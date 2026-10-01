@@ -59,6 +59,23 @@ def test_validation_catches_unknown_data_source(sla):
     assert any("unknown data source" in e for e in validate_sla(bad))
 
 
+def test_validation_catches_bad_measurement_spec(sla):
+    bad = copy.deepcopy(sla)
+    bad["measurement_spec"][0]["validation_class"] = ["Not a real checklist"]
+    bad["measurement_spec"][1]["stability_window_hours"] = 0.5      # shorter than the early-failure window
+    bad["measurement_spec"][2]["detection"]["source"] = "DS-NOPE"
+    errors = validate_sla(bad)
+    assert any("not in Return-to-Service Validation" in e for e in errors)
+    assert any("longer than the early-failure window" in e for e in errors)
+    assert any("unknown detection source" in e for e in errors)
+
+
+def test_every_fault_class_has_a_validation_checklist(sla):
+    rts = {c["component"] for c in sla["rts_validation"]["classes"]}
+    for fc in sla["measurement_spec"]:
+        assert set(fc["validation_class"]) <= rts
+
+
 def test_load_refuses_invalid_file(tmp_path, sla):
     import yaml
 
@@ -122,7 +139,7 @@ def test_integrity_default_not_earnback_eligible(sla):
 def test_monthly_cap(sla):
     credits = [compute_credit(sla, c, 1) for c in ("CSL-01", "CSL-03", "CSL-06", "CSL-07", "CSL-11")]
     uncapped, payable, capped = cap_monthly_credits(sla, credits)
-    assert uncapped == pytest.approx(310_800)
+    assert uncapped == pytest.approx(288_600)
     assert payable == pytest.approx(222_000)
     assert capped
 
@@ -186,5 +203,7 @@ def test_generated_document_is_current():
 
 def test_document_mentions_every_service_level(sla):
     text = (ROOT / "docs" / "SLA.md").read_text(encoding="utf-8")
-    for item in sla["critical_service_levels"] + sla["key_measurements"]:
+    for item in sla["critical_service_levels"] + sla["key_measurements"] + sla["measurement_spec"]:
         assert item["id"] in text
+    for rule in sla["ticket_handling"]["stability"]["rules"]:
+        assert rule["id"] in text

@@ -9,13 +9,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Validate SLA and check generated document is current
         run: python scripts/render_sla.py --check
-      - name: Run tests
+      - name: Run tests (includes check that data/sample is current)
         run: pytest -q

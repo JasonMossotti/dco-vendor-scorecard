@@ -1,0 +1,41 @@
+{"gpu_index": 2, "host": "a31-ct11", "message": "Contained ECC error", "timestamp": "2026-09-01T05:48:43Z", "tray_serial": "CTUCUJKCBY", "xid": 94}
+{"gpu_index": 3, "host": "a31-ct06", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-01T15:13:51Z", "tray_serial": "CTBIHSL4VQ", "xid": 119}
+{"gpu_index": 2, "host": "a20-ct15", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-02T13:39:38Z", "tray_serial": "CTYI8I5ZGF", "xid": 119}
+{"gpu_index": 2, "host": "a05-ct18", "message": "GPU has fallen off the bus", "timestamp": "2026-09-04T00:35:24Z", "tray_serial": "CT8JIIH9QY", "xid": 79}
+{"gpu_index": 0, "host": "a22-ct07", "message": "Contained ECC error", "timestamp": "2026-09-04T07:21:29Z", "tray_serial": "CTR9IUS5X3", "xid": 94}
+{"gpu_index": 1, "host": "a06-ct13", "message": "NVLink error", "timestamp": "2026-09-04T09:37:29Z", "tray_serial": "CTVTAEE6BD", "xid": 145}
+{"gpu_index": 3, "host": "a06-ct13", "message": "NVLink error", "timestamp": "2026-09-04T17:31:42Z", "tray_serial": "CTVTAEE6BD", "xid": 145}
+{"gpu_index": 0, "host": "a03-ct14", "message": "NVLink error", "timestamp": "2026-09-04T20:23:10Z", "tray_serial": "CTGXG89B8X", "xid": 145}
+{"gpu_index": 1, "host": "a28-ct04", "message": "NVLink error", "timestamp": "2026-09-04T21:52:50Z", "tray_serial": "CTEOLAWSZK", "xid": 149}
+{"gpu_index": 0, "host": "a29-ct03", "message": "GPU has fallen off the bus", "timestamp": "2026-09-04T23:33:03Z", "tray_serial": "CTOTEIFWVL", "xid": 79}
+{"gpu_index": 2, "host": "a09-ct10", "message": "NVLink error", "timestamp": "2026-09-06T08:52:39Z", "tray_serial": "CTQSRSX7QQ", "xid": 145}
+{"gpu_index": 2, "host": "a31-ct06", "message": "NVLink error", "timestamp": "2026-09-07T15:03:53Z", "tray_serial": "CTBIHSL4VQ", "xid": 145}
+{"gpu_index": 3, "host": "a26-ct16", "message": "NVLink error", "timestamp": "2026-09-08T13:01:44Z", "tray_serial": "CTSXQ9HJ60", "xid": 149}
+{"gpu_index": 0, "host": "a26-ct16", "message": "NVLink error", "timestamp": "2026-09-08T20:42:32Z", "tray_serial": "CTON3U5J01", "xid": 149}
+{"gpu_index": 3, "host": "a14-ct02", "message": "NVLink error", "timestamp": "2026-09-09T21:06:27Z", "tray_serial": "CTH4E4H5XS", "xid": 145}
+{"gpu_index": 0, "host": "a15-ct07", "message": "Contained ECC error", "timestamp": "2026-09-10T18:01:45Z", "tray_serial": "CTB8P6H4LC", "xid": 94}
+{"gpu_index": 2, "host": "a31-ct17", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-11T16:01:07Z", "tray_serial": "CTH9GMP6ZF", "xid": 119}
+{"gpu_index": 3, "host": "a14-ct07", "message": "GPU has fallen off the bus", "timestamp": "2026-09-13T03:06:06Z", "tray_serial": "CTA1QSVRVF", "xid": 79}
+{"gpu_index": 3, "host": "a05-ct15", "message": "Contained ECC error", "timestamp": "2026-09-13T03:50:40Z", "tray_serial": "CTYCX5H7TS", "xid": 94}
+{"gpu_index": 1, "host": "a31-ct15", "message": "GPU has fallen off the bus", "timestamp": "2026-09-13T07:13:04Z", "tray_serial": "CT4TDXX1SR", "xid": 79}
+{"gpu_index": 0, "host": "a23-ct04", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-13T08:10:51Z", "tray_serial": "CTZO363BHD", "xid": 119}
+{"gpu_index": 2, "host": "a31-ct06", "message": "Contained ECC error", "timestamp": "2026-09-13T14:15:31Z", "tray_serial": "CTBIHSL4VQ", "xid": 94}
+{"gpu_index": 2, "host": "a31-ct17", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-14T13:45:51Z", "tray_serial": "CTH9GMP6ZF", "xid": 119}
+{"gpu_index": 1, "host": "a07-ct04", "message": "NVLink error", "timestamp": "2026-09-15T09:31:51Z", "tray_serial": "CTRYB13GAR", "xid": 149}
+{"gpu_index": 0, "host": "a01-ct05", "message": "GPU has fallen off the bus", "timestamp": "2026-09-15T12:48:14Z", "tray_serial": "CTKQ5ZUAZN", "xid": 79}
+{"gpu_index": 2, "host": "a16-ct01", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-15T20:06:17Z", "tray_serial": "CT8VAFZXJA", "xid": 119}
+{"gpu_index": 2, "host": "a14-ct14", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-15T20:14:44Z", "tray_serial": "CTU04P32H5", "xid": 119}
+{"gpu_index": 1, "host": "a16-ct14", "message": "GPU has fallen off the bus", "timestamp": "2026-09-15T21:32:29Z", "tray_serial": "CTY00WS6LS", "xid": 79}
+{"gpu_index": 1, "host": "a14-ct07", "message": "GPU has fallen off the bus", "timestamp": "2026-09-17T08:35:39Z", "tray_serial": "CTA1QSVRVF", "xid": 79}
+{"gpu_index": 3, "host": "a03-ct02", "message": "GPU has fallen off the bus", "timestamp": "2026-09-17T13:12:31Z", "tray_serial": "CT5GJ85SND", "xid": 79}
+{"gpu_index": 2, "host": "a30-ct06", "message": "Contained ECC error", "timestamp": "2026-09-20T16:29:42Z", "tray_serial": "CTKX3ZU5J9", "xid": 94}
+{"gpu_index": 1, "host": "a13-ct10", "message": "Double Bit ECC Error", "timestamp": "2026-09-21T00:54:07Z", "tray_serial": "CTA5F79H0D", "xid": 48}
+{"gpu_index": 2, "host": "a10-ct13", "message": "GPU has fallen off the bus", "timestamp": "2026-09-21T05:14:39Z", "tray_serial": "CTX4GH2MXS", "xid": 79}
+{"gpu_index": 2, "host": "a22-ct02", "message": "NVLink error", "timestamp": "2026-09-22T00:47:12Z", "tray_serial": "CT5K95M7HP", "xid": 145}
+{"gpu_index": 3, "host": "a10-ct12", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-22T21:03:17Z", "tray_serial": "CTZJDXTEZZ", "xid": 119}
+{"gpu_index": 1, "host": "a19-ct15", "message": "Contained ECC error", "timestamp": "2026-09-23T06:51:44Z", "tray_serial": "CT9602BBTK", "xid": 94}
+{"gpu_index": 3, "host": "a13-ct01", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-23T12:33:52Z", "tray_serial": "CTUA2DP68L", "xid": 119}
+{"gpu_index": 0, "host": "a01-ct10", "message": "GPU has fallen off the bus", "timestamp": "2026-09-24T16:57:06Z", "tray_serial": "CTTUYL2SR5", "xid": 79}
+{"gpu_index": 3, "host": "a30-ct08", "message": "Contained ECC error", "timestamp": "2026-09-25T00:43:32Z", "tray_serial": "CTW4PJ9FZ0", "xid": 94}
+{"gpu_index": 3, "host": "a01-ct03", "message": "NVLink error", "timestamp": "2026-09-25T22:34:52Z", "tray_serial": "CTD3Q3YYHJ", "xid": 149}
+{"gpu_index": 0, "host": "a20-ct07", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-25T23:56:04Z", "tray_serial": "CTIVL27E8R", "xid": 119}

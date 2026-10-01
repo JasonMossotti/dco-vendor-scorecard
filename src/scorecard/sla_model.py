@@ -110,6 +110,39 @@ def validate_sla(sla: dict[str, Any]) -> list[str]:
         if restores != sorted(restores):
             errors.append("Restore targets must increase from P1 to P4")
 
+    # Measurement Specification: every rule card must reference real things.
+    rts_classes = {c["component"] for c in sla.get("rts_validation", {}).get("classes", [])}
+    th = sla.get("ticket_handling", {})
+    early_min = th.get("stability", {}).get("early_failure_minutes", 0)
+    fc_ids: set[str] = set()
+    for fc in sla.get("measurement_spec", []):
+        fid = fc["id"]
+        if fid in fc_ids:
+            errors.append(f"Duplicate fault class {fid}")
+        fc_ids.add(fid)
+        if fc["detection"]["source"] not in ds_ids:
+            errors.append(f"{fid}: unknown detection source {fc['detection']['source']}")
+        if fc["default_priority"] not in prios:
+            errors.append(f"{fid}: unknown default priority {fc['default_priority']}")
+        for vc in fc["validation_class"]:
+            if vc not in rts_classes:
+                errors.append(f"{fid}: validation class '{vc}' not in Return-to-Service Validation")
+        if fc["stability_window_hours"] * 60 <= early_min:
+            errors.append(f"{fid}: stability window must be longer than the early-failure window")
+        if fc["recurrence_window_days"] * 24 <= fc["stability_window_hours"]:
+            errors.append(f"{fid}: recurrence window must be longer than the stability window")
+        for st in fc["capacity_impact"]["states"]:
+            if not 0 <= st["factor"] <= 1:
+                errors.append(f"{fid}: capacity factor must be between 0 and 1")
+    if sla.get("measurement_spec") and not th:
+        errors.append("measurement_spec requires a ticket_handling section")
+    allowed_pauses = {pc["code"] for pc in th.get("pause_codes", [])}
+    if th and len(allowed_pauses) != len(sla["measurement"]["clock_rules"]["pause_allowed_only_for"]):
+        errors.append("Pause codes must correspond one-to-one with the clock pause rules")
+    for r in sla.get("capacity_accounting", {}).get("rollups", []):
+        if r["metric"] not in seen:
+            errors.append(f"Capacity rollup references unknown service level {r['metric']}")
+
     # Severity bands must be ascending, and end with an open (null) band.
     sev = sla.get("breach_severity", {})
     level_ids = {lvl["id"] for lvl in sev.get("levels", [])}

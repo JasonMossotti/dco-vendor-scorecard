@@ -20,6 +20,9 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from datetime import datetime, timedelta, timezone  # noqa: E402
+
+from scorecard.measurement import Outage, build_tickets_of_record  # noqa: E402
 from scorecard.sla_model import (  # noqa: E402
     HIGHER,
     at_risk_amount,
@@ -59,6 +62,51 @@ def fmt_target(item: dict, value: float) -> str:
         return "100%"
     symbol = "≥" if item["direction"] == HIGHER else "≤"
     return f"{symbol} {value:g}{unit}"
+
+
+def ticket_handling_examples(sla: dict) -> dict:
+    """Appendix B.3: one repair that refaults at different times, run through the
+    reference implementation of TR-1, TR-2, and TR-5."""
+    fc = next(f for f in sla["measurement_spec"] if f["id"] == "FC-GPU")
+    target = next(p for p in sla["priorities"] if p["id"] == fc["default_priority"])["restore_min"]
+    first, second = 420, 180          # 7 hrs, then 3 hrs
+    t0 = datetime(2026, 9, 7, 8, 0, tzinfo=timezone.utc)
+    rts1 = t0 + timedelta(minutes=first)
+    gaps = [
+        ("10 minutes", timedelta(minutes=10)),
+        ("6 hours", timedelta(hours=6)),
+        ("3 days", timedelta(days=3)),
+        ("10 days", timedelta(days=10)),
+    ]
+    rows = []
+    for label, gap in gaps:
+        t1 = rts1 + gap
+        outages = [Outage("a14-ct07", t0, rts1, ("INC-1",)), Outage("a14-ct07", t1, t1 + timedelta(minutes=second), ("INC-2",))]
+        tors = build_tickets_of_record(sla, "FC-GPU", outages, as_of=t1 + timedelta(days=30))
+        tor = tors[0]
+        if tor.early_failures:
+            rule = "TR-1"
+        elif tor.reopens:
+            rule = "TR-2"
+        elif tors[1].parent_index == 0:
+            rule = "TR-5"
+        else:
+            rule = "New ticket"
+        merged = rule in ("TR-1", "TR-2")
+        measured = tor.measured_restore_min
+        sev = classify_event_breach(sla, target, measured, fc["capacity_impact"]["gpus"])
+        rows.append({
+            "gap_label": label,
+            "rule": rule,
+            "vendor_view": (f"Two tickets: {fmt_duration(first)} and {fmt_duration(second)}, both on time"
+                            if merged else "Two separate tickets (correct)"),
+            "measured": measured,
+            "met": measured <= target,
+            "severity": f"{sev.level} {sev.name}" if sev.level else "None",
+            "ftf": tor.first_time_fix,
+        })
+    return {"tr_examples": rows, "tr_first": first, "tr_second": second, "tr_target": target,
+            "tr_target_label": f"{fc['default_priority']} {fc['name']}"}
 
 
 # --------------------------------------------------------------------------- #
@@ -167,6 +215,10 @@ def build_context(sla: dict) -> dict:
         "cap_example": cap_example,
         "severity_examples": severity_examples,
         "period_examples": period_examples,
+        "th": sla["ticket_handling"],
+        "ms": sla["measurement_spec"],
+        "ca": sla["capacity_accounting"],
+        **ticket_handling_examples(sla),
     }
 
 
@@ -206,7 +258,7 @@ def main() -> int:
         return 0
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(text, encoding="utf-8")
+    OUTPUT_PATH.write_text(text, encoding="utf-8", newline="\n")
     print(f"Wrote {OUTPUT_PATH.relative_to(ROOT)} ({len(text.splitlines())} lines)")
     return 0
 

@@ -22,21 +22,24 @@
 4. [Scope and Responsibility Matrix](#4-scope-and-responsibility-matrix)
 5. [Incident Priority Matrix](#5-incident-priority-matrix)
 6. [Measurement and Telemetry of Record](#6-measurement-and-telemetry-of-record)
-7. [Critical Service Levels](#7-critical-service-levels)
-8. [Key Measurements](#8-key-measurements)
-9. [Return-to-Service Validation Requirements](#9-return-to-service-validation-requirements)
-10. [Deployment Milestones](#10-deployment-milestones)
-11. [Service Level Credits and Earnback](#11-service-level-credits-and-earnback)
-12. [Chronic Failure and Termination](#12-chronic-failure-and-termination)
-13. [Excused Events](#13-excused-events)
-14. [Root Cause Analysis and Corrective Action](#14-root-cause-analysis-and-corrective-action)
-15. [Governance and Reporting Cadence](#15-governance-and-reporting-cadence)
-16. [Staffing and Qualifications](#16-staffing-and-qualifications)
-17. [Change Management](#17-change-management)
-18. [Security and Chain of Custody](#18-security-and-chain-of-custody)
-19. [Environmental, Health, and Safety](#19-environmental-health-and-safety)
-20. [Spares and RMA](#20-spares-and-rma)
-21. [SLA Change Control and Continuous Improvement](#21-sla-change-control-and-continuous-improvement)
+7. [Ticket Handling Rules](#7-ticket-handling-rules)
+8. [Measurement Specification by Fault Class](#8-measurement-specification-by-fault-class)
+9. [Capacity and Downtime Accounting](#9-capacity-and-downtime-accounting)
+10. [Critical Service Levels](#10-critical-service-levels)
+11. [Key Measurements](#11-key-measurements)
+12. [Return-to-Service Validation Requirements](#12-return-to-service-validation-requirements)
+13. [Deployment Milestones](#13-deployment-milestones)
+14. [Service Level Credits and Earnback](#14-service-level-credits-and-earnback)
+15. [Chronic Failure and Termination](#15-chronic-failure-and-termination)
+16. [Excused Events](#16-excused-events)
+17. [Root Cause Analysis and Corrective Action](#17-root-cause-analysis-and-corrective-action)
+18. [Governance and Reporting Cadence](#18-governance-and-reporting-cadence)
+19. [Staffing and Qualifications](#19-staffing-and-qualifications)
+20. [Change Management](#20-change-management)
+21. [Security and Chain of Custody](#21-security-and-chain-of-custody)
+22. [Environmental, Health, and Safety](#22-environmental-health-and-safety)
+23. [Spares and RMA](#23-spares-and-rma)
+24. [SLA Change Control and Continuous Improvement](#24-sla-change-control-and-continuous-improvement)
 - [Appendix A: Internal Breach Severity Index](#appendix-a-internal-breach-severity-index)
 - [Appendix B: Worked Examples](#appendix-b-worked-examples)
 
@@ -175,9 +178,139 @@ Precedence 1 is most authoritative. When sources disagree, the higher-precedence
 - **Raw data:** {{ m.reporting.raw_data_access }}
 - **Failure to report:** {{ m.reporting.failure_to_report }}
 
-## 7. Critical Service Levels
+### 6.4 Reference implementation
 
-Critical Service Levels are measured each {{ c.measurement_period }} and tracked each {{ c.scorecard_period }}. A result worse than **Minimum** is a Minimum Service Level Default and earns the credit described in Section 11.
+{{ m.reference_implementation }}
+
+### 6.5 Calibration period
+
+{{ m.calibration.rule }}
+
+### 6.6 Reconciliation and disputes
+
+{{ m.reconciliation }}
+
+{{ m.disputes.rule }}
+
+### 6.7 Audit
+
+{{ m.audit.rule }}
+
+## 7. Ticket Handling Rules
+
+{{ th.principle }}
+
+### 7.1 Ticket of Record
+
+{% for r in th.ticket_of_record -%}
+- {{ r }}
+{% endfor %}
+
+### 7.2 Required ticket fields
+
+Every Ticket of Record carries these fields. Fault classes in Section 8 add their own.
+
+{% for f in th.required_fields -%}
+- {{ f }}
+{% endfor %}
+
+### 7.3 Ticket states
+
+| State | Clock | Meaning |
+|---|:-:|---|
+{% for st in th.states -%}
+| `{{ st.id }}` | {{ st.clock }} | {{ st.description }} |
+{% endfor %}
+
+### 7.4 Pause codes
+
+The clock pauses only under one of these codes, each requiring a named Customer approver.
+
+| Code | Meaning |
+|---|---|
+{% for pc in th.pause_codes -%}
+| `{{ pc.code }}` | {{ pc.description }} |
+{% endfor %}
+
+### 7.5 Data integrity
+
+{% for r in th.data_integrity -%}
+- {{ r }}
+{% endfor %}
+
+### 7.6 Stability, reopen, and recurrence rules
+
+**{{ th.stability.principle }}**
+
+| Rule | Name | Rule text |
+|---|---|---|
+{% for r in th.stability.rules -%}
+| **{{ r.id }}** | {{ r.name }} | {{ r.rule }} |
+{% endfor %}
+
+How the same refault is treated depends on when it happens after Validated RTS:
+
+| Refault timing | Treatment | Restoration time measured as |
+|---|---|---|
+| Within {{ th.stability.early_failure_minutes }} minutes | TR-1: same ticket, restore void | Continuous from original T0 (uptime counts as downtime) |
+| After {{ th.stability.early_failure_minutes }} minutes, within the stability window | TR-2: same ticket, reopened | Sum of all down intervals from original T0 |
+| After the stability window, within the recurrence window | TR-5: new linked ticket | Each ticket on its own clock; original fails First-Time Fix |
+| After the recurrence window | New, independent ticket | Its own clock |
+
+Appendix B.3 works through these cases with numbers computed by the reference implementation.
+
+## 8. Measurement Specification by Fault Class
+
+Each fault class below is a rule card: the single approved way to detect, classify, evidence, validate, and time that kind of fault. The Customer alerting integration assigns the fault class when it opens the Ticket of Record.
+
+| Class | Fault | Service Unit Key | Detected by | Default priority | Stability window | Recurrence window |
+|---|---|---|---|:-:|:-:|:-:|
+{% for fc in ms -%}
+| {{ fc.id }} | {{ fc.name }} | {{ fc.service_unit_key }} | {{ fc.detection.source }} | {{ fc.default_priority }} | {{ fc.stability_window_hours }} hrs | {{ fc.recurrence_window_days }} days |
+{% endfor %}
+
+{% for fc in ms %}
+### {{ fc.id }}: {{ fc.name }}
+
+| | |
+|---|---|
+| **Service Unit Key** | {{ fc.service_unit_key }} |
+| **Detection signal** | {{ fc.detection.signal }} Source: {{ fc.detection.source }}. |
+| **T0 rule** | {{ fc.detection.t0_rule }} |
+| **Recurrence signal** | {{ fc.recurrence_signal }} |
+| **Priority** | {{ fc.default_priority }} by default.{% for r in fc.priority_rules %} {{ r }}{% endfor %} |
+| **Additional ticket fields** | {{ fc.additional_fields | join("; ") if fc.additional_fields else "None beyond Section 7.2" }} |
+| **Repair evidence** | {{ fc.repair_evidence | join(" ") }} |
+| **Validation** | Section 12 checklist: {{ fc.validation_class | join(" or ") }} |
+| **Clock stops** | {{ fc.clock_stop }} |
+| **Stability window** | {{ fc.stability_window_hours }} hours in production (TR-2, TR-3) |
+| **Recurrence window** | {{ fc.recurrence_window_days }} days (TR-5) |
+| **Capacity impact** | {% if fc.capacity_impact.states %}{% for st in fc.capacity_impact.states %}{{ st.state }}: {{ st.gpus }} GPUs × {{ st.factor }}{% if not loop.last %}; {% endif %}{% endfor %}{% else %}No compute lost{% endif %}{% if fc.redundancy_exposure %}; counts as Redundancy Exposure (KM-17){% endif %} |
+{% endfor %}
+
+## 9. Capacity and Downtime Accounting
+
+{{ ca.principle }}
+
+**Measure:** {{ ca.measure }}.
+
+| State | Capacity factor | Note |
+|---|:-:|---|
+{% for st in ca.states -%}
+| {{ st.state }} | {{ st.factor }} | {{ st.note }} |
+{% endfor %}
+
+**Attribution:** {{ ca.attribution }}
+
+| Metric | Scope | What it catches |
+|---|---|---|
+{% for r in ca.rollups -%}
+| {{ r.metric }} | {{ r.scope }} | {{ r.description }} |
+{% endfor %}
+
+## 10. Critical Service Levels
+
+Critical Service Levels are measured each {{ c.measurement_period }} and tracked each {{ c.scorecard_period }}. A result worse than **Minimum** is a Minimum Service Level Default and earns the credit described in Section 14.
 
 | ID | Service level | Category | Expected | Minimum | Credit allocation |
 |---|---|---|:-:|:-:|:-:|
@@ -199,9 +332,9 @@ Critical Service Levels are measured each {{ c.measurement_period }} and tracked
 {%- endif %}
 {% endfor %}
 
-## 8. Key Measurements
+## 11. Key Measurements
 
-Key Measurements carry no credits. Any miss requires a root cause analysis and corrective action plan (Section 14), and repeated misses may lead the Customer to promote the measurement to a Critical Service Level (Section 21).
+Key Measurements carry no credits. Any miss requires a root cause analysis and corrective action plan (Section 17), and repeated misses may lead the Customer to promote the measurement to a Critical Service Level (Section 24).
 
 | ID | Key measurement | Target | Telemetry |
 |---|---|:-:|---|
@@ -209,7 +342,7 @@ Key Measurements carry no credits. Any miss requires a root cause analysis and c
 | {{ k.id }} | {{ k.name }} | {{ k | target(k.target) }} | {{ k.data_sources | join(", ") }} |
 {% endfor %}
 
-## 9. Return-to-Service Validation Requirements
+## 12. Return-to-Service Validation Requirements
 
 {{ sla.rts_validation.principle }}
 
@@ -220,7 +353,7 @@ Key Measurements carry no credits. Any miss requires a root cause analysis and c
 {%- endfor %}
 
 {% endfor %}
-## 10. Deployment Milestones
+## 13. Deployment Milestones
 
 Target cycle: **{{ sla.deployment.rack_cycle_target_days }} calendar days** from rack receipt to Validated Handoff. Surge capacity: +25% staffing on {{ sla.deployment.surge.plus_25_pct_notice_hours }} hours notice; +100% on {{ sla.deployment.surge.plus_100_pct_notice_business_days }} business days notice.
 
@@ -230,7 +363,7 @@ Target cycle: **{{ sla.deployment.rack_cycle_target_days }} calendar days** from
 | {{ ms.id }} | {{ ms.name }} | {{ ms.exit_criteria }} | {{ ms.target_days_from_receipt }} |
 {% endfor %}
 
-## 11. Service Level Credits and Earnback
+## 14. Service Level Credits and Earnback
 
 - **At-Risk Amount:** {{ c.at_risk_pct }}% of monthly charges (illustratively ${{ "{:,.0f}".format(c.monthly_charges) }}/month, so **${{ "{:,.0f}".format(at_risk) }}** at risk each month).
 - **Pool:** Credit allocations across all Critical Service Levels total {{ total_alloc }}% of the At-Risk Amount (pool limit {{ c.pool_pct }}%), with no single CSL above {{ c.max_allocation_per_csl_pct }}%. A pool above 100% concentrates financial attention on the Customer's priorities while the monthly cap protects the Supplier.
@@ -246,7 +379,7 @@ Target cycle: **{{ sla.deployment.rack_cycle_target_days }} calendar days** from
 
 See Appendix B for worked credit examples.
 
-## 12. Chronic Failure and Termination
+## 15. Chronic Failure and Termination
 
 Any of the following is a Chronic Failure:
 
@@ -260,7 +393,7 @@ On a Chronic Failure, the Customer may:
 {% endfor %}
 **Termination assistance:** {{ sla.chronic_failure.termination_assistance }}
 
-## 13. Excused Events
+## 16. Excused Events
 
 The Supplier must claim an Excused Event within {{ sla.excused_events.claim_window_business_days }} business days, with supporting evidence. Only the following qualify:
 
@@ -271,7 +404,7 @@ The Supplier must claim an Excused Event within {{ sla.excused_events.claim_wind
 
 **Supplier duty:** {{ sla.excused_events.supplier_duty }}
 
-## 14. Root Cause Analysis and Corrective Action
+## 17. Root Cause Analysis and Corrective Action
 
 **Triggers:**
 
@@ -287,7 +420,7 @@ The Supplier must claim an Excused Event within {{ sla.excused_events.claim_wind
 {% endfor %}
 **Overdue CAPs:** {{ sla.corrective_action.cap_overdue_escalation }}
 
-## 15. Governance and Reporting Cadence
+## 18. Governance and Reporting Cadence
 
 | Forum | Frequency | Attendees | Inputs |
 |---|---|---|---|
@@ -295,7 +428,7 @@ The Supplier must claim an Excused Event within {{ sla.excused_events.claim_wind
 | {{ g.forum }} | {{ g.frequency }} | {{ g.attendees }} | {{ g.inputs }} |
 {% endfor %}
 
-## 16. Staffing and Qualifications
+## 19. Staffing and Qualifications
 
 **Coverage:** {{ sla.staffing.coverage }}.
 
@@ -317,21 +450,21 @@ The Supplier must claim an Excused Event within {{ sla.excused_events.claim_wind
 {% endfor %}
 {{ sla.staffing.qualification_rule }}
 
-## 17. Change Management
+## 20. Change Management
 
 {% for r in sla.change_management.rules -%}
 - {{ r }}
 {% endfor %}
 **Firmware:** {{ sla.change_management.firmware }}
 
-## 18. Security and Chain of Custody
+## 21. Security and Chain of Custody
 
 {% for r in sla.security.requirements -%}
 - {{ r }}
 {% endfor %}
 **Incident reporting:** {{ sla.security.incident_reporting }}
 
-## 19. Environmental, Health, and Safety
+## 22. Environmental, Health, and Safety
 
 {% for r in sla.ehs.requirements -%}
 - {{ r }}
@@ -340,7 +473,7 @@ The Supplier must claim an Excused Event within {{ sla.excused_events.claim_wind
 
 {{ sla.ehs.treatment }}
 
-## 20. Spares and RMA
+## 23. Spares and RMA
 
 {{ sla.spares.ownership }}
 
@@ -353,7 +486,7 @@ The Supplier must claim an Excused Event within {{ sla.excused_events.claim_wind
 - **Reorder:** {{ sla.spares.reorder_rule }}
 - **Cycle counts:** {{ sla.spares.cycle_count }}
 
-## 21. SLA Change Control and Continuous Improvement
+## 24. SLA Change Control and Continuous Improvement
 
 {% for r in sla.sla_change_control.customer_rights -%}
 - {{ r }}
@@ -432,6 +565,18 @@ Aggravators adjust an existing breach; they never create one.
 {% for ex in period_examples -%}
 | {{ ex.title }} | {{ ex.actual }} | **{{ ex.result.level or "None" }}{% if ex.result.name %} {{ ex.result.name }}{% endif %}** | {{ ex.result.reasons | join("; ") }} |
 {% endfor %}
+
+### B.3 Ticket handling: the same repair, refaulting at different times
+
+A {{ tr_target_label }} (4 GPUs). The first repair reaches Validated RTS after {{ tr_first | dur }}; the tray then faults again; the second repair takes {{ tr_second | dur }}. Restore target: {{ tr_target | dur }}.
+
+| Refault after RTS | Rule | Vendor view if tickets are split | Measured restoration | Within target? | Severity | First-Time Fix |
+|---|:-:|---|:-:|:-:|:-:|:-:|
+{% for ex in tr_examples -%}
+| {{ ex.gap_label }} | {{ ex.rule }} | {{ ex.vendor_view }} | {{ ex.measured | dur }} | {{ "Yes" if ex.met else "**No**" }} | {{ ex.severity }} | {{ "Yes" if ex.ftf else "No" }} |
+{% endfor %}
+
+If the vendor opened a second ticket in a TR-1 or TR-2 case, TR-6 makes it a Record Integrity Finding, and severity rises to S1 through AGG-INTEGRITY.
 
 ---
 

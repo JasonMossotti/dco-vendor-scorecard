@@ -1,0 +1,58 @@
+# =============================================================================
+# Synthetic data generator configuration
+# -----------------------------------------------------------------------------
+# All values are illustrative. Fault rates are tuned to produce a realistic
+# weekly ticket volume for one production hall (32 GB200 NVL72 racks,
+# 2,304 GPUs). Change the seed to get a different but equally realistic month.
+# =============================================================================
+
+seed: 2026
+weeks: 4
+site_utc_offset_hours: -5          # Site local time (Central Daylight Time)
+
+# Average incidents per week in the production hall, by fault class.
+incident_rates_per_week:
+  tray_gpu: 9          # GPU faults on a compute tray (XID 79, 48, 94, 119, 145, 149)
+  optic_link: 6        # Back-end fabric optic or link faults
+  psu: 2               # Single PSU failure, redundancy intact
+  power_shelf: 0.5     # Power shelf failure, redundancy lost
+  switch_tray: 0.4     # NVLink switch tray failure (rack-wide)
+  cdu_pump: 0.3        # CDU pump failure, redundancy lost
+  leak: 0.3            # Leak-detection alarm (tray or rack manifold)
+
+# GPU fault mix (XID code -> relative weight). Codes as reported by the driver.
+xid_mix:
+  79: 25    # GPU has fallen off the bus
+  94: 20    # Contained ECC error
+  48: 10    # Double-bit ECC error
+  119: 15   # GSP RPC timeout
+  145: 20   # NVLink error
+  149: 10   # NVLink error
+
+# Honest vendor behavior (before any planted discrepancies).
+vendor_behavior:
+  tray_swap_probability: 0.7        # Otherwise the tray is reseated
+  optic_replace_probability: 0.7    # Otherwise the fiber is cleaned
+  late_engagement_probability: 0.06 # Tech arrives after the engaged-on-site target
+  hard_fault_probability: 0.06      # Extra diagnosis or spare retrieval time
+  rma_ship_days: [1, 7]             # Days from part removal to RMA shipment
+
+# Planted discrepancies. Each is recorded in ground_truth/ so the engine's
+# detection rate can be measured. Set any count to 0 to disable it.
+anomalies:
+  phantom_fix: 2           # Ticket closed, same fault recurs on the same tray within days
+  unverified_swap: 2       # Ticket claims a part swap; BMC inventory serial never changed
+  skipped_validation: 2    # Unit returned to service with no validation records
+  clock_shift: 1           # Ticket opened late, hiding a restore-time breach
+  ticket_split: 2          # Unit refaults minutes after repair; vendor opens a new ticket to restart the clock
+  ghost_engagement: 2      # Ticket says "on site" before the tech badged into the hall
+  wrong_end_optic: 1       # Optic replaced on the wrong end; errors continue
+  lemon_unit: 1            # Tray fails 3 times in 30 days with no RMA escalation
+  staffing_gap: 2          # Shifts where 2 rostered techs never badged in
+  spares_drift: 1          # Part used but never issued from the spares ledger
+  unauthorized_change: 1   # Firmware changed on a rack with no change record
+
+deployment:
+  racks_received_in_window: 14
+  late_probability: 0.25
+  late_days: [1, 4]
