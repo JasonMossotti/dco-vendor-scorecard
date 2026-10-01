@@ -156,6 +156,16 @@ def validate_sla(sla: dict[str, Any]) -> list[str]:
         for b in dim["bands"]:
             if b["level"] not in level_ids:
                 errors.append(f"Severity dimension {dim_name}: unknown level {b['level']}")
+    agg_ids = {a["id"] for a in sev.get("aggravators", [])}
+    for ft in sev.get("finding_types", []):
+        if ft["base_level"] not in level_ids:
+            errors.append(f"Finding type {ft['id']}: unknown base level {ft['base_level']}")
+        for a in ft["aggravators"]:
+            if a not in agg_ids:
+                errors.append(f"Finding type {ft['id']}: unknown aggravator {a}")
+    for c in sla.get("rts_validation", {}).get("classes", []):
+        if not c.get("check_ids"):
+            errors.append(f"Validation class '{c['component']}' needs check_ids")
     for agg in sev.get("aggravators", []):
         if agg["effect"] == "floor" and agg.get("level") not in level_ids:
             errors.append(f"Aggravator {agg['id']}: unknown floor level")
@@ -430,3 +440,37 @@ def classify_period_breach(
     # Aggravators only adjust an actual breach; they never create one.
     level = _apply_aggravators(sla, rule["level"], aggravators, reasons) if rule["level"] else None
     return _result(sla, level, reasons, {"actual": csl_result.actual})
+
+
+def finding_type(sla: dict[str, Any], type_id: str) -> dict[str, Any]:
+    for ft in sla["breach_severity"]["finding_types"]:
+        if ft["id"] == type_id:
+            return ft
+    raise KeyError(f"Unknown finding type {type_id}")
+
+
+def classify_finding(
+    sla: dict[str, Any],
+    type_id: str,
+    target_min: float | None = None,
+    actual_min: float | None = None,
+    gpus_affected: int = 0,
+    extra_aggravators: Iterable[str] = (),
+) -> SeverityResult:
+    """Severity for a discrepancy finding.
+
+    If the finding carries a time breach (actual beyond target), severity starts
+    from the event-breach dimensions; otherwise from the type's base level. The
+    type's aggravators (plus any extras) are then applied.
+    """
+    ft = finding_type(sla, type_id)
+    aggs = list(dict.fromkeys(list(ft["aggravators"]) + list(extra_aggravators)))
+    if target_min is not None and actual_min is not None and actual_min > target_min:
+        res = classify_event_breach(sla, target_min, actual_min, gpus_affected)
+        base = res.level if _rank(sla, res.level) >= _rank(sla, ft["base_level"]) else ft["base_level"]
+        reasons = res.reasons + [f"Base level for {ft['name'].lower()}: {ft['base_level']}"]
+        metrics = res.metrics
+    else:
+        base, reasons, metrics = ft["base_level"], [f"Base level for {ft['name'].lower()}: {ft['base_level']}"], {}
+    level = _apply_aggravators(sla, base, aggs, reasons)
+    return _result(sla, level, reasons, metrics)

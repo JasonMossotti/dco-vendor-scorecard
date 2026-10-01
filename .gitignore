@@ -8,3 +8,6 @@ venv/
 # Extra generated datasets (only the committed sample is tracked)
 data/*
 !data/sample/
+
+# Extra engine runs (only the committed reports/ files are tracked)
+reports/*/

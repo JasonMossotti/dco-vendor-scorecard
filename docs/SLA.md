@@ -659,7 +659,9 @@ Key Measurements carry no credits. Any miss requires a root cause analysis and c
 
 A unit is not returned to production until every check for its component class has passed and the evidence is recorded in the ticket. Missing evidence counts as a failed validation for CSL-07.
 
-**Compute tray**
+Each check is recorded in the health-check system under a standard check ID, so validation evidence is linked by record, never retyped.
+
+**Compute tray** (check IDs: `leak_hold_30m`, `dcgm_diag_r3`, `nvlink_domain`, `nccl_allreduce_rack`, `burn_in_1h`)
 
 - [ ] Serial number change recorded in Redfish inventory matches the ticket's parts record.
 - [ ] Quick-disconnects verified seated; zero tray or rack leak alarms during a 30-minute post-insertion hold.
@@ -668,39 +670,39 @@ A unit is not returned to production until every check for its component class h
 - [ ] Rack NCCL all-reduce bandwidth within 5% of the rack's baseline.
 - [ ] 1-hour burn-in with zero XID events (DCGM diagnostics cover the deeper stress test).
 
-**NVLink switch tray**
+**NVLink switch tray** (check IDs: `leak_hold_30m`, `nmx_tray_health`, `rack_nvlink_acceptance`, `nccl_allreduce_rack`)
 
 - [ ] Serial number change recorded in Redfish inventory.
 - [ ] NVLink fabric management reports the tray and all ports healthy.
 - [ ] Full-rack NVLink acceptance and NCCL all-reduce within 5% of baseline.
 - [ ] Zero leak alarms during a 30-minute hold.
 
-**Optic, cable, or fiber**
+**Optic, cable, or fiber** (check IDs: `fiber_inspection`, `link_soak_30m`)
 
 - [ ] Fiber end faces inspected and cleaned (inspection record attached).
 - [ ] Port up with zero symbol errors and zero link-down events over a 30-minute soak.
 - [ ] Pre-FEC bit error rate below the Customer threshold.
 - [ ] Both link ends identified in the ticket (prevents fixing the wrong end).
 
-**Power shelf or PSU**
+**Power shelf or PSU** (check IDs: `psu_redundancy`)
 
 - [ ] Redfish reports PSU health OK and redundancy restored.
 - [ ] Serial number change recorded in inventory.
 
-**CDU component (pump, filter, sensor)**
+**CDU component (pump, filter, sensor)** (check IDs: `cdu_flow_baseline`, `pump_failover_test`)
 
 - [ ] Flow, supply temperature, and return temperature within baseline.
 - [ ] Pump redundancy confirmed by failover test, coordinated with the Facility Provider.
 - [ ] All leak alarms clear; coolant conductivity and pH within specification after any fluid work.
 
-**Rack manifold**
+**Rack manifold** (check IDs: `leak_hold_30m`, `rack_nvlink_acceptance`, `nccl_allreduce_rack`)
 
 - [ ] Manifold and every quick-disconnect inspected and verified seated; zero leak alarms during a 30-minute hold.
 - [ ] Coolant conductivity and pH within specification after any fluid work.
 - [ ] Full-rack NVLink acceptance and NCCL all-reduce within 5% of baseline.
 - [ ] Every node in the rack returned to service only after the rack checks pass.
 
-**E1.S drive or other storage media**
+**E1.S drive or other storage media** (check IDs: `media_chain_of_custody`, `node_health`)
 
 - [ ] Removed media logged into chain of custody (see Security).
 - [ ] Node health check passes and RAID or volume rebuilt.
@@ -934,6 +936,24 @@ Severity is the **worse** of the two dimensions below, then adjusted by aggravat
 | AGG-SECURITY | Breach involved a security or chain-of-custody failure. | Raise to at least S1 |
 
 Aggravators adjust an existing breach; they never create one.
+
+### A.5 Discrepancy types
+
+The discrepancy engine reports each mismatch between vendor records and the Telemetry of Record as one of these types. Severity starts at the base level (or the event-breach level, if a restore target was missed) and the listed aggravators are then applied.
+
+| Type | Base | Aggravators | SLA references | Recommended corrective action |
+|---|:-:|---|---|---|
+| Ticket opened late (clock shift) (`clock_shift`) | S3 | AGG-INTEGRITY | CSL-03, CSL-04, CSL-05, CSL-11 | Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later. |
+| Ticket split to restart the clock (`ticket_split`) | S3 | AGG-INTEGRITY | TR-1, TR-2, TR-6, CSL-11 | Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold. |
+| On-site claim before badge-in (`ghost_engagement`) | S3 | AGG-INTEGRITY | CSL-02, KM-01, CSL-11 | Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician. |
+| Returned to service without validation (`skipped_validation`) | S2 | AGG-INTEGRITY | CSL-07, CSL-11 | Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period. |
+| Part swap not confirmed by inventory (`unverified_swap`) | S2 | AGG-INTEGRITY | CSL-11 | Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial. |
+| Same fault recurred after a reseat (`phantom_fix`) | S3 | AGG-REPEAT | CSL-06, CSL-08 | Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA. |
+| Link errors continued after optic replacement (`wrong_end_optic`) | S3 | AGG-REPEAT | CSL-06, CSL-08, TR-2 | Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2. |
+| Repeat-failing unit not escalated (`lemon_unit`) | S2 | None | KM-09, CSL-08 | Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation. |
+| Rostered technicians not on site (`staffing_gap`) | S3 | None | CSL-10 | Reconcile the roster against badge data with the vendor. Require a written coverage plan for the affected shift pattern. |
+| Part used but not issued from spares (`spares_drift`) | S3 | None | KM-06, KM-07 | Correct the ledger and recount the affected spares class. Enforce scan-to-issue before any part leaves the cage. |
+| Change without an approved change record (`unauthorized_change`) | S2 | AGG-RACKWIDE | KM-10 | Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach. |
 
 ## Appendix B: Worked Examples
 

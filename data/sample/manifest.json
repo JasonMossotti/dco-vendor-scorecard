@@ -14,7 +14,7 @@
     "telemetry/redfish_events.jsonl": 22,
     "telemetry/redfish_inventory_changes.jsonl": 89,
     "telemetry/scheduler_node_states.jsonl": 382,
-    "telemetry/ufm_port_events.jsonl": 127,
+    "telemetry/ufm_port_events.jsonl": 129,
     "vendor/deployment_milestones.csv": 97,
     "vendor/personnel.csv": 30,
     "vendor/rma_shipments.csv": 57,

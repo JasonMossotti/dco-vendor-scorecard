@@ -346,8 +346,10 @@ Key Measurements carry no credits. Any miss requires a root cause analysis and c
 
 {{ sla.rts_validation.principle }}
 
+Each check is recorded in the health-check system under a standard check ID, so validation evidence is linked by record, never retyped.
+
 {% for cl in sla.rts_validation.classes %}
-**{{ cl.component }}**
+**{{ cl.component }}** (check IDs: {% for c in cl.check_ids %}`{{ c }}`{% if not loop.last %}, {% endif %}{% endfor %})
 {% for chk in cl.checks %}
 - [ ] {{ chk }}
 {%- endfor %}
@@ -539,6 +541,16 @@ Severity is the **worse** of the two dimensions below, then adjusted by aggravat
 {% endfor %}
 
 Aggravators adjust an existing breach; they never create one.
+
+### A.5 Discrepancy types
+
+The discrepancy engine reports each mismatch between vendor records and the Telemetry of Record as one of these types. Severity starts at the base level (or the event-breach level, if a restore target was missed) and the listed aggravators are then applied.
+
+| Type | Base | Aggravators | SLA references | Recommended corrective action |
+|---|:-:|---|---|---|
+{% for ft in sev.finding_types -%}
+| {{ ft.name }} (`{{ ft.id }}`) | {{ ft.base_level }} | {{ ft.aggravators | join(", ") or "None" }} | {{ ft.sla_refs | join(", ") }} | {{ ft.action }} |
+{% endfor %}
 
 ## Appendix B: Worked Examples
 

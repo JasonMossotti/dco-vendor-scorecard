@@ -73,7 +73,7 @@
   },
   {
     "first_time_fix_pct": 100.0,
-    "gpu_availability_pct": 99.896,
+    "gpu_availability_pct": 99.895,
     "notes": "All SLAs met. No open escalations.",
     "restore_performance": {
       "P1": {

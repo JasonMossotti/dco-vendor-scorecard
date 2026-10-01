@@ -658,7 +658,9 @@ class SiteGenerator:
                 break
             target = self._engaged_target(inc.priority)
             claimed = inc.t0 + minutes(target - self._u(1, 5))
-            self.schedule(inc, engaged_delay=target + self._u(15, 40))
+            # Badge-in lands at least 20 minutes after the claim: beyond the SLA's
+            # 15-minute record-integrity tolerance, so it is a real discrepancy.
+            self.schedule(inc, engaged_delay=target + self._u(22, 45))
             inc.engaged_claimed = max(claimed, inc.acknowledged + minutes(1))
             self._plant(inc, "ghost_engagement",
                         f"Ticket work note claims technician on site within the {target}-minute target; "
@@ -733,8 +735,19 @@ class SiteGenerator:
         self.incidents.sort(key=lambda i: i.t0)
         for n, inc in enumerate(self.incidents, start=1):
             inc.ticket_number = f"INC{3_100_000 + n * 17:07d}"
+        # Assign technicians. Planted ghost engagements go last, to a technician with
+        # no other job within 3 hours, so no unrelated hall badge-in blurs the evidence.
+        ordered = [i for i in self.incidents if "ghost_engagement" not in i.anomalies] + \
+                  [i for i in self.incidents if "ghost_engagement" in i.anomalies]
+        busy: dict[str, list[datetime]] = {}
+        for inc in ordered:
             techs = self.on_duty_techs(inc.engaged)
+            if "ghost_engagement" in inc.anomalies:
+                free = [p for p in techs if all(abs((inc.engaged - t).total_seconds()) > 3 * 3600
+                                                for t in busy.get(p["person_id"], []))]
+                techs = free or techs
             inc.tech_id = self.rng.choice(techs)["person_id"]
+            busy.setdefault(inc.tech_id, []).append(inc.engaged)
 
     # ================================================================ emit
     def emit(self) -> dict[str, list]:

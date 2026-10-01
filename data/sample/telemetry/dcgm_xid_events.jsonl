@@ -1,14 +1,14 @@
-{"gpu_index": 2, "host": "a31-ct11", "message": "Contained ECC error", "timestamp": "2026-09-01T05:48:43Z", "tray_serial": "CTUCUJKCBY", "xid": 94}
-{"gpu_index": 3, "host": "a31-ct06", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-01T15:13:51Z", "tray_serial": "CTBIHSL4VQ", "xid": 119}
+{"gpu_index": 1, "host": "a31-ct11", "message": "Contained ECC error", "timestamp": "2026-09-01T05:48:43Z", "tray_serial": "CTUCUJKCBY", "xid": 94}
+{"gpu_index": 2, "host": "a31-ct06", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-01T15:13:51Z", "tray_serial": "CTBIHSL4VQ", "xid": 119}
 {"gpu_index": 2, "host": "a20-ct15", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-09-02T13:39:38Z", "tray_serial": "CTYI8I5ZGF", "xid": 119}
-{"gpu_index": 2, "host": "a05-ct18", "message": "GPU has fallen off the bus", "timestamp": "2026-09-04T00:35:24Z", "tray_serial": "CT8JIIH9QY", "xid": 79}
+{"gpu_index": 1, "host": "a05-ct18", "message": "GPU has fallen off the bus", "timestamp": "2026-09-04T00:35:24Z", "tray_serial": "CT8JIIH9QY", "xid": 79}
 {"gpu_index": 0, "host": "a22-ct07", "message": "Contained ECC error", "timestamp": "2026-09-04T07:21:29Z", "tray_serial": "CTR9IUS5X3", "xid": 94}
-{"gpu_index": 1, "host": "a06-ct13", "message": "NVLink error", "timestamp": "2026-09-04T09:37:29Z", "tray_serial": "CTVTAEE6BD", "xid": 145}
-{"gpu_index": 3, "host": "a06-ct13", "message": "NVLink error", "timestamp": "2026-09-04T17:31:42Z", "tray_serial": "CTVTAEE6BD", "xid": 145}
+{"gpu_index": 0, "host": "a06-ct13", "message": "NVLink error", "timestamp": "2026-09-04T09:37:29Z", "tray_serial": "CTVTAEE6BD", "xid": 145}
+{"gpu_index": 1, "host": "a06-ct13", "message": "NVLink error", "timestamp": "2026-09-04T17:31:42Z", "tray_serial": "CTVTAEE6BD", "xid": 145}
 {"gpu_index": 0, "host": "a03-ct14", "message": "NVLink error", "timestamp": "2026-09-04T20:23:10Z", "tray_serial": "CTGXG89B8X", "xid": 145}
-{"gpu_index": 1, "host": "a28-ct04", "message": "NVLink error", "timestamp": "2026-09-04T21:52:50Z", "tray_serial": "CTEOLAWSZK", "xid": 149}
-{"gpu_index": 0, "host": "a29-ct03", "message": "GPU has fallen off the bus", "timestamp": "2026-09-04T23:33:03Z", "tray_serial": "CTOTEIFWVL", "xid": 79}
-{"gpu_index": 2, "host": "a09-ct10", "message": "NVLink error", "timestamp": "2026-09-06T08:52:39Z", "tray_serial": "CTQSRSX7QQ", "xid": 145}
+{"gpu_index": 0, "host": "a28-ct04", "message": "NVLink error", "timestamp": "2026-09-04T21:52:50Z", "tray_serial": "CTEOLAWSZK", "xid": 149}
+{"gpu_index": 3, "host": "a29-ct03", "message": "GPU has fallen off the bus", "timestamp": "2026-09-04T23:33:03Z", "tray_serial": "CTOTEIFWVL", "xid": 79}
+{"gpu_index": 1, "host": "a09-ct10", "message": "NVLink error", "timestamp": "2026-09-06T08:52:39Z", "tray_serial": "CTQSRSX7QQ", "xid": 145}
 {"gpu_index": 2, "host": "a31-ct06", "message": "NVLink error", "timestamp": "2026-09-07T15:03:53Z", "tray_serial": "CTBIHSL4VQ", "xid": 145}
 {"gpu_index": 3, "host": "a26-ct16", "message": "NVLink error", "timestamp": "2026-09-08T13:01:44Z", "tray_serial": "CTSXQ9HJ60", "xid": 149}
 {"gpu_index": 0, "host": "a26-ct16", "message": "NVLink error", "timestamp": "2026-09-08T20:42:32Z", "tray_serial": "CTON3U5J01", "xid": 149}

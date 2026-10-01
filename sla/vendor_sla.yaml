@@ -436,6 +436,7 @@ measurement:
       - "Waiting for parts when Customer spares were at or above minimum stock."
       - "Supplier staffing shortfalls or shift changes."
       - "Waiting on Supplier internal escalation."
+  record_integrity_tolerance_min: 15
   timestamp_standard: "All systems record UTC and are NTP-synchronized; records with clock skew over 5 seconds are flagged."
   reporting:
     weekly: "Operating scorecard by Monday 12:00 UTC, generated automatically from telemetry and ticket data."
@@ -1113,6 +1114,7 @@ rts_validation:
     counts as a failed validation for CSL-07.
   classes:
     - component: "Compute tray"
+      check_ids: ["leak_hold_30m", "dcgm_diag_r3", "nvlink_domain", "nccl_allreduce_rack", "burn_in_1h"]
       checks:
         - "Serial number change recorded in Redfish inventory matches the ticket's parts record."
         - "Quick-disconnects verified seated; zero tray or rack leak alarms during a 30-minute post-insertion hold."
@@ -1121,33 +1123,39 @@ rts_validation:
         - "Rack NCCL all-reduce bandwidth within 5% of the rack's baseline."
         - "1-hour burn-in with zero XID events (DCGM diagnostics cover the deeper stress test)."
     - component: "NVLink switch tray"
+      check_ids: ["leak_hold_30m", "nmx_tray_health", "rack_nvlink_acceptance", "nccl_allreduce_rack"]
       checks:
         - "Serial number change recorded in Redfish inventory."
         - "NVLink fabric management reports the tray and all ports healthy."
         - "Full-rack NVLink acceptance and NCCL all-reduce within 5% of baseline."
         - "Zero leak alarms during a 30-minute hold."
     - component: "Optic, cable, or fiber"
+      check_ids: ["fiber_inspection", "link_soak_30m"]
       checks:
         - "Fiber end faces inspected and cleaned (inspection record attached)."
         - "Port up with zero symbol errors and zero link-down events over a 30-minute soak."
         - "Pre-FEC bit error rate below the Customer threshold."
         - "Both link ends identified in the ticket (prevents fixing the wrong end)."
     - component: "Power shelf or PSU"
+      check_ids: ["psu_redundancy"]
       checks:
         - "Redfish reports PSU health OK and redundancy restored."
         - "Serial number change recorded in inventory."
     - component: "CDU component (pump, filter, sensor)"
+      check_ids: ["cdu_flow_baseline", "pump_failover_test"]
       checks:
         - "Flow, supply temperature, and return temperature within baseline."
         - "Pump redundancy confirmed by failover test, coordinated with the Facility Provider."
         - "All leak alarms clear; coolant conductivity and pH within specification after any fluid work."
     - component: "Rack manifold"
+      check_ids: ["leak_hold_30m", "rack_nvlink_acceptance", "nccl_allreduce_rack"]
       checks:
         - "Manifold and every quick-disconnect inspected and verified seated; zero leak alarms during a 30-minute hold."
         - "Coolant conductivity and pH within specification after any fluid work."
         - "Full-rack NVLink acceptance and NCCL all-reduce within 5% of baseline."
         - "Every node in the rack returned to service only after the rack checks pass."
     - component: "E1.S drive or other storage media"
+      check_ids: ["media_chain_of_custody", "node_health"]
       checks:
         - "Removed media logged into chain of custody (see Security)."
         - "Node health check passes and RAID or volume rebuilt."
@@ -1441,6 +1449,73 @@ breach_severity:
     - condition: "chronic"
       level: "S1"
       description: "Minimum default on the same CSL for 3 or more consecutive periods (chronic failure CF-1)."
+  finding_types:
+    - id: "clock_shift"
+      name: "Ticket opened late (clock shift)"
+      base_level: "S3"
+      aggravators: ["AGG-INTEGRITY"]
+      sla_refs: ["CSL-03", "CSL-04", "CSL-05", "CSL-11"]
+      action: "Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later."
+    - id: "ticket_split"
+      name: "Ticket split to restart the clock"
+      base_level: "S3"
+      aggravators: ["AGG-INTEGRITY"]
+      sla_refs: ["TR-1", "TR-2", "TR-6", "CSL-11"]
+      action: "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold."
+    - id: "ghost_engagement"
+      name: "On-site claim before badge-in"
+      base_level: "S3"
+      aggravators: ["AGG-INTEGRITY"]
+      sla_refs: ["CSL-02", "KM-01", "CSL-11"]
+      action: "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician."
+    - id: "skipped_validation"
+      name: "Returned to service without validation"
+      base_level: "S2"
+      aggravators: ["AGG-INTEGRITY"]
+      sla_refs: ["CSL-07", "CSL-11"]
+      action: "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period."
+    - id: "unverified_swap"
+      name: "Part swap not confirmed by inventory"
+      base_level: "S2"
+      aggravators: ["AGG-INTEGRITY"]
+      sla_refs: ["CSL-11"]
+      action: "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial."
+    - id: "phantom_fix"
+      name: "Same fault recurred after a reseat"
+      base_level: "S3"
+      aggravators: ["AGG-REPEAT"]
+      sla_refs: ["CSL-06", "CSL-08"]
+      action: "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA."
+    - id: "wrong_end_optic"
+      name: "Link errors continued after optic replacement"
+      base_level: "S3"
+      aggravators: ["AGG-REPEAT"]
+      sla_refs: ["CSL-06", "CSL-08", "TR-2"]
+      action: "Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2."
+    - id: "lemon_unit"
+      name: "Repeat-failing unit not escalated"
+      base_level: "S2"
+      aggravators: []
+      sla_refs: ["KM-09", "CSL-08"]
+      action: "Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation."
+    - id: "staffing_gap"
+      name: "Rostered technicians not on site"
+      base_level: "S3"
+      aggravators: []
+      sla_refs: ["CSL-10"]
+      action: "Reconcile the roster against badge data with the vendor. Require a written coverage plan for the affected shift pattern."
+    - id: "spares_drift"
+      name: "Part used but not issued from spares"
+      base_level: "S3"
+      aggravators: []
+      sla_refs: ["KM-06", "KM-07"]
+      action: "Correct the ledger and recount the affected spares class. Enforce scan-to-issue before any part leaves the cage."
+    - id: "unauthorized_change"
+      name: "Change without an approved change record"
+      base_level: "S2"
+      aggravators: ["AGG-RACKWIDE"]
+      sla_refs: ["KM-10"]
+      action: "Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach."
   aggravators:
     - id: "AGG-REPEAT"
       description: "Same CSL or same Service Unit breached within the previous 30 days."
