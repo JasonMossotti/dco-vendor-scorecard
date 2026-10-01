@@ -1,0 +1,1083 @@
+# =============================================================================
+# Partner-Operated Site Services: Service Level Agreement (SLA as Code)
+# -----------------------------------------------------------------------------
+# This file is the SINGLE SOURCE OF TRUTH for every service level, threshold,
+# credit rule, and severity band used by the scorecard. The human-readable SLA
+# document (docs/SLA.md) is GENERATED from this file by scripts/render_sla.py,
+# so the contract text and the scoring engine can never disagree.
+#
+# MOCK DOCUMENT FOR PORTFOLIO DEMONSTRATION ONLY. All parties, sites, figures,
+# and commercial terms are fictional and illustrative. Not legal advice. Not
+# based on any real company's internal information or agreements.
+# =============================================================================
+
+schema_version: "1.0"
+
+document:
+  id: "SLA-RSS-AUS1-001"
+  title: "Service Level Agreement: Partner-Operated GPU Site Operations"
+  subtitle: "Schedule B (Service Levels) to the Master Services Agreement"
+  version: "1.0.0"
+  effective_date: "2026-10-05"
+  term_months: 36
+  status: "MOCK / ILLUSTRATIVE"
+  disclaimer: >-
+    This is a fictional, illustrative service level agreement created for a
+    portfolio demonstration. All parties, sites, quantities, prices, and terms
+    are invented. It is not legal advice and is not derived from any real
+    organization's internal documents or contracts.
+  timezone: "UTC"
+
+parties:
+  customer:
+    name: "Customer"
+    description: "An AI compute operator that owns the IT equipment and spares at the Site."
+    role: "Owns site outcomes; directs priorities; operates the telemetry of record."
+  supplier:
+    name: "Ridgeline Site Services, LLC"
+    fictional: true
+    description: "Strategic site operations partner performing day-to-day data hall work."
+    role: "Performs deployment, break-fix, and data hall operations under Customer direction."
+  facility_provider:
+    name: "Facility Provider"
+    description: "Colocation operator responsible for the building, facility power, and facility water."
+    role: "Separate contract. Named here only to define ownership boundaries."
+  oem:
+    name: "OEM / System Integrator"
+    description: "Hardware manufacturer and integrator providing warranty, RMA, and field diagnostics."
+    role: "Separate contract. Named here only to define ownership boundaries."
+
+site:
+  id: "AUS-1"
+  name: "Site AUS-1 (fictional)"
+  platform: "NVIDIA GB200 NVL72 (rack-scale, direct-to-chip liquid cooled)"
+  halls:
+    - id: "HALL-A"
+      state: "production"
+      racks: 32
+    - id: "HALL-B"
+      state: "deployment"
+      racks: 32
+  per_rack:
+    gpus: 72
+    grace_cpus: 36
+    compute_trays: 18
+    gpus_per_compute_tray: 4
+    nvlink_switch_trays: 9
+    power_shelves: 8
+    nominal_power_kw: 120
+  cooling:
+    cdu_type: "in-row liquid-to-liquid CDU"
+    cdu_capacity_mw: 1.3
+    racks_per_cdu: 8
+    cdus_total: 8
+  service_units:
+    - id: "SU-TRAY"
+      name: "Compute tray"
+      gpus: 4
+      note: "Smallest GPU field-replaceable service unit."
+    - id: "SU-SWITCH"
+      name: "NVLink switch tray"
+      gpus: 72
+      note: "Treated as a rack-wide event until degraded operation is proven safe."
+    - id: "SU-RACK"
+      name: "NVL72 rack"
+      gpus: 72
+      note: "One NVLink domain; the Customer's smallest large-job scheduling unit."
+    - id: "SU-CDU"
+      name: "CDU loop"
+      gpus: 576
+      note: "One CDU serves up to 8 racks; a loss of cooling can affect all of them."
+
+commercial:
+  currency: "USD"
+  monthly_charges: 1850000
+  at_risk_pct: 12
+  pool_pct: 250
+  max_allocation_per_csl_pct: 40
+  measurement_period: "calendar month"
+  scorecard_period: "ISO week (Monday 00:00 UTC to Sunday 23:59 UTC)"
+  credit_application: "Credits appear on the invoice following the Measurement Period."
+  doubling:
+    consecutive_minimum_defaults: 3
+    multiplier: 2
+    note: "Doubled credits are not eligible for Earnback."
+  earnback:
+    enabled: true
+    rule: >-
+      Supplier earns back a Service Level Credit for a Critical Service Level if
+      it meets or exceeds the Expected Service Level for that same Critical
+      Service Level in each of the 3 Measurement Periods immediately following
+      the default.
+    following_periods_required: 3
+    ineligible_when:
+      - "The credit was doubled under the repeat-default rule."
+      - "The default involved a confirmed Record Integrity finding (AGG-INTEGRITY)."
+      - "The default involved an EHS or security event (AGG-EHS, AGG-SECURITY)."
+  credits_sole_remedy: false
+  credits_note: >-
+    Service Level Credits are a price adjustment reflecting reduced service
+    value. They are not a penalty and do not limit the Customer's other rights
+    under the Agreement, including chronic failure termination rights.
+
+# -----------------------------------------------------------------------------
+# DEFINITIONS: precise terms prevent most SLA disputes.
+# -----------------------------------------------------------------------------
+definitions:
+  - term: "Fault Detection Time (T0)"
+    definition: >-
+      The earliest timestamp at which a fault is evidenced by any Telemetry of
+      Record source, a Supplier ticket, or a Customer notification, whichever is
+      earliest. All restoration clocks start at T0.
+  - term: "Acknowledge"
+    definition: >-
+      A qualified Supplier person has accepted the incident in the ticketing
+      system and posted an initial assessment. Automated acknowledgments do not count.
+  - term: "Engaged On-Site"
+    definition: >-
+      A qualified Supplier technician is physically at the affected equipment,
+      as evidenced by badge access to the relevant data hall and a ticket work note.
+  - term: "Containment"
+    definition: >-
+      For leak or safety incidents, the hazard is isolated and no longer
+      spreading (e.g., affected loop isolated, fluid contained, area secured).
+  - term: "Restore"
+    definition: >-
+      The affected Service Unit is returned to production, or an approved
+      workaround returns the affected capacity to the Customer scheduler.
+  - term: "Validated Return to Service (Validated RTS)"
+    definition: >-
+      Restore, plus complete evidence that every check in the Return-to-Service
+      Validation Requirements for that component class passed. The restoration
+      clock stops only at Validated RTS.
+  - term: "Telemetry of Record"
+    definition: >-
+      The Customer-operated monitoring and inventory systems listed in the
+      Measurement section. They are authoritative for all timing, inventory,
+      and health measurements under this SLA.
+  - term: "Supplier-Attributable Unavailability"
+    definition: >-
+      Time during which installed GPU capacity is unavailable and the next
+      required action belongs to the Supplier (dispatch, diagnosis, repair,
+      validation, or documentation).
+  - term: "First-Time Fix"
+    definition: >-
+      A repair that reaches Validated RTS on the first attempt and does not
+      experience a Same-Fault Recurrence within 7 days.
+  - term: "Same-Fault Recurrence"
+    definition: >-
+      A new fault on the same Service Unit serial number in the same fault
+      class (e.g., the same XID family, the same port, the same leak location).
+  - term: "Repeat Failure"
+    definition: >-
+      Any fault on a Service Unit serial number within 30 days after it reached
+      Validated RTS, regardless of fault class.
+  - term: "Lemon Unit"
+    definition: >-
+      A Service Unit with 3 or more repair events within any rolling 30 days.
+  - term: "Record Integrity Finding"
+    definition: >-
+      A closed ticket whose recorded actions or timestamps do not reconcile with
+      the Telemetry of Record (e.g., a part swap claimed with no serial change in
+      inventory, or a repair time that disagrees with telemetry by more than 15 minutes).
+  - term: "GPU-Hours Lost"
+    definition: >-
+      The number of GPUs in the affected Service Unit multiplied by the hours of
+      unavailability. Used for impact scoring; one NVL72 rack-hour equals 72 GPU-hours.
+  - term: "Measurement Period"
+    definition: "One calendar month. Performance is also tracked weekly for the operating scorecard."
+  - term: "Expected Service Level"
+    definition: >-
+      The level of performance the Supplier is expected to deliver. Missing it
+      triggers a root cause analysis but no credit.
+  - term: "Minimum Service Level"
+    definition: >-
+      The floor of acceptable performance. Missing it is a Minimum Service Level
+      Default and triggers a Service Level Credit.
+  - term: "Excused Event"
+    definition: >-
+      An event listed in the Excused Events section, claimed by the Supplier on
+      time and approved by the Customer, that removes the affected occurrence
+      from the calculation of a service level.
+
+# -----------------------------------------------------------------------------
+# SCOPE AND RESPONSIBILITY (break-fix ownership matrix)
+# -----------------------------------------------------------------------------
+scope:
+  in_scope:
+    - id: "SVC-BF"
+      name: "Break-fix"
+      description: >-
+        Triage, diagnosis, and replacement of field-replaceable units (compute
+        trays, NVLink switch trays, power shelves and PSUs, optics, cables, E1.S
+        drives, fans, management components) using Customer-owned spares.
+    - id: "SVC-DEP"
+      name: "Deployment"
+      description: >-
+        Rack receiving, inspection, placement, power and liquid connection,
+        leak testing, cabling, power-on, firmware baselining, and burn-in through
+        Validated Handoff.
+    - id: "SVC-LC"
+      name: "Liquid-cooling operations (rack side)"
+      description: >-
+        Rack manifolds, quick-disconnects, tray-level leak response, and
+        secondary-loop CDU monitoring and first response, in coordination with
+        the Facility Provider.
+    - id: "SVC-NET"
+      name: "Physical network operations"
+      description: >-
+        Optic and cable replacement, fiber cleaning and inspection, port
+        troubleshooting, and labeling for back-end, front-end, and OOB networks.
+    - id: "SVC-RMA"
+      name: "Spares and RMA logistics"
+      description: >-
+        Spares cage management, cycle counts, failed-part handling, chain of
+        custody, and RMA shipment to the OEM.
+    - id: "SVC-IR"
+      name: "Incident response support"
+      description: >-
+        24x7 on-site response under the direction of the Customer Incident
+        Commander, including post-incident data collection.
+  out_of_scope:
+    - "Building power, generators, UPS, and switchgear (Facility Provider)."
+    - "Facility water plant and primary-side cooling (Facility Provider)."
+    - "Logical configuration of Customer networks and workloads (Customer)."
+    - "Board-level repair and OEM warranty adjudication (OEM)."
+  raci_legend:
+    R: "Responsible: performs the work"
+    A: "Accountable: owns the outcome and approves"
+    C: "Consulted"
+    I: "Informed"
+  raci_parties: ["Supplier", "Customer", "Facility Provider", "OEM"]
+  raci:
+    - component: "Compute tray (GPU, CPU, memory, cold plate)"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "I"
+      OEM: "C"
+    - component: "NVLink switch tray and NVLink backplane"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "I"
+      OEM: "C"
+    - component: "Power shelves and PSUs (in-rack)"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "C"
+      OEM: "C"
+    - component: "Rack busbar, whips, and upstream PDUs and busway"
+      Supplier: "C"
+      Customer: "A"
+      Facility Provider: "R"
+      OEM: "I"
+    - component: "Rack manifold and quick-disconnects"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "C"
+      OEM: "C"
+    - component: "CDU (secondary loop: monitoring, first response, pumps, filters)"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "C"
+      OEM: "C"
+    - component: "Facility water and primary loop"
+      Supplier: "I"
+      Customer: "C"
+      Facility Provider: "A/R"
+      OEM: "I"
+    - component: "Back-end fabric optics, cables, and fiber"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "I"
+      OEM: "C"
+    - component: "Leaf and spine switches (physical replacement)"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "I"
+      OEM: "C"
+    - component: "BMC and out-of-band management network (physical)"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "I"
+      OEM: "C"
+    - component: "Spares cage, inventory, and RMA shipments"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "I"
+      OEM: "C"
+    - component: "Physical security of the Customer cage"
+      Supplier: "R"
+      Customer: "A"
+      Facility Provider: "R"
+      OEM: "I"
+
+# -----------------------------------------------------------------------------
+# INCIDENT PRIORITY MATRIX (GB200-specific criteria)
+# -----------------------------------------------------------------------------
+priority_rules:
+  authority: >-
+    The Customer has final authority over priority. Telemetry-based automatic
+    classification sets the initial priority. The Supplier may request a change
+    but may not downgrade an incident without written Customer approval. If
+    priority changes, the stricter target applies from T0.
+  escalation_on_risk: >-
+    The Supplier must notify the Customer Incident Commander as soon as it
+    believes any target is at risk, and no later than 50% of the target time elapsed.
+
+priorities:
+  - id: "P1"
+    name: "Critical"
+    criteria:
+      - "Active coolant leak or any tray, rack, or CDU leak-detection alarm."
+      - "CDU loss of flow, or loss of pump redundancy with rising temperatures."
+      - "Rack-level outage (an entire NVL72 rack or more unavailable)."
+      - "NVLink switch tray failure (treated as rack-wide)."
+      - "Any EHS event involving injury, fire, smoke, or electrical hazard."
+      - "Physical security breach of the Customer cage."
+    examples:
+      - "Leak detector alarm on rack A-14 manifold."
+      - "CDU-3 flow drops below baseline; 8 racks at risk."
+    acknowledge_min: 5
+    engaged_on_site_min: 15
+    containment_min: 60
+    restore_min: 240
+    update_cadence_min: 30
+    escalation: "Immediate page to Customer Incident Commander; Supplier site manager engaged."
+  - id: "P2"
+    name: "High"
+    criteria:
+      - "Single compute tray down in production (4 GPUs)."
+      - "Back-end fabric link down or flapping and impacting jobs."
+      - "Power shelf failure with redundancy lost."
+      - "CDU pump redundancy lost with stable temperatures."
+    examples:
+      - "XID 79 (GPU fallen off bus) on a production tray."
+      - "Repeated link-down events on a leaf port serving rack B-03."
+    acknowledge_min: 15
+    engaged_on_site_min: 30
+    containment_min: null
+    restore_min: 480
+    update_cadence_min: 60
+    escalation: "Supplier shift lead; Customer on-call informed."
+  - id: "P3"
+    name: "Medium"
+    criteria:
+      - "Redundant component failed with redundancy still intact (e.g., one PSU)."
+      - "Degradation trend before failure (rising corrected errors, pre-FEC BER drift)."
+      - "Fault on a non-production or burn-in tray."
+    examples:
+      - "One 5.5 kW PSU failed in a power shelf; shelf redundancy intact."
+      - "Rising symbol errors on an optic that has not yet flapped."
+    acknowledge_min: 60
+    engaged_on_site_min: 240
+    containment_min: null
+    restore_min: 1440
+    update_cadence_min: 1440
+    escalation: "Tracked in daily standup."
+  - id: "P4"
+    name: "Low"
+    criteria:
+      - "Service requests, planned work, labeling, audits, and cable management."
+    examples:
+      - "Re-label a row after a layout change."
+    acknowledge_min: 240
+    engaged_on_site_min: null
+    containment_min: null
+    restore_min: 7200
+    update_cadence_min: null
+    escalation: "Tracked in weekly operations review."
+
+# -----------------------------------------------------------------------------
+# MEASUREMENT: Telemetry of Record
+# -----------------------------------------------------------------------------
+measurement:
+  principle: >-
+    Performance is measured from Customer-operated Telemetry of Record, not from
+    Supplier self-reporting. Supplier ticket data is used for work content and
+    narrative, and is reconciled against telemetry. Where they disagree, the
+    higher-precedence source prevails.
+  clock_rules:
+    start: "T0, the earliest evidence of the fault across all sources."
+    stop: "Validated RTS."
+    pause_allowed_only_for:
+      - "A Customer-requested hold, recorded in the ticket with Customer approval."
+      - "Customer-controlled access delays (e.g., cage access withheld by the Customer)."
+      - "An approved Excused Event."
+    pause_not_allowed_for:
+      - "Waiting for parts when Customer spares were at or above minimum stock."
+      - "Supplier staffing shortfalls or shift changes."
+      - "Waiting on Supplier internal escalation."
+  timestamp_standard: "All systems record UTC and are NTP-synchronized; records with clock skew over 5 seconds are flagged."
+  reporting:
+    weekly: "Operating scorecard by Monday 12:00 UTC, generated automatically from telemetry and ticket data."
+    monthly: "Service Level Report within 5 business days after month end, including all defaults, credits, and trends."
+    raw_data_access: "The Customer may access ticket data through API at any time; the Supplier must keep all records for the Term plus 2 years."
+    failure_to_report: >-
+      If the Supplier fails to provide data required to measure a service level,
+      that service level is deemed to have a Minimum Service Level Default for the period.
+  data_sources:
+    - id: "DS-DCGM"
+      name: "GPU telemetry (DCGM and driver XID events)"
+      measures: "GPU faults, ECC and XID events, diagnostic results, burn-in results."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-REDFISH"
+      name: "BMC Redfish API"
+      measures: "Hardware inventory and serial numbers, PSU health, tray leak detection, power state."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-NMX"
+      name: "NVLink fabric management telemetry"
+      measures: "NVLink switch tray health, NVLink domain state, link errors."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-UFM"
+      name: "InfiniBand fabric manager"
+      measures: "Port state, link-down events, symbol and error counters."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-HEALTH"
+      name: "Cluster health-check and automated recovery platform"
+      measures: "Periodic and job-boundary health checks; node drain and return events."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-SCHED"
+      name: "Customer workload scheduler"
+      measures: "Node state (available, drained, down) and capacity returned to production."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-BMS"
+      name: "Building management system feed (via Facility Provider)"
+      measures: "CDU flow, supply and return temperatures, pump status, room leak sensors."
+      owner: "Facility Provider"
+      precedence: 2
+    - id: "DS-BADGE"
+      name: "Access control system"
+      measures: "Technician presence by hall, time on site, staffing fill."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-CAB"
+      name: "Customer change management system"
+      measures: "Approved changes and maintenance windows."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-ITSM"
+      name: "Supplier ticketing system"
+      measures: "Ticket lifecycle, work notes, parts used, priority, Supplier-recorded timestamps."
+      owner: "Supplier"
+      precedence: 3
+    - id: "DS-SPARES"
+      name: "Supplier spares and RMA system"
+      measures: "Stock levels, consumption, cycle counts, RMA shipments."
+      owner: "Supplier"
+      precedence: 3
+
+# -----------------------------------------------------------------------------
+# CRITICAL SERVICE LEVELS (credit-bearing)
+#   direction: higher_is_better -> actual must be >= threshold
+#              lower_is_better  -> actual must be <= threshold
+# -----------------------------------------------------------------------------
+performance_categories:
+  - id: "CAT-AVAIL"
+    name: "Availability and Restoration"
+  - id: "CAT-QUALITY"
+    name: "Repair Quality"
+  - id: "CAT-DELIVERY"
+    name: "Deployment Delivery"
+  - id: "CAT-INTEGRITY"
+    name: "Workforce and Record Integrity"
+
+critical_service_levels:
+  - id: "CSL-01"
+    name: "Supplier-Attributable GPU Availability"
+    category: "CAT-AVAIL"
+    description: >-
+      Share of installed production GPU-hours not lost to Supplier-Attributable
+      Unavailability. Racks count as installed from Validated Handoff.
+    numerator: "Installed production GPU-hours minus Supplier-Attributable unavailable GPU-hours"
+    denominator: "Installed production GPU-hours"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 99.5
+    minimum: 99.0
+    data_sources: ["DS-DCGM", "DS-SCHED", "DS-HEALTH", "DS-ITSM"]
+    credit_allocation_pct: 40
+  - id: "CSL-02"
+    name: "P1 Engaged On-Site Within 15 Minutes"
+    category: "CAT-AVAIL"
+    description: "Share of P1 incidents where a qualified technician was Engaged On-Site within the target."
+    numerator: "P1 incidents Engaged On-Site within 15 minutes of T0"
+    denominator: "All P1 incidents"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 100.0
+    minimum: 95.0
+    small_sample_rule:
+      below_events: 20
+      max_misses_before_minimum_default: 0
+    data_sources: ["DS-BADGE", "DS-ITSM", "DS-DCGM", "DS-REDFISH", "DS-BMS"]
+    credit_allocation_pct: 20
+  - id: "CSL-03"
+    name: "P1 Restoration Within 4 Hours"
+    category: "CAT-AVAIL"
+    description: "Share of P1 incidents reaching Validated RTS within 240 minutes of T0."
+    numerator: "P1 incidents reaching Validated RTS within 240 minutes"
+    denominator: "All P1 incidents"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 95.0
+    minimum: 90.0
+    small_sample_rule:
+      below_events: 20
+      max_misses_before_minimum_default: 1
+    data_sources: ["DS-DCGM", "DS-REDFISH", "DS-NMX", "DS-SCHED", "DS-BMS"]
+    credit_allocation_pct: 30
+  - id: "CSL-04"
+    name: "P2 Restoration Within 8 Hours"
+    category: "CAT-AVAIL"
+    description: "Share of P2 incidents reaching Validated RTS within 480 minutes of T0."
+    numerator: "P2 incidents reaching Validated RTS within 480 minutes"
+    denominator: "All P2 incidents"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 95.0
+    minimum: 90.0
+    data_sources: ["DS-DCGM", "DS-REDFISH", "DS-UFM", "DS-SCHED"]
+    credit_allocation_pct: 20
+  - id: "CSL-05"
+    name: "P3 Restoration Within 24 Hours"
+    category: "CAT-AVAIL"
+    description: "Share of P3 incidents reaching Validated RTS within 1,440 minutes of T0."
+    numerator: "P3 incidents reaching Validated RTS within 1,440 minutes"
+    denominator: "All P3 incidents"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 95.0
+    minimum: 90.0
+    data_sources: ["DS-DCGM", "DS-REDFISH", "DS-UFM", "DS-ITSM"]
+    credit_allocation_pct: 10
+  - id: "CSL-06"
+    name: "First-Time Fix Rate"
+    category: "CAT-QUALITY"
+    description: >-
+      Share of repairs that pass validation on the first attempt with no
+      Same-Fault Recurrence within 7 days. For repairs late in a month, the
+      7-day window closes in the following period and the result is finalized then.
+    numerator: "Repairs meeting the First-Time Fix definition"
+    denominator: "All repairs reaching Validated RTS in the period"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 92.0
+    minimum: 88.0
+    data_sources: ["DS-DCGM", "DS-REDFISH", "DS-UFM", "DS-NMX", "DS-ITSM"]
+    credit_allocation_pct: 25
+  - id: "CSL-07"
+    name: "Validated Return to Service"
+    category: "CAT-QUALITY"
+    description: "Share of units returned to production with complete Return-to-Service validation evidence."
+    numerator: "Units returned to production with all required validation checks passed and recorded"
+    denominator: "All units returned to production after Supplier work"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 100.0
+    minimum: 98.0
+    data_sources: ["DS-DCGM", "DS-HEALTH", "DS-NMX", "DS-UFM", "DS-REDFISH"]
+    credit_allocation_pct: 25
+  - id: "CSL-08"
+    name: "30-Day Repeat Failure Rate"
+    category: "CAT-QUALITY"
+    description: "Share of repaired units with any new fault within 30 days of Validated RTS."
+    numerator: "Repaired units with a Repeat Failure"
+    denominator: "Units reaching Validated RTS in the trailing window"
+    unit: "%"
+    direction: "lower_is_better"
+    expected: 3.0
+    minimum: 5.0
+    data_sources: ["DS-DCGM", "DS-REDFISH", "DS-UFM", "DS-NMX"]
+    credit_allocation_pct: 20
+  - id: "CSL-09"
+    name: "Deployment Milestone Adherence"
+    category: "CAT-DELIVERY"
+    description: "Share of racks reaching Validated Handoff by the committed date in the deployment plan."
+    numerator: "Racks reaching Validated Handoff on or before the committed date"
+    denominator: "Racks with a committed Validated Handoff date in the period"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 95.0
+    minimum: 90.0
+    data_sources: ["DS-HEALTH", "DS-SCHED", "DS-REDFISH", "DS-ITSM"]
+    credit_allocation_pct: 20
+  - id: "CSL-10"
+    name: "Qualified Staffing Fill Rate"
+    category: "CAT-INTEGRITY"
+    description: "Share of committed qualified-technician shift-hours actually staffed, verified by badge data."
+    numerator: "Qualified technician hours present on site (badge-verified)"
+    denominator: "Committed qualified technician shift-hours"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 98.0
+    minimum: 95.0
+    data_sources: ["DS-BADGE", "DS-ITSM"]
+    credit_allocation_pct: 20
+  - id: "CSL-11"
+    name: "Record Integrity"
+    category: "CAT-INTEGRITY"
+    description: >-
+      Share of closed tickets whose recorded actions, parts, and timestamps
+      reconcile with the Telemetry of Record (no Record Integrity Finding).
+    numerator: "Closed tickets with no Record Integrity Finding"
+    denominator: "All tickets closed in the period"
+    unit: "%"
+    direction: "higher_is_better"
+    expected: 99.0
+    minimum: 97.0
+    data_sources: ["DS-REDFISH", "DS-DCGM", "DS-BADGE", "DS-ITSM", "DS-SPARES"]
+    credit_allocation_pct: 20
+
+# -----------------------------------------------------------------------------
+# KEY MEASUREMENTS (no credits; misses trigger RCA and may be promoted to CSLs)
+# -----------------------------------------------------------------------------
+key_measurements:
+  - id: "KM-01"
+    name: "P2 Engaged On-Site Within 30 Minutes"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 95.0
+    data_sources: ["DS-BADGE", "DS-ITSM"]
+  - id: "KM-02"
+    name: "P1 Containment Within 60 Minutes (leak and safety incidents)"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 100.0
+    data_sources: ["DS-REDFISH", "DS-BMS", "DS-ITSM"]
+  - id: "KM-03"
+    name: "P3 Engaged On-Site Within 4 Hours"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 95.0
+    data_sources: ["DS-BADGE", "DS-ITSM"]
+  - id: "KM-04"
+    name: "P4 Completed Within 5 Days"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 90.0
+    data_sources: ["DS-ITSM"]
+  - id: "KM-05"
+    name: "Incident Update Cadence Adherence"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 95.0
+    data_sources: ["DS-ITSM"]
+  - id: "KM-06"
+    name: "Spares at or Above Minimum Stock (by FRU class, daily)"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 98.0
+    data_sources: ["DS-SPARES", "DS-REDFISH"]
+  - id: "KM-07"
+    name: "Spares Cycle Count Accuracy"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 99.0
+    data_sources: ["DS-SPARES"]
+  - id: "KM-08"
+    name: "RMA Shipped to OEM Within 5 Business Days"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 95.0
+    data_sources: ["DS-SPARES"]
+  - id: "KM-09"
+    name: "Lemon Units Escalated Within 2 Business Days"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 100.0
+    data_sources: ["DS-DCGM", "DS-REDFISH", "DS-ITSM"]
+  - id: "KM-10"
+    name: "Change Compliance (all changes CAB-approved and in window)"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 100.0
+    data_sources: ["DS-CAB", "DS-ITSM", "DS-REDFISH"]
+  - id: "KM-11"
+    name: "P1 Final RCA Delivered Within 5 Business Days"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 100.0
+    data_sources: ["DS-ITSM"]
+  - id: "KM-12"
+    name: "Corrective Actions Closed On Time"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 90.0
+    data_sources: ["DS-ITSM"]
+  - id: "KM-13"
+    name: "Backlog Aging (P3 and P4 tickets open more than 14 days)"
+    unit: "%"
+    direction: "lower_is_better"
+    target: 5.0
+    data_sources: ["DS-ITSM"]
+  - id: "KM-14"
+    name: "Ticket Data Completeness (required fields populated at closure)"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 98.0
+    data_sources: ["DS-ITSM"]
+  - id: "KM-15"
+    name: "Training and Certification Currency"
+    unit: "%"
+    direction: "higher_is_better"
+    target: 100.0
+    data_sources: ["DS-ITSM", "DS-BADGE"]
+
+# -----------------------------------------------------------------------------
+# RETURN-TO-SERVICE VALIDATION (what "fixed" means, per component class)
+# -----------------------------------------------------------------------------
+rts_validation:
+  principle: >-
+    A unit is not returned to production until every check for its component
+    class has passed and the evidence is recorded in the ticket. Missing evidence
+    counts as a failed validation for CSL-07.
+  classes:
+    - component: "Compute tray"
+      checks:
+        - "Serial number change recorded in Redfish inventory matches the ticket's parts record."
+        - "Quick-disconnects verified seated; zero tray or rack leak alarms during a 30-minute post-insertion hold."
+        - "GPU diagnostic (DCGM run level 3 or higher) passes on all 4 GPUs."
+        - "NVLink domain healthy for the rack (IMEX domain up; all GPU NVLinks active)."
+        - "Rack NCCL all-reduce bandwidth within 5% of the rack's baseline."
+        - "4-hour burn-in with zero XID events."
+    - component: "NVLink switch tray"
+      checks:
+        - "Serial number change recorded in Redfish inventory."
+        - "NVLink fabric management reports the tray and all ports healthy."
+        - "Full-rack NVLink acceptance and NCCL all-reduce within 5% of baseline."
+        - "Zero leak alarms during a 30-minute hold."
+    - component: "Optic, cable, or fiber"
+      checks:
+        - "Fiber end faces inspected and cleaned (inspection record attached)."
+        - "Port up with zero symbol errors and zero link-down events over a 30-minute soak."
+        - "Pre-FEC bit error rate below the Customer threshold."
+        - "Both link ends identified in the ticket (prevents fixing the wrong end)."
+    - component: "Power shelf or PSU"
+      checks:
+        - "Redfish reports PSU health OK and redundancy restored."
+        - "Serial number change recorded in inventory."
+    - component: "CDU component (pump, filter, sensor)"
+      checks:
+        - "Flow, supply temperature, and return temperature within baseline."
+        - "Pump redundancy confirmed by failover test, coordinated with the Facility Provider."
+        - "All leak alarms clear; coolant conductivity and pH within specification after any fluid work."
+    - component: "E1.S drive or other storage media"
+      checks:
+        - "Removed media logged into chain of custody (see Security)."
+        - "Node health check passes and RAID or volume rebuilt."
+
+# -----------------------------------------------------------------------------
+# DEPLOYMENT MILESTONES (measured by CSL-09)
+# -----------------------------------------------------------------------------
+deployment:
+  rack_cycle_target_days: 10
+  surge:
+    plus_25_pct_notice_hours: 72
+    plus_100_pct_notice_business_days: 10
+  milestones:
+    - id: "M1"
+      name: "Received and inspected"
+      exit_criteria: "Shock and tilt indicators checked; no shipping damage; asset tags and serials reconciled to the ASN."
+      target_days_from_receipt: 1
+    - id: "M2"
+      name: "Positioned and connected"
+      exit_criteria: "Rack set and secured; power whips and manifold connected to the CDU."
+      target_days_from_receipt: 3
+    - id: "M3"
+      name: "Leak test passed"
+      exit_criteria: "Pressure hold at the OEM test pressure (typically 1.5x operating) for at least 30 minutes with no decay; zero leak alarms; coolant within specification."
+      target_days_from_receipt: 4
+    - id: "M4"
+      name: "Power-on and firmware baseline"
+      exit_criteria: "POST clean on all trays; firmware matches the Customer baseline; BMCs reachable on OOB."
+      target_days_from_receipt: 5
+    - id: "M5"
+      name: "Network cabled and verified"
+      exit_criteria: "Every back-end and front-end link up, error-free over soak, and matching the cabling plan."
+      target_days_from_receipt: 7
+    - id: "M6"
+      name: "Burn-in accepted"
+      exit_criteria: "GPU diagnostics, NVLink domain acceptance, NCCL benchmarks, and 24-hour burn-in all pass."
+      target_days_from_receipt: 9
+    - id: "M7"
+      name: "Validated Handoff"
+      exit_criteria: "Rack released to the Customer scheduler with the full acceptance record. CSL-09 is measured at this milestone."
+      target_days_from_receipt: 10
+
+# -----------------------------------------------------------------------------
+# CHRONIC FAILURE AND TERMINATION
+# -----------------------------------------------------------------------------
+chronic_failure:
+  triggers:
+    - id: "CF-1"
+      rule: "A Minimum Service Level Default on the same CSL in 3 consecutive Measurement Periods."
+    - id: "CF-2"
+      rule: "A Minimum Service Level Default on the same CSL in any 4 of 6 rolling Measurement Periods."
+    - id: "CF-3"
+      rule: "Total Service Level Credits over 50% of the cumulative At-Risk Amount in any rolling 6 Measurement Periods."
+    - id: "CF-4"
+      rule: "Any confirmed deliberate falsification of records."
+  customer_rights:
+    - "Terminate the affected services or the entire Site scope for cause, without termination charges."
+    - "Require a Supplier executive-sponsored recovery plan within 10 business days."
+    - "Step-in: the Customer or a third party may perform the affected services at the Supplier's cost during recovery."
+  termination_assistance: >-
+    The Supplier provides up to 6 months of transition assistance at the
+    then-current service levels, including full transfer of performance data,
+    procedures, and spares records to the successor.
+
+# -----------------------------------------------------------------------------
+# EXCUSED EVENTS
+# -----------------------------------------------------------------------------
+excused_events:
+  claim_window_business_days: 5
+  evidence_required: true
+  events:
+    - "Force majeure as defined in the Agreement."
+    - "Failures of Facility Provider systems outside Supplier scope (the Supplier must still respond and notify)."
+    - "Customer-caused delays, including withheld access or Customer-requested holds recorded in the ticket."
+    - "Approved maintenance inside an approved change window, within the approved duration."
+    - "OEM part unavailability, ONLY if Customer spares for that FRU class were at or above minimum stock and the Supplier notified the Customer within 4 hours."
+  treatment: >-
+    The excused occurrence is removed from both the numerator and the
+    denominator of the affected service level. The rest of the Measurement
+    Period is still measured.
+  supplier_duty: "The Supplier must use commercially reasonable efforts to perform despite the Excused Event."
+
+# -----------------------------------------------------------------------------
+# ROOT CAUSE ANALYSIS AND CORRECTIVE ACTION
+# -----------------------------------------------------------------------------
+corrective_action:
+  triggers:
+    - "Any Expected or Minimum Service Level Default."
+    - "Any Key Measurement miss."
+    - "Any P1 incident."
+    - "Any Lemon Unit."
+    - "Any Record Integrity Finding."
+  rca_timelines:
+    p1_preliminary_hours: 24
+    p1_final_business_days: 5
+    other_business_days: 10
+  cap_requirements:
+    - "Root cause stated in terms of process, people, parts, or tooling; not 'technician error' alone."
+    - "Each action has a single named owner, a due date, and an evidence-of-completion definition."
+    - "Effectiveness check: the triggering metric is reviewed for 2 Measurement Periods after closure."
+  cap_overdue_escalation: "CAPs more than 10 business days overdue escalate to the monthly service review."
+
+# -----------------------------------------------------------------------------
+# GOVERNANCE CADENCE
+# -----------------------------------------------------------------------------
+governance:
+  - forum: "Daily operations standup"
+    frequency: "Daily, 15 minutes"
+    attendees: "Supplier shift leads; Customer site lead"
+    inputs: "Open P1 and P2 incidents, today's deployment plan, blockers, spares alerts."
+  - forum: "Weekly operations review"
+    frequency: "Weekly"
+    attendees: "Supplier site manager; Customer site lead"
+    inputs: "Automated weekly scorecard, breach severity log, CAP status, staffing, lemon units."
+  - forum: "Monthly service review"
+    frequency: "Monthly"
+    attendees: "Supplier account manager; Customer DCO leadership"
+    inputs: "Service Level Report, credits and earnback, chronic-failure watch, trends."
+  - forum: "Quarterly business review"
+    frequency: "Quarterly"
+    attendees: "Supplier executive sponsor; Customer DCO leadership"
+    inputs: "Trend analysis, SLA change proposals, roadmap and capacity plan, program-wide lessons learned."
+
+# -----------------------------------------------------------------------------
+# STAFFING AND QUALIFICATIONS
+# -----------------------------------------------------------------------------
+staffing:
+  coverage: "24x7x365 on site"
+  committed_per_shift:
+    - shift: "Day (07:00 to 19:00 local)"
+      technicians: 8
+      shift_leads: 1
+    - shift: "Night (19:00 to 07:00 local)"
+      technicians: 5
+      shift_leads: 1
+  key_personnel:
+    - "Site manager (named; replacement requires 30 days notice and Customer approval)"
+    - "EHS coordinator"
+    - "Spares and logistics coordinator"
+  required_qualifications:
+    - "OEM-authorized training for GB200 NVL72 field-replaceable unit service"
+    - "Liquid-cooling handling, quick-disconnect service, and spill response"
+    - "ESD control program training"
+    - "Electrical safety training appropriate to the tasks performed"
+    - "Lockout/tagout (hazardous energy control) training"
+    - "Fiber inspection and cleaning"
+    - "Customer site security and chain-of-custody procedures"
+  qualification_rule: "Only badge-verified hours by technicians with current qualifications count toward CSL-10."
+
+# -----------------------------------------------------------------------------
+# CHANGE MANAGEMENT
+# -----------------------------------------------------------------------------
+change_management:
+  rules:
+    - "All non-emergency changes require Customer change approval before work starts."
+    - "Standard changes (pre-approved runbook FRU swaps) may proceed under an open incident."
+    - "Emergency changes require verbal approval from the Customer Incident Commander, recorded in the ticket within 1 hour."
+    - "Work outside the approved window or scope is an unauthorized change and counts against KM-10."
+  firmware: "Firmware may only be loaded from the Customer-approved baseline; any deviation is an unauthorized change."
+
+# -----------------------------------------------------------------------------
+# SECURITY AND CHAIN OF CUSTODY
+# -----------------------------------------------------------------------------
+security:
+  requirements:
+    - "Badge access only for Customer-approved personnel; no tailgating; visitors escorted at all times."
+    - "Daily reconciliation of badge records against the shift roster."
+    - "Storage media (e.g., E1.S drives) never leave the Site intact; media is sanitized or destroyed on site under the Customer's media sanitization standard, with a certificate per serial number."
+    - "Every failed part is logged into chain of custody at removal, with serial, ticket, technician, and timestamp."
+    - "Cameras and photography in the data hall are prohibited except for Customer-approved documentation."
+  incident_reporting: "Suspected security incidents are reported to the Customer within 1 hour of discovery."
+
+# -----------------------------------------------------------------------------
+# ENVIRONMENTAL, HEALTH, AND SAFETY (EHS)
+# -----------------------------------------------------------------------------
+ehs:
+  requirements:
+    - "Every technician has stop-work authority and must use it for any unsafe condition."
+    - "Hazardous energy control (lockout/tagout) for any work requiring de-energization."
+    - "Electrical safety practices appropriate to the task and approach boundaries."
+    - "ESD-safe handling for all electronic components."
+    - "Spill kits staged at every CDU and at row ends; coolant spills handled per the site spill procedure."
+    - "Mechanical lift and team-lift procedures for trays and racks (a fully loaded NVL72 rack weighs well over a metric ton)."
+  reporting:
+    injury_or_recordable_hours: 1
+    near_miss_hours: 24
+  treatment: >-
+    EHS performance is not credit-bearing; safety must never be traded for
+    speed. Any recordable injury or stop-work event triggers an internal S1
+    severity and a joint review. Serious or repeated EHS failures are a
+    material breach of the Agreement.
+
+# -----------------------------------------------------------------------------
+# SPARES AND RMA
+# -----------------------------------------------------------------------------
+spares:
+  ownership: "Spares are Customer-owned and Supplier-managed."
+  minimum_stock_per_hall:
+    - fru: "Compute tray"
+      minimum: 6
+    - fru: "NVLink switch tray"
+      minimum: 2
+    - fru: "Power shelf"
+      minimum: 4
+    - fru: "PSU (5.5 kW)"
+      minimum: 24
+    - fru: "800G OSFP optic"
+      minimum: 150
+    - fru: "Fiber and DAC cable kits"
+      minimum: 100
+    - fru: "Manifold hose and quick-disconnect kit"
+      minimum: 10
+    - fru: "E1.S drive"
+      minimum: 20
+    - fru: "CDU pump assembly"
+      minimum: 1
+  reorder_rule: "Replenishment requests are raised automatically when stock reaches minimum plus lead-time demand."
+  cycle_count: "Weekly cycle count of high-value FRUs; full count monthly."
+
+# -----------------------------------------------------------------------------
+# SLA CHANGE CONTROL AND CONTINUOUS IMPROVEMENT
+# -----------------------------------------------------------------------------
+sla_change_control:
+  customer_rights:
+    - "Promote a Key Measurement to a Critical Service Level, or demote a CSL, with 90 days notice (maximum 2 changes per contract year)."
+    - "Reallocate credit allocation percentages with 90 days notice, within the pool and per-CSL caps."
+    - "Add new service levels; targets are set from 6 months of measured baseline, or by mutual agreement."
+  continuous_improvement: >-
+    At each contract anniversary, the Expected and Minimum levels of each CSL
+    tighten by 10% of the remaining gap to perfect performance, using the
+    trailing 12 months of results, unless the parties agree otherwise.
+  versioning: "Every change to this file is a new SLA version, reviewed through pull request and approved by both parties."
+
+# -----------------------------------------------------------------------------
+# INTERNAL BREACH SEVERITY INDEX
+# Customer-internal: guides escalation. Not a contractual remedy and not shared
+# with the Supplier.
+# -----------------------------------------------------------------------------
+breach_severity:
+  internal_only: true
+  purpose: >-
+    Translates a breach into a single severity so readers immediately understand
+    how serious it was. Severity is the worst level across all dimensions, then
+    adjusted by aggravators.
+  levels:
+    - id: "S1"
+      name: "Critical"
+      rank: 4
+      escalation: "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review."
+    - id: "S2"
+      name: "Major"
+      rank: 3
+      escalation: "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure."
+    - id: "S3"
+      name: "Minor"
+      rank: 2
+      escalation: "Supplier RCA within 10 business days; discussed in the weekly operations review."
+    - id: "S4"
+      name: "Watch"
+      rank: 1
+      escalation: "Logged and trended in the weekly scorecard; no formal action unless it repeats."
+  event_dimensions:
+    overrun_pct:
+      description: "How far past the target time the event ran: (actual - target) / target."
+      bands:
+        - {max: 10, level: "S4"}
+        - {max: 50, level: "S3"}
+        - {max: 200, level: "S2"}
+        - {max: null, level: "S1"}
+    gpu_hours_beyond_target:
+      description: "GPU-hours lost after the target expired (GPUs affected x hours late). 72 GPU-hours = one NVL72 rack-hour."
+      bands:
+        - {max: 72, level: "S4"}
+        - {max: 500, level: "S3"}
+        - {max: 5000, level: "S2"}
+        - {max: null, level: "S1"}
+  period_rules:
+    - condition: "met_expected"
+      level: null
+      description: "Expected level met; no breach."
+    - condition: "below_expected"
+      level: "S4"
+      description: "Below Expected but at or above Minimum."
+    - condition: "below_minimum"
+      level: "S3"
+      description: "Below Minimum (credit-bearing default)."
+    - condition: "deep_below_minimum"
+      level: "S2"
+      description: "Below Minimum by more than the Expected-to-Minimum gap."
+    - condition: "chronic"
+      level: "S1"
+      description: "Minimum default on the same CSL for 3 or more consecutive periods (chronic failure CF-1)."
+  aggravators:
+    - id: "AGG-REPEAT"
+      description: "Same CSL or same Service Unit breached within the previous 30 days."
+      effect: "bump"
+      amount: 1
+    - id: "AGG-RACKWIDE"
+      description: "Breach affected an entire NVL72 rack or a CDU loop."
+      effect: "floor"
+      level: "S2"
+    - id: "AGG-INTEGRITY"
+      description: "Breach involved a Record Integrity Finding (vendor record contradicted by telemetry)."
+      effect: "floor"
+      level: "S1"
+    - id: "AGG-EHS"
+      description: "Breach involved an EHS recordable, stop-work event, or uncontained leak."
+      effect: "floor"
+      level: "S1"
+    - id: "AGG-SECURITY"
+      description: "Breach involved a security or chain-of-custody failure."
+      effect: "floor"
+      level: "S1"
