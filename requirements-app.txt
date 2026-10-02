@@ -1,0 +1,3 @@
+# For running the interactive app locally: streamlit run app/streamlit_app.py
+-r requirements.txt
+streamlit>=1.40

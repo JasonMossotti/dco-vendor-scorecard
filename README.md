@@ -4,6 +4,8 @@
 
 **Vendor performance and repair-verification scorecard for partner-operated GPU data center sites.**
 
+**▶ [Open the interactive demo](https://rexferal.github.io/dco-vendor-scorecard/)** (runs entirely in your browser; first load takes 20 to 40 seconds)
+
 > Portfolio demonstration. All data, parties, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on internal information from, any real company.
 
 ## The idea
@@ -20,7 +22,7 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
 | Weekly scorecard ([`reports/scorecard.md`](reports/scorecard.md)) | Done, tested |
-| Interactive demo (GitHub Pages) | Next |
+| Interactive demo ([live](https://rexferal.github.io/dco-vendor-scorecard/)) | Done, tested |
 
 ## SLA as code
 
@@ -81,6 +83,16 @@ python scripts/run_engine.py                    # data/sample -> reports/
 python scripts/run_engine.py --robustness 20    # also test 20 freshly generated months
 ```
 
+## Interactive demo
+
+The [demo](https://rexferal.github.io/dco-vendor-scorecard/) runs the whole pipeline in the browser (Python via WebAssembly, no server). You can:
+
+- Switch between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), or a brand-new random month.
+- Change SLA terms in the sidebar (restore targets, ticket handling windows, service level thresholds, at-risk amount) and watch every result recalculate from the same telemetry.
+- Drill into each finding's evidence, the corrective action plans, and every incident.
+
+Run it locally with `pip install -r requirements-app.txt` and `streamlit run app/streamlit_app.py`.
+
 ## Project layout
 
 ```
@@ -92,15 +104,21 @@ src/scorecard/connectors.py      Data access layer (one interface per source; an
 src/scorecard/engine/            Discrepancy engine: context, 11 detectors, evaluation, reports
 src/scorecard/kpi.py             Service level measurement from telemetry, for any period
 src/scorecard/builder.py         Scorecard: SLA results, vendor vs. measured, credits, severity log, CAPs
+src/scorecard/app_support.py     App logic: what-if overrides, pipeline runner, display tables
+app/streamlit_app.py             Interactive app (Streamlit; runs in the browser via stlite)
 src/scorecard/synthetic/         Synthetic GB200 site data generator
 scripts/render_sla.py            Generates docs/SLA.md from the YAML
 scripts/generate_data.py         Generates the synthetic dataset
 scripts/run_engine.py            Runs the engine and writes reports/
 scripts/build_scorecard.py       Builds the scorecard and writes reports/
+scripts/build_site.py            Builds the static GitHub Pages site
 templates/sla.md.j2              Document template
 docs/SLA.md                      Generated SLA (do not edit by hand)
 docs/DATA_MODEL.md               What each data file represents
+docs/PROJECT_GUIDE.md            How the project fits together and how to change it
 data/sample/                     Committed synthetic dataset (4 weeks)
 reports/                         Generated: scorecard.md, discrepancy_report.md, and their JSON
 tests/                           Pytest suite
 ```
+
+New to the code? Start with [docs/PROJECT_GUIDE.md](docs/PROJECT_GUIDE.md).

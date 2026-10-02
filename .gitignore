@@ -11,3 +11,6 @@ data/*
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/
+
+# Built site (published by the Pages workflow, never committed)
+_site/
