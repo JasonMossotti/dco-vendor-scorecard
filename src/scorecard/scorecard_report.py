@@ -122,11 +122,13 @@ def scorecard_markdown(sc: dict[str, Any]) -> str:
 
     L += ["## Corrective action plans", "",
           f"{len(sc['corrective_actions'])} plans drafted automatically: one per affected ticket group (or service level) for "
-          "every S1 and S2 item. Due dates follow the severity index (S1: 5 business days, S2: 10).", "",
-          "| CAP | Severity | Tickets | Triggers | Required actions | Owner | Due |", "|---|:-:|---|---|---|---|---|"]
+          "every S1 and S2 item. Plans are raised at this period review; due dates follow the severity index "
+          "(S1: 5 business days, S2: 10).", "",
+          "| CAP | Severity | Tickets | Triggers | Required actions | Owner | Raised | Due |", "|---|:-:|---|---|---|---|---|---|"]
     for c in sc["corrective_actions"]:
         L.append(f"| {c['id']} | {c['level']} | {', '.join(c['tickets']) or (c['unit'] or '-')} | "
-                 f"{_cell('; '.join(c['triggers']))} | {_cell(' '.join(c['actions']))} | {c['owner']} | {c['due'].strftime('%Y-%m-%d')} |")
+                 f"{_cell('; '.join(c['triggers']))} | {_cell(' '.join(c['actions']))} | {c['owner']} | "
+                 f"{c['raised'].strftime('%Y-%m-%d')} | {c['due'].strftime('%Y-%m-%d')} |")
     L.append("")
 
     L += ["## Severity log", "",

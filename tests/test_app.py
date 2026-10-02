@@ -51,6 +51,18 @@ def test_app_generate_flow(monkeypatch):
     assert any("seed 11" in t for t in fake.texts("caption"))
 
 
+def test_reset_moves_widgets_back_to_contract(monkeypatch):
+    """Regression: Reset must restore the widget values themselves, not only the results."""
+    moved = {"wf_restore_P2": 11.0, "wf_early": 120, "wf_atrisk": 15.0}
+    still_moved = run_app(monkeypatch, session_state=moved)
+    assert any("What-if" in t for t in still_moved.texts("warning"))
+    reset = run_app(monkeypatch, session_state=moved, buttons={"Reset to contract values"})
+    sla = load_sla()
+    assert reset.session_state["wf_restore_P2"] == next(p for p in sla["priorities"] if p["id"] == "P2")["restore_min"] / 60
+    assert reset.session_state["wf_early"] == sla["ticket_handling"]["stability"]["early_failure_minutes"]
+    assert not reset.texts("warning"), "no what-if banner after reset"
+
+
 def test_invalid_threshold_is_rejected(monkeypatch):
     fake = run_app(monkeypatch, overrides={"Expected (%)": 90.0, "Minimum (%)": 99.0})
     assert any("Expected must be" in t for t in fake.texts("error"))
@@ -96,3 +108,16 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     assert any("Vendor SLA Scorecard" in t for t in fake.texts("title"))
     import scorecard
     assert str(home) in scorecard.__file__
+
+
+def test_display_tables_are_tidy():
+    _, sc, _ = A.run_pipeline(load_sla(), ROOT / "data" / "sample")
+    for r in A.csl_rows(sc):
+        assert "≥ 100%" not in (r["Expected"], r["Minimum"])
+    for row in A.weekly_rows(sc):
+        for k, v in row.items():
+            if isinstance(v, float):
+                assert round(v, 1) == v, (k, v)
+    gaps = A.weekly_gap_rows(sc)
+    assert all(v <= 0 for row in gaps for k, v in row.items() if k != "Week" and v is not None), \
+        "the vendor never under-reports in this dataset"

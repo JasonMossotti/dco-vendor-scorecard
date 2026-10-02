@@ -101,6 +101,14 @@ def test_cap_due_dates_are_business_days(sc):
         assert c["due"].weekday() < 5
 
 
+def test_caps_raised_at_review_and_due_after_it(sc):
+    """Plans are drafted at the period review, so none can be overdue on the day they are raised."""
+    for c in sc["corrective_actions"]:
+        assert c["raised"] == sc["window"]["end"]
+        days = {"S1": 5, "S2": 10}[c["level"]]
+        assert c["due"] > c["raised"] and (c["due"] - c["raised"]).days <= days + 4
+
+
 # ------------------------------------------------------------------ what-if
 def test_what_if_tighter_target_creates_more_breaches(sla, engine):
     """The browser app relies on this: change the SLA, rerun, and results change."""

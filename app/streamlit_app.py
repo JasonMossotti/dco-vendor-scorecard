@@ -34,6 +34,15 @@ SEV_ORDER = ["S1", "S2", "S3", "S4"]
 st.set_page_config(page_title="DCO Vendor Scorecard", page_icon="📊", layout="wide")
 CONTRACT = load_sla(ROOT / "sla" / "vendor_sla.yaml")
 DEFAULTS = A.contract_defaults(CONTRACT)
+WIDGET_DEFAULTS = A.widget_defaults(CONTRACT)
+for _k, _v in WIDGET_DEFAULTS.items():          # widgets read their values from session state
+    st.session_state.setdefault(_k, _v)
+
+
+def reset_to_contract() -> None:
+    """Runs before the next render, so the sliders themselves move back (not just the data)."""
+    for k, v in WIDGET_DEFAULTS.items():
+        st.session_state[k] = v
 
 # --------------------------------------------------------------------------- #
 # Sidebar: dataset and what-if controls
@@ -58,30 +67,22 @@ else:
 
 st.sidebar.header("What if the SLA were different?")
 st.sidebar.caption("Change contract terms and every result recalculates from the same telemetry.")
-if st.sidebar.button("Reset to contract values"):
-    for k in list(st.session_state):
-        if k.startswith("wf_"):
-            del st.session_state[k]
-    st.rerun()
+st.sidebar.button("Reset to contract values", on_click=reset_to_contract)
 
 with st.sidebar.expander("Restore targets", expanded=True):
     restore = {p: st.slider(f"{p} restore target (hours)", 1.0, 48.0 if p == "P3" else 16.0,
-                            float(DEFAULTS["restore_hours"][p]), 0.5, key=f"wf_restore_{p}")
+                            step=0.5, key=f"wf_restore_{p}")
                for p in ("P1", "P2", "P3")}
 with st.sidebar.expander("Ticket handling"):
-    early = st.slider("Early-failure window, TR-1 (minutes)", 0, 240, int(DEFAULTS["early_failure_minutes"]), 5,
-                      key="wf_early")
-    stability = st.slider("Stability window, TR-2 (hours)", 2, 72, int(DEFAULTS["stability_hours"]), 1,
-                          key="wf_stability")
+    early = st.slider("Early-failure window, TR-1 (minutes)", 0, 240, step=5, key="wf_early")
+    stability = st.slider("Stability window, TR-2 (hours)", 2, 72, step=1, key="wf_stability")
 with st.sidebar.expander("Service level thresholds"):
     csl_names = {c["id"]: f"{c['id']} {c['name']}" for c in CONTRACT["critical_service_levels"]}
     cid = st.selectbox("Service level", list(csl_names), format_func=lambda c: csl_names[c], key="wf_csl")
-    e0, m0 = DEFAULTS["thresholds"][cid]
-    exp = st.number_input("Expected (%)", 0.0, 100.0, float(e0), 0.1, key=f"wf_exp_{cid}")
-    mn = st.number_input("Minimum (%)", 0.0, 100.0, float(m0), 0.1, key=f"wf_min_{cid}")
+    exp = st.number_input("Expected (%)", 0.0, 100.0, step=0.1, key=f"wf_exp_{cid}")
+    mn = st.number_input("Minimum (%)", 0.0, 100.0, step=0.1, key=f"wf_min_{cid}")
 with st.sidebar.expander("Commercials"):
-    at_risk = st.slider("At-risk amount (% of monthly charges)", 5.0, 20.0, float(DEFAULTS["at_risk_pct"]), 0.5,
-                        key="wf_atrisk")
+    at_risk = st.slider("At-risk amount (% of monthly charges)", 5.0, 20.0, step=0.5, key="wf_atrisk")
 
 overrides = {"restore_hours": restore, "early_failure_minutes": early, "stability_hours": stability,
              "at_risk_pct": at_risk, "thresholds": {cid: (exp, mn)}}
@@ -126,8 +127,9 @@ with tabs[0]:
     st.subheader("Vendor reported vs. measured from telemetry")
     vv = pd.DataFrame(A.vendor_vs_measured_rows(sc))
     st.dataframe(vv, hide_index=True)
-    chart = vv.set_index("Service level")[["Vendor reported (%)", "Measured (%)"]]
-    st.bar_chart(chart)
+    chart = vv.assign(**{"Service level": vv["Service level"].str.split(" ").str[0]})
+    chart = chart.set_index("Service level")[["Vendor reported (%)", "Measured (%)"]]
+    st.bar_chart(chart, stack=False)
     st.caption("Fleet availability is nearly identical either way: a few hidden hours vanish inside millions of "
                "GPU-hours. The gaps show up in restoration, repair quality, and record integrity.")
 
@@ -142,13 +144,14 @@ with tabs[1]:
     st.subheader("Critical Service Levels (credit-bearing)")
     st.dataframe(pd.DataFrame(A.csl_rows(sc)), hide_index=True)
     cr = sc["credits"]
-    st.markdown(f"**Credits:** ${cr['uncapped']:,.0f} before the monthly cap; **${cr['payable']:,.0f} payable**"
+    st.markdown(f"**Credits:** \\${cr['uncapped']:,.0f} before the monthly cap; **\\${cr['payable']:,.0f} payable**"
                 + (" (the cap applied)." if cr["capped"] else "."))
-    st.subheader("Week by week")
-    wk = pd.DataFrame(A.weekly_rows(sc))
-    st.line_chart(wk.set_index("Week")[["P2 restore, vendor", "P2 restore, measured",
-                                        "First-time fix, vendor", "First-time fix, measured"]])
-    st.dataframe(wk, hide_index=True)
+    st.subheader("Week by week: how far the vendor's report was from the telemetry")
+    st.caption("Measured minus vendor-reported, in percentage points. 0 means the vendor's weekly report was "
+               "accurate; below 0 means it overstated performance.")
+    gaps = pd.DataFrame(A.weekly_gap_rows(sc)).set_index("Week")
+    st.line_chart(gaps, color=["#ff4b4b", "#ffa421", "#29b09d", "#7d8cff"])
+    st.dataframe(pd.DataFrame(A.weekly_rows(sc)), hide_index=True)
     st.subheader("Key Measurements")
     st.dataframe(pd.DataFrame(A.km_rows(sc)), hide_index=True)
 
@@ -173,8 +176,8 @@ with tabs[2]:
 # ---- Corrective actions ------------------------------------------------------
 with tabs[3]:
     st.subheader("Corrective action plans")
-    st.caption("Drafted automatically for every S1 and S2 item, grouped by affected tickets. "
-               "Due dates: S1 within 5 business days, S2 within 10.")
+    st.caption("Drafted automatically at this period review for every S1 and S2 item, grouped by affected tickets. "
+               "Due dates count from the review: S1 within 5 business days, S2 within 10.")
     st.dataframe(pd.DataFrame(A.cap_rows(sc)), hide_index=True)
     st.subheader("Severity log")
     sev = pd.DataFrame(A.severity_rows(sc))

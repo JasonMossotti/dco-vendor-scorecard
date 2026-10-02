@@ -4,10 +4,12 @@
       "actions": [
         "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period."
       ],
-      "due": "2026-09-11T02:17:33Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-04T02:17:33Z",
       "id": "CAP-001",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -23,10 +25,12 @@
         "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
         "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause."
       ],
-      "due": "2026-09-11T09:37:29Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-04T09:37:29Z",
       "id": "CAP-002",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -41,30 +45,14 @@
     },
     {
       "actions": [
-        "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial."
+        "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period."
       ],
-      "due": "2026-09-11T12:52:06Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-04T21:42:00Z",
       "id": "CAP-003",
       "level": "S1",
       "owner": "Supplier site manager",
-      "reviewer": "Customer site lead",
-      "status": "Open",
-      "tickets": [
-        "INC3100323"
-      ],
-      "triggers": [
-        "F-004 Part swap not confirmed by inventory"
-      ],
-      "unit": "a09-ct10"
-    },
-    {
-      "actions": [
-        "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period."
-      ],
-      "due": "2026-09-11T21:42:00Z",
-      "id": "CAP-004",
-      "level": "S1",
-      "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -77,14 +65,36 @@
     },
     {
       "actions": [
+        "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial."
+      ],
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-06T12:52:06Z",
+      "id": "CAP-004",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100323"
+      ],
+      "triggers": [
+        "F-004 Part swap not confirmed by inventory"
+      ],
+      "unit": "a09-ct10"
+    },
+    {
+      "actions": [
         "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
         "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
         "Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2."
       ],
-      "due": "2026-09-15T03:04:06Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-08T03:04:06Z",
       "id": "CAP-005",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -103,10 +113,12 @@
         "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
         "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause."
       ],
-      "due": "2026-09-15T13:01:44Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-08T13:01:44Z",
       "id": "CAP-006",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -123,10 +135,12 @@
       "actions": [
         "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician."
       ],
-      "due": "2026-09-18T08:36:38Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-13T08:36:38Z",
       "id": "CAP-007",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -142,10 +156,12 @@
         "Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later.",
         "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause."
       ],
-      "due": "2026-09-22T12:48:14Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-15T12:48:14Z",
       "id": "CAP-008",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -161,10 +177,12 @@
       "actions": [
         "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial."
       ],
-      "due": "2026-09-25T20:06:57Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-20T20:06:57Z",
       "id": "CAP-009",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -179,10 +197,12 @@
       "actions": [
         "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician."
       ],
-      "due": "2026-10-02T00:24:01Z",
+      "due": "2026-10-05T00:00:00Z",
+      "first_seen": "2026-09-26T00:24:01Z",
       "id": "CAP-010",
       "level": "S1",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -197,10 +217,12 @@
       "actions": [
         "Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation."
       ],
-      "due": "2026-09-25T14:15:31Z",
+      "due": "2026-10-12T00:00:00Z",
+      "first_seen": "2026-09-13T14:15:31Z",
       "id": "CAP-011",
       "level": "S2",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -217,10 +239,12 @@
       "actions": [
         "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA."
       ],
-      "due": "2026-09-28T13:45:51Z",
+      "due": "2026-10-12T00:00:00Z",
+      "first_seen": "2026-09-14T13:45:51Z",
       "id": "CAP-012",
       "level": "S2",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -236,10 +260,12 @@
       "actions": [
         "Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach."
       ],
-      "due": "2026-09-30T08:54:20Z",
+      "due": "2026-10-12T00:00:00Z",
+      "first_seen": "2026-09-16T08:54:20Z",
       "id": "CAP-013",
       "level": "S2",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [],
@@ -252,10 +278,12 @@
       "actions": [
         "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA."
       ],
-      "due": "2026-10-01T08:35:39Z",
+      "due": "2026-10-12T00:00:00Z",
+      "first_seen": "2026-09-17T08:35:39Z",
       "id": "CAP-014",
       "level": "S2",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [
@@ -272,14 +300,16 @@
         "Supplier RCA and corrective action plan for CSL-08 (SLA Section 17)."
       ],
       "due": "2026-10-12T00:00:00Z",
+      "first_seen": "2026-09-28T00:00:00Z",
       "id": "CAP-015",
       "level": "S2",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [],
       "triggers": [
-        "CSL-08 CSL-08 30-Day Repeat Failure Rate: Minimum default (severe)"
+        "CSL-08 30-Day Repeat Failure Rate: Minimum default (severe)"
       ],
       "unit": null
     },
@@ -288,14 +318,16 @@
         "Supplier RCA and corrective action plan for CSL-09 (SLA Section 17)."
       ],
       "due": "2026-10-12T00:00:00Z",
+      "first_seen": "2026-09-28T00:00:00Z",
       "id": "CAP-016",
       "level": "S2",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [],
       "triggers": [
-        "CSL-09 CSL-09 Deployment Milestone Adherence: Minimum default (severe)"
+        "CSL-09 Deployment Milestone Adherence: Minimum default (severe)"
       ],
       "unit": null
     },
@@ -304,14 +336,16 @@
         "Supplier RCA and corrective action plan for CSL-11 (SLA Section 17)."
       ],
       "due": "2026-10-12T00:00:00Z",
+      "first_seen": "2026-09-28T00:00:00Z",
       "id": "CAP-017",
       "level": "S2",
       "owner": "Supplier site manager",
+      "raised": "2026-09-28T00:00:00Z",
       "reviewer": "Customer site lead",
       "status": "Open",
       "tickets": [],
       "triggers": [
-        "CSL-11 CSL-11 Record Integrity: Minimum default (severe)"
+        "CSL-11 Record Integrity: Minimum default (severe)"
       ],
       "unit": null
     }
@@ -3516,7 +3550,7 @@
       "level": "S2",
       "ref": "CSL-08",
       "tickets": [],
-      "title": "CSL-08 30-Day Repeat Failure Rate: Minimum default (severe)",
+      "title": "30-Day Repeat Failure Rate: Minimum default (severe)",
       "unit": null
     },
     {
@@ -3527,7 +3561,7 @@
       "level": "S2",
       "ref": "CSL-09",
       "tickets": [],
-      "title": "CSL-09 Deployment Milestone Adherence: Minimum default (severe)",
+      "title": "Deployment Milestone Adherence: Minimum default (severe)",
       "unit": null
     },
     {
@@ -3538,7 +3572,7 @@
       "level": "S2",
       "ref": "CSL-11",
       "tickets": [],
-      "title": "CSL-11 Record Integrity: Minimum default (severe)",
+      "title": "Record Integrity: Minimum default (severe)",
       "unit": null
     },
     {
@@ -3584,7 +3618,7 @@
       "level": "S3",
       "ref": "CSL-03",
       "tickets": [],
-      "title": "CSL-03 P1 Restoration Within 4 Hours: Minimum default",
+      "title": "P1 Restoration Within 4 Hours: Minimum default",
       "unit": null
     },
     {
@@ -3595,7 +3629,7 @@
       "level": "S3",
       "ref": "CSL-07",
       "tickets": [],
-      "title": "CSL-07 Validated Return to Service: Minimum default",
+      "title": "Validated Return to Service: Minimum default",
       "unit": null
     },
     {
@@ -3632,7 +3666,7 @@
       "level": "S4",
       "ref": "CSL-04",
       "tickets": [],
-      "title": "CSL-04 P2 Restoration Within 8 Hours: Below Expected",
+      "title": "P2 Restoration Within 8 Hours: Below Expected",
       "unit": null
     },
     {
@@ -3643,7 +3677,7 @@
       "level": "S4",
       "ref": "CSL-06",
       "tickets": [],
-      "title": "CSL-06 First-Time Fix Rate: Below Expected",
+      "title": "First-Time Fix Rate: Below Expected",
       "unit": null
     }
   ],

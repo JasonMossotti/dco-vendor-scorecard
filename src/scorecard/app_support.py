@@ -138,6 +138,16 @@ def _pct(v: float | None, d: int = 2) -> str:
     return "n/a" if v is None else f"{v:.{d}f}%"
 
 
+def _round(v: float | None, d: int) -> float | None:
+    return None if v is None else round(v, d)
+
+
+def _threshold(direction: str, v: float) -> str:
+    if direction == "higher_is_better" and v == 100:
+        return "100%"
+    return f"{'≥' if direction == 'higher_is_better' else '≤'} {v:g}%"
+
+
 def headline(sc: dict[str, Any]) -> str:
     defaults = [r["id"] for r in sc["csl"] if r["status"] in ("below_minimum", "deep_below_minimum")]
     clean = sum(1 for w in sc["weeks"] if w["vendor_note"].startswith("All SLAs met"))
@@ -146,21 +156,32 @@ def headline(sc: dict[str, Any]) -> str:
     return (f"The supplier's weekly reports claimed every SLA was met in {clean} of {len(sc['weeks'])} weeks. "
             f"Measured from telemetry: **{len(defaults)} Minimum defaults**"
             + (f" ({', '.join(defaults)})" if defaults else "")
-            + f", **{s1} S1 items**, and **${cr['payable']:,.0f}** in credits"
-            + (f" (capped from ${cr['uncapped']:,.0f})." if cr["capped"] else "."))
+            + f", **{s1} S1 items**, and **\\${cr['payable']:,.0f}** in credits"
+            + (f" (capped from \\${cr['uncapped']:,.0f})." if cr["capped"] else "."))
+
+
+def widget_defaults(sla: dict[str, Any]) -> dict[str, Any]:
+    """Session-state key -> contract value for every what-if widget in the app."""
+    d = contract_defaults(sla)
+    out: dict[str, Any] = {f"wf_restore_{p}": float(h) for p, h in d["restore_hours"].items()}
+    out["wf_early"] = int(d["early_failure_minutes"])
+    out["wf_stability"] = int(d["stability_hours"])
+    out["wf_atrisk"] = float(d["at_risk_pct"])
+    for cid, (e, m) in d["thresholds"].items():
+        out[f"wf_exp_{cid}"], out[f"wf_min_{cid}"] = float(e), float(m)
+    return out
 
 
 def vendor_vs_measured_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
-    return [{"Service level": f"{r['id']} {r['name']}", "Vendor reported (%)": r["vendor_reported"],
-             "Measured (%)": r["actual"],
+    return [{"Service level": f"{r['id']} {r['name']}", "Vendor reported (%)": _round(r["vendor_reported"], 2),
+             "Measured (%)": _round(r["actual"], 2),
              "Gap (pts)": None if r["actual"] is None else round(r["actual"] - r["vendor_reported"], 2)}
             for r in sc["csl"] if r["vendor_reported"] is not None]
 
 
 def csl_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
-    sym = lambda r: "≥" if r["direction"] == "higher_is_better" else "≤"  # noqa: E731
     return [{"ID": r["id"], "Service level": r["name"],
-             "Expected": f"{sym(r)} {r['expected']:g}%", "Minimum": f"{sym(r)} {r['minimum']:g}%",
+             "Expected": _threshold(r["direction"], r["expected"]), "Minimum": _threshold(r["direction"], r["minimum"]),
              "Measured": _pct(r["actual"]), "Vendor reported": _pct(r["vendor_reported"]),
              "Status": r["status_text"], "Credit": f"${r['credit']:,.0f}" if r["credit"] else "",
              "Basis": r["detail"] + (f". {r['note']}" if r["note"] else "")} for r in sc["csl"]]
@@ -181,11 +202,29 @@ def km_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
 def weekly_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
     out = []
     for w in sc["weeks"]:
+        v, m = w["vendor"], w["measured"]
         out.append({"Week": w["week_start"].strftime("%Y-%m-%d"),
-                    "P2 restore, vendor": w["vendor"]["CSL-04"], "P2 restore, measured": w["measured"]["CSL-04"],
-                    "First-time fix, vendor": w["vendor"]["CSL-06"], "First-time fix, measured": w["measured"]["CSL-06"],
-                    "Staffing, vendor": w["vendor"]["CSL-10"], "Staffing, measured": w["measured"]["CSL-10"],
+                    "P2 restore, vendor": _round(v["CSL-04"], 1), "P2 restore, measured": _round(m["CSL-04"], 1),
+                    "First-time fix, vendor": _round(v["CSL-06"], 1), "First-time fix, measured": _round(m["CSL-06"], 1),
+                    "Staffing, vendor": _round(v["CSL-10"], 1), "Staffing, measured": _round(m["CSL-10"], 1),
                     "Findings": w["findings"], "Vendor's note": w["vendor_note"]})
+    return out
+
+
+GAP_SERIES = {"P2 restore": "CSL-04", "First-time fix": "CSL-06", "Validated return to service": "CSL-07",
+              "Staffing fill": "CSL-10"}
+
+
+def weekly_gap_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    """Measured minus vendor-reported, in points, per week. 0 means the vendor's report was accurate;
+    below 0 means the vendor overstated performance."""
+    out = []
+    for w in sc["weeks"]:
+        row: dict[str, Any] = {"Week": w["week_start"].strftime("%Y-%m-%d")}
+        for label, cid in GAP_SERIES.items():
+            v, m = w["vendor"].get(cid), w["measured"].get(cid)
+            row[label] = None if v is None or m is None else round(m - v, 1)
+        out.append(row)
     return out
 
 
@@ -206,7 +245,8 @@ def incident_rows(sc: dict[str, Any], target_min: dict[str, int]) -> list[dict[s
 def cap_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
     return [{"CAP": c["id"], "Severity": c["level"], "Tickets": ", ".join(c["tickets"]) or (c["unit"] or "-"),
              "Triggers": "; ".join(c["triggers"]), "Required actions": " ".join(c["actions"]),
-             "Owner": c["owner"], "Due": c["due"].strftime("%Y-%m-%d"), "Status": c["status"]}
+             "Owner": c["owner"], "Raised": c["raised"].strftime("%Y-%m-%d"), "Due": c["due"].strftime("%Y-%m-%d"),
+             "Status": c["status"]}
             for c in sc["corrective_actions"]]
 
 

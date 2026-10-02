@@ -69,27 +69,27 @@ Payable after the monthly cap (the At-Risk Amount): **$222,000**. The cap applie
 
 ## Corrective action plans
 
-17 plans drafted automatically: one per affected ticket group (or service level) for every S1 and S2 item. Due dates follow the severity index (S1: 5 business days, S2: 10).
+17 plans drafted automatically: one per affected ticket group (or service level) for every S1 and S2 item. Plans are raised at this period review; due dates follow the severity index (S1: 5 business days, S2: 10).
 
-| CAP | Severity | Tickets | Triggers | Required actions | Owner | Due |
-|---|:-:|---|---|---|---|---|
-| CAP-001 | S1 | INC3100153 | F-001 Returned to service without validation | Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period. | Supplier site manager | 2026-09-11 |
-| CAP-002 | S1 | INC3100187, INC3100204 | F-002 Ticket split to restart the clock; INC3100187 P2 restore 11.0 hrs vs 8-hr target | Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. | Supplier site manager | 2026-09-11 |
-| CAP-003 | S1 | INC3100323 | F-004 Part swap not confirmed by inventory | Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial. | Supplier site manager | 2026-09-11 |
-| CAP-004 | S1 | INC3100221 | F-003 Returned to service without validation | Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period. | Supplier site manager | 2026-09-11 |
-| CAP-005 | S1 | INC3100391, INC3100442 | F-005 Ticket split to restart the clock; INC3100391 P2 restore 12.6 hrs vs 8-hr target; F-011 Link errors continued after optic replacement | Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2. | Supplier site manager | 2026-09-15 |
-| CAP-006 | S1 | INC3100425, INC3100476 | F-006 Ticket split to restart the clock; INC3100425 P2 restore 10.9 hrs vs 8-hr target | Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. | Supplier site manager | 2026-09-15 |
-| CAP-007 | S1 | INC3100663 | F-007 On-site claim before badge-in | Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician. | Supplier site manager | 2026-09-18 |
-| CAP-008 | S1 | INC3100799 | F-008 Ticket opened late (clock shift); INC3100799 P2 restore 9.4 hrs vs 8-hr target | Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. | Supplier site manager | 2026-09-22 |
-| CAP-009 | S1 | INC3100952 | F-009 Part swap not confirmed by inventory | Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial. | Supplier site manager | 2026-09-25 |
-| CAP-010 | S1 | INC3101309 | F-010 On-site claim before badge-in | Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician. | Supplier site manager | 2026-10-02 |
-| CAP-011 | S2 | INC3100085, INC3100374, INC3100697 | F-012 Repeat-failing unit not escalated | Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation. | Supplier site manager | 2026-09-25 |
-| CAP-012 | S2 | INC3100544, INC3100748 | F-013 Same fault recurred after a reseat | Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA. | Supplier site manager | 2026-09-28 |
-| CAP-013 | S2 | Rack A23 | F-014 Change without an approved change record | Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach. | Supplier site manager | 2026-09-30 |
-| CAP-014 | S2 | INC3100612, INC3100901 | F-015 Same fault recurred after a reseat | Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA. | Supplier site manager | 2026-10-01 |
-| CAP-015 | S2 | - | CSL-08 CSL-08 30-Day Repeat Failure Rate: Minimum default (severe) | Supplier RCA and corrective action plan for CSL-08 (SLA Section 17). | Supplier site manager | 2026-10-12 |
-| CAP-016 | S2 | - | CSL-09 CSL-09 Deployment Milestone Adherence: Minimum default (severe) | Supplier RCA and corrective action plan for CSL-09 (SLA Section 17). | Supplier site manager | 2026-10-12 |
-| CAP-017 | S2 | - | CSL-11 CSL-11 Record Integrity: Minimum default (severe) | Supplier RCA and corrective action plan for CSL-11 (SLA Section 17). | Supplier site manager | 2026-10-12 |
+| CAP | Severity | Tickets | Triggers | Required actions | Owner | Raised | Due |
+|---|:-:|---|---|---|---|---|---|
+| CAP-001 | S1 | INC3100153 | F-001 Returned to service without validation | Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-002 | S1 | INC3100187, INC3100204 | F-002 Ticket split to restart the clock; INC3100187 P2 restore 11.0 hrs vs 8-hr target | Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-003 | S1 | INC3100221 | F-003 Returned to service without validation | Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-004 | S1 | INC3100323 | F-004 Part swap not confirmed by inventory | Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-005 | S1 | INC3100391, INC3100442 | F-005 Ticket split to restart the clock; INC3100391 P2 restore 12.6 hrs vs 8-hr target; F-011 Link errors continued after optic replacement | Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-006 | S1 | INC3100425, INC3100476 | F-006 Ticket split to restart the clock; INC3100425 P2 restore 10.9 hrs vs 8-hr target | Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-007 | S1 | INC3100663 | F-007 On-site claim before badge-in | Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-008 | S1 | INC3100799 | F-008 Ticket opened late (clock shift); INC3100799 P2 restore 9.4 hrs vs 8-hr target | Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later. RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-009 | S1 | INC3100952 | F-009 Part swap not confirmed by inventory | Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-010 | S1 | INC3101309 | F-010 On-site claim before badge-in | Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician. | Supplier site manager | 2026-09-28 | 2026-10-05 |
+| CAP-011 | S2 | INC3100085, INC3100374, INC3100697 | F-012 Repeat-failing unit not escalated | Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation. | Supplier site manager | 2026-09-28 | 2026-10-12 |
+| CAP-012 | S2 | INC3100544, INC3100748 | F-013 Same fault recurred after a reseat | Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA. | Supplier site manager | 2026-09-28 | 2026-10-12 |
+| CAP-013 | S2 | Rack A23 | F-014 Change without an approved change record | Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach. | Supplier site manager | 2026-09-28 | 2026-10-12 |
+| CAP-014 | S2 | INC3100612, INC3100901 | F-015 Same fault recurred after a reseat | Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA. | Supplier site manager | 2026-09-28 | 2026-10-12 |
+| CAP-015 | S2 | - | CSL-08 30-Day Repeat Failure Rate: Minimum default (severe) | Supplier RCA and corrective action plan for CSL-08 (SLA Section 17). | Supplier site manager | 2026-09-28 | 2026-10-12 |
+| CAP-016 | S2 | - | CSL-09 Deployment Milestone Adherence: Minimum default (severe) | Supplier RCA and corrective action plan for CSL-09 (SLA Section 17). | Supplier site manager | 2026-09-28 | 2026-10-12 |
+| CAP-017 | S2 | - | CSL-11 Record Integrity: Minimum default (severe) | Supplier RCA and corrective action plan for CSL-11 (SLA Section 17). | Supplier site manager | 2026-09-28 | 2026-10-12 |
 
 ## Severity log
 
@@ -116,18 +116,18 @@ Payable after the monthly cap (the At-Risk Amount): **$222,000**. The cap applie
 | S2 | Discrepancy | F-013 | INC3100544, INC3100748 | Same fault recurred after a reseat |
 | S2 | Discrepancy | F-014 | - | Change without an approved change record |
 | S2 | Discrepancy | F-015 | INC3100612, INC3100901 | Same fault recurred after a reseat |
-| S2 | Service level | CSL-08 | - | CSL-08 30-Day Repeat Failure Rate: Minimum default (severe) |
-| S2 | Service level | CSL-09 | - | CSL-09 Deployment Milestone Adherence: Minimum default (severe) |
-| S2 | Service level | CSL-11 | - | CSL-11 Record Integrity: Minimum default (severe) |
+| S2 | Service level | CSL-08 | - | 30-Day Repeat Failure Rate: Minimum default (severe) |
+| S2 | Service level | CSL-09 | - | Deployment Milestone Adherence: Minimum default (severe) |
+| S2 | Service level | CSL-11 | - | Record Integrity: Minimum default (severe) |
 | S3 | Discrepancy | F-016 | - | Rostered technicians not on site |
 | S3 | Discrepancy | F-017 | INC3100272 | Part used but not issued from spares |
 | S3 | Discrepancy | F-018 | - | Rostered technicians not on site |
-| S3 | Service level | CSL-03 | - | CSL-03 P1 Restoration Within 4 Hours: Minimum default |
-| S3 | Service level | CSL-07 | - | CSL-07 Validated Return to Service: Minimum default |
+| S3 | Service level | CSL-03 | - | P1 Restoration Within 4 Hours: Minimum default |
+| S3 | Service level | CSL-07 | - | Validated Return to Service: Minimum default |
 | S4 | Restore breach | INC3100527 | INC3100527 | P1 restore 4.2 hrs vs 4-hr target |
 | S4 | Restore breach | INC3100816 | INC3100816 | P1 restore 4.1 hrs vs 4-hr target |
-| S4 | Service level | CSL-04 | - | CSL-04 P2 Restoration Within 8 Hours: Below Expected |
-| S4 | Service level | CSL-06 | - | CSL-06 First-Time Fix Rate: Below Expected |
+| S4 | Service level | CSL-04 | - | P2 Restoration Within 8 Hours: Below Expected |
+| S4 | Service level | CSL-06 | - | First-Time Fix Rate: Below Expected |
 
 Discrepancy details and evidence: [discrepancy_report.md](discrepancy_report.md).
 

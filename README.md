@@ -8,6 +8,10 @@
 
 > Portfolio demonstration. All data, parties, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on internal information from, any real company.
 
+![Scorecard overview: vendor reported vs. measured from telemetry](docs/images/overview.png)
+
+**In 30 seconds:** a GPU site vendor's weekly reports say every SLA was met. This project rebuilds every incident from hardware telemetry (GPU faults, BMC inventory, fabric counters, badge access) and finds 5 Minimum Service Level Defaults, $222,000 in credits, and 18 places where the vendor's records do not match what the hardware recorded, each with evidence, a severity, and a corrective action. The contract itself is code, so changing a target in the SLA changes every result.
+
 ## The idea
 
 At a partner-operated site, the vendor does the hands-on work and the site lead owns the outcome. The core principle of this project: **verify vendor performance with independent telemetry, not vendor self-reporting.** The scorecard reconciles what the vendor's tickets say against what the hardware itself reports (GPU telemetry, BMC inventory, fabric counters, badge access), then scores the result against a contractual SLA.
@@ -91,7 +95,12 @@ The [demo](https://rexferal.github.io/dco-vendor-scorecard/) runs the whole pipe
 - Change SLA terms in the sidebar (restore targets, ticket handling windows, service level thresholds, at-risk amount) and watch every result recalculate from the same telemetry.
 - Drill into each finding's evidence, the corrective action plans, and every incident.
 
-Run it locally with `pip install -r requirements-app.txt` and `streamlit run app/streamlit_app.py`.
+<p>
+  <img src="docs/images/finding.png" alt="A finding with its evidence: a compute tray returned to service with no validation checks recorded" width="680">
+  <img src="docs/images/what-if.png" alt="What-if controls in the sidebar" width="190">
+</p>
+
+Run it locally with `pip install -r requirements-app.txt` and `streamlit run app/streamlit_app.py`. To host it on AWS (S3, EC2, or a production-shaped architecture), see [docs/DEPLOY_AWS.md](docs/DEPLOY_AWS.md).
 
 ## Project layout
 
@@ -116,6 +125,8 @@ templates/sla.md.j2              Document template
 docs/SLA.md                      Generated SLA (do not edit by hand)
 docs/DATA_MODEL.md               What each data file represents
 docs/PROJECT_GUIDE.md            How the project fits together and how to change it
+docs/DEPLOY_AWS.md               Hosting on AWS: S3, EC2, and production architecture
+docs/images/                     Screenshots used in this README
 data/sample/                     Committed synthetic dataset (4 weeks)
 reports/                         Generated: scorecard.md, discrepancy_report.md, and their JSON
 tests/                           Pytest suite

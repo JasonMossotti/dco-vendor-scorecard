@@ -8,7 +8,11 @@ the end without raising.
 
 from __future__ import annotations
 
+import re
+
 import pandas as pd
+
+_UNESCAPED_DOLLAR = re.compile(r"(?<!\\)\$")
 
 
 class StopApp(Exception):
@@ -36,8 +40,9 @@ class _Block:
 
 
 class FakeStreamlit:
-    def __init__(self, overrides: dict | None = None, buttons: set | None = None):
-        self.session_state: dict = {}
+    def __init__(self, overrides: dict | None = None, buttons: set | None = None,
+                 session_state: dict | None = None):
+        self.session_state: dict = dict(session_state or {})
         self.overrides = overrides or {}       # label -> value returned by that widget
         self.buttons = buttons or set()        # labels of buttons that are "pressed"
         self.drawn: list[tuple[str, object]] = []
@@ -73,7 +78,12 @@ class FakeStreamlit:
     def __getattr__(self, name):
         if name in ("title", "header", "subheader", "markdown", "caption", "info", "warning", "error",
                     "success", "write", "divider", "text"):
-            return lambda *a, **k: self._rec(name, a[0] if a else "")
+            def draw(*a, **k):
+                text = str(a[0]) if a else ""
+                # Real Streamlit renders text between two unescaped $ signs as LaTeX math.
+                assert len(_UNESCAPED_DOLLAR.findall(text)) < 2, f"unescaped $ in st.{name}: {text[:80]!r}"
+                self._rec(name, text)
+            return draw
         raise AttributeError(f"FakeStreamlit has no '{name}'; add it if the app uses a new Streamlit feature")
 
     def metric(self, label, value, *a, **k):
@@ -89,39 +99,54 @@ class FakeStreamlit:
         self._rec(kind, data)
 
     def bar_chart(self, data, **kw):
+        if len(data.columns) > 1:
+            assert kw.get("stack") is False, "multi-series bar charts must use stack=False to compare side by side"
         self._chart("bar_chart", data, **kw)
 
     def line_chart(self, data, **kw):
+        if isinstance(kw.get("color"), list):
+            assert len(kw["color"]) == len(data.columns), "one color per line is required"
         self._chart("line_chart", data, **kw)
 
     # -------------------------------------------------------------- widgets
-    def _value(self, label, default):
-        return self.overrides.get(label, default)
+    def _value(self, label, default, key=None):
+        """Test override > session state (as real Streamlit) > widget default."""
+        if label in self.overrides:
+            v = self.overrides[label]
+            if key:
+                self.session_state[key] = v
+            return v
+        if key and key in self.session_state:
+            return self.session_state[key]
+        return default
 
     def radio(self, label, options, index=0, **kw):
         return self._value(label, options[index])
 
-    def selectbox(self, label, options, index=0, format_func=str, **kw):
+    def selectbox(self, label, options, index=0, format_func=str, key=None, **kw):
         for o in options:
             format_func(o)
-        return self._value(label, options[index])
+        return self._value(label, options[index], key)
 
     def multiselect(self, label, options, default=None, **kw):
         return self._value(label, list(default or []))
 
-    def slider(self, label, min_value=None, max_value=None, value=None, step=None, **kw):
-        v = self._value(label, value)
+    def slider(self, label, min_value=None, max_value=None, value=None, step=None, key=None, **kw):
+        v = self._value(label, value if value is not None else min_value, key)
         assert min_value <= v <= max_value, f"slider '{label}' value {v} outside [{min_value}, {max_value}]"
         return v
 
-    def number_input(self, label, min_value=None, max_value=None, value=None, step=None, **kw):
-        return self._value(label, value)
+    def number_input(self, label, min_value=None, max_value=None, value=None, step=None, key=None, **kw):
+        return self._value(label, value if value is not None else min_value, key)
 
     def checkbox(self, label, value=False, **kw):
         return self._value(label, value)
 
-    def button(self, label, **kw):
-        return label in self.buttons
+    def button(self, label, on_click=None, **kw):
+        pressed = label in self.buttons
+        if pressed and on_click is not None:
+            on_click()               # Streamlit runs callbacks before the rest of the script
+        return pressed
 
     # ---------------------------------------------------------- control flow
     def stop(self):

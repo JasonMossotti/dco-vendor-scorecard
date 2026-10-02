@@ -118,15 +118,18 @@ def _severity_log(sla: dict, ctx: Context, incidents: list[ScoredIncident], find
             continue
         sev = classify_period_breach(sla, r["_result"], 1 if r["_result"].is_minimum_default else 0)
         log.append({"level": sev.level, "kind": "Service level", "ref": r["id"], "tickets": [], "unit": None,
-                    "at": ctx.window_end, "title": f"{r['id']} {r['name']}: {r['status_text']}",
+                    "at": ctx.window_end, "title": f"{r['name']}: {r['status_text']}",
                     "description": f"{r['detail']}. " + "; ".join(sev.reasons),
                     "action": f"Supplier RCA and corrective action plan for {r['id']} (SLA Section 17)."})
     log.sort(key=lambda e: (-SEV_RANK[e["level"]], e["at"] or ctx.window_end))
     return log
 
 
-def _corrective_actions(sla: dict, log: list[dict]) -> list[dict]:
-    """Draft one CAP per affected ticket group (or service level) for every S1/S2 entry."""
+def _corrective_actions(sla: dict, log: list[dict], raised: datetime) -> list[dict]:
+    """Draft one CAP per affected ticket group (or service level) for every S1/S2 entry.
+
+    Plans are drafted at the period review, so due dates count from the review date
+    (S1: 5 business days, S2: 10), not from when each issue happened."""
     days = {"S1": 5, "S2": 10}
     groups: dict[tuple, dict] = {}
     for e in log:
@@ -136,10 +139,11 @@ def _corrective_actions(sla: dict, log: list[dict]) -> list[dict]:
         # Merge with an existing group that shares any ticket.
         match = next((k for k in groups if e["tickets"] and set(k) & set(e["tickets"])), None)
         g = groups.get(match) if match else None
-        due = _add_business_days(e["at"], days[e["level"]])
+        due = _add_business_days(raised, days[e["level"]])
         if g is None:
             groups[key] = {"level": e["level"], "tickets": sorted(set(e["tickets"])), "unit": e["unit"],
-                           "triggers": [f"{e['ref']} {e['title']}"], "actions": [e["action"]], "due": due}
+                           "triggers": [f"{e['ref']} {e['title']}"], "actions": [e["action"]], "due": due,
+                           "first_seen": e["at"]}
         else:
             g["triggers"].append(f"{e['ref']} {e['title']}")
             if e["action"] not in g["actions"]:
@@ -147,10 +151,10 @@ def _corrective_actions(sla: dict, log: list[dict]) -> list[dict]:
             if SEV_RANK[e["level"]] > SEV_RANK[g["level"]]:
                 g["level"] = e["level"]
             g["due"] = min(g["due"], due)
-    caps = sorted(groups.values(), key=lambda g: (-SEV_RANK[g["level"]], g["due"]))
+    caps = sorted(groups.values(), key=lambda g: (-SEV_RANK[g["level"]], g["due"], g["first_seen"]))
     for n, g in enumerate(caps, start=1):
         g.update({"id": f"CAP-{n:03d}", "owner": "Supplier site manager", "reviewer": "Customer site lead",
-                  "status": "Open"})
+                  "raised": raised, "status": "Open"})
     return caps
 
 
@@ -179,7 +183,7 @@ def build_scorecard(sla: dict[str, Any], result: EngineResult) -> dict[str, Any]
                       "findings": sum(1 for f in findings if f.observed_at and ws <= f.observed_at < we)})
 
     log = _severity_log(sla, ctx, incidents, findings, csl)
-    caps = _corrective_actions(sla, log)
+    caps = _corrective_actions(sla, log, ctx.window_end)
     lost = sum(i.lost_gpu_hours(ctx.window_start, ctx.window_end) for i in incidents)
     vendor_lost = sum(i.gpus * i.factor * sum(i.vendor_restore_min) / 60 for i in incidents)
     for r in csl:
