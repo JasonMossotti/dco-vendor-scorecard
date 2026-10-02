@@ -1,0 +1,3827 @@
+{
+  "corrective_actions": [
+    {
+      "actions": [
+        "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period."
+      ],
+      "due": "2026-09-11T02:17:33Z",
+      "id": "CAP-001",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100153"
+      ],
+      "triggers": [
+        "F-001 Returned to service without validation"
+      ],
+      "unit": "a05-ct18"
+    },
+    {
+      "actions": [
+        "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
+        "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause."
+      ],
+      "due": "2026-09-11T09:37:29Z",
+      "id": "CAP-002",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100187",
+        "INC3100204"
+      ],
+      "triggers": [
+        "F-002 Ticket split to restart the clock",
+        "INC3100187 P2 restore 11.0 hrs vs 8-hr target"
+      ],
+      "unit": "a06-ct13"
+    },
+    {
+      "actions": [
+        "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial."
+      ],
+      "due": "2026-09-11T12:52:06Z",
+      "id": "CAP-003",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100323"
+      ],
+      "triggers": [
+        "F-004 Part swap not confirmed by inventory"
+      ],
+      "unit": "a09-ct10"
+    },
+    {
+      "actions": [
+        "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period."
+      ],
+      "due": "2026-09-11T21:42:00Z",
+      "id": "CAP-004",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100221"
+      ],
+      "triggers": [
+        "F-003 Returned to service without validation"
+      ],
+      "unit": "a03-ct14"
+    },
+    {
+      "actions": [
+        "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
+        "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
+        "Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2."
+      ],
+      "due": "2026-09-15T03:04:06Z",
+      "id": "CAP-005",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100391",
+        "INC3100442"
+      ],
+      "triggers": [
+        "F-005 Ticket split to restart the clock",
+        "INC3100391 P2 restore 12.6 hrs vs 8-hr target",
+        "F-011 Link errors continued after optic replacement"
+      ],
+      "unit": "leaf-a16-r0:swp33"
+    },
+    {
+      "actions": [
+        "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
+        "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause."
+      ],
+      "due": "2026-09-15T13:01:44Z",
+      "id": "CAP-006",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100425",
+        "INC3100476"
+      ],
+      "triggers": [
+        "F-006 Ticket split to restart the clock",
+        "INC3100425 P2 restore 10.9 hrs vs 8-hr target"
+      ],
+      "unit": "a26-ct16"
+    },
+    {
+      "actions": [
+        "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician."
+      ],
+      "due": "2026-09-18T08:36:38Z",
+      "id": "CAP-007",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100663"
+      ],
+      "triggers": [
+        "F-007 On-site claim before badge-in"
+      ],
+      "unit": "a23-ct04"
+    },
+    {
+      "actions": [
+        "Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later.",
+        "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause."
+      ],
+      "due": "2026-09-22T12:48:14Z",
+      "id": "CAP-008",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100799"
+      ],
+      "triggers": [
+        "F-008 Ticket opened late (clock shift)",
+        "INC3100799 P2 restore 9.4 hrs vs 8-hr target"
+      ],
+      "unit": "a01-ct05"
+    },
+    {
+      "actions": [
+        "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial."
+      ],
+      "due": "2026-09-25T20:06:57Z",
+      "id": "CAP-009",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100952"
+      ],
+      "triggers": [
+        "F-009 Part swap not confirmed by inventory"
+      ],
+      "unit": "a30-ct06"
+    },
+    {
+      "actions": [
+        "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician."
+      ],
+      "due": "2026-10-02T00:24:01Z",
+      "id": "CAP-010",
+      "level": "S1",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3101309"
+      ],
+      "triggers": [
+        "F-010 On-site claim before badge-in"
+      ],
+      "unit": "a20-ct07"
+    },
+    {
+      "actions": [
+        "Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation."
+      ],
+      "due": "2026-09-25T14:15:31Z",
+      "id": "CAP-011",
+      "level": "S2",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100085",
+        "INC3100374",
+        "INC3100697"
+      ],
+      "triggers": [
+        "F-012 Repeat-failing unit not escalated"
+      ],
+      "unit": "a31-ct06"
+    },
+    {
+      "actions": [
+        "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA."
+      ],
+      "due": "2026-09-28T13:45:51Z",
+      "id": "CAP-012",
+      "level": "S2",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100544",
+        "INC3100748"
+      ],
+      "triggers": [
+        "F-013 Same fault recurred after a reseat"
+      ],
+      "unit": "a31-ct17"
+    },
+    {
+      "actions": [
+        "Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach."
+      ],
+      "due": "2026-09-30T08:54:20Z",
+      "id": "CAP-013",
+      "level": "S2",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [],
+      "triggers": [
+        "F-014 Change without an approved change record"
+      ],
+      "unit": "Rack A23"
+    },
+    {
+      "actions": [
+        "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA."
+      ],
+      "due": "2026-10-01T08:35:39Z",
+      "id": "CAP-014",
+      "level": "S2",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [
+        "INC3100612",
+        "INC3100901"
+      ],
+      "triggers": [
+        "F-015 Same fault recurred after a reseat"
+      ],
+      "unit": "a14-ct07"
+    },
+    {
+      "actions": [
+        "Supplier RCA and corrective action plan for CSL-08 (SLA Section 17)."
+      ],
+      "due": "2026-10-12T00:00:00Z",
+      "id": "CAP-015",
+      "level": "S2",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [],
+      "triggers": [
+        "CSL-08 CSL-08 30-Day Repeat Failure Rate: Minimum default (severe)"
+      ],
+      "unit": null
+    },
+    {
+      "actions": [
+        "Supplier RCA and corrective action plan for CSL-09 (SLA Section 17)."
+      ],
+      "due": "2026-10-12T00:00:00Z",
+      "id": "CAP-016",
+      "level": "S2",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [],
+      "triggers": [
+        "CSL-09 CSL-09 Deployment Milestone Adherence: Minimum default (severe)"
+      ],
+      "unit": null
+    },
+    {
+      "actions": [
+        "Supplier RCA and corrective action plan for CSL-11 (SLA Section 17)."
+      ],
+      "due": "2026-10-12T00:00:00Z",
+      "id": "CAP-017",
+      "level": "S2",
+      "owner": "Supplier site manager",
+      "reviewer": "Customer site lead",
+      "status": "Open",
+      "tickets": [],
+      "triggers": [
+        "CSL-11 CSL-11 Record Integrity: Minimum default (severe)"
+      ],
+      "unit": null
+    }
+  ],
+  "credits": {
+    "at_risk": 222000.0,
+    "capped": true,
+    "items": [
+      {
+        "credit": 66600.0,
+        "csl": "CSL-03",
+        "earnback_eligible": true,
+        "explanation": "At-Risk Amount $222,000 (12% of $1,850,000) \u00d7 30% allocation = $66,600"
+      },
+      {
+        "credit": 55500.0,
+        "csl": "CSL-07",
+        "earnback_eligible": true,
+        "explanation": "At-Risk Amount $222,000 (12% of $1,850,000) \u00d7 25% allocation = $55,500"
+      },
+      {
+        "credit": 44400.0,
+        "csl": "CSL-08",
+        "earnback_eligible": true,
+        "explanation": "At-Risk Amount $222,000 (12% of $1,850,000) \u00d7 20% allocation = $44,400"
+      },
+      {
+        "credit": 44400.0,
+        "csl": "CSL-09",
+        "earnback_eligible": true,
+        "explanation": "At-Risk Amount $222,000 (12% of $1,850,000) \u00d7 20% allocation = $44,400"
+      },
+      {
+        "credit": 44400.0,
+        "csl": "CSL-11",
+        "earnback_eligible": false,
+        "explanation": "At-Risk Amount $222,000 (12% of $1,850,000) \u00d7 20% allocation = $44,400"
+      }
+    ],
+    "payable": 222000.0,
+    "uncapped": 255300.0
+  },
+  "csl": [
+    {
+      "actual": 99.938,
+      "allocation_pct": 30,
+      "credit": 0.0,
+      "detail": "1,083 capacity-weighted GPU-hours lost of 1,750,780 installed",
+      "direction": "higher_is_better",
+      "events": null,
+      "expected": 99.5,
+      "id": "CSL-01",
+      "minimum": 99.0,
+      "misses": null,
+      "name": "Supplier-Attributable GPU Availability",
+      "note": "",
+      "status": "met_expected",
+      "status_text": "Met",
+      "unit": "%",
+      "vendor_reported": 99.936
+    },
+    {
+      "actual": 100.0,
+      "allocation_pct": 20,
+      "credit": 0.0,
+      "detail": "4 of 4 P1 incidents with a badge-verified technician within 15 min",
+      "direction": "higher_is_better",
+      "events": 4,
+      "expected": 100.0,
+      "id": "CSL-02",
+      "minimum": 95.0,
+      "misses": 0,
+      "name": "P1 Engaged On-Site Within 15 Minutes",
+      "note": "Small-sample rule: 4 events, 0 misses.",
+      "status": "met_expected",
+      "status_text": "Met",
+      "unit": "%",
+      "vendor_reported": null
+    },
+    {
+      "actual": 50.0,
+      "allocation_pct": 30,
+      "credit": 66600.0,
+      "detail": "2 of 4 P1 Tickets of Record restored within 4 hrs",
+      "direction": "higher_is_better",
+      "events": 4,
+      "expected": 95.0,
+      "id": "CSL-03",
+      "minimum": 90.0,
+      "misses": 2,
+      "name": "P1 Restoration Within 4 Hours",
+      "note": "Small-sample rule: 2 misses exceeds allowance of 1.",
+      "status": "below_minimum",
+      "status_text": "Minimum default",
+      "unit": "%",
+      "vendor_reported": 50.0
+    },
+    {
+      "actual": 92.593,
+      "allocation_pct": 15,
+      "credit": 0.0,
+      "detail": "50 of 54 P2 Tickets of Record restored within 8 hrs",
+      "direction": "higher_is_better",
+      "events": 54,
+      "expected": 95.0,
+      "id": "CSL-04",
+      "minimum": 90.0,
+      "misses": 4,
+      "name": "P2 Restoration Within 8 Hours",
+      "note": "",
+      "status": "below_expected",
+      "status_text": "Below Expected",
+      "unit": "%",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 100.0,
+      "allocation_pct": 5,
+      "credit": 0.0,
+      "detail": "17 of 17 P3 Tickets of Record restored within 24 hrs",
+      "direction": "higher_is_better",
+      "events": 17,
+      "expected": 95.0,
+      "id": "CSL-05",
+      "minimum": 90.0,
+      "misses": 0,
+      "name": "P3 Restoration Within 24 Hours",
+      "note": "",
+      "status": "met_expected",
+      "status_text": "Met",
+      "unit": "%",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 90.667,
+      "allocation_pct": 25,
+      "credit": 0.0,
+      "detail": "68 of 75 repairs fixed the first time",
+      "direction": "higher_is_better",
+      "events": 75,
+      "expected": 92.0,
+      "id": "CSL-06",
+      "minimum": 88.0,
+      "misses": 7,
+      "name": "First-Time Fix Rate",
+      "note": "",
+      "status": "below_expected",
+      "status_text": "Below Expected",
+      "unit": "%",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 97.333,
+      "allocation_pct": 25,
+      "credit": 55500.0,
+      "detail": "73 of 75 returns to service had the full validation checklist",
+      "direction": "higher_is_better",
+      "events": 75,
+      "expected": 100.0,
+      "id": "CSL-07",
+      "minimum": 98.0,
+      "misses": 2,
+      "name": "Validated Return to Service",
+      "note": "",
+      "status": "below_minimum",
+      "status_text": "Minimum default",
+      "unit": "%",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 9.333,
+      "allocation_pct": 20,
+      "credit": 44400.0,
+      "detail": "7 of 75 repaired units failed again within 30 days",
+      "direction": "lower_is_better",
+      "events": 75,
+      "expected": 3.0,
+      "id": "CSL-08",
+      "minimum": 5.0,
+      "misses": 7,
+      "name": "30-Day Repeat Failure Rate",
+      "note": "",
+      "status": "deep_below_minimum",
+      "status_text": "Minimum default (severe)",
+      "unit": "%",
+      "vendor_reported": null
+    },
+    {
+      "actual": 69.231,
+      "allocation_pct": 20,
+      "credit": 44400.0,
+      "detail": "9 of 13 racks due this period reached Validated Handoff on time",
+      "direction": "higher_is_better",
+      "events": 13,
+      "expected": 95.0,
+      "id": "CSL-09",
+      "minimum": 90.0,
+      "misses": 4,
+      "name": "Deployment Milestone Adherence",
+      "note": "",
+      "status": "deep_below_minimum",
+      "status_text": "Minimum default (severe)",
+      "unit": "%",
+      "vendor_reported": null
+    },
+    {
+      "actual": 98.901,
+      "allocation_pct": 20,
+      "credit": 0.0,
+      "detail": "4,320 of 4,368 committed technician hours badge-verified",
+      "direction": "higher_is_better",
+      "events": null,
+      "expected": 98.0,
+      "id": "CSL-10",
+      "minimum": 95.0,
+      "misses": null,
+      "name": "Qualified Staffing Fill Rate",
+      "note": "",
+      "status": "met_expected",
+      "status_text": "Met",
+      "unit": "%",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 83.333,
+      "allocation_pct": 20,
+      "credit": 44400.0,
+      "detail": "13 of 78 closed tickets did not reconcile with telemetry",
+      "direction": "higher_is_better",
+      "events": 78,
+      "expected": 99.0,
+      "id": "CSL-11",
+      "minimum": 97.0,
+      "misses": 13,
+      "name": "Record Integrity",
+      "note": "",
+      "status": "deep_below_minimum",
+      "status_text": "Minimum default (severe)",
+      "unit": "%",
+      "vendor_reported": null
+    },
+    {
+      "actual": 99.489,
+      "allocation_pct": 20,
+      "credit": 0.0,
+      "detail": "Worst rack A15: 247 GPU-hours lost",
+      "direction": "higher_is_better",
+      "events": null,
+      "expected": 99.0,
+      "id": "CSL-12",
+      "minimum": 97.5,
+      "misses": null,
+      "name": "Worst-Rack Availability",
+      "note": "",
+      "status": "met_expected",
+      "status_text": "Met",
+      "unit": "%",
+      "vendor_reported": null
+    }
+  ],
+  "incidents": [
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-08-31T04:34:49Z",
+      "engaged_min": 135.8,
+      "factor": 1.0,
+      "fault_class": "FC-PSU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-08-31T02:19:00Z",
+          "2026-08-31T05:03:41Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100017",
+      "linked_child": false,
+      "measured_min": 164.7,
+      "priority": "P3",
+      "rack": "A06",
+      "reopens": 0,
+      "rts": "2026-08-31T05:03:41Z",
+      "t0": "2026-08-31T02:19:00Z",
+      "tickets": [
+        "INC3100017"
+      ],
+      "unit": "PSU 5 in A06 power shelf 1",
+      "validated": true,
+      "vendor_restore_min": [
+        169.8667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-08-31T21:57:59Z",
+      "engaged_min": 103.9,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-08-31T20:14:07Z",
+          "2026-08-31T23:11:37Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100034",
+      "linked_child": false,
+      "measured_min": 177.5,
+      "priority": "P3",
+      "rack": "A23",
+      "reopens": 0,
+      "rts": "2026-08-31T23:11:37Z",
+      "t0": "2026-08-31T20:14:07Z",
+      "tickets": [
+        "INC3100034"
+      ],
+      "unit": "leaf-a12-r0:swp7",
+      "validated": true,
+      "vendor_restore_min": [
+        176.8833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-01T00:53:48Z",
+      "engaged_min": 59.3,
+      "factor": 1.0,
+      "fault_class": "FC-PSU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-08-31T23:54:28Z",
+          "2026-09-01T01:16:01Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100051",
+      "linked_child": false,
+      "measured_min": 81.5,
+      "priority": "P3",
+      "rack": "A19",
+      "reopens": 0,
+      "rts": "2026-09-01T01:16:01Z",
+      "t0": "2026-08-31T23:54:28Z",
+      "tickets": [
+        "INC3100051"
+      ],
+      "unit": "PSU 1 in A19 power shelf 5",
+      "validated": true,
+      "vendor_restore_min": [
+        79.8333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-01T06:12:53Z",
+      "engaged_min": 24.2,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-01T05:48:43Z",
+          "2026-09-01T09:51:27Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100068",
+      "linked_child": false,
+      "measured_min": 242.7,
+      "priority": "P2",
+      "rack": "A31",
+      "reopens": 0,
+      "rts": "2026-09-01T09:51:27Z",
+      "t0": "2026-09-01T05:48:43Z",
+      "tickets": [
+        "INC3100068"
+      ],
+      "unit": "a31-ct11",
+      "validated": true,
+      "vendor_restore_min": [
+        244.45
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-01T15:28:31Z",
+      "engaged_min": 14.7,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": false,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-01T15:13:51Z",
+          "2026-09-01T18:29:56Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100085",
+      "linked_child": true,
+      "measured_min": 196.1,
+      "priority": "P2",
+      "rack": "A31",
+      "reopens": 0,
+      "rts": "2026-09-01T18:29:56Z",
+      "t0": "2026-09-01T15:13:51Z",
+      "tickets": [
+        "INC3100085"
+      ],
+      "unit": "a31-ct06",
+      "validated": true,
+      "vendor_restore_min": [
+        192.1667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-02T13:48:47Z",
+      "engaged_min": 9.2,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-02T13:39:38Z",
+          "2026-09-02T16:39:19Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100102",
+      "linked_child": false,
+      "measured_min": 179.7,
+      "priority": "P2",
+      "rack": "A20",
+      "reopens": 0,
+      "rts": "2026-09-02T16:39:19Z",
+      "t0": "2026-09-02T13:39:38Z",
+      "tickets": [
+        "INC3100102"
+      ],
+      "unit": "a20-ct15",
+      "validated": true,
+      "vendor_restore_min": [
+        184.2167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-03T12:16:47Z",
+      "engaged_min": 12.2,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-03T12:04:38Z",
+          "2026-09-03T13:16:57Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100119",
+      "linked_child": false,
+      "measured_min": 72.3,
+      "priority": "P2",
+      "rack": "A13",
+      "reopens": 0,
+      "rts": "2026-09-03T13:16:57Z",
+      "t0": "2026-09-03T12:04:38Z",
+      "tickets": [
+        "INC3100119"
+      ],
+      "unit": "leaf-a07-r1:swp18",
+      "validated": true,
+      "vendor_restore_min": [
+        68.0333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-03T15:57:51Z",
+      "engaged_min": 98.1,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-03T14:19:46Z",
+          "2026-09-03T23:44:50Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100136",
+      "linked_child": false,
+      "measured_min": 565.1,
+      "priority": "P3",
+      "rack": "A13",
+      "reopens": 0,
+      "rts": "2026-09-03T23:44:50Z",
+      "t0": "2026-09-03T14:19:46Z",
+      "tickets": [
+        "INC3100136"
+      ],
+      "unit": "leaf-a07-r2:swp16",
+      "validated": true,
+      "vendor_restore_min": [
+        567.65
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-04T00:56:50Z",
+      "engaged_min": 21.4,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-04T00:35:24Z",
+          "2026-09-04T02:15:15Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100153",
+      "linked_child": false,
+      "measured_min": 99.8,
+      "priority": "P2",
+      "rack": "A05",
+      "reopens": 0,
+      "rts": "2026-09-04T02:15:15Z",
+      "t0": "2026-09-04T00:35:24Z",
+      "tickets": [
+        "INC3100153"
+      ],
+      "unit": "a05-ct18",
+      "validated": false,
+      "vendor_restore_min": [
+        98.9333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-04T07:35:23Z",
+      "engaged_min": 13.9,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-04T07:21:29Z",
+          "2026-09-04T10:51:56Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100170",
+      "linked_child": false,
+      "measured_min": 210.4,
+      "priority": "P2",
+      "rack": "A22",
+      "reopens": 0,
+      "rts": "2026-09-04T10:51:56Z",
+      "t0": "2026-09-04T07:21:29Z",
+      "tickets": [
+        "INC3100170"
+      ],
+      "unit": "a22-ct07",
+      "validated": true,
+      "vendor_restore_min": [
+        210.9167
+      ]
+    },
+    {
+      "early_failures": 1,
+      "engaged_at": "2026-09-04T09:51:59Z",
+      "engaged_min": 14.5,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": false,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-04T09:37:29Z",
+          "2026-09-04T20:36:40Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100187",
+      "linked_child": false,
+      "measured_min": 659.2,
+      "priority": "P2",
+      "rack": "A06",
+      "reopens": 0,
+      "rts": "2026-09-04T20:36:40Z",
+      "t0": "2026-09-04T09:37:29Z",
+      "tickets": [
+        "INC3100187",
+        "INC3100204"
+      ],
+      "unit": "a06-ct13",
+      "validated": true,
+      "vendor_restore_min": [
+        430.3333,
+        186.6167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-04T20:37:40Z",
+      "engaged_min": 14.5,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-04T20:23:10Z",
+          "2026-09-04T21:39:49Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100221",
+      "linked_child": false,
+      "measured_min": 76.7,
+      "priority": "P2",
+      "rack": "A03",
+      "reopens": 0,
+      "rts": "2026-09-04T21:39:49Z",
+      "t0": "2026-09-04T20:23:10Z",
+      "tickets": [
+        "INC3100221"
+      ],
+      "unit": "a03-ct14",
+      "validated": false,
+      "vendor_restore_min": [
+        74.3167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-04T23:49:03Z",
+      "engaged_min": 146.1,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-04T21:22:55Z",
+          "2026-09-05T01:04:59Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100238",
+      "linked_child": false,
+      "measured_min": 222.1,
+      "priority": "P3",
+      "rack": "A30",
+      "reopens": 0,
+      "rts": "2026-09-05T01:04:59Z",
+      "t0": "2026-09-04T21:22:55Z",
+      "tickets": [
+        "INC3100238"
+      ],
+      "unit": "leaf-a15-r0:swp33",
+      "validated": true,
+      "vendor_restore_min": [
+        222.2
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-04T22:14:48Z",
+      "engaged_min": 22.0,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-04T21:52:50Z",
+          "2026-09-05T01:11:09Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100255",
+      "linked_child": false,
+      "measured_min": 198.3,
+      "priority": "P2",
+      "rack": "A28",
+      "reopens": 0,
+      "rts": "2026-09-05T01:11:09Z",
+      "t0": "2026-09-04T21:52:50Z",
+      "tickets": [
+        "INC3100255"
+      ],
+      "unit": "a28-ct04",
+      "validated": true,
+      "vendor_restore_min": [
+        197.45
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-04T23:52:44Z",
+      "engaged_min": 19.7,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-04T23:33:03Z",
+          "2026-09-05T03:49:43Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100272",
+      "linked_child": false,
+      "measured_min": 256.7,
+      "priority": "P2",
+      "rack": "A29",
+      "reopens": 0,
+      "rts": "2026-09-05T03:49:43Z",
+      "t0": "2026-09-04T23:33:03Z",
+      "tickets": [
+        "INC3100272"
+      ],
+      "unit": "a29-ct03",
+      "validated": true,
+      "vendor_restore_min": [
+        250.6667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-05T11:43:38Z",
+      "engaged_min": 96.4,
+      "factor": 1.0,
+      "fault_class": "FC-PSU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-05T10:07:16Z",
+          "2026-09-05T12:08:54Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100289",
+      "linked_child": false,
+      "measured_min": 121.6,
+      "priority": "P3",
+      "rack": "A02",
+      "reopens": 0,
+      "rts": "2026-09-05T12:08:54Z",
+      "t0": "2026-09-05T10:07:16Z",
+      "tickets": [
+        "INC3100289"
+      ],
+      "unit": "PSU 3 in A02 power shelf 3",
+      "validated": true,
+      "vendor_restore_min": [
+        121.05
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-06T03:42:58Z",
+      "engaged_min": 33.6,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-06T03:09:22Z",
+          "2026-09-06T04:36:02Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100306",
+      "linked_child": false,
+      "measured_min": 86.7,
+      "priority": "P3",
+      "rack": "A29",
+      "reopens": 0,
+      "rts": "2026-09-06T04:36:02Z",
+      "t0": "2026-09-06T03:09:22Z",
+      "tickets": [
+        "INC3100306"
+      ],
+      "unit": "leaf-a15-r1:swp10",
+      "validated": true,
+      "vendor_restore_min": [
+        91.1667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-06T09:05:19Z",
+      "engaged_min": 12.7,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-06T08:52:39Z",
+          "2026-09-06T12:46:10Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100323",
+      "linked_child": false,
+      "measured_min": 233.5,
+      "priority": "P2",
+      "rack": "A09",
+      "reopens": 0,
+      "rts": "2026-09-06T12:46:10Z",
+      "t0": "2026-09-06T08:52:39Z",
+      "tickets": [
+        "INC3100323"
+      ],
+      "unit": "a09-ct10",
+      "validated": true,
+      "vendor_restore_min": [
+        233.8167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-07T07:36:23Z",
+      "engaged_min": 163.4,
+      "factor": 1.0,
+      "fault_class": "FC-PSU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-07T04:52:59Z",
+          "2026-09-07T07:59:21Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100340",
+      "linked_child": false,
+      "measured_min": 186.4,
+      "priority": "P3",
+      "rack": "A03",
+      "reopens": 0,
+      "rts": "2026-09-07T07:59:21Z",
+      "t0": "2026-09-07T04:52:59Z",
+      "tickets": [
+        "INC3100340"
+      ],
+      "unit": "PSU 3 in A03 power shelf 3",
+      "validated": true,
+      "vendor_restore_min": [
+        186.9667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-07T12:34:50Z",
+      "engaged_min": 17.5,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-07T12:17:22Z",
+          "2026-09-07T13:47:36Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100357",
+      "linked_child": false,
+      "measured_min": 90.2,
+      "priority": "P2",
+      "rack": "A08",
+      "reopens": 0,
+      "rts": "2026-09-07T13:47:36Z",
+      "t0": "2026-09-07T12:17:22Z",
+      "tickets": [
+        "INC3100357"
+      ],
+      "unit": "leaf-a04-r3:swp26",
+      "validated": true,
+      "vendor_restore_min": [
+        87.4333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-07T15:20:40Z",
+      "engaged_min": 16.8,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": false,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-07T15:03:53Z",
+          "2026-09-07T18:16:03Z"
+        ]
+      ],
+      "is_child": true,
+      "key": "INC3100374",
+      "linked_child": true,
+      "measured_min": 192.2,
+      "priority": "P2",
+      "rack": "A31",
+      "reopens": 0,
+      "rts": "2026-09-07T18:16:03Z",
+      "t0": "2026-09-07T15:03:53Z",
+      "tickets": [
+        "INC3100374"
+      ],
+      "unit": "a31-ct06",
+      "validated": true,
+      "vendor_restore_min": [
+        192.8667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-08T03:24:45Z",
+      "engaged_min": 20.6,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": false,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-08T03:04:06Z",
+          "2026-09-08T04:37:21Z"
+        ],
+        [
+          "2026-09-08T05:42:37Z",
+          "2026-09-08T16:42:24Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100391",
+      "linked_child": false,
+      "measured_min": 753.0,
+      "priority": "P2",
+      "rack": "A32",
+      "reopens": 1,
+      "rts": "2026-09-08T16:42:24Z",
+      "t0": "2026-09-08T03:04:06Z",
+      "tickets": [
+        "INC3100391",
+        "INC3100442"
+      ],
+      "unit": "leaf-a16-r0:swp33",
+      "validated": true,
+      "vendor_restore_min": [
+        94.15,
+        201.35
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-08T07:25:03Z",
+      "engaged_min": 38.4,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-08T06:46:41Z",
+          "2026-09-08T08:40:15Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100408",
+      "linked_child": false,
+      "measured_min": 113.6,
+      "priority": "P2",
+      "rack": "A14",
+      "reopens": 0,
+      "rts": "2026-09-08T08:40:15Z",
+      "t0": "2026-09-08T06:46:41Z",
+      "tickets": [
+        "INC3100408"
+      ],
+      "unit": "leaf-a07-r1:swp34",
+      "validated": true,
+      "vendor_restore_min": [
+        110.0
+      ]
+    },
+    {
+      "early_failures": 1,
+      "engaged_at": "2026-09-08T13:13:47Z",
+      "engaged_min": 12.1,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": false,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-08T13:01:44Z",
+          "2026-09-08T23:57:22Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100425",
+      "linked_child": false,
+      "measured_min": 655.6,
+      "priority": "P2",
+      "rack": "A26",
+      "reopens": 0,
+      "rts": "2026-09-08T23:57:22Z",
+      "t0": "2026-09-08T13:01:44Z",
+      "tickets": [
+        "INC3100425",
+        "INC3100476"
+      ],
+      "unit": "a26-ct16",
+      "validated": true,
+      "vendor_restore_min": [
+        424.9833,
+        192.85
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-08T15:35:28Z",
+      "engaged_min": 14.9,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-08T15:20:32Z",
+          "2026-09-08T16:33:03Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100459",
+      "linked_child": false,
+      "measured_min": 72.5,
+      "priority": "P2",
+      "rack": "A03",
+      "reopens": 0,
+      "rts": "2026-09-08T16:33:03Z",
+      "t0": "2026-09-08T15:20:32Z",
+      "tickets": [
+        "INC3100459"
+      ],
+      "unit": "leaf-a02-r2:swp11",
+      "validated": true,
+      "vendor_restore_min": [
+        72.7833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-09T21:23:27Z",
+      "engaged_min": 17.0,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-09T21:06:27Z",
+          "2026-09-10T01:10:58Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100493",
+      "linked_child": false,
+      "measured_min": 244.5,
+      "priority": "P2",
+      "rack": "A14",
+      "reopens": 0,
+      "rts": "2026-09-10T01:10:58Z",
+      "t0": "2026-09-09T21:06:27Z",
+      "tickets": [
+        "INC3100493"
+      ],
+      "unit": "a14-ct02",
+      "validated": true,
+      "vendor_restore_min": [
+        247.8167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-10T18:26:40Z",
+      "engaged_min": 24.9,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-10T18:01:45Z",
+          "2026-09-10T21:09:41Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100510",
+      "linked_child": false,
+      "measured_min": 187.9,
+      "priority": "P2",
+      "rack": "A15",
+      "reopens": 0,
+      "rts": "2026-09-10T21:09:41Z",
+      "t0": "2026-09-10T18:01:45Z",
+      "tickets": [
+        "INC3100510"
+      ],
+      "unit": "a15-ct07",
+      "validated": true,
+      "vendor_restore_min": [
+        186.6
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-11T10:38:10Z",
+      "engaged_min": 9.1,
+      "factor": 1.0,
+      "fault_class": "FC-LEAK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-11T10:29:02Z",
+          "2026-09-11T14:42:16Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100527",
+      "linked_child": false,
+      "measured_min": 253.2,
+      "priority": "P1",
+      "rack": "A25",
+      "reopens": 0,
+      "rts": "2026-09-11T14:42:16Z",
+      "t0": "2026-09-11T10:29:02Z",
+      "tickets": [
+        "INC3100527"
+      ],
+      "unit": "a25-ct12",
+      "validated": true,
+      "vendor_restore_min": [
+        255.2333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-11T16:24:24Z",
+      "engaged_min": 23.3,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": false,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-11T16:01:07Z",
+          "2026-09-11T19:13:46Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100544",
+      "linked_child": true,
+      "measured_min": 192.7,
+      "priority": "P2",
+      "rack": "A31",
+      "reopens": 0,
+      "rts": "2026-09-11T19:13:46Z",
+      "t0": "2026-09-11T16:01:07Z",
+      "tickets": [
+        "INC3100544"
+      ],
+      "unit": "a31-ct17",
+      "validated": true,
+      "vendor_restore_min": [
+        193.1667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-11T16:24:24Z",
+      "engaged_min": 6.4,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-11T16:17:59Z",
+          "2026-09-11T17:50:38Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100561",
+      "linked_child": false,
+      "measured_min": 92.7,
+      "priority": "P2",
+      "rack": "A25",
+      "reopens": 0,
+      "rts": "2026-09-11T17:50:38Z",
+      "t0": "2026-09-11T16:17:59Z",
+      "tickets": [
+        "INC3100561"
+      ],
+      "unit": "leaf-a13-r3:swp10",
+      "validated": true,
+      "vendor_restore_min": [
+        95.6833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-11T22:14:19Z",
+      "engaged_min": 10.5,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-11T22:03:51Z",
+          "2026-09-11T23:21:49Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100578",
+      "linked_child": false,
+      "measured_min": 78.0,
+      "priority": "P2",
+      "rack": "A21",
+      "reopens": 0,
+      "rts": "2026-09-11T23:21:49Z",
+      "t0": "2026-09-11T22:03:51Z",
+      "tickets": [
+        "INC3100578"
+      ],
+      "unit": "leaf-a11-r3:swp2",
+      "validated": true,
+      "vendor_restore_min": [
+        78.5833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-12T05:05:41Z",
+      "engaged_min": 5.8,
+      "factor": 1.0,
+      "fault_class": "FC-LEAK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-12T04:59:53Z",
+          "2026-09-12T08:44:23Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100595",
+      "linked_child": false,
+      "measured_min": 224.5,
+      "priority": "P1",
+      "rack": "A29",
+      "reopens": 0,
+      "rts": "2026-09-12T08:44:23Z",
+      "t0": "2026-09-12T04:59:53Z",
+      "tickets": [
+        "INC3100595"
+      ],
+      "unit": "a29-ct04",
+      "validated": true,
+      "vendor_restore_min": [
+        227.6833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-13T03:28:10Z",
+      "engaged_min": 22.1,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": false,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-13T03:06:06Z",
+          "2026-09-13T06:33:57Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100612",
+      "linked_child": true,
+      "measured_min": 207.8,
+      "priority": "P2",
+      "rack": "A14",
+      "reopens": 0,
+      "rts": "2026-09-13T06:33:57Z",
+      "t0": "2026-09-13T03:06:06Z",
+      "tickets": [
+        "INC3100612"
+      ],
+      "unit": "a14-ct07",
+      "validated": true,
+      "vendor_restore_min": [
+        205.6833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-13T04:11:37Z",
+      "engaged_min": 20.9,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-13T03:50:40Z",
+          "2026-09-13T08:13:20Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100629",
+      "linked_child": false,
+      "measured_min": 262.7,
+      "priority": "P2",
+      "rack": "A05",
+      "reopens": 0,
+      "rts": "2026-09-13T08:13:20Z",
+      "t0": "2026-09-13T03:50:40Z",
+      "tickets": [
+        "INC3100629"
+      ],
+      "unit": "a05-ct15",
+      "validated": true,
+      "vendor_restore_min": [
+        266.1833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-13T07:25:35Z",
+      "engaged_min": 12.5,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-13T07:13:04Z",
+          "2026-09-13T11:08:11Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100646",
+      "linked_child": false,
+      "measured_min": 235.1,
+      "priority": "P2",
+      "rack": "A31",
+      "reopens": 0,
+      "rts": "2026-09-13T11:08:11Z",
+      "t0": "2026-09-13T07:13:04Z",
+      "tickets": [
+        "INC3100646"
+      ],
+      "unit": "a31-ct15",
+      "validated": true,
+      "vendor_restore_min": [
+        235.1833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-13T09:04:42Z",
+      "engaged_min": 53.9,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-13T08:10:51Z",
+          "2026-09-13T12:05:41Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100663",
+      "linked_child": false,
+      "measured_min": 234.8,
+      "priority": "P2",
+      "rack": "A23",
+      "reopens": 0,
+      "rts": "2026-09-13T12:05:41Z",
+      "t0": "2026-09-13T08:10:51Z",
+      "tickets": [
+        "INC3100663"
+      ],
+      "unit": "a23-ct04",
+      "validated": true,
+      "vendor_restore_min": [
+        233.1167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-13T11:01:28Z",
+      "engaged_min": 17.1,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-13T10:44:21Z",
+          "2026-09-13T11:55:13Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100680",
+      "linked_child": false,
+      "measured_min": 70.9,
+      "priority": "P2",
+      "rack": "A03",
+      "reopens": 0,
+      "rts": "2026-09-13T11:55:13Z",
+      "t0": "2026-09-13T10:44:21Z",
+      "tickets": [
+        "INC3100680"
+      ],
+      "unit": "leaf-a02-r3:swp8",
+      "validated": true,
+      "vendor_restore_min": [
+        68.2333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-13T14:31:53Z",
+      "engaged_min": 16.4,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-13T14:15:31Z",
+          "2026-09-13T17:36:21Z"
+        ]
+      ],
+      "is_child": true,
+      "key": "INC3100697",
+      "linked_child": false,
+      "measured_min": 200.8,
+      "priority": "P2",
+      "rack": "A31",
+      "reopens": 0,
+      "rts": "2026-09-13T17:36:21Z",
+      "t0": "2026-09-13T14:15:31Z",
+      "tickets": [
+        "INC3100697"
+      ],
+      "unit": "a31-ct06",
+      "validated": true,
+      "vendor_restore_min": [
+        195.8667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-14T02:26:52Z",
+      "engaged_min": 11.7,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-14T02:15:12Z",
+          "2026-09-14T03:23:58Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100714",
+      "linked_child": false,
+      "measured_min": 68.8,
+      "priority": "P2",
+      "rack": "A20",
+      "reopens": 0,
+      "rts": "2026-09-14T03:23:58Z",
+      "t0": "2026-09-14T02:15:12Z",
+      "tickets": [
+        "INC3100714"
+      ],
+      "unit": "leaf-a10-r0:swp21",
+      "validated": true,
+      "vendor_restore_min": [
+        68.3167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-14T10:04:45Z",
+      "engaged_min": 23.8,
+      "factor": 1.0,
+      "fault_class": "FC-CDU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-14T09:40:57Z",
+          "2026-09-14T14:04:36Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100731",
+      "linked_child": false,
+      "measured_min": 263.6,
+      "priority": "P2",
+      "rack": "A06",
+      "reopens": 0,
+      "rts": "2026-09-14T14:04:36Z",
+      "t0": "2026-09-14T09:40:57Z",
+      "tickets": [
+        "INC3100731"
+      ],
+      "unit": "CDU-A1 pump 2",
+      "validated": true,
+      "vendor_restore_min": [
+        258.4833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-14T13:59:48Z",
+      "engaged_min": 13.9,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-14T13:45:51Z",
+          "2026-09-14T17:34:19Z"
+        ]
+      ],
+      "is_child": true,
+      "key": "INC3100748",
+      "linked_child": false,
+      "measured_min": 228.5,
+      "priority": "P2",
+      "rack": "A31",
+      "reopens": 0,
+      "rts": "2026-09-14T17:34:19Z",
+      "t0": "2026-09-14T13:45:51Z",
+      "tickets": [
+        "INC3100748"
+      ],
+      "unit": "a31-ct17",
+      "validated": true,
+      "vendor_restore_min": [
+        225.1833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-14T18:44:45Z",
+      "engaged_min": 14.8,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-14T18:30:00Z",
+          "2026-09-14T19:40:21Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100765",
+      "linked_child": false,
+      "measured_min": 70.3,
+      "priority": "P2",
+      "rack": "A26",
+      "reopens": 0,
+      "rts": "2026-09-14T19:40:21Z",
+      "t0": "2026-09-14T18:30:00Z",
+      "tickets": [
+        "INC3100765"
+      ],
+      "unit": "leaf-a13-r1:swp35",
+      "validated": true,
+      "vendor_restore_min": [
+        67.15
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-15T09:45:22Z",
+      "engaged_min": 13.5,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-15T09:31:51Z",
+          "2026-09-15T13:29:34Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100782",
+      "linked_child": false,
+      "measured_min": 237.7,
+      "priority": "P2",
+      "rack": "A07",
+      "reopens": 0,
+      "rts": "2026-09-15T13:29:34Z",
+      "t0": "2026-09-15T09:31:51Z",
+      "tickets": [
+        "INC3100782"
+      ],
+      "unit": "a07-ct04",
+      "validated": true,
+      "vendor_restore_min": [
+        238.7167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-15T14:41:41Z",
+      "engaged_min": 113.5,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-15T12:48:14Z",
+          "2026-09-15T22:10:22Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100799",
+      "linked_child": false,
+      "measured_min": 562.1,
+      "priority": "P2",
+      "rack": "A01",
+      "reopens": 0,
+      "rts": "2026-09-15T22:10:22Z",
+      "t0": "2026-09-15T12:48:14Z",
+      "tickets": [
+        "INC3100799"
+      ],
+      "unit": "a01-ct05",
+      "validated": true,
+      "vendor_restore_min": [
+        463.05
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-15T18:05:35Z",
+      "engaged_min": 7.7,
+      "factor": 1.0,
+      "fault_class": "FC-LEAK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-15T17:57:56Z",
+          "2026-09-15T22:01:09Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100816",
+      "linked_child": false,
+      "measured_min": 243.2,
+      "priority": "P1",
+      "rack": "A24",
+      "reopens": 0,
+      "rts": "2026-09-15T22:01:09Z",
+      "t0": "2026-09-15T17:57:56Z",
+      "tickets": [
+        "INC3100816"
+      ],
+      "unit": "a24-ct13",
+      "validated": true,
+      "vendor_restore_min": [
+        243.05
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-15T20:16:42Z",
+      "engaged_min": 10.4,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-15T20:06:17Z",
+          "2026-09-15T22:58:53Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100833",
+      "linked_child": false,
+      "measured_min": 172.6,
+      "priority": "P2",
+      "rack": "A16",
+      "reopens": 0,
+      "rts": "2026-09-15T22:58:53Z",
+      "t0": "2026-09-15T20:06:17Z",
+      "tickets": [
+        "INC3100833"
+      ],
+      "unit": "a16-ct01",
+      "validated": true,
+      "vendor_restore_min": [
+        171.8833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-15T20:16:42Z",
+      "engaged_min": 2.0,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-15T20:14:44Z",
+          "2026-09-15T23:48:28Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100850",
+      "linked_child": false,
+      "measured_min": 213.7,
+      "priority": "P2",
+      "rack": "A14",
+      "reopens": 0,
+      "rts": "2026-09-15T23:48:28Z",
+      "t0": "2026-09-15T20:14:44Z",
+      "tickets": [
+        "INC3100850"
+      ],
+      "unit": "a14-ct14",
+      "validated": true,
+      "vendor_restore_min": [
+        210.5167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-15T21:45:30Z",
+      "engaged_min": 13.0,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-15T21:32:29Z",
+          "2026-09-16T00:53:59Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100867",
+      "linked_child": false,
+      "measured_min": 201.5,
+      "priority": "P2",
+      "rack": "A16",
+      "reopens": 0,
+      "rts": "2026-09-16T00:53:59Z",
+      "t0": "2026-09-15T21:32:29Z",
+      "tickets": [
+        "INC3100867"
+      ],
+      "unit": "a16-ct14",
+      "validated": true,
+      "vendor_restore_min": [
+        199.2667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-16T04:44:35Z",
+      "engaged_min": 9.3,
+      "factor": 1.0,
+      "fault_class": "FC-CDU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-16T04:35:17Z",
+          "2026-09-16T07:26:55Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100884",
+      "linked_child": false,
+      "measured_min": 171.6,
+      "priority": "P2",
+      "rack": "A15",
+      "reopens": 0,
+      "rts": "2026-09-16T07:26:55Z",
+      "t0": "2026-09-16T04:35:17Z",
+      "tickets": [
+        "INC3100884"
+      ],
+      "unit": "CDU-A2 pump 2",
+      "validated": true,
+      "vendor_restore_min": [
+        175.5167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-17T08:58:08Z",
+      "engaged_min": 22.5,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-17T08:35:39Z",
+          "2026-09-17T13:03:15Z"
+        ]
+      ],
+      "is_child": true,
+      "key": "INC3100901",
+      "linked_child": false,
+      "measured_min": 267.6,
+      "priority": "P2",
+      "rack": "A14",
+      "reopens": 0,
+      "rts": "2026-09-17T13:03:15Z",
+      "t0": "2026-09-17T08:35:39Z",
+      "tickets": [
+        "INC3100901"
+      ],
+      "unit": "a14-ct07",
+      "validated": true,
+      "vendor_restore_min": [
+        263.2
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-17T11:04:42Z",
+      "engaged_min": 17.1,
+      "factor": 1.0,
+      "fault_class": "FC-SHELF",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-17T10:47:35Z",
+          "2026-09-17T11:43:00Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100918",
+      "linked_child": false,
+      "measured_min": 55.4,
+      "priority": "P2",
+      "rack": "A23",
+      "reopens": 0,
+      "rts": "2026-09-17T11:43:00Z",
+      "t0": "2026-09-17T10:47:35Z",
+      "tickets": [
+        "INC3100918"
+      ],
+      "unit": "A23 power shelf 7",
+      "validated": true,
+      "vendor_restore_min": [
+        55.2333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-17T13:30:18Z",
+      "engaged_min": 17.8,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-17T13:12:31Z",
+          "2026-09-17T17:26:09Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100935",
+      "linked_child": false,
+      "measured_min": 253.6,
+      "priority": "P2",
+      "rack": "A03",
+      "reopens": 0,
+      "rts": "2026-09-17T17:26:09Z",
+      "t0": "2026-09-17T13:12:31Z",
+      "tickets": [
+        "INC3100935"
+      ],
+      "unit": "a03-ct02",
+      "validated": true,
+      "vendor_restore_min": [
+        253.95
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-20T16:54:22Z",
+      "engaged_min": 24.7,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-20T16:29:42Z",
+          "2026-09-20T20:04:57Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100952",
+      "linked_child": false,
+      "measured_min": 215.2,
+      "priority": "P2",
+      "rack": "A30",
+      "reopens": 0,
+      "rts": "2026-09-20T20:04:57Z",
+      "t0": "2026-09-20T16:29:42Z",
+      "tickets": [
+        "INC3100952"
+      ],
+      "unit": "a30-ct06",
+      "validated": true,
+      "vendor_restore_min": [
+        214.5833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-20T21:07:25Z",
+      "engaged_min": 64.7,
+      "factor": 1.0,
+      "fault_class": "FC-PSU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-20T20:02:44Z",
+          "2026-09-20T21:29:57Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100969",
+      "linked_child": false,
+      "measured_min": 87.2,
+      "priority": "P3",
+      "rack": "A06",
+      "reopens": 0,
+      "rts": "2026-09-20T21:29:57Z",
+      "t0": "2026-09-20T20:02:44Z",
+      "tickets": [
+        "INC3100969"
+      ],
+      "unit": "PSU 1 in A06 power shelf 8",
+      "validated": true,
+      "vendor_restore_min": [
+        89.4167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-21T01:09:48Z",
+      "engaged_min": 15.7,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-21T00:54:07Z",
+          "2026-09-21T04:05:37Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3100986",
+      "linked_child": false,
+      "measured_min": 191.5,
+      "priority": "P2",
+      "rack": "A13",
+      "reopens": 0,
+      "rts": "2026-09-21T04:05:37Z",
+      "t0": "2026-09-21T00:54:07Z",
+      "tickets": [
+        "INC3100986"
+      ],
+      "unit": "a13-ct10",
+      "validated": true,
+      "vendor_restore_min": [
+        189.5
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-21T05:26:28Z",
+      "engaged_min": 11.8,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-21T05:14:39Z",
+          "2026-09-21T09:21:33Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101003",
+      "linked_child": false,
+      "measured_min": 246.9,
+      "priority": "P2",
+      "rack": "A10",
+      "reopens": 0,
+      "rts": "2026-09-21T09:21:33Z",
+      "t0": "2026-09-21T05:14:39Z",
+      "tickets": [
+        "INC3101003"
+      ],
+      "unit": "a10-ct13",
+      "validated": true,
+      "vendor_restore_min": [
+        250.8833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-22T01:06:35Z",
+      "engaged_min": 19.4,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-22T00:47:12Z",
+          "2026-09-22T05:00:15Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101020",
+      "linked_child": false,
+      "measured_min": 253.1,
+      "priority": "P2",
+      "rack": "A22",
+      "reopens": 0,
+      "rts": "2026-09-22T05:00:15Z",
+      "t0": "2026-09-22T00:47:12Z",
+      "tickets": [
+        "INC3101020"
+      ],
+      "unit": "a22-ct02",
+      "validated": true,
+      "vendor_restore_min": [
+        254.0167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-22T21:44:54Z",
+      "engaged_min": 151.1,
+      "factor": 1.0,
+      "fault_class": "FC-PSU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-22T19:13:49Z",
+          "2026-09-22T22:02:58Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101037",
+      "linked_child": false,
+      "measured_min": 169.2,
+      "priority": "P3",
+      "rack": "A04",
+      "reopens": 0,
+      "rts": "2026-09-22T22:02:58Z",
+      "t0": "2026-09-22T19:13:49Z",
+      "tickets": [
+        "INC3101037"
+      ],
+      "unit": "PSU 1 in A04 power shelf 7",
+      "validated": true,
+      "vendor_restore_min": [
+        174.1167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-22T21:35:32Z",
+      "engaged_min": 32.2,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-22T21:03:17Z",
+          "2026-09-23T00:54:59Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101054",
+      "linked_child": false,
+      "measured_min": 231.7,
+      "priority": "P2",
+      "rack": "A10",
+      "reopens": 0,
+      "rts": "2026-09-23T00:54:59Z",
+      "t0": "2026-09-22T21:03:17Z",
+      "tickets": [
+        "INC3101054"
+      ],
+      "unit": "a10-ct12",
+      "validated": true,
+      "vendor_restore_min": [
+        235.3
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-23T10:25:25Z",
+      "engaged_min": 392.6,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-23T03:52:52Z",
+          "2026-09-23T11:34:27Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101071",
+      "linked_child": false,
+      "measured_min": 461.6,
+      "priority": "P3",
+      "rack": "A17",
+      "reopens": 0,
+      "rts": "2026-09-23T11:34:27Z",
+      "t0": "2026-09-23T03:52:52Z",
+      "tickets": [
+        "INC3101071"
+      ],
+      "unit": "leaf-a09-r2:swp17",
+      "validated": true,
+      "vendor_restore_min": [
+        461.8
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-23T07:15:04Z",
+      "engaged_min": 23.3,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-23T06:51:44Z",
+          "2026-09-23T10:29:09Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101088",
+      "linked_child": false,
+      "measured_min": 217.4,
+      "priority": "P2",
+      "rack": "A19",
+      "reopens": 0,
+      "rts": "2026-09-23T10:29:09Z",
+      "t0": "2026-09-23T06:51:44Z",
+      "tickets": [
+        "INC3101088"
+      ],
+      "unit": "a19-ct15",
+      "validated": true,
+      "vendor_restore_min": [
+        216.0333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-23T10:37:56Z",
+      "engaged_min": 151.9,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-23T08:06:02Z",
+          "2026-09-23T11:58:42Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101105",
+      "linked_child": false,
+      "measured_min": 232.7,
+      "priority": "P3",
+      "rack": "A10",
+      "reopens": 0,
+      "rts": "2026-09-23T11:58:42Z",
+      "t0": "2026-09-23T08:06:02Z",
+      "tickets": [
+        "INC3101105"
+      ],
+      "unit": "leaf-a05-r3:swp28",
+      "validated": true,
+      "vendor_restore_min": [
+        230.6
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-23T12:49:46Z",
+      "engaged_min": 15.9,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-23T12:33:52Z",
+          "2026-09-23T16:12:55Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101122",
+      "linked_child": false,
+      "measured_min": 219.1,
+      "priority": "P2",
+      "rack": "A13",
+      "reopens": 0,
+      "rts": "2026-09-23T16:12:55Z",
+      "t0": "2026-09-23T12:33:52Z",
+      "tickets": [
+        "INC3101122"
+      ],
+      "unit": "a13-ct01",
+      "validated": true,
+      "vendor_restore_min": [
+        215.9333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-23T23:59:17Z",
+      "engaged_min": 53.8,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-23T23:05:32Z",
+          "2026-09-24T05:57:07Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101139",
+      "linked_child": false,
+      "measured_min": 411.6,
+      "priority": "P3",
+      "rack": "A26",
+      "reopens": 0,
+      "rts": "2026-09-24T05:57:07Z",
+      "t0": "2026-09-23T23:05:32Z",
+      "tickets": [
+        "INC3101139"
+      ],
+      "unit": "leaf-a13-r0:swp32",
+      "validated": true,
+      "vendor_restore_min": [
+        410.5333
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-24T04:38:00Z",
+      "engaged_min": 18.0,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-24T04:20:02Z",
+          "2026-09-24T05:51:31Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101156",
+      "linked_child": false,
+      "measured_min": 91.5,
+      "priority": "P2",
+      "rack": "A23",
+      "reopens": 0,
+      "rts": "2026-09-24T05:51:31Z",
+      "t0": "2026-09-24T04:20:02Z",
+      "tickets": [
+        "INC3101156"
+      ],
+      "unit": "leaf-a12-r0:swp2",
+      "validated": true,
+      "vendor_restore_min": [
+        91.0833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-24T07:24:07Z",
+      "engaged_min": 156.7,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-24T04:47:24Z",
+          "2026-09-24T08:28:15Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101173",
+      "linked_child": false,
+      "measured_min": 220.8,
+      "priority": "P3",
+      "rack": "A18",
+      "reopens": 0,
+      "rts": "2026-09-24T08:28:15Z",
+      "t0": "2026-09-24T04:47:24Z",
+      "tickets": [
+        "INC3101173"
+      ],
+      "unit": "leaf-a09-r0:swp21",
+      "validated": true,
+      "vendor_restore_min": [
+        220.7167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-24T13:40:28Z",
+      "engaged_min": 123.2,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-24T11:37:14Z",
+          "2026-09-24T14:58:27Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101190",
+      "linked_child": false,
+      "measured_min": 201.2,
+      "priority": "P3",
+      "rack": "A02",
+      "reopens": 0,
+      "rts": "2026-09-24T14:58:27Z",
+      "t0": "2026-09-24T11:37:14Z",
+      "tickets": [
+        "INC3101190"
+      ],
+      "unit": "leaf-a01-r2:swp31",
+      "validated": true,
+      "vendor_restore_min": [
+        207.0167
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-24T17:17:18Z",
+      "engaged_min": 20.2,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-24T16:57:06Z",
+          "2026-09-24T20:49:45Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101207",
+      "linked_child": false,
+      "measured_min": 232.7,
+      "priority": "P2",
+      "rack": "A01",
+      "reopens": 0,
+      "rts": "2026-09-24T20:49:45Z",
+      "t0": "2026-09-24T16:57:06Z",
+      "tickets": [
+        "INC3101207"
+      ],
+      "unit": "a01-ct10",
+      "validated": true,
+      "vendor_restore_min": [
+        233.2833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-25T01:01:19Z",
+      "engaged_min": 17.8,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-25T00:43:32Z",
+          "2026-09-25T04:36:53Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101224",
+      "linked_child": false,
+      "measured_min": 233.3,
+      "priority": "P2",
+      "rack": "A30",
+      "reopens": 0,
+      "rts": "2026-09-25T04:36:53Z",
+      "t0": "2026-09-25T00:43:32Z",
+      "tickets": [
+        "INC3101224"
+      ],
+      "unit": "a30-ct08",
+      "validated": true,
+      "vendor_restore_min": [
+        229.6
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-25T08:14:46Z",
+      "engaged_min": 4.9,
+      "factor": 1.0,
+      "fault_class": "FC-SWITCH",
+      "first_time_fix": true,
+      "gpus": 72,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-25T08:09:50Z",
+          "2026-09-25T11:25:26Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101241",
+      "linked_child": false,
+      "measured_min": 195.6,
+      "priority": "P1",
+      "rack": "A15",
+      "reopens": 0,
+      "rts": "2026-09-25T11:25:26Z",
+      "t0": "2026-09-25T08:09:50Z",
+      "tickets": [
+        "INC3101241"
+      ],
+      "unit": "A15",
+      "validated": true,
+      "vendor_restore_min": [
+        198.3833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-25T18:31:14Z",
+      "engaged_min": 131.3,
+      "factor": 0.25,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-25T16:19:54Z",
+          "2026-09-25T19:44:52Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101258",
+      "linked_child": false,
+      "measured_min": 205.0,
+      "priority": "P3",
+      "rack": "A26",
+      "reopens": 0,
+      "rts": "2026-09-25T19:44:52Z",
+      "t0": "2026-09-25T16:19:54Z",
+      "tickets": [
+        "INC3101258"
+      ],
+      "unit": "leaf-a13-r1:swp28",
+      "validated": true,
+      "vendor_restore_min": [
+        210.7833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-26T00:25:16Z",
+      "engaged_min": 159.2,
+      "factor": 1.0,
+      "fault_class": "FC-PSU",
+      "first_time_fix": true,
+      "gpus": 0,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-25T21:46:01Z",
+          "2026-09-26T00:46:38Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101275",
+      "linked_child": false,
+      "measured_min": 180.6,
+      "priority": "P3",
+      "rack": "A17",
+      "reopens": 0,
+      "rts": "2026-09-26T00:46:38Z",
+      "t0": "2026-09-25T21:46:01Z",
+      "tickets": [
+        "INC3101275"
+      ],
+      "unit": "PSU 5 in A17 power shelf 4",
+      "validated": true,
+      "vendor_restore_min": [
+        183.6833
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-25T22:53:05Z",
+      "engaged_min": 18.2,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-25T22:34:52Z",
+          "2026-09-26T02:35:06Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101292",
+      "linked_child": false,
+      "measured_min": 240.2,
+      "priority": "P2",
+      "rack": "A01",
+      "reopens": 0,
+      "rts": "2026-09-26T02:35:06Z",
+      "t0": "2026-09-25T22:34:52Z",
+      "tickets": [
+        "INC3101292"
+      ],
+      "unit": "a01-ct03",
+      "validated": true,
+      "vendor_restore_min": [
+        238.0667
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-26T00:46:19Z",
+      "engaged_min": 50.2,
+      "factor": 1.0,
+      "fault_class": "FC-GPU",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": true,
+      "intervals": [
+        [
+          "2026-09-25T23:56:04Z",
+          "2026-09-26T04:26:31Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101309",
+      "linked_child": false,
+      "measured_min": 270.4,
+      "priority": "P2",
+      "rack": "A20",
+      "reopens": 0,
+      "rts": "2026-09-26T04:26:31Z",
+      "t0": "2026-09-25T23:56:04Z",
+      "tickets": [
+        "INC3101309"
+      ],
+      "unit": "a20-ct07",
+      "validated": true,
+      "vendor_restore_min": [
+        269.75
+      ]
+    },
+    {
+      "early_failures": 0,
+      "engaged_at": "2026-09-26T04:33:50Z",
+      "engaged_min": 20.3,
+      "factor": 1.0,
+      "fault_class": "FC-LINK",
+      "first_time_fix": true,
+      "gpus": 4,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-26T04:13:31Z",
+          "2026-09-26T05:32:26Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3101326",
+      "linked_child": false,
+      "measured_min": 78.9,
+      "priority": "P2",
+      "rack": "A29",
+      "reopens": 0,
+      "rts": "2026-09-26T05:32:26Z",
+      "t0": "2026-09-26T04:13:31Z",
+      "tickets": [
+        "INC3101326"
+      ],
+      "unit": "leaf-a15-r0:swp17",
+      "validated": true,
+      "vendor_restore_min": [
+        78.7167
+      ]
+    }
+  ],
+  "km": [
+    {
+      "actual": 90.741,
+      "detail": "49 of 54 P2 incidents with a badge-verified technician within 30 min",
+      "direction": "higher_is_better",
+      "id": "KM-01",
+      "met": false,
+      "name": "P2 Engaged On-Site Within 30 Minutes",
+      "target": 95.0,
+      "unit": "%"
+    },
+    {
+      "actual": 100.0,
+      "detail": "3 of 3 leaks contained within 60 minutes",
+      "direction": "higher_is_better",
+      "id": "KM-02",
+      "met": true,
+      "name": "P1 Containment Within 60 Minutes (leak and safety incidents)",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": 94.118,
+      "detail": "16 of 17 P3 incidents with a badge-verified technician within 240 min",
+      "direction": "higher_is_better",
+      "id": "KM-03",
+      "met": false,
+      "name": "P3 Engaged On-Site Within 4 Hours",
+      "target": 95.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "higher_is_better",
+      "id": "KM-04",
+      "met": null,
+      "name": "P4 Completed Within 5 Days",
+      "target": 90.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "higher_is_better",
+      "id": "KM-05",
+      "met": null,
+      "name": "Incident Update Cadence Adherence",
+      "target": 95.0,
+      "unit": "%"
+    },
+    {
+      "actual": 88.889,
+      "detail": "32 of 36 counted spares classes at or above minimum",
+      "direction": "higher_is_better",
+      "id": "KM-06",
+      "met": false,
+      "name": "Spares at or Above Minimum Stock (by FRU class, daily)",
+      "target": 98.0,
+      "unit": "%"
+    },
+    {
+      "actual": 97.222,
+      "detail": "35 of 36 cycle counts matched the ledger",
+      "direction": "higher_is_better",
+      "id": "KM-07",
+      "met": false,
+      "name": "Spares Cycle Count Accuracy",
+      "target": 99.0,
+      "unit": "%"
+    },
+    {
+      "actual": 100.0,
+      "detail": "57 of 57 failed parts shipped to the OEM within 5 business days",
+      "direction": "higher_is_better",
+      "id": "KM-08",
+      "met": true,
+      "name": "RMA Shipped to OEM Within 5 Business Days",
+      "target": 95.0,
+      "unit": "%"
+    },
+    {
+      "actual": 0.0,
+      "detail": "1 lemon unit(s) not escalated",
+      "direction": "higher_is_better",
+      "id": "KM-09",
+      "met": false,
+      "name": "Lemon Units Escalated Within 2 Business Days",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": 66.667,
+      "detail": "36 of 54 firmware changes covered by an approved change record",
+      "direction": "higher_is_better",
+      "id": "KM-10",
+      "met": false,
+      "name": "Change Compliance (all changes CAB-approved and in window)",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "higher_is_better",
+      "id": "KM-11",
+      "met": null,
+      "name": "P1 Final RCA Delivered Within 5 Business Days",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "higher_is_better",
+      "id": "KM-12",
+      "met": null,
+      "name": "Corrective Actions Closed On Time",
+      "target": 90.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "lower_is_better",
+      "id": "KM-13",
+      "met": null,
+      "name": "Backlog Aging (P3 and P4 tickets open more than 14 days)",
+      "target": 5.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "higher_is_better",
+      "id": "KM-14",
+      "met": null,
+      "name": "Ticket Data Completeness (required fields populated at closure)",
+      "target": 98.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "higher_is_better",
+      "id": "KM-15",
+      "met": null,
+      "name": "Training and Certification Currency",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": 1.0,
+      "detail": "leaf-a16-r0:swp33",
+      "direction": "lower_is_better",
+      "id": "KM-16",
+      "met": false,
+      "name": "Chronic Units (more than 12 Supplier-attributable down-hours in a rolling 30 days)",
+      "target": 0,
+      "unit": " units"
+    },
+    {
+      "actual": 6.5,
+      "detail": "6.5 hours running without power or cooling redundancy",
+      "direction": "lower_is_better",
+      "id": "KM-17",
+      "met": true,
+      "name": "Redundancy Exposure (hours per month running without power or cooling redundancy)",
+      "target": 24,
+      "unit": " hrs"
+    },
+    {
+      "actual": 4.0,
+      "detail": "3 Tickets of Record reopened under TR-1 or TR-2",
+      "direction": "lower_is_better",
+      "id": "KM-18",
+      "met": false,
+      "name": "Ticket Reopen Rate (TR-1 early failures and TR-2 reopens)",
+      "target": 3.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "Not measured in the demo data",
+      "direction": "lower_is_better",
+      "id": "KM-19",
+      "met": null,
+      "name": "Manual Data Overrides (manually entered serials and audited timestamp edits)",
+      "target": 1.0,
+      "unit": "%"
+    }
+  ],
+  "severity_log": [
+    {
+      "action": "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period.",
+      "at": "2026-09-04T02:17:33Z",
+      "description": "a05-ct18 returned to service with 5 of 5 required 'Compute tray' checks missing (burn_in_1h, dcgm_diag_r3, leak_hold_30m, nccl_allreduce_rack, nvlink_domain); the ticket still claims validation passed.",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-001",
+      "tickets": [
+        "INC3100153"
+      ],
+      "title": "Returned to service without validation",
+      "unit": "a05-ct18"
+    },
+    {
+      "action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
+      "at": "2026-09-04T09:37:29Z",
+      "description": "a06-ct13 failed again 41 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-1 (early failure) it is one Ticket of Record: measured restoration 11.0 hrs against the 8-hour target (vendor tickets show 7.2 and 3.1 hrs).",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-002",
+      "tickets": [
+        "INC3100187",
+        "INC3100204"
+      ],
+      "title": "Ticket split to restart the clock",
+      "unit": "a06-ct13"
+    },
+    {
+      "action": "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
+      "at": "2026-09-04T09:37:29Z",
+      "description": "Overrun 37% past target \u2192 S3; 12 GPU-hours lost beyond target (4 GPUs) \u2192 S4; AGG-REPEAT: +1 level (Same CSL or same Service Unit breached within the previous 30 days); AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))",
+      "kind": "Restore breach",
+      "level": "S1",
+      "ref": "INC3100187",
+      "tickets": [
+        "INC3100187",
+        "INC3100204"
+      ],
+      "title": "P2 restore 11.0 hrs vs 8-hr target",
+      "unit": "a06-ct13"
+    },
+    {
+      "action": "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period.",
+      "at": "2026-09-04T21:42:00Z",
+      "description": "a03-ct14 returned to service with 5 of 5 required 'Compute tray' checks missing (burn_in_1h, dcgm_diag_r3, leak_hold_30m, nccl_allreduce_rack, nvlink_domain); the ticket still claims validation passed.",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-003",
+      "tickets": [
+        "INC3100221"
+      ],
+      "title": "Returned to service without validation",
+      "unit": "a03-ct14"
+    },
+    {
+      "action": "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial.",
+      "at": "2026-09-06T12:52:06Z",
+      "description": "INC3100323 records a compute tray replacement at a09-ct10, but BMC inventory never showed the installed serial CTY3CUQ51W; the original part appears to still be in place.",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-004",
+      "tickets": [
+        "INC3100323"
+      ],
+      "title": "Part swap not confirmed by inventory",
+      "unit": "a09-ct10"
+    },
+    {
+      "action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
+      "at": "2026-09-08T03:04:06Z",
+      "description": "leaf-a16-r0:swp33 failed again 65 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-2 (reopen within stability window) it is one Ticket of Record: measured restoration 12.6 hrs against the 8-hour target (vendor tickets show 1.6 and 3.4 hrs).",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-005",
+      "tickets": [
+        "INC3100391",
+        "INC3100442"
+      ],
+      "title": "Ticket split to restart the clock",
+      "unit": "leaf-a16-r0:swp33"
+    },
+    {
+      "action": "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
+      "at": "2026-09-08T03:04:06Z",
+      "description": "Overrun 57% past target \u2192 S2; 18 GPU-hours lost beyond target (4 GPUs) \u2192 S4; AGG-REPEAT: +1 level (Same CSL or same Service Unit breached within the previous 30 days); AGG-INTEGRITY: present; already at or above S1",
+      "kind": "Restore breach",
+      "level": "S1",
+      "ref": "INC3100391",
+      "tickets": [
+        "INC3100391",
+        "INC3100442"
+      ],
+      "title": "P2 restore 12.6 hrs vs 8-hr target",
+      "unit": "leaf-a16-r0:swp33"
+    },
+    {
+      "action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
+      "at": "2026-09-08T13:01:44Z",
+      "description": "a26-ct16 failed again 36 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-1 (early failure) it is one Ticket of Record: measured restoration 10.9 hrs against the 8-hour target (vendor tickets show 7.1 and 3.2 hrs).",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-006",
+      "tickets": [
+        "INC3100425",
+        "INC3100476"
+      ],
+      "title": "Ticket split to restart the clock",
+      "unit": "a26-ct16"
+    },
+    {
+      "action": "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
+      "at": "2026-09-08T13:01:44Z",
+      "description": "Overrun 37% past target \u2192 S3; 12 GPU-hours lost beyond target (4 GPUs) \u2192 S4; AGG-REPEAT: +1 level (Same CSL or same Service Unit breached within the previous 30 days); AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))",
+      "kind": "Restore breach",
+      "level": "S1",
+      "ref": "INC3100425",
+      "tickets": [
+        "INC3100425",
+        "INC3100476"
+      ],
+      "title": "P2 restore 10.9 hrs vs 8-hr target",
+      "unit": "a26-ct16"
+    },
+    {
+      "action": "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician.",
+      "at": "2026-09-13T08:36:38Z",
+      "description": "Work note claims on site at 2026-09-13 08:36 UTC, 28 minutes before Drew Chen badged into HALL-A. Claimed engagement 26 min after T0; badge-verified 54 min against the 30-minute target.",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-007",
+      "tickets": [
+        "INC3100663"
+      ],
+      "title": "On-site claim before badge-in",
+      "unit": "a23-ct04"
+    },
+    {
+      "action": "Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later.",
+      "at": "2026-09-15T12:48:14Z",
+      "description": "Ticket opened 100 minutes after the telemetry fault. Vendor-reported restoration 7.7 hrs; measured from T0 9.4 hrs against the 8-hour P2 target (a breach hidden by the late start).",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-008",
+      "tickets": [
+        "INC3100799"
+      ],
+      "title": "Ticket opened late (clock shift)",
+      "unit": "a01-ct05"
+    },
+    {
+      "action": "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
+      "at": "2026-09-15T12:48:14Z",
+      "description": "Overrun 17% past target \u2192 S3; 5 GPU-hours lost beyond target (4 GPUs) \u2192 S4; AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))",
+      "kind": "Restore breach",
+      "level": "S1",
+      "ref": "INC3100799",
+      "tickets": [
+        "INC3100799"
+      ],
+      "title": "P2 restore 9.4 hrs vs 8-hr target",
+      "unit": "a01-ct05"
+    },
+    {
+      "action": "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial.",
+      "at": "2026-09-20T20:06:57Z",
+      "description": "INC3100952 records a compute tray replacement at a30-ct06, but BMC inventory never showed the installed serial CTPQPV9KMG; the original part appears to still be in place.",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-009",
+      "tickets": [
+        "INC3100952"
+      ],
+      "title": "Part swap not confirmed by inventory",
+      "unit": "a30-ct06"
+    },
+    {
+      "action": "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician.",
+      "at": "2026-09-26T00:24:01Z",
+      "description": "Work note claims on site at 2026-09-26 00:24 UTC, 22 minutes before Reese Moreau badged into HALL-A. Claimed engagement 28 min after T0; badge-verified 50 min against the 30-minute target.",
+      "kind": "Discrepancy",
+      "level": "S1",
+      "ref": "F-010",
+      "tickets": [
+        "INC3101309"
+      ],
+      "title": "On-site claim before badge-in",
+      "unit": "a20-ct07"
+    },
+    {
+      "action": "Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2.",
+      "at": "2026-09-08T05:42:37Z",
+      "description": "INC3100391 replaced the switch-side optic on leaf-a16-r0:swp33, but link errors resumed 61 minutes after closure. The fault was likely at the other end; under TR-2 the original ticket should have reopened.",
+      "kind": "Discrepancy",
+      "level": "S2",
+      "ref": "F-011",
+      "tickets": [
+        "INC3100391",
+        "INC3100442"
+      ],
+      "title": "Link errors continued after optic replacement",
+      "unit": "leaf-a16-r0:swp33"
+    },
+    {
+      "action": "Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation.",
+      "at": "2026-09-13T14:15:31Z",
+      "description": "a31-ct06 needed 3 repairs in 11 days (INC3100085, INC3100374, INC3100697) with no OEM RMA escalation. KM-09 requires escalation within 2 business days.",
+      "kind": "Discrepancy",
+      "level": "S2",
+      "ref": "F-012",
+      "tickets": [
+        "INC3100085",
+        "INC3100374",
+        "INC3100697"
+      ],
+      "title": "Repeat-failing unit not escalated",
+      "unit": "a31-ct06"
+    },
+    {
+      "action": "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA.",
+      "at": "2026-09-14T13:45:51Z",
+      "description": "INC3100544 closed a31-ct17 as 'Cleaned/reseated' with no part replaced; the same gsp fault (XID 119) recurred 67 hours after return to service, inside the recurrence window (TR-5).",
+      "kind": "Discrepancy",
+      "level": "S2",
+      "ref": "F-013",
+      "tickets": [
+        "INC3100544",
+        "INC3100748"
+      ],
+      "title": "Same fault recurred after a reseat",
+      "unit": "a31-ct17"
+    },
+    {
+      "action": "Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach.",
+      "at": "2026-09-16T08:54:20Z",
+      "description": "Firmware changed (1.3.6 -> 1.3.7) on 18 components in rack A23 between 2026-09-16 08:54 UTC and 2026-09-16 10:36 UTC with no approved change record.",
+      "kind": "Discrepancy",
+      "level": "S2",
+      "ref": "F-014",
+      "tickets": [],
+      "title": "Change without an approved change record",
+      "unit": "Rack A23"
+    },
+    {
+      "action": "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA.",
+      "at": "2026-09-17T08:35:39Z",
+      "description": "INC3100612 closed a14-ct07 as 'Cleaned/reseated' with no part replaced; the same bus fault (XID 79) recurred 98 hours after return to service, inside the recurrence window (TR-5).",
+      "kind": "Discrepancy",
+      "level": "S2",
+      "ref": "F-015",
+      "tickets": [
+        "INC3100612",
+        "INC3100901"
+      ],
+      "title": "Same fault recurred after a reseat",
+      "unit": "a14-ct07"
+    },
+    {
+      "action": "Supplier RCA and corrective action plan for CSL-08 (SLA Section 17).",
+      "at": "2026-09-28T00:00:00Z",
+      "description": "7 of 75 repaired units failed again within 30 days. CSL-08 actual 9.333 vs expected 3 / minimum 5: Below Minimum by more than the Expected-to-Minimum gap.",
+      "kind": "Service level",
+      "level": "S2",
+      "ref": "CSL-08",
+      "tickets": [],
+      "title": "CSL-08 30-Day Repeat Failure Rate: Minimum default (severe)",
+      "unit": null
+    },
+    {
+      "action": "Supplier RCA and corrective action plan for CSL-09 (SLA Section 17).",
+      "at": "2026-09-28T00:00:00Z",
+      "description": "9 of 13 racks due this period reached Validated Handoff on time. CSL-09 actual 69.231 vs expected 95 / minimum 90: Below Minimum by more than the Expected-to-Minimum gap.",
+      "kind": "Service level",
+      "level": "S2",
+      "ref": "CSL-09",
+      "tickets": [],
+      "title": "CSL-09 Deployment Milestone Adherence: Minimum default (severe)",
+      "unit": null
+    },
+    {
+      "action": "Supplier RCA and corrective action plan for CSL-11 (SLA Section 17).",
+      "at": "2026-09-28T00:00:00Z",
+      "description": "13 of 78 closed tickets did not reconcile with telemetry. CSL-11 actual 83.333 vs expected 99 / minimum 97: Below Minimum by more than the Expected-to-Minimum gap.",
+      "kind": "Service level",
+      "level": "S2",
+      "ref": "CSL-11",
+      "tickets": [],
+      "title": "CSL-11 Record Integrity: Minimum default (severe)",
+      "unit": null
+    },
+    {
+      "action": "Reconcile the roster against badge data with the vendor. Require a written coverage plan for the affected shift pattern.",
+      "at": "2026-09-01T12:00:00Z",
+      "description": "Day shift starting 2026-09-01 12:00 UTC (crew D1): 2 rostered people never badged in (Marlowe Mensah (RSS-003), Jesse Kim (RSS-005)). 6 of 8 committed technicians were on site.",
+      "kind": "Discrepancy",
+      "level": "S3",
+      "ref": "F-016",
+      "tickets": [],
+      "title": "Rostered technicians not on site",
+      "unit": "Crew D1"
+    },
+    {
+      "action": "Correct the ledger and recount the affected spares class. Enforce scan-to-issue before any part leaves the cage.",
+      "at": "2026-09-05T03:48:54Z",
+      "description": "INC3100272 used 1 x Compute tray but the spares ledger records 0 issue(s); the next cycle count was 1 short.",
+      "kind": "Discrepancy",
+      "level": "S3",
+      "ref": "F-017",
+      "tickets": [
+        "INC3100272"
+      ],
+      "title": "Part used but not issued from spares",
+      "unit": "Compute tray"
+    },
+    {
+      "action": "Reconcile the roster against badge data with the vendor. Require a written coverage plan for the affected shift pattern.",
+      "at": "2026-09-18T12:00:00Z",
+      "description": "Day shift starting 2026-09-18 12:00 UTC (crew D1): 2 rostered people never badged in (Lane Haddad (RSS-004), Alex Novak (RSS-009)). 6 of 8 committed technicians were on site.",
+      "kind": "Discrepancy",
+      "level": "S3",
+      "ref": "F-018",
+      "tickets": [],
+      "title": "Rostered technicians not on site",
+      "unit": "Crew D1"
+    },
+    {
+      "action": "Supplier RCA and corrective action plan for CSL-03 (SLA Section 17).",
+      "at": "2026-09-28T00:00:00Z",
+      "description": "2 of 4 P1 Tickets of Record restored within 4 hrs. CSL-03 actual 50 vs expected 95 / minimum 90: Below Minimum (credit-bearing default).; Small-sample rule: 2 misses exceeds allowance of 1.",
+      "kind": "Service level",
+      "level": "S3",
+      "ref": "CSL-03",
+      "tickets": [],
+      "title": "CSL-03 P1 Restoration Within 4 Hours: Minimum default",
+      "unit": null
+    },
+    {
+      "action": "Supplier RCA and corrective action plan for CSL-07 (SLA Section 17).",
+      "at": "2026-09-28T00:00:00Z",
+      "description": "73 of 75 returns to service had the full validation checklist. CSL-07 actual 97.333 vs expected 100 / minimum 98: Below Minimum (credit-bearing default).",
+      "kind": "Service level",
+      "level": "S3",
+      "ref": "CSL-07",
+      "tickets": [],
+      "title": "CSL-07 Validated Return to Service: Minimum default",
+      "unit": null
+    },
+    {
+      "action": "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
+      "at": "2026-09-11T10:29:02Z",
+      "description": "Overrun 6% past target \u2192 S4; 1 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
+      "kind": "Restore breach",
+      "level": "S4",
+      "ref": "INC3100527",
+      "tickets": [
+        "INC3100527"
+      ],
+      "title": "P1 restore 4.2 hrs vs 4-hr target",
+      "unit": "a25-ct12"
+    },
+    {
+      "action": "RCA on the delay (dispatch, diagnosis, parts, or validation) with a corrective action for the cause.",
+      "at": "2026-09-15T17:57:56Z",
+      "description": "Overrun 1% past target \u2192 S4; 0 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
+      "kind": "Restore breach",
+      "level": "S4",
+      "ref": "INC3100816",
+      "tickets": [
+        "INC3100816"
+      ],
+      "title": "P1 restore 4.1 hrs vs 4-hr target",
+      "unit": "a24-ct13"
+    },
+    {
+      "action": "Supplier RCA and corrective action plan for CSL-04 (SLA Section 17).",
+      "at": "2026-09-28T00:00:00Z",
+      "description": "50 of 54 P2 Tickets of Record restored within 8 hrs. CSL-04 actual 92.593 vs expected 95 / minimum 90: Below Expected but at or above Minimum.",
+      "kind": "Service level",
+      "level": "S4",
+      "ref": "CSL-04",
+      "tickets": [],
+      "title": "CSL-04 P2 Restoration Within 8 Hours: Below Expected",
+      "unit": null
+    },
+    {
+      "action": "Supplier RCA and corrective action plan for CSL-06 (SLA Section 17).",
+      "at": "2026-09-28T00:00:00Z",
+      "description": "68 of 75 repairs fixed the first time. CSL-06 actual 90.667 vs expected 92 / minimum 88: Below Expected but at or above Minimum.",
+      "kind": "Service level",
+      "level": "S4",
+      "ref": "CSL-06",
+      "tickets": [],
+      "title": "CSL-06 First-Time Fix Rate: Below Expected",
+      "unit": null
+    }
+  ],
+  "site": "Site AUS-1 (fictional)",
+  "supplier": "Ridgeline Site Services, LLC",
+  "totals": {
+    "defaults": 5,
+    "findings": 18,
+    "gpu_hours_lost": 1083.115,
+    "incidents": 75,
+    "s1": 14,
+    "tickets": 78,
+    "vendor_gpu_hours_lost": 1041.9425
+  },
+  "weeks": [
+    {
+      "findings": 6,
+      "measured": {
+        "CSL-01": 99.954,
+        "CSL-02": null,
+        "CSL-03": null,
+        "CSL-04": 90.909,
+        "CSL-05": 100.0,
+        "CSL-06": 88.889,
+        "CSL-07": 88.889,
+        "CSL-08": 11.111,
+        "CSL-09": null,
+        "CSL-10": 97.802,
+        "CSL-11": 73.684,
+        "CSL-12": 99.637,
+        "KM-01": 100.0,
+        "KM-02": null,
+        "KM-03": 100.0,
+        "KM-06": 88.889,
+        "KM-07": 88.889,
+        "KM-08": 100.0,
+        "KM-09": null,
+        "KM-10": 100.0,
+        "KM-16": 0.0,
+        "KM-17": 0.0,
+        "KM-18": 5.556
+      },
+      "vendor": {
+        "CSL-01": 99.959,
+        "CSL-03": null,
+        "CSL-04": 100.0,
+        "CSL-05": 100.0,
+        "CSL-06": 100.0,
+        "CSL-07": 100.0,
+        "CSL-10": 100.0
+      },
+      "vendor_note": "All SLAs met. No open escalations.",
+      "week_end": "2026-09-07T00:00:00Z",
+      "week_start": "2026-08-31T00:00:00Z"
+    },
+    {
+      "findings": 5,
+      "measured": {
+        "CSL-01": 99.926,
+        "CSL-02": 100.0,
+        "CSL-03": 50.0,
+        "CSL-04": 88.235,
+        "CSL-05": 100.0,
+        "CSL-06": 75.0,
+        "CSL-07": 100.0,
+        "CSL-08": 25.0,
+        "CSL-09": 33.333,
+        "CSL-10": 100.0,
+        "CSL-11": 77.273,
+        "CSL-12": 99.548,
+        "KM-01": 88.235,
+        "KM-02": 100.0,
+        "KM-03": 100.0,
+        "KM-06": 88.889,
+        "KM-07": 100.0,
+        "KM-08": 100.0,
+        "KM-09": 0.0,
+        "KM-10": 100.0,
+        "KM-16": 1.0,
+        "KM-17": 0.0,
+        "KM-18": 10.0
+      },
+      "vendor": {
+        "CSL-01": 99.937,
+        "CSL-03": 50.0,
+        "CSL-04": 100.0,
+        "CSL-05": 100.0,
+        "CSL-06": 100.0,
+        "CSL-07": 100.0,
+        "CSL-10": 100.0
+      },
+      "vendor_note": "Minor restore-time exceptions under review. No open escalations.",
+      "week_end": "2026-09-14T00:00:00Z",
+      "week_start": "2026-09-07T00:00:00Z"
+    },
+    {
+      "findings": 6,
+      "measured": {
+        "CSL-01": 99.96,
+        "CSL-02": 100.0,
+        "CSL-03": 0.0,
+        "CSL-04": 92.857,
+        "CSL-05": 100.0,
+        "CSL-06": 100.0,
+        "CSL-07": 100.0,
+        "CSL-08": 0.0,
+        "CSL-09": 80.0,
+        "CSL-10": 97.802,
+        "CSL-11": 87.5,
+        "CSL-12": 99.69,
+        "KM-01": 92.857,
+        "KM-02": 100.0,
+        "KM-03": 100.0,
+        "KM-06": 88.889,
+        "KM-07": 100.0,
+        "KM-08": 100.0,
+        "KM-09": null,
+        "KM-10": 0.0,
+        "KM-16": 0.0,
+        "KM-17": 6.5,
+        "KM-18": 0.0
+      },
+      "vendor": {
+        "CSL-01": 99.955,
+        "CSL-03": 0.0,
+        "CSL-04": 100.0,
+        "CSL-05": 100.0,
+        "CSL-06": 100.0,
+        "CSL-07": 100.0,
+        "CSL-10": 100.0
+      },
+      "vendor_note": "Minor restore-time exceptions under review. No open escalations.",
+      "week_end": "2026-09-21T00:00:00Z",
+      "week_start": "2026-09-14T00:00:00Z"
+    },
+    {
+      "findings": 1,
+      "measured": {
+        "CSL-01": 99.916,
+        "CSL-02": 100.0,
+        "CSL-03": 100.0,
+        "CSL-04": 100.0,
+        "CSL-05": 100.0,
+        "CSL-06": 100.0,
+        "CSL-07": 100.0,
+        "CSL-08": 0.0,
+        "CSL-09": 80.0,
+        "CSL-10": 100.0,
+        "CSL-11": 95.238,
+        "CSL-12": 98.06,
+        "KM-01": 83.333,
+        "KM-02": null,
+        "KM-03": 87.5,
+        "KM-06": 88.889,
+        "KM-07": 100.0,
+        "KM-08": 100.0,
+        "KM-09": null,
+        "KM-10": null,
+        "KM-16": 0.0,
+        "KM-17": 0.0,
+        "KM-18": 0.0
+      },
+      "vendor": {
+        "CSL-01": 99.895,
+        "CSL-03": 100.0,
+        "CSL-04": 100.0,
+        "CSL-05": 100.0,
+        "CSL-06": 100.0,
+        "CSL-07": 100.0,
+        "CSL-10": 100.0
+      },
+      "vendor_note": "All SLAs met. No open escalations.",
+      "week_end": "2026-09-28T00:00:00Z",
+      "week_start": "2026-09-21T00:00:00Z"
+    }
+  ],
+  "window": {
+    "end": "2026-09-28T00:00:00Z",
+    "start": "2026-08-31T00:00:00Z"
+  }
+}

@@ -19,8 +19,8 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 | SLA model: validation, credits, breach severity | Done, tested |
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
-| Weekly scorecard | Next |
-| Interactive demo (GitHub Pages) | Planned |
+| Weekly scorecard ([`reports/scorecard.md`](reports/scorecard.md)) | Done, tested |
+| Interactive demo (GitHub Pages) | Next |
 
 ## SLA as code
 
@@ -31,6 +31,7 @@ pip install -r requirements.txt
 python scripts/render_sla.py     # validate the SLA and regenerate docs/SLA.md
 python scripts/generate_data.py  # regenerate the synthetic sample in data/sample
 python scripts/run_engine.py     # run the discrepancy engine, write reports/
+python scripts/build_scorecard.py  # build the scorecard, write reports/
 pytest -q                        # run the test suite
 ```
 
@@ -51,6 +52,21 @@ Highlights of the SLA design:
 It then plants 11 types of realistic discrepancies, such as a repair ticket claiming a part swap the BMC inventory never saw, or a technician "on site" before badging into the hall, and writes an answer key so the engine's detection rate can be measured.
 
 The committed sample in [`data/sample/`](data/sample) covers 4 weeks and 17 planted discrepancies across 11 types. In it, the vendor's self-report shows 100% across the board; the telemetry does not agree. See [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) for every file and discrepancy type.
+
+## The scorecard: vendor reported vs. measured
+
+`scripts/build_scorecard.py` measures every service level from telemetry and puts it beside the vendor's own weekly report. From the committed sample ([full scorecard](reports/scorecard.md)):
+
+| Service level | Vendor reported | Measured from telemetry |
+|---|:-:|:-:|
+| P2 restoration within 8 hours | 100% | 92.6% |
+| First-time fix rate | 100% | 90.7% |
+| Validated return to service | 100% | 97.3% (Minimum default) |
+| Record integrity | not reported | 83.3% (Minimum default) |
+
+The vendor's weekly notes said all SLAs were met or showed only minor exceptions. Measured, the period has 5 Minimum Service Level Defaults, $222,000 in Service Level Credits (after the monthly cap), and 17 corrective action plans drafted automatically with owners and due dates. Fleet availability, by contrast, is 99.94% either way, which is why the scorecard measures each incident rather than trusting the average.
+
+`build_scorecard(sla, result)` is a pure function of the SLA and the data, so changing a target (for example, a 4-hour P2 restore) and rerunning immediately shows the new breaches, credits, and corrective actions. The interactive demo is built on that.
 
 ## Discrepancy engine
 
@@ -74,14 +90,17 @@ src/scorecard/sla_model.py       Load, validate, credit math, severity classific
 src/scorecard/measurement.py     Ticket handling rules (TR-1 to TR-6) as the reference implementation
 src/scorecard/connectors.py      Data access layer (one interface per source; answer key blocked)
 src/scorecard/engine/            Discrepancy engine: context, 11 detectors, evaluation, reports
+src/scorecard/kpi.py             Service level measurement from telemetry, for any period
+src/scorecard/builder.py         Scorecard: SLA results, vendor vs. measured, credits, severity log, CAPs
 src/scorecard/synthetic/         Synthetic GB200 site data generator
 scripts/render_sla.py            Generates docs/SLA.md from the YAML
 scripts/generate_data.py         Generates the synthetic dataset
 scripts/run_engine.py            Runs the engine and writes reports/
+scripts/build_scorecard.py       Builds the scorecard and writes reports/
 templates/sla.md.j2              Document template
 docs/SLA.md                      Generated SLA (do not edit by hand)
 docs/DATA_MODEL.md               What each data file represents
 data/sample/                     Committed synthetic dataset (4 weeks)
-reports/                         Engine output: findings.json and discrepancy_report.md
+reports/                         Generated: scorecard.md, discrepancy_report.md, and their JSON
 tests/                           Pytest suite
 ```
