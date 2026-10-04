@@ -47,7 +47,7 @@
       }
     },
     "corroborating": [
-      "F-005"
+      "F-002"
     ],
     "detected": 17,
     "false_positives": [],
@@ -61,93 +61,99 @@
       "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
       "evidence": [
         {
-          "at": null,
-          "detail": "Passed checks on a05-ct18 for this repair: none",
-          "source": "telemetry/health_checks.jsonl"
+          "at": "2026-09-01T05:48:43Z",
+          "detail": "Down interval 2026-09-01 05:48 UTC to 2026-09-01 12:25 UTC",
+          "source": "telemetry/scheduler_node_states.jsonl"
         },
         {
-          "at": "2026-09-04T02:17:33Z",
-          "detail": "INC3100153: \"Validation complete; all return-to-service checks passed. Returned to production.\"",
+          "at": "2026-09-01T12:54:07Z",
+          "detail": "Down interval 2026-09-01 12:54 UTC to 2026-09-01 16:11 UTC",
+          "source": "telemetry/scheduler_node_states.jsonl"
+        },
+        {
+          "at": "2026-09-01T05:51:16Z",
+          "detail": "INC3100068 opened; vendor-reported restoration 6.6 hrs",
+          "source": "vendor/tickets.json"
+        },
+        {
+          "at": "2026-09-01T12:59:35Z",
+          "detail": "INC3100085 opened; vendor-reported restoration 3.2 hrs",
           "source": "vendor/tickets.json"
         }
       ],
       "id": "F-001",
       "keys": {},
       "metrics": {
-        "missing_checks": [
-          "burn_in_1h",
-          "dcgm_diag_r3",
-          "leak_hold_30m",
-          "nccl_allreduce_rack",
-          "nvlink_domain"
-        ],
-        "required_checks": [
-          "burn_in_1h",
-          "dcgm_diag_r3",
-          "leak_hold_30m",
-          "nccl_allreduce_rack",
-          "nvlink_domain"
-        ]
+        "early_failures": 1,
+        "gpus": 4,
+        "measured_restore_min": 623.2,
+        "reopens": 0,
+        "target_min": 480
       },
-      "observed_at": "2026-09-04T02:17:33Z",
-      "recommended_action": "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period.",
+      "observed_at": "2026-09-01T05:48:43Z",
+      "recommended_action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
       "severity": "S1",
       "severity_name": "Critical",
       "severity_reasons": [
-        "Base level for returned to service without validation: S2",
+        "Overrun 30% past target \u2192 S3",
+        "10 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
+        "Base level for ticket split to restart the clock: S3",
         "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
       ],
       "sla_refs": [
-        "CSL-07",
+        "TR-1",
+        "TR-2",
+        "TR-6",
         "CSL-11"
       ],
-      "summary": "a05-ct18 returned to service with 5 of 5 required 'Compute tray' checks missing (burn_in_1h, dcgm_diag_r3, leak_hold_30m, nccl_allreduce_rack, nvlink_domain); the ticket still claims validation passed.",
+      "summary": "a31-ct11 failed again 29 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-1 (early failure) it is one Ticket of Record: measured restoration 10.4 hrs against the 8-hour target (vendor tickets show 6.6 and 3.2 hrs).",
       "tickets": [
-        "INC3100153"
+        "INC3100068",
+        "INC3100085"
       ],
-      "title": "Returned to service without validation",
-      "type": "skipped_validation",
-      "unit": "a05-ct18"
+      "title": "Ticket split to restart the clock",
+      "type": "ticket_split",
+      "unit": "a31-ct11"
     },
     {
       "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
       "evidence": [
         {
-          "at": "2026-09-04T09:37:29Z",
-          "detail": "Down interval 2026-09-04 09:37 UTC to 2026-09-04 16:51 UTC",
-          "source": "telemetry/scheduler_node_states.jsonl"
+          "at": "2026-09-03T12:04:38Z",
+          "detail": "Down interval 2026-09-03 12:04 UTC to 2026-09-03 13:15 UTC",
+          "source": "telemetry/ufm_port_events.jsonl"
         },
         {
-          "at": "2026-09-04T17:31:42Z",
-          "detail": "Down interval 2026-09-04 17:31 UTC to 2026-09-04 20:36 UTC",
-          "source": "telemetry/scheduler_node_states.jsonl"
+          "at": "2026-09-03T14:33:57Z",
+          "detail": "Down interval 2026-09-03 14:33 UTC to 2026-09-04 00:26 UTC",
+          "source": "telemetry/ufm_port_events.jsonl"
         },
         {
-          "at": "2026-09-04T09:41:25Z",
-          "detail": "INC3100187 opened; vendor-reported restoration 7.2 hrs",
+          "at": "2026-09-03T12:06:05Z",
+          "detail": "INC3100136 opened; vendor-reported restoration 1.2 hrs",
           "source": "vendor/tickets.json"
         },
         {
-          "at": "2026-09-04T17:35:22Z",
-          "detail": "INC3100204 opened; vendor-reported restoration 3.1 hrs",
+          "at": "2026-09-03T21:02:01Z",
+          "detail": "INC3100170 opened; vendor-reported restoration 3.4 hrs",
           "source": "vendor/tickets.json"
         }
       ],
       "id": "F-002",
       "keys": {},
       "metrics": {
-        "early_failures": 1,
+        "early_failures": 0,
         "gpus": 4,
-        "measured_restore_min": 659.2,
-        "reopens": 0,
+        "measured_restore_min": 663.6,
+        "reopens": 1,
         "target_min": 480
       },
-      "observed_at": "2026-09-04T09:37:29Z",
+      "observed_at": "2026-09-03T12:04:38Z",
       "recommended_action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
       "severity": "S1",
       "severity_name": "Critical",
       "severity_reasons": [
-        "Overrun 37% past target \u2192 S3",
+        "Overrun 38% past target \u2192 S3",
         "12 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
         "Base level for ticket split to restart the clock: S3",
         "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
@@ -158,10 +164,68 @@
         "TR-6",
         "CSL-11"
       ],
-      "summary": "a06-ct13 failed again 41 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-1 (early failure) it is one Ticket of Record: measured restoration 11.0 hrs against the 8-hour target (vendor tickets show 7.2 and 3.1 hrs).",
+      "summary": "leaf-a07-r1:swp18 failed again 78 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-2 (reopen within stability window) it is one Ticket of Record: measured restoration 11.1 hrs against the 8-hour target (vendor tickets show 1.2 and 3.4 hrs).",
       "tickets": [
-        "INC3100187",
-        "INC3100204"
+        "INC3100136",
+        "INC3100170"
+      ],
+      "title": "Ticket split to restart the clock",
+      "type": "ticket_split",
+      "unit": "leaf-a07-r1:swp18"
+    },
+    {
+      "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
+      "evidence": [
+        {
+          "at": "2026-09-04T09:37:29Z",
+          "detail": "Down interval 2026-09-04 09:37 UTC to 2026-09-04 16:09 UTC",
+          "source": "telemetry/scheduler_node_states.jsonl"
+        },
+        {
+          "at": "2026-09-04T16:22:13Z",
+          "detail": "Down interval 2026-09-04 16:22 UTC to 2026-09-04 19:33 UTC",
+          "source": "telemetry/scheduler_node_states.jsonl"
+        },
+        {
+          "at": "2026-09-04T09:42:16Z",
+          "detail": "INC3100221 opened; vendor-reported restoration 6.5 hrs",
+          "source": "vendor/tickets.json"
+        },
+        {
+          "at": "2026-09-04T16:23:40Z",
+          "detail": "INC3100238 opened; vendor-reported restoration 3.2 hrs",
+          "source": "vendor/tickets.json"
+        }
+      ],
+      "id": "F-003",
+      "keys": {},
+      "metrics": {
+        "early_failures": 1,
+        "gpus": 4,
+        "measured_restore_min": 596.2,
+        "reopens": 0,
+        "target_min": 480
+      },
+      "observed_at": "2026-09-04T09:37:29Z",
+      "recommended_action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
+      "severity": "S1",
+      "severity_name": "Critical",
+      "severity_reasons": [
+        "Overrun 24% past target \u2192 S3",
+        "8 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
+        "Base level for ticket split to restart the clock: S3",
+        "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
+      ],
+      "sla_refs": [
+        "TR-1",
+        "TR-2",
+        "TR-6",
+        "CSL-11"
+      ],
+      "summary": "a06-ct13 failed again 12 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-1 (early failure) it is one Ticket of Record: measured restoration 9.9 hrs against the 8-hour target (vendor tickets show 6.5 and 3.2 hrs).",
+      "tickets": [
+        "INC3100221",
+        "INC3100238"
       ],
       "title": "Ticket split to restart the clock",
       "type": "ticket_split",
@@ -171,17 +235,111 @@
       "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
       "evidence": [
         {
-          "at": null,
-          "detail": "Passed checks on a03-ct14 for this repair: none",
-          "source": "telemetry/health_checks.jsonl"
+          "at": "2026-09-04T22:21:11Z",
+          "detail": "INC3100289 work note by Taylor Haddad: \"On site at rack A28 (HALL-A).\"",
+          "source": "vendor/tickets.json"
         },
         {
-          "at": "2026-09-04T21:42:00Z",
-          "detail": "INC3100221: \"Validation complete; all return-to-service checks passed. Returned to production.\"",
+          "at": "2026-09-04T22:49:06Z",
+          "detail": "First HALL-A badge-in by Taylor Haddad (RSS-014)",
+          "source": "access/badge_events.csv"
+        }
+      ],
+      "id": "F-004",
+      "keys": {},
+      "metrics": {
+        "badge_engaged_min": 56.3,
+        "claimed_engaged_min": 28.4,
+        "target_min": 30
+      },
+      "observed_at": "2026-09-04T22:21:11Z",
+      "recommended_action": "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician.",
+      "severity": "S1",
+      "severity_name": "Critical",
+      "severity_reasons": [
+        "Base level for on-site claim before badge-in: S3",
+        "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
+      ],
+      "sla_refs": [
+        "CSL-02",
+        "KM-01",
+        "CSL-11"
+      ],
+      "summary": "Work note claims on site at 2026-09-04 22:21 UTC, 28 minutes before Taylor Haddad badged into HALL-A. Claimed engagement 28 min after T0; badge-verified 56 min against the 30-minute target.",
+      "tickets": [
+        "INC3100289"
+      ],
+      "title": "On-site claim before badge-in",
+      "type": "ghost_engagement",
+      "unit": "a28-ct04"
+    },
+    {
+      "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
+      "evidence": [
+        {
+          "at": "2026-09-06T08:52:39Z",
+          "detail": "Fault signal: XID 145 (NVLink error) on a09-ct10",
+          "source": "telemetry/dcgm_xid_events.jsonl"
+        },
+        {
+          "at": "2026-09-06T10:41:39Z",
+          "detail": "INC3100357 opened; reported outage start 2026-09-06 10:41 UTC",
+          "source": "vendor/tickets.json"
+        },
+        {
+          "at": "2026-09-06T17:54:31Z",
+          "detail": "INC3100357 resolved",
           "source": "vendor/tickets.json"
         }
       ],
-      "id": "F-003",
+      "id": "F-005",
+      "keys": {},
+      "metrics": {
+        "delay_min": 109.0,
+        "gpus": 4,
+        "measured_restore_min": 541.9,
+        "target_min": 480,
+        "vendor_restore_min": 432.9
+      },
+      "observed_at": "2026-09-06T08:52:39Z",
+      "recommended_action": "Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later.",
+      "severity": "S1",
+      "severity_name": "Critical",
+      "severity_reasons": [
+        "Overrun 13% past target \u2192 S3",
+        "4 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
+        "Base level for ticket opened late (clock shift): S3",
+        "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
+      ],
+      "sla_refs": [
+        "CSL-03",
+        "CSL-04",
+        "CSL-05",
+        "CSL-11"
+      ],
+      "summary": "Ticket opened 109 minutes after the telemetry fault. Vendor-reported restoration 7.2 hrs; measured from T0 9.0 hrs against the 8-hour P2 target (a breach hidden by the late start).",
+      "tickets": [
+        "INC3100357"
+      ],
+      "title": "Ticket opened late (clock shift)",
+      "type": "clock_shift",
+      "unit": "a09-ct10"
+    },
+    {
+      "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
+      "evidence": [
+        {
+          "at": null,
+          "detail": "Passed checks on a14-ct02 for this repair: none",
+          "source": "telemetry/health_checks.jsonl"
+        },
+        {
+          "at": "2026-09-09T23:00:09Z",
+          "detail": "INC3100510: \"Validation complete; all return-to-service checks passed. Returned to production.\"",
+          "source": "vendor/tickets.json"
+        }
+      ],
+      "id": "F-006",
       "keys": {},
       "metrics": {
         "missing_checks": [
@@ -199,7 +357,7 @@
           "nvlink_domain"
         ]
       },
-      "observed_at": "2026-09-04T21:42:00Z",
+      "observed_at": "2026-09-09T23:00:09Z",
       "recommended_action": "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period.",
       "severity": "S1",
       "severity_name": "Critical",
@@ -211,40 +369,40 @@
         "CSL-07",
         "CSL-11"
       ],
-      "summary": "a03-ct14 returned to service with 5 of 5 required 'Compute tray' checks missing (burn_in_1h, dcgm_diag_r3, leak_hold_30m, nccl_allreduce_rack, nvlink_domain); the ticket still claims validation passed.",
+      "summary": "a14-ct02 returned to service with 5 of 5 required 'Compute tray' checks missing (burn_in_1h, dcgm_diag_r3, leak_hold_30m, nccl_allreduce_rack, nvlink_domain); the ticket still claims validation passed.",
       "tickets": [
-        "INC3100221"
+        "INC3100510"
       ],
       "title": "Returned to service without validation",
       "type": "skipped_validation",
-      "unit": "a03-ct14"
+      "unit": "a14-ct02"
     },
     {
       "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
       "evidence": [
         {
-          "at": "2026-09-06T12:52:06Z",
-          "detail": "INC3100323 parts: removed CTQSRSX7QQ, installed CTY3CUQ51W at a09-ct10",
+          "at": "2026-09-13T08:19:08Z",
+          "detail": "INC3100629 parts: removed CTYCX5H7TS, installed CT3PQ9DACL at a05-ct15",
           "source": "vendor/tickets.json"
         },
         {
           "at": null,
-          "detail": "No SerialNumber change to CTY3CUQ51W observed on any BMC",
+          "detail": "No SerialNumber change to CT3PQ9DACL observed on any BMC",
           "source": "telemetry/redfish_inventory_changes.jsonl"
         },
         {
-          "at": "2026-09-10T14:03:20Z",
-          "detail": "RMA shipped for CTQSRSX7QQ, which inventory shows is still installed",
+          "at": "2026-09-16T07:00:11Z",
+          "detail": "RMA shipped for CTYCX5H7TS, which inventory shows is still installed",
           "source": "vendor/rma_shipments.csv"
         }
       ],
-      "id": "F-004",
+      "id": "F-007",
       "keys": {},
       "metrics": {
-        "claimed_serial": "CTY3CUQ51W",
-        "removed_serial": "CTQSRSX7QQ"
+        "claimed_serial": "CT3PQ9DACL",
+        "removed_serial": "CTYCX5H7TS"
       },
-      "observed_at": "2026-09-06T12:52:06Z",
+      "observed_at": "2026-09-13T08:19:08Z",
       "recommended_action": "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial.",
       "severity": "S1",
       "severity_name": "Critical",
@@ -255,250 +413,92 @@
       "sla_refs": [
         "CSL-11"
       ],
-      "summary": "INC3100323 records a compute tray replacement at a09-ct10, but BMC inventory never showed the installed serial CTY3CUQ51W; the original part appears to still be in place.",
+      "summary": "INC3100629 records a compute tray replacement at a05-ct15, but BMC inventory never showed the installed serial CT3PQ9DACL; the original part appears to still be in place.",
       "tickets": [
-        "INC3100323"
+        "INC3100629"
       ],
       "title": "Part swap not confirmed by inventory",
       "type": "unverified_swap",
-      "unit": "a09-ct10"
+      "unit": "a05-ct15"
     },
     {
       "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
       "evidence": [
         {
-          "at": "2026-09-08T03:04:06Z",
-          "detail": "Down interval 2026-09-08 03:04 UTC to 2026-09-08 04:37 UTC",
-          "source": "telemetry/ufm_port_events.jsonl"
+          "at": null,
+          "detail": "Passed checks on a07-ct04 for this repair: none",
+          "source": "telemetry/health_checks.jsonl"
         },
         {
-          "at": "2026-09-08T05:42:37Z",
-          "detail": "Down interval 2026-09-08 05:42 UTC to 2026-09-08 16:42 UTC",
-          "source": "telemetry/ufm_port_events.jsonl"
-        },
-        {
-          "at": "2026-09-08T03:07:34Z",
-          "detail": "INC3100391 opened; vendor-reported restoration 1.6 hrs",
-          "source": "vendor/tickets.json"
-        },
-        {
-          "at": "2026-09-08T13:23:33Z",
-          "detail": "INC3100442 opened; vendor-reported restoration 3.4 hrs",
-          "source": "vendor/tickets.json"
-        }
-      ],
-      "id": "F-005",
-      "keys": {},
-      "metrics": {
-        "early_failures": 0,
-        "gpus": 4,
-        "measured_restore_min": 753.0,
-        "reopens": 1,
-        "target_min": 480
-      },
-      "observed_at": "2026-09-08T03:04:06Z",
-      "recommended_action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
-      "severity": "S1",
-      "severity_name": "Critical",
-      "severity_reasons": [
-        "Overrun 57% past target \u2192 S2",
-        "18 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
-        "Base level for ticket split to restart the clock: S3",
-        "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
-      ],
-      "sla_refs": [
-        "TR-1",
-        "TR-2",
-        "TR-6",
-        "CSL-11"
-      ],
-      "summary": "leaf-a16-r0:swp33 failed again 65 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-2 (reopen within stability window) it is one Ticket of Record: measured restoration 12.6 hrs against the 8-hour target (vendor tickets show 1.6 and 3.4 hrs).",
-      "tickets": [
-        "INC3100391",
-        "INC3100442"
-      ],
-      "title": "Ticket split to restart the clock",
-      "type": "ticket_split",
-      "unit": "leaf-a16-r0:swp33"
-    },
-    {
-      "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
-      "evidence": [
-        {
-          "at": "2026-09-08T13:01:44Z",
-          "detail": "Down interval 2026-09-08 13:01 UTC to 2026-09-08 20:07 UTC",
-          "source": "telemetry/scheduler_node_states.jsonl"
-        },
-        {
-          "at": "2026-09-08T20:42:32Z",
-          "detail": "Down interval 2026-09-08 20:42 UTC to 2026-09-08 23:57 UTC",
-          "source": "telemetry/scheduler_node_states.jsonl"
-        },
-        {
-          "at": "2026-09-08T13:04:34Z",
-          "detail": "INC3100425 opened; vendor-reported restoration 7.1 hrs",
-          "source": "vendor/tickets.json"
-        },
-        {
-          "at": "2026-09-08T20:46:55Z",
-          "detail": "INC3100476 opened; vendor-reported restoration 3.2 hrs",
-          "source": "vendor/tickets.json"
-        }
-      ],
-      "id": "F-006",
-      "keys": {},
-      "metrics": {
-        "early_failures": 1,
-        "gpus": 4,
-        "measured_restore_min": 655.6,
-        "reopens": 0,
-        "target_min": 480
-      },
-      "observed_at": "2026-09-08T13:01:44Z",
-      "recommended_action": "Merge the tickets under TR-6 and recalculate restoration from the original T0. Require an RCA on why the first repair did not hold.",
-      "severity": "S1",
-      "severity_name": "Critical",
-      "severity_reasons": [
-        "Overrun 37% past target \u2192 S3",
-        "12 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
-        "Base level for ticket split to restart the clock: S3",
-        "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
-      ],
-      "sla_refs": [
-        "TR-1",
-        "TR-2",
-        "TR-6",
-        "CSL-11"
-      ],
-      "summary": "a26-ct16 failed again 36 minutes after return to service, and the follow-up was logged as a new ticket. Under TR-1 (early failure) it is one Ticket of Record: measured restoration 10.9 hrs against the 8-hour target (vendor tickets show 7.1 and 3.2 hrs).",
-      "tickets": [
-        "INC3100425",
-        "INC3100476"
-      ],
-      "title": "Ticket split to restart the clock",
-      "type": "ticket_split",
-      "unit": "a26-ct16"
-    },
-    {
-      "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
-      "evidence": [
-        {
-          "at": "2026-09-13T08:36:38Z",
-          "detail": "INC3100663 work note by Drew Chen: \"On site at rack A23 (HALL-A).\"",
-          "source": "vendor/tickets.json"
-        },
-        {
-          "at": "2026-09-13T09:04:42Z",
-          "detail": "First HALL-A badge-in by Drew Chen (RSS-026)",
-          "source": "access/badge_events.csv"
-        }
-      ],
-      "id": "F-007",
-      "keys": {},
-      "metrics": {
-        "badge_engaged_min": 53.9,
-        "claimed_engaged_min": 25.8,
-        "target_min": 30
-      },
-      "observed_at": "2026-09-13T08:36:38Z",
-      "recommended_action": "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician.",
-      "severity": "S1",
-      "severity_name": "Critical",
-      "severity_reasons": [
-        "Base level for on-site claim before badge-in: S3",
-        "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
-      ],
-      "sla_refs": [
-        "CSL-02",
-        "KM-01",
-        "CSL-11"
-      ],
-      "summary": "Work note claims on site at 2026-09-13 08:36 UTC, 28 minutes before Drew Chen badged into HALL-A. Claimed engagement 26 min after T0; badge-verified 54 min against the 30-minute target.",
-      "tickets": [
-        "INC3100663"
-      ],
-      "title": "On-site claim before badge-in",
-      "type": "ghost_engagement",
-      "unit": "a23-ct04"
-    },
-    {
-      "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
-      "evidence": [
-        {
-          "at": "2026-09-15T12:48:14Z",
-          "detail": "Fault signal: XID 79 (GPU has fallen off the bus) on a01-ct05",
-          "source": "telemetry/dcgm_xid_events.jsonl"
-        },
-        {
-          "at": "2026-09-15T14:28:39Z",
-          "detail": "INC3100799 opened; reported outage start 2026-09-15 14:28 UTC",
-          "source": "vendor/tickets.json"
-        },
-        {
-          "at": "2026-09-15T22:11:42Z",
-          "detail": "INC3100799 resolved",
+          "at": "2026-09-15T11:26:31Z",
+          "detail": "INC3100748: \"Validation complete; all return-to-service checks passed. Returned to production.\"",
           "source": "vendor/tickets.json"
         }
       ],
       "id": "F-008",
       "keys": {},
       "metrics": {
-        "delay_min": 100.4,
-        "gpus": 4,
-        "measured_restore_min": 563.5,
-        "target_min": 480,
-        "vendor_restore_min": 463.1
+        "missing_checks": [
+          "burn_in_1h",
+          "dcgm_diag_r3",
+          "leak_hold_30m",
+          "nccl_allreduce_rack",
+          "nvlink_domain"
+        ],
+        "required_checks": [
+          "burn_in_1h",
+          "dcgm_diag_r3",
+          "leak_hold_30m",
+          "nccl_allreduce_rack",
+          "nvlink_domain"
+        ]
       },
-      "observed_at": "2026-09-15T12:48:14Z",
-      "recommended_action": "Recalculate restoration from telemetry T0. Confirm the alerting integration opened the Ticket of Record at T0 and find out why the vendor ticket started later.",
+      "observed_at": "2026-09-15T11:26:31Z",
+      "recommended_action": "Drain the unit and run the full validation checklist now. Audit other returns by the same technician this period.",
       "severity": "S1",
       "severity_name": "Critical",
       "severity_reasons": [
-        "Overrun 17% past target \u2192 S3",
-        "6 GPU-hours lost beyond target (4 GPUs) \u2192 S4",
-        "Base level for ticket opened late (clock shift): S3",
+        "Base level for returned to service without validation: S2",
         "AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry))"
       ],
       "sla_refs": [
-        "CSL-03",
-        "CSL-04",
-        "CSL-05",
+        "CSL-07",
         "CSL-11"
       ],
-      "summary": "Ticket opened 100 minutes after the telemetry fault. Vendor-reported restoration 7.7 hrs; measured from T0 9.4 hrs against the 8-hour P2 target (a breach hidden by the late start).",
+      "summary": "a07-ct04 returned to service with 5 of 5 required 'Compute tray' checks missing (burn_in_1h, dcgm_diag_r3, leak_hold_30m, nccl_allreduce_rack, nvlink_domain); the ticket still claims validation passed.",
       "tickets": [
-        "INC3100799"
+        "INC3100748"
       ],
-      "title": "Ticket opened late (clock shift)",
-      "type": "clock_shift",
-      "unit": "a01-ct05"
+      "title": "Returned to service without validation",
+      "type": "skipped_validation",
+      "unit": "a07-ct04"
     },
     {
       "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
       "evidence": [
         {
-          "at": "2026-09-20T20:06:57Z",
-          "detail": "INC3100952 parts: removed CTKX3ZU5J9, installed CTPQPV9KMG at a30-ct06",
+          "at": "2026-09-21T09:27:26Z",
+          "detail": "INC3100935 parts: removed CTX4GH2MXS, installed CT7K064GC5 at a10-ct13",
           "source": "vendor/tickets.json"
         },
         {
           "at": null,
-          "detail": "No SerialNumber change to CTPQPV9KMG observed on any BMC",
+          "detail": "No SerialNumber change to CT7K064GC5 observed on any BMC",
           "source": "telemetry/redfish_inventory_changes.jsonl"
         },
         {
-          "at": "2026-09-24T20:30:17Z",
-          "detail": "RMA shipped for CTKX3ZU5J9, which inventory shows is still installed",
+          "at": "2026-09-26T16:19:37Z",
+          "detail": "RMA shipped for CTX4GH2MXS, which inventory shows is still installed",
           "source": "vendor/rma_shipments.csv"
         }
       ],
       "id": "F-009",
       "keys": {},
       "metrics": {
-        "claimed_serial": "CTPQPV9KMG",
-        "removed_serial": "CTKX3ZU5J9"
+        "claimed_serial": "CT7K064GC5",
+        "removed_serial": "CTX4GH2MXS"
       },
-      "observed_at": "2026-09-20T20:06:57Z",
+      "observed_at": "2026-09-21T09:27:26Z",
       "recommended_action": "Physically verify the serial in the slot. If the part was not replaced, reopen the ticket, replace it, and stop the RMA of the still-installed serial.",
       "severity": "S1",
       "severity_name": "Critical",
@@ -509,24 +509,24 @@
       "sla_refs": [
         "CSL-11"
       ],
-      "summary": "INC3100952 records a compute tray replacement at a30-ct06, but BMC inventory never showed the installed serial CTPQPV9KMG; the original part appears to still be in place.",
+      "summary": "INC3100935 records a compute tray replacement at a10-ct13, but BMC inventory never showed the installed serial CT7K064GC5; the original part appears to still be in place.",
       "tickets": [
-        "INC3100952"
+        "INC3100935"
       ],
       "title": "Part swap not confirmed by inventory",
       "type": "unverified_swap",
-      "unit": "a30-ct06"
+      "unit": "a10-ct13"
     },
     {
       "escalation": "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review.",
       "evidence": [
         {
-          "at": "2026-09-26T00:24:01Z",
-          "detail": "INC3101309 work note by Reese Moreau: \"On site at rack A20 (HALL-A).\"",
+          "at": "2026-09-26T00:23:33Z",
+          "detail": "INC3101241 work note by Reese Moreau: \"On site at rack A20 (HALL-A).\"",
           "source": "vendor/tickets.json"
         },
         {
-          "at": "2026-09-26T00:46:19Z",
+          "at": "2026-09-26T00:55:03Z",
           "detail": "First HALL-A badge-in by Reese Moreau (RSS-023)",
           "source": "access/badge_events.csv"
         }
@@ -534,11 +534,11 @@
       "id": "F-010",
       "keys": {},
       "metrics": {
-        "badge_engaged_min": 50.2,
-        "claimed_engaged_min": 27.9,
+        "badge_engaged_min": 59.0,
+        "claimed_engaged_min": 27.5,
         "target_min": 30
       },
-      "observed_at": "2026-09-26T00:24:01Z",
+      "observed_at": "2026-09-26T00:23:33Z",
       "recommended_action": "Correct the engaged time from badge data. Review the record with the vendor site manager and agree on corrective steps for the technician.",
       "severity": "S1",
       "severity_name": "Critical",
@@ -551,9 +551,9 @@
         "KM-01",
         "CSL-11"
       ],
-      "summary": "Work note claims on site at 2026-09-26 00:24 UTC, 22 minutes before Reese Moreau badged into HALL-A. Claimed engagement 28 min after T0; badge-verified 50 min against the 30-minute target.",
+      "summary": "Work note claims on site at 2026-09-26 00:23 UTC, 32 minutes before Reese Moreau badged into HALL-A. Claimed engagement 27 min after T0; badge-verified 59 min against the 30-minute target.",
       "tickets": [
-        "INC3101309"
+        "INC3101241"
       ],
       "title": "On-site claim before badge-in",
       "type": "ghost_engagement",
@@ -563,27 +563,27 @@
       "escalation": "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure.",
       "evidence": [
         {
-          "at": "2026-09-08T04:41:43Z",
-          "detail": "INC3100391 replaced the switch-side optic and closed the ticket",
+          "at": "2026-09-03T13:18:20Z",
+          "detail": "INC3100136 replaced the switch-side optic and closed the ticket",
           "source": "vendor/tickets.json"
         },
         {
-          "at": "2026-09-08T05:42:37Z",
-          "detail": "11 error events on leaf-a16-r0:swp33 within 24 hrs after closure; first: symbol_errors (367)",
+          "at": "2026-09-03T14:33:57Z",
+          "detail": "10 error events on leaf-a07-r1:swp18 within 24 hrs after closure; first: symbol_errors (258)",
           "source": "telemetry/ufm_port_events.jsonl"
         },
         {
-          "at": "2026-09-08T13:23:33Z",
-          "detail": "Follow-up INC3100442 replaced the optic at a32-ct15 (host side)",
+          "at": "2026-09-03T21:02:01Z",
+          "detail": "Follow-up INC3100170 replaced the optic at a13-ct18 (host side)",
           "source": "vendor/tickets.json"
         }
       ],
       "id": "F-011",
       "keys": {},
       "metrics": {
-        "error_events_after_close": 11
+        "error_events_after_close": 10
       },
-      "observed_at": "2026-09-08T05:42:37Z",
+      "observed_at": "2026-09-03T14:33:57Z",
       "recommended_action": "Require inspection of both link ends before replacing an optic. Merge the follow-up ticket under TR-2.",
       "severity": "S2",
       "severity_name": "Major",
@@ -596,40 +596,85 @@
         "CSL-08",
         "TR-2"
       ],
-      "summary": "INC3100391 replaced the switch-side optic on leaf-a16-r0:swp33, but link errors resumed 61 minutes after closure. The fault was likely at the other end; under TR-2 the original ticket should have reopened.",
+      "summary": "INC3100136 replaced the switch-side optic on leaf-a07-r1:swp18, but link errors resumed 76 minutes after closure. The fault was likely at the other end; under TR-2 the original ticket should have reopened.",
       "tickets": [
-        "INC3100391",
-        "INC3100442"
+        "INC3100136",
+        "INC3100170"
       ],
       "title": "Link errors continued after optic replacement",
       "type": "wrong_end_optic",
-      "unit": "leaf-a16-r0:swp33"
+      "unit": "leaf-a07-r1:swp18"
     },
     {
       "escalation": "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure.",
       "evidence": [
         {
-          "at": "2026-09-01T15:17:47Z",
-          "detail": "INC3100085: Compute tray a31-ct06: XID 119, closed 'Cleaned/reseated'",
+          "at": "2026-09-04T07:21:29Z",
+          "detail": "Original fault: XID 94 (Contained ECC error)",
+          "source": "telemetry/dcgm_xid_events.jsonl"
+        },
+        {
+          "at": "2026-09-04T10:32:21Z",
+          "detail": "INC3100204 closed as 'Cleaned/reseated', no part used",
           "source": "vendor/tickets.json"
         },
         {
-          "at": "2026-09-07T15:06:12Z",
-          "detail": "INC3100374: Compute tray a31-ct06: XID 145, closed 'Cleaned/reseated'",
-          "source": "vendor/tickets.json"
-        },
-        {
-          "at": "2026-09-13T14:19:57Z",
-          "detail": "INC3100697: Compute tray a31-ct06: XID 94, closed 'Cleaned/reseated'",
-          "source": "vendor/tickets.json"
+          "at": "2026-09-07T02:24:27Z",
+          "detail": "Recurrence: XID 48 (Double Bit ECC Error)",
+          "source": "telemetry/dcgm_xid_events.jsonl"
         }
       ],
       "id": "F-012",
       "keys": {},
       "metrics": {
+        "recurrence_gap_hours": 63.9
+      },
+      "observed_at": "2026-09-07T02:24:27Z",
+      "recommended_action": "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA.",
+      "severity": "S2",
+      "severity_name": "Major",
+      "severity_reasons": [
+        "Base level for same fault recurred after a reseat: S3",
+        "AGG-REPEAT: +1 level (Same CSL or same Service Unit breached within the previous 30 days)"
+      ],
+      "sla_refs": [
+        "CSL-06",
+        "CSL-08"
+      ],
+      "summary": "INC3100204 closed a22-ct07 as 'Cleaned/reseated' with no part replaced; the same ecc fault (XID 48) recurred 64 hours after return to service, inside the recurrence window (TR-5).",
+      "tickets": [
+        "INC3100204",
+        "INC3100391"
+      ],
+      "title": "Same fault recurred after a reseat",
+      "type": "phantom_fix",
+      "unit": "a22-ct07"
+    },
+    {
+      "escalation": "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure.",
+      "evidence": [
+        {
+          "at": "2026-09-01T13:48:28Z",
+          "detail": "INC3100102: Compute tray a23-ct18: XID 145, closed 'Cleaned/reseated'",
+          "source": "vendor/tickets.json"
+        },
+        {
+          "at": "2026-09-06T16:24:53Z",
+          "detail": "INC3100374: Compute tray a23-ct18: XID 79, closed 'Cleaned/reseated'",
+          "source": "vendor/tickets.json"
+        },
+        {
+          "at": "2026-09-12T07:47:53Z",
+          "detail": "INC3100595: Compute tray a23-ct18: XID 119, closed 'Cleaned/reseated'",
+          "source": "vendor/tickets.json"
+        }
+      ],
+      "id": "F-013",
+      "keys": {},
+      "metrics": {
         "repairs_30d": 3
       },
-      "observed_at": "2026-09-13T14:15:31Z",
+      "observed_at": "2026-09-12T07:45:40Z",
       "recommended_action": "Remove the unit from service and open an OEM RMA. Find out why the lemon rule did not trigger an escalation.",
       "severity": "S2",
       "severity_name": "Major",
@@ -640,41 +685,41 @@
         "KM-09",
         "CSL-08"
       ],
-      "summary": "a31-ct06 needed 3 repairs in 11 days (INC3100085, INC3100374, INC3100697) with no OEM RMA escalation. KM-09 requires escalation within 2 business days.",
+      "summary": "a23-ct18 needed 3 repairs in 10 days (INC3100102, INC3100374, INC3100595) with no OEM RMA escalation. KM-09 requires escalation within 2 business days.",
       "tickets": [
-        "INC3100085",
+        "INC3100102",
         "INC3100374",
-        "INC3100697"
+        "INC3100595"
       ],
       "title": "Repeat-failing unit not escalated",
       "type": "lemon_unit",
-      "unit": "a31-ct06"
+      "unit": "a23-ct18"
     },
     {
       "escalation": "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure.",
       "evidence": [
         {
-          "at": "2026-09-11T16:01:07Z",
+          "at": "2026-09-13T08:10:51Z",
           "detail": "Original fault: XID 119 (Timeout waiting for GSP RPC response)",
           "source": "telemetry/dcgm_xid_events.jsonl"
         },
         {
-          "at": "2026-09-11T19:18:16Z",
-          "detail": "INC3100544 closed as 'Cleaned/reseated', no part used",
+          "at": "2026-09-13T11:27:54Z",
+          "detail": "INC3100663 closed as 'Cleaned/reseated', no part used",
           "source": "vendor/tickets.json"
         },
         {
-          "at": "2026-09-14T13:45:51Z",
+          "at": "2026-09-16T01:29:51Z",
           "detail": "Recurrence: XID 119 (Timeout waiting for GSP RPC response)",
           "source": "telemetry/dcgm_xid_events.jsonl"
         }
       ],
-      "id": "F-013",
+      "id": "F-014",
       "keys": {},
       "metrics": {
-        "recurrence_gap_hours": 66.5
+        "recurrence_gap_hours": 62.1
       },
-      "observed_at": "2026-09-14T13:45:51Z",
+      "observed_at": "2026-09-16T01:29:51Z",
       "recommended_action": "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA.",
       "severity": "S2",
       "severity_name": "Major",
@@ -686,37 +731,37 @@
         "CSL-06",
         "CSL-08"
       ],
-      "summary": "INC3100544 closed a31-ct17 as 'Cleaned/reseated' with no part replaced; the same gsp fault (XID 119) recurred 67 hours after return to service, inside the recurrence window (TR-5).",
+      "summary": "INC3100663 closed a23-ct04 as 'Cleaned/reseated' with no part replaced; the same gsp fault (XID 119) recurred 62 hours after return to service, inside the recurrence window (TR-5).",
       "tickets": [
-        "INC3100544",
-        "INC3100748"
+        "INC3100663",
+        "INC3100833"
       ],
       "title": "Same fault recurred after a reseat",
       "type": "phantom_fix",
-      "unit": "a31-ct17"
+      "unit": "a23-ct04"
     },
     {
       "escalation": "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure.",
       "evidence": [
         {
-          "at": "2026-09-16T08:54:20Z",
-          "detail": "18 FirmwareVersion changes in rack A23, first on a23-ct01",
+          "at": "2026-09-21T08:14:21Z",
+          "detail": "18 FirmwareVersion changes in rack A29, first on a29-ct01",
           "source": "telemetry/redfish_inventory_changes.jsonl"
         },
         {
           "at": null,
-          "detail": "No approved change covers rack A23 at these times",
+          "detail": "No approved change covers rack A29 at these times",
           "source": "customer/cab_changes.json"
         }
       ],
-      "id": "F-014",
+      "id": "F-015",
       "keys": {
-        "rack": "A23"
+        "rack": "A29"
       },
       "metrics": {
         "components_changed": 18
       },
-      "observed_at": "2026-09-16T08:54:20Z",
+      "observed_at": "2026-09-21T08:14:21Z",
       "recommended_action": "Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach.",
       "severity": "S2",
       "severity_name": "Major",
@@ -727,56 +772,11 @@
       "sla_refs": [
         "KM-10"
       ],
-      "summary": "Firmware changed (1.3.6 -> 1.3.7) on 18 components in rack A23 between 2026-09-16 08:54 UTC and 2026-09-16 10:36 UTC with no approved change record.",
+      "summary": "Firmware changed (1.3.6 -> 1.3.7) on 18 components in rack A29 between 2026-09-21 08:14 UTC and 2026-09-21 09:56 UTC with no approved change record.",
       "tickets": [],
       "title": "Change without an approved change record",
       "type": "unauthorized_change",
-      "unit": "Rack A23"
-    },
-    {
-      "escalation": "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure.",
-      "evidence": [
-        {
-          "at": "2026-09-13T03:06:06Z",
-          "detail": "Original fault: XID 79 (GPU has fallen off the bus)",
-          "source": "telemetry/dcgm_xid_events.jsonl"
-        },
-        {
-          "at": "2026-09-13T06:37:19Z",
-          "detail": "INC3100612 closed as 'Cleaned/reseated', no part used",
-          "source": "vendor/tickets.json"
-        },
-        {
-          "at": "2026-09-17T08:35:39Z",
-          "detail": "Recurrence: XID 79 (GPU has fallen off the bus)",
-          "source": "telemetry/dcgm_xid_events.jsonl"
-        }
-      ],
-      "id": "F-015",
-      "keys": {},
-      "metrics": {
-        "recurrence_gap_hours": 98.0
-      },
-      "observed_at": "2026-09-17T08:35:39Z",
-      "recommended_action": "Replace rather than reseat on any recurrence. Add a one-reseat-maximum rule to the break-fix runbook and require an RCA.",
-      "severity": "S2",
-      "severity_name": "Major",
-      "severity_reasons": [
-        "Base level for same fault recurred after a reseat: S3",
-        "AGG-REPEAT: +1 level (Same CSL or same Service Unit breached within the previous 30 days)"
-      ],
-      "sla_refs": [
-        "CSL-06",
-        "CSL-08"
-      ],
-      "summary": "INC3100612 closed a14-ct07 as 'Cleaned/reseated' with no part replaced; the same bus fault (XID 79) recurred 98 hours after return to service, inside the recurrence window (TR-5).",
-      "tickets": [
-        "INC3100612",
-        "INC3100901"
-      ],
-      "title": "Same fault recurred after a reseat",
-      "type": "phantom_fix",
-      "unit": "a14-ct07"
+      "unit": "Rack A29"
     },
     {
       "escalation": "Supplier RCA within 10 business days; discussed in the weekly operations review.",
@@ -825,17 +825,17 @@
       "escalation": "Supplier RCA within 10 business days; discussed in the weekly operations review.",
       "evidence": [
         {
-          "at": "2026-09-05T03:48:54Z",
-          "detail": "INC3100272 used 1 x Compute tray",
+          "at": "2026-09-13T06:45:45Z",
+          "detail": "INC3100612 used 1 x Compute tray",
           "source": "vendor/tickets.json"
         },
         {
           "at": null,
-          "detail": "0 issue(s) of Compute tray recorded against INC3100272",
+          "detail": "0 issue(s) of Compute tray recorded against INC3100612",
           "source": "vendor/spares_ledger.csv"
         },
         {
-          "at": "2026-09-06T23:00:00Z",
+          "at": "2026-09-13T23:00:00Z",
           "detail": "Cycle count Compute tray: ledger 4, counted 3",
           "source": "vendor/spares_cycle_counts.csv"
         }
@@ -843,7 +843,7 @@
       "id": "F-017",
       "keys": {},
       "metrics": {},
-      "observed_at": "2026-09-05T03:48:54Z",
+      "observed_at": "2026-09-13T06:45:45Z",
       "recommended_action": "Correct the ledger and recount the affected spares class. Enforce scan-to-issue before any part leaves the cage.",
       "severity": "S3",
       "severity_name": "Minor",
@@ -854,9 +854,9 @@
         "KM-06",
         "KM-07"
       ],
-      "summary": "INC3100272 used 1 x Compute tray but the spares ledger records 0 issue(s); the next cycle count was 1 short.",
+      "summary": "INC3100612 used 1 x Compute tray but the spares ledger records 0 issue(s); the next cycle count was 1 short.",
       "tickets": [
-        "INC3100272"
+        "INC3100612"
       ],
       "title": "Part used but not issued from spares",
       "type": "spares_drift",

@@ -1,0 +1,53 @@
+## {{ num.measurement }}. Measurement and Telemetry of Record
+
+{{ m.principle }}
+
+### {{ num.measurement }}.1 Clock rules
+
+- **Clock starts:** {{ m.clock_rules.start }}
+- **Clock stops:** {{ m.clock_rules.stop }}
+- **The clock may pause only for:**
+{%- for x in m.clock_rules.pause_allowed_only_for %}
+  - {{ x }}
+{%- endfor %}
+- **The clock does not pause for:**
+{%- for x in m.clock_rules.pause_not_allowed_for %}
+  - {{ x }}
+{%- endfor %}
+- **Timestamps:** {{ m.timestamp_standard }}
+
+### {{ num.measurement }}.2 Data sources and precedence
+
+Precedence 1 is most authoritative. When sources disagree, the higher-precedence source prevails.
+
+| ID | Source | Measures | Owner | Precedence |
+|---|---|---|---|:-:|
+{% for ds in m.data_sources -%}
+| {{ ds.id }} | {{ ds.name }} | {{ ds.measures }} | {{ ds.owner }} | {{ ds.precedence }} |
+{% endfor %}
+
+### {{ num.measurement }}.3 Reporting
+
+- **Weekly:** {{ m.reporting.weekly }}
+- **Monthly:** {{ m.reporting.monthly }}
+- **Raw data:** {{ m.reporting.raw_data_access }}
+- **Failure to report:** {{ m.reporting.failure_to_report }}
+
+### {{ num.measurement }}.4 Reference implementation
+
+{{ m.reference_implementation }}
+
+### {{ num.measurement }}.5 Calibration period
+
+{{ m.calibration.rule }}
+
+### {{ num.measurement }}.6 Reconciliation and disputes
+
+{{ m.reconciliation }}
+
+{{ m.disputes.rule }}
+
+### {{ num.measurement }}.7 Audit
+
+{{ m.audit.rule }}
+

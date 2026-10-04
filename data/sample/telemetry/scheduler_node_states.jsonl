@@ -1,257 +1,287 @@
 {"node": "a31-ct11", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-01T05:49:43Z"}
-{"node": "a31-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-01T09:51:27Z"}
-{"node": "a31-ct06", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-01T15:14:51Z"}
-{"node": "a31-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-01T18:29:56Z"}
+{"node": "a31-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-01T12:25:08Z"}
+{"node": "a31-ct11", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-01T12:55:07Z"}
+{"node": "a23-ct18", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-01T13:47:47Z"}
+{"node": "a31-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-01T16:11:56Z"}
+{"node": "a23-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-01T16:55:42Z"}
 {"node": "a20-ct15", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-02T13:40:38Z"}
 {"node": "a20-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-02T16:39:19Z"}
 {"node": "a13-ct18", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-03T12:05:38Z"}
-{"node": "a13-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-03T13:17:57Z"}
+{"node": "a13-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-03T13:16:30Z"}
 {"node": "a05-ct18", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-04T00:36:24Z"}
-{"node": "a05-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T02:15:15Z"}
+{"node": "a05-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T04:18:57Z"}
 {"node": "a22-ct07", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-04T07:22:29Z"}
 {"node": "a06-ct13", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-04T09:38:29Z"}
-{"node": "a22-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T10:51:56Z"}
-{"node": "a06-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T16:51:04Z"}
-{"node": "a06-ct13", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-04T17:32:42Z"}
+{"node": "a22-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T10:29:06Z"}
+{"node": "a06-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T16:09:49Z"}
+{"node": "a06-ct13", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-04T16:23:13Z"}
+{"node": "a06-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T19:33:42Z"}
 {"node": "a03-ct14", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-04T20:24:10Z"}
-{"node": "a06-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T20:36:40Z"}
-{"node": "a03-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T21:39:49Z"}
 {"node": "a28-ct04", "reason": "XID 149", "state": "drain", "timestamp": "2026-09-04T21:53:50Z"}
 {"node": "a29-ct03", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-04T23:34:03Z"}
-{"node": "a28-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-05T01:11:09Z"}
+{"node": "a03-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-04T23:50:04Z"}
+{"node": "a28-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-05T01:35:42Z"}
 {"node": "a29-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-05T03:49:43Z"}
 {"node": "a09-ct10", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-06T08:53:39Z"}
-{"node": "a09-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-06T12:46:10Z"}
+{"node": "a23-ct18", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-06T16:21:52Z"}
+{"node": "a09-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-06T17:55:16Z"}
+{"node": "a23-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-06T19:27:44Z"}
+{"node": "a22-ct07", "reason": "XID 48", "state": "drain", "timestamp": "2026-09-07T02:25:27Z"}
+{"node": "a22-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-07T06:19:50Z"}
 {"node": "a08-ct08", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-07T12:18:22Z"}
 {"node": "a08-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-07T13:48:36Z"}
-{"node": "a31-ct06", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-07T15:04:53Z"}
-{"node": "a31-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-07T18:16:03Z"}
 {"node": "a32-ct15", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-08T03:05:06Z"}
-{"node": "a32-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-08T04:38:21Z"}
+{"node": "a32-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-08T04:07:58Z"}
 {"node": "a14-ct16", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-08T06:47:41Z"}
 {"node": "a14-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-08T08:41:15Z"}
 {"node": "a26-ct16", "reason": "XID 149", "state": "drain", "timestamp": "2026-09-08T13:02:44Z"}
 {"node": "a03-ct11", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-08T15:21:32Z"}
+{"node": "a26-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-08T16:25:35Z"}
 {"node": "a03-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-08T16:34:03Z"}
-{"node": "a26-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-08T20:07:02Z"}
-{"node": "a26-ct16", "reason": "XID 149", "state": "drain", "timestamp": "2026-09-08T20:43:32Z"}
-{"node": "a26-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-08T23:57:22Z"}
 {"node": "a14-ct02", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-09T21:07:27Z"}
-{"node": "a14-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-10T01:10:58Z"}
+{"node": "a14-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-09T23:00:25Z"}
+{"node": "b01-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
+{"node": "b01-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-10T02:37:24Z"}
 {"node": "a15-ct07", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-10T18:02:45Z"}
 {"node": "a15-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-10T21:09:41Z"}
-{"node": "b02-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "b02-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T05:53:56Z"}
-{"node": "a25-ct12", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-11T10:30:02Z"}
-{"node": "a25-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-11T14:43:16Z"}
 {"node": "a31-ct17", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-11T16:02:07Z"}
 {"node": "a25-ct10", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-11T16:18:59Z"}
 {"node": "a25-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-11T17:51:38Z"}
-{"node": "a31-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-11T19:13:46Z"}
+{"node": "b03-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "b03-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-11T18:01:44Z"}
+{"node": "a31-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-11T20:24:10Z"}
 {"node": "a21-ct02", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-11T22:04:51Z"}
 {"node": "a21-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-11T23:22:49Z"}
-{"node": "a29-ct04", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-12T05:00:53Z"}
-{"node": "a29-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-12T08:45:23Z"}
+{"node": "a23-ct18", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-12T07:46:40Z"}
+{"node": "a23-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-12T10:53:18Z"}
 {"node": "a14-ct07", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-13T03:07:06Z"}
 {"node": "a05-ct15", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-13T03:51:40Z"}
-{"node": "a14-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T06:33:57Z"}
+{"node": "a14-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T06:45:45Z"}
 {"node": "a31-ct15", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-13T07:14:04Z"}
 {"node": "a23-ct04", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-13T08:11:51Z"}
 {"node": "a05-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T08:13:20Z"}
 {"node": "a03-ct08", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-13T10:45:21Z"}
 {"node": "a31-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T11:08:11Z"}
+{"node": "a23-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T11:21:58Z"}
 {"node": "a03-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T11:56:13Z"}
-{"node": "a23-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T12:05:41Z"}
-{"node": "a31-ct06", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-13T14:16:31Z"}
-{"node": "a31-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-13T17:36:21Z"}
-{"node": "b01-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
-{"node": "b01-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-13T18:12:14Z"}
 {"node": "a20-ct03", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-14T02:16:12Z"}
 {"node": "a20-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T03:24:58Z"}
-{"node": "b04-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "b04-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T05:07:01Z"}
-{"node": "a31-ct17", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-14T13:46:51Z"}
-{"node": "b03-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "b03-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T14:01:48Z"}
-{"node": "a31-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T17:34:19Z"}
+{"node": "b02-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b02-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T04:57:49Z"}
+{"node": "b04-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "b04-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T07:06:00Z"}
+{"node": "a06-ct01", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct02", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct03", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct04", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct05", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct06", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct07", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct08", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct09", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct10", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct11", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct12", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct13", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct14", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct15", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct16", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct17", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct18", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-14T09:41:57Z"}
+{"node": "a06-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
+{"node": "a06-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T12:31:20Z"}
 {"node": "a26-ct17", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-14T18:31:00Z"}
-{"node": "b05-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
-{"node": "b05-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T19:23:42Z"}
 {"node": "a26-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-14T19:41:21Z"}
+{"node": "b05-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
+{"node": "b05-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-14T22:45:29Z"}
 {"node": "a07-ct04", "reason": "XID 149", "state": "drain", "timestamp": "2026-09-15T09:32:51Z"}
+{"node": "a07-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T11:23:21Z"}
 {"node": "a01-ct05", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-15T12:49:14Z"}
-{"node": "a07-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T13:29:34Z"}
-{"node": "a24-ct13", "reason": "Leak detected", "state": "drain", "timestamp": "2026-09-15T17:58:56Z"}
+{"node": "a01-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T17:17:06Z"}
 {"node": "a16-ct01", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-15T20:07:17Z"}
 {"node": "a14-ct14", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-15T20:15:44Z"}
 {"node": "a16-ct14", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-15T21:33:29Z"}
-{"node": "a24-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T22:02:09Z"}
-{"node": "a01-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T22:10:22Z"}
 {"node": "a16-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T22:58:53Z"}
 {"node": "a14-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T23:48:28Z"}
 {"node": "a16-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-16T00:53:59Z"}
-{"node": "b06-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "b06-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T06:46:09Z"}
-{"node": "a14-ct07", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-17T08:36:39Z"}
-{"node": "a14-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-17T13:03:15Z"}
+{"node": "a23-ct04", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-16T01:30:51Z"}
+{"node": "a23-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-16T04:58:06Z"}
 {"node": "a03-ct02", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-17T13:13:31Z"}
 {"node": "a03-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-17T17:26:09Z"}
-{"node": "b08-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b08-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T04:39:25Z"}
-{"node": "b07-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
-{"node": "b07-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T00:30:36Z"}
+{"node": "b07-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b07-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-17T20:35:59Z"}
+{"node": "b06-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b06-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-18T17:06:41Z"}
+{"node": "b08-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
+{"node": "b08-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-19T00:49:06Z"}
 {"node": "a30-ct06", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-20T16:30:42Z"}
+{"node": "b09-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
+{"node": "b09-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-20T18:01:26Z"}
 {"node": "a30-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-20T20:04:57Z"}
 {"node": "a13-ct10", "reason": "XID 48", "state": "drain", "timestamp": "2026-09-21T00:55:07Z"}
 {"node": "a13-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-21T04:05:37Z"}
 {"node": "a10-ct13", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-21T05:15:39Z"}
 {"node": "a10-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-21T09:21:33Z"}
-{"node": "b10-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
-{"node": "b10-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-21T20:44:24Z"}
 {"node": "a22-ct02", "reason": "XID 145", "state": "drain", "timestamp": "2026-09-22T00:48:12Z"}
 {"node": "a22-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-22T05:00:15Z"}
 {"node": "a10-ct12", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-22T21:04:17Z"}
@@ -259,67 +289,67 @@
 {"node": "a19-ct15", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-23T06:52:44Z"}
 {"node": "a19-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-23T10:29:09Z"}
 {"node": "a13-ct01", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-23T12:34:52Z"}
+{"node": "b10-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
+{"node": "b10-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T13:27:31Z"}
 {"node": "a13-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-23T16:12:55Z"}
-{"node": "b09-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b09-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-23T23:23:26Z"}
-{"node": "b11-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
-{"node": "b11-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T04:20:46Z"}
 {"node": "a23-ct02", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-24T04:21:02Z"}
 {"node": "a23-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-24T05:52:31Z"}
+{"node": "b11-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
+{"node": "b11-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-24T10:49:54Z"}
 {"node": "a01-ct10", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-24T16:58:06Z"}
 {"node": "a01-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-24T20:49:45Z"}
 {"node": "a30-ct08", "reason": "XID 94", "state": "drain", "timestamp": "2026-09-25T00:44:32Z"}
 {"node": "a30-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-25T04:36:53Z"}
-{"node": "b12-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
-{"node": "b12-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T08:06:22Z"}
+{"node": "b12-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
+{"node": "b12-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-25T07:37:11Z"}
 {"node": "a15-ct01", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-09-25T08:10:50Z"}
 {"node": "a15-ct02", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-09-25T08:10:50Z"}
 {"node": "a15-ct03", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-09-25T08:10:50Z"}
@@ -360,23 +390,23 @@
 {"node": "a20-ct07", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-25T23:57:04Z"}
 {"node": "a01-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-26T02:35:06Z"}
 {"node": "a29-ct17", "reason": "IB link down", "state": "drain", "timestamp": "2026-09-26T04:14:31Z"}
-{"node": "a20-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-26T04:26:31Z"}
+{"node": "a20-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-26T04:23:42Z"}
+{"node": "b13-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
+{"node": "b13-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T04:49:07Z"}
 {"node": "a29-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-26T05:33:26Z"}
-{"node": "b13-ct01", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct02", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct03", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct04", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct05", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct06", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct07", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct08", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct09", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct10", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct11", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct12", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct13", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct14", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct15", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct16", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct17", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}
-{"node": "b13-ct18", "reason": "validated handoff", "state": "idle", "timestamp": "2026-09-26T08:26:55Z"}

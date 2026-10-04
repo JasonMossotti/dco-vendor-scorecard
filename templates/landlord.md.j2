@@ -1,0 +1,352 @@
+<!--
+  GENERATED FILE. DO NOT EDIT BY HAND.
+  Source: sla/{{ src.partner }} + sla/{{ src.common }}  |  Generator: scripts/render_sla.py
+  Edit the YAML and re-run: python scripts/render_sla.py
+-->
+
+# {{ d.title }}
+
+**{{ d.subtitle }}**
+
+> **{{ d.status }}.** {{ d.disclaimer }}
+
+| Document ID | Version | Effective date | Term | Timezone |
+|---|---|---|---|---|
+| {{ d.id }} | {{ d.version }} | {{ d.effective_date }} | {{ d.term_months }} months | {{ d.timezone }} |
+
+## Contents
+
+1. [Purpose and Structure](#1-purpose-and-structure)
+2. [Parties and Leased Premises](#2-parties-and-leased-premises)
+3. [Scope and Ownership](#3-scope-and-ownership)
+4. [Alarm Priority Matrix](#4-alarm-priority-matrix)
+5. [Measurement and Telemetry of Record](#5-measurement-and-telemetry-of-record)
+6. [Work Order Handling Rules](#6-work-order-handling-rules)
+7. [Measurement Specification by Fault Class](#7-measurement-specification-by-fault-class)
+8. [Critical Service Levels](#8-critical-service-levels)
+9. [Key Measurements](#9-key-measurements)
+10. [Return-to-Service Validation Requirements](#10-return-to-service-validation-requirements)
+11. [Maintenance Requirements](#11-maintenance-requirements)
+12. [Service Level Credits and Earnback](#12-service-level-credits-and-earnback)
+13. [Chronic Failure](#13-chronic-failure)
+14. [Excused Events](#14-excused-events)
+15. [Root Cause Analysis and Corrective Action](#15-root-cause-analysis-and-corrective-action)
+16. [Governance and Reporting Cadence](#16-governance-and-reporting-cadence)
+17. [Staffing and Qualifications](#17-staffing-and-qualifications)
+18. [Change Management](#18-change-management)
+19. [Security and Chain of Custody](#19-security-and-chain-of-custody)
+20. [Environmental, Health, and Safety](#20-environmental-health-and-safety)
+21. [Spares](#21-spares)
+22. [SLA Change Control and Continuous Improvement](#22-sla-change-control-and-continuous-improvement)
+- [Appendix A: Internal Breach Severity Index](#appendix-a-internal-breach-severity-index)
+- [Appendix B: Worked Examples](#appendix-b-worked-examples)
+
+---
+
+## 1. Purpose and Structure
+
+This Schedule defines the service levels {{ p.supplier.name }} ("Landlord", and the "Supplier" for the purposes of the common terms in this Schedule) must meet in operating the facility the {{ p.customer.name }} leases at {{ s.name }}, how performance is measured, and what happens when service levels are missed.
+
+{{ d.negotiation_note }}
+
+Each service level has an **Expected** level (missing it triggers root cause analysis) and a **Minimum** level (missing it triggers a Service Level Credit against rent). Two principles shape this Schedule:
+
+1. **Telemetry of Record.** Performance is measured from device telemetry the Customer reads directly under the Interface Agreement, not from the Landlord's own reports.
+2. **Redundancy restored means proven.** A repair is complete only when redundancy is restored and verified by telemetry, not when an alarm clears or a work order closes.
+
+## 2. Parties and Leased Premises
+
+| Party | Name | Role |
+|---|---|---|
+| Customer (tenant) | {{ p.customer.name }} | {{ p.customer.role }} |
+| Landlord | {{ p.supplier.name }}{% if p.supplier.fictional %} *(fictional)*{% endif %} | {{ p.supplier.role }} |
+| IT Partner | {{ p.it_partner.name }}{% if p.it_partner.fictional %} *(fictional)*{% endif %} | {{ p.it_partner.role }} |
+| Utility | {{ p.utility.name }} | {{ p.utility.role }} |
+
+**Premises:** {{ s.name }}. **Charges basis:** {{ c.charges_basis }}
+
+| Hall | State | Racks |
+|---|---|:-:|
+{% for h in s.halls -%}
+| {{ h.id }} | {{ h.state }} | {{ h.racks }} |
+{% endfor %}
+
+## 3. Scope and Ownership
+
+### 3.1 Landlord services
+
+| ID | Service | Description |
+|---|---|---|
+{% for x in sla.scope.in_scope -%}
+| {{ x.id }} | {{ x.name }} | {{ x.description }} |
+{% endfor %}
+
+### 3.2 Not Landlord scope
+
+{% for x in sla.scope.out_of_scope -%}
+- {{ x }}
+{% endfor %}
+
+### 3.3 Break-fix ownership matrix
+
+{% include "partials/ownership.md.j2" %}
+
+## 4. Alarm Priority Matrix
+
+"Engaged on-site" means a qualified engineer badged into the room with the alarmed equipment.
+
+| Priority | Acknowledge | Engaged on-site | Containment | Restore (Validated RTS) | Updates every |
+|---|---|---|---|---|---|
+{% for pr in sla.priorities -%}
+| **{{ pr.id }} {{ pr.name }}** | {{ pr.acknowledge_min | dur }} | {{ pr.engaged_on_site_min | dur }} | {{ pr.containment_min | dur }} | {{ pr.restore_min | dur }} | {{ pr.update_cadence_min | dur }} |
+{% endfor %}
+
+{% for pr in sla.priorities %}
+### {{ pr.id }}: {{ pr.name }}
+
+**Criteria:**
+{% for c in pr.criteria %}
+- {{ c }}
+{%- endfor %}
+
+**Examples:** {{ pr.examples | join(" ") }}
+
+**Escalation:** {{ pr.escalation }}
+{% endfor %}
+
+{% include "partials/measurement.md.j2" %}
+## 6. Work Order Handling Rules
+
+{{ sla.ticket_handling.principle }}
+
+### 6.1 Work Order of Record
+
+{% for r in sla.ticket_handling.ticket_of_record -%}
+- {{ r }}
+{% endfor %}
+
+### 6.2 Required work order fields
+
+Every Work Order of Record carries these fields. Fault classes in Section 7 add their own.
+
+{% for f in sla.ticket_handling.required_fields -%}
+- {{ f }}
+{% endfor %}
+
+### 6.3 Work order states
+
+| State | Clock | Meaning |
+|---|:-:|---|
+{% for st in sla.ticket_handling.states -%}
+| `{{ st.id }}` | {{ st.clock }} | {{ st.description }} |
+{% endfor %}
+
+### 6.4 Pause codes
+
+The clock pauses only under one of these codes, each requiring a named Customer approver.
+
+| Code | Meaning |
+|---|---|
+{% for pc in sla.ticket_handling.pause_codes -%}
+| `{{ pc.code }}` | {{ pc.description }} |
+{% endfor %}
+
+### 6.5 Data integrity
+
+{% for r in sla.ticket_handling.data_integrity -%}
+- {{ r }}
+{% endfor %}
+
+### 6.6 Stability, reopen, and recurrence rules
+
+**{{ sla.ticket_handling.stability.principle }}**
+
+| Rule | Name | Rule text |
+|---|---|---|
+{% for r in sla.ticket_handling.stability.rules -%}
+| **{{ r.id }}** | {{ r.name }} | {{ r.rule }} |
+{% endfor %}
+
+How the same refault is treated follows the same timing rules as the IT Partner SLA: a refault within {{ sla.ticket_handling.stability.early_failure_minutes }} minutes voids the restore (TR-1); within the fault class's stability window it reopens the work order (TR-2); after the stability window but within the recurrence window it is a new linked work order that fails first-time fix (TR-5).
+
+## 7. Measurement Specification by Fault Class
+
+Each fault class below is a rule card: the single approved way to detect, classify, evidence, validate, and time that kind of fault. The Customer alerting integration assigns the fault class when it opens the Work Order of Record.
+
+| Class | Fault | Service Unit Key | Detected by | Default priority | Stability window | Recurrence window |
+|---|---|---|---|:-:|:-:|:-:|
+{% for fc in sla.measurement_spec -%}
+| {{ fc.id }} | {{ fc.name }} | {{ fc.service_unit_key }} | {{ fc.detection.source }} | {{ fc.default_priority }} | {{ fc.stability_window_hours }} hrs | {{ fc.recurrence_window_days }} days |
+{% endfor %}
+
+{% for fc in sla.measurement_spec %}
+### {{ fc.id }}: {{ fc.name }}
+
+| | |
+|---|---|
+| **Service Unit Key** | {{ fc.service_unit_key }} |
+| **Detection signal** | {{ fc.detection.signal }} Source: {{ fc.detection.source }}. |
+| **T0 rule** | {{ fc.detection.t0_rule }} |
+| **Recurrence signal** | {{ fc.recurrence_signal }} |
+| **Priority** | {{ fc.default_priority }} by default.{% for r in fc.priority_rules %} {{ r }}{% endfor %} |
+| **Additional work order fields** | {{ fc.additional_fields | join("; ") if fc.additional_fields else "None beyond Section 6.2" }} |
+| **Repair evidence** | {{ fc.repair_evidence | join(" ") }} |
+| **Validation** | Section 10 checklist: {{ fc.validation_class | join(" or ") }} |
+| **Clock stops** | {{ fc.clock_stop }} |
+| **Stability window** | {{ fc.stability_window_hours }} hours in production (TR-2, TR-3) |
+| **Recurrence window** | {{ fc.recurrence_window_days }} days (TR-5) |
+| **Capacity impact** | {% if fc.capacity_impact.states %}{% for st in fc.capacity_impact.states %}{{ st.state }}: {{ st.gpus }} GPUs × {{ st.factor }}{% if not loop.last %}; {% endif %}{% endfor %}{% else %}No compute lost{% endif %}{% if fc.redundancy_exposure %}; counts against redundancy service levels (OT-CSL-02, OT-CSL-05){% endif %} |
+{% endfor %}
+
+## 8. Critical Service Levels
+
+Critical Service Levels are measured each {{ c.measurement_period }} and tracked each {{ c.scorecard_period }}. A result worse than **Minimum** is a Minimum Service Level Default and earns the credit described in Section 12.
+
+| ID | Service level | Category | Expected | Minimum | Credit allocation |
+|---|---|---|:-:|:-:|:-:|
+{% for x in sla.critical_service_levels -%}
+| {{ x.id }} | {{ x.name }} | {{ categories[x.category] }} | {{ x | target(x.expected) }} | {{ x | target(x.minimum) }} | {{ x.credit_allocation_pct }}% |
+{% endfor -%}
+| | **Total allocation** | | | | **{{ total_alloc }}%** (pool limit {{ c.pool_pct }}%) |
+
+{% for x in sla.critical_service_levels %}
+### {{ x.id }}: {{ x.name }}
+
+{{ x.description }}
+
+- **Formula:** ({{ x.numerator }}) ÷ ({{ x.denominator }}) × 100
+- **Expected:** {{ x | target(x.expected) }}. **Minimum:** {{ x | target(x.minimum) }}.
+- **Telemetry:** {{ x.data_sources | join(", ") }}
+{%- if x.get('small_sample_rule') %}
+- **Small-sample rule:** When there are fewer than {{ x.small_sample_rule.below_events }} qualifying events in the period, {% if x.small_sample_rule.max_misses_before_minimum_default == 0 %}any miss{% elif x.small_sample_rule.max_misses_before_minimum_default == 1 %}more than 1 miss{% else %}more than {{ x.small_sample_rule.max_misses_before_minimum_default }} misses{% endif %} is a Minimum Service Level Default regardless of the percentage. This prevents one incident in a quiet month from swinging the result unfairly in either direction.
+{%- endif %}
+{% endfor %}
+
+## 9. Key Measurements
+
+Key Measurements carry no credits. Any miss requires a root cause analysis and corrective action plan (Section 15), and repeated misses may lead the Customer to promote the measurement to a Critical Service Level (Section 22).
+
+| ID | Key measurement | Target | Telemetry |
+|---|---|:-:|---|
+{% for k in sla.key_measurements -%}
+| {{ k.id }} | {{ k.name }} | {{ k | target(k.target) }} | {{ k.data_sources | join(", ") }} |
+{% endfor %}
+
+## 10. Return-to-Service Validation Requirements
+
+{{ sla.rts_validation.principle }}
+
+Each check is recorded in the Landlord maintenance system under a standard check ID, so validation evidence is linked by record, never retyped.
+
+{% for cl in sla.rts_validation.classes %}
+**{{ cl.component }}** (check IDs: {% for c in cl.check_ids %}`{{ c }}`{% if not loop.last %}, {% endif %}{% endfor %})
+{% for chk in cl.checks %}
+- [ ] {{ chk }}
+{%- endfor %}
+
+{% endfor %}
+
+## 11. Maintenance Requirements
+
+{{ sla.maintenance.principle }}
+
+| System | Task | Requirement | Frequency |
+|---|---|---|---|
+{% for t in sla.maintenance.schedule -%}
+| {{ t.system }} | {{ t.task }} | {{ t.requirement }} | {{ t.frequency }} |
+{% endfor %}
+
+## 12. Service Level Credits and Earnback
+
+- **At-Risk Amount:** {{ c.at_risk_pct }}% of monthly charges (illustratively ${{ "{:,.0f}".format(c.monthly_charges) }}/month, so **${{ "{:,.0f}".format(at_risk) }}** at risk each month).
+- **Pool:** Credit allocations across all Critical Service Levels total {{ total_alloc }}% of the At-Risk Amount (pool limit {{ c.pool_pct }}%), with no single CSL above {{ c.max_allocation_per_csl_pct }}%. A pool above 100% concentrates financial attention on the Customer's priorities while the monthly cap protects the Supplier.
+- **Credit formula:** Credit = At-Risk Amount × CSL allocation %.
+- **Monthly cap:** Total credits in a Measurement Period never exceed the At-Risk Amount.
+- **Repeat defaults:** A Minimum Service Level Default on the same CSL for {{ c.doubling.consecutive_minimum_defaults }} consecutive periods earns {{ c.doubling.multiplier }}× the credit. {{ c.doubling.note }}
+- **Earnback:** {{ c.earnback.rule }} Earnback is not available when:
+{%- for x in c.earnback.ineligible_when %}
+  - {{ x }}
+{%- endfor %}
+- **Application:** {{ c.credit_application }}
+- **EHS Credits:** handled separately under Section 22; outside this monthly cap and never earned back.
+- **Nature of credits:** {{ c.credits_note }}
+
+See Appendix B.1 for worked credit examples.
+
+ Chronic Failure and Termination
+
+
+## 13. Chronic Failure
+
+Any of the following is a Chronic Failure:
+
+{% for t in sla.chronic_failure.triggers -%}
+- **{{ t.id }}:** {{ t.rule }}
+{% endfor %}
+On a Chronic Failure, the Customer may:
+
+{% for r in sla.chronic_failure.customer_rights -%}
+- {{ r }}
+{% endfor %}
+{% include "partials/process.md.j2" %}
+## 17. Staffing and Qualifications
+
+**Coverage:** {{ sla.staffing.coverage }}.
+
+| Shift | Engineers | Shift leads |
+|---|:-:|:-:|
+{% for sh in sla.staffing.committed_per_shift -%}
+| {{ sh.shift }} | {{ sh.technicians }} | {{ sh.shift_leads }} |
+{% endfor %}
+
+**Key personnel:**
+
+{% for k in sla.staffing.key_personnel -%}
+- {{ k }}
+{% endfor %}
+**Required qualifications:**
+
+{% for q in sla.staffing.required_qualifications -%}
+- {{ q }}
+{% endfor %}
+{{ sla.staffing.qualification_rule }}
+
+## 18. Change Management
+
+{% for r in sla.change_management.rules -%}
+- {{ r }}
+{% endfor %}
+**Landlord critical systems:** {{ sla.change_management.landlord }} Coordination across parties follows the Interface Agreement.
+
+{% include "partials/security_ehs.md.j2" %}
+## 21. Spares
+
+{{ sla.spares.ownership }}
+
+| Field-replaceable unit | Minimum stock per hall |
+|---|:-:|
+{% for f in sla.spares.minimum_stock_per_hall -%}
+| {{ f.fru }} | {{ f.minimum }} |
+{% endfor %}
+
+- **Reorder:** {{ sla.spares.reorder_rule }}
+- **Cycle counts:** {{ sla.spares.cycle_count }}
+
+{% include "partials/change_control_severity.md.j2" %}
+## Appendix B: Worked Examples
+
+*These examples are computed by `src/scorecard/sla_model.py` from this SLA's own parameters every time the document is generated, so the document and the scoring engine always agree.*
+
+### B.1 Service Level Credits
+
+{% for ex in credit_examples %}
+**{{ ex.title }}.** {{ ex.result.explanation }}. **Credit: ${{ "{:,.0f}".format(ex.result.credit) }}.** Earnback eligible: {{ "Yes" if ex.result.earnback_eligible else "No" }}.
+{% endfor %}
+
+**Monthly cap.** A severe month with Minimum defaults on OT-CSL-01, OT-CSL-03, OT-CSL-05, OT-CSL-06, and OT-CSL-08: uncapped credits total ${{ "{:,.0f}".format(cap_example.uncapped) }} ({{ cap_example.pct_of_ara }}% of the At-Risk Amount). The cap limits the payable credit to **${{ "{:,.0f}".format(cap_example.payable) }}**.
+
+{% include "partials/ehs_example.md.j2" %}
+
+---
+
+*Generated from `sla/{{ src.partner }}` and the common terms in `sla/{{ src.common }}` (schema {{ sla.schema_version }}, SLA version {{ d.version }}, common terms version {{ src.common_version }}). {{ d.disclaimer }}*

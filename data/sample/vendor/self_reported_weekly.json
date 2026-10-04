@@ -1,7 +1,7 @@
 [
   {
     "first_time_fix_pct": 100.0,
-    "gpu_availability_pct": 99.959,
+    "gpu_availability_pct": 99.943,
     "notes": "All SLAs met. No open escalations.",
     "restore_performance": {
       "P1": {
@@ -9,55 +9,31 @@
         "within_target_pct": 100.0
       },
       "P2": {
-        "count": 12,
+        "count": 14,
         "within_target_pct": 100.0
       },
       "P3": {
-        "count": 7,
-        "within_target_pct": 100.0
-      }
-    },
-    "staffing_fill_pct": 100.0,
-    "tickets_closed": 19,
-    "validated_rts_pct": 100.0,
-    "week_end": "2026-09-07T00:00:00Z",
-    "week_start": "2026-08-31T00:00:00Z"
-  },
-  {
-    "first_time_fix_pct": 100.0,
-    "gpu_availability_pct": 99.937,
-    "notes": "Minor restore-time exceptions under review. No open escalations.",
-    "restore_performance": {
-      "P1": {
-        "count": 2,
-        "within_target_pct": 50.0
-      },
-      "P2": {
-        "count": 18,
-        "within_target_pct": 100.0
-      },
-      "P3": {
-        "count": 2,
+        "count": 8,
         "within_target_pct": 100.0
       }
     },
     "staffing_fill_pct": 100.0,
     "tickets_closed": 22,
     "validated_rts_pct": 100.0,
-    "week_end": "2026-09-14T00:00:00Z",
-    "week_start": "2026-09-07T00:00:00Z"
+    "week_end": "2026-09-07T00:00:00Z",
+    "week_start": "2026-08-31T00:00:00Z"
   },
   {
     "first_time_fix_pct": 100.0,
-    "gpu_availability_pct": 99.955,
-    "notes": "Minor restore-time exceptions under review. No open escalations.",
+    "gpu_availability_pct": 99.954,
+    "notes": "All SLAs met. No open escalations.",
     "restore_performance": {
       "P1": {
-        "count": 1,
-        "within_target_pct": 0.0
+        "count": 0,
+        "within_target_pct": 100.0
       },
       "P2": {
-        "count": 14,
+        "count": 17,
         "within_target_pct": 100.0
       },
       "P3": {
@@ -66,7 +42,31 @@
       }
     },
     "staffing_fill_pct": 100.0,
-    "tickets_closed": 16,
+    "tickets_closed": 18,
+    "validated_rts_pct": 100.0,
+    "week_end": "2026-09-14T00:00:00Z",
+    "week_start": "2026-09-07T00:00:00Z"
+  },
+  {
+    "first_time_fix_pct": 100.0,
+    "gpu_availability_pct": 99.917,
+    "notes": "All SLAs met. No open escalations.",
+    "restore_performance": {
+      "P1": {
+        "count": 1,
+        "within_target_pct": 100.0
+      },
+      "P2": {
+        "count": 11,
+        "within_target_pct": 100.0
+      },
+      "P3": {
+        "count": 1,
+        "within_target_pct": 100.0
+      }
+    },
+    "staffing_fill_pct": 100.0,
+    "tickets_closed": 13,
     "validated_rts_pct": 100.0,
     "week_end": "2026-09-21T00:00:00Z",
     "week_start": "2026-09-14T00:00:00Z"

@@ -19,12 +19,13 @@ At a partner-operated GPU data center site, vendors do the hands-on work and the
 | SLA (generated) | `docs/sla/IT_PARTNER_SLA.md` from `sla/it_partner.yaml` + `sla/common.yaml`: 24 sections plus appendices |
 | Scorecard and discrepancy reports (generated) | `reports/scorecard.md`, `reports/discrepancy_report.md` |
 | Site model and drawings (generated) | `site/site.yaml` -> `docs/site/SITE.md` plus 7 SVG sheets |
-| Tests | 126 (pytest), run by CI on every push and before every Pages deploy |
+| Landlord SLA and Interface Agreement (generated) | `docs/sla/LANDLORD_SLA.md`, `docs/sla/INTERFACE_AGREEMENT.md` |
+| Tests | 139 (pytest), run by CI on every push and before every Pages deploy |
 | AWS hosting guide | `docs/DEPLOY_AWS.md` |
 
-Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 5 Minimum Service Level Defaults, $222,000 credits payable (capped from $255,300), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
+Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 4 Minimum Service Level Defaults (CSL-07, 08, 09, 11), $188,700 credits payable (inside the $222,000 cap), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
 
-**In progress: multi-vendor expansion.** The site is becoming a customer-owned AI data center in Central Texas with two contracted partners: Ridgeline Site Services (IT partner, the existing SLA) and Caprock Critical Facilities (OT partner, new). Phase 1 (site model and drawings), Phase 2 (SLA split into common terms and the IT partner SLA), and 2b (EHS strengthening) are complete; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
+**In progress: multi-vendor expansion.** The site is becoming a customer-owned AI data center in Central Texas with two contracted partners: Ridgeline Site Services (IT partner, the existing SLA) and Caprock Critical Facilities (OT partner, new). Phases 1 (site model and drawings), 2 (SLA split), 2b (EHS), and 3 (Landlord SLA and Interface Agreement) are complete. The owner chose the landlord model: Caprock is a wholesale owner-operator that leases the halls to the Customer, matching the posting's "facility someone else runs"; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
 
 **Purpose:** a portfolio project for a Data Center Operations Lead (partner-operated sites) application. Keep everything synthetic and fictional; never imply knowledge of any real company's internal systems.
 
@@ -58,6 +59,8 @@ Working practices that caught real bugs, worth keeping:
 
 ```
 sla/common.yaml + sla/it_partner.yaml ──► docs/sla/IT_PARTNER_SLA.md   (scripts/render_sla.py)
+sla/common.yaml + sla/ot_partner.yaml ──► docs/sla/LANDLORD_SLA.md
+sla/interface_agreement.yaml ─────────► docs/sla/INTERFACE_AGREEMENT.md (and the ownership exhibit in both SLAs)
         │
         ├──► synthetic generator ──► data/sample/        (scripts/generate_data.py; config/synthetic.yaml)
         │                                │
@@ -81,6 +84,9 @@ The SLA YAML is the single source of truth for the contract (`load_sla()` merges
 |---|---|
 | Site-wide terms: Customer and site parties, site profile, measurement principles, excused events, corrective action, governance, security, EHS, SLA change control, severity levels and aggravators | `sla/common.yaml` |
 | IT partner terms: commercials, scope, priorities, ticket handling, rule cards, CSLs, KMs, validation, deployment, staffing, spares, chronic failure, finding types | `sla/it_partner.yaml` |
+| Landlord terms: rent-based commercials, scope, alarm priorities, work order handling, 8 facility rule cards, OT-CSL-01 to 10, OT-KM-01 to 08, maintenance schedule (NFPA 110 and others), staffing, spares, OT finding types | `sla/ot_partner.yaml` |
+| Demarcations, ownership matrix (RACI), fault attribution FA-1 to FA-6, incident command, handoffs, change coordination, Customer data access | `sla/interface_agreement.yaml` |
+| Document templates (shared sections in `templates/partials/`) | `templates/it_partner.md.j2`, `templates/landlord.md.j2`, `templates/interface_agreement.md.j2` |
 | SLA document layout | `templates/sla.md.j2` |
 | SLA loading, validation, credit math, severity | `src/scorecard/sla_model.py` |
 | Ticket handling rules TR-1 to TR-6 (Tickets of Record) | `src/scorecard/measurement.py` |
@@ -154,7 +160,10 @@ python scripts/build_site.py && python -m http.server -d _site 8000
 | Site model as code with capacity checks | Drawings, docs, and telemetry agree on what exists; an under-built site will not load |
 | Distributed redundant UPS (4 make 3) with all six UPS pairings | A lost module's load spreads over the other three (worst case 97%) |
 | Shared N+1 CDU secondary header per hall | A single CDU loss does not drop racks; the row's CDU is only the primary |
-| Customer Telemetry of Record reads devices directly, read-only | The OT partner runs the BMS; the customer still has an independent source |
+| Customer Telemetry of Record reads devices directly, read-only | The Landlord runs the BMS; read-only access is a negotiated lease term, so the Landlord SLA is not measured by the Landlord |
+| Landlord (owner-operator) model | Matches "a facility someone else runs"; the Customer has less leverage, which makes attribution and data access matter more |
+| CDUs are Landlord equipment; boundary at the rack manifold isolation valves | A physical point a technician can see; CDUs run on the mechanical UPS and report into the BMS |
+| Fault attribution walks the site model's power and cooling paths | One owner per outage, decided from telemetry, never from ticket text; the IT clock starts at the Landlord's restoration handoff |
 | 1-hour post-repair burn-in | A 4-hour burn-in made the 4-hour P1 restore target impossible |
 
 ## Build history
@@ -171,10 +180,11 @@ In the order it was built, with the decisions that shaped each step:
 8. **What-if removed; Phase 1 site model.** The sidebar sliders were removed (a test confirms none are drawn). Equipment was researched against manufacturer documentation and chosen for interoperability under one monitoring layer. `site/site.yaml` and `site_model.py` define three halls (A: 32 x GB200 NVL72 in production; B: 32 x GB300 NVL72 in deployment; C: 8-rack 800 VDC pilot, planned), 7 x Cat C175-16 generators (N+1), 11 x Liebert AFC chillers (N+1 at 43 C), 4 x Galaxy VX per hall in a distributed redundant 4-make-3 design, 4 x CoolIT CHx2000 per hall (N+1), and 2 x Eaton MVSST for Hall C. 25 capacity checks pass. Seven schematic sheets (A-001 campus, A-101 building, A-201 to A-203 halls, E-001 one-line, M-001 cooling) are generated and were reviewed visually. Decisions: the MVSST serves only the 800 VDC pilot because GB200 and GB300 power shelves take AC; leak cable senses water and conductive fluids because the coolant is PG25 (hydrocarbon cable only at the diesel tanks); Galaxy VX rather than VXL because the VXL is a 400 V IEC product and the site is 480 V. Regenerating left every report byte-identical.
 9. **Phase 2: SLA split.** `sla/vendor_sla.yaml` became `sla/common.yaml` (site-wide terms) and `sla/it_partner.yaml` (`extends: common.yaml`). `load_sla()` performs an add-only merge (`merge_terms`); the merged result was verified identical to the old file, and every data, report, and site file stayed byte-identical. The rendered contract moved to `docs/sla/IT_PARTNER_SLA.md` and differs from the old `docs/SLA.md` only in its two source lines. Content changes (OT partner replacing the colocation "Facility Provider" wording and RACI column) were deliberately left for Phase 3.
 10. **EHS strengthening (owner request).** `ehs` in `sla/common.yaml` binds every partner: principles, required standards with editions checked in October 2026 (NFPA 70E-2027 took effect May 6, 2026; NFPA 70B and 855 are 2026 editions; no final federal heat rule, so the contract sets 80 F and 90 F heat-index triggers modeled on the proposal), 12 site rules, partner qualification (EMR 1.0 or lower; workers' comp required because Texas allows opting out), reporting, independent investigation, three violation classes, and escalation to termination. `compute_ehs_credits()` applies the credits. Owner decisions: EHS Credits sit outside the monthly cap and are never earned back (validation enforces both). Design choices to defend: credits attach only to confirmed violations of required controls, never to reported injuries (29 CFR 1904.35); amounts are framed as a price adjustment and a reasonable pre-estimate of the Customer's costs, because courts do not enforce penalties; self-reporting halves a credit and concealment doubles it and is a record-integrity finding. Worked example in Appendix B.4. Not legal advice. Data and reports were unchanged.
+11. **Phase 3: Landlord SLA and Interface Agreement.** The owner chose the landlord model (Caprock owns and operates the facility and leases the halls). `sla/ot_partner.yaml` (generated once from a build script, then maintained by hand) mirrors the IT SLA's structure so the same validation, credit, and ticket-handling code works: 10 CSLs (power availability, redundancy, cooling in band, alarm response, redundancy restoration, evidence-verified maintenance, MOP compliance, record integrity, staffing, worst-hall cooling), 8 KMs, 8 facility rule cards, an NFPA 110 maintenance schedule, and 5 OT finding types for Phase 4. `sla/interface_agreement.yaml` holds the demarcations, the single ownership matrix (validated: exactly one Accountable per component, every site product category covered), fault attribution, incident command, handoffs, change coordination, and data access. Common terms gained Landlord-owned and Customer-read data sources and party names. CDUs moved to the Landlord: the IT rule card, priorities, spares, and validation class for CDUs were removed and `cdu_pump` set to 0 in `config/synthetic.yaml`, which changed the IT headline once (5 to 4 defaults, $222,000 to $188,700; findings, S1 items, and CAPs unchanged; engine still 17/17 and 1,020/1,020). Templates were split into shared partials so all documents print the common terms identically.
 
 ## Roadmap (agreed with the owner; plan before building each phase)
 
-3. **OT partner SLA and interface agreement.** `sla/ot_partner.yaml` (critical power availability per feed, cooling within band, alarm acknowledgment and response, redundancy restoration time, NFPA 110 generator testing, NFPA 72 inspections, coolant chemistry, MOP compliance, record integrity) and `sla/interface_agreement.yaml` (demarcation points, break-fix ownership matrix, joint incident command, fault-attribution rules using the site model's power and cooling paths).
+3. ~~**OT partner SLA and interface agreement.**~~ Done (step 11). `sla/ot_partner.yaml` (critical power availability per feed, cooling within band, alarm acknowledgment and response, redundancy restoration time, NFPA 110 generator testing, NFPA 72 inspections, coolant chemistry, MOP compliance, record integrity) and `sla/interface_agreement.yaml` (demarcation points, break-fix ownership matrix, joint incident command, fault-attribution rules using the site model's power and cooling paths).
 4. **OT telemetry and detection.** Synthetic OT telemetry with real point and alarm names (UPS NMC SNMP, EMCP 4.4 Modbus, CHx2000 Redfish, VESDA Alert/Action/Fire 1/Fire 2, TraceTek leak location), OT detectors (for example, a generator test reported passed with no load transfer, maintenance marked complete with no evidence, a BMS point overridden or an alarm inhibited with no change record), cross-vendor attribution, OT and site scorecards, robustness runs. Use a separate random stream so the IT sample and its headline numbers do not change.
 5. **App.** Partner selector, site rollup, attribution view.
 6. **Live-readiness adapters.** SNMP, Modbus, Redfish, and BACnet connectors tested against protocol simulators. Real use would still need a security review, a read-only path segmented from the OT network, and site acceptance testing.
@@ -185,4 +195,4 @@ Later: a security partner (access control, CCTV, escorts).
 
 - [ ] Fix the repository topic "gp" to "gpu" (GitHub repo page, gear icon next to About).
 - [ ] Confirm the Git commit email uses GitHub's numbered noreply address (`git log -1 --format='%ae'`).
-- [ ] Next: Phase 3 (OT partner SLA and interface agreement). Present the plan, then build.
+- [ ] Next: Phase 4 (Landlord telemetry, OT detectors, cross-partner attribution, Landlord and site scorecards). Present the plan, then build.

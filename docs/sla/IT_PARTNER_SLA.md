@@ -60,9 +60,9 @@ Two principles shape this agreement:
 
 | Party | Name | Role |
 |---|---|---|
-| Customer | Customer | Owns site outcomes; directs priorities; operates the telemetry of record. |
+| Customer | Customer | Owns site outcomes; directs the IT partner; operates the Telemetry of Record; holds the Landlord to its SLA. |
 | Supplier | Ridgeline Site Services, LLC *(fictional)* | Performs deployment, break-fix, and data hall operations under Customer direction. |
-| Facility Provider | Facility Provider | Separate contract. Named here only to define ownership boundaries. |
+| Landlord | Caprock Critical Facilities, LLC *(fictional)* | Separate lease and Landlord SLA (Schedule C). Bound by the common terms, including EHS. |
 | OEM / Integrator | OEM / System Integrator | Separate contract. Named here only to define ownership boundaries. |
 
 **Site:** Site AUS-1 (fictional). **Platform:** NVIDIA GB200 NVL72 (rack-scale, direct-to-chip liquid cooled).
@@ -107,7 +107,7 @@ Each rack contains 72 GPUs and 36 CPUs across 18 compute trays (4 GPUs per tray)
 | **Minimum Service Level** | The floor of acceptable performance. Missing it is a Minimum Service Level Default and triggers a Service Level Credit. |
 | **Excused Event** | An event listed in the Excused Events section, claimed by the Supplier on time and approved by the Customer, that removes the affected occurrence from the calculation of a service level. |
 | **Ticket of Record** | The single ticket used to measure a fault on a Service Unit. It is opened automatically from telemetry, carries the original T0, and absorbs any early failure or reopen on the same unit (see Ticket Handling Rules). |
-| **Service Unit Key** | The identifier that decides whether two faults hit the same thing: the host for a compute tray, the link (both ends) for a back-end link, the rack for an NVLink switch tray, the slot for a PSU or power shelf, the pump for a CDU, and the location for a leak. |
+| **Service Unit Key** | The identifier that decides whether two faults hit the same thing: the host for a compute tray, the link (both ends) for a back-end link, the rack for an NVLink switch tray, the slot for a PSU or power shelf, and the location for a leak. |
 | **Stability Window** | The period after Validated RTS during which the repaired unit must run in production without a fault before its ticket can close. Set per fault class. |
 | **Early Failure** | A fault on the same Service Unit Key within 60 minutes of Validated RTS. The earlier restore is treated as if it never happened. |
 | **Capacity-Weighted GPU-Hours** | GPU-hours lost, weighted by how much of each GPU's capacity was unusable: 1.0 when drained or down, a partial factor when running degraded (see Capacity and Downtime Accounting). |
@@ -121,36 +121,48 @@ Each rack contains 72 GPUs and 36 CPUs across 18 compute trays (4 GPUs per tray)
 |---|---|---|
 | SVC-BF | Break-fix | Triage, diagnosis, and replacement of field-replaceable units (compute trays, NVLink switch trays, power shelves and PSUs, optics, cables, E1.S drives, fans, management components) using Customer-owned spares. |
 | SVC-DEP | Deployment | Rack receiving, inspection, placement, power and liquid connection, leak testing, cabling, power-on, firmware baselining, and burn-in through Validated Handoff. |
-| SVC-LC | Liquid-cooling operations (rack side) | Rack manifolds, quick-disconnects, tray-level leak response, and secondary-loop CDU monitoring and first response, in coordination with the Facility Provider. |
+| SVC-LC | Liquid-cooling operations (rack side) | Rack manifolds, rack manifold isolation valves, quick-disconnects, cold plates, and rack-level leak response. The CDUs and secondary header belong to the Landlord (see the Interface Agreement). |
 | SVC-NET | Physical network operations | Optic and cable replacement, fiber cleaning and inspection, port troubleshooting, and labeling for back-end, front-end, and OOB networks. |
 | SVC-RMA | Spares and RMA logistics | Spares cage management, cycle counts, failed-part handling, chain of custody, and RMA shipment to the OEM. |
 | SVC-IR | Incident response support | 24x7 on-site response under the direction of the Customer Incident Commander, including post-incident data collection. |
 
 ### 4.2 Out of scope
 
-- Building power, generators, UPS, and switchgear (Facility Provider).
-- Facility water plant and primary-side cooling (Facility Provider).
+- Building power, generators, UPS, switchgear, and busway up to the tap-off output (Landlord).
+- CDUs, secondary header, facility water, chillers, thermal walls, fire protection, and building leak detection (Landlord).
 - Logical configuration of Customer networks and workloads (Customer).
 - Board-level repair and OEM warranty adjudication (OEM).
 
-### 4.3 Break-fix ownership matrix (RACI)
+### 4.3 Break-fix ownership matrix
+
+Exhibit from the Interface Agreement (IA-AUS1-001, version 1.0.0), which governs demarcation, fault attribution, and joint operations between the parties.
 
 **R** = Responsible: performs the work; **A** = Accountable: owns the outcome and approves; **C** = Consulted; **I** = Informed.
 
-| Component | Supplier | Customer | Facility Provider | OEM |
-|---|:-:|:-:|:-:|:-:|
-| Compute tray (GPU, CPU, memory, cold plate) | R | A | I | C |
-| NVLink switch tray and NVLink backplane | R | A | I | C |
-| Power shelves and PSUs (in-rack) | R | A | C | C |
-| Rack busbar, whips, and upstream PDUs and busway | C | A | R | I |
-| Rack manifold and quick-disconnects | R | A | C | C |
-| CDU (secondary loop: monitoring, first response, pumps, filters) | R | A | C | C |
-| Facility water and primary loop | I | C | A/R | I |
-| Back-end fabric optics, cables, and fiber | R | A | I | C |
-| Leaf and spine switches (physical replacement) | R | A | I | C |
-| BMC and out-of-band management network (physical) | R | A | I | C |
-| Spares cage, inventory, and RMA shipments | R | A | I | C |
-| Physical security of the Customer cage | R | A | R | I |
+| Component | Customer | IT Partner | Landlord | OEM | Utility |
+|---|:-:|:-:|:-:|:-:|:-:|
+| Compute tray (GPU, CPU, memory, cold plate) | A | R | - | C | - |
+| NVLink switch tray and NVLink backplane | A | R | - | C | - |
+| Rack power shelves, PSUs, and whips from the tap-off output | A | R | C | C | - |
+| Busway, tap-off units, and tap-off breakers | I | C | A/R | - | - |
+| UPS, batteries, unit substations, and switchgear | I | I | A/R | - | - |
+| Generators, paralleling controls, and fuel | I | - | A/R | - | - |
+| 138 kV substation and utility transformers | - | - | C | - | A/R |
+| Rack manifold, isolation valves, quick-disconnects | A | R | C | C | - |
+| CDUs and the hall secondary header | I | C | A/R | - | - |
+| Chillers, facility water, and pumps | I | - | A/R | - | - |
+| Thermal walls, CRAHs, and hot-aisle containment | I | C | A/R | - | - |
+| Building leak detection (cable and controllers) | I | C | A/R | - | - |
+| Fire alarm, VESDA, and pre-action suppression | I | I | A/R | - | - |
+| BMS and EPMS operation | C | - | A/R | - | - |
+| Customer Telemetry of Record collector and read-only taps | A/R | I | C | - | - |
+| Back-end fabric optics, cables, and fiber | A | R | - | C | - |
+| Leaf and spine switches (physical replacement) | A | R | - | C | - |
+| BMC and out-of-band management network (physical) | A | R | - | C | - |
+| Meet-me rooms and cross-connects | C | C | A/R | - | - |
+| Spares cage, inventory, and RMA shipments | A | R | - | C | - |
+| Building perimeter, lobby, and access control system | C | I | A/R | - | - |
+| Customer halls and cage access lists | A | R | R | - | - |
 
 ## 5. Incident Priority Matrix
 
@@ -169,14 +181,13 @@ The Supplier must notify the Customer Incident Commander as soon as it believes 
 
 **Criteria:**
 
-- Active coolant leak or any tray, rack, or CDU leak-detection alarm.
-- CDU loss of flow, or loss of pump redundancy with rising temperatures.
+- Active coolant leak or any tray or rack manifold leak-detection alarm.
 - Rack-level outage (an entire NVL72 rack or more unavailable).
 - NVLink switch tray failure (treated as rack-wide).
 - Any EHS event involving injury, fire, smoke, or electrical hazard.
 - Physical security breach of the Customer cage.
 
-**Examples:** Leak detector alarm on rack A-14 manifold. CDU-3 flow drops below baseline; 8 racks at risk.
+**Examples:** Leak detector alarm on rack A-14 manifold. Rack A-07 down on both power feeds after a tap-off repair (rack side to validate).
 
 **Escalation:** Immediate page to Customer Incident Commander; Supplier site manager engaged.
 
@@ -187,7 +198,6 @@ The Supplier must notify the Customer Incident Commander as soon as it believes 
 - Single compute tray down in production (4 GPUs).
 - Back-end fabric link down or flapping and impacting jobs.
 - Power shelf failure with redundancy lost.
-- CDU pump redundancy lost with stable temperatures.
 
 **Examples:** XID 79 (GPU fallen off bus) on a production tray. Repeated link-down events on a leaf port serving rack B-03.
 
@@ -217,14 +227,14 @@ The Supplier must notify the Customer Incident Commander as soon as it believes 
 
 ## 6. Measurement and Telemetry of Record
 
-Performance is measured from Customer-operated Telemetry of Record, not from Supplier self-reporting. Supplier ticket data is used for work content and narrative, and is reconciled against telemetry. Where they disagree, the higher-precedence source prevails.
+Performance is measured from Customer-operated Telemetry of Record, not from Supplier self-reporting. Supplier ticket and work order data is used for work content and narrative, and is reconciled against telemetry. Where they disagree, the higher-precedence source prevails.
 
 ### 6.1 Clock rules
 
 - **Clock starts:** T0, the earliest evidence of the fault across all sources.
 - **Clock stops:** Validated RTS.
 - **The clock may pause only for:**
-  - A Customer-requested hold, recorded in the ticket with Customer approval.
+  - A Customer-requested hold, recorded in the ticket or work order with Customer approval.
   - Customer-controlled access delays (e.g., cage access withheld by the Customer).
   - An approved Excused Event.
 - **The clock does not pause for:**
@@ -245,17 +255,25 @@ Precedence 1 is most authoritative. When sources disagree, the higher-precedence
 | DS-UFM | InfiniBand fabric manager | Port state, link-down events, symbol and error counters. | Customer | 1 |
 | DS-HEALTH | Cluster health-check and automated recovery platform | Periodic and job-boundary health checks; node drain and return events. | Customer | 1 |
 | DS-SCHED | Customer workload scheduler | Node state (available, drained, down) and capacity returned to production. | Customer | 1 |
-| DS-BMS | Building management system feed (via Facility Provider) | CDU flow, supply and return temperatures, pump status, room leak sensors. | Facility Provider | 2 |
-| DS-BADGE | Access control system | Technician presence by hall, time on site, staffing fill. | Customer | 1 |
+| DS-BMS | Building management system feed (EcoStruxure Building Operation, operated by the Landlord) | Chillers, pumps, thermal walls, CRAHs, CDU summary points, alarm acknowledgments, point overrides and alarm inhibits. | Landlord | 2 |
+| DS-EPMS | Electrical power monitoring (EcoStruxure Power Monitoring Expert export) | Switchgear breaker states, utility and generator source, meter readings, power quality events. | Landlord | 2 |
+| DS-UPS | UPS network management cards (SNMPv3, Customer read-only user) | UPS mode (normal, battery, bypass), module status, load, battery state of charge, alarms. | Customer | 1 |
+| DS-BUSWAY | Busway Critical Power Monitors (Modbus TCP, Customer read-only) | Per-segment voltage, current, and power at each A and B busway; tap-off breaker state. | Customer | 1 |
+| DS-EMCP | Generator controllers (EMCP 4.4 via Modbus TCP, Customer read-only) | Engine run state, kW load, percent of nameplate, exhaust temperature, start and transfer events, alarms. | Customer | 1 |
+| DS-CDU | CDU controllers (Redfish, Customer read-only account) | Secondary supply and return temperature, flow, pressure, pump status and redundancy, coolant level, CDU leak sensors. | Customer | 1 |
+| DS-LEAK | Leak detection (TraceTek TTDM-128 via Modbus gateway, Customer read-only) | Leak alarms with distance along the cable, cable breaks, circuit faults. | Customer | 1 |
+| DS-FIRE | Fire alarm and aspirating smoke detection (VESDA via HLI, secondary monitoring) | VESDA Alert, Action, Fire 1, and Fire 2; detector faults; fire system impairments. The fire panel remains the life-safety system of record. | Landlord | 2 |
+| DS-CMMS | Landlord maintenance management system | Work orders, preventive maintenance schedule and completion, method of procedure (MOP) references, Landlord-recorded timestamps. | Landlord | 3 |
+| DS-BADGE | Access control system | Technician and engineer presence by hall and equipment room, time on site, staffing fill. | Customer | 1 |
 | DS-CAB | Customer change management system | Approved changes and maintenance windows. | Customer | 1 |
 | DS-ITSM | Supplier ticketing system | Ticket lifecycle, work notes, parts used, priority, Supplier-recorded timestamps. | Supplier | 3 |
 | DS-SPARES | Supplier spares and RMA system | Stock levels, consumption, cycle counts, RMA shipments. | Supplier | 3 |
 
 ### 6.3 Reporting
 
-- **Weekly:** Operating scorecard by Monday 12:00 UTC, generated automatically from telemetry and ticket data.
+- **Weekly:** Operating scorecard by Monday 12:00 UTC, generated automatically from telemetry and ticket or work order data.
 - **Monthly:** Service Level Report within 5 business days after month end, including all defaults, credits, and trends.
-- **Raw data:** The Customer may access ticket data through API at any time; the Supplier must keep all records for the Term plus 2 years.
+- **Raw data:** The Customer may access ticket and work order data through API at any time; the Supplier must keep all records for the Term plus 2 years.
 - **Failure to report:** If the Supplier fails to provide data required to measure a service level, that service level is deemed to have a Minimum Service Level Default for the period.
 
 ### 6.4 Reference implementation
@@ -274,7 +292,7 @@ The Supplier may dispute a measurement within 5 business days of the weekly scor
 
 ### 6.7 Audit
 
-Each month the Customer audits a random 5% of closed tickets (minimum 10) end to end against raw telemetry, badge, and inventory records. Audit findings count toward CSL-11.
+Each month the Customer audits a random 5% of closed tickets or work orders (minimum 10) end to end against raw telemetry, badge, and inventory records. Audit findings count toward CSL-11.
 
 ## 7. Ticket Handling Rules
 
@@ -366,7 +384,6 @@ Each fault class below is a rule card: the single approved way to detect, classi
 | FC-LINK | Back-end fabric link fault | Link: host and HCA on one end, switch and port on the other (both ends together) | DS-UFM | P3 | 24 hrs | 7 days |
 | FC-PSU | Single PSU failure (redundancy intact) | PSU slot (rack, power shelf, PSU number) | DS-REDFISH | P3 | 24 hrs | 7 days |
 | FC-SHELF | Power shelf failure (redundancy lost) | Power shelf slot (rack, shelf number) | DS-REDFISH | P2 | 24 hrs | 7 days |
-| FC-CDU | CDU pump failure (redundancy lost) | CDU and pump number | DS-BMS | P2 | 72 hrs | 14 days |
 | FC-LEAK | Coolant leak alarm | Leak location (compute tray or rack manifold) | DS-REDFISH | P1 | 72 hrs | 14 days |
 
 ### FC-GPU: GPU fault on a compute tray
@@ -452,23 +469,6 @@ Each fault class below is a rule card: the single approved way to detect, classi
 | **Clock stops** | BMC reports power redundancy restored. |
 | **Stability window** | 24 hours in production (TR-2, TR-3) |
 | **Recurrence window** | 7 days (TR-5) |
-| **Capacity impact** | No compute lost; counts as Redundancy Exposure (KM-17) |
-
-### FC-CDU: CDU pump failure (redundancy lost)
-
-| | |
-|---|---|
-| **Service Unit Key** | CDU and pump number |
-| **Detection signal** | PumpRedundancyLost alarm. Source: DS-BMS. |
-| **T0 rule** | Timestamp the alarm became active. |
-| **Recurrence signal** | Any pump alarm on the same CDU. |
-| **Priority** | P2 by default. P1 if supply temperature rises above baseline or flow drops below baseline. |
-| **Additional ticket fields** | Supply and return temperatures at T0 and at restore |
-| **Repair evidence** | Removed and installed pump assembly serials scanned. |
-| **Validation** | Section 12 checklist: CDU component (pump, filter, sensor) |
-| **Clock stops** | BMS alarm cleared and pump failover test passed. |
-| **Stability window** | 72 hours in production (TR-2, TR-3) |
-| **Recurrence window** | 14 days (TR-5) |
 | **Capacity impact** | No compute lost; counts as Redundancy Exposure (KM-17) |
 
 ### FC-LEAK: Coolant leak alarm
@@ -689,12 +689,6 @@ Each check is recorded in the health-check system under a standard check ID, so 
 - [ ] Redfish reports PSU health OK and redundancy restored.
 - [ ] Serial number change recorded in inventory.
 
-**CDU component (pump, filter, sensor)** (check IDs: `cdu_flow_baseline`, `pump_failover_test`)
-
-- [ ] Flow, supply temperature, and return temperature within baseline.
-- [ ] Pump redundancy confirmed by failover test, coordinated with the Facility Provider.
-- [ ] All leak alarms clear; coolant conductivity and pH within specification after any fluid work.
-
 **Rack manifold** (check IDs: `leak_hold_30m`, `rack_nvlink_acceptance`, `nccl_allreduce_rack`)
 
 - [ ] Manifold and every quick-disconnect inspected and verified seated; zero leak alarms during a 30-minute hold.
@@ -714,7 +708,7 @@ Target cycle: **10 calendar days** from rack receipt to Validated Handoff. Surge
 | Milestone | Name | Exit criteria | Target (days from receipt) |
 |---|---|---|:-:|
 | M1 | Received and inspected | Shock and tilt indicators checked; no shipping damage; asset tags and serials reconciled to the ASN. | 1 |
-| M2 | Positioned and connected | Rack set and secured; power whips and manifold connected to the CDU. | 3 |
+| M2 | Positioned and connected | Rack set and secured; power whips and manifold connected at the rack isolation valves. | 3 |
 | M3 | Leak test passed | Pressure hold at the OEM test pressure (typically 1.5x operating) for at least 30 minutes with no decay; zero leak alarms; coolant within specification. | 4 |
 | M4 | Power-on and firmware baseline | POST clean on all trays; firmware matches the Customer baseline; BMCs reachable on OOB. | 5 |
 | M5 | Network cabled and verified | Every back-end and front-end link up, error-free over soak, and matching the cabling plan. | 7 |
@@ -760,8 +754,8 @@ On a Chronic Failure, the Customer may:
 The Supplier must claim an Excused Event within 5 business days, with supporting evidence. Only the following qualify:
 
 - Force majeure as defined in the Agreement.
-- Failures of Facility Provider systems outside Supplier scope (the Supplier must still respond and notify).
-- Customer-caused delays, including withheld access or Customer-requested holds recorded in the ticket.
+- Failures attributed to another party under the Interface Agreement, for the time that party's fault is active (the Supplier must still respond, protect equipment, and notify).
+- Customer-caused delays, including withheld access or Customer-requested holds recorded in the ticket or work order.
 - Approved maintenance inside an approved change window, within the approved duration.
 - OEM part unavailability, ONLY if Customer spares for that FRU class were at or above minimum stock and the Supplier notified the Customer within 4 hours.
 
@@ -778,7 +772,7 @@ The Supplier must claim an Excused Event within 5 business days, with supporting
 - Any P1 incident.
 - Any Lemon Unit.
 - Any Record Integrity Finding.
-- Any reopened ticket (TR-1 or TR-2).
+- Any reopened ticket or work order (TR-1 or TR-2).
 
 **Timelines:** P1 preliminary RCA within 24 hours; P1 final RCA within 5 business days; all other RCAs within 10 business days.
 
@@ -830,7 +824,7 @@ Only badge-verified hours by technicians with current qualifications count towar
 
 - All non-emergency changes require Customer change approval before work starts.
 - Standard changes (pre-approved runbook FRU swaps) may proceed under an open incident.
-- Emergency changes require verbal approval from the Customer Incident Commander, recorded in the ticket within 1 hour.
+- Emergency changes require verbal approval from the Customer Incident Commander, recorded in the ticket or work order within 1 hour.
 - Work outside the approved window or scope is an unauthorized change and counts against KM-10.
 
 **Firmware:** Firmware may only be loaded from the Customer-approved baseline; any deviation is an unauthorized change.
@@ -840,7 +834,7 @@ Only badge-verified hours by technicians with current qualifications count towar
 - Badge access only for Customer-approved personnel; no tailgating; visitors escorted at all times.
 - Daily reconciliation of badge records against the shift roster.
 - Storage media (e.g., E1.S drives) never leave the Site intact; media is sanitized or destroyed on site under the Customer's media sanitization standard, with a certificate per serial number.
-- Every failed part is logged into chain of custody at removal, with serial, ticket, technician, and timestamp.
+- Every failed part is logged into chain of custody at removal, with serial, ticket or work order, technician, and timestamp.
 - Cameras and photography in the data hall are prohibited except for Customer-approved documentation.
 
 **Incident reporting:** Suspected security incidents are reported to the Customer within 1 hour of discovery.
@@ -958,7 +952,6 @@ Spares are Customer-owned and Supplier-managed.
 | Fiber and DAC cable kits | 100 |
 | Manifold hose and quick-disconnect kit | 10 |
 | E1.S drive | 20 |
-| CDU pump assembly | 1 |
 
 - **Reorder:** Replenishment requests are raised automatically when stock reaches minimum plus lead-time demand.
 - **Cycle counts:** Weekly cycle count of high-value FRUs; full count monthly.
@@ -1064,7 +1057,7 @@ The discrepancy engine reports each mismatch between vendor records and the Tele
 | P2 tray late, same tray failed 2 weeks ago | 8 hrs | 12 hrs | 4 | AGG-REPEAT | **S2 Major** | Overrun 50% past target → S3; 16 GPU-hours lost beyond target (4 GPUs) → S4; AGG-REPEAT: +1 level (Same CSL or same Service Unit breached within the previous 30 days) |
 | P1 rack outage restored at 8 hrs | 4 hrs | 8 hrs | 72 | AGG-RACKWIDE | **S2 Major** | Overrun 100% past target → S2; 288 GPU-hours lost beyond target (72 GPUs) → S3; AGG-RACKWIDE: present; already at or above S2 |
 | P2 tray late; ticket claims swap but serial unchanged | 8 hrs | 10 hrs | 4 | AGG-INTEGRITY | **S1 Critical** | Overrun 25% past target → S3; 8 GPU-hours lost beyond target (4 GPUs) → S4; AGG-INTEGRITY: raised to at least S1 (Breach involved a Record Integrity Finding (vendor record contradicted by telemetry)) |
-| P1 CDU loop loss restored at ~18 hrs | 4 hrs | 18 hrs 20 min | 576 | AGG-RACKWIDE | **S1 Critical** | Overrun 358% past target → S1; 8,256 GPU-hours lost beyond target (576 GPUs) → S1; AGG-RACKWIDE: present; already at or above S2 |
+| P1 row outage (8 racks) restored at ~18 hrs | 4 hrs | 18 hrs 20 min | 576 | AGG-RACKWIDE | **S1 Critical** | Overrun 358% past target → S1; 8,256 GPU-hours lost beyond target (576 GPUs) → S1; AGG-RACKWIDE: present; already at or above S2 |
 
 | Period scenario | Result | Severity | Why |
 |---|:-:|:-:|---|
@@ -1100,4 +1093,4 @@ Total EHS Credits: **$46,250**, payable in addition to any Service Level Credits
 
 ---
 
-*Generated from `sla/it_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.1.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/it_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.2.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*

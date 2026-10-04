@@ -1,0 +1,901 @@
+# =============================================================================
+# Landlord SLA: Data Center Lease Services (SLA as Code)
+# -----------------------------------------------------------------------------
+# Caprock Critical Facilities' service levels as the Landlord: power, cooling,
+# fire and life safety, monitoring, and maintenance of the facility the
+# Customer leases. Extends common.yaml (add-only), so the common terms,
+# including EHS, bind the Landlord exactly as they bind the IT partner.
+# The human-readable SLA (docs/sla/LANDLORD_SLA.md) is GENERATED from this
+# file and common.yaml by scripts/render_sla.py.
+#
+# MOCK DOCUMENT FOR PORTFOLIO DEMONSTRATION ONLY. All parties, sites, figures,
+# and commercial terms are fictional and illustrative. Not legal advice. Not
+# based on any real company's internal information or agreements.
+# =============================================================================
+
+extends: common.yaml
+
+partner_type: landlord
+
+document:
+  id: SLA-CCF-AUS1-001
+  title: 'Service Level Agreement: Data Center Lease Services'
+  subtitle: Schedule C (Landlord Service Levels) to the Data Center Lease
+  version: 1.0.0
+  effective_date: '2026-10-05'
+  term_months: 120
+  status: MOCK / ILLUSTRATIVE
+  disclaimer: This is a fictional, illustrative landlord service level agreement created for a portfolio demonstration.
+    All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from
+    any real organization's internal documents or contracts.
+  timezone: UTC
+  negotiation_note: 'Landlord SLAs are usually drafted by the landlord. The terms below are the Customer''s negotiated
+    position: measurement from Customer-read telemetry, credits against rent, and read-only device access under
+    the Interface Agreement.'
+
+parties:
+  supplier:
+    name: Caprock Critical Facilities, LLC
+    fictional: true
+    description: Wholesale data center owner-operator (the Landlord).
+    role: Owns and operates the building, power, cooling, fire protection, and building monitoring; leases Halls
+      A and B (and Hall C on delivery) to the Customer.
+
+commercial:
+  currency: USD
+  monthly_charges: 1180000
+  charges_basis: Monthly rent and services fees for 8.4 MW of leased critical capacity (illustrative).
+  at_risk_pct: 10
+  pool_pct: 200
+  max_allocation_per_csl_pct: 40
+  measurement_period: calendar month
+  scorecard_period: ISO week (Monday 00:00 UTC to Sunday 23:59 UTC)
+  credit_application: Credits are applied against the next month's rent and services fees.
+  doubling:
+    consecutive_minimum_defaults: 3
+    multiplier: 2
+    note: Doubled credits are not eligible for Earnback.
+  earnback:
+    enabled: true
+    rule: Supplier earns back a Service Level Credit for a Critical Service Level if it meets or exceeds the Expected
+      Service Level for that same Critical Service Level in each of the 3 Measurement Periods immediately following
+      the default.
+    following_periods_required: 3
+    ineligible_when:
+      - The credit was doubled under the repeat-default rule.
+      - The default involved a confirmed Record Integrity finding (AGG-INTEGRITY).
+      - The default involved an EHS or security event (AGG-EHS, AGG-SECURITY).
+  credits_sole_remedy: false
+  credits_note: Service Level Credits are a rent adjustment reflecting reduced value of the leased capacity. They
+    are not a penalty and do not limit the Customer's other rights under the Lease, including chronic failure rights
+    and EHS Credits.
+
+scope:
+  in_scope:
+    - id: LL-PWR
+      name: Critical power
+      description: Utility interface, 13.8 kV switchgear, generators and fuel, unit substations, UPS and batteries,
+        and busway through the tap-off output.
+    - id: LL-COOL
+      name: Cooling
+      description: Chillers, facility water, CDUs and the secondary header up to the rack manifold isolation valves,
+        thermal walls, and electrical-room CRAHs.
+    - id: LL-FLS
+      name: Fire and life safety
+      description: Fire alarm, VESDA, pre-action suppression, and building leak detection.
+    - id: LL-MON
+      name: Building monitoring
+      description: Operating the BMS and EPMS, and providing the Customer's read-only feeds under the Interface
+        Agreement.
+    - id: LL-MAINT
+      name: Maintenance
+      description: Preventive and corrective maintenance of all Landlord equipment under NFPA 70B, 110, 72, 25,
+        and manufacturer schedules.
+  out_of_scope:
+    - Racks, power shelves, whips from the tap-off output, rack manifolds, quick-disconnects, and cold plates (IT
+      Partner).
+    - Customer networks and workloads (Customer).
+    - The 138 kV substation (Utility).
+
+priority_rules:
+  authority: The Customer has final authority over priority. Telemetry-based automatic classification sets the initial
+    priority. The Supplier may request a change but may not downgrade an incident without written Customer approval.
+    If priority changes, the stricter target applies from T0.
+  escalation_on_risk: The Supplier must notify the Customer Incident Commander as soon as it believes any target
+    is at risk, and no later than 50% of the target time elapsed.
+
+priorities:
+  - id: P1
+    name: Critical
+    criteria:
+      - Loss of power or cooling to any leased rack.
+      - A power or cooling path serving racks with no redundancy remaining.
+      - Any building leak alarm, VESDA Action or higher, or unplanned fire protection impairment.
+      - Any EHS event involving injury, fire, smoke, or electrical hazard.
+    examples:
+      - Both feeds lost to rack A-07.
+      - CDU-B2 out with the Hall B header at N.
+      - TraceTek leak at 14.2 m on the circuit under CDU-A3.
+    acknowledge_min: 5
+    engaged_on_site_min: 15
+    containment_min: 30
+    restore_min: 240
+    update_cadence_min: 30
+    escalation: Immediate page to the Customer Incident Commander; Landlord chief engineer engaged.
+  - id: P2
+    name: Major
+    criteria:
+      - Loss of redundancy on a power or cooling path (N+1 to N, or 2N to N).
+      - A generator fails to start or accept load.
+      - A UPS on bypass with redundancy remaining.
+    examples:
+      - UPS-A3 module failed; Hall A still 4 make 3 with margin.
+      - GEN-4 alarm shutdown during the monthly test.
+    acknowledge_min: 15
+    engaged_on_site_min: 30
+    containment_min: null
+    restore_min: 480
+    update_cadence_min: 60
+    escalation: Landlord duty manager notifies the Customer site lead.
+  - id: P3
+    name: Minor
+    criteria:
+      - A degraded component with redundancy intact.
+      - A BMS point or sensor failure with coverage maintained.
+    examples:
+      - One thermal-wall fan failed; TW-A2 still in service.
+    acknowledge_min: 60
+    engaged_on_site_min: 240
+    containment_min: null
+    restore_min: 1440
+    update_cadence_min: 1440
+    escalation: Reviewed in the daily standup.
+  - id: P4
+    name: Planned
+    criteria:
+      - Requests and planned work with no current risk.
+    examples:
+      - Relabel a busway tap-off after a rack move.
+    acknowledge_min: 1440
+    engaged_on_site_min: null
+    containment_min: null
+    restore_min: 7200
+    update_cadence_min: null
+    escalation: Scheduled through the Landlord maintenance system.
+
+ticket_handling:
+  principle: Ticket handling is standardized so that no individual's habits or preferences can change a measurement.
+    These rules apply to every fault class; the Measurement Specification adds the class-specific details.
+  ticket_of_record:
+    - Telemetry-detected faults open the Work Order of Record automatically through the Customer alerting integration,
+      stamped with T0, the fault class, and the Service Unit Key. The Supplier works that work order in its maintenance
+      system and does not open its own for the same fault.
+    - Faults found by people first (visible leak, physical damage, smoke, odor) are opened by the Supplier immediately.
+      T0 is still the earliest evidence from any source.
+    - One Work Order of Record per fault per Service Unit Key. A second work order for the same unit opened while
+      the first is open or in MONITORING is merged into the first and keeps the earliest T0.
+    - The fault class, chosen from the controlled list in the Measurement Specification, sets the priority, evidence,
+      validation, and stability rules. It cannot be changed without Customer approval.
+  required_fields:
+    - Work Order of Record ID and fault class
+    - Service Unit Key
+    - T0 (system-generated)
+    - Priority (from the Measurement Specification)
+    - Assigned engineer (person ID)
+    - Parts removed and installed, with scanned serial numbers
+    - Validation record IDs linked from the BMS and device telemetry
+    - Close code and root-cause category (controlled lists)
+  states:
+    - id: NEW
+      clock: running
+      description: Opened from telemetry or by the Supplier.
+    - id: ASSIGNED
+      clock: running
+      description: Acknowledged by a qualified person.
+    - id: IN_PROGRESS
+      clock: running
+      description: Engineer at the Equipment.
+    - id: PENDING_CUSTOMER
+      clock: paused
+      description: Allowed only with an approved pause code and a named Customer approver.
+    - id: VALIDATING
+      clock: running
+      description: Repair complete; validation checks running.
+    - id: MONITORING
+      clock: stopped
+      description: Validated RTS reached; unit in production for its stability window.
+    - id: REOPENED
+      clock: running
+      description: Fault recurred during MONITORING; clock resumes under TR-1 or TR-2.
+    - id: CLOSED
+      clock: stopped
+      description: Stability window passed with no fault. Set automatically, never manually.
+  pause_codes:
+    - code: CUST_HOLD
+      description: Customer-requested hold, such as a job checkpoint before work starts.
+    - code: CUST_ACCESS
+      description: Access withheld by the Customer.
+    - code: EXCUSED
+      description: Approved Excused Event.
+  data_integrity:
+    - All timestamps are system-generated in UTC. Manual timestamp entry is disabled; any edit to a timestamp, priority,
+      state, or fault class is audit-logged with user, time, and reason.
+    - Part and component serial numbers are captured by scanning the part label. Manual entry requires a reason
+      code and is flagged for audit.
+    - Fault class, close code, root-cause category, and pause code come from controlled lists. Free text is narrative
+      only and is never used to calculate a service level.
+    - Validation evidence is linked from the BMS and device telemetry by record ID. Pasted text, typed summaries,
+      and screenshots are not evidence.
+  stability:
+    principle: A repair is finished when the unit stays up, not when it comes up.
+    early_failure_minutes: 60
+    rules:
+      - id: TR-1
+        name: Early failure
+        rule: If the same Service Unit Key faults again within 60 minutes of Validated RTS, the earlier restore
+          is void. The work order reopens and the clock runs continuously from the original T0, including the minutes
+          the unit was up.
+      - id: TR-2
+        name: Reopen within the stability window
+        rule: If the same Service Unit Key faults again after 60 minutes but within its fault class's stability
+          window, the original work order reopens. Measured restoration time is the cumulative downtime of every
+          down interval since the original T0, and the work order is restored only when a Validated RTS survives
+          a full stability window.
+      - id: TR-3
+        name: Automatic closure
+        rule: Work orders stay in MONITORING for the stability window and close automatically when it passes with no
+          fault. They cannot be closed manually before then.
+      - id: TR-4
+        name: Stability runs in production
+        rule: The stability window runs with the unit in production. Holding a repaired unit out of production to
+          wait out the window counts as downtime.
+      - id: TR-5
+        name: Linked recurrence
+        rule: A fault on the same Service Unit Key after the stability window but within its recurrence window opens
+          a new work order, automatically linked to the original as a child. The child has its own clock; the original
+          counts as a First-Time Fix failure (CSL-06) and a Repeat Failure (CSL-08).
+      - id: TR-6
+        name: No work order splitting
+        rule: Opening a new work order for a fault that TR-1 or TR-2 requires to reopen an existing work order is
+          a Record Integrity Finding (CSL-11, aggravator AGG-INTEGRITY). The work orders are merged for measurement.
+      - id: TR-7
+        name: Unrelated-fault dispute
+        rule: The Supplier may show with telemetry evidence that a recurrence is unrelated to the repair (for example, a CDU pump failure days after
+          a filter change on the same unit). The default presumption
+          is that a recurrence is related. Disputes follow the measurement dispute process.
+
+measurement_spec:
+  - id: OT-FC-PWR
+    name: Busway or tap-off power loss
+    service_unit_key: Busway segment and side (A or B)
+    detection:
+      source: DS-BUSWAY
+      signal: Critical Power Monitor voltage out of tolerance or zero on a busway segment, or a tap-off breaker
+        open.
+      t0_rule: First out-of-tolerance reading.
+    recurrence_signal: Any power loss on the same busway segment and side.
+    default_priority: P2
+    priority_rules:
+      - P1 if both feeds of any rack are lost, or the surviving feed exceeds 80% of its rating.
+    additional_fields:
+      - Racks on the segment
+      - Surviving feed load at T0
+    repair_evidence:
+      - Breaker or component serials replaced; infrared scan after repair.
+    validation_class:
+      - Electrical distribution (busway, tap-off, breaker)
+    clock_stop: Both feeds in tolerance for every rack on the segment.
+    stability_window_hours: 24
+    recurrence_window_days: 7
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+  - id: OT-FC-UPS
+    name: UPS module or system fault
+    service_unit_key: UPS system and module number
+    detection:
+      source: DS-UPS
+      signal: 'NMC trap or poll: module failed, UPS on bypass, or on battery without a source event.'
+      t0_rule: Timestamp of the first UPS alarm.
+    recurrence_signal: Any module or mode alarm on the same UPS.
+    default_priority: P2
+    priority_rules:
+      - P1 if a UPS transfers to bypass or battery while carrying racks with no redundancy remaining.
+    additional_fields:
+      - UPS load and mode at T0
+      - Battery state of charge
+    repair_evidence:
+      - Module serials scanned; OEM field service report.
+    validation_class:
+      - UPS module
+    clock_stop: UPS in normal mode with all modules healthy and redundancy restored.
+    stability_window_hours: 72
+    recurrence_window_days: 14
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+  - id: OT-FC-GEN
+    name: Generator failure
+    service_unit_key: Generator number
+    detection:
+      source: DS-EMCP
+      signal: EMCP alarm shutdown, failure to start or to reach rated voltage and frequency, or failure to accept
+        load.
+      t0_rule: Timestamp of the EMCP event.
+    recurrence_signal: Any start, load, or shutdown alarm on the same generator.
+    default_priority: P2
+    priority_rules:
+      - P1 during a utility outage, or if generator redundancy is lost (fewer than N+1 available).
+    additional_fields:
+      - Run hours
+      - Fuel level
+      - Load at failure
+    repair_evidence:
+      - Dealer service report; parts replaced with serials.
+    validation_class:
+      - Generator
+    clock_stop: Successful start and loaded run at 30% of nameplate or more for 30 minutes, recorded by the EMCP.
+    stability_window_hours: 72
+    recurrence_window_days: 30
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+  - id: OT-FC-CDU
+    name: CDU fault (pump, controls, or redundancy lost)
+    service_unit_key: CDU and pump number
+    detection:
+      source: DS-CDU
+      signal: 'Redfish: pump failed or redundancy lost, or secondary supply temperature or flow outside the rack
+        band.'
+      t0_rule: Timestamp the condition first appeared.
+    recurrence_signal: Any pump or band alarm on the same CDU.
+    default_priority: P2
+    priority_rules:
+      - P1 if secondary supply temperature or flow at any rack leaves the band, or the header loses N+1.
+    additional_fields:
+      - Supply and return temperatures and flow at T0 and at restore
+    repair_evidence:
+      - Removed and installed pump assembly serials scanned.
+    validation_class:
+      - CDU component (pump, filter, sensor)
+    clock_stop: Pump redundancy restored, failover test passed, and the hall header in band.
+    stability_window_hours: 72
+    recurrence_window_days: 14
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+  - id: OT-FC-CHW
+    name: Chiller, pump, or facility water fault
+    service_unit_key: Chiller or pump number
+    detection:
+      source: DS-BMS
+      signal: 'BMS: chiller or facility water pump alarm or trip, or facility water supply temperature above setpoint
+        plus 2 C.'
+      t0_rule: Timestamp of the first BMS alarm.
+    recurrence_signal: Any alarm on the same chiller or pump.
+    default_priority: P2
+    priority_rules:
+      - P1 if facility water supply leaves its band or plant redundancy is lost at design conditions.
+    additional_fields:
+      - Outdoor temperature
+      - Plant load
+    repair_evidence:
+      - Service report; refrigerant work logged by an EPA 608 certified technician.
+    validation_class:
+      - Chiller, pump, or air handler
+    clock_stop: Unit back in service and plant redundancy restored.
+    stability_window_hours: 72
+    recurrence_window_days: 14
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+  - id: OT-FC-AIR
+    name: Thermal wall or CRAH fault
+    service_unit_key: Unit ID
+    detection:
+      source: DS-BMS
+      signal: 'BMS: unit alarm, fan failure, or hall cold-aisle temperature above its limit.'
+      t0_rule: Timestamp of the first BMS alarm.
+    recurrence_signal: Any alarm on the same unit.
+    default_priority: P3
+    priority_rules:
+      - P2 if air-side redundancy is lost in a hall; P1 if a cold aisle exceeds its limit.
+    additional_fields:
+      - Cold-aisle temperatures
+    repair_evidence:
+      - Fan or component serials replaced.
+    validation_class:
+      - Chiller, pump, or air handler
+    clock_stop: Unit back in service; cold aisles within limit.
+    stability_window_hours: 24
+    recurrence_window_days: 14
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+  - id: OT-FC-LEAK
+    name: Building leak (CDU, header, or facility water)
+    service_unit_key: Leak circuit and distance
+    detection:
+      source: DS-LEAK
+      signal: TraceTek leak alarm with location on a circuit under a CDU, along the header, or on facility water
+        piping.
+      t0_rule: Timestamp of the leak alarm.
+    recurrence_signal: Any leak alarm within 3 m on the same circuit.
+    default_priority: P1
+    priority_rules: []
+    additional_fields:
+      - Estimated volume
+      - Containment time
+    repair_evidence:
+      - Source identified and repaired; cable section replaced if wetted.
+    validation_class:
+      - Leak detection zone
+    clock_stop: Source repaired, area dry, cable restored, and a 30-minute hold with no alarm.
+    stability_window_hours: 24
+    recurrence_window_days: 30
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+  - id: OT-FC-FIRE
+    name: Fire protection alarm or impairment
+    service_unit_key: Detector, zone, or system
+    detection:
+      source: DS-FIRE
+      signal: VESDA Action, Fire 1, or Fire 2; a detector or panel fault; or an unplanned impairment.
+      t0_rule: Timestamp of the first alarm or fault.
+    recurrence_signal: Any alarm or fault in the same zone.
+    default_priority: P1
+    priority_rules:
+      - P2 for a detector fault with coverage maintained by adjacent detection.
+    additional_fields:
+      - Smoke level at alarm
+      - Fire watch start time if impaired
+    repair_evidence:
+      - Fire contractor report under NFPA 72 or NFPA 25.
+    validation_class:
+      - Fire protection system
+    clock_stop: System restored, tested, and any impairment closed with the Customer notified.
+    stability_window_hours: 24
+    recurrence_window_days: 30
+    capacity_impact:
+      gpus: 0
+      states: []
+    redundancy_exposure: true
+
+performance_categories:
+  - id: CAT-OT-AVAIL
+    name: Power and Cooling Availability
+  - id: CAT-OT-RESP
+    name: Response and Restoration
+  - id: CAT-OT-MAINT
+    name: Maintenance and Change Discipline
+  - id: CAT-OT-INTEGRITY
+    name: Workforce and Record Integrity
+
+critical_service_levels:
+  - id: OT-CSL-01
+    name: Rack Power Availability
+    category: CAT-OT-AVAIL
+    description: Share of rack-minutes with at least one feed in tolerance at the busway tap-off.
+    numerator: Rack-minutes with at least one feed in tolerance
+    denominator: Leased rack-minutes
+    unit: '%'
+    direction: higher_is_better
+    expected: 99.999
+    minimum: 99.995
+    data_sources:
+      - DS-BUSWAY
+      - DS-UPS
+      - DS-EPMS
+    credit_allocation_pct: 30
+  - id: OT-CSL-02
+    name: Power Redundancy Availability
+    category: CAT-OT-AVAIL
+    description: Share of rack-minutes with both feeds in tolerance.
+    numerator: Rack-minutes with both feeds in tolerance
+    denominator: Leased rack-minutes
+    unit: '%'
+    direction: higher_is_better
+    expected: 99.9
+    minimum: 99.5
+    data_sources:
+      - DS-BUSWAY
+      - DS-UPS
+    credit_allocation_pct: 15
+  - id: OT-CSL-03
+    name: Cooling Within Band at the Rack
+    category: CAT-OT-AVAIL
+    description: Share of rack-minutes with CDU secondary supply temperature, flow, and pressure within the rack
+      band, and the cold aisle within its limit.
+    numerator: Rack-minutes in band
+    denominator: Leased rack-minutes
+    unit: '%'
+    direction: higher_is_better
+    expected: 99.99
+    minimum: 99.95
+    data_sources:
+      - DS-CDU
+      - DS-BMS
+    credit_allocation_pct: 30
+  - id: OT-CSL-04
+    name: Critical Alarm Response
+    category: CAT-OT-RESP
+    description: P1 alarms acknowledged within 5 minutes and a qualified engineer at the equipment within 15 minutes
+      (badge evidence).
+    numerator: P1 alarms meeting both targets
+    denominator: P1 alarms
+    unit: '%'
+    direction: higher_is_better
+    expected: 98.0
+    minimum: 95.0
+    data_sources:
+      - DS-BMS
+      - DS-BADGE
+      - DS-CMMS
+    credit_allocation_pct: 15
+  - id: OT-CSL-05
+    name: Redundancy Restored Within Target
+    category: CAT-OT-RESP
+    description: Redundancy-loss events restored and validated within the priority's restore target.
+    numerator: Events restored within target
+    denominator: Redundancy-loss events
+    unit: '%'
+    direction: higher_is_better
+    expected: 95.0
+    minimum: 90.0
+    data_sources:
+      - DS-UPS
+      - DS-CDU
+      - DS-EMCP
+      - DS-BMS
+      - DS-CMMS
+    credit_allocation_pct: 20
+  - id: OT-CSL-06
+    name: Preventive Maintenance On Time, Evidence-Verified
+    category: CAT-OT-MAINT
+    description: Scheduled maintenance completed within its window, counted only when device telemetry or badge
+      records confirm the work (for example, EMCP data for an NFPA 110 test).
+    numerator: Maintenance tasks completed on time with evidence
+    denominator: Maintenance tasks due
+    unit: '%'
+    direction: higher_is_better
+    expected: 98.0
+    minimum: 95.0
+    data_sources:
+      - DS-CMMS
+      - DS-EMCP
+      - DS-BADGE
+      - DS-BMS
+    credit_allocation_pct: 20
+  - id: OT-CSL-07
+    name: Critical Work Under Approved MOP
+    category: CAT-OT-MAINT
+    description: Work on critical power, cooling, or fire systems performed under an approved method of procedure
+      within its window.
+    numerator: Critical work events with an approved MOP
+    denominator: Critical work events seen in telemetry
+    unit: '%'
+    direction: higher_is_better
+    expected: 100.0
+    minimum: 98.0
+    data_sources:
+      - DS-CMMS
+      - DS-CAB
+      - DS-BADGE
+      - DS-BMS
+    credit_allocation_pct: 15
+  - id: OT-CSL-08
+    name: Record Integrity
+    category: CAT-OT-INTEGRITY
+    description: Landlord work orders and maintenance records that reconcile with device telemetry and badge records
+      within the common tolerance.
+    numerator: Reconciled records
+    denominator: Records sampled
+    unit: '%'
+    direction: higher_is_better
+    expected: 98.0
+    minimum: 95.0
+    data_sources:
+      - DS-CMMS
+      - DS-EMCP
+      - DS-UPS
+      - DS-CDU
+      - DS-BADGE
+    credit_allocation_pct: 25
+  - id: OT-CSL-09
+    name: Qualified Staffing Fill
+    category: CAT-OT-INTEGRITY
+    description: Badge-verified hours by qualified critical facilities engineers against the committed roster.
+    numerator: Qualified badge-verified hours
+    denominator: Committed hours
+    unit: '%'
+    direction: higher_is_better
+    expected: 98.0
+    minimum: 95.0
+    data_sources:
+      - DS-BADGE
+    credit_allocation_pct: 10
+  - id: OT-CSL-10
+    name: Worst-Hall Cooling Within Band
+    category: CAT-OT-AVAIL
+    description: OT-CSL-03 for the worst hall in the period, so a good site average cannot hide one hall.
+    numerator: Rack-minutes in band (worst hall)
+    denominator: Leased rack-minutes (that hall)
+    unit: '%'
+    direction: higher_is_better
+    expected: 99.95
+    minimum: 99.9
+    data_sources:
+      - DS-CDU
+    credit_allocation_pct: 10
+
+key_measurements:
+  - id: OT-KM-01
+    name: P2 Alarm Response (acknowledge 15 min, at equipment 30 min)
+    unit: '%'
+    direction: higher_is_better
+    target: 95.0
+    data_sources:
+      - DS-BMS
+      - DS-BADGE
+  - id: OT-KM-02
+    name: Generator Monthly Tests Meeting NFPA 110 Load (30% for 30 min)
+    unit: '%'
+    direction: higher_is_better
+    target: 100.0
+    data_sources:
+      - DS-EMCP
+  - id: OT-KM-03
+    name: Coolant Samples Within Specification
+    unit: '%'
+    direction: higher_is_better
+    target: 100.0
+    data_sources:
+      - DS-CMMS
+      - DS-CDU
+  - id: OT-KM-04
+    name: Annual Fuel Quality Tests On Schedule
+    unit: '%'
+    direction: higher_is_better
+    target: 100.0
+    data_sources:
+      - DS-CMMS
+  - id: OT-KM-05
+    name: BMS Overrides or Alarm Inhibits Open Over 24 Hours Without a Change Reference
+    unit: ' items'
+    direction: lower_is_better
+    target: 0.0
+    data_sources:
+      - DS-BMS
+      - DS-CAB
+  - id: OT-KM-06
+    name: Monitoring Feed Availability to the Customer
+    unit: '%'
+    direction: higher_is_better
+    target: 99.9
+    data_sources:
+      - DS-BMS
+      - DS-EPMS
+  - id: OT-KM-07
+    name: Planned Maintenance Notified 10 Business Days Ahead
+    unit: '%'
+    direction: higher_is_better
+    target: 100.0
+    data_sources:
+      - DS-CMMS
+      - DS-CAB
+  - id: OT-KM-08
+    name: Corrective Action Plans Closed On Time
+    unit: '%'
+    direction: higher_is_better
+    target: 95.0
+    data_sources:
+      - DS-CMMS
+
+rts_validation:
+  principle: Facility equipment is returned to service only when its redundancy is restored and proven, not when
+    an alarm clears.
+  classes:
+    - component: Electrical distribution (busway, tap-off, breaker)
+      check_ids:
+        - busway_in_tolerance
+        - ir_scan
+      checks:
+        - Critical Power Monitor shows both feeds in tolerance for every rack on the segment.
+        - Infrared scan of the repaired connection under load.
+    - component: UPS module
+      check_ids:
+        - ups_normal_mode
+        - redundancy_restored
+      checks:
+        - UPS in normal (double-conversion) mode with all modules healthy.
+        - Redundancy confirmed from the NMC, not from the work order.
+    - component: Generator
+      check_ids:
+        - gen_loaded_run
+      checks:
+        - EMCP records a start and a run at 30% of nameplate or more for 30 minutes.
+    - component: CDU component (pump, filter, sensor)
+      check_ids:
+        - cdu_flow_baseline
+        - pump_failover_test
+      checks:
+        - Flow, supply temperature, and return temperature within baseline.
+        - Pump redundancy confirmed by failover test; leak alarms clear; coolant conductivity and pH within specification
+          after any fluid work.
+    - component: Chiller, pump, or air handler
+      check_ids:
+        - unit_in_service
+        - plant_redundancy
+      checks:
+        - Unit running in auto with no active alarms.
+        - Plant or hall redundancy restored at current load.
+    - component: Leak detection zone
+      check_ids:
+        - leak_hold_30m
+        - cable_continuity
+      checks:
+        - 30-minute hold with no leak alarm.
+        - Cable continuity and circuit healthy on the TTDM-128.
+    - component: Fire protection system
+      check_ids:
+        - fire_test
+        - impairment_closed
+      checks:
+        - Function test under NFPA 72 or NFPA 25 passed.
+        - Impairment closed with the Customer notified.
+
+maintenance:
+  principle: A maintenance task counts as done only when telemetry or badge records confirm it.
+  schedule:
+    - system: Generators
+      task: Monthly loaded exercise
+      requirement: At least 30% of nameplate kW for 30 minutes (NFPA 110), recorded by the EMCP.
+      frequency: Monthly
+    - system: Generators
+      task: Supplemental load bank
+      requirement: 50% of nameplate for 30 minutes then 75% for 60 minutes when monthly tests did not reach 30%.
+      frequency: Annual
+    - system: Generators
+      task: Endurance test
+      requirement: 4 continuous hours under load (NFPA 110, Level 1).
+      frequency: Every 36 months
+    - system: Generators
+      task: Fuel quality test
+      requirement: Sampled and tested; results on file.
+      frequency: Annual
+    - system: UPS and batteries
+      task: Preventive maintenance and battery health check
+      requirement: Manufacturer schedule and NFPA 70B.
+      frequency: Semiannual
+    - system: Switchgear and busway
+      task: Infrared thermography under load
+      requirement: NFPA 70B.
+      frequency: Annual
+    - system: CDUs
+      task: Filter change and coolant sample
+      requirement: Manufacturer schedule; conductivity, pH, and inhibitor within specification.
+      frequency: Quarterly
+    - system: Chillers
+      task: Preventive maintenance
+      requirement: Manufacturer schedule; refrigerant work by EPA 608 certified technicians.
+      frequency: Quarterly
+    - system: Fire protection
+      task: Inspection and testing
+      requirement: NFPA 72 and NFPA 25 intervals; VESDA per manufacturer.
+      frequency: Per code
+
+chronic_failure:
+  triggers:
+    - id: CF-1
+      rule: A Minimum Service Level Default on the same CSL in 3 consecutive Measurement Periods.
+    - id: CF-2
+      rule: A Minimum Service Level Default on the same CSL in any 4 of 6 rolling Measurement Periods.
+    - id: CF-3
+      rule: Total Service Level Credits over 50% of the cumulative At-Risk Amount in any rolling 6 Measurement Periods.
+    - id: CF-4
+      rule: Any confirmed deliberate falsification of records.
+  customer_rights:
+    - Terminate the affected services or the entire Site scope for cause, without termination charges.
+    - Require a Supplier executive-sponsored recovery plan within 10 business days.
+    - 'Step-in: the Customer or a third party may perform the affected services at the Supplier''s cost during recovery.'
+  termination_assistance: The Supplier provides up to 6 months of transition assistance at the then-current service
+    levels, including full transfer of performance data, procedures, and spares records to the successor.
+
+staffing:
+  coverage: 24x7x365 on site
+  committed_per_shift:
+    - shift: Day (07:00 to 19:00 local)
+      technicians: 3
+      shift_leads: 1
+    - shift: Night (19:00 to 07:00 local)
+      technicians: 2
+      shift_leads: 1
+  key_personnel:
+    - Chief engineer (named; replacement requires 30 days notice and Customer consultation)
+    - EHS coordinator
+  required_qualifications:
+    - NFPA 70E qualified person for the electrical tasks performed
+    - Manufacturer training for Galaxy UPS, CHx2000 CDUs, and Cat EMCP 4.4
+    - EPA Section 608 certification for refrigerant work
+    - Lockout/tagout and group lockout
+    - Customer site security and escort procedures
+  qualification_rule: Only badge-verified hours by engineers with current qualifications count toward OT-CSL-09.
+
+spares:
+  ownership: Spares are Landlord-owned and Landlord-managed.
+  minimum_stock_per_hall:
+    - fru: UPS power module
+      minimum: 1
+    - fru: CDU pump assembly
+      minimum: 1
+    - fru: CDU filter set
+      minimum: 4
+    - fru: Busway tap-off unit
+      minimum: 2
+    - fru: Thermal-wall fan assembly
+      minimum: 1
+    - fru: VFD
+      minimum: 1
+  reorder_rule: Replenished within 10 business days of use.
+  cycle_count: Quarterly, reported to the Customer.
+
+change_management:
+  landlord: Changes to critical power, cooling, or fire systems require an approved MOP, notice under the Interface
+    Agreement, and a Customer-approved window when redundancy is reduced.
+
+breach_severity:
+  finding_types:
+    - id: gen_test_no_load
+      name: Generator test reported without load
+      base_level: S2
+      aggravators:
+        - AGG-INTEGRITY
+      sla_refs:
+        - OT-CSL-06
+        - OT-KM-02
+        - OT-CSL-08
+      action: Recount the test as not done. Confirm EMCP data for every generator test in the period and schedule
+        a compliant test.
+    - id: pm_without_evidence
+      name: Maintenance closed without evidence
+      base_level: S2
+      aggravators:
+        - AGG-INTEGRITY
+      sla_refs:
+        - OT-CSL-06
+        - OT-CSL-08
+      action: Reopen the task. Audit the engineer's other closures in the period against badge and device records.
+    - id: bms_override_unrecorded
+      name: BMS override or alarm inhibit without a change record
+      base_level: S1
+      aggravators:
+        - AGG-INTEGRITY
+      sla_refs:
+        - OT-CSL-07
+        - OT-KM-05
+      action: Release the override or inhibit, or record it under an approved change with an expiry. Review alarm
+        suppression controls.
+    - id: alarm_acked_no_dispatch
+      name: Alarm acknowledged but never dispatched
+      base_level: S2
+      aggravators: []
+      sla_refs:
+        - OT-CSL-04
+        - OT-CSL-05
+      action: Recalculate response from badge evidence. Review the acknowledgment workflow so an acknowledgment
+        cannot stand in for a response.
+    - id: critical_work_no_mop
+      name: Critical work without an approved MOP
+      base_level: S1
+      aggravators: []
+      sla_refs:
+        - OT-CSL-07
+      action: Stop similar work until MOP control is confirmed. Joint review with the Customer change board.

@@ -1,0 +1,79 @@
+## {{ num.security }}. Security and Chain of Custody
+
+{% for r in sla.security.requirements -%}
+- {{ r }}
+{% endfor %}
+**Incident reporting:** {{ sla.security.incident_reporting }}
+
+## {{ num.ehs }}. Environmental, Health, and Safety
+
+These terms are common to every partner SLA at the Site and bind every subcontractor. They are not subject to the monthly credit cap and cannot be weakened by any partner SLA.
+
+### {{ num.ehs }}.1 Principles
+
+{% for x in sla.ehs.principles -%}
+- {{ x }}
+{% endfor %}
+### {{ num.ehs }}.2 Required standards
+
+Each partner complies with the edition in force; where an edition is shown, it is the edition current when this SLA version was issued.
+
+| ID | Standard | Edition | Applies to |
+|---|---|:-:|---|
+{% for x in sla.ehs.standards -%}
+| {{ x.id }} | {{ x.name }} | {{ x.get("edition") or "In force" }} | {{ x.scope }} |
+{% endfor %}
+### {{ num.ehs }}.3 Site safety rules
+
+| ID | Rule | Requirement | Standards |
+|---|---|---|---|
+{% for r in sla.ehs.site_rules -%}
+| {{ r.id }} | {{ r.title }} | {{ r.rule }} | {{ r.refs | join(", ") or "Site rule" }} |
+{% endfor %}
+### {{ num.ehs }}.4 Partner qualification
+
+{% for x in sla.ehs.partner_qualification -%}
+- {{ x }}
+{% endfor %}
+### {{ num.ehs }}.5 Reporting
+
+- **Injuries and recordables:** to the Customer within {{ sla.ehs.reporting.injury_or_recordable_hours }} hour.
+- **Near misses:** within {{ sla.ehs.reporting.near_miss_hours }} hours.
+- **Severe events:** {{ sla.ehs.reporting.severe_events }}
+- **Monthly:** {{ sla.ehs.reporting.monthly }}
+
+### {{ num.ehs }}.6 Independent investigation
+
+- **Trigger:** {{ sla.ehs.investigation.trigger }}
+- **Investigator:** {{ sla.ehs.investigation.investigator }}
+- **Partner response:** within {{ sla.ehs.investigation.partner_response_business_days }} business days of notice, before a finding is confirmed.
+- **Standard of proof:** {{ sla.ehs.investigation.standard_of_proof }}
+- **Evidence:** {{ sla.ehs.investigation.evidence }}
+- **Disputes:** {{ sla.ehs.investigation.disputes }}
+
+### {{ num.ehs }}.7 Violation classes and consequences
+
+EHS Credits apply only to violations confirmed by the investigation above. Amounts are a percentage of the partner's own monthly charges (illustrated at ${{ "{:,.0f}".format(c.monthly_charges) }}/month for this SLA).
+
+| Class | Examples | EHS Credit | Consequences |
+|---|---|:-:|---|
+{% for vc in ehs_classes -%}
+| {{ vc.id }} {{ vc.name }} | {{ vc.examples | join("<br>") }} | {% if vc.dollars %}{{ vc.credit_pct_of_monthly_charges }}% (${{ "{:,.0f}".format(vc.dollars) }}){% else %}None{% endif %} | {{ vc.consequences | join("<br>") }}{% if vc.cost_recovery %}<br>Customer's investigation and stand-down costs reimbursed.{% endif %} |
+{% endfor %}
+### {{ num.ehs }}.8 EHS Credits
+
+- **Outside the monthly cap:** EHS Credits are never counted toward, or limited by, the monthly cap in Section {{ num.credits }}.
+- **No earnback:** EHS Credits are never eligible for Earnback.
+- **Repeat violations:** a second {{ sla.ehs.credits.repeat.class }} violation within {{ sla.ehs.credits.repeat.window_days }} days carries {{ sla.ehs.credits.repeat.multiplier }}× the EHS Credit.
+- **Self-reporting and concealment:** {{ sla.ehs.credits.self_reporting }} (Reduction: {{ sla.ehs.credits.self_reported_reduction_pct }}%. Concealment multiplier: {{ sla.ehs.credits.concealment_multiplier }}×.)
+- **Never based on reporting:** {{ sla.ehs.credits.never_based_on }}
+- **Cost recovery:** {{ sla.ehs.credits.cost_recovery }}
+- **Nature of EHS Credits:** {{ sla.ehs.credits.nature }}
+
+### {{ num.ehs }}.9 Escalation and termination
+
+{% for x in sla.ehs.escalation -%}
+- {{ x }}
+{% endfor %}
+See Appendix {{ num.ehs_example }} for a worked example.
+

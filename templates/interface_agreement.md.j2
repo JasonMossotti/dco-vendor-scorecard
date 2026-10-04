@@ -1,0 +1,110 @@
+<!--
+  GENERATED FILE. DO NOT EDIT BY HAND.
+  Source: sla/interface_agreement.yaml (+ party names from sla/common.yaml)  |  Generator: scripts/render_sla.py
+  Edit the YAML and re-run: python scripts/render_sla.py
+-->
+
+# {{ ia.document.title }}
+
+**{{ ia.document.subtitle }}**
+
+> **{{ ia.document.status }}.** {{ ia.document.disclaimer }}
+
+| Document ID | Version | Effective date |
+|---|---|---|
+| {{ ia.document.id }} | {{ ia.document.version }} | {{ ia.document.effective_date }} |
+
+## Contents
+
+1. [Purpose and Principles](#1-purpose-and-principles)
+2. [Parties](#2-parties)
+3. [Demarcation Points](#3-demarcation-points)
+4. [Break-Fix Ownership Matrix](#4-break-fix-ownership-matrix)
+5. [Fault Attribution](#5-fault-attribution)
+6. [Joint Incident Command](#6-joint-incident-command)
+7. [Handoffs](#7-handoffs)
+8. [Change Coordination](#8-change-coordination)
+9. [Customer Data Access](#9-customer-data-access)
+
+---
+
+## 1. Purpose and Principles
+
+This agreement joins the Landlord SLA and the IT Partner SLA. It says where each party's equipment ends, who owns each component, how an outage is attributed to exactly one party, and how the parties work together during incidents and changes. Where it conflicts with a partner SLA on any of these points, this agreement governs.
+
+{% for x in ia.principles -%}
+- {{ x }}
+{% endfor %}
+
+## 2. Parties
+
+| Party | Name | Role |
+|---|---|---|
+{% for key in ia.parties -%}
+| {{ key | replace("_", " ") | title | replace("It ", "IT ") | replace("Oem", "OEM") }} | {{ parties[key].name }}{% if parties[key].get("fictional") %} *(fictional)*{% endif %} | {{ parties[key].role }} |
+{% endfor %}
+
+## 3. Demarcation Points
+
+| ID | System | Boundary | Upstream owner | Downstream owner | Evidence on each side |
+|---|---|---|---|---|---|
+{% for d in ia.demarcations -%}
+| {{ d.id }} | {{ d.system }} | {{ d.boundary }} | {{ names[d.upstream] }} | {{ names[d.downstream] }} | {{ d.evidence }} |
+{% endfor %}
+
+## 4. Break-Fix Ownership Matrix
+
+{% for k, v in ia.raci_legend.items() %}**{{ k }}** = {{ v }}{% if not loop.last %}; {% endif %}{% endfor %}. Every component has exactly one Accountable party.
+
+| Component | {{ ia.raci_parties | join(" | ") }} |
+|---|{% for _ in ia.raci_parties %}:-:|{% endfor %}
+{% for row in ia.raci -%}
+| {{ row.component }} | {% for party in ia.raci_parties %}{{ row[party] }} | {% endfor %}
+{% endfor %}
+
+## 5. Fault Attribution
+
+{{ ia.fault_attribution.principle }}
+
+| Rule | Text |
+|---|---|
+{% for r in ia.fault_attribution.rules -%}
+| **{{ r.id }}** | {{ r.rule }} |
+{% endfor %}
+
+**Disputes:** {{ ia.fault_attribution.disputes }}
+
+## 6. Joint Incident Command
+
+- **Commander:** {{ ia.incident_command.commander }}
+{% for r in ia.incident_command.roles -%}
+- {{ r }}
+{% endfor %}
+- **Bridge:** {{ ia.incident_command.bridge }}
+- **Post-incident review:** {{ ia.incident_command.post_incident }}
+
+## 7. Handoffs
+
+| ID | Handoff | Rule |
+|---|---|---|
+{% for h in ia.handoffs -%}
+| {{ h.id }} | {{ h.name }} | {{ h.rule }} |
+{% endfor %}
+
+## 8. Change Coordination
+
+{% for x in ia.change_coordination -%}
+- {{ x }}
+{% endfor %}
+
+## 9. Customer Data Access
+
+{{ ia.data_access.principle }}
+
+{% for x in ia.data_access.rights -%}
+- {{ x }}
+{% endfor %}
+
+---
+
+*Generated from `sla/interface_agreement.yaml` (version {{ ia.document.version }}). {{ ia.document.disclaimer }}*

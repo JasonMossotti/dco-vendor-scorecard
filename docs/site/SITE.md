@@ -58,11 +58,11 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 
 | Party | Name | Role |
 |---|---|---|
-| Customer | Customer | Owns the IT equipment and site outcomes; operates the Telemetry of Record. |
+| Customer | Customer | Leases the halls; owns the IT equipment and site outcomes; operates the Telemetry of Record. |
 | It partner | Ridgeline Site Services, LLC (fictional) | Deployment, break-fix, and data hall IT operations. |
-| Ot partner | Caprock Critical Facilities, LLC (fictional) | Critical facilities operations: electrical, mechanical, fire and life safety, BMS and EPMS. |
+| Landlord | Caprock Critical Facilities, LLC (fictional) | Wholesale data center owner-operator: owns and operates the building, power, cooling, fire protection, and building monitoring; leases the halls to the Customer. |
 | Security partner | To be contracted | Access control, CCTV, escorts (later phase). |
-| Utility | Serving utility (ERCOT region) | Owns the 138 kV substation and its transformers. |
+| Utility | Serving utility (ERCOT region) | Owns the 138 kV substation and its transformers; serves the Landlord. |
 
 ## Equipment
 
@@ -136,7 +136,7 @@ Each rack's power and cooling paths, upstream to the sources. When a rack goes d
 
 ## Monitoring map
 
-The OT partner runs EcoStruxure day to day. The Customer's Telemetry of Record collector reads critical devices directly and read-only, and also receives the BMS feed, so a point overridden or an alarm inhibited at the BMS shows up as a mismatch.
+The Landlord runs EcoStruxure day to day. Under the Interface Agreement, the Customer's Telemetry of Record collector reads critical devices directly and read-only, and also receives the BMS feed, so a point overridden or an alarm inhibited at the BMS shows up as a mismatch.
 
 | System | Role | Operated by |
 |---|---|---|

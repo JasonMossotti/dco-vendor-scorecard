@@ -1,0 +1,64 @@
+## {{ num.change_control }}. SLA Change Control and Continuous Improvement
+
+{% for r in sla.sla_change_control.customer_rights -%}
+- {{ r }}
+{% endfor %}
+**Continuous improvement:** {{ sla.sla_change_control.continuous_improvement }}
+
+**Versioning:** {{ sla.sla_change_control.versioning }}
+
+---
+
+## Appendix A: Internal Breach Severity Index
+
+> **Customer-internal.** {{ sev.purpose }} This index guides escalation only. It is not a contractual remedy and is not shared with the Supplier.
+
+### A.1 Severity levels
+
+| Level | Name | Escalation |
+|---|---|---|
+{% for lvl in sev.levels -%}
+| **{{ lvl.id }}** | {{ lvl.name }} | {{ lvl.escalation }} |
+{% endfor %}
+
+### A.2 Event breaches (a single late incident)
+
+Severity is the **worse** of the two dimensions below, then adjusted by aggravators.
+
+| Level | Overrun past target | GPU-hours lost beyond target |
+|---|:-:|:-:|
+{% for row in sev_table -%}
+| {{ row.level }} | {{ row.overrun }} | {{ row.gpu_hours }} |
+{% endfor %}
+
+- **Overrun:** {{ sev.event_dimensions.overrun_pct.description }}
+- **GPU-hours:** {{ sev.event_dimensions.gpu_hours_beyond_target.description }}
+
+### A.3 Period breaches (a CSL over a week or month)
+
+| Condition | Level |
+|---|:-:|
+{% for r in sev.period_rules -%}
+| {{ r.description }} | {{ r.level or "None" }} |
+{% endfor %}
+
+### A.4 Aggravators
+
+| ID | Trigger | Effect |
+|---|---|---|
+{% for a in sev.aggravators -%}
+| {{ a.id }} | {{ a.description }} | {% if a.effect == "bump" %}Raise by {{ a.amount }} level{% else %}Raise to at least {{ a.level }}{% endif %} |
+{% endfor %}
+
+Aggravators adjust an existing breach; they never create one.
+
+### A.5 Discrepancy types
+
+The discrepancy engine reports each mismatch between vendor records and the Telemetry of Record as one of these types. Severity starts at the base level (or the event-breach level, if a restore target was missed) and the listed aggravators are then applied.
+
+| Type | Base | Aggravators | SLA references | Recommended corrective action |
+|---|:-:|---|---|---|
+{% for ft in sev.finding_types -%}
+| {{ ft.name }} (`{{ ft.id }}`) | {{ ft.base_level }} | {{ ft.aggravators | join(", ") or "None" }} | {{ ft.sla_refs | join(", ") }} | {{ ft.action }} |
+{% endfor %}
+

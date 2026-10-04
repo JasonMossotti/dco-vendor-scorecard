@@ -49,21 +49,21 @@
     ],
     "evidence": "3 repair events on one tray within 30 days; every ticket closed as reseated with no RMA escalation.",
     "gt_ids": [
-      "GT-0071",
-      "GT-0072",
-      "GT-0073"
+      "GT-0067",
+      "GT-0068",
+      "GT-0069"
     ],
     "sla_refs": [
       "KM-09",
       "CSL-08"
     ],
     "tickets": [
-      "INC3100085",
+      "INC3100102",
       "INC3100374",
-      "INC3100697"
+      "INC3100595"
     ],
     "type": "lemon_unit",
-    "unit": "Compute tray a31-ct06"
+    "unit": "Compute tray a23-ct18"
   },
   {
     "anomaly_id": "PD-004",
@@ -71,17 +71,17 @@
       "telemetry/dcgm_xid_events.jsonl",
       "vendor/tickets.json"
     ],
-    "evidence": "Ticket closed as resolved (reseat); same gsp fault recurred on a31-ct17 67 hours after return to service, inside the 7-day recurrence window (TR-5): a First-Time Fix failure.",
-    "gt_id": "GT-0019",
-    "recurrence_gt_id": "GT-0074",
-    "recurrence_ticket": "INC3100748",
+    "evidence": "Ticket closed as resolved (reseat); same gsp fault recurred on a23-ct04 62 hours after return to service, inside the 7-day recurrence window (TR-5): a First-Time Fix failure.",
+    "gt_id": "GT-0015",
+    "recurrence_gt_id": "GT-0070",
+    "recurrence_ticket": "INC3100833",
     "sla_refs": [
       "CSL-06",
       "CSL-08"
     ],
-    "ticket": "INC3100544",
+    "ticket": "INC3100663",
     "type": "phantom_fix",
-    "unit": "Compute tray a31-ct17"
+    "unit": "Compute tray a23-ct04"
   },
   {
     "anomaly_id": "PD-005",
@@ -89,17 +89,17 @@
       "telemetry/dcgm_xid_events.jsonl",
       "vendor/tickets.json"
     ],
-    "evidence": "Ticket closed as resolved (reseat); same bus fault recurred on a14-ct07 98 hours after return to service, inside the 7-day recurrence window (TR-5): a First-Time Fix failure.",
-    "gt_id": "GT-0029",
-    "recurrence_gt_id": "GT-0075",
-    "recurrence_ticket": "INC3100901",
+    "evidence": "Ticket closed as resolved (reseat); same ecc fault recurred on a22-ct07 64 hours after return to service, inside the 7-day recurrence window (TR-5): a First-Time Fix failure.",
+    "gt_id": "GT-0030",
+    "recurrence_gt_id": "GT-0071",
+    "recurrence_ticket": "INC3100391",
     "sla_refs": [
       "CSL-06",
       "CSL-08"
     ],
-    "ticket": "INC3100612",
+    "ticket": "INC3100204",
     "type": "phantom_fix",
-    "unit": "Compute tray a14-ct07"
+    "unit": "Compute tray a22-ct07"
   },
   {
     "anomaly_id": "PD-006",
@@ -108,13 +108,13 @@
       "telemetry/redfish_inventory_changes.jsonl"
     ],
     "evidence": "Ticket parts record claims a tray replacement with a new serial number; BMC inventory shows no serial change for that slot.",
-    "gt_id": "GT-0012",
+    "gt_id": "GT-0021",
     "sla_refs": [
       "CSL-11"
     ],
-    "ticket": "INC3100323",
+    "ticket": "INC3100935",
     "type": "unverified_swap",
-    "unit": "Compute tray a09-ct10"
+    "unit": "Compute tray a10-ct13"
   },
   {
     "anomaly_id": "PD-007",
@@ -123,13 +123,13 @@
       "telemetry/redfish_inventory_changes.jsonl"
     ],
     "evidence": "Ticket parts record claims a tray replacement with a new serial number; BMC inventory shows no serial change for that slot.",
-    "gt_id": "GT-0005",
+    "gt_id": "GT-0010",
     "sla_refs": [
       "CSL-11"
     ],
-    "ticket": "INC3100952",
+    "ticket": "INC3100629",
     "type": "unverified_swap",
-    "unit": "Compute tray a30-ct06"
+    "unit": "Compute tray a05-ct15"
   },
   {
     "anomaly_id": "PD-008",
@@ -139,14 +139,14 @@
       "vendor/tickets.json"
     ],
     "evidence": "Node returned to the scheduler with no validation health checks recorded; ticket notes still claim validation passed.",
-    "gt_id": "GT-0017",
+    "gt_id": "GT-0022",
     "sla_refs": [
       "CSL-07",
       "CSL-11"
     ],
-    "ticket": "INC3100153",
+    "ticket": "INC3100510",
     "type": "skipped_validation",
-    "unit": "Compute tray a05-ct18"
+    "unit": "Compute tray a14-ct02"
   },
   {
     "anomaly_id": "PD-009",
@@ -156,14 +156,14 @@
       "vendor/tickets.json"
     ],
     "evidence": "Node returned to the scheduler with no validation health checks recorded; ticket notes still claim validation passed.",
-    "gt_id": "GT-0024",
+    "gt_id": "GT-0014",
     "sla_refs": [
       "CSL-07",
       "CSL-11"
     ],
-    "ticket": "INC3100221",
+    "ticket": "INC3100748",
     "type": "skipped_validation",
-    "unit": "Compute tray a03-ct14"
+    "unit": "Compute tray a07-ct04"
   },
   {
     "anomaly_id": "PD-010",
@@ -172,15 +172,15 @@
       "telemetry/scheduler_node_states.jsonl",
       "vendor/tickets.json"
     ],
-    "evidence": "GPU telemetry shows the fault 100 minutes before the ticket was opened. Measured from ticket open the repair met the 8-hour target; measured from T0 it took 9.4 hours.",
-    "gt_id": "GT-0011",
+    "evidence": "GPU telemetry shows the fault 109 minutes before the ticket was opened. Measured from ticket open the repair met the 8-hour target; measured from T0 it took 9.0 hours.",
+    "gt_id": "GT-0012",
     "sla_refs": [
       "CSL-04",
       "CSL-11"
     ],
-    "ticket": "INC3100799",
+    "ticket": "INC3100357",
     "type": "clock_shift",
-    "unit": "Compute tray a01-ct05"
+    "unit": "Compute tray a09-ct10"
   },
   {
     "anomaly_id": "PD-011",
@@ -189,19 +189,19 @@
       "telemetry/scheduler_node_states.jsonl",
       "vendor/tickets.json"
     ],
-    "evidence": "Tray faulted again 42 minutes after return to service and the vendor opened a new ticket, restarting the clock. Separately the tickets look on time (7.2 and 3.1 hours); under TR-1 the restore is continuous: 11.0 hours against the 8-hour target.",
-    "gt_id": "GT-0008",
-    "recurrence_gt_id": "GT-0076",
-    "recurrence_ticket": "INC3100204",
+    "evidence": "Tray faulted again 30 minutes after return to service and the vendor opened a new ticket, restarting the clock. Separately the tickets look on time (6.6 and 3.3 hours); under TR-1 the restore is continuous: 10.4 hours against the 8-hour target.",
+    "gt_id": "GT-0006",
+    "recurrence_gt_id": "GT-0072",
+    "recurrence_ticket": "INC3100085",
     "sla_refs": [
       "TR-1",
       "TR-6",
       "CSL-04",
       "CSL-11"
     ],
-    "ticket": "INC3100187",
+    "ticket": "INC3100068",
     "type": "ticket_split",
-    "unit": "Compute tray a06-ct13"
+    "unit": "Compute tray a31-ct11"
   },
   {
     "anomaly_id": "PD-012",
@@ -210,22 +210,38 @@
       "telemetry/scheduler_node_states.jsonl",
       "vendor/tickets.json"
     ],
-    "evidence": "Tray faulted again 37 minutes after return to service and the vendor opened a new ticket, restarting the clock. Separately the tickets look on time (7.1 and 3.2 hours); under TR-1 the restore is continuous: 10.9 hours against the 8-hour target.",
-    "gt_id": "GT-0033",
-    "recurrence_gt_id": "GT-0077",
-    "recurrence_ticket": "INC3100476",
+    "evidence": "Tray faulted again 13 minutes after return to service and the vendor opened a new ticket, restarting the clock. Separately the tickets look on time (6.5 and 3.2 hours); under TR-1 the restore is continuous: 9.9 hours against the 8-hour target.",
+    "gt_id": "GT-0008",
+    "recurrence_gt_id": "GT-0073",
+    "recurrence_ticket": "INC3100238",
     "sla_refs": [
       "TR-1",
       "TR-6",
       "CSL-04",
       "CSL-11"
     ],
-    "ticket": "INC3100425",
+    "ticket": "INC3100221",
     "type": "ticket_split",
-    "unit": "Compute tray a26-ct16"
+    "unit": "Compute tray a06-ct13"
   },
   {
     "anomaly_id": "PD-013",
+    "detect_with": [
+      "vendor/tickets.json",
+      "access/badge_events.csv"
+    ],
+    "evidence": "Ticket work note claims technician on site within the 30-minute target; the assigned technician's first badge-in to the hall came later.",
+    "gt_id": "GT-0028",
+    "sla_refs": [
+      "KM-01",
+      "CSL-11"
+    ],
+    "ticket": "INC3100289",
+    "type": "ghost_engagement",
+    "unit": "Compute tray a28-ct04"
+  },
+  {
+    "anomaly_id": "PD-014",
     "detect_with": [
       "vendor/tickets.json",
       "access/badge_events.csv"
@@ -236,25 +252,9 @@
       "KM-01",
       "CSL-11"
     ],
-    "ticket": "INC3101309",
+    "ticket": "INC3101241",
     "type": "ghost_engagement",
     "unit": "Compute tray a20-ct07"
-  },
-  {
-    "anomaly_id": "PD-014",
-    "detect_with": [
-      "vendor/tickets.json",
-      "access/badge_events.csv"
-    ],
-    "evidence": "Ticket work note claims technician on site within the 30-minute target; the assigned technician's first badge-in to the hall came later.",
-    "gt_id": "GT-0015",
-    "sla_refs": [
-      "KM-01",
-      "CSL-11"
-    ],
-    "ticket": "INC3100663",
-    "type": "ghost_engagement",
-    "unit": "Compute tray a23-ct04"
   },
   {
     "anomaly_id": "PD-015",
@@ -262,17 +262,17 @@
       "telemetry/ufm_port_events.jsonl",
       "vendor/tickets.json"
     ],
-    "evidence": "Switch-side optic replaced and ticket closed; symbol errors on the same link continued until the host-side optic was replaced 9+ hours later (GT-0078).",
-    "gt_id": "GT-0035",
-    "recurrence_gt_id": "GT-0078",
-    "recurrence_ticket": "INC3100442",
+    "evidence": "Switch-side optic replaced and ticket closed; symbol errors on the same link continued until the host-side optic was replaced 8+ hours later (GT-0074).",
+    "gt_id": "GT-0048",
+    "recurrence_gt_id": "GT-0074",
+    "recurrence_ticket": "INC3100170",
     "sla_refs": [
       "CSL-06",
       "CSL-08"
     ],
-    "ticket": "INC3100391",
+    "ticket": "INC3100136",
     "type": "wrong_end_optic",
-    "unit": "Link a32-ct15:mlx5_0 <-> leaf-a16-r0:swp33"
+    "unit": "Link a13-ct18:mlx5_1 <-> leaf-a07-r1:swp18"
   },
   {
     "anomaly_id": "PD-016",
@@ -282,15 +282,15 @@
       "vendor/spares_cycle_counts.csv"
     ],
     "evidence": "Tray replaced (ticket and BMC inventory agree) but no matching issue in the spares ledger; the next cycle count is one tray short of the ledger balance.",
-    "gt_id": "GT-0018",
+    "gt_id": "GT-0029",
     "sla_refs": [
       "KM-06",
       "KM-07",
       "CSL-11"
     ],
-    "ticket": "INC3100272",
+    "ticket": "INC3100612",
     "type": "spares_drift",
-    "unit": "Compute tray a29-ct03"
+    "unit": "Compute tray a14-ct07"
   },
   {
     "anomaly_id": "PD-017",
@@ -298,13 +298,13 @@
       "telemetry/redfish_inventory_changes.jsonl",
       "customer/cab_changes.json"
     ],
-    "evidence": "Firmware changed on all 18 trays of rack A23 with no approved change record covering that rack and time.",
-    "observed_from": "2026-09-16T08:54:20Z",
-    "rack": "A23",
+    "evidence": "Firmware changed on all 18 trays of rack A29 with no approved change record covering that rack and time.",
+    "observed_from": "2026-09-21T08:14:21Z",
+    "rack": "A29",
     "sla_refs": [
       "KM-10"
     ],
     "type": "unauthorized_change",
-    "unit": "Rack A23 compute trays"
+    "unit": "Rack A29 compute trays"
   }
 ]

@@ -1,0 +1,168 @@
+# =============================================================================
+# Interface Agreement: Site AUS-1 (SLA as Code)
+# -----------------------------------------------------------------------------
+# The multi-party agreement that joins the Lease (Landlord SLA) and the IT
+# Partner SLA: where each party's equipment ends, who owns each component,
+# how an outage is attributed to one party, how the parties run incidents
+# together, and the Customer's negotiated right to read facility telemetry.
+# Party names come from common.yaml. The document docs/sla/INTERFACE_AGREEMENT.md
+# is GENERATED from this file; the ownership matrix also prints as an exhibit
+# in each partner SLA.
+#
+# MOCK DOCUMENT FOR PORTFOLIO DEMONSTRATION ONLY. All parties, sites, figures,
+# and commercial terms are fictional and illustrative. Not legal advice.
+# =============================================================================
+
+document:
+  id: "IA-AUS1-001"
+  title: "Interface Agreement: Site AUS-1"
+  subtitle: "Joined to the Data Center Lease (Schedule C) and the IT Partner Services Agreement (Schedule B)"
+  version: "1.0.0"
+  effective_date: "2026-10-05"
+  status: "MOCK / ILLUSTRATIVE"
+  disclaimer: >-
+    This is a fictional, illustrative interface agreement created for a
+    portfolio demonstration. All parties, sites, and terms are invented. It is
+    not legal advice and is not derived from any real organization's internal
+    documents or contracts.
+
+parties: ["customer", "landlord", "it_partner", "oem", "utility"]
+
+principles:
+  - "Every component has exactly one Accountable party."
+  - "Boundaries are physical points a technician can see and touch, so ownership is never a matter of opinion."
+  - "Outages are attributed from the Customer's Telemetry of Record by walking the site's power and cooling paths, never from ticket text alone."
+  - "No party's SLA clock runs for time another party's fault is active, and no outage goes unowned."
+  - "The common terms, including EHS, bind every party working at the Site."
+
+demarcations:
+  - id: "DM-PWR"
+    system: "Power"
+    boundary: "Output terminals of the busway tap-off unit."
+    upstream: "landlord"
+    downstream: "it_partner"
+    evidence: "Busway Critical Power Monitor at the segment (Landlord side); rack power shelf input via Redfish (IT side)."
+  - id: "DM-COOL"
+    system: "Liquid cooling"
+    boundary: "Rack manifold isolation valves (supply and return)."
+    upstream: "landlord"
+    downstream: "it_partner"
+    evidence: "CDU secondary supply temperature, flow, and pressure via Redfish (Landlord side); tray and manifold leak sensors via the rack BMC (IT side)."
+  - id: "DM-AIR"
+    system: "Air cooling"
+    boundary: "Cold aisle supply air at the rack face."
+    upstream: "landlord"
+    downstream: "it_partner"
+    evidence: "Cold-aisle temperature sensors in the BMS; rack inlet temperatures via Redfish."
+  - id: "DM-UTIL"
+    system: "Utility service"
+    boundary: "13.8 kV main breakers in the Landlord's switchgear."
+    upstream: "utility"
+    downstream: "landlord"
+    evidence: "Utility revenue metering; main breaker status in the EPMS."
+  - id: "DM-NET"
+    system: "Network"
+    boundary: "Meet-me room cross-connect panel."
+    upstream: "landlord"
+    downstream: "it_partner"
+    evidence: "Cross-connect records; optical power at the IT side of the panel."
+  - id: "DM-MON"
+    system: "Monitoring"
+    boundary: "The read-only interfaces listed under Customer data access."
+    upstream: "landlord"
+    downstream: "customer"
+    evidence: "Feed availability measured by the Customer collector (OT-KM-06)."
+
+raci_legend:
+  R: "Responsible: performs the work"
+  A: "Accountable: owns the outcome and approves"
+  C: "Consulted"
+  I: "Informed"
+raci_parties: ["Customer", "IT Partner", "Landlord", "OEM", "Utility"]
+raci:
+  - {component: "Compute tray (GPU, CPU, memory, cold plate)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
+  - {component: "NVLink switch tray and NVLink backplane", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
+  - {component: "Rack power shelves, PSUs, and whips from the tap-off output", Customer: "A", IT Partner: "R", Landlord: "C", OEM: "C", Utility: "-"}
+  - {component: "Busway, tap-off units, and tap-off breakers", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "UPS, batteries, unit substations, and switchgear", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Generators, paralleling controls, and fuel", Customer: "I", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "138 kV substation and utility transformers", Customer: "-", IT Partner: "-", Landlord: "C", OEM: "-", Utility: "A/R"}
+  - {component: "Rack manifold, isolation valves, quick-disconnects", Customer: "A", IT Partner: "R", Landlord: "C", OEM: "C", Utility: "-"}
+  - {component: "CDUs and the hall secondary header", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Chillers, facility water, and pumps", Customer: "I", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Thermal walls, CRAHs, and hot-aisle containment", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Building leak detection (cable and controllers)", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Fire alarm, VESDA, and pre-action suppression", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "BMS and EPMS operation", Customer: "C", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Customer Telemetry of Record collector and read-only taps", Customer: "A/R", IT Partner: "I", Landlord: "C", OEM: "-", Utility: "-"}
+  - {component: "Back-end fabric optics, cables, and fiber", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
+  - {component: "Leaf and spine switches (physical replacement)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
+  - {component: "BMC and out-of-band management network (physical)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
+  - {component: "Meet-me rooms and cross-connects", Customer: "C", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Spares cage, inventory, and RMA shipments", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
+  - {component: "Building perimeter, lobby, and access control system", Customer: "C", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-"}
+  - {component: "Customer halls and cage access lists", Customer: "A", IT Partner: "R", Landlord: "R", OEM: "-", Utility: "-"}
+
+fault_attribution:
+  principle: >-
+    When the Telemetry of Record shows rack capacity lost, the Customer walks
+    that rack's power and cooling paths in the site model (site/site.yaml) as
+    of T0. The first unhealthy component, starting from the source, decides
+    which party owns the outage.
+  rules:
+    - id: "FA-1"
+      rule: "If every feed of the rack was out of tolerance at the tap-off at or before T0, or the CDU secondary supply at the rack was out of band, the outage is Landlord-attributed from T0."
+    - id: "FA-2"
+      rule: "If the Landlord side was healthy at T0, the outage is IT Partner-attributed and runs under the IT Partner SLA."
+    - id: "FA-3"
+      rule: "When a Landlord-attributed outage ends (Landlord restoration declared and confirmed by telemetry), the IT Partner's clock starts at that handoff time, for validating the rack's return to service. The IT Partner is never measured for the Landlord's minutes."
+    - id: "FA-4"
+      rule: "If one party's action caused another party's equipment to fail (for example, an IT Partner whip fault tripping a tap-off breaker), the outage is attributed to the party whose action caused it, as found by the joint post-incident review."
+    - id: "FA-5"
+      rule: "Loss of one feed or of N+1 cooling with no capacity lost is a Landlord redundancy event (OT-CSL-02, OT-CSL-05) and does not stop or start any IT Partner clock."
+    - id: "FA-6"
+      rule: "Utility outages are Utility-attributed; the Landlord is measured on carrying the load (transfer, generators, and UPS) and is attributed any capacity lost during a utility event."
+  disputes: "The Customer determines attribution from the Telemetry of Record within 2 business days. A party may appeal to the monthly service review with evidence; attribution is never decided from ticket or work order text alone."
+
+incident_command:
+  commander: "The Customer is Incident Commander for any P1 under either SLA and for any event involving more than one party."
+  roles:
+    - "Landlord lead: facility status, isolation, and restoration."
+    - "IT Partner lead: rack protection, controlled shutdowns, and return-to-service validation."
+    - "Customer Incident Commander: priorities, decisions, and all communications to Customer leadership."
+  bridge: "A joint bridge opens within 15 minutes of a multi-party P1. Each lead updates the Incident Commander at the stricter of the two SLAs' update cadences."
+  post_incident: "A joint post-incident review within 5 business days produces one timeline from the Telemetry of Record, the attribution decision, and actions tracked in each party's corrective action process."
+
+handoffs:
+  - id: "HO-1"
+    name: "Facility restored to IT validation"
+    rule: "The Landlord declares restoration in the joint bridge; the Customer confirms it from telemetry (feeds in tolerance, cooling in band); the IT Partner then validates each affected rack."
+  - id: "HO-2"
+    name: "De-energizing a tap-off for rack work"
+    rule: "The IT Partner requests it under an approved change; the Landlord isolates under group lockout with both parties' locks applied (EHS-R2)."
+  - id: "HO-3"
+    name: "Leak at a rack"
+    rule: "The IT Partner isolates at the rack manifold valves; the Landlord isolates at the header if the leak is upstream of the valves; both follow the spill procedure (EHS-R5)."
+  - id: "HO-4"
+    name: "New rack energization"
+    rule: "The Landlord energizes the tap-off and opens the isolation valves only after the IT Partner confirms the rack is set, leak-tested, and ready; the time is recorded as the deployment milestone handoff."
+
+change_coordination:
+  - "Any change touching a demarcation point needs a joint method of procedure approved by the Customer and both parties."
+  - "Landlord work that reduces redundancy is notified at least 10 business days ahead and done in a Customer-approved window; emergency work is notified as soon as it is known and at least 1 hour ahead where possible."
+  - "Group lockout under EHS-R2 for any multi-party work."
+  - "BMS point overrides and alarm inhibits carry a change reference and an expiry, and are visible to the Customer in real time."
+
+data_access:
+  principle: >-
+    The Customer's right to read facility telemetry is a negotiated term of the
+    Lease, not a courtesy. Without it, the Landlord SLA would be measured by the
+    Landlord.
+  rights:
+    - "Read-only access to: UPS network management cards (SNMPv3), busway Critical Power Monitors (Modbus TCP), generator controllers (EMCP 4.4, Modbus TCP), CDU controllers (Redfish), and leak detection controllers (Modbus via gateway)."
+    - "A real-time export of BMS and EPMS alarms, acknowledgments, point overrides, and alarm inhibits, and one-minute trend data for the points that measure the Landlord SLA."
+    - "Read-only access is enforced at each device (no write credentials are issued) over a segmented monitoring network the Landlord approves."
+    - "The Landlord may not disable, filter, or delay the feeds. A feed outage over 15 minutes is a Landlord P2 and counts against OT-KM-06."
+    - "The Landlord keeps 13 months of BMS and EPMS history and provides it within 5 business days of a request."
+    - "All systems are NTP-synchronized; clock skew over 5 seconds is flagged under the common measurement terms."
+    - "The Customer uses the data only to measure the SLAs, attribute outages, and protect safety, and shares it with the IT Partner only as needed for attribution."

@@ -36,21 +36,21 @@ site:
 parties:
   customer:
     name: "Customer"
-    role: "Owns the IT equipment and site outcomes; operates the Telemetry of Record."
+    role: "Leases the halls; owns the IT equipment and site outcomes; operates the Telemetry of Record."
   it_partner:
     name: "Ridgeline Site Services, LLC"
     fictional: true
     role: "Deployment, break-fix, and data hall IT operations."
-  ot_partner:
+  landlord:
     name: "Caprock Critical Facilities, LLC"
     fictional: true
-    role: "Critical facilities operations: electrical, mechanical, fire and life safety, BMS and EPMS."
+    role: "Wholesale data center owner-operator: owns and operates the building, power, cooling, fire protection, and building monitoring; leases the halls to the Customer."
   security_partner:
     name: "To be contracted"
     role: "Access control, CCTV, escorts (later phase)."
   utility:
     name: "Serving utility (ERCOT region)"
-    role: "Owns the 138 kV substation and its transformers."
+    role: "Owns the 138 kV substation and its transformers; serves the Landlord."
 
 # Engineering assumptions made for this model (listed in docs/site/SITE.md).
 assumptions:
@@ -403,7 +403,7 @@ plants:
     unit_sub_product: unit_sub_2500
 
 # -----------------------------------------------------------------------------
-# Monitoring. The OT partner operates EcoStruxure day to day. The Customer's
+# Monitoring. The Landlord operates EcoStruxure day to day. The Customer's
 # Telemetry of Record collector polls critical devices directly, read-only,
 # and also receives the BMS feed, so the two can be compared.
 # -----------------------------------------------------------------------------
@@ -412,19 +412,19 @@ monitoring:
     - id: "EBO"
       name: "EcoStruxure Building Operation"
       role: "BMS: HVAC, chillers, CDUs, thermal walls, fire and leak (secondary)"
-      operator: ot_partner
+      operator: landlord
     - id: "PME"
       name: "EcoStruxure Power Monitoring Expert"
       role: "EPMS: switchgear, metering, power quality"
-      operator: ot_partner
+      operator: landlord
     - id: "EIT"
       name: "EcoStruxure IT"
       role: "DCIM: UPS, busway, rack power, capacity"
-      operator: ot_partner
+      operator: landlord
     - id: "FACP"
       name: "Notifier fire alarm control panel"
       role: "Fire alarm system of record (life safety)"
-      operator: ot_partner
+      operator: landlord
     - id: "UFM"
       name: "NVIDIA UFM"
       role: "InfiniBand fabric management"

@@ -13,6 +13,7 @@
 # =============================================================================
 
 extends: "common.yaml"
+partner_type: "it"
 
 document:
   id: "SLA-RSS-AUS1-001"
@@ -157,7 +158,7 @@ definitions:
     definition: >-
       The identifier that decides whether two faults hit the same thing: the host
       for a compute tray, the link (both ends) for a back-end link, the rack for an
-      NVLink switch tray, the slot for a PSU or power shelf, the pump for a CDU, and
+      NVLink switch tray, the slot for a PSU or power shelf, and
       the location for a leak.
   - term: "Stability Window"
     definition: >-
@@ -197,9 +198,9 @@ scope:
     - id: "SVC-LC"
       name: "Liquid-cooling operations (rack side)"
       description: >-
-        Rack manifolds, quick-disconnects, tray-level leak response, and
-        secondary-loop CDU monitoring and first response, in coordination with
-        the Facility Provider.
+        Rack manifolds, rack manifold isolation valves, quick-disconnects, cold
+        plates, and rack-level leak response. The CDUs and secondary header
+        belong to the Landlord (see the Interface Agreement).
     - id: "SVC-NET"
       name: "Physical network operations"
       description: >-
@@ -216,77 +217,11 @@ scope:
         24x7 on-site response under the direction of the Customer Incident
         Commander, including post-incident data collection.
   out_of_scope:
-    - "Building power, generators, UPS, and switchgear (Facility Provider)."
-    - "Facility water plant and primary-side cooling (Facility Provider)."
+    - "Building power, generators, UPS, switchgear, and busway up to the tap-off output (Landlord)."
+    - "CDUs, secondary header, facility water, chillers, thermal walls, fire protection, and building leak detection (Landlord)."
     - "Logical configuration of Customer networks and workloads (Customer)."
     - "Board-level repair and OEM warranty adjudication (OEM)."
-  raci_legend:
-    R: "Responsible: performs the work"
-    A: "Accountable: owns the outcome and approves"
-    C: "Consulted"
-    I: "Informed"
-  raci_parties: ["Supplier", "Customer", "Facility Provider", "OEM"]
-  raci:
-    - component: "Compute tray (GPU, CPU, memory, cold plate)"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "I"
-      OEM: "C"
-    - component: "NVLink switch tray and NVLink backplane"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "I"
-      OEM: "C"
-    - component: "Power shelves and PSUs (in-rack)"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "C"
-      OEM: "C"
-    - component: "Rack busbar, whips, and upstream PDUs and busway"
-      Supplier: "C"
-      Customer: "A"
-      Facility Provider: "R"
-      OEM: "I"
-    - component: "Rack manifold and quick-disconnects"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "C"
-      OEM: "C"
-    - component: "CDU (secondary loop: monitoring, first response, pumps, filters)"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "C"
-      OEM: "C"
-    - component: "Facility water and primary loop"
-      Supplier: "I"
-      Customer: "C"
-      Facility Provider: "A/R"
-      OEM: "I"
-    - component: "Back-end fabric optics, cables, and fiber"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "I"
-      OEM: "C"
-    - component: "Leaf and spine switches (physical replacement)"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "I"
-      OEM: "C"
-    - component: "BMC and out-of-band management network (physical)"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "I"
-      OEM: "C"
-    - component: "Spares cage, inventory, and RMA shipments"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "I"
-      OEM: "C"
-    - component: "Physical security of the Customer cage"
-      Supplier: "R"
-      Customer: "A"
-      Facility Provider: "R"
-      OEM: "I"
+
 
 # -----------------------------------------------------------------------------
 # INCIDENT PRIORITY MATRIX (GB200-specific criteria)
@@ -305,15 +240,14 @@ priorities:
   - id: "P1"
     name: "Critical"
     criteria:
-      - "Active coolant leak or any tray, rack, or CDU leak-detection alarm."
-      - "CDU loss of flow, or loss of pump redundancy with rising temperatures."
+      - "Active coolant leak or any tray or rack manifold leak-detection alarm."
       - "Rack-level outage (an entire NVL72 rack or more unavailable)."
       - "NVLink switch tray failure (treated as rack-wide)."
       - "Any EHS event involving injury, fire, smoke, or electrical hazard."
       - "Physical security breach of the Customer cage."
     examples:
       - "Leak detector alarm on rack A-14 manifold."
-      - "CDU-3 flow drops below baseline; 8 racks at risk."
+      - "Rack A-07 down on both power feeds after a tap-off repair (rack side to validate)."
     acknowledge_min: 5
     engaged_on_site_min: 15
     containment_min: 60
@@ -326,7 +260,6 @@ priorities:
       - "Single compute tray down in production (4 GPUs)."
       - "Back-end fabric link down or flapping and impacting jobs."
       - "Power shelf failure with redundancy lost."
-      - "CDU pump redundancy lost with stable temperatures."
     examples:
       - "XID 79 (GPU fallen off bus) on a production tray."
       - "Repeated link-down events on a leaf port serving rack B-03."
@@ -565,28 +498,6 @@ measurement_spec:
     clock_stop: "BMC reports power redundancy restored."
     stability_window_hours: 24
     recurrence_window_days: 7
-    capacity_impact:
-      gpus: 0
-      states: []
-    redundancy_exposure: true
-  - id: "FC-CDU"
-    name: "CDU pump failure (redundancy lost)"
-    service_unit_key: "CDU and pump number"
-    detection:
-      source: "DS-BMS"
-      signal: "PumpRedundancyLost alarm."
-      t0_rule: "Timestamp the alarm became active."
-    recurrence_signal: "Any pump alarm on the same CDU."
-    default_priority: "P2"
-    priority_rules:
-      - "P1 if supply temperature rises above baseline or flow drops below baseline."
-    additional_fields: ["Supply and return temperatures at T0 and at restore"]
-    repair_evidence:
-      - "Removed and installed pump assembly serials scanned."
-    validation_class: ["CDU component (pump, filter, sensor)"]
-    clock_stop: "BMS alarm cleared and pump failover test passed."
-    stability_window_hours: 72
-    recurrence_window_days: 14
     capacity_impact:
       gpus: 0
       states: []
@@ -974,12 +885,6 @@ rts_validation:
       checks:
         - "Redfish reports PSU health OK and redundancy restored."
         - "Serial number change recorded in inventory."
-    - component: "CDU component (pump, filter, sensor)"
-      check_ids: ["cdu_flow_baseline", "pump_failover_test"]
-      checks:
-        - "Flow, supply temperature, and return temperature within baseline."
-        - "Pump redundancy confirmed by failover test, coordinated with the Facility Provider."
-        - "All leak alarms clear; coolant conductivity and pH within specification after any fluid work."
     - component: "Rack manifold"
       check_ids: ["leak_hold_30m", "rack_nvlink_acceptance", "nccl_allreduce_rack"]
       checks:
@@ -1008,7 +913,7 @@ deployment:
       target_days_from_receipt: 1
     - id: "M2"
       name: "Positioned and connected"
-      exit_criteria: "Rack set and secured; power whips and manifold connected to the CDU."
+      exit_criteria: "Rack set and secured; power whips and manifold connected at the rack isolation valves."
       target_days_from_receipt: 3
     - id: "M3"
       name: "Leak test passed"
@@ -1107,8 +1012,6 @@ spares:
       minimum: 10
     - fru: "E1.S drive"
       minimum: 20
-    - fru: "CDU pump assembly"
-      minimum: 1
   reorder_rule: "Replenishment requests are raised automatically when stock reaches minimum plus lead-time demand."
   cycle_count: "Weekly cycle count of high-value FRUs; full count monthly."
 

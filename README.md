@@ -10,7 +10,7 @@
 
 ![Scorecard overview: vendor reported vs. measured from telemetry](docs/images/overview.png)
 
-**In 30 seconds:** a GPU site vendor's weekly reports say every SLA was met. This project rebuilds every incident from hardware telemetry (GPU faults, BMC inventory, fabric counters, badge access) and finds 5 Minimum Service Level Defaults, $222,000 in credits, and 18 places where the vendor's records do not match what the hardware recorded, each with evidence, a severity, and a corrective action. The contract itself is code, so changing a target in the SLA changes every result.
+**In 30 seconds:** a GPU site vendor's weekly reports say every SLA was met. This project rebuilds every incident from hardware telemetry (GPU faults, BMC inventory, fabric counters, badge access) and finds 4 Minimum Service Level Defaults, $188,700 in credits, and 18 places where the vendor's records do not match what the hardware recorded, each with evidence, a severity, and a corrective action. The contract itself is code, so changing a target in the SLA changes every result.
 
 ## The idea
 
@@ -22,6 +22,7 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 |---|---|
 | SLA as code (`sla/common.yaml` + `sla/it_partner.yaml`) | Done |
 | Generated IT partner SLA ([`docs/sla/IT_PARTNER_SLA.md`](docs/sla/IT_PARTNER_SLA.md)) | Done |
+| Landlord SLA ([`docs/sla/LANDLORD_SLA.md`](docs/sla/LANDLORD_SLA.md)) and Interface Agreement ([`docs/sla/INTERFACE_AGREEMENT.md`](docs/sla/INTERFACE_AGREEMENT.md)) | Done, tested; Landlord telemetry and detection next |
 | SLA model: validation, credits, breach severity | Done, tested |
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
@@ -31,7 +32,7 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 
 ## The site
 
-Site AUS-1 is a fictional AI data center in Central Texas, built from real, interoperable equipment: Schneider Electric Galaxy UPS and EcoStruxure monitoring, CoolIT CHx2000 CDUs, Vertiv Liebert thermal walls and free-cooling chillers, Caterpillar C175-16 generators, VESDA aspirating smoke detection, TraceTek leak detection, NVIDIA InfiniBand, and an Eaton MVSST feeding an 800 VDC pilot hall. Three halls: Hall A in production (32 x GB200 NVL72), Hall B in deployment (32 x GB300 NVL72), and Hall C planned as the 800 VDC pilot.
+Site AUS-1 is a fictional AI data center in Central Texas, run the way many AI companies run capacity: the Customer leases the halls from a wholesale owner-operator (the Landlord, which runs the building, power, and cooling) and contracts a separate IT partner for the data hall work. The site is built from real, interoperable equipment: Schneider Electric Galaxy UPS and EcoStruxure monitoring, CoolIT CHx2000 CDUs, Vertiv Liebert thermal walls and free-cooling chillers, Caterpillar C175-16 generators, VESDA aspirating smoke detection, TraceTek leak detection, NVIDIA InfiniBand, and an Eaton MVSST feeding an 800 VDC pilot hall. Three halls: Hall A in production (32 x GB200 NVL72), Hall B in deployment (32 x GB300 NVL72), and Hall C planned as the 800 VDC pilot.
 
 The site is code too. [`site/site.yaml`](site/site.yaml) lists every product with its rating, management interfaces, and source documentation; the model expands it into named equipment, traces each rack's power and cooling paths, and runs 25 capacity checks (UPS 4-make-3, CDU N+1, generators N+1, chillers at a 43 C design day). The site refuses to load if any check fails, and the drawing set is generated from the same file. See [`docs/site/SITE.md`](docs/site/SITE.md).
 
@@ -43,7 +44,7 @@ python scripts/render_site.py    # validate the site model and regenerate docs/s
 
 ## SLA as code
 
-The SLA lives in YAML. Terms every partner shares (Telemetry of Record measurement, excused events, corrective action, governance, security, EHS, and the severity framework) are in `sla/common.yaml`; each partner's service levels, credits, and finding types are in its own file (`sla/it_partner.yaml` today) that extends the common terms. A partner file may add terms but never override a common one, so no contract can quietly weaken a site-wide standard. Each partner's contract is generated as a self-contained document, and the scoring engine reads its thresholds from the same files, so the contract and the code can never disagree. CI fails if the document is out of date.
+The SLA lives in YAML. Terms every partner shares (Telemetry of Record measurement, excused events, corrective action, governance, security, EHS, and the severity framework) are in `sla/common.yaml`; each partner's service levels, credits, and finding types are in its own file that extends the common terms: `sla/it_partner.yaml` for Ridgeline (IT) and `sla/ot_partner.yaml` for Caprock (the Landlord). `sla/interface_agreement.yaml` joins them: demarcation points (power at the busway tap-off output, liquid cooling at the rack manifold isolation valves), one break-fix ownership matrix with exactly one Accountable party per component, fault attribution by walking each rack's power and cooling paths in the site model, joint incident command, and the Customer's negotiated read-only access to facility telemetry. A partner file may add terms but never override a common one, so no contract can quietly weaken a site-wide standard. Each partner's contract is generated as a self-contained document, and the scoring engine reads its thresholds from the same files, so the contract and the code can never disagree. CI fails if the document is out of date.
 
 ```bash
 pip install -r requirements.txt
@@ -79,12 +80,12 @@ The committed sample in [`data/sample/`](data/sample) covers 4 weeks and 17 plan
 
 | Service level | Vendor reported | Measured from telemetry |
 |---|:-:|:-:|
-| P2 restoration within 8 hours | 100% | 92.6% |
-| First-time fix rate | 100% | 90.7% |
-| Validated return to service | 100% | 97.3% (Minimum default) |
-| Record integrity | not reported | 83.3% (Minimum default) |
+| P2 restoration within 8 hours | 100% | 92.3% |
+| First-time fix rate | 100% | 90.1% |
+| Validated return to service | 100% | 97.2% (Minimum default) |
+| Record integrity | not reported | 82.4% (Minimum default) |
 
-The vendor's weekly notes said all SLAs were met or showed only minor exceptions. Measured, the period has 5 Minimum Service Level Defaults, $222,000 in Service Level Credits (after the monthly cap), and 17 corrective action plans drafted automatically with owners and due dates. Fleet availability, by contrast, is 99.94% either way, which is why the scorecard measures each incident rather than trusting the average.
+The vendor's weekly notes said all SLAs were met or showed only minor exceptions. Measured, the period has 4 Minimum Service Level Defaults, $188,700 in Service Level Credits (inside the $222,000 monthly cap), and 17 corrective action plans drafted automatically with owners and due dates. Fleet availability, by contrast, is 99.93% either way, which is why the scorecard measures each incident rather than trusting the average.
 
 `build_scorecard(sla, result)` is a pure function of the SLA and the data. A contract amendment is a one-line change to the YAML, and rerunning shows its effect on breaches, credits, and corrective actions from the same telemetry.
 
@@ -117,6 +118,8 @@ Run it locally with `pip install -r requirements-app.txt` and `streamlit run app
 ```
 sla/common.yaml                  Terms shared by every partner SLA (add-only merge)
 sla/it_partner.yaml              IT partner SLA: service levels, credits, finding types
+sla/ot_partner.yaml              Landlord SLA: power, cooling, maintenance, response, credits against rent
+sla/interface_agreement.yaml     Demarcation, ownership matrix, fault attribution, joint operations, data access
 site/site.yaml                   Single source of truth for the site: equipment, topology, monitoring
 src/scorecard/site_model.py      Site expansion, power and cooling paths, capacity checks
 src/scorecard/site_drawings.py   Schematic drawing set (SVG) generated from the site model
@@ -137,7 +140,7 @@ scripts/run_engine.py            Runs the engine and writes reports/
 scripts/build_scorecard.py       Builds the scorecard and writes reports/
 scripts/build_site.py            Builds the static GitHub Pages site
 templates/sla.md.j2              Document template
-docs/sla/IT_PARTNER_SLA.md       Generated IT partner SLA (do not edit by hand)
+docs/sla/                        Generated contracts: IT partner SLA, Landlord SLA, Interface Agreement (do not edit by hand)
 docs/DATA_MODEL.md               What each data file represents
 docs/PROJECT_GUIDE.md            How the project fits together and how to change it
 docs/DEPLOY_AWS.md               Hosting on AWS: S3, EC2, and production architecture

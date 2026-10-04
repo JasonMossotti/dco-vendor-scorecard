@@ -111,8 +111,13 @@ def test_units_are_independent(sla):
 
 
 def test_cdu_has_longer_stability_window(sla):
-    """Rotating equipment gets 72 hours: a 2-day refault reopens a CDU ticket but not a GPU one."""
+    """Rotating equipment gets 72 hours: a 2-day refault reopens a Landlord CDU work order but not a GPU ticket.
+
+    The same ticket handling code measures both partners; only the SLA file differs.
+    """
+    from scorecard.sla_model import PARTNER_FILES
+    landlord = load_sla(PARTNER_FILES["landlord"])
     gap = timedelta(days=2)
-    [cdu] = build_tickets_of_record(sla, "FC-CDU", two_outages(gap), as_of=LATER)
+    [cdu] = build_tickets_of_record(landlord, "OT-FC-CDU", two_outages(gap), as_of=LATER)
     assert cdu.reopens == 1
     assert len(build_tickets_of_record(sla, "FC-GPU", two_outages(gap), as_of=LATER)) == 2

@@ -1,0 +1,11 @@
+### {{ num.ehs_example }} EHS Credits
+
+Three violations confirmed by independent investigation in one quarter, at ${{ "{:,.0f}".format(c.monthly_charges) }}/month:
+
+| Violation | Class | Confirmed | Base | Adjustments | EHS Credit |
+|---|---|:-:|:-:|---|:-:|
+{% for e in ehs_example.rows -%}
+| {{ e.violation_id }}: {{ e.note }} | {{ e.violation_class }} | {{ e.confirmed }} | ${{ "{:,.0f}".format(e.base) }} | {{ e.adjustments | join("; ") or "None" }}{% if e.record_integrity_finding %}; also a record-integrity finding{% endif %} | **${{ "{:,.0f}".format(e.amount) }}** |
+{% endfor %}
+
+Total EHS Credits: **${{ "{:,.0f}".format(ehs_example.total) }}**, payable in addition to any Service Level Credits for the same months and not reduced by the monthly cap.

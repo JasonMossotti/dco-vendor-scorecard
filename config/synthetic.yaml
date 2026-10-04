@@ -17,7 +17,7 @@ incident_rates_per_week:
   psu: 2               # Single PSU failure, redundancy intact
   power_shelf: 0.5     # Power shelf failure, redundancy lost
   switch_tray: 0.4     # NVLink switch tray failure (rack-wide)
-  cdu_pump: 0.3        # CDU pump failure, redundancy lost
+  cdu_pump: 0.0        # CDUs belong to the Landlord (Interface Agreement); none in the IT data
   leak: 0.3            # Leak-detection alarm (tray or rack manifold)
 
 # GPU fault mix (XID code -> relative weight). Codes as reported by the driver.

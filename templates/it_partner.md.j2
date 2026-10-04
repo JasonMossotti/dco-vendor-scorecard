@@ -62,7 +62,7 @@ Two principles shape this agreement:
 |---|---|---|
 | Customer | {{ p.customer.name }} | {{ p.customer.role }} |
 | Supplier | {{ p.supplier.name }}{% if p.supplier.fictional %} *(fictional)*{% endif %} | {{ p.supplier.role }} |
-| Facility Provider | {{ p.facility_provider.name }} | {{ p.facility_provider.role }} |
+| Landlord | {{ p.landlord.name }}{% if p.landlord.fictional %} *(fictional)*{% endif %} | {{ p.landlord.role }} |
 | OEM / Integrator | {{ p.oem.name }} | {{ p.oem.role }} |
 
 **Site:** {{ s.name }}. **Platform:** {{ s.platform }}.
@@ -108,16 +108,9 @@ Each rack contains {{ s.per_rack.gpus }} GPUs and {{ s.per_rack.grace_cpus }} CP
 - {{ o }}
 {% endfor %}
 
-### 4.3 Break-fix ownership matrix (RACI)
+### 4.3 Break-fix ownership matrix
 
-{% for k, v in sla.scope.raci_legend.items() %}**{{ k }}** = {{ v }}{% if not loop.last %}; {% endif %}{% endfor %}.
-
-| Component | {{ sla.scope.raci_parties | join(" | ") }} |
-|---|{% for _ in sla.scope.raci_parties %}:-:|{% endfor %}
-{% for row in sla.scope.raci -%}
-| {{ row.component }} | {% for party in sla.scope.raci_parties %}{{ row[party] }} | {% endfor %}
-{% endfor %}
-
+{% include "partials/ownership.md.j2" %}
 ## 5. Incident Priority Matrix
 
 {{ sla.priority_rules.authority }}
@@ -143,59 +136,7 @@ Each rack contains {{ s.per_rack.gpus }} GPUs and {{ s.per_rack.grace_cpus }} CP
 **Escalation:** {{ pr.escalation }}
 {% endfor %}
 
-## 6. Measurement and Telemetry of Record
-
-{{ m.principle }}
-
-### 6.1 Clock rules
-
-- **Clock starts:** {{ m.clock_rules.start }}
-- **Clock stops:** {{ m.clock_rules.stop }}
-- **The clock may pause only for:**
-{%- for x in m.clock_rules.pause_allowed_only_for %}
-  - {{ x }}
-{%- endfor %}
-- **The clock does not pause for:**
-{%- for x in m.clock_rules.pause_not_allowed_for %}
-  - {{ x }}
-{%- endfor %}
-- **Timestamps:** {{ m.timestamp_standard }}
-
-### 6.2 Data sources and precedence
-
-Precedence 1 is most authoritative. When sources disagree, the higher-precedence source prevails.
-
-| ID | Source | Measures | Owner | Precedence |
-|---|---|---|---|:-:|
-{% for ds in m.data_sources -%}
-| {{ ds.id }} | {{ ds.name }} | {{ ds.measures }} | {{ ds.owner }} | {{ ds.precedence }} |
-{% endfor %}
-
-### 6.3 Reporting
-
-- **Weekly:** {{ m.reporting.weekly }}
-- **Monthly:** {{ m.reporting.monthly }}
-- **Raw data:** {{ m.reporting.raw_data_access }}
-- **Failure to report:** {{ m.reporting.failure_to_report }}
-
-### 6.4 Reference implementation
-
-{{ m.reference_implementation }}
-
-### 6.5 Calibration period
-
-{{ m.calibration.rule }}
-
-### 6.6 Reconciliation and disputes
-
-{{ m.reconciliation }}
-
-{{ m.disputes.rule }}
-
-### 6.7 Audit
-
-{{ m.audit.rule }}
-
+{% include "partials/measurement.md.j2" %}
 ## 7. Ticket Handling Rules
 
 {{ th.principle }}
@@ -396,41 +337,7 @@ On a Chronic Failure, the Customer may:
 {% endfor %}
 **Termination assistance:** {{ sla.chronic_failure.termination_assistance }}
 
-## 16. Excused Events
-
-The Supplier must claim an Excused Event within {{ sla.excused_events.claim_window_business_days }} business days, with supporting evidence. Only the following qualify:
-
-{% for e in sla.excused_events.events -%}
-- {{ e }}
-{% endfor %}
-**Treatment:** {{ sla.excused_events.treatment }}
-
-**Supplier duty:** {{ sla.excused_events.supplier_duty }}
-
-## 17. Root Cause Analysis and Corrective Action
-
-**Triggers:**
-
-{% for t in sla.corrective_action.triggers -%}
-- {{ t }}
-{% endfor %}
-**Timelines:** P1 preliminary RCA within {{ sla.corrective_action.rca_timelines.p1_preliminary_hours }} hours; P1 final RCA within {{ sla.corrective_action.rca_timelines.p1_final_business_days }} business days; all other RCAs within {{ sla.corrective_action.rca_timelines.other_business_days }} business days.
-
-**Corrective action plan (CAP) requirements:**
-
-{% for r in sla.corrective_action.cap_requirements -%}
-- {{ r }}
-{% endfor %}
-**Overdue CAPs:** {{ sla.corrective_action.cap_overdue_escalation }}
-
-## 18. Governance and Reporting Cadence
-
-| Forum | Frequency | Attendees | Inputs |
-|---|---|---|---|
-{% for g in sla.governance -%}
-| {{ g.forum }} | {{ g.frequency }} | {{ g.attendees }} | {{ g.inputs }} |
-{% endfor %}
-
+{% include "partials/process.md.j2" %}
 ## 19. Staffing and Qualifications
 
 **Coverage:** {{ sla.staffing.coverage }}.
@@ -460,85 +367,7 @@ The Supplier must claim an Excused Event within {{ sla.excused_events.claim_wind
 {% endfor %}
 **Firmware:** {{ sla.change_management.firmware }}
 
-## 21. Security and Chain of Custody
-
-{% for r in sla.security.requirements -%}
-- {{ r }}
-{% endfor %}
-**Incident reporting:** {{ sla.security.incident_reporting }}
-
-## 22. Environmental, Health, and Safety
-
-These terms are common to every partner SLA at the Site and bind every subcontractor. They are not subject to the monthly credit cap and cannot be weakened by any partner SLA.
-
-### 22.1 Principles
-
-{% for x in sla.ehs.principles -%}
-- {{ x }}
-{% endfor %}
-### 22.2 Required standards
-
-Each partner complies with the edition in force; where an edition is shown, it is the edition current when this SLA version was issued.
-
-| ID | Standard | Edition | Applies to |
-|---|---|:-:|---|
-{% for x in sla.ehs.standards -%}
-| {{ x.id }} | {{ x.name }} | {{ x.get("edition") or "In force" }} | {{ x.scope }} |
-{% endfor %}
-### 22.3 Site safety rules
-
-| ID | Rule | Requirement | Standards |
-|---|---|---|---|
-{% for r in sla.ehs.site_rules -%}
-| {{ r.id }} | {{ r.title }} | {{ r.rule }} | {{ r.refs | join(", ") or "Site rule" }} |
-{% endfor %}
-### 22.4 Partner qualification
-
-{% for x in sla.ehs.partner_qualification -%}
-- {{ x }}
-{% endfor %}
-### 22.5 Reporting
-
-- **Injuries and recordables:** to the Customer within {{ sla.ehs.reporting.injury_or_recordable_hours }} hour.
-- **Near misses:** within {{ sla.ehs.reporting.near_miss_hours }} hours.
-- **Severe events:** {{ sla.ehs.reporting.severe_events }}
-- **Monthly:** {{ sla.ehs.reporting.monthly }}
-
-### 22.6 Independent investigation
-
-- **Trigger:** {{ sla.ehs.investigation.trigger }}
-- **Investigator:** {{ sla.ehs.investigation.investigator }}
-- **Partner response:** within {{ sla.ehs.investigation.partner_response_business_days }} business days of notice, before a finding is confirmed.
-- **Standard of proof:** {{ sla.ehs.investigation.standard_of_proof }}
-- **Evidence:** {{ sla.ehs.investigation.evidence }}
-- **Disputes:** {{ sla.ehs.investigation.disputes }}
-
-### 22.7 Violation classes and consequences
-
-EHS Credits apply only to violations confirmed by the investigation above. Amounts are a percentage of the partner's own monthly charges (illustrated at ${{ "{:,.0f}".format(c.monthly_charges) }}/month for this SLA).
-
-| Class | Examples | EHS Credit | Consequences |
-|---|---|:-:|---|
-{% for vc in ehs_classes -%}
-| {{ vc.id }} {{ vc.name }} | {{ vc.examples | join("<br>") }} | {% if vc.dollars %}{{ vc.credit_pct_of_monthly_charges }}% (${{ "{:,.0f}".format(vc.dollars) }}){% else %}None{% endif %} | {{ vc.consequences | join("<br>") }}{% if vc.cost_recovery %}<br>Customer's investigation and stand-down costs reimbursed.{% endif %} |
-{% endfor %}
-### 22.8 EHS Credits
-
-- **Outside the monthly cap:** EHS Credits are never counted toward, or limited by, the monthly cap in Section 14.
-- **No earnback:** EHS Credits are never eligible for Earnback.
-- **Repeat violations:** a second {{ sla.ehs.credits.repeat.class }} violation within {{ sla.ehs.credits.repeat.window_days }} days carries {{ sla.ehs.credits.repeat.multiplier }}× the EHS Credit.
-- **Self-reporting and concealment:** {{ sla.ehs.credits.self_reporting }} (Reduction: {{ sla.ehs.credits.self_reported_reduction_pct }}%. Concealment multiplier: {{ sla.ehs.credits.concealment_multiplier }}×.)
-- **Never based on reporting:** {{ sla.ehs.credits.never_based_on }}
-- **Cost recovery:** {{ sla.ehs.credits.cost_recovery }}
-- **Nature of EHS Credits:** {{ sla.ehs.credits.nature }}
-
-### 22.9 Escalation and termination
-
-{% for x in sla.ehs.escalation -%}
-- {{ x }}
-{% endfor %}
-See Appendix B.4 for a worked example.
-
+{% include "partials/security_ehs.md.j2" %}
 ## 23. Spares and RMA
 
 {{ sla.spares.ownership }}
@@ -552,70 +381,7 @@ See Appendix B.4 for a worked example.
 - **Reorder:** {{ sla.spares.reorder_rule }}
 - **Cycle counts:** {{ sla.spares.cycle_count }}
 
-## 24. SLA Change Control and Continuous Improvement
-
-{% for r in sla.sla_change_control.customer_rights -%}
-- {{ r }}
-{% endfor %}
-**Continuous improvement:** {{ sla.sla_change_control.continuous_improvement }}
-
-**Versioning:** {{ sla.sla_change_control.versioning }}
-
----
-
-## Appendix A: Internal Breach Severity Index
-
-> **Customer-internal.** {{ sev.purpose }} This index guides escalation only. It is not a contractual remedy and is not shared with the Supplier.
-
-### A.1 Severity levels
-
-| Level | Name | Escalation |
-|---|---|---|
-{% for lvl in sev.levels -%}
-| **{{ lvl.id }}** | {{ lvl.name }} | {{ lvl.escalation }} |
-{% endfor %}
-
-### A.2 Event breaches (a single late incident)
-
-Severity is the **worse** of the two dimensions below, then adjusted by aggravators.
-
-| Level | Overrun past target | GPU-hours lost beyond target |
-|---|:-:|:-:|
-{% for row in sev_table -%}
-| {{ row.level }} | {{ row.overrun }} | {{ row.gpu_hours }} |
-{% endfor %}
-
-- **Overrun:** {{ sev.event_dimensions.overrun_pct.description }}
-- **GPU-hours:** {{ sev.event_dimensions.gpu_hours_beyond_target.description }}
-
-### A.3 Period breaches (a CSL over a week or month)
-
-| Condition | Level |
-|---|:-:|
-{% for r in sev.period_rules -%}
-| {{ r.description }} | {{ r.level or "None" }} |
-{% endfor %}
-
-### A.4 Aggravators
-
-| ID | Trigger | Effect |
-|---|---|---|
-{% for a in sev.aggravators -%}
-| {{ a.id }} | {{ a.description }} | {% if a.effect == "bump" %}Raise by {{ a.amount }} level{% else %}Raise to at least {{ a.level }}{% endif %} |
-{% endfor %}
-
-Aggravators adjust an existing breach; they never create one.
-
-### A.5 Discrepancy types
-
-The discrepancy engine reports each mismatch between vendor records and the Telemetry of Record as one of these types. Severity starts at the base level (or the event-breach level, if a restore target was missed) and the listed aggravators are then applied.
-
-| Type | Base | Aggravators | SLA references | Recommended corrective action |
-|---|:-:|---|---|---|
-{% for ft in sev.finding_types -%}
-| {{ ft.name }} (`{{ ft.id }}`) | {{ ft.base_level }} | {{ ft.aggravators | join(", ") or "None" }} | {{ ft.sla_refs | join(", ") }} | {{ ft.action }} |
-{% endfor %}
-
+{% include "partials/change_control_severity.md.j2" %}
 ## Appendix B: Worked Examples
 
 *These examples are computed by `src/scorecard/sla_model.py` from this SLA's own parameters every time the document is generated, so the document and the scoring engine always agree.*
@@ -655,17 +421,7 @@ A {{ tr_target_label }} (4 GPUs). The first repair reaches Validated RTS after {
 If the vendor opened a second ticket in a TR-1 or TR-2 case, TR-6 makes it a Record Integrity Finding, and severity rises to S1 through AGG-INTEGRITY.
 
 
-### B.4 EHS Credits
-
-Three violations confirmed by independent investigation in one quarter, at ${{ "{:,.0f}".format(c.monthly_charges) }}/month:
-
-| Violation | Class | Confirmed | Base | Adjustments | EHS Credit |
-|---|---|:-:|:-:|---|:-:|
-{% for e in ehs_example.rows -%}
-| {{ e.violation_id }}: {{ e.note }} | {{ e.violation_class }} | {{ e.confirmed }} | ${{ "{:,.0f}".format(e.base) }} | {{ e.adjustments | join("; ") or "None" }}{% if e.record_integrity_finding %}; also a record-integrity finding{% endif %} | **${{ "{:,.0f}".format(e.amount) }}** |
-{% endfor %}
-
-Total EHS Credits: **${{ "{:,.0f}".format(ehs_example.total) }}**, payable in addition to any Service Level Credits for the same months and not reduced by the monthly cap.
+{% include "partials/ehs_example.md.j2" %}
 
 ---
 

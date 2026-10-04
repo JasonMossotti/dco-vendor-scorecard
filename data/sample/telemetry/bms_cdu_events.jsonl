@@ -1,10 +1,2 @@
-{"alarm": "LeakDetected", "cdu": "CDU-A4", "point": "A25 leak rope", "state": "active", "timestamp": "2026-09-11T10:30:02Z"}
-{"alarm": "LeakDetected", "cdu": "CDU-A4", "point": "A25 leak rope", "state": "cleared", "timestamp": "2026-09-11T12:27:16Z"}
-{"alarm": "LeakDetected", "cdu": "CDU-A4", "point": "A29 leak rope", "state": "active", "timestamp": "2026-09-12T05:00:53Z"}
-{"alarm": "LeakDetected", "cdu": "CDU-A4", "point": "A29 leak rope", "state": "cleared", "timestamp": "2026-09-12T06:29:23Z"}
-{"alarm": "PumpRedundancyLost", "cdu": "CDU-A1", "point": "CDU-A1 pump 2", "state": "active", "timestamp": "2026-09-14T09:40:57Z"}
-{"alarm": "PumpRedundancyLost", "cdu": "CDU-A1", "point": "CDU-A1 pump 2", "state": "cleared", "timestamp": "2026-09-14T13:19:36Z"}
-{"alarm": "LeakDetected", "cdu": "CDU-A3", "point": "A24 leak rope", "state": "active", "timestamp": "2026-09-15T17:58:56Z"}
-{"alarm": "LeakDetected", "cdu": "CDU-A3", "point": "A24 leak rope", "state": "cleared", "timestamp": "2026-09-15T19:46:09Z"}
-{"alarm": "PumpRedundancyLost", "cdu": "CDU-A2", "point": "CDU-A2 pump 2", "state": "active", "timestamp": "2026-09-16T04:35:17Z"}
-{"alarm": "PumpRedundancyLost", "cdu": "CDU-A2", "point": "CDU-A2 pump 2", "state": "cleared", "timestamp": "2026-09-16T06:41:55Z"}
+{"alarm": "LeakDetected", "cdu": "CDU-A1", "point": "A06 leak rope", "state": "active", "timestamp": "2026-09-14T09:41:57Z"}
+{"alarm": "LeakDetected", "cdu": "CDU-A1", "point": "A06 leak rope", "state": "cleared", "timestamp": "2026-09-14T11:25:20Z"}

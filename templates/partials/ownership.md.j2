@@ -1,0 +1,9 @@
+Exhibit from the Interface Agreement ({{ ia.document.id }}, version {{ ia.document.version }}), which governs demarcation, fault attribution, and joint operations between the parties.
+
+{% for k, v in ia.raci_legend.items() %}**{{ k }}** = {{ v }}{% if not loop.last %}; {% endif %}{% endfor %}.
+
+| Component | {{ ia.raci_parties | join(" | ") }} |
+|---|{% for _ in ia.raci_parties %}:-:|{% endfor %}
+{% for row in ia.raci -%}
+| {{ row.component }} | {% for party in ia.raci_parties %}{{ row[party] }} | {% endfor %}
+{% endfor %}

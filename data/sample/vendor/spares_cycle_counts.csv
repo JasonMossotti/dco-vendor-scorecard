@@ -1,33 +1,29 @@
 counted_at,fru,system_qty,counted_qty
-2026-09-06T23:00:00Z,800G OSFP optic,220,220
-2026-09-06T23:00:00Z,CDU pump assembly,2,2
-2026-09-06T23:00:00Z,Compute tray,4,3
+2026-09-06T23:00:00Z,800G OSFP optic,219,219
+2026-09-06T23:00:00Z,Compute tray,4,4
 2026-09-06T23:00:00Z,E1.S drive,30,30
 2026-09-06T23:00:00Z,Fiber and DAC cable kits,150,150
 2026-09-06T23:00:00Z,Manifold hose and quick-disconnect kit,15,15
 2026-09-06T23:00:00Z,NVLink switch tray,3,3
 2026-09-06T23:00:00Z,PSU (5.5 kW),34,34
 2026-09-06T23:00:00Z,Power shelf,6,6
-2026-09-13T23:00:00Z,800G OSFP optic,221,221
-2026-09-13T23:00:00Z,CDU pump assembly,2,2
-2026-09-13T23:00:00Z,Compute tray,4,4
+2026-09-13T23:00:00Z,800G OSFP optic,223,223
+2026-09-13T23:00:00Z,Compute tray,4,3
 2026-09-13T23:00:00Z,E1.S drive,30,30
 2026-09-13T23:00:00Z,Fiber and DAC cable kits,150,150
-2026-09-13T23:00:00Z,Manifold hose and quick-disconnect kit,13,13
+2026-09-13T23:00:00Z,Manifold hose and quick-disconnect kit,15,15
 2026-09-13T23:00:00Z,NVLink switch tray,3,3
 2026-09-13T23:00:00Z,PSU (5.5 kW),36,36
 2026-09-13T23:00:00Z,Power shelf,6,6
 2026-09-20T23:00:00Z,800G OSFP optic,224,224
-2026-09-20T23:00:00Z,CDU pump assembly,1,1
-2026-09-20T23:00:00Z,Compute tray,2,2
+2026-09-20T23:00:00Z,Compute tray,3,3
 2026-09-20T23:00:00Z,E1.S drive,30,30
 2026-09-20T23:00:00Z,Fiber and DAC cable kits,150,150
-2026-09-20T23:00:00Z,Manifold hose and quick-disconnect kit,14,14
+2026-09-20T23:00:00Z,Manifold hose and quick-disconnect kit,15,15
 2026-09-20T23:00:00Z,NVLink switch tray,3,3
 2026-09-20T23:00:00Z,PSU (5.5 kW),35,35
 2026-09-20T23:00:00Z,Power shelf,5,5
 2026-09-27T23:00:00Z,800G OSFP optic,218,218
-2026-09-27T23:00:00Z,CDU pump assembly,2,2
 2026-09-27T23:00:00Z,Compute tray,1,1
 2026-09-27T23:00:00Z,E1.S drive,30,30
 2026-09-27T23:00:00Z,Fiber and DAC cable kits,150,150

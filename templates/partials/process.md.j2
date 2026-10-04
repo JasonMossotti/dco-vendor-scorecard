@@ -1,0 +1,35 @@
+## {{ num.excused }}. Excused Events
+
+The Supplier must claim an Excused Event within {{ sla.excused_events.claim_window_business_days }} business days, with supporting evidence. Only the following qualify:
+
+{% for e in sla.excused_events.events -%}
+- {{ e }}
+{% endfor %}
+**Treatment:** {{ sla.excused_events.treatment }}
+
+**Supplier duty:** {{ sla.excused_events.supplier_duty }}
+
+## {{ num.rca }}. Root Cause Analysis and Corrective Action
+
+**Triggers:**
+
+{% for t in sla.corrective_action.triggers -%}
+- {{ t }}
+{% endfor %}
+**Timelines:** P1 preliminary RCA within {{ sla.corrective_action.rca_timelines.p1_preliminary_hours }} hours; P1 final RCA within {{ sla.corrective_action.rca_timelines.p1_final_business_days }} business days; all other RCAs within {{ sla.corrective_action.rca_timelines.other_business_days }} business days.
+
+**Corrective action plan (CAP) requirements:**
+
+{% for r in sla.corrective_action.cap_requirements -%}
+- {{ r }}
+{% endfor %}
+**Overdue CAPs:** {{ sla.corrective_action.cap_overdue_escalation }}
+
+## {{ num.governance }}. Governance and Reporting Cadence
+
+| Forum | Frequency | Attendees | Inputs |
+|---|---|---|---|
+{% for g in sla.governance -%}
+| {{ g.forum }} | {{ g.frequency }} | {{ g.attendees }} | {{ g.inputs }} |
+{% endfor %}
+

@@ -111,7 +111,10 @@ def test_ids_are_sequential_and_sorted_by_severity(result):
 
 # ------------------------------------------------- single source of truth
 def test_generator_validation_names_match_sla_check_ids(sla):
-    sla_ids = {c["component"]: c["check_ids"] for c in sla["rts_validation"]["classes"]}
+    from scorecard.sla_model import PARTNER_FILES, load_sla
+    landlord = load_sla(PARTNER_FILES["landlord"])   # CDUs belong to the Landlord; the generator keeps the plan for Phase 4
+    sla_ids = {c["component"]: c["check_ids"]
+               for c in sla["rts_validation"]["classes"] + landlord["rts_validation"]["classes"]}
     mapping = {"tray": "Compute tray", "switch_tray": "NVLink switch tray", "optic": "Optic, cable, or fiber",
                "psu": "Power shelf or PSU", "power_shelf": "Power shelf or PSU",
                "cdu": "CDU component (pump, filter, sensor)", "rack_manifold": "Rack manifold"}

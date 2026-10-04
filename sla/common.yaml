@@ -17,17 +17,27 @@
 # =============================================================================
 
 schema_version: "1.0"
-common_version: "1.1.0"
+common_version: "1.2.0"
 
 parties:
   customer:
     name: "Customer"
-    description: "An AI compute operator that owns the IT equipment and spares at the Site."
-    role: "Owns site outcomes; directs priorities; operates the telemetry of record."
-  facility_provider:
-    name: "Facility Provider"
-    description: "Colocation operator responsible for the building, facility power, and facility water."
-    role: "Separate contract. Named here only to define ownership boundaries."
+    description: "An AI compute operator that leases the data halls and owns the IT equipment and spares at the Site."
+    role: "Owns site outcomes; directs the IT partner; operates the Telemetry of Record; holds the Landlord to its SLA."
+  landlord:
+    name: "Caprock Critical Facilities, LLC"
+    fictional: true
+    description: "Wholesale data center owner-operator. Owns and operates the building, power (utility interface through busway tap-offs), cooling (chillers through CDUs and the secondary header), fire protection, and building monitoring."
+    role: "Separate lease and Landlord SLA (Schedule C). Bound by the common terms, including EHS."
+  it_partner:
+    name: "Ridgeline Site Services, LLC"
+    fictional: true
+    description: "Strategic site operations partner performing day-to-day data hall IT work."
+    role: "Separate services agreement and IT Partner SLA (Schedule B)."
+  utility:
+    name: "Serving utility (ERCOT region)"
+    description: "Owns the 138 kV substation and transformers; delivers power at 13.8 kV to the Landlord."
+    role: "Contracts with the Landlord. Named here only to define ownership boundaries."
   oem:
     name: "OEM / System Integrator"
     description: "Hardware manufacturer and integrator providing warranty, RMA, and field diagnostics."
@@ -81,14 +91,14 @@ site:
 measurement:
   principle: >-
     Performance is measured from Customer-operated Telemetry of Record, not from
-    Supplier self-reporting. Supplier ticket data is used for work content and
+    Supplier self-reporting. Supplier ticket and work order data is used for work content and
     narrative, and is reconciled against telemetry. Where they disagree, the
     higher-precedence source prevails.
   clock_rules:
     start: "T0, the earliest evidence of the fault across all sources."
     stop: "Validated RTS."
     pause_allowed_only_for:
-      - "A Customer-requested hold, recorded in the ticket with Customer approval."
+      - "A Customer-requested hold, recorded in the ticket or work order with Customer approval."
       - "Customer-controlled access delays (e.g., cage access withheld by the Customer)."
       - "An approved Excused Event."
     pause_not_allowed_for:
@@ -98,9 +108,9 @@ measurement:
   record_integrity_tolerance_min: 15
   timestamp_standard: "All systems record UTC and are NTP-synchronized; records with clock skew over 5 seconds are flagged."
   reporting:
-    weekly: "Operating scorecard by Monday 12:00 UTC, generated automatically from telemetry and ticket data."
+    weekly: "Operating scorecard by Monday 12:00 UTC, generated automatically from telemetry and ticket or work order data."
     monthly: "Service Level Report within 5 business days after month end, including all defaults, credits, and trends."
-    raw_data_access: "The Customer may access ticket data through API at any time; the Supplier must keep all records for the Term plus 2 years."
+    raw_data_access: "The Customer may access ticket and work order data through API at any time; the Supplier must keep all records for the Term plus 2 years."
     failure_to_report: >-
       If the Supplier fails to provide data required to measure a service level,
       that service level is deemed to have a Minimum Service Level Default for the period.
@@ -130,7 +140,7 @@ measurement:
   audit:
     sample_pct: 5
     rule: >-
-      Each month the Customer audits a random 5% of closed tickets (minimum 10) end
+      Each month the Customer audits a random 5% of closed tickets or work orders (minimum 10) end
       to end against raw telemetry, badge, and inventory records. Audit findings
       count toward CSL-11.
   data_sources:
@@ -165,13 +175,53 @@ measurement:
       owner: "Customer"
       precedence: 1
     - id: "DS-BMS"
-      name: "Building management system feed (via Facility Provider)"
-      measures: "CDU flow, supply and return temperatures, pump status, room leak sensors."
-      owner: "Facility Provider"
+      name: "Building management system feed (EcoStruxure Building Operation, operated by the Landlord)"
+      measures: "Chillers, pumps, thermal walls, CRAHs, CDU summary points, alarm acknowledgments, point overrides and alarm inhibits."
+      owner: "Landlord"
       precedence: 2
+    - id: "DS-EPMS"
+      name: "Electrical power monitoring (EcoStruxure Power Monitoring Expert export)"
+      measures: "Switchgear breaker states, utility and generator source, meter readings, power quality events."
+      owner: "Landlord"
+      precedence: 2
+    - id: "DS-UPS"
+      name: "UPS network management cards (SNMPv3, Customer read-only user)"
+      measures: "UPS mode (normal, battery, bypass), module status, load, battery state of charge, alarms."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-BUSWAY"
+      name: "Busway Critical Power Monitors (Modbus TCP, Customer read-only)"
+      measures: "Per-segment voltage, current, and power at each A and B busway; tap-off breaker state."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-EMCP"
+      name: "Generator controllers (EMCP 4.4 via Modbus TCP, Customer read-only)"
+      measures: "Engine run state, kW load, percent of nameplate, exhaust temperature, start and transfer events, alarms."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-CDU"
+      name: "CDU controllers (Redfish, Customer read-only account)"
+      measures: "Secondary supply and return temperature, flow, pressure, pump status and redundancy, coolant level, CDU leak sensors."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-LEAK"
+      name: "Leak detection (TraceTek TTDM-128 via Modbus gateway, Customer read-only)"
+      measures: "Leak alarms with distance along the cable, cable breaks, circuit faults."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-FIRE"
+      name: "Fire alarm and aspirating smoke detection (VESDA via HLI, secondary monitoring)"
+      measures: "VESDA Alert, Action, Fire 1, and Fire 2; detector faults; fire system impairments. The fire panel remains the life-safety system of record."
+      owner: "Landlord"
+      precedence: 2
+    - id: "DS-CMMS"
+      name: "Landlord maintenance management system"
+      measures: "Work orders, preventive maintenance schedule and completion, method of procedure (MOP) references, Landlord-recorded timestamps."
+      owner: "Landlord"
+      precedence: 3
     - id: "DS-BADGE"
       name: "Access control system"
-      measures: "Technician presence by hall, time on site, staffing fill."
+      measures: "Technician and engineer presence by hall and equipment room, time on site, staffing fill."
       owner: "Customer"
       precedence: 1
     - id: "DS-CAB"
@@ -197,7 +247,7 @@ change_management:
   rules:
     - "All non-emergency changes require Customer change approval before work starts."
     - "Standard changes (pre-approved runbook FRU swaps) may proceed under an open incident."
-    - "Emergency changes require verbal approval from the Customer Incident Commander, recorded in the ticket within 1 hour."
+    - "Emergency changes require verbal approval from the Customer Incident Commander, recorded in the ticket or work order within 1 hour."
     - "Work outside the approved window or scope is an unauthorized change and counts against KM-10."
 
 # -----------------------------------------------------------------------------
@@ -208,8 +258,8 @@ excused_events:
   evidence_required: true
   events:
     - "Force majeure as defined in the Agreement."
-    - "Failures of Facility Provider systems outside Supplier scope (the Supplier must still respond and notify)."
-    - "Customer-caused delays, including withheld access or Customer-requested holds recorded in the ticket."
+    - "Failures attributed to another party under the Interface Agreement, for the time that party's fault is active (the Supplier must still respond, protect equipment, and notify)."
+    - "Customer-caused delays, including withheld access or Customer-requested holds recorded in the ticket or work order."
     - "Approved maintenance inside an approved change window, within the approved duration."
     - "OEM part unavailability, ONLY if Customer spares for that FRU class were at or above minimum stock and the Supplier notified the Customer within 4 hours."
   treatment: >-
@@ -228,7 +278,7 @@ corrective_action:
     - "Any P1 incident."
     - "Any Lemon Unit."
     - "Any Record Integrity Finding."
-    - "Any reopened ticket (TR-1 or TR-2)."
+    - "Any reopened ticket or work order (TR-1 or TR-2)."
   rca_timelines:
     p1_preliminary_hours: 24
     p1_final_business_days: 5
@@ -268,7 +318,7 @@ security:
     - "Badge access only for Customer-approved personnel; no tailgating; visitors escorted at all times."
     - "Daily reconciliation of badge records against the shift roster."
     - "Storage media (e.g., E1.S drives) never leave the Site intact; media is sanitized or destroyed on site under the Customer's media sanitization standard, with a certificate per serial number."
-    - "Every failed part is logged into chain of custody at removal, with serial, ticket, technician, and timestamp."
+    - "Every failed part is logged into chain of custody at removal, with serial, ticket or work order, technician, and timestamp."
     - "Cameras and photography in the data hall are prohibited except for Customer-approved documentation."
   incident_reporting: "Suspected security incidents are reported to the Customer within 1 hour of discovery."
 

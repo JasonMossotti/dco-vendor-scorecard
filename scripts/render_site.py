@@ -125,7 +125,7 @@ def render_markdown(site: dict, sheet_list: list[tuple[str, str, str, str]]) -> 
     add("")
     add("## Monitoring map")
     add("")
-    add("The OT partner runs EcoStruxure day to day. The Customer's Telemetry of Record collector reads critical "
+    add("The Landlord runs EcoStruxure day to day. Under the Interface Agreement, the Customer's Telemetry of Record collector reads critical "
         "devices directly and read-only, and also receives the BMS feed, so a point overridden or an alarm "
         "inhibited at the BMS shows up as a mismatch.")
     add("")
