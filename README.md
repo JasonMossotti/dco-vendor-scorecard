@@ -62,6 +62,7 @@ Highlights of the SLA design:
 - **Ticket handling rules:** a repair is finished when the unit *stays* up. A refault within 60 minutes voids the restore and the clock runs continuously; a refault within the stability window reopens the ticket and downtime accumulates; opening a new ticket to restart the clock is a record-integrity finding.
 - **Measurement specification:** one rule card per fault class (GPU, NVLink switch, link, PSU, power shelf, CDU, leak) defining the exact detection signal, T0 rule, evidence, validation, clock-stop event, and stability window, so the vendor and the customer measure identically.
 - **Capacity accounting:** downtime is measured in capacity-weighted GPU-hours (degraded links count), with a worst-rack floor so a good fleet average cannot hide one failing rack.
+- **EHS for every vendor:** site-wide safety terms in `sla/common.yaml` (OSHA 1910/1926/1904, NFPA 70E-2027, 70B, 855, 110, 72, 51B), 12 site safety rules including energized-work permits with the 70E second person, battery and DC work, and a Central Texas heat plan, and three violation classes. EHS Credits apply only to violations confirmed by independent investigation, sit outside the monthly cap, are never earned back, and are never based on reported injuries or near misses; self-reporting halves a credit and concealment doubles it.
 - **Internal breach severity index (S1 to S4):** combines how late an incident was with how many GPU-hours were lost, plus aggravators like repeat failures or safety events.
 
 ## Synthetic site data

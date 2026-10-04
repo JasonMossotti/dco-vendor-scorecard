@@ -17,7 +17,7 @@
 # =============================================================================
 
 schema_version: "1.0"
-common_version: "1.0.0"
+common_version: "1.1.0"
 
 parties:
   customer:
@@ -274,23 +274,188 @@ security:
 
 # -----------------------------------------------------------------------------
 # ENVIRONMENTAL, HEALTH, AND SAFETY (EHS)
+# Binding on every partner and every subcontractor working at the Site.
+# Editions below were checked against published sources in October 2026 (see
+# `sources`). Not legal advice: a real agreement needs counsel.
 # -----------------------------------------------------------------------------
 ehs:
-  requirements:
-    - "Every technician has stop-work authority and must use it for any unsafe condition."
-    - "Hazardous energy control (lockout/tagout) for any work requiring de-energization."
-    - "Electrical safety practices appropriate to the task and approach boundaries."
-    - "ESD-safe handling for all electronic components."
-    - "Spill kits staged at every CDU and at row ends; coolant spills handled per the site spill procedure."
-    - "Mechanical lift and team-lift procedures for trays and racks (a fully loaded NVL72 rack weighs well over a metric ton)."
+  principles:
+    - "Safety is never traded for speed, schedule, or a service level. No target in any partner SLA justifies an unsafe act."
+    - "Every person on Site has stop-work authority and must use it for any unsafe condition. Stopping work is never a violation and never counts against a service level."
+    - "Consequences attach to confirmed violations of required controls, never to injuries, illnesses, or near misses that are reported. Reporting is protected (29 CFR 1904.35(b)(1)(iv))."
+    - "Where a regulation and a requirement below differ, the more protective one applies."
+
+  standards:
+    - {id: "OSHA-1910", name: "OSHA 29 CFR 1910, General Industry", scope: "All work. Includes Subpart S (electrical), 1910.147 (hazardous energy control), 1910.132 to .138 (PPE, including 1910.137 electrical protective equipment), 1910.1200 (hazard communication: PG25 coolant, diesel, lithium-ion), 1910.178 (powered industrial trucks), 1910.95 (noise), 1910.38 and .39 (emergency action and fire prevention plans), and Subpart D (walking-working surfaces)."}
+    - {id: "OSHA-1926", name: "OSHA 29 CFR 1926, Construction", scope: "Build-out, fit-out, and installation work during deployment, including Subpart K (electrical) and Subpart M (fall protection)."}
+    - {id: "OSHA-1904", name: "OSHA 29 CFR 1904, Recordkeeping and Reporting", scope: "Injury and illness records, severe-injury reporting (1904.39), and the prohibition on discouraging reports (1904.35)."}
+    - {id: "OSHA-GDC", name: "OSH Act Section 5(a)(1), General Duty Clause", scope: "Recognized hazards without a specific standard, including heat stress. Texas has no state plan; federal OSHA has jurisdiction."}
+    - {id: "NFPA-70E", name: "NFPA 70E, Standard for Electrical Safety in the Workplace", edition: "2027", scope: "Electrical safety program, qualified persons, energized work permits, approach boundaries, arc flash and shock PPE, battery and DC systems."}
+    - {id: "NFPA-70B", name: "NFPA 70B, Standard for Electrical Equipment Maintenance", edition: "2026", scope: "Documented electrical maintenance program; supports the 70E condition-of-maintenance assumption."}
+    - {id: "NFPA-855", name: "NFPA 855, Installation of Stationary Energy Storage Systems", edition: "2026", scope: "Lithium-ion UPS battery rooms and any energy storage in the 800 VDC pilot."}
+    - {id: "NFPA-110", name: "NFPA 110, Emergency and Standby Power Systems", scope: "Generator testing and maintenance, including safe running-equipment practices."}
+    - {id: "NFPA-72-25", name: "NFPA 72 and NFPA 25", scope: "Fire alarm and water-based fire protection inspection, testing, and impairment handling."}
+    - {id: "NFPA-51B", name: "NFPA 51B, Fire Prevention During Welding, Cutting, and Other Hot Work", scope: "Hot work permits and fire watch."}
+    - {id: "ISO-45001", name: "ISO 45001:2018 or ANSI/ASSP Z10.0", scope: "Each partner operates an occupational health and safety management system aligned to one of these."}
+
+  site_rules:
+    - id: "EHS-R1"
+      title: "Pre-task planning"
+      rule: "Every non-routine task starts with a written job hazard analysis and a job briefing covering hazards, energy sources, boundaries, PPE, and emergency response."
+      refs: ["NFPA-70E", "OSHA-1910"]
+    - id: "EHS-R2"
+      title: "Hazardous energy control"
+      rule: "Lockout/tagout under a written, task-specific procedure for any work requiring de-energization, with test-before-touch absence-of-voltage verification by a qualified person. Group lockout for multi-partner work, with every worker applying a personal lock."
+      refs: ["OSHA-1910", "NFPA-70E"]
+    - id: "EHS-R3"
+      title: "Energized electrical work"
+      rule: "Prohibited unless de-energizing creates a greater hazard or is infeasible, and then only under an energized electrical work permit approved in advance by the Customer. Where the permit specifies shock or arc flash PPE, a second person trained in contact release and emergency response is present outside the boundary, as NFPA 70E (2027) requires. Arc flash labels and the incident energy study are kept current."
+      refs: ["NFPA-70E", "OSHA-1910"]
+    - id: "EHS-R4"
+      title: "Battery rooms and DC systems"
+      rule: "Work on lithium-ion UPS batteries and any 800 VDC equipment requires a risk assessment that addresses chemical, contact thermal, shock, and arc flash hazards, PPE for each, authorized entry only, and the battery system's emergency procedures."
+      refs: ["NFPA-70E", "NFPA-855"]
+    - id: "EHS-R5"
+      title: "Liquid cooling and coolant"
+      rule: "Safety data sheets for PG25 coolant on hand; spill kits at every CDU and row end; quick-disconnect service only on isolated loops; leak alarms answered under the site spill procedure."
+      refs: ["OSHA-1910"]
+    - id: "EHS-R6"
+      title: "Rack and heavy equipment moves"
+      rule: "Racks (well over a metric ton loaded) move only on rated powered equipment run by trained operators, with a route survey, floor-load check, and a dedicated spotter. Team lifts and lift assists for trays and power shelves."
+      refs: ["OSHA-1910"]
+    - id: "EHS-R7"
+      title: "Heat illness prevention"
+      rule: "A written heat illness prevention plan for outdoor work (generator and chiller yards) and hot aisles. At a heat index of 80 F: drinking water, shade, and acclimatization for new and returning workers. At 90 F: at least 15 minutes of rest in shade every 2 hours, buddy system or check-ins, and observation for heat illness. Thresholds are modeled on OSHA's proposed heat rule; the rule is not final, so this agreement makes them binding."
+      refs: ["OSHA-GDC"]
+    - id: "EHS-R8"
+      title: "Generators and running equipment"
+      rule: "Hearing protection in posted areas; exclusion zones around running engines and during load-bank tests; diesel spills handled under the site spill procedure."
+      refs: ["OSHA-1910", "NFPA-110"]
+    - id: "EHS-R9"
+      title: "Working at height"
+      rule: "Rated ladders and platforms for overhead busway and cable tray work; fall protection where required; no standing on racks, CDUs, or containment."
+      refs: ["OSHA-1910", "OSHA-1926"]
+    - id: "EHS-R10"
+      title: "Working alone"
+      rule: "No lone work on energized equipment, in battery rooms, or outdoors at a heat index of 90 F or above. Other lone work requires check-ins at least every 60 minutes."
+      refs: ["NFPA-70E", "OSHA-GDC"]
+    - id: "EHS-R11"
+      title: "Hot work and fire protection impairment"
+      rule: "Hot work only under permit with a fire watch. Any impairment of fire alarm, detection, or suppression is notified to the Customer before it begins and tracked to restoration."
+      refs: ["NFPA-51B", "NFPA-72-25"]
+    - id: "EHS-R12"
+      title: "Electrostatic discharge"
+      rule: "ESD-safe handling for all electronic components (equipment protection, tracked with the safety rules)."
+      refs: []
+
+  partner_qualification:
+    - "Experience Modification Rate (EMR) of 1.0 or lower, or a Customer-approved improvement plan."
+    - "Three years of injury rates (TRIR and DART) and five years of OSHA citation history disclosed before mobilization and annually."
+    - "Workers' compensation coverage for every person on Site. Texas allows employers to opt out of workers' compensation; partners at this Site may not."
+    - "A written safety program and a named, on-site EHS coordinator."
+    - "Training records on Site for every worker: NFPA 70E qualified-person training for electrical tasks, lockout/tagout, powered equipment operation, heat illness, hazard communication, and site orientation. Supervisors hold OSHA 30-hour training."
+    - "Subcontractors meet the same requirements; the partner remains responsible for them."
+
   reporting:
     injury_or_recordable_hours: 1
     near_miss_hours: 24
-  treatment: >-
-    EHS performance is not credit-bearing; safety must never be traded for
-    speed. Any recordable injury or stop-work event triggers an internal S1
-    severity and a joint review. Serious or repeated EHS failures are a
-    material breach of the Agreement.
+    severe_events: "Fatalities, in-patient hospitalizations, amputations, and losses of an eye are reported to the Customer immediately and to OSHA within the 29 CFR 1904.39 deadlines (8 hours for a fatality, 24 hours for the others)."
+    monthly: "Hours worked, recordables, near misses, stop-work uses, permits issued, and open corrective actions, by partner."
+
+  investigation:
+    trigger: "Any suspected violation of a site rule or standard above, from any source: observation, audit, telemetry, permit and badge records, or a report."
+    investigator: "Customer EHS, or an independent third-party Certified Safety Professional engaged by the Customer. The partner whose work is investigated may not lead the investigation."
+    partner_response_business_days: 5
+    standard_of_proof: "Preponderance of the evidence."
+    evidence: "Permits, job hazard analyses, lockout records, telemetry (for example, power present on a circuit recorded as locked out), badge records, witness statements, and photographs taken for the investigation."
+    disputes: "Disputed findings go to the monthly service review, then to the independent Certified Safety Professional, whose determination of fact is final for EHS credits."
+
+  violation_classes:
+    - id: "EHS-C1"
+      name: "Life-critical"
+      examples:
+        - "Energized electrical work without an approved permit, or without the required second person."
+        - "Lockout/tagout not applied or not verified before work."
+        - "Entering an arc flash or shock boundary without the required PPE."
+        - "Bypassing or defeating a safety interlock, guard, or fire protection system."
+        - "A rack move without the required equipment, operator, or spotter."
+      credit_pct_of_monthly_charges: 1.0
+      consequences:
+        - "Immediate stop of the task and removal of the individuals involved from Site work pending review."
+        - "Partner-wide safety stand-down at the Site within 24 hours."
+        - "Root cause analysis and corrective action plan within 5 business days."
+        - "Internal severity S1."
+      cost_recovery: true
+    - id: "EHS-C2"
+      name: "Serious"
+      examples:
+        - "Work performed without a required job hazard analysis or permit, where no life-critical control was missed."
+        - "A worker performing a task without current required qualification."
+        - "Required PPE missing outside a hazard boundary."
+        - "Heat illness controls not provided at a triggering heat index."
+      credit_pct_of_monthly_charges: 0.25
+      consequences:
+        - "Correction before work resumes."
+        - "Corrective action plan within 10 business days."
+        - "Internal severity S2."
+      cost_recovery: false
+    - id: "EHS-C3"
+      name: "Administrative"
+      examples:
+        - "Incomplete or late paperwork where the required control was in place."
+        - "Training records not available on Site."
+      credit_pct_of_monthly_charges: 0.0
+      consequences:
+        - "Corrected and tracked in the weekly operations review."
+        - "Internal severity S3."
+      cost_recovery: false
+
+  credits:
+    basis: "Each partner's own monthly charges under its SLA."
+    outside_monthly_cap: true
+    earnback_eligible: false
+    repeat:
+      class: "EHS-C1"
+      window_days: 90
+      multiplier: 2
+    self_reported_reduction_pct: 50
+    concealment_multiplier: 2
+    concealment_is_record_integrity_finding: true
+    nature: >-
+      EHS Credits are a price adjustment reflecting that services were not
+      delivered to the contracted safety standard. Their amounts are a
+      reasonable pre-estimate of costs the Customer incurs from a confirmed
+      violation (investigation, re-verification of affected work, and
+      operational disruption), which are real but impractical to quantify in
+      advance. They are not a penalty, are not subject to the monthly credit
+      cap, cannot be earned back, and do not limit the Customer's other
+      rights, including recovery of actual costs and termination.
+    self_reporting: >-
+      A violation the partner reports to the Customer within the reporting
+      window and corrects before work resumes has its EHS Credit reduced by the
+      percentage above. A violation the partner knew of and did not report, or
+      whose records were altered, has its EHS Credit multiplied as above and is
+      also a record-integrity finding.
+    never_based_on: >-
+      No EHS Credit, charge, or adverse action is ever based on the number of
+      injuries, illnesses, or near misses reported, or on the use of
+      stop-work authority.
+    cost_recovery: "For Life-critical violations, the partner also reimburses the Customer's documented costs of the independent investigation and of any Customer-directed stand-down."
+
+  sources:
+    - "NFPA 70E current edition (2027): https://www.nfpa.org/codes-and-standards/nfpa-70e-standard-development/70e"
+    - "NFPA 70E 2027 effective May 6, 2026; second-person and battery changes: https://arcflashtraining.org/guide/nfpa-70e/2027-changes/"
+    - "NFPA 70B as a standard; 2026 edition current: https://reliamag.com/guides/nfpa-70b-compliance/"
+    - "NFPA 855 2026 edition: https://www.energy-storage.news/nfpa-855-2026-edition-updates-and-what-they-mean-for-energy-storage-projects/"
+    - "OSHA heat rule status and Heat NEP (April 2026, through 2031): https://www.salussafety.io/us/osha/heat-rule"
+    - "Proposed heat rule triggers (80 F and 90 F heat index): https://abccarolinas.org/heat-illness-prevention-what-southeast-contractors-need-in-place-before-summer-2026/"
+    - "OSHA interpretation of 29 CFR 1904.35(b)(1)(iv) (2018): https://www.osha.gov/laws-regs/standardinterpretations/2018-10-11"
+    - "Liquidated damages must be a reasonable pre-estimate, not a penalty: https://www.venable.com/insights/publications/design-build/law-practice-contractor-marketing-penalty-clauses"
+
+  escalation:
+    - "Two Life-critical violations by one partner in any rolling 90 days: executive review and a partner-wide safety improvement plan approved by the Customer."
+    - "Three Life-critical violations by one partner in any rolling 12 months, or one resulting in a fatality or permanent disability: a material breach, giving the Customer the right to terminate for cause."
+    - "The Customer may require removal of any individual from Site work for safety reasons at any time."
 
 # -----------------------------------------------------------------------------
 # SLA CHANGE CONTROL AND CONTINUOUS IMPROVEMENT

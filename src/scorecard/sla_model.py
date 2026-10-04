@@ -220,6 +220,7 @@ def validate_sla(sla: dict[str, Any]) -> list[str]:
         if agg["effect"] not in ("floor", "bump"):
             errors.append(f"Aggravator {agg['id']}: effect must be 'floor' or 'bump'")
 
+    errors += _validate_ehs(sla)
     return errors
 
 
@@ -362,6 +363,94 @@ def cap_monthly_credits(sla: dict[str, Any], credits: Iterable[CreditResult],
     total = sum(cr.credit for cr in credits)
     cap = at_risk_amount(sla, monthly_charges)
     return total, min(total, cap), total > cap
+
+
+# --------------------------------------------------------------------------- #
+# EHS credits (site-wide terms; outside the monthly cap, never earned back)
+# --------------------------------------------------------------------------- #
+def _validate_ehs(sla: dict[str, Any]) -> list[str]:
+    ehs = sla.get("ehs")
+    if ehs is None:
+        return ["ehs: missing (every partner SLA must carry the site EHS terms)"]
+    errors: list[str] = []
+    standards = {x["id"] for x in ehs["standards"]}
+    for rule in ehs["site_rules"]:
+        for ref in rule["refs"]:
+            if ref not in standards:
+                errors.append(f"ehs.site_rules.{rule['id']}: unknown standard '{ref}'")
+    classes = {c["id"]: c for c in ehs["violation_classes"]}
+    for c in classes.values():
+        if c["credit_pct_of_monthly_charges"] < 0:
+            errors.append(f"ehs.{c['id']}: credit cannot be negative")
+        if not c["examples"]:
+            errors.append(f"ehs.{c['id']}: a class needs examples so investigators classify consistently")
+    pcts = [c["credit_pct_of_monthly_charges"] for c in ehs["violation_classes"]]
+    if pcts != sorted(pcts, reverse=True):
+        errors.append("ehs.violation_classes: listed most to least severe, credits must not increase")
+    cr = ehs["credits"]
+    if cr["repeat"]["class"] not in classes:
+        errors.append(f"ehs.credits.repeat: unknown class {cr['repeat']['class']}")
+    if not 0 <= cr["self_reported_reduction_pct"] < 100:
+        errors.append("ehs.credits.self_reported_reduction_pct must be at least 0 and below 100")
+    if cr["earnback_eligible"]:
+        errors.append("ehs.credits.earnback_eligible must be false: EHS credits are never earned back")
+    if not cr["outside_monthly_cap"]:
+        errors.append("ehs.credits.outside_monthly_cap must be true: a bad service month must not make a safety violation free")
+    return errors
+
+
+@dataclass
+class EHSCredit:
+    """One confirmed violation and the EHS Credit it carries."""
+
+    violation_id: str
+    violation_class: str
+    confirmed: str                      # ISO date the investigation confirmed it
+    base: float
+    amount: float
+    adjustments: list[str] = field(default_factory=list)
+    record_integrity_finding: bool = False
+
+
+def compute_ehs_credits(sla: dict[str, Any], violations: Iterable[dict[str, Any]],
+                        monthly_charges: float | None = None) -> list[EHSCredit]:
+    """EHS Credits for independently confirmed violations.
+
+    Each violation: ``{"id", "class", "confirmed" (YYYY-MM-DD), "self_reported", "concealed"}``.
+    Order of adjustments: repeat multiplier, then self-report reduction or
+    concealment multiplier. Unconfirmed allegations never reach this function.
+    These credits are never passed through ``cap_monthly_credits``.
+    """
+    from datetime import date
+
+    ehs = sla["ehs"]
+    cr = ehs["credits"]
+    classes = {c["id"]: c for c in ehs["violation_classes"]}
+    charges = sla["commercial"]["monthly_charges"] if monthly_charges is None else monthly_charges
+    out: list[EHSCredit] = []
+    history: list[date] = []
+    for v in sorted(violations, key=lambda x: x["confirmed"]):
+        if v.get("self_reported") and v.get("concealed"):
+            raise ValueError(f"{v['id']}: a violation cannot be both self-reported and concealed")
+        cls = classes[v["class"]]
+        when = date.fromisoformat(v["confirmed"])
+        base = charges * cls["credit_pct_of_monthly_charges"] / 100
+        amount, notes = base, []
+        rep = cr["repeat"]
+        if v["class"] == rep["class"]:
+            if any(0 <= (when - d).days <= rep["window_days"] for d in history):
+                amount *= rep["multiplier"]
+                notes.append(f"repeat within {rep['window_days']} days: x{rep['multiplier']}")
+            history.append(when)
+        if v.get("self_reported") and amount:
+            amount *= 1 - cr["self_reported_reduction_pct"] / 100
+            notes.append(f"self-reported and corrected: -{cr['self_reported_reduction_pct']}%")
+        if v.get("concealed"):
+            amount *= cr["concealment_multiplier"]
+            notes.append(f"concealed: x{cr['concealment_multiplier']}")
+        out.append(EHSCredit(v["id"], v["class"], v["confirmed"], base, amount, notes,
+                             bool(v.get("concealed")) and cr["concealment_is_record_integrity_finding"]))
+    return out
 
 
 # --------------------------------------------------------------------------- #

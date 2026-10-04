@@ -1,6 +1,6 @@
 <!--
   GENERATED FILE. DO NOT EDIT BY HAND.
-  Source: sla/it_partner.yaml + sla/common.yaml  |  Generator: scripts/render_sla.py
+  Source: sla/vendor_sla.yaml  |  Generator: scripts/render_sla.py
   Edit the YAML and re-run: python scripts/render_sla.py
 -->
 
@@ -733,7 +733,6 @@ Target cycle: **10 calendar days** from rack receipt to Validated Handoff. Surge
   - The default involved a confirmed Record Integrity finding (AGG-INTEGRITY).
   - The default involved an EHS or security event (AGG-EHS, AGG-SECURITY).
 - **Application:** Credits appear on the invoice following the Measurement Period.
-- **EHS Credits:** handled separately under Section 22; outside this monthly cap and never earned back.
 - **Nature of credits:** Service Level Credits are a price adjustment reflecting reduced service value. They are not a penalty and do not limit the Customer's other rights under the Agreement, including chronic failure termination rights.
 
 See Appendix B for worked credit examples.
@@ -847,102 +846,16 @@ Only badge-verified hours by technicians with current qualifications count towar
 
 ## 22. Environmental, Health, and Safety
 
-These terms are common to every partner SLA at the Site and bind every subcontractor. They are not subject to the monthly credit cap and cannot be weakened by any partner SLA.
+- Every technician has stop-work authority and must use it for any unsafe condition.
+- Hazardous energy control (lockout/tagout) for any work requiring de-energization.
+- Electrical safety practices appropriate to the task and approach boundaries.
+- ESD-safe handling for all electronic components.
+- Spill kits staged at every CDU and at row ends; coolant spills handled per the site spill procedure.
+- Mechanical lift and team-lift procedures for trays and racks (a fully loaded NVL72 rack weighs well over a metric ton).
 
-### 22.1 Principles
+**Reporting:** Injuries and recordables within 1 hour; near misses within 24 hours.
 
-- Safety is never traded for speed, schedule, or a service level. No target in any partner SLA justifies an unsafe act.
-- Every person on Site has stop-work authority and must use it for any unsafe condition. Stopping work is never a violation and never counts against a service level.
-- Consequences attach to confirmed violations of required controls, never to injuries, illnesses, or near misses that are reported. Reporting is protected (29 CFR 1904.35(b)(1)(iv)).
-- Where a regulation and a requirement below differ, the more protective one applies.
-
-### 22.2 Required standards
-
-Each partner complies with the edition in force; where an edition is shown, it is the edition current when this SLA version was issued.
-
-| ID | Standard | Edition | Applies to |
-|---|---|:-:|---|
-| OSHA-1910 | OSHA 29 CFR 1910, General Industry | In force | All work. Includes Subpart S (electrical), 1910.147 (hazardous energy control), 1910.132 to .138 (PPE, including 1910.137 electrical protective equipment), 1910.1200 (hazard communication: PG25 coolant, diesel, lithium-ion), 1910.178 (powered industrial trucks), 1910.95 (noise), 1910.38 and .39 (emergency action and fire prevention plans), and Subpart D (walking-working surfaces). |
-| OSHA-1926 | OSHA 29 CFR 1926, Construction | In force | Build-out, fit-out, and installation work during deployment, including Subpart K (electrical) and Subpart M (fall protection). |
-| OSHA-1904 | OSHA 29 CFR 1904, Recordkeeping and Reporting | In force | Injury and illness records, severe-injury reporting (1904.39), and the prohibition on discouraging reports (1904.35). |
-| OSHA-GDC | OSH Act Section 5(a)(1), General Duty Clause | In force | Recognized hazards without a specific standard, including heat stress. Texas has no state plan; federal OSHA has jurisdiction. |
-| NFPA-70E | NFPA 70E, Standard for Electrical Safety in the Workplace | 2027 | Electrical safety program, qualified persons, energized work permits, approach boundaries, arc flash and shock PPE, battery and DC systems. |
-| NFPA-70B | NFPA 70B, Standard for Electrical Equipment Maintenance | 2026 | Documented electrical maintenance program; supports the 70E condition-of-maintenance assumption. |
-| NFPA-855 | NFPA 855, Installation of Stationary Energy Storage Systems | 2026 | Lithium-ion UPS battery rooms and any energy storage in the 800 VDC pilot. |
-| NFPA-110 | NFPA 110, Emergency and Standby Power Systems | In force | Generator testing and maintenance, including safe running-equipment practices. |
-| NFPA-72-25 | NFPA 72 and NFPA 25 | In force | Fire alarm and water-based fire protection inspection, testing, and impairment handling. |
-| NFPA-51B | NFPA 51B, Fire Prevention During Welding, Cutting, and Other Hot Work | In force | Hot work permits and fire watch. |
-| ISO-45001 | ISO 45001:2018 or ANSI/ASSP Z10.0 | In force | Each partner operates an occupational health and safety management system aligned to one of these. |
-
-### 22.3 Site safety rules
-
-| ID | Rule | Requirement | Standards |
-|---|---|---|---|
-| EHS-R1 | Pre-task planning | Every non-routine task starts with a written job hazard analysis and a job briefing covering hazards, energy sources, boundaries, PPE, and emergency response. | NFPA-70E, OSHA-1910 |
-| EHS-R2 | Hazardous energy control | Lockout/tagout under a written, task-specific procedure for any work requiring de-energization, with test-before-touch absence-of-voltage verification by a qualified person. Group lockout for multi-partner work, with every worker applying a personal lock. | OSHA-1910, NFPA-70E |
-| EHS-R3 | Energized electrical work | Prohibited unless de-energizing creates a greater hazard or is infeasible, and then only under an energized electrical work permit approved in advance by the Customer. Where the permit specifies shock or arc flash PPE, a second person trained in contact release and emergency response is present outside the boundary, as NFPA 70E (2027) requires. Arc flash labels and the incident energy study are kept current. | NFPA-70E, OSHA-1910 |
-| EHS-R4 | Battery rooms and DC systems | Work on lithium-ion UPS batteries and any 800 VDC equipment requires a risk assessment that addresses chemical, contact thermal, shock, and arc flash hazards, PPE for each, authorized entry only, and the battery system's emergency procedures. | NFPA-70E, NFPA-855 |
-| EHS-R5 | Liquid cooling and coolant | Safety data sheets for PG25 coolant on hand; spill kits at every CDU and row end; quick-disconnect service only on isolated loops; leak alarms answered under the site spill procedure. | OSHA-1910 |
-| EHS-R6 | Rack and heavy equipment moves | Racks (well over a metric ton loaded) move only on rated powered equipment run by trained operators, with a route survey, floor-load check, and a dedicated spotter. Team lifts and lift assists for trays and power shelves. | OSHA-1910 |
-| EHS-R7 | Heat illness prevention | A written heat illness prevention plan for outdoor work (generator and chiller yards) and hot aisles. At a heat index of 80 F: drinking water, shade, and acclimatization for new and returning workers. At 90 F: at least 15 minutes of rest in shade every 2 hours, buddy system or check-ins, and observation for heat illness. Thresholds are modeled on OSHA's proposed heat rule; the rule is not final, so this agreement makes them binding. | OSHA-GDC |
-| EHS-R8 | Generators and running equipment | Hearing protection in posted areas; exclusion zones around running engines and during load-bank tests; diesel spills handled under the site spill procedure. | OSHA-1910, NFPA-110 |
-| EHS-R9 | Working at height | Rated ladders and platforms for overhead busway and cable tray work; fall protection where required; no standing on racks, CDUs, or containment. | OSHA-1910, OSHA-1926 |
-| EHS-R10 | Working alone | No lone work on energized equipment, in battery rooms, or outdoors at a heat index of 90 F or above. Other lone work requires check-ins at least every 60 minutes. | NFPA-70E, OSHA-GDC |
-| EHS-R11 | Hot work and fire protection impairment | Hot work only under permit with a fire watch. Any impairment of fire alarm, detection, or suppression is notified to the Customer before it begins and tracked to restoration. | NFPA-51B, NFPA-72-25 |
-| EHS-R12 | Electrostatic discharge | ESD-safe handling for all electronic components (equipment protection, tracked with the safety rules). | Site rule |
-
-### 22.4 Partner qualification
-
-- Experience Modification Rate (EMR) of 1.0 or lower, or a Customer-approved improvement plan.
-- Three years of injury rates (TRIR and DART) and five years of OSHA citation history disclosed before mobilization and annually.
-- Workers' compensation coverage for every person on Site. Texas allows employers to opt out of workers' compensation; partners at this Site may not.
-- A written safety program and a named, on-site EHS coordinator.
-- Training records on Site for every worker: NFPA 70E qualified-person training for electrical tasks, lockout/tagout, powered equipment operation, heat illness, hazard communication, and site orientation. Supervisors hold OSHA 30-hour training.
-- Subcontractors meet the same requirements; the partner remains responsible for them.
-
-### 22.5 Reporting
-
-- **Injuries and recordables:** to the Customer within 1 hour.
-- **Near misses:** within 24 hours.
-- **Severe events:** Fatalities, in-patient hospitalizations, amputations, and losses of an eye are reported to the Customer immediately and to OSHA within the 29 CFR 1904.39 deadlines (8 hours for a fatality, 24 hours for the others).
-- **Monthly:** Hours worked, recordables, near misses, stop-work uses, permits issued, and open corrective actions, by partner.
-
-### 22.6 Independent investigation
-
-- **Trigger:** Any suspected violation of a site rule or standard above, from any source: observation, audit, telemetry, permit and badge records, or a report.
-- **Investigator:** Customer EHS, or an independent third-party Certified Safety Professional engaged by the Customer. The partner whose work is investigated may not lead the investigation.
-- **Partner response:** within 5 business days of notice, before a finding is confirmed.
-- **Standard of proof:** Preponderance of the evidence.
-- **Evidence:** Permits, job hazard analyses, lockout records, telemetry (for example, power present on a circuit recorded as locked out), badge records, witness statements, and photographs taken for the investigation.
-- **Disputes:** Disputed findings go to the monthly service review, then to the independent Certified Safety Professional, whose determination of fact is final for EHS credits.
-
-### 22.7 Violation classes and consequences
-
-EHS Credits apply only to violations confirmed by the investigation above. Amounts are a percentage of the partner's own monthly charges (illustrated at $1,850,000/month for this SLA).
-
-| Class | Examples | EHS Credit | Consequences |
-|---|---|:-:|---|
-| EHS-C1 Life-critical | Energized electrical work without an approved permit, or without the required second person.<br>Lockout/tagout not applied or not verified before work.<br>Entering an arc flash or shock boundary without the required PPE.<br>Bypassing or defeating a safety interlock, guard, or fire protection system.<br>A rack move without the required equipment, operator, or spotter. | 1.0% ($18,500) | Immediate stop of the task and removal of the individuals involved from Site work pending review.<br>Partner-wide safety stand-down at the Site within 24 hours.<br>Root cause analysis and corrective action plan within 5 business days.<br>Internal severity S1.<br>Customer's investigation and stand-down costs reimbursed. |
-| EHS-C2 Serious | Work performed without a required job hazard analysis or permit, where no life-critical control was missed.<br>A worker performing a task without current required qualification.<br>Required PPE missing outside a hazard boundary.<br>Heat illness controls not provided at a triggering heat index. | 0.25% ($4,625) | Correction before work resumes.<br>Corrective action plan within 10 business days.<br>Internal severity S2. |
-| EHS-C3 Administrative | Incomplete or late paperwork where the required control was in place.<br>Training records not available on Site. | None | Corrected and tracked in the weekly operations review.<br>Internal severity S3. |
-
-### 22.8 EHS Credits
-
-- **Outside the monthly cap:** EHS Credits are never counted toward, or limited by, the monthly cap in Section 14.
-- **No earnback:** EHS Credits are never eligible for Earnback.
-- **Repeat violations:** a second EHS-C1 violation within 90 days carries 2× the EHS Credit.
-- **Self-reporting and concealment:** A violation the partner reports to the Customer within the reporting window and corrects before work resumes has its EHS Credit reduced by the percentage above. A violation the partner knew of and did not report, or whose records were altered, has its EHS Credit multiplied as above and is also a record-integrity finding. (Reduction: 50%. Concealment multiplier: 2×.)
-- **Never based on reporting:** No EHS Credit, charge, or adverse action is ever based on the number of injuries, illnesses, or near misses reported, or on the use of stop-work authority.
-- **Cost recovery:** For Life-critical violations, the partner also reimburses the Customer's documented costs of the independent investigation and of any Customer-directed stand-down.
-- **Nature of EHS Credits:** EHS Credits are a price adjustment reflecting that services were not delivered to the contracted safety standard. Their amounts are a reasonable pre-estimate of costs the Customer incurs from a confirmed violation (investigation, re-verification of affected work, and operational disruption), which are real but impractical to quantify in advance. They are not a penalty, are not subject to the monthly credit cap, cannot be earned back, and do not limit the Customer's other rights, including recovery of actual costs and termination.
-
-### 22.9 Escalation and termination
-
-- Two Life-critical violations by one partner in any rolling 90 days: executive review and a partner-wide safety improvement plan approved by the Customer.
-- Three Life-critical violations by one partner in any rolling 12 months, or one resulting in a fatality or permanent disability: a material breach, giving the Customer the right to terminate for cause.
-- The Customer may require removal of any individual from Site work for safety reasons at any time.
-
-See Appendix B.4 for a worked example.
+EHS performance is not credit-bearing; safety must never be traded for speed. Any recordable injury or stop-work event triggers an internal S1 severity and a joint review. Serious or repeated EHS failures are a material breach of the Agreement.
 
 ## 23. Spares and RMA
 
@@ -1086,18 +999,6 @@ A P2 GPU fault on a compute tray (4 GPUs). The first repair reaches Validated RT
 
 If the vendor opened a second ticket in a TR-1 or TR-2 case, TR-6 makes it a Record Integrity Finding, and severity rises to S1 through AGG-INTEGRITY.
 
-### B.4 EHS Credits
-
-Three violations confirmed by independent investigation in one quarter, at $1,850,000/month:
-
-| Violation | Class | Confirmed | Base | Adjustments | EHS Credit |
-|---|---|:-:|:-:|---|:-:|
-| EHS-1: busway tap-off worked with no lockout applied | EHS-C1 | 2026-10-06 | $18,500 | None | **$18,500** |
-| EHS-2: energized work permit without the second person, self-reported | EHS-C1 | 2026-11-17 | $18,500 | repeat within 90 days: x2; self-reported and corrected: -50% | **$18,500** |
-| EHS-3: expired qualification, roster altered to hide it | EHS-C2 | 2026-12-01 | $4,625 | concealed: x2; also a record-integrity finding | **$9,250** |
-
-Total EHS Credits: **$46,250**, payable in addition to any Service Level Credits for the same months and not reduced by the monthly cap.
-
 ---
 
-*Generated from `sla/it_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.1.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/vendor_sla.yaml` (schema 1.0, SLA version 1.0.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*

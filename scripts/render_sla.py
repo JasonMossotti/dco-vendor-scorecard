@@ -33,6 +33,7 @@ from scorecard.sla_model import (  # noqa: E402
     classify_event_breach,
     classify_period_breach,
     compute_credit,
+    compute_ehs_credits,
     evaluate_csl,
     load_sla,
     sla_sources,
@@ -201,8 +202,24 @@ def build_context(sla: dict) -> dict:
             "result": classify_period_breach(sla, res, consec, aggs),
         })
 
+    charges = sla["commercial"]["monthly_charges"]
+    ehs_classes = [dict(vc, dollars=charges * vc["credit_pct_of_monthly_charges"] / 100)
+                   for vc in sla["ehs"]["violation_classes"]]
+    ehs_specs = [
+        ("EHS-1", "EHS-C1", "2026-10-06", False, False, "busway tap-off worked with no lockout applied"),
+        ("EHS-2", "EHS-C1", "2026-11-17", True, False, "energized work permit without the second person, self-reported"),
+        ("EHS-3", "EHS-C2", "2026-12-01", False, True, "expired qualification, roster altered to hide it"),
+    ]
+    notes = {vid: note for vid, _, _, _, _, note in ehs_specs}
+    rows = compute_ehs_credits(sla, [{"id": vid, "class": cls, "confirmed": day, "self_reported": sr, "concealed": cc}
+                                     for vid, cls, day, sr, cc, _ in ehs_specs])
+    ehs_example = {"rows": [dict(vars(x), note=notes[x.violation_id]) for x in rows],
+                   "total": sum(x.amount for x in rows)}
+
     return {
         "sla": sla,
+        "ehs_classes": ehs_classes,
+        "ehs_example": ehs_example,
         "d": sla["document"],
         "p": sla["parties"],
         "s": site,

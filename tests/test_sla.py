@@ -13,6 +13,7 @@ import yaml
 
 from scorecard.sla_model import (
     SLAMergeError,
+    compute_ehs_credits,
     merge_terms,
     sla_sources,
     SLAValidationError,
@@ -251,3 +252,82 @@ def test_merge_does_not_modify_its_inputs():
     common, partner = {"a": {"x": 1}}, {"a": {"y": 2}}
     merge_terms(common, partner)
     assert common == {"a": {"x": 1}} and partner == {"a": {"y": 2}}
+
+
+# ------------------------------------------------------------------ EHS
+def V(id_, cls, day, **kw):
+    return {"id": id_, "class": cls, "confirmed": day, **kw}
+
+
+def test_ehs_credit_is_a_share_of_the_partners_monthly_charges(sla):
+    (c,) = compute_ehs_credits(sla, [V("v", "EHS-C1", "2026-10-01")])
+    pct = next(x for x in sla["ehs"]["violation_classes"] if x["id"] == "EHS-C1")["credit_pct_of_monthly_charges"]
+    assert c.amount == c.base == sla["commercial"]["monthly_charges"] * pct / 100
+
+
+def test_repeat_life_critical_violation_within_window_doubles(sla):
+    w = sla["ehs"]["credits"]["repeat"]["window_days"]
+    from datetime import date, timedelta
+    d0 = date(2026, 10, 1)
+    inside = compute_ehs_credits(sla, [V("a", "EHS-C1", d0.isoformat()),
+                                       V("b", "EHS-C1", (d0 + timedelta(days=w)).isoformat())])
+    outside = compute_ehs_credits(sla, [V("a", "EHS-C1", d0.isoformat()),
+                                        V("b", "EHS-C1", (d0 + timedelta(days=w + 1)).isoformat())])
+    assert inside[1].amount == 2 * inside[1].base and outside[1].amount == outside[1].base
+
+
+def test_self_reporting_reduces_and_concealment_multiplies(sla):
+    honest, hidden = compute_ehs_credits(sla, [V("h", "EHS-C2", "2026-10-01", self_reported=True),
+                                               V("x", "EHS-C2", "2026-10-02", concealed=True)])
+    assert honest.amount == honest.base * (1 - sla["ehs"]["credits"]["self_reported_reduction_pct"] / 100)
+    assert hidden.amount == hidden.base * sla["ehs"]["credits"]["concealment_multiplier"]
+    assert hidden.record_integrity_finding and not honest.record_integrity_finding
+    with pytest.raises(ValueError):
+        compute_ehs_credits(sla, [V("z", "EHS-C1", "2026-10-01", self_reported=True, concealed=True)])
+
+
+def test_administrative_violations_carry_no_credit(sla):
+    (c,) = compute_ehs_credits(sla, [V("a", "EHS-C3", "2026-10-01", concealed=True)])
+    assert c.amount == 0
+
+
+def test_ehs_credits_are_not_limited_by_the_monthly_cap(sla):
+    """Ten life-critical violations exceed the At-Risk Amount; every dollar still applies."""
+    from datetime import date, timedelta
+    vs = [V(f"v{i}", "EHS-C1", (date(2026, 1, 1) + timedelta(days=100 * i)).isoformat()) for i in range(10)]
+    total = sum(c.amount for c in compute_ehs_credits(sla, vs, monthly_charges=sla["commercial"]["monthly_charges"]))
+    assert sla["ehs"]["credits"]["outside_monthly_cap"] and not sla["ehs"]["credits"]["earnback_eligible"]
+    assert total == 10 * sla["commercial"]["monthly_charges"] * 0.01
+
+
+def test_ehs_validation_guards_the_non_negotiables(sla):
+    for path, value, msg in [(("credits", "earnback_eligible"), True, "never earned back"),
+                             (("credits", "outside_monthly_cap"), False, "must be true"),
+                             (("credits", "self_reported_reduction_pct"), 100, "below 100")]:
+        bad = copy.deepcopy(sla)
+        bad["ehs"][path[0]][path[1]] = value
+        assert any(msg in e for e in validate_sla(bad)), path
+    bad = copy.deepcopy(sla)
+    bad["ehs"]["site_rules"][0]["refs"] = ["NOT-A-STANDARD"]
+    assert any("unknown standard" in e for e in validate_sla(bad))
+    bad = copy.deepcopy(sla)
+    bad["ehs"]["violation_classes"][2]["credit_pct_of_monthly_charges"] = 5
+    assert any("must not increase" in e for e in validate_sla(bad))
+
+
+def test_a_partner_cannot_soften_ehs_terms(tmp_path):
+    common = yaml.safe_load((ROOT / "sla" / "common.yaml").read_text(encoding="utf-8"))
+    partner = yaml.safe_load((ROOT / "sla" / "it_partner.yaml").read_text(encoding="utf-8"))
+    partner["ehs"] = {"credits": {"self_reported_reduction_pct": 90}}
+    (tmp_path / "common.yaml").write_text(yaml.safe_dump(common), encoding="utf-8")
+    (tmp_path / "it_partner.yaml").write_text(yaml.safe_dump(partner), encoding="utf-8")
+    with pytest.raises(SLAMergeError, match="ehs.credits.self_reported_reduction_pct"):
+        load_sla(tmp_path / "it_partner.yaml")
+
+
+def test_document_states_every_ehs_term(sla):
+    text = (ROOT / "docs" / "sla" / "IT_PARTNER_SLA.md").read_text(encoding="utf-8")
+    for x in sla["ehs"]["standards"] + sla["ehs"]["site_rules"] + sla["ehs"]["violation_classes"]:
+        assert x["id"] in text, x["id"]
+    assert "Outside the monthly cap" in text and "### B.4 EHS Credits" in text
+    assert "1904.35(b)(1)(iv)" in text
