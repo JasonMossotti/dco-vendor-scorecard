@@ -73,7 +73,7 @@ Two principles shape this agreement:
 | HALL-B | deployment | 32 | 2,304 |
 | **Total** | | **64** | **4,608** |
 
-Each rack contains 72 GPUs and 36 CPUs across 18 compute trays (4 GPUs per tray), 9 NVLink switch trays, and 8 power shelves, at roughly 120 kW nominal. Cooling is provided by 8 in-row liquid-to-liquid CDUs rated 1.3 MW, each serving up to 8 racks.
+Each rack contains 72 GPUs and 36 CPUs across 18 compute trays (4 GPUs per tray), 9 NVLink switch trays, and 8 power shelves, at roughly 120 kW nominal. Cooling is provided by 8 CoolIT CHx2000 row-based liquid-to-liquid CDUs rated 2.0 MW, each serving up to 8 racks.
 
 **Service units.** Impact is scored by the service unit affected:
 
@@ -82,7 +82,7 @@ Each rack contains 72 GPUs and 36 CPUs across 18 compute trays (4 GPUs per tray)
 | Compute tray | 4 | Smallest GPU field-replaceable service unit. |
 | NVLink switch tray | 72 | Treated as a rack-wide event until degraded operation is proven safe. |
 | NVL72 rack | 72 | One NVLink domain; the Customer's smallest large-job scheduling unit. |
-| CDU loop | 576 | One CDU serves up to 8 racks; a loss of cooling can affect all of them. |
+| CDU loop | 576 | Each CDU is the primary for one row of 8 racks on a shared N+1 secondary header; a loss of cooling can affect all of them. |
 
 ## 3. Definitions
 

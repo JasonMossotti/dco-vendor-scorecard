@@ -1,7 +1,7 @@
 """Run the interactive app end to end against a Streamlit stand-in.
 
 The real UI is exercised in the browser; these tests make sure the app's logic
-runs without errors for each dataset option and for what-if changes.
+runs without errors for each dataset option.
 """
 
 import runpy
@@ -30,17 +30,16 @@ def test_app_renders_with_committed_sample(monkeypatch):
     fake = run_app(monkeypatch)
     assert any("Vendor SLA Scorecard" in t for t in fake.texts("title"))
     assert len(fake.texts("dataframe")) >= 6
-    assert not fake.texts("warning"), "no what-if banner at contract values"
     md = " ".join(fake.texts("markdown"))
     assert "Minimum defaults" in md and "Engine self-check" in " ".join(fake.texts("subheader"))
 
 
-def test_app_what_if_shows_banner_and_more_defaults(monkeypatch):
-    base = run_app(monkeypatch)
-    tight = run_app(monkeypatch, overrides={"P2 restore target (hours)": 4.0})
-    assert any("What-if" in t for t in tight.texts("warning"))
-    d = lambda f: next(v for k, v in f.drawn if k == "metric" and v[0] == "Minimum defaults")[1]  # noqa: E731
-    assert d(tight) > d(base)
+def test_app_has_no_what_if_controls(monkeypatch):
+    """The SLA terms are the signed contract; the app reports against them and offers no sliders."""
+    fake = run_app(monkeypatch)
+    assert not [k for k, _ in fake.drawn if k == "slider"]
+    headers = " ".join(fake.texts("header"))
+    assert "What if" not in headers and "Data" in headers
 
 
 def test_app_generate_flow(monkeypatch):
@@ -49,33 +48,6 @@ def test_app_generate_flow(monkeypatch):
     fake = run_app(monkeypatch, overrides={"Dataset": "Generate a new random month", "Seed": 11},
                    buttons={"Generate"})
     assert any("seed 11" in t for t in fake.texts("caption"))
-
-
-def test_reset_moves_widgets_back_to_contract(monkeypatch):
-    """Regression: Reset must restore the widget values themselves, not only the results."""
-    moved = {"wf_restore_P2": 11.0, "wf_early": 120, "wf_atrisk": 15.0}
-    still_moved = run_app(monkeypatch, session_state=moved)
-    assert any("What-if" in t for t in still_moved.texts("warning"))
-    reset = run_app(monkeypatch, session_state=moved, buttons={"Reset to contract values"})
-    sla = load_sla()
-    assert reset.session_state["wf_restore_P2"] == next(p for p in sla["priorities"] if p["id"] == "P2")["restore_min"] / 60
-    assert reset.session_state["wf_early"] == sla["ticket_handling"]["stability"]["early_failure_minutes"]
-    assert not reset.texts("warning"), "no what-if banner after reset"
-
-
-def test_invalid_threshold_is_rejected(monkeypatch):
-    fake = run_app(monkeypatch, overrides={"Expected (%)": 90.0, "Minimum (%)": 99.0})
-    assert any("Expected must be" in t for t in fake.texts("error"))
-
-
-def test_overrides_round_trip():
-    sla = load_sla()
-    d = A.contract_defaults(sla)
-    assert A.changed_from_contract(sla, d) == []
-    new = A.apply_overrides(sla, {"restore_hours": {"P1": 2.0}, "at_risk_pct": 15})
-    assert next(p for p in new["priorities"] if p["id"] == "P1")["restore_min"] == 120
-    assert new["commercial"]["at_risk_pct"] == 15
-    assert next(p for p in sla["priorities"] if p["id"] == "P1")["restore_min"] == 240   # original untouched
 
 
 def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):

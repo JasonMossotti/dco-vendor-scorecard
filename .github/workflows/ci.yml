@@ -17,5 +17,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Validate SLA and check generated document is current
         run: python scripts/render_sla.py --check
+      - name: Validate site model and check generated drawings are current
+        run: python scripts/render_site.py --check
       - name: Run tests (includes check that data/sample is current)
         run: pytest -q

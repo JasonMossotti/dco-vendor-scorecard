@@ -14915,8 +14915,8 @@
   ],
   "site": {
     "cooling": {
-      "cdu_capacity_mw": 1.3,
-      "cdu_type": "in-row liquid-to-liquid CDU",
+      "cdu_capacity_mw": 2.0,
+      "cdu_type": "CoolIT CHx2000 row-based liquid-to-liquid CDU",
       "cdus_total": 8,
       "racks_per_cdu": 8
     },

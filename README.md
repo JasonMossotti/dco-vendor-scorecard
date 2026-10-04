@@ -27,6 +27,19 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
 | Weekly scorecard ([`reports/scorecard.md`](reports/scorecard.md)) | Done, tested |
 | Interactive demo ([live](https://jasonmossotti.github.io/dco-vendor-scorecard/)) | Done, tested |
+| Site model and drawings ([`docs/site/SITE.md`](docs/site/SITE.md)) | Done, tested |
+
+## The site
+
+Site AUS-1 is a fictional AI data center in Central Texas, built from real, interoperable equipment: Schneider Electric Galaxy UPS and EcoStruxure monitoring, CoolIT CHx2000 CDUs, Vertiv Liebert thermal walls and free-cooling chillers, Caterpillar C175-16 generators, VESDA aspirating smoke detection, TraceTek leak detection, NVIDIA InfiniBand, and an Eaton MVSST feeding an 800 VDC pilot hall. Three halls: Hall A in production (32 x GB200 NVL72), Hall B in deployment (32 x GB300 NVL72), and Hall C planned as the 800 VDC pilot.
+
+The site is code too. [`site/site.yaml`](site/site.yaml) lists every product with its rating, management interfaces, and source documentation; the model expands it into named equipment, traces each rack's power and cooling paths, and runs 25 capacity checks (UPS 4-make-3, CDU N+1, generators N+1, chillers at a 43 C design day). The site refuses to load if any check fails, and the drawing set is generated from the same file. See [`docs/site/SITE.md`](docs/site/SITE.md).
+
+![Hall A floor plan](docs/site/A-201_hall_a_plan.svg)
+
+```bash
+python scripts/render_site.py    # validate the site model and regenerate docs/site/
+```
 
 ## SLA as code
 
@@ -72,7 +85,7 @@ The committed sample in [`data/sample/`](data/sample) covers 4 weeks and 17 plan
 
 The vendor's weekly notes said all SLAs were met or showed only minor exceptions. Measured, the period has 5 Minimum Service Level Defaults, $222,000 in Service Level Credits (after the monthly cap), and 17 corrective action plans drafted automatically with owners and due dates. Fleet availability, by contrast, is 99.94% either way, which is why the scorecard measures each incident rather than trusting the average.
 
-`build_scorecard(sla, result)` is a pure function of the SLA and the data, so changing a target (for example, a 4-hour P2 restore) and rerunning immediately shows the new breaches, credits, and corrective actions. The interactive demo is built on that.
+`build_scorecard(sla, result)` is a pure function of the SLA and the data. A contract amendment is a one-line change to the YAML, and rerunning shows its effect on breaches, credits, and corrective actions from the same telemetry.
 
 ## Discrepancy engine
 
@@ -92,13 +105,9 @@ python scripts/run_engine.py --robustness 20    # also test 20 freshly generated
 The [demo](https://jasonmossotti.github.io/dco-vendor-scorecard/) runs the whole pipeline in the browser (Python via WebAssembly, no server). You can:
 
 - Switch between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), or a brand-new random month.
-- Change SLA terms in the sidebar (restore targets, ticket handling windows, service level thresholds, at-risk amount) and watch every result recalculate from the same telemetry.
 - Drill into each finding's evidence, the corrective action plans, and every incident.
 
-<p>
-  <img src="docs/images/finding.png" alt="A finding with its evidence: a compute tray returned to service with no validation checks recorded" width="680">
-  <img src="docs/images/what-if.png" alt="What-if controls in the sidebar" width="190">
-</p>
+<img src="docs/images/finding.png" alt="A finding with its evidence: a compute tray returned to service with no validation checks recorded" width="680">
 
 Run it locally with `pip install -r requirements-app.txt` and `streamlit run app/streamlit_app.py`. To host it on AWS (S3, EC2, or a production-shaped architecture), see [docs/DEPLOY_AWS.md](docs/DEPLOY_AWS.md).
 
@@ -106,6 +115,10 @@ Run it locally with `pip install -r requirements-app.txt` and `streamlit run app
 
 ```
 sla/vendor_sla.yaml              Single source of truth for the SLA
+site/site.yaml                   Single source of truth for the site: equipment, topology, monitoring
+src/scorecard/site_model.py      Site expansion, power and cooling paths, capacity checks
+src/scorecard/site_drawings.py   Schematic drawing set (SVG) generated from the site model
+scripts/render_site.py           Generates docs/site/ (SITE.md and drawings)
 config/synthetic.yaml            Generator settings: fault rates, vendor behavior, planted discrepancies
 src/scorecard/sla_model.py       Load, validate, credit math, severity classification
 src/scorecard/measurement.py     Ticket handling rules (TR-1 to TR-6) as the reference implementation
@@ -113,7 +126,7 @@ src/scorecard/connectors.py      Data access layer (one interface per source; an
 src/scorecard/engine/            Discrepancy engine: context, 11 detectors, evaluation, reports
 src/scorecard/kpi.py             Service level measurement from telemetry, for any period
 src/scorecard/builder.py         Scorecard: SLA results, vendor vs. measured, credits, severity log, CAPs
-src/scorecard/app_support.py     App logic: what-if overrides, pipeline runner, display tables
+src/scorecard/app_support.py     App logic: pipeline runner, display tables
 app/streamlit_app.py             Interactive app (Streamlit; runs in the browser via stlite)
 src/scorecard/synthetic/         Synthetic GB200 site data generator
 scripts/render_sla.py            Generates docs/SLA.md from the YAML

@@ -109,9 +109,9 @@ def test_caps_raised_at_review_and_due_after_it(sc):
         assert c["due"] > c["raised"] and (c["due"] - c["raised"]).days <= days + 4
 
 
-# ------------------------------------------------------------------ what-if
-def test_what_if_tighter_target_creates_more_breaches(sla, engine):
-    """The browser app relies on this: change the SLA, rerun, and results change."""
+# ------------------------------------------------------------------ contract amendments
+def test_amended_tighter_target_creates_more_breaches(sla, engine):
+    """An amended contract term changes results from the same telemetry (scorecard is a pure function)."""
     tight = copy.deepcopy(sla)
     next(p for p in tight["priorities"] if p["id"] == "P2")["restore_min"] = 240
     before = build_scorecard(sla, engine)
@@ -120,7 +120,7 @@ def test_what_if_tighter_target_creates_more_breaches(sla, engine):
     assert after["credits"]["uncapped"] >= before["credits"]["uncapped"]
 
 
-def test_what_if_looser_minimum_removes_a_default(sla, engine):
+def test_amended_looser_minimum_removes_a_default(sla, engine):
     loose = copy.deepcopy(sla)
     c = next(c for c in loose["critical_service_levels"] if c["id"] == "CSL-07")
     c["expected"], c["minimum"] = 97.0, 95.0

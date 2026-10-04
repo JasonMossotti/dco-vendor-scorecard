@@ -132,6 +132,7 @@ class FakeStreamlit:
         return self._value(label, list(default or []))
 
     def slider(self, label, min_value=None, max_value=None, value=None, step=None, key=None, **kw):
+        self._rec("slider", label)
         v = self._value(label, value if value is not None else min_value, key)
         assert min_value <= v <= max_value, f"slider '{label}' value {v} outside [{min_value}, {max_value}]"
         return v

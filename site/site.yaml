@@ -1,0 +1,460 @@
+# =============================================================================
+# Site AUS-1: site model as code
+# =============================================================================
+# Single source of truth for what exists at the site, what feeds what, and how
+# each device is monitored. The SLA documents, synthetic generator, engine, and
+# drawings (docs/site/) all describe the same site because they read this file.
+#
+# Real, named products in a fictional site operated by fictional companies.
+# Product facts were checked against manufacturer documentation (see
+# `products.*.sources`). Values marked `basis: assumption` are engineering
+# assumptions for this model, not manufacturer claims; review them before
+# using this file to design anything real.
+# =============================================================================
+
+meta:
+  title: "Site AUS-1 site model"
+  version: "1.0"
+  fictional: true
+  disclaimer: >-
+    Fictional site for a portfolio demonstration. Equipment models are real
+    products; the site, its layout, quantities, and operators are invented.
+    Schematic only: not a construction document.
+
+site:
+  id: "AUS-1"
+  name: "Site AUS-1 (fictional)"
+  location: "Central Texas, USA (fictional parcel)"
+  grid: "ERCOT"
+  timezone: "America/Chicago"
+  design_ambient_c: 43          # basis: assumption (hot-day design dry bulb for chiller derating)
+  service_voltage_kv: 138
+  distribution_voltage_kv: 13.8
+  utilization_voltage_v: 480
+  house_load_kw: 400            # basis: assumption (offices, lighting, security, MMRs)
+
+parties:
+  customer:
+    name: "Customer"
+    role: "Owns the IT equipment and site outcomes; operates the Telemetry of Record."
+  it_partner:
+    name: "Ridgeline Site Services, LLC"
+    fictional: true
+    role: "Deployment, break-fix, and data hall IT operations."
+  ot_partner:
+    name: "Caprock Critical Facilities, LLC"
+    fictional: true
+    role: "Critical facilities operations: electrical, mechanical, fire and life safety, BMS and EPMS."
+  security_partner:
+    name: "To be contracted"
+    role: "Access control, CCTV, escorts (later phase)."
+  utility:
+    name: "Serving utility (ERCOT region)"
+    role: "Owns the 138 kV substation and its transformers."
+
+# Engineering assumptions made for this model (listed in docs/site/SITE.md).
+assumptions:
+  - "Rack design envelope 132 kW for GB200 and GB300 (GB300 power-capped to the hall envelope); 230 kW for the 800 VDC pilot racks."
+  - "Hot-day design dry bulb of 43 C; each 1,500 kW chiller derated to 1,150 kW, plant COP 3.0 on that day."
+  - "UPS double-conversion efficiency 97%; UPS input sized with a 10% battery-recharge allowance; power factor 0.99."
+  - "Busway may carry up to 90% of its rating with one feed lost."
+  - "One facility water loop at 20 C supply / 30 C return serves CDUs, thermal walls, and CRAHs."
+  - "Thermal-wall fan power 20 kW per unit; CRAH fan power 5 kW; facility water pumps 110 kW each."
+  - "Lithium-ion runtime 5 minutes; 48 hours of generator fuel at full load; 400 kW of house load."
+
+# -----------------------------------------------------------------------------
+# Product catalog. `interfaces` are the management protocols the product
+# documents; the monitoring section says which ones this site uses.
+# -----------------------------------------------------------------------------
+products:
+  gb200_nvl72:
+    category: compute_rack
+    manufacturer: "NVIDIA"
+    model: "GB200 NVL72"
+    design_kw: 132              # design envelope per rack (reference designs cite up to 132 kW)
+    liquid_fraction: 0.87       # about 115 kW liquid / 17 kW air in a published GB200 rack design
+    footprint_mm: [600, 1200]   # basis: assumption (footprint allowance incl. door and manifold)
+    input: "3-phase AC to power shelves (N+N), ~50 VDC in-rack busbar"
+    interfaces: ["Redfish (BMC)", "NVLink telemetry via NMX", "InfiniBand via UFM"]
+    sources:
+      - "https://www.szsanyi.com/en/blog/nvidia-hvdc"
+      - "https://blog.qct.io/wp-content/uploads/2025/04/QCT-Qoolrack-Stand-Alone_Advanced-Liquid-Cooling-for-NVIDIA-GB200-NVL72-Systems.pdf"
+  gb300_nvl72:
+    category: compute_rack
+    manufacturer: "NVIDIA"
+    model: "GB300 NVL72"
+    design_kw: 132              # basis: assumption (power-capped to the hall's 132 kW envelope)
+    liquid_fraction: 0.90       # about 90% liquid / 10% air per a published GB300 design
+    footprint_mm: [600, 1200]
+    input: "3-phase AC to power shelves (N+N), ~50 VDC in-rack busbar"
+    interfaces: ["Redfish (BMC)", "NVLink telemetry via NMX", "InfiniBand via UFM"]
+    sources:
+      - "https://lenovopress.lenovo.com/lp2357.pdf"
+  pilot_800vdc_rack:
+    category: compute_rack
+    manufacturer: "NVIDIA ecosystem (to be selected)"
+    model: "800 VDC rack, Vera Rubin class (planned)"
+    design_kw: 230              # basis: assumption (upper end of published Vera Rubin rack estimates)
+    liquid_fraction: 1.0
+    footprint_mm: [600, 1200]
+    input: "800 VDC"
+    interfaces: ["Redfish (BMC)"]
+    sources:
+      - "https://www.moduledge.com/blog/nvidia-vera-rubin"
+  galaxy_vx_1500:
+    category: ups
+    manufacturer: "Schneider Electric"
+    model: "Galaxy VX 1500 kW, 480 V"
+    rating_kw: 1500
+    efficiency: 0.97            # basis: assumption (double conversion)
+    interfaces: ["SNMPv3 (Network Management Card)", "Modbus TCP", "HTTPS"]
+    sources:
+      - "https://www.merten.de/produkt/gvxp250kd-galaxy-vx-250-kva-400-480-v-pwr-cab.html"
+      - "https://www.se.com/us/en/product/AP9644/network-management-card-4-nmc4-for-galaxy-vs-galaxy-vl-galaxy-vxl-remote-ups-monitoring-and-management/"
+  galaxy_vl_300:
+    category: ups
+    manufacturer: "Schneider Electric"
+    model: "Galaxy VL 300 kW, 480 V (mechanical UPS)"
+    rating_kw: 300
+    efficiency: 0.97
+    interfaces: ["SNMPv3 (Network Management Card)", "Modbus TCP"]
+    sources:
+      - "https://www.merten.de/produkt/gvlopt006-galaxy-vl-vxl-paralleles-kommunikationskit-weltweit.html"
+  galaxy_li_ion:
+    category: battery
+    manufacturer: "Schneider Electric"
+    model: "Galaxy Lithium-ion Battery System"
+    runtime_min: 5              # basis: assumption (bridges generator start and transfer)
+    interfaces: ["Reported through the UPS"]
+    sources:
+      - "https://www.se.com/ie/en/work/products/master-ranges/galaxy/"
+  starline_1200t5:
+    category: busway
+    manufacturer: "Starline (Legrand)"
+    model: "Track Busway 1200T5 with Critical Power Monitor"
+    rating_a: 1200
+    interfaces: ["Modbus TCP / SNMP via Critical Power Monitor"]
+    sources:
+      - "https://www.cablinginstall.com/articles/2016/12/starline-1200t5-track-busway-system.html"
+      - "https://starlinepower.com/products"
+  unit_sub_2500:
+    category: transformer
+    manufacturer: "To be selected"
+    model: "13.8 kV to 480 V unit substation, 2500 kVA"
+    rating_kva: 2500
+    interfaces: ["Metered via PowerLogic into Power Monitoring Expert"]
+  utility_tx_25mva:
+    category: transformer
+    manufacturer: "Utility-owned"
+    model: "138 kV to 13.8 kV power transformer, 25 MVA"
+    rating_kva: 25000
+    interfaces: ["Utility SCADA (not customer accessible); site metering at the 13.8 kV mains"]
+  eaton_mvsst:
+    category: solid_state_transformer
+    manufacturer: "Eaton"
+    model: "MVSST, 15 kV class, 2.5 MW (pilot)"
+    rating_kw: 2500
+    interfaces: ["To be confirmed in pilot submittals"]
+    sources:
+      - "https://www.eaton.com/us/en-us/catalog/medium-voltage-power-distribution-control-systems/medium-voltage-solid-state-transformer.html"
+  cat_c175_16:
+    category: generator
+    manufacturer: "Caterpillar"
+    model: "C175-16, 13.8 kV, EMCP 4.4"
+    rating_kw: 3000             # mission critical rating
+    interfaces: ["Modbus TCP (EMCP 4.4)", "Modbus RTU", "EMCP 4.4 master panel to BMS"]
+    sources:
+      - "https://pesa.com.br/pesaenergia-specsheets/diesel/DataSheetC175-16-3750kVAStand-by.pdf"
+      - "https://www.warrencat.com/new/power-systems/electric-power/switchgear-and-paralleling-controls/emcp-4-4-master-control-panel/"
+  coolit_chx2000:
+    category: cdu
+    manufacturer: "CoolIT Systems"
+    model: "CHx2000 row-based CDU"
+    capacity_kw: 2000
+    secondary_flow_lpm: 1800
+    flow_per_kw_lpm: 1.2
+    power_kw: 12.24             # single-pump operation at 1500 LPM, per datasheet
+    coolant: "PG25"
+    footprint_mm: [750, 1200]
+    interfaces: ["Redfish", "SNMP", "Modbus TCP", "BACnet"]
+    sources:
+      - "https://www.coolitsystems.com/product/chx2000-cdu/"
+      - "https://www.coolitsystems.com/cdu-product/chx2000/"
+  liebert_cwa_400:
+    category: thermal_wall
+    manufacturer: "Vertiv"
+    model: "Liebert CWA thermal wall, 400 kW configuration"
+    capacity_kw: 400
+    power_kw: 20                # basis: assumption (EC fan power)
+    interfaces: ["BACnet/IP via unit controller"]
+    sources:
+      - "https://www.vertiv.com/en-us/products-catalog/thermal-management/room-cooling/liebert-cwa-chilled-water-thermal-wall-unit-from-200-to-500kw/"
+  liebert_cw_crah:
+    category: crah
+    manufacturer: "Vertiv"
+    model: "Liebert CW perimeter CRAH, 100 kW (electrical rooms)"
+    capacity_kw: 100
+    power_kw: 5                 # basis: assumption
+    interfaces: ["BACnet/IP via unit controller"]
+    sources:
+      - "https://www.intelligentcio.com/north-america/2024/10/17/vertiv-codevelops-with-nvidia-complete-power-and-cooling-blueprint-for-nvidia-gb200-nvl72-platform/"
+  liebert_afc_1500:
+    category: chiller
+    manufacturer: "Vertiv"
+    model: "Liebert AFC air-cooled free-cooling chiller, 1500 kW nominal"
+    capacity_kw: 1500
+    capacity_at_design_ambient_kw: 1150   # basis: assumption (derated at site design ambient)
+    cop_at_design_ambient: 3.0            # basis: assumption
+    interfaces: ["BACnet/IP", "Modbus"]
+    sources:
+      - "https://www.vertiv.com/49dc08/globalassets/products/thermal-management/free-cooling-chillers/liebert-afc-ds-en-emea-rev0---03.2020.pdf"
+  fw_pump:
+    category: pump
+    manufacturer: "To be selected"
+    model: "Facility water pump, VFD driven"
+    power_kw: 110               # basis: assumption
+    interfaces: ["BACnet/IP via VFD"]
+  vesda_e_vep:
+    category: smoke_detection
+    manufacturer: "Xtralis (Honeywell)"
+    model: "VESDA-E VEP aspirating smoke detector"
+    alarm_levels: ["Alert", "Action", "Fire 1", "Fire 2"]
+    interfaces: ["VESDAnet to fire panel (primary)", "Modbus HLI to BMS (secondary)"]
+    sources:
+      - "https://xtralis.com/file/8501"
+  notifier_facp:
+    category: fire_panel
+    manufacturer: "Notifier (Honeywell)"
+    model: "Addressable fire alarm control panel"
+    interfaces: ["BACnet gateway to BMS (secondary monitoring)"]
+  tracetek_ttdm128:
+    category: leak_detection
+    manufacturer: "Chemelex (nVent RAYCHEM TraceTek)"
+    model: "TTDM-128 alarm and locator module"
+    locate_accuracy_m: 1
+    interfaces: ["Modbus RTU (RS-485) via gateway to Modbus TCP"]
+    sources:
+      - "https://cdn.chemelex.com/Product%20Documents/Design%20Guides-Forms/RAYCHEM-DG-EU0614-TraceTekOverview-EN.pdf"
+  tracetek_water_cable:
+    category: leak_cable
+    manufacturer: "Chemelex (nVent RAYCHEM TraceTek)"
+    model: "Water and conductive-fluid sensing cable (PG25 coolant)"
+    interfaces: ["Monitored by TTDM-128"]
+    sources:
+      - "https://go.nvent.com/rs/760-EGW-100/images/RaychemTraceTek-AR-H58709-FMClass7745-EN.pdf"
+  tracetek_tt5000:
+    category: leak_cable
+    manufacturer: "Chemelex (nVent RAYCHEM TraceTek)"
+    model: "TT5000 hydrocarbon sensing cable (generator diesel)"
+    interfaces: ["Monitored by TTDM-128"]
+    sources:
+      - "https://go.nvent.com/rs/760-EGW-100/images/RaychemTraceTek-AR-H53147-SensingAppGuide-EN.pdf"
+  quantum2_qm9700:
+    category: ib_switch
+    manufacturer: "NVIDIA"
+    model: "Quantum-2 QM9700 NDR InfiniBand switch"
+    interfaces: ["UFM", "SNMP", "gNMI"]
+    sources:
+      - "https://networking-docs.nvidia.com/cablevalidationtool/2.0.1/installation-notes"
+  quantum_x800_q3400:
+    category: ib_switch
+    manufacturer: "NVIDIA"
+    model: "Quantum-X800 Q3400-RA XDR InfiniBand switch"
+    interfaces: ["UFM", "gNMI"]
+    sources:
+      - "https://networking-docs.nvidia.com/cablevalidationtool/2.0.1/installation-notes"
+
+# -----------------------------------------------------------------------------
+# Halls. Racks are numbered A01..A32 in row order; each row holds 8 racks and
+# one CDU. Power groups pair two UPS modules (A feed, B feed); with 4 UPS and
+# all 6 pairings, losing any one UPS spreads its load evenly over the other 3
+# (distributed redundant, "4 make 3").
+# -----------------------------------------------------------------------------
+halls:
+  - id: "HALL-A"
+    letter: "A"
+    name: "Hall A"
+    state: "production"
+    rack_product: gb200_nvl72
+    rows: 4
+    racks_per_row: 8
+    fabric: quantum2_qm9700
+    power:
+      architecture: "distributed_redundant"
+      ups_product: galaxy_vx_1500
+      ups_count: 4
+      battery_product: galaxy_li_ion
+      unit_sub_product: unit_sub_2500
+      busway_product: starline_1200t5
+      groups:                         # rack counts in rack order; feeds = [A-side UPS, B-side UPS]
+        - {id: "PG-A1", racks: 6, feeds: [1, 2]}
+        - {id: "PG-A2", racks: 6, feeds: [3, 4]}
+        - {id: "PG-A3", racks: 5, feeds: [1, 3]}
+        - {id: "PG-A4", racks: 5, feeds: [2, 4]}
+        - {id: "PG-A5", racks: 5, feeds: [1, 4]}
+        - {id: "PG-A6", racks: 5, feeds: [2, 3]}
+      mech_ups_product: galaxy_vl_300
+      mech_ups_count: 2               # 2N for CDU pumps and thermal-wall fans
+    cooling:
+      cdu_product: coolit_chx2000
+      cdu_count: 4                    # one per row, shared secondary header
+      cdu_redundancy: 1               # N+1
+      thermal_wall_product: liebert_cwa_400
+      thermal_wall_count: 4
+      thermal_wall_redundancy: 1
+      electrical_room_crah_product: liebert_cw_crah
+      electrical_room_crah_count: 3
+      electrical_room_crah_redundancy: 1
+    fire_life_safety:
+      vesda_detectors: 2              # hall + electrical room
+      leak_circuits: 8                # one per row manifold, one under each CDU
+  - id: "HALL-B"
+    letter: "B"
+    name: "Hall B"
+    state: "deployment"
+    rack_product: gb300_nvl72
+    rows: 4
+    racks_per_row: 8
+    fabric: quantum_x800_q3400
+    power:
+      architecture: "distributed_redundant"
+      ups_product: galaxy_vx_1500
+      ups_count: 4
+      battery_product: galaxy_li_ion
+      unit_sub_product: unit_sub_2500
+      busway_product: starline_1200t5
+      groups:
+        - {id: "PG-B1", racks: 6, feeds: [1, 2]}
+        - {id: "PG-B2", racks: 6, feeds: [3, 4]}
+        - {id: "PG-B3", racks: 5, feeds: [1, 3]}
+        - {id: "PG-B4", racks: 5, feeds: [2, 4]}
+        - {id: "PG-B5", racks: 5, feeds: [1, 4]}
+        - {id: "PG-B6", racks: 5, feeds: [2, 3]}
+      mech_ups_product: galaxy_vl_300
+      mech_ups_count: 2
+    cooling:
+      cdu_product: coolit_chx2000
+      cdu_count: 4
+      cdu_redundancy: 1
+      thermal_wall_product: liebert_cwa_400
+      thermal_wall_count: 4
+      thermal_wall_redundancy: 1
+      electrical_room_crah_product: liebert_cw_crah
+      electrical_room_crah_count: 3
+      electrical_room_crah_redundancy: 1
+    fire_life_safety:
+      vesda_detectors: 2
+      leak_circuits: 8
+  - id: "HALL-C"
+    letter: "C"
+    name: "Hall C (800 VDC pilot)"
+    state: "planned"
+    rack_product: pilot_800vdc_rack
+    rows: 2
+    racks_per_row: 4
+    fabric: quantum_x800_q3400
+    power:
+      architecture: "2n_dc"
+      mvsst_product: eaton_mvsst
+      mvsst_count: 2                  # 2N: one per 13.8 kV bus
+      note: "Energy storage and the 800 VDC busway are selected during pilot design."
+    cooling:
+      cdu_product: coolit_chx2000
+      cdu_count: 3
+      cdu_redundancy: 1
+      thermal_wall_count: 0           # fully liquid-cooled racks
+      electrical_room_crah_product: liebert_cw_crah
+      electrical_room_crah_count: 2
+      electrical_room_crah_redundancy: 1
+    fire_life_safety:
+      vesda_detectors: 1
+      leak_circuits: 5
+
+# -----------------------------------------------------------------------------
+# Central plants
+# -----------------------------------------------------------------------------
+plants:
+  utility:
+    substation_kv: 138
+    transformer_product: utility_tx_25mva
+    transformer_count: 2              # 2N: either can carry the site
+  mv_switchgear:
+    voltage_kv: 13.8
+    arrangement: "main-tie-main"
+    buses: ["MV-A", "MV-B"]
+    note: "Automatic tie on loss of one main; the generator paralleling bus feeds both buses."
+  generators:
+    product: cat_c175_16
+    count: 7
+    redundancy: 1                     # N+1
+    fuel_hours_at_full_load: 48       # basis: assumption
+    fuel_leak_detection: tracetek_tt5000
+  heat_rejection:
+    chiller_product: liebert_afc_1500
+    chiller_count: 11
+    chiller_redundancy: 1             # N+1 at design ambient
+    supply_c: 20                      # basis: assumption (single facility water loop)
+    return_c: 30
+    pump_product: fw_pump
+    pump_count: 3
+    pump_redundancy: 1
+  mechanical_power:
+    chiller_unit_subs: 4              # 2N pairs of unit substations for the chiller yard
+    unit_sub_product: unit_sub_2500
+
+# -----------------------------------------------------------------------------
+# Monitoring. The OT partner operates EcoStruxure day to day. The Customer's
+# Telemetry of Record collector polls critical devices directly, read-only,
+# and also receives the BMS feed, so the two can be compared.
+# -----------------------------------------------------------------------------
+monitoring:
+  systems:
+    - id: "EBO"
+      name: "EcoStruxure Building Operation"
+      role: "BMS: HVAC, chillers, CDUs, thermal walls, fire and leak (secondary)"
+      operator: ot_partner
+    - id: "PME"
+      name: "EcoStruxure Power Monitoring Expert"
+      role: "EPMS: switchgear, metering, power quality"
+      operator: ot_partner
+    - id: "EIT"
+      name: "EcoStruxure IT"
+      role: "DCIM: UPS, busway, rack power, capacity"
+      operator: ot_partner
+    - id: "FACP"
+      name: "Notifier fire alarm control panel"
+      role: "Fire alarm system of record (life safety)"
+      operator: ot_partner
+    - id: "UFM"
+      name: "NVIDIA UFM"
+      role: "InfiniBand fabric management"
+      operator: it_partner
+    - id: "NMX"
+      name: "NVIDIA NMX"
+      role: "NVLink domain management (per rack)"
+      operator: it_partner
+    - id: "TOR"
+      name: "Customer Telemetry of Record collector"
+      role: "Independent, read-only aggregation of every source; basis for SLA measurement"
+      operator: customer
+  device_classes:
+    - {class: "UPS", products: [galaxy_vx_1500, galaxy_vl_300], protocol: "SNMPv3", system: "EIT", customer_tap: "direct (SNMPv3 read-only user)"}
+    - {class: "Busway", products: [starline_1200t5], protocol: "Modbus TCP", system: "EIT", customer_tap: "direct (read-only)"}
+    - {class: "Switchgear and meters", products: [unit_sub_2500], protocol: "Modbus TCP", system: "PME", customer_tap: "PME export"}
+    - {class: "Generators", products: [cat_c175_16], protocol: "Modbus TCP (EMCP 4.4)", system: "EBO", customer_tap: "direct (read-only)"}
+    - {class: "CDUs", products: [coolit_chx2000], protocol: "Redfish", system: "EBO", customer_tap: "direct (Redfish read-only account)"}
+    - {class: "Thermal walls and CRAHs", products: [liebert_cwa_400, liebert_cw_crah], protocol: "BACnet/IP", system: "EBO", customer_tap: "BMS feed"}
+    - {class: "Chillers and pumps", products: [liebert_afc_1500, fw_pump], protocol: "BACnet/IP", system: "EBO", customer_tap: "BMS feed"}
+    - {class: "Leak detection", products: [tracetek_ttdm128], protocol: "Modbus TCP (via gateway)", system: "EBO", customer_tap: "direct (read-only)"}
+    - {class: "Aspirating smoke", products: [vesda_e_vep], protocol: "Modbus HLI", system: "EBO", customer_tap: "BMS feed (fire panel is the system of record)"}
+    - {class: "Compute racks", products: [gb200_nvl72, gb300_nvl72], protocol: "Redfish", system: "TOR", customer_tap: "direct"}
+    - {class: "InfiniBand fabric", products: [quantum2_qm9700, quantum_x800_q3400], protocol: "UFM REST / events", system: "UFM", customer_tap: "UFM event export"}
+
+# -----------------------------------------------------------------------------
+# Drawing geometry (meters). Used only by the schematic drawings.
+# -----------------------------------------------------------------------------
+layout:
+  cold_aisle_m: 1.8
+  hot_aisle_m: 1.2
+  end_clearance_m: 2.0
+  thermal_wall_depth_m: 2.4

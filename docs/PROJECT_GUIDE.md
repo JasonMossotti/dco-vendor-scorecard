@@ -6,7 +6,7 @@ How this project fits together and how to change it. Written so that someone new
 
 ## The idea in one paragraph
 
-At a partner-operated GPU data center site, a vendor does the hands-on work and the customer's site lead owns the outcome. This project shows how to hold that vendor accountable with **independent telemetry instead of vendor self-reporting**: a machine-readable SLA, synthetic site data with planted discrepancies, an engine that reconciles vendor records against telemetry, and a scorecard comparing what the vendor reported with what actually happened. Everything is synthetic and fictional.
+At a partner-operated GPU data center site, vendors do the hands-on work and the customer's site lead owns the outcome. This project shows how to hold that vendor accountable with **independent telemetry instead of vendor self-reporting**: a machine-readable SLA, synthetic site data with planted discrepancies, an engine that reconciles vendor records against telemetry, and a scorecard comparing what the vendor reported with what actually happened. Everything is synthetic and fictional.
 
 ## Current status (as of 2026-10-04)
 
@@ -18,10 +18,13 @@ At a partner-operated GPU data center site, a vendor does the hands-on work and 
 | Live demo (GitHub Pages) | https://jasonmossotti.github.io/dco-vendor-scorecard/ |
 | SLA document (generated) | `docs/SLA.md`: 24 sections plus appendices |
 | Scorecard and discrepancy reports (generated) | `reports/scorecard.md`, `reports/discrepancy_report.md` |
-| Tests | 99 (pytest), run by CI on every push and before every Pages deploy |
+| Site model and drawings (generated) | `site/site.yaml` -> `docs/site/SITE.md` plus 7 SVG sheets |
+| Tests | 113 (pytest), run by CI on every push and before every Pages deploy |
 | AWS hosting guide | `docs/DEPLOY_AWS.md` |
 
 Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 5 Minimum Service Level Defaults, $222,000 credits payable (capped from $255,300), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
+
+**In progress: multi-vendor expansion.** The site is becoming a customer-owned AI data center in Central Texas with two contracted partners: Ridgeline Site Services (IT partner, the existing SLA) and Caprock Critical Facilities (OT partner, new). Phase 1 (site model and drawings) is complete; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
 
 **Purpose:** a portfolio project for a Data Center Operations Lead (partner-operated sites) application. Keep everything synthetic and fictional; never imply knowledge of any real company's internal systems.
 
@@ -66,9 +69,11 @@ sla/vendor_sla.yaml ──► docs/SLA.md                     (scripts/render_sl
                                          │
                                          ▼
                               interactive app (app/streamlit_app.py) ──► GitHub Pages (scripts/build_site.py)
+
+site/site.yaml ──► docs/site/SITE.md + drawing sheets        (scripts/render_site.py)
 ```
 
-The SLA YAML is the single source of truth. The document, generator, engine, scorecard, and app all read it.
+The SLA YAML is the single source of truth for the contract; `site/site.yaml` is the single source of truth for the equipment, topology, and monitoring. The document, generator, engine, scorecard, and app read the SLA; the drawings and site description read the site model, and tests check that the two agree (halls, rack counts, CDUs, rack-to-CDU mapping).
 
 ## Where things live
 
@@ -86,7 +91,10 @@ The SLA YAML is the single source of truth. The document, generator, engine, sco
 | Engine self-check against the answer key | `src/scorecard/engine/evaluate.py` |
 | Service level measurement for any period | `src/scorecard/kpi.py` |
 | Scorecard assembly: credits, severity log, corrective action plans | `src/scorecard/builder.py` |
-| App logic (what-if overrides, tables), testable without Streamlit | `src/scorecard/app_support.py` |
+| App logic (pipeline runner, tables), testable without Streamlit | `src/scorecard/app_support.py` |
+| Site equipment, ratings, interfaces, sources, topology, monitoring map | `site/site.yaml` |
+| Site expansion, power and cooling paths, capacity checks | `src/scorecard/site_model.py` |
+| Drawing sheets (SVG), generated from the site model | `src/scorecard/site_drawings.py` |
 | App layout | `app/streamlit_app.py` |
 | What each data file represents | `docs/DATA_MODEL.md` |
 
@@ -100,12 +108,15 @@ The SLA YAML is the single source of truth. The document, generator, engine, sco
 
 **Add a fault class.** Add a rule card under `measurement_spec`, a validation checklist with `check_ids` under `rts_validation`, the category mapping in `engine/core.py` (`CATEGORY_TO_CLASS`, `telemetry_t0`, `validation_target`), and generation in the synthetic generator.
 
+**Change site equipment or quantities.** Edit `site/site.yaml`, then `python scripts/render_site.py`. The model refuses to load if any capacity check fails (for example, too few chillers for the design day), and the drawings and `docs/site/SITE.md` regenerate from the same file. Mark engineering assumptions in the `assumptions` list and cite manufacturer sources under the product.
+
 **Change the app.** Logic goes in `app_support.py` (tested); layout goes in `app/streamlit_app.py`. If the app starts using a new Streamlit feature, add it to `tests/fake_streamlit.py`.
 
 ## Regenerate everything after a change
 
 ```bash
 python scripts/render_sla.py        # SLA document
+python scripts/render_site.py       # site description and drawings
 python scripts/generate_data.py     # committed sample data
 python scripts/run_engine.py        # discrepancy report
 python scripts/build_scorecard.py   # scorecard
@@ -123,7 +134,7 @@ python scripts/build_site.py && python -m http.server -d _site 8000
 
 ## Conventions
 
-- **Generated files are never edited by hand:** `docs/SLA.md`, `data/sample/`, and everything in `reports/`. Tests fail if they are out of date.
+- **Generated files are never edited by hand:** `docs/SLA.md`, `docs/site/`, `data/sample/`, and everything in `reports/`. Tests fail if they are out of date.
 - **The engine never reads `ground_truth/`.** Only `engine/evaluate.py` does, after the engine has finished.
 - **A finding means records do not reconcile, not that someone lied.** Keep that framing in report text.
 - **Synthetic data only.** No real company's information, names, or documents.
@@ -138,7 +149,11 @@ python scripts/build_site.py && python -m http.server -d _site 8000
 | Record-integrity findings are S1 | Trust in the records underpins every other measurement |
 | Worst-rack floor (CSL-12) | Fleet averages hide one failing rack |
 | Expected vs. Minimum levels, credit pool, monthly cap, earnback | Standard outsourcing structure |
-| Pure-Python scorecard function of (SLA, data) | Enables what-if analysis and runs in the browser |
+| Pure-Python scorecard function of (SLA, data) | Runs in the browser; a contract amendment is a one-line YAML change |
+| Site model as code with capacity checks | Drawings, docs, and telemetry agree on what exists; an under-built site will not load |
+| Distributed redundant UPS (4 make 3) with all six UPS pairings | A lost module's load spreads over the other three (worst case 97%) |
+| Shared N+1 CDU secondary header per hall | A single CDU loss does not drop racks; the row's CDU is only the primary |
+| Customer Telemetry of Record reads devices directly, read-only | The OT partner runs the BMS; the customer still has an independent source |
 | 1-hour post-repair burn-in | A 4-hour burn-in made the 4-hour P1 restore target impossible |
 
 ## Build history
@@ -149,12 +164,23 @@ In the order it was built, with the decisions that shaped each step:
 2. **Synthetic GB200 NVL72 data.** A seeded generator for one site (Hall A in production with 32 racks; Hall B in deployment) writes telemetry and vendor records plus an answer key. The 4-hour tray burn-in was cut to 1 hour because it made the 4-hour P1 restore target impossible.
 3. **Measurement specification and ticket handling** (the owner's ideas): one rule card per fault class so the vendor and customer measure identically, and TR-1 to TR-7 so a repair that fails again soon after cannot restart the clock. Also added capacity-weighted availability, a worst-rack floor (CSL-12), and KM-16 to KM-19.
 4. **Discrepancy engine.** Connectors (answer key blocked), Tickets of Record rebuilt from telemetry, and 11 detectors. Severity and corrective actions come from `breach_severity.finding_types` in the SLA. Testing found two real bugs: the engine matched PSU faults by rack instead of slot, and the generator planted a discrepancy inside the SLA's 15-minute tolerance.
-5. **Scorecard.** Every service level measured from telemetry beside the vendor's self-report, with credits, a severity log, and corrective action plans raised at the period review. `build_scorecard(sla, result)` is a pure function, which enables what-if analysis.
+5. **Scorecard.** Every service level measured from telemetry beside the vendor's self-report, with credits, a severity log, and corrective action plans raised at the period review. `build_scorecard(sla, result)` is a pure function, so results always follow the contract as written.
 6. **Interactive demo.** A Streamlit app running in the browser through stlite on GitHub Pages, refreshed every Monday with a "latest 4 weeks" dataset. The owner's review caught a reset bug (sliders now reset through an `on_click` callback), dollar signs rendering as math, stacked bars, an unreadable weekly chart (now a vendor-vs-measured gap chart), and corrective action plans that looked overdue (due dates now count from the review date).
 7. **Polish.** README screenshots and a 30-second summary, the AWS guide, and the account rename to JasonMossotti.
+8. **What-if removed; Phase 1 site model.** The sidebar sliders were removed (a test confirms none are drawn). Equipment was researched against manufacturer documentation and chosen for interoperability under one monitoring layer. `site/site.yaml` and `site_model.py` define three halls (A: 32 x GB200 NVL72 in production; B: 32 x GB300 NVL72 in deployment; C: 8-rack 800 VDC pilot, planned), 7 x Cat C175-16 generators (N+1), 11 x Liebert AFC chillers (N+1 at 43 C), 4 x Galaxy VX per hall in a distributed redundant 4-make-3 design, 4 x CoolIT CHx2000 per hall (N+1), and 2 x Eaton MVSST for Hall C. 25 capacity checks pass. Seven schematic sheets (A-001 campus, A-101 building, A-201 to A-203 halls, E-001 one-line, M-001 cooling) are generated and were reviewed visually. Decisions: the MVSST serves only the 800 VDC pilot because GB200 and GB300 power shelves take AC; leak cable senses water and conductive fluids because the coolant is PG25 (hydrocarbon cable only at the diesel tanks); Galaxy VX rather than VXL because the VXL is a 400 V IEC product and the site is 480 V. Regenerating left every report byte-identical.
+
+## Roadmap (agreed with the owner; plan before building each phase)
+
+2. **Split the SLA files.** `sla/common.yaml` (definitions, Telemetry of Record, severity framework), `sla/it_partner.yaml` (today's SLA, moved), rendered per partner. Pure refactor: all tests pass and every output stays byte-identical.
+3. **OT partner SLA and interface agreement.** `sla/ot_partner.yaml` (critical power availability per feed, cooling within band, alarm acknowledgment and response, redundancy restoration time, NFPA 110 generator testing, NFPA 72 inspections, coolant chemistry, MOP compliance, record integrity) and `sla/interface_agreement.yaml` (demarcation points, break-fix ownership matrix, joint incident command, fault-attribution rules using the site model's power and cooling paths).
+4. **OT telemetry and detection.** Synthetic OT telemetry with real point and alarm names (UPS NMC SNMP, EMCP 4.4 Modbus, CHx2000 Redfish, VESDA Alert/Action/Fire 1/Fire 2, TraceTek leak location), OT detectors (for example, a generator test reported passed with no load transfer, maintenance marked complete with no evidence, a BMS point overridden or an alarm inhibited with no change record), cross-vendor attribution, OT and site scorecards, robustness runs. Use a separate random stream so the IT sample and its headline numbers do not change.
+5. **App.** Partner selector, site rollup, attribution view.
+6. **Live-readiness adapters.** SNMP, Modbus, Redfish, and BACnet connectors tested against protocol simulators. Real use would still need a security review, a read-only path segmented from the OT network, and site acceptance testing.
+
+Later: a security partner (access control, CCTV, escorts).
 
 ## Open items
 
 - [ ] Fix the repository topic "gp" to "gpu" (GitHub repo page, gear icon next to About).
 - [ ] Confirm the Git commit email uses GitHub's numbered noreply address (`git log -1 --format='%ae'`).
-- [ ] Next: the owner has new ideas for larger project updates. Start by asking what they are, then plan before building.
+- [ ] Next: Phase 2 (split the SLA files). Present the plan, then build.

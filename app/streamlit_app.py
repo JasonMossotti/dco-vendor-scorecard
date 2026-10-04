@@ -33,19 +33,8 @@ SEV_ORDER = ["S1", "S2", "S3", "S4"]
 
 st.set_page_config(page_title="DCO Vendor Scorecard", page_icon="📊", layout="wide")
 CONTRACT = load_sla(ROOT / "sla" / "vendor_sla.yaml")
-DEFAULTS = A.contract_defaults(CONTRACT)
-WIDGET_DEFAULTS = A.widget_defaults(CONTRACT)
-for _k, _v in WIDGET_DEFAULTS.items():          # widgets read their values from session state
-    st.session_state.setdefault(_k, _v)
-
-
-def reset_to_contract() -> None:
-    """Runs before the next render, so the sliders themselves move back (not just the data)."""
-    for k, v in WIDGET_DEFAULTS.items():
-        st.session_state[k] = v
-
 # --------------------------------------------------------------------------- #
-# Sidebar: dataset and what-if controls
+# Sidebar: dataset
 # --------------------------------------------------------------------------- #
 st.sidebar.header("Data")
 datasets = A.available_datasets(ROOT)
@@ -65,35 +54,7 @@ if pick == "Generate a new random month":
 else:
     data_dir = str(datasets[pick])
 
-st.sidebar.header("What if the SLA were different?")
-st.sidebar.caption("Change contract terms and every result recalculates from the same telemetry.")
-st.sidebar.button("Reset to contract values", on_click=reset_to_contract)
-
-with st.sidebar.expander("Restore targets", expanded=True):
-    restore = {p: st.slider(f"{p} restore target (hours)", 1.0, 48.0 if p == "P3" else 16.0,
-                            step=0.5, key=f"wf_restore_{p}")
-               for p in ("P1", "P2", "P3")}
-with st.sidebar.expander("Ticket handling"):
-    early = st.slider("Early-failure window, TR-1 (minutes)", 0, 240, step=5, key="wf_early")
-    stability = st.slider("Stability window, TR-2 (hours)", 2, 72, step=1, key="wf_stability")
-with st.sidebar.expander("Service level thresholds"):
-    csl_names = {c["id"]: f"{c['id']} {c['name']}" for c in CONTRACT["critical_service_levels"]}
-    cid = st.selectbox("Service level", list(csl_names), format_func=lambda c: csl_names[c], key="wf_csl")
-    exp = st.number_input("Expected (%)", 0.0, 100.0, step=0.1, key=f"wf_exp_{cid}")
-    mn = st.number_input("Minimum (%)", 0.0, 100.0, step=0.1, key=f"wf_min_{cid}")
-with st.sidebar.expander("Commercials"):
-    at_risk = st.slider("At-risk amount (% of monthly charges)", 5.0, 20.0, step=0.5, key="wf_atrisk")
-
-overrides = {"restore_hours": restore, "early_failure_minutes": early, "stability_hours": stability,
-             "at_risk_pct": at_risk, "thresholds": {cid: (exp, mn)}}
-sla = A.apply_overrides(CONTRACT, overrides)
-changes = A.changed_from_contract(CONTRACT, overrides)
-direction_ok = next(c for c in sla["critical_service_levels"] if c["id"] == cid)
-if (direction_ok["direction"] == "higher_is_better" and exp < mn) or (direction_ok["direction"] == "lower_is_better" and exp > mn):
-    st.sidebar.error("Expected must be at least as demanding as Minimum. Threshold change ignored.")
-    overrides["thresholds"] = {}
-    sla = A.apply_overrides(CONTRACT, overrides)
-    changes = A.changed_from_contract(CONTRACT, overrides)
+sla = CONTRACT
 
 st.sidebar.divider()
 st.sidebar.markdown(f"[Source code and SLA on GitHub]({REPO})")
@@ -108,8 +69,6 @@ ctx = result.context
 st.title("Vendor SLA Scorecard")
 st.caption(f"{sc['site']} · Supplier: {sc['supplier']} · {sc['window']['start']:%b %d} to "
            f"{sc['window']['end']:%b %d, %Y} · Synthetic data for a portfolio demonstration; all names and events are fictional.")
-if changes:
-    st.warning("**What-if mode.** Results use modified SLA terms: " + "; ".join(changes) + ".")
 
 tabs = st.tabs(["Overview", "Service levels", "Findings", "Corrective actions", "Incidents", "About"])
 

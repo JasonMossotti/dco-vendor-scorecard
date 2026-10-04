@@ -67,8 +67,8 @@ site:
     power_shelves: 8
     nominal_power_kw: 120
   cooling:
-    cdu_type: "in-row liquid-to-liquid CDU"
-    cdu_capacity_mw: 1.3
+    cdu_type: "CoolIT CHx2000 row-based liquid-to-liquid CDU"
+    cdu_capacity_mw: 2.0
     racks_per_cdu: 8
     cdus_total: 8
   service_units:
@@ -87,7 +87,7 @@ site:
     - id: "SU-CDU"
       name: "CDU loop"
       gpus: 576
-      note: "One CDU serves up to 8 racks; a loss of cooling can affect all of them."
+      note: "Each CDU is the primary for one row of 8 racks on a shared N+1 secondary header; a loss of cooling can affect all of them."
 
 commercial:
   currency: "USD"

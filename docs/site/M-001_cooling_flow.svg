@@ -1,0 +1,296 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="860" viewBox="0 0 1520 860">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="70.0" y="40.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="start" fill="#1e2933" font-weight="bold">Cooling flow diagram</text>
+<text x="70.0" y="60.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="start" fill="#6b7785" font-weight="normal">One facility water loop (20 C supply / 30 C return) serves CDUs, thermal walls, and electrical-room CRAHs. CDUs isolate the PG25 secondary loop to the racks.</text>
+<rect x="70.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="106.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-01</text>
+<text x="106.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="91.6" y1="126.0" x2="91.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="120.4" y1="126.0" x2="120.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="150.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="186.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-02</text>
+<text x="186.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="171.6" y1="126.0" x2="171.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="200.4" y1="126.0" x2="200.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="230.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="266.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-03</text>
+<text x="266.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="251.6" y1="126.0" x2="251.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="280.4" y1="126.0" x2="280.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="310.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="346.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-04</text>
+<text x="346.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="331.6" y1="126.0" x2="331.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="360.4" y1="126.0" x2="360.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="390.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="426.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-05</text>
+<text x="426.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="411.6" y1="126.0" x2="411.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="440.4" y1="126.0" x2="440.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="470.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="506.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-06</text>
+<text x="506.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="491.6" y1="126.0" x2="491.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="520.4" y1="126.0" x2="520.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="550.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="586.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-07</text>
+<text x="586.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="571.6" y1="126.0" x2="571.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="600.4" y1="126.0" x2="600.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="630.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="666.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-08</text>
+<text x="666.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="651.6" y1="126.0" x2="651.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="680.4" y1="126.0" x2="680.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="710.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="746.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-09</text>
+<text x="746.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="731.6" y1="126.0" x2="731.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="760.4" y1="126.0" x2="760.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="790.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="826.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-10</text>
+<text x="826.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="811.6" y1="126.0" x2="811.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="840.4" y1="126.0" x2="840.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<rect x="870.0" y="86.0" width="72.0" height="40.0" rx="0" fill="#dff0f7" stroke="#1e2933" stroke-width="1.0"/>
+<text x="906.0" y="104.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CH-11</text>
+<text x="906.0" y="118.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">AFC</text>
+<line x1="891.6" y1="126.0" x2="891.6" y2="150.0" stroke="#0b78a8" stroke-width="1.6"/>
+<line x1="920.4" y1="126.0" x2="920.4" y2="196.0" stroke="#c2362b" stroke-width="1.6"/>
+<line x1="91.6" y1="150.0" x2="1082.0" y2="150.0" stroke="#0b78a8" stroke-width="3"/>
+<circle cx="972.0" cy="150.0" r="10" fill="#ffffff" stroke="#0b78a8" stroke-width="1.6"/>
+<polyline points="967.0,155.0 978.0,150.0 967.0,145.0" fill="none" stroke="#0b78a8" stroke-width="1.2"/>
+<circle cx="1006.0" cy="150.0" r="10" fill="#ffffff" stroke="#0b78a8" stroke-width="1.6"/>
+<polyline points="1001.0,155.0 1012.0,150.0 1001.0,145.0" fill="none" stroke="#0b78a8" stroke-width="1.2"/>
+<circle cx="1040.0" cy="150.0" r="10" fill="#ffffff" stroke="#0b78a8" stroke-width="1.6"/>
+<polyline points="1035.0,155.0 1046.0,150.0 1035.0,145.0" fill="none" stroke="#0b78a8" stroke-width="1.2"/>
+<text x="960.0" y="134.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="start" fill="#6b7785" font-weight="normal">FWP-1..3 (N+1)</text>
+<line x1="1082.0" y1="150.0" x2="1082.0" y2="176.0" stroke="#0b78a8" stroke-width="3"/>
+<line x1="50.0" y1="176.0" x2="1480.0" y2="176.0" stroke="#0b78a8" stroke-width="4"/>
+<line x1="50.0" y1="196.0" x2="1480.0" y2="196.0" stroke="#c2362b" stroke-width="4"/>
+<text x="1476.0" y="170.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="end" fill="#0b78a8" font-weight="normal">supply 20 C</text>
+<text x="1476.0" y="211.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="end" fill="#c2362b" font-weight="normal">return 30 C</text>
+<rect x="60.0" y="240.0" width="440.0" height="560.0" rx="4" fill="none" stroke="#c9d0d8" stroke-width="1.0"/>
+<text x="114.0" y="262.0" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="start" fill="#1e2933" font-weight="bold">Hall A</text>
+<text x="114.0" y="278.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="start" fill="#6b7785" font-weight="normal">3,675 kW to liquid, 549 kW to air</text>
+<line x1="84.0" y1="176.0" x2="84.0" y2="760.0" stroke="#0b78a8" stroke-width="2"/>
+<line x1="98.0" y1="196.0" x2="98.0" y2="770.0" stroke="#c2362b" stroke-width="2"/>
+<line x1="84.0" y1="312.0" x2="130.0" y2="312.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="324.0" x2="130.0" y2="324.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="302.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="316.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-A1</text>
+<text x="176.0" y="328.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="222.0" y1="312.0" x2="320.0" y2="312.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="222.0" y1="324.0" x2="320.0" y2="324.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="84.0" y1="353.0" x2="130.0" y2="353.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="365.0" x2="130.0" y2="365.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="343.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="357.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-A2</text>
+<text x="176.0" y="369.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="222.0" y1="353.0" x2="320.0" y2="353.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="222.0" y1="365.0" x2="320.0" y2="365.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="84.0" y1="394.0" x2="130.0" y2="394.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="406.0" x2="130.0" y2="406.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="384.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="398.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-A3</text>
+<text x="176.0" y="410.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="222.0" y1="394.0" x2="320.0" y2="394.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="222.0" y1="406.0" x2="320.0" y2="406.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="84.0" y1="435.0" x2="130.0" y2="435.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="447.0" x2="130.0" y2="447.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="425.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="439.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-A4</text>
+<text x="176.0" y="451.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="222.0" y1="435.0" x2="320.0" y2="435.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="222.0" y1="447.0" x2="320.0" y2="447.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="84.0" y1="476.0" x2="130.0" y2="476.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="488.0" x2="130.0" y2="488.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="466.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="480.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-A1</text>
+<text x="176.0" y="492.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="84.0" y1="517.0" x2="130.0" y2="517.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="529.0" x2="130.0" y2="529.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="507.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="521.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-A2</text>
+<text x="176.0" y="533.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="84.0" y1="558.0" x2="130.0" y2="558.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="570.0" x2="130.0" y2="570.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="548.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="562.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-A3</text>
+<text x="176.0" y="574.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="84.0" y1="599.0" x2="130.0" y2="599.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="611.0" x2="130.0" y2="611.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="589.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="603.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-A4</text>
+<text x="176.0" y="615.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="84.0" y1="640.0" x2="130.0" y2="640.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="652.0" x2="130.0" y2="652.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="630.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="644.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-A1</text>
+<text x="176.0" y="656.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="84.0" y1="681.0" x2="130.0" y2="681.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="693.0" x2="130.0" y2="693.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="671.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="685.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-A2</text>
+<text x="176.0" y="697.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="84.0" y1="722.0" x2="130.0" y2="722.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="98.0" y1="734.0" x2="130.0" y2="734.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="130.0" y="712.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="176.0" y="726.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-A3</text>
+<text x="176.0" y="738.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="320.0" y1="312.0" x2="320.0" y2="447.0" stroke="#2f8f5b" stroke-width="3"/>
+<text x="328.0" y="306.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="start" fill="#2f8f5b" font-weight="normal">shared secondary</text>
+<text x="328.0" y="318.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="start" fill="#2f8f5b" font-weight="normal">header (PG25)</text>
+<line x1="320.0" y1="379.5" x2="360.0" y2="379.5" stroke="#2f8f5b" stroke-width="2"/>
+<rect x="360.0" y="349.5" width="140.0" height="60.0" rx="0" fill="#d5dbe2" stroke="#1e2933" stroke-width="1.0"/>
+<text x="430.0" y="371.5" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="middle" fill="#1e2933" font-weight="bold">32 racks</text>
+<text x="430.0" y="386.5" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="middle" fill="#6b7785" font-weight="normal">GB200 NVL72</text>
+<text x="430.0" y="399.5" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">cold plates and manifolds</text>
+<rect x="356.0" y="345.5" width="148.0" height="68.0" rx="0" fill="none" stroke="#0f9d8a" stroke-width="1.2" stroke-dasharray="6 3"/>
+<text x="360.0" y="427.5" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="start" fill="#0f9d8a" font-weight="normal">leak cable at manifolds and CDUs</text>
+<text x="360.0" y="441.5" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="start" fill="#6b7785" font-weight="normal">CDUs N+1 on the header</text>
+<rect x="530.0" y="240.0" width="440.0" height="560.0" rx="4" fill="none" stroke="#c9d0d8" stroke-width="1.0"/>
+<text x="584.0" y="262.0" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="start" fill="#1e2933" font-weight="bold">Hall B</text>
+<text x="584.0" y="278.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="start" fill="#6b7785" font-weight="normal">3,802 kW to liquid, 422 kW to air</text>
+<line x1="554.0" y1="176.0" x2="554.0" y2="760.0" stroke="#0b78a8" stroke-width="2"/>
+<line x1="568.0" y1="196.0" x2="568.0" y2="770.0" stroke="#c2362b" stroke-width="2"/>
+<line x1="554.0" y1="312.0" x2="600.0" y2="312.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="324.0" x2="600.0" y2="324.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="302.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="316.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-B1</text>
+<text x="646.0" y="328.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="692.0" y1="312.0" x2="790.0" y2="312.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="692.0" y1="324.0" x2="790.0" y2="324.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="554.0" y1="353.0" x2="600.0" y2="353.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="365.0" x2="600.0" y2="365.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="343.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="357.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-B2</text>
+<text x="646.0" y="369.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="692.0" y1="353.0" x2="790.0" y2="353.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="692.0" y1="365.0" x2="790.0" y2="365.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="554.0" y1="394.0" x2="600.0" y2="394.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="406.0" x2="600.0" y2="406.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="384.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="398.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-B3</text>
+<text x="646.0" y="410.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="692.0" y1="394.0" x2="790.0" y2="394.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="692.0" y1="406.0" x2="790.0" y2="406.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="554.0" y1="435.0" x2="600.0" y2="435.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="447.0" x2="600.0" y2="447.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="425.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="439.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-B4</text>
+<text x="646.0" y="451.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="692.0" y1="435.0" x2="790.0" y2="435.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="692.0" y1="447.0" x2="790.0" y2="447.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="554.0" y1="476.0" x2="600.0" y2="476.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="488.0" x2="600.0" y2="488.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="466.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="480.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-B1</text>
+<text x="646.0" y="492.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="554.0" y1="517.0" x2="600.0" y2="517.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="529.0" x2="600.0" y2="529.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="507.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="521.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-B2</text>
+<text x="646.0" y="533.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="554.0" y1="558.0" x2="600.0" y2="558.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="570.0" x2="600.0" y2="570.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="548.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="562.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-B3</text>
+<text x="646.0" y="574.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="554.0" y1="599.0" x2="600.0" y2="599.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="611.0" x2="600.0" y2="611.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="589.0" width="92.0" height="32.0" rx="0" fill="#dfe9f3" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="603.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">TW-B4</text>
+<text x="646.0" y="615.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">Liebert CWA</text>
+<line x1="554.0" y1="640.0" x2="600.0" y2="640.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="652.0" x2="600.0" y2="652.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="630.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="644.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-B1</text>
+<text x="646.0" y="656.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="554.0" y1="681.0" x2="600.0" y2="681.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="693.0" x2="600.0" y2="693.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="671.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="685.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-B2</text>
+<text x="646.0" y="697.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="554.0" y1="722.0" x2="600.0" y2="722.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="568.0" y1="734.0" x2="600.0" y2="734.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="600.0" y="712.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="646.0" y="726.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-B3</text>
+<text x="646.0" y="738.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="790.0" y1="312.0" x2="790.0" y2="447.0" stroke="#2f8f5b" stroke-width="3"/>
+<text x="798.0" y="306.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="start" fill="#2f8f5b" font-weight="normal">shared secondary</text>
+<text x="798.0" y="318.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="start" fill="#2f8f5b" font-weight="normal">header (PG25)</text>
+<line x1="790.0" y1="379.5" x2="830.0" y2="379.5" stroke="#2f8f5b" stroke-width="2"/>
+<rect x="830.0" y="349.5" width="140.0" height="60.0" rx="0" fill="#d5dbe2" stroke="#1e2933" stroke-width="1.0"/>
+<text x="900.0" y="371.5" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="middle" fill="#1e2933" font-weight="bold">32 racks</text>
+<text x="900.0" y="386.5" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="middle" fill="#6b7785" font-weight="normal">GB300 NVL72</text>
+<text x="900.0" y="399.5" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">cold plates and manifolds</text>
+<rect x="826.0" y="345.5" width="148.0" height="68.0" rx="0" fill="none" stroke="#0f9d8a" stroke-width="1.2" stroke-dasharray="6 3"/>
+<text x="830.0" y="427.5" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="start" fill="#0f9d8a" font-weight="normal">leak cable at manifolds and CDUs</text>
+<text x="830.0" y="441.5" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="start" fill="#6b7785" font-weight="normal">CDUs N+1 on the header</text>
+<rect x="1000.0" y="240.0" width="440.0" height="560.0" rx="4" fill="none" stroke="#c9d0d8" stroke-width="1.0"/>
+<text x="1054.0" y="262.0" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="start" fill="#1e2933" font-weight="bold">Hall C (800 VDC pilot)</text>
+<text x="1054.0" y="278.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="start" fill="#6b7785" font-weight="normal">1,840 kW to liquid, 0 kW to air</text>
+<line x1="1024.0" y1="176.0" x2="1024.0" y2="760.0" stroke="#0b78a8" stroke-width="2"/>
+<line x1="1038.0" y1="196.0" x2="1038.0" y2="770.0" stroke="#c2362b" stroke-width="2"/>
+<line x1="1024.0" y1="312.0" x2="1070.0" y2="312.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="1038.0" y1="324.0" x2="1070.0" y2="324.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="1070.0" y="302.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1116.0" y="316.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-C1</text>
+<text x="1116.0" y="328.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="1162.0" y1="312.0" x2="1260.0" y2="312.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="1162.0" y1="324.0" x2="1260.0" y2="324.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="1024.0" y1="353.0" x2="1070.0" y2="353.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="1038.0" y1="365.0" x2="1070.0" y2="365.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="1070.0" y="343.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1116.0" y="357.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-C2</text>
+<text x="1116.0" y="369.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="1162.0" y1="353.0" x2="1260.0" y2="353.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="1162.0" y1="365.0" x2="1260.0" y2="365.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="1024.0" y1="394.0" x2="1070.0" y2="394.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="1038.0" y1="406.0" x2="1070.0" y2="406.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="1070.0" y="384.0" width="92.0" height="32.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1116.0" y="398.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CDU-C3</text>
+<text x="1116.0" y="410.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">CHx2000</text>
+<line x1="1162.0" y1="394.0" x2="1260.0" y2="394.0" stroke="#2f8f5b" stroke-width="1.4"/>
+<line x1="1162.0" y1="406.0" x2="1260.0" y2="406.0" stroke="#2f8f5b" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="1024.0" y1="435.0" x2="1070.0" y2="435.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="1038.0" y1="447.0" x2="1070.0" y2="447.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="1070.0" y="425.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1116.0" y="439.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-C1</text>
+<text x="1116.0" y="451.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="1024.0" y1="476.0" x2="1070.0" y2="476.0" stroke="#0b78a8" stroke-width="1.2"/>
+<line x1="1038.0" y1="488.0" x2="1070.0" y2="488.0" stroke="#c2362b" stroke-width="1.2"/>
+<rect x="1070.0" y="466.0" width="92.0" height="32.0" rx="0" fill="#eef2f6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1116.0" y="480.0" font-family="Helvetica, Arial, sans-serif" font-size="9.5" text-anchor="middle" fill="#1e2933" font-weight="bold">CRAH-C2</text>
+<text x="1116.0" y="492.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">elec. room</text>
+<line x1="1260.0" y1="312.0" x2="1260.0" y2="406.0" stroke="#2f8f5b" stroke-width="3"/>
+<text x="1268.0" y="306.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="start" fill="#2f8f5b" font-weight="normal">shared secondary</text>
+<text x="1268.0" y="318.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="start" fill="#2f8f5b" font-weight="normal">header (PG25)</text>
+<line x1="1260.0" y1="359.0" x2="1300.0" y2="359.0" stroke="#2f8f5b" stroke-width="2"/>
+<rect x="1300.0" y="329.0" width="140.0" height="60.0" rx="0" fill="#d5dbe2" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1370.0" y="351.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" text-anchor="middle" fill="#1e2933" font-weight="bold">8 racks</text>
+<text x="1370.0" y="366.0" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="middle" fill="#6b7785" font-weight="normal">800 VDC rack, Vera Rubin</text>
+<text x="1370.0" y="379.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="middle" fill="#6b7785" font-weight="normal">cold plates and manifolds</text>
+<rect x="1296.0" y="325.0" width="148.0" height="68.0" rx="0" fill="none" stroke="#0f9d8a" stroke-width="1.2" stroke-dasharray="6 3"/>
+<text x="1300.0" y="407.0" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="start" fill="#0f9d8a" font-weight="normal">leak cable at manifolds and CDUs</text>
+<text x="1300.0" y="421.0" font-family="Helvetica, Arial, sans-serif" font-size="8.5" text-anchor="start" fill="#6b7785" font-weight="normal">CDUs N+1 on the header</text>
+<text x="1054.0" y="640.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="start" fill="#1e2933" font-weight="bold">Legend</text>
+<line x1="1054.0" y1="652.0" x2="1072.0" y2="652.0" stroke="#0b78a8" stroke-width="2.4"/>
+<text x="1080.0" y="656.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">Facility water supply</text>
+<line x1="1054.0" y1="669.0" x2="1072.0" y2="669.0" stroke="#c2362b" stroke-width="2.4"/>
+<text x="1080.0" y="673.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">Facility water return</text>
+<line x1="1054.0" y1="686.0" x2="1072.0" y2="686.0" stroke="#2f8f5b" stroke-width="2.4"/>
+<text x="1080.0" y="690.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">CDU secondary supply (PG25)</text>
+<line x1="1054.0" y1="703.0" x2="1072.0" y2="703.0" stroke="#2f8f5b" stroke-width="2.4" stroke-dasharray="6 3"/>
+<text x="1080.0" y="707.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">CDU secondary return</text>
+<line x1="1054.0" y1="720.0" x2="1072.0" y2="720.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<text x="1080.0" y="724.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">Leak detection zone</text>
+<rect x="8.0" y="8.0" width="1504.0" height="844.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
+<line x1="8.0" y1="808.0" x2="1512.0" y2="808.0" stroke="#1e2933" stroke-width="1.4"/>
+<text x="20.0" y="827.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Cooling flow diagram</text>
+<text x="20.0" y="845.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Not to scale  |  Schematic, not for construction</text>
+<line x1="1400.0" y1="808.0" x2="1400.0" y2="852.0" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1456.0" y="829.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
+<text x="1456.0" y="848.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">M-001</text>
+</svg>

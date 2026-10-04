@@ -2,15 +2,13 @@
 
 The app is a thin display layer over these functions:
 
-* ``apply_overrides``: build a what-if copy of the SLA from slider values.
-* ``run_pipeline``: engine -> scorecard -> self-check, cached per (dataset, SLA).
+* ``run_pipeline``: engine -> scorecard -> self-check, cached per dataset.
 * ``generate_month``: make a brand-new synthetic month in a temporary folder.
 * ``*_rows``: plain list-of-dict tables the app turns into DataFrames.
 """
 
 from __future__ import annotations
 
-import copy
 import json
 import tempfile
 from datetime import date, timedelta
@@ -59,61 +57,6 @@ def generate_month(seed: int, root: Path = ROOT, start: date | None = None) -> P
 
 
 # --------------------------------------------------------------------------- #
-# What-if SLA
-# --------------------------------------------------------------------------- #
-def contract_defaults(sla: dict[str, Any]) -> dict[str, Any]:
-    """Current contract values for every control the app exposes."""
-    prio = {p["id"]: p for p in sla["priorities"]}
-    fc = {f["id"]: f for f in sla["measurement_spec"]}
-    return {
-        "restore_hours": {p: prio[p]["restore_min"] / 60 for p in ("P1", "P2", "P3")},
-        "early_failure_minutes": sla["ticket_handling"]["stability"]["early_failure_minutes"],
-        "stability_hours": fc["FC-GPU"]["stability_window_hours"],
-        "at_risk_pct": sla["commercial"]["at_risk_pct"],
-        "thresholds": {c["id"]: (c["expected"], c["minimum"]) for c in sla["critical_service_levels"]},
-    }
-
-
-def apply_overrides(sla: dict[str, Any], overrides: dict[str, Any]) -> dict[str, Any]:
-    """Return a modified deep copy of the SLA. Unknown or missing keys are ignored."""
-    new = copy.deepcopy(sla)
-    for p in new["priorities"]:
-        if p["id"] in overrides.get("restore_hours", {}):
-            p["restore_min"] = int(round(overrides["restore_hours"][p["id"]] * 60))
-    if "early_failure_minutes" in overrides:
-        new["ticket_handling"]["stability"]["early_failure_minutes"] = int(overrides["early_failure_minutes"])
-    if "stability_hours" in overrides:
-        for f in new["measurement_spec"]:
-            if f["id"] in ("FC-GPU", "FC-LINK", "FC-SWITCH", "FC-PSU", "FC-SHELF"):
-                f["stability_window_hours"] = overrides["stability_hours"]
-    if "at_risk_pct" in overrides:
-        new["commercial"]["at_risk_pct"] = overrides["at_risk_pct"]
-    for c in new["critical_service_levels"]:
-        if c["id"] in overrides.get("thresholds", {}):
-            c["expected"], c["minimum"] = overrides["thresholds"][c["id"]]
-    return new
-
-
-def changed_from_contract(sla: dict[str, Any], overrides: dict[str, Any]) -> list[str]:
-    """Human-readable list of what differs from the contract."""
-    d = contract_defaults(sla)
-    out = []
-    for p, h in overrides.get("restore_hours", {}).items():
-        if abs(h - d["restore_hours"][p]) > 1e-9:
-            out.append(f"{p} restore target {d['restore_hours'][p]:g} -> {h:g} hrs")
-    if overrides.get("early_failure_minutes", d["early_failure_minutes"]) != d["early_failure_minutes"]:
-        out.append(f"Early-failure window {d['early_failure_minutes']} -> {overrides['early_failure_minutes']} min")
-    if overrides.get("stability_hours", d["stability_hours"]) != d["stability_hours"]:
-        out.append(f"Stability window {d['stability_hours']} -> {overrides['stability_hours']} hrs")
-    if overrides.get("at_risk_pct", d["at_risk_pct"]) != d["at_risk_pct"]:
-        out.append(f"At-risk amount {d['at_risk_pct']}% -> {overrides['at_risk_pct']}%")
-    for cid, (e, m) in overrides.get("thresholds", {}).items():
-        if (e, m) != d["thresholds"][cid]:
-            out.append(f"{cid} Expected/Minimum {d['thresholds'][cid][0]:g}/{d['thresholds'][cid][1]:g} -> {e:g}/{m:g}")
-    return out
-
-
-# --------------------------------------------------------------------------- #
 # Pipeline
 # --------------------------------------------------------------------------- #
 @lru_cache(maxsize=12)
@@ -158,18 +101,6 @@ def headline(sc: dict[str, Any]) -> str:
             + (f" ({', '.join(defaults)})" if defaults else "")
             + f", **{s1} S1 items**, and **\\${cr['payable']:,.0f}** in credits"
             + (f" (capped from \\${cr['uncapped']:,.0f})." if cr["capped"] else "."))
-
-
-def widget_defaults(sla: dict[str, Any]) -> dict[str, Any]:
-    """Session-state key -> contract value for every what-if widget in the app."""
-    d = contract_defaults(sla)
-    out: dict[str, Any] = {f"wf_restore_{p}": float(h) for p, h in d["restore_hours"].items()}
-    out["wf_early"] = int(d["early_failure_minutes"])
-    out["wf_stability"] = int(d["stability_hours"])
-    out["wf_atrisk"] = float(d["at_risk_pct"])
-    for cid, (e, m) in d["thresholds"].items():
-        out[f"wf_exp_{cid}"], out[f"wf_min_{cid}"] = float(e), float(m)
-    return out
 
 
 def vendor_vs_measured_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
