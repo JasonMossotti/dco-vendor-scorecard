@@ -1,10 +1,10 @@
 # DCO Vendor Scorecard
 
-[![CI](https://github.com/RexFeral/dco-vendor-scorecard/actions/workflows/ci.yml/badge.svg)](https://github.com/RexFeral/dco-vendor-scorecard/actions/workflows/ci.yml)
+[![CI](https://github.com/JasonMossotti/dco-vendor-scorecard/actions/workflows/ci.yml/badge.svg)](https://github.com/JasonMossotti/dco-vendor-scorecard/actions/workflows/ci.yml)
 
 **Vendor performance and repair-verification scorecard for partner-operated GPU data center sites.**
 
-**▶ [Open the interactive demo](https://rexferal.github.io/dco-vendor-scorecard/)** (runs entirely in your browser; first load takes 20 to 40 seconds)
+**▶ [Open the interactive demo](https://jasonmossotti.github.io/dco-vendor-scorecard/)** (runs entirely in your browser; first load takes 20 to 40 seconds)
 
 > Portfolio demonstration. All data, parties, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on internal information from, any real company.
 
@@ -26,7 +26,7 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
 | Weekly scorecard ([`reports/scorecard.md`](reports/scorecard.md)) | Done, tested |
-| Interactive demo ([live](https://rexferal.github.io/dco-vendor-scorecard/)) | Done, tested |
+| Interactive demo ([live](https://jasonmossotti.github.io/dco-vendor-scorecard/)) | Done, tested |
 
 ## SLA as code
 
@@ -89,7 +89,7 @@ python scripts/run_engine.py --robustness 20    # also test 20 freshly generated
 
 ## Interactive demo
 
-The [demo](https://rexferal.github.io/dco-vendor-scorecard/) runs the whole pipeline in the browser (Python via WebAssembly, no server). You can:
+The [demo](https://jasonmossotti.github.io/dco-vendor-scorecard/) runs the whole pipeline in the browser (Python via WebAssembly, no server). You can:
 
 - Switch between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), or a brand-new random month.
 - Change SLA terms in the sidebar (restore targets, ticket handling windows, service level thresholds, at-risk amount) and watch every result recalculate from the same telemetry.

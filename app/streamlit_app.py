@@ -28,7 +28,7 @@ import streamlit as st  # noqa: E402
 from scorecard import app_support as A  # noqa: E402
 from scorecard.sla_model import load_sla  # noqa: E402
 
-REPO = "https://github.com/RexFeral/dco-vendor-scorecard"
+REPO = "https://github.com/JasonMossotti/dco-vendor-scorecard"
 SEV_ORDER = ["S1", "S2", "S3", "S4"]
 
 st.set_page_config(page_title="DCO Vendor Scorecard", page_icon="📊", layout="wide")

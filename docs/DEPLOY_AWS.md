@@ -30,7 +30,7 @@ Then either enable **Static website hosting** on the bucket (simple, HTTP only, 
 
 ```bash
 sudo dnf install -y git python3.12        # if not found, update first: sudo dnf --releasever=latest update
-git clone https://github.com/RexFeral/dco-vendor-scorecard.git
+git clone https://github.com/JasonMossotti/dco-vendor-scorecard.git
 cd dco-vendor-scorecard
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-app.txt
