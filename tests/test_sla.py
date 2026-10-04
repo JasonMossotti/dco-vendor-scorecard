@@ -9,8 +9,12 @@ import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
 from scorecard.sla_model import (
+    SLAMergeError,
+    merge_terms,
+    sla_sources,
     SLAValidationError,
     cap_monthly_credits,
     classify_event_breach,
@@ -193,7 +197,7 @@ def test_unknown_aggravator_raises(sla):
 
 # ------------------------------------------------------------------ document
 def test_generated_document_is_current():
-    """Fails if someone edited the YAML without regenerating docs/SLA.md."""
+    """Fails if someone edited the YAML without regenerating the rendered SLA."""
     result = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "render_sla.py"), "--check"],
         capture_output=True, text=True,
@@ -202,8 +206,48 @@ def test_generated_document_is_current():
 
 
 def test_document_mentions_every_service_level(sla):
-    text = (ROOT / "docs" / "SLA.md").read_text(encoding="utf-8")
+    text = (ROOT / "docs" / "sla" / "IT_PARTNER_SLA.md").read_text(encoding="utf-8")
     for item in sla["critical_service_levels"] + sla["key_measurements"] + sla["measurement_spec"]:
         assert item["id"] in text
     for rule in sla["ticket_handling"]["stability"]["rules"]:
         assert rule["id"] in text
+
+
+# ------------------------------------------------------------------ common terms + partner SLA
+def test_partner_sla_extends_the_common_terms():
+    sources = sla_sources()
+    assert sources == {"partner": "it_partner.yaml", "common": "common.yaml",
+                       "common_version": sources["common_version"]} and sources["common_version"]
+    sla = load_sla()
+    assert "extends" not in sla and "common_version" not in sla, "file provenance is not a contract term"
+
+
+def test_site_wide_terms_live_only_in_common():
+    common = yaml.safe_load((ROOT / "sla" / "common.yaml").read_text(encoding="utf-8"))
+    partner = yaml.safe_load((ROOT / "sla" / "it_partner.yaml").read_text(encoding="utf-8"))
+    for section in ("measurement", "excused_events", "corrective_action", "governance", "security", "ehs",
+                    "sla_change_control"):
+        assert section in common and section not in partner, section
+    assert set(common["breach_severity"]) >= {"levels", "event_dimensions", "period_rules", "aggravators"}
+    assert set(partner["breach_severity"]) == {"finding_types"}
+
+
+def test_partner_can_add_terms_inside_a_common_section():
+    merged = merge_terms({"breach_severity": {"levels": [1]}}, {"breach_severity": {"finding_types": [2]}})
+    assert merged == {"breach_severity": {"levels": [1], "finding_types": [2]}}
+
+
+def test_partner_cannot_override_a_common_term(tmp_path):
+    common = yaml.safe_load((ROOT / "sla" / "common.yaml").read_text(encoding="utf-8"))
+    partner = yaml.safe_load((ROOT / "sla" / "it_partner.yaml").read_text(encoding="utf-8"))
+    partner.setdefault("measurement", {})["record_integrity_tolerance_min"] = 120   # a quiet weakening
+    (tmp_path / "common.yaml").write_text(yaml.safe_dump(common), encoding="utf-8")
+    (tmp_path / "it_partner.yaml").write_text(yaml.safe_dump(partner), encoding="utf-8")
+    with pytest.raises(SLAMergeError, match="measurement.record_integrity_tolerance_min"):
+        load_sla(tmp_path / "it_partner.yaml")
+
+
+def test_merge_does_not_modify_its_inputs():
+    common, partner = {"a": {"x": 1}}, {"a": {"y": 2}}
+    merge_terms(common, partner)
+    assert common == {"a": {"x": 1}} and partner == {"a": {"y": 2}}

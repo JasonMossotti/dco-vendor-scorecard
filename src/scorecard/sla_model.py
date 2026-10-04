@@ -1,9 +1,11 @@
 """SLA model: load the machine-readable SLA, validate it, and apply its rules.
 
-Everything the scorecard needs to judge vendor performance comes from
-sla/vendor_sla.yaml. This module turns that file into answers:
+Everything the scorecard needs to judge vendor performance comes from a
+partner SLA file (sla/it_partner.yaml) merged onto the terms every partner
+shares (sla/common.yaml). This module turns those files into answers:
 
-* ``load_sla`` / ``validate_sla``: read the file and refuse to run on a broken SLA.
+* ``load_sla`` / ``validate_sla``: read and merge the files, refuse to run on a broken SLA.
+* ``merge_terms``: add-only merge; a partner file can never override a common term.
 * ``evaluate_csl``: did a measured value meet Expected, Minimum, or neither?
 * ``compute_credit`` / ``cap_monthly_credits``: contractual credit math.
 * ``classify_event_breach`` / ``classify_period_breach``: internal severity (S1-S4).
@@ -20,7 +22,9 @@ from typing import Any, Iterable
 
 import yaml
 
-DEFAULT_SLA_PATH = Path(__file__).resolve().parents[2] / "sla" / "vendor_sla.yaml"
+SLA_DIR = Path(__file__).resolve().parents[2] / "sla"
+DEFAULT_SLA_PATH = SLA_DIR / "it_partner.yaml"
+PROVENANCE_KEYS = ("extends", "common_version")   # describe the files, not the contract
 
 HIGHER = "higher_is_better"
 LOWER = "lower_is_better"
@@ -30,13 +34,57 @@ class SLAValidationError(ValueError):
     """Raised when the SLA file is internally inconsistent."""
 
 
+class SLAMergeError(SLAValidationError):
+    """Raised when a partner file tries to set a term the common file already sets."""
+
+
 # --------------------------------------------------------------------------- #
 # Loading and validation
 # --------------------------------------------------------------------------- #
-def load_sla(path: str | Path = DEFAULT_SLA_PATH, validate: bool = True) -> dict[str, Any]:
-    """Load the SLA YAML. Validates by default and raises on any problem."""
+def _read_yaml(path: Path) -> dict[str, Any]:
     with open(path, encoding="utf-8") as fh:
-        sla = yaml.safe_load(fh)
+        return yaml.safe_load(fh)
+
+
+def merge_terms(common: dict[str, Any], partner: dict[str, Any], where: str = "") -> dict[str, Any]:
+    """Add the partner's terms to the common terms.
+
+    Dictionaries merge key by key. Any other value set in both files is an
+    error: a partner contract may add terms but may never replace or weaken a
+    site-wide one. Neither input is modified.
+    """
+    out = dict(common)
+    for key, value in partner.items():
+        path = f"{where}.{key}" if where else key
+        if key not in out:
+            out[key] = value
+        elif isinstance(out[key], dict) and isinstance(value, dict):
+            out[key] = merge_terms(out[key], value, path)
+        else:
+            raise SLAMergeError(f"'{path}' is set in both the common terms and the partner SLA; "
+                                "a partner SLA may add terms but not override common ones")
+    return out
+
+
+def sla_sources(path: str | Path = DEFAULT_SLA_PATH) -> dict[str, str]:
+    """File names and versions behind a partner SLA, for the rendered document's footer."""
+    path = Path(path)
+    partner = _read_yaml(path)
+    out = {"partner": path.name}
+    if partner.get("extends"):
+        common = _read_yaml(path.parent / partner["extends"])
+        out.update(common=partner["extends"], common_version=str(common.get("common_version", "")))
+    return out
+
+
+def load_sla(path: str | Path = DEFAULT_SLA_PATH, validate: bool = True) -> dict[str, Any]:
+    """Load a partner SLA merged onto the common terms. Validates by default and raises on any problem."""
+    path = Path(path)
+    sla = _read_yaml(path)
+    if sla.get("extends"):
+        common = _read_yaml(path.parent / sla["extends"])
+        sla = merge_terms({k: v for k, v in common.items() if k not in PROVENANCE_KEYS},
+                          {k: v for k, v in sla.items() if k not in PROVENANCE_KEYS})
     if validate:
         errors = validate_sla(sla)
         if errors:

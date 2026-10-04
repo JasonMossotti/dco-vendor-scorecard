@@ -14,7 +14,7 @@ from pathlib import Path
 def _project_root() -> Path:
     here = Path(__file__).resolve()
     for cand in (here.parent, here.parent.parent, Path.cwd()):
-        if (cand / "sla" / "vendor_sla.yaml").exists():
+        if (cand / "sla" / "it_partner.yaml").exists():
             return cand
     return here.parent
 
@@ -32,7 +32,7 @@ REPO = "https://github.com/JasonMossotti/dco-vendor-scorecard"
 SEV_ORDER = ["S1", "S2", "S3", "S4"]
 
 st.set_page_config(page_title="DCO Vendor Scorecard", page_icon="📊", layout="wide")
-CONTRACT = load_sla(ROOT / "sla" / "vendor_sla.yaml")
+CONTRACT = load_sla(ROOT / "sla" / "it_partner.yaml")
 # --------------------------------------------------------------------------- #
 # Sidebar: dataset
 # --------------------------------------------------------------------------- #
@@ -171,7 +171,7 @@ telemetry, not vendor self-reporting.**
 
 **Everything here runs in your browser.** There is no server: Python runs locally via WebAssembly.
 
-**Read more:** [README]({REPO}#readme) · [The SLA]({REPO}/blob/main/docs/SLA.md) ·
+**Read more:** [README]({REPO}#readme) · [The SLA]({REPO}/blob/main/docs/sla/IT_PARTNER_SLA.md) ·
 [Discrepancy report]({REPO}/blob/main/reports/discrepancy_report.md) ·
 [Data model]({REPO}/blob/main/docs/DATA_MODEL.md)
 

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Render the human-readable SLA (docs/SLA.md) from sla/vendor_sla.yaml.
+"""Render the human-readable IT partner SLA (docs/sla/IT_PARTNER_SLA.md) from sla/it_partner.yaml + sla/common.yaml.
 
 Usage:
-    python scripts/render_sla.py            # validate + write docs/SLA.md
-    python scripts/render_sla.py --check    # fail if docs/SLA.md is out of date (used in CI)
+    python scripts/render_sla.py            # validate + write docs/sla/IT_PARTNER_SLA.md
+    python scripts/render_sla.py --check    # fail if the document is out of date (used in CI)
+
+Each partner SLA is rendered as a self-contained document that includes the
+common terms, because each partner signs only its own contract.
 
 The worked examples in Appendix B are computed with the same functions the
 scorecard uses, so the document can never drift from the scoring engine.
@@ -32,11 +35,12 @@ from scorecard.sla_model import (  # noqa: E402
     compute_credit,
     evaluate_csl,
     load_sla,
+    sla_sources,
 )
 
-SLA_PATH = ROOT / "sla" / "vendor_sla.yaml"
+SLA_PATH = ROOT / "sla" / "it_partner.yaml"
 TEMPLATE_DIR = ROOT / "templates"
-OUTPUT_PATH = ROOT / "docs" / "SLA.md"
+OUTPUT_PATH = ROOT / "docs" / "sla" / "IT_PARTNER_SLA.md"
 
 
 # --------------------------------------------------------------------------- #
@@ -233,7 +237,7 @@ def render(sla_path: Path = SLA_PATH) -> str:
     )
     env.filters["dur"] = fmt_duration
     env.filters["target"] = fmt_target
-    text = env.get_template("sla.md.j2").render(**build_context(sla))
+    text = env.get_template("sla.md.j2").render(src=sla_sources(sla_path), **build_context(sla))
     # Collapse runs of blank lines left by template control blocks.
     lines, out, blank = text.splitlines(), [], 0
     for line in lines:
@@ -245,16 +249,16 @@ def render(sla_path: Path = SLA_PATH) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true", help="exit 1 if docs/SLA.md is stale")
+    ap.add_argument("--check", action="store_true", help="exit 1 if the rendered SLA is stale")
     args = ap.parse_args()
 
     text = render()
     if args.check:
         current = OUTPUT_PATH.read_text(encoding="utf-8") if OUTPUT_PATH.exists() else ""
         if current != text:
-            print("docs/SLA.md is out of date. Run: python scripts/render_sla.py")
+            print(f"{OUTPUT_PATH.relative_to(ROOT)} is out of date. Run: python scripts/render_sla.py")
             return 1
-        print("docs/SLA.md is up to date.")
+        print(f"{OUTPUT_PATH.relative_to(ROOT)} is up to date.")
         return 0
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)

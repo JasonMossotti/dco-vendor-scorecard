@@ -1,6 +1,6 @@
 <!--
   GENERATED FILE. DO NOT EDIT BY HAND.
-  Source: sla/vendor_sla.yaml  |  Generator: scripts/render_sla.py
+  Source: sla/{{ src.partner }} + sla/{{ src.common }}  |  Generator: scripts/render_sla.py
   Edit the YAML and re-run: python scripts/render_sla.py
 -->
 
@@ -592,4 +592,4 @@ If the vendor opened a second ticket in a TR-1 or TR-2 case, TR-6 makes it a Rec
 
 ---
 
-*Generated from `sla/vendor_sla.yaml` (schema {{ sla.schema_version }}, SLA version {{ d.version }}). {{ d.disclaimer }}*
+*Generated from `sla/{{ src.partner }}` and the common terms in `sla/{{ src.common }}` (schema {{ sla.schema_version }}, SLA version {{ d.version }}, common terms version {{ src.common_version }}). {{ d.disclaimer }}*

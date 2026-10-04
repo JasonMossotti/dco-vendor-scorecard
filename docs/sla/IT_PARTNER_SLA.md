@@ -1,6 +1,6 @@
 <!--
   GENERATED FILE. DO NOT EDIT BY HAND.
-  Source: sla/vendor_sla.yaml  |  Generator: scripts/render_sla.py
+  Source: sla/it_partner.yaml + sla/common.yaml  |  Generator: scripts/render_sla.py
   Edit the YAML and re-run: python scripts/render_sla.py
 -->
 
@@ -1001,4 +1001,4 @@ If the vendor opened a second ticket in a TR-1 or TR-2 case, TR-6 makes it a Rec
 
 ---
 
-*Generated from `sla/vendor_sla.yaml` (schema 1.0, SLA version 1.0.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/it_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.0.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*

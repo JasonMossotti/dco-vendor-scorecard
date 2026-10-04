@@ -20,8 +20,8 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 
 | Component | Status |
 |---|---|
-| SLA as code (`sla/vendor_sla.yaml`) | Done |
-| Generated SLA document ([`docs/SLA.md`](docs/SLA.md)) | Done |
+| SLA as code (`sla/common.yaml` + `sla/it_partner.yaml`) | Done |
+| Generated IT partner SLA ([`docs/sla/IT_PARTNER_SLA.md`](docs/sla/IT_PARTNER_SLA.md)) | Done |
 | SLA model: validation, credits, breach severity | Done, tested |
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
@@ -43,11 +43,11 @@ python scripts/render_site.py    # validate the site model and regenerate docs/s
 
 ## SLA as code
 
-The SLA lives in one YAML file. The human-readable contract is generated from it, and the scoring engine reads its thresholds from it, so the contract and the code can never disagree. CI fails if the document is out of date.
+The SLA lives in YAML. Terms every partner shares (Telemetry of Record measurement, excused events, corrective action, governance, security, EHS, and the severity framework) are in `sla/common.yaml`; each partner's service levels, credits, and finding types are in its own file (`sla/it_partner.yaml` today) that extends the common terms. A partner file may add terms but never override a common one, so no contract can quietly weaken a site-wide standard. Each partner's contract is generated as a self-contained document, and the scoring engine reads its thresholds from the same files, so the contract and the code can never disagree. CI fails if the document is out of date.
 
 ```bash
 pip install -r requirements.txt
-python scripts/render_sla.py     # validate the SLA and regenerate docs/SLA.md
+python scripts/render_sla.py     # validate the SLA and regenerate docs/sla/IT_PARTNER_SLA.md
 python scripts/generate_data.py  # regenerate the synthetic sample in data/sample
 python scripts/run_engine.py     # run the discrepancy engine, write reports/
 python scripts/build_scorecard.py  # build the scorecard, write reports/
@@ -114,7 +114,8 @@ Run it locally with `pip install -r requirements-app.txt` and `streamlit run app
 ## Project layout
 
 ```
-sla/vendor_sla.yaml              Single source of truth for the SLA
+sla/common.yaml                  Terms shared by every partner SLA (add-only merge)
+sla/it_partner.yaml              IT partner SLA: service levels, credits, finding types
 site/site.yaml                   Single source of truth for the site: equipment, topology, monitoring
 src/scorecard/site_model.py      Site expansion, power and cooling paths, capacity checks
 src/scorecard/site_drawings.py   Schematic drawing set (SVG) generated from the site model
@@ -129,13 +130,13 @@ src/scorecard/builder.py         Scorecard: SLA results, vendor vs. measured, cr
 src/scorecard/app_support.py     App logic: pipeline runner, display tables
 app/streamlit_app.py             Interactive app (Streamlit; runs in the browser via stlite)
 src/scorecard/synthetic/         Synthetic GB200 site data generator
-scripts/render_sla.py            Generates docs/SLA.md from the YAML
+scripts/render_sla.py            Generates docs/sla/IT_PARTNER_SLA.md from the YAML
 scripts/generate_data.py         Generates the synthetic dataset
 scripts/run_engine.py            Runs the engine and writes reports/
 scripts/build_scorecard.py       Builds the scorecard and writes reports/
 scripts/build_site.py            Builds the static GitHub Pages site
 templates/sla.md.j2              Document template
-docs/SLA.md                      Generated SLA (do not edit by hand)
+docs/sla/IT_PARTNER_SLA.md       Generated IT partner SLA (do not edit by hand)
 docs/DATA_MODEL.md               What each data file represents
 docs/PROJECT_GUIDE.md            How the project fits together and how to change it
 docs/DEPLOY_AWS.md               Hosting on AWS: S3, EC2, and production architecture

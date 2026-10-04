@@ -1,17 +1,18 @@
 # =============================================================================
-# Partner-Operated Site Services: Service Level Agreement (SLA as Code)
+# IT Partner SLA: Partner-Operated Site Services (SLA as Code)
 # -----------------------------------------------------------------------------
-# This file is the SINGLE SOURCE OF TRUTH for every service level, threshold,
-# credit rule, and severity band used by the scorecard. The human-readable SLA
-# document (docs/SLA.md) is GENERATED from this file by scripts/render_sla.py,
-# so the contract text and the scoring engine can never disagree.
+# Ridgeline Site Services' service levels, thresholds, credit rules, and
+# finding types. Together with common.yaml, this is the SINGLE SOURCE OF TRUTH
+# for the scorecard. The human-readable SLA (docs/sla/IT_PARTNER_SLA.md) is
+# GENERATED from both files by scripts/render_sla.py, so the contract text and
+# the scoring engine can never disagree.
 #
 # MOCK DOCUMENT FOR PORTFOLIO DEMONSTRATION ONLY. All parties, sites, figures,
 # and commercial terms are fictional and illustrative. Not legal advice. Not
 # based on any real company's internal information or agreements.
 # =============================================================================
 
-schema_version: "1.0"
+extends: "common.yaml"
 
 document:
   id: "SLA-RSS-AUS1-001"
@@ -28,66 +29,13 @@ document:
     organization's internal documents or contracts.
   timezone: "UTC"
 
+# The Supplier. The Customer and the other site parties are in common.yaml.
 parties:
-  customer:
-    name: "Customer"
-    description: "An AI compute operator that owns the IT equipment and spares at the Site."
-    role: "Owns site outcomes; directs priorities; operates the telemetry of record."
   supplier:
     name: "Ridgeline Site Services, LLC"
     fictional: true
     description: "Strategic site operations partner performing day-to-day data hall work."
     role: "Performs deployment, break-fix, and data hall operations under Customer direction."
-  facility_provider:
-    name: "Facility Provider"
-    description: "Colocation operator responsible for the building, facility power, and facility water."
-    role: "Separate contract. Named here only to define ownership boundaries."
-  oem:
-    name: "OEM / System Integrator"
-    description: "Hardware manufacturer and integrator providing warranty, RMA, and field diagnostics."
-    role: "Separate contract. Named here only to define ownership boundaries."
-
-site:
-  id: "AUS-1"
-  name: "Site AUS-1 (fictional)"
-  platform: "NVIDIA GB200 NVL72 (rack-scale, direct-to-chip liquid cooled)"
-  halls:
-    - id: "HALL-A"
-      state: "production"
-      racks: 32
-    - id: "HALL-B"
-      state: "deployment"
-      racks: 32
-  per_rack:
-    gpus: 72
-    grace_cpus: 36
-    compute_trays: 18
-    gpus_per_compute_tray: 4
-    nvlink_switch_trays: 9
-    power_shelves: 8
-    nominal_power_kw: 120
-  cooling:
-    cdu_type: "CoolIT CHx2000 row-based liquid-to-liquid CDU"
-    cdu_capacity_mw: 2.0
-    racks_per_cdu: 8
-    cdus_total: 8
-  service_units:
-    - id: "SU-TRAY"
-      name: "Compute tray"
-      gpus: 4
-      note: "Smallest GPU field-replaceable service unit."
-    - id: "SU-SWITCH"
-      name: "NVLink switch tray"
-      gpus: 72
-      note: "Treated as a rack-wide event until degraded operation is proven safe."
-    - id: "SU-RACK"
-      name: "NVL72 rack"
-      gpus: 72
-      note: "One NVLink domain; the Customer's smallest large-job scheduling unit."
-    - id: "SU-CDU"
-      name: "CDU loop"
-      gpus: 576
-      note: "Each CDU is the primary for one row of 8 racks on a shared N+1 secondary header; a loss of cooling can affect all of them."
 
 commercial:
   currency: "USD"
@@ -415,121 +363,6 @@ priorities:
     restore_min: 7200
     update_cadence_min: null
     escalation: "Tracked in weekly operations review."
-
-# -----------------------------------------------------------------------------
-# MEASUREMENT: Telemetry of Record
-# -----------------------------------------------------------------------------
-measurement:
-  principle: >-
-    Performance is measured from Customer-operated Telemetry of Record, not from
-    Supplier self-reporting. Supplier ticket data is used for work content and
-    narrative, and is reconciled against telemetry. Where they disagree, the
-    higher-precedence source prevails.
-  clock_rules:
-    start: "T0, the earliest evidence of the fault across all sources."
-    stop: "Validated RTS."
-    pause_allowed_only_for:
-      - "A Customer-requested hold, recorded in the ticket with Customer approval."
-      - "Customer-controlled access delays (e.g., cage access withheld by the Customer)."
-      - "An approved Excused Event."
-    pause_not_allowed_for:
-      - "Waiting for parts when Customer spares were at or above minimum stock."
-      - "Supplier staffing shortfalls or shift changes."
-      - "Waiting on Supplier internal escalation."
-  record_integrity_tolerance_min: 15
-  timestamp_standard: "All systems record UTC and are NTP-synchronized; records with clock skew over 5 seconds are flagged."
-  reporting:
-    weekly: "Operating scorecard by Monday 12:00 UTC, generated automatically from telemetry and ticket data."
-    monthly: "Service Level Report within 5 business days after month end, including all defaults, credits, and trends."
-    raw_data_access: "The Customer may access ticket data through API at any time; the Supplier must keep all records for the Term plus 2 years."
-    failure_to_report: >-
-      If the Supplier fails to provide data required to measure a service level,
-      that service level is deemed to have a Minimum Service Level Default for the period.
-  reference_implementation: >-
-    Every calculation in this SLA is implemented in the scorecard source code
-    (src/scorecard), which both parties receive and may run. That reference
-    implementation, applied to the Telemetry of Record, is the agreed method of
-    calculation, so any disagreement is about data, never about math. Changes to
-    it follow SLA change control.
-  calibration:
-    days: 90
-    rule: >-
-      For the first 90 days, both parties measure every service level in parallel
-      and reconcile every difference weekly. Credits do not apply during
-      calibration; defaults are recorded and reviewed, and the Measurement
-      Specification is corrected before credits begin.
-  reconciliation: >-
-    Each week the scorecard lists every record where Supplier data and telemetry
-    disagree. The Supplier responds to each item before the weekly operations review.
-  disputes:
-    window_business_days: 5
-    rule: >-
-      The Supplier may dispute a measurement within 5 business days of the weekly
-      scorecard, with evidence from a Telemetry of Record source. Undisputed
-      measurements are final. Disputes unresolved after 10 business days escalate
-      to the monthly service review.
-  audit:
-    sample_pct: 5
-    rule: >-
-      Each month the Customer audits a random 5% of closed tickets (minimum 10) end
-      to end against raw telemetry, badge, and inventory records. Audit findings
-      count toward CSL-11.
-  data_sources:
-    - id: "DS-DCGM"
-      name: "GPU telemetry (DCGM and driver XID events)"
-      measures: "GPU faults, ECC and XID events, diagnostic results, burn-in results."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-REDFISH"
-      name: "BMC Redfish API"
-      measures: "Hardware inventory and serial numbers, PSU health, tray leak detection, power state."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-NMX"
-      name: "NVLink fabric management telemetry"
-      measures: "NVLink switch tray health, NVLink domain state, link errors."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-UFM"
-      name: "InfiniBand fabric manager"
-      measures: "Port state, link-down events, symbol and error counters."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-HEALTH"
-      name: "Cluster health-check and automated recovery platform"
-      measures: "Periodic and job-boundary health checks; node drain and return events."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-SCHED"
-      name: "Customer workload scheduler"
-      measures: "Node state (available, drained, down) and capacity returned to production."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-BMS"
-      name: "Building management system feed (via Facility Provider)"
-      measures: "CDU flow, supply and return temperatures, pump status, room leak sensors."
-      owner: "Facility Provider"
-      precedence: 2
-    - id: "DS-BADGE"
-      name: "Access control system"
-      measures: "Technician presence by hall, time on site, staffing fill."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-CAB"
-      name: "Customer change management system"
-      measures: "Approved changes and maintenance windows."
-      owner: "Customer"
-      precedence: 1
-    - id: "DS-ITSM"
-      name: "Supplier ticketing system"
-      measures: "Ticket lifecycle, work notes, parts used, priority, Supplier-recorded timestamps."
-      owner: "Supplier"
-      precedence: 3
-    - id: "DS-SPARES"
-      name: "Supplier spares and RMA system"
-      measures: "Stock levels, consumption, cycle counts, RMA shipments."
-      owner: "Supplier"
-      precedence: 3
 
 # -----------------------------------------------------------------------------
 # TICKET HANDLING RULES (identical for every person, every shift)
@@ -1221,66 +1054,6 @@ chronic_failure:
     procedures, and spares records to the successor.
 
 # -----------------------------------------------------------------------------
-# EXCUSED EVENTS
-# -----------------------------------------------------------------------------
-excused_events:
-  claim_window_business_days: 5
-  evidence_required: true
-  events:
-    - "Force majeure as defined in the Agreement."
-    - "Failures of Facility Provider systems outside Supplier scope (the Supplier must still respond and notify)."
-    - "Customer-caused delays, including withheld access or Customer-requested holds recorded in the ticket."
-    - "Approved maintenance inside an approved change window, within the approved duration."
-    - "OEM part unavailability, ONLY if Customer spares for that FRU class were at or above minimum stock and the Supplier notified the Customer within 4 hours."
-  treatment: >-
-    The excused occurrence is removed from both the numerator and the
-    denominator of the affected service level. The rest of the Measurement
-    Period is still measured.
-  supplier_duty: "The Supplier must use commercially reasonable efforts to perform despite the Excused Event."
-
-# -----------------------------------------------------------------------------
-# ROOT CAUSE ANALYSIS AND CORRECTIVE ACTION
-# -----------------------------------------------------------------------------
-corrective_action:
-  triggers:
-    - "Any Expected or Minimum Service Level Default."
-    - "Any Key Measurement miss."
-    - "Any P1 incident."
-    - "Any Lemon Unit."
-    - "Any Record Integrity Finding."
-    - "Any reopened ticket (TR-1 or TR-2)."
-  rca_timelines:
-    p1_preliminary_hours: 24
-    p1_final_business_days: 5
-    other_business_days: 10
-  cap_requirements:
-    - "Root cause stated in terms of process, people, parts, or tooling; not 'technician error' alone."
-    - "Each action has a single named owner, a due date, and an evidence-of-completion definition."
-    - "Effectiveness check: the triggering metric is reviewed for 2 Measurement Periods after closure."
-  cap_overdue_escalation: "CAPs more than 10 business days overdue escalate to the monthly service review."
-
-# -----------------------------------------------------------------------------
-# GOVERNANCE CADENCE
-# -----------------------------------------------------------------------------
-governance:
-  - forum: "Daily operations standup"
-    frequency: "Daily, 15 minutes"
-    attendees: "Supplier shift leads; Customer site lead"
-    inputs: "Open P1 and P2 incidents, today's deployment plan, blockers, spares alerts."
-  - forum: "Weekly operations review"
-    frequency: "Weekly"
-    attendees: "Supplier site manager; Customer site lead"
-    inputs: "Automated weekly scorecard, breach severity log, CAP status, staffing, lemon units."
-  - forum: "Monthly service review"
-    frequency: "Monthly"
-    attendees: "Supplier account manager; Customer DCO leadership"
-    inputs: "Service Level Report, credits and earnback, chronic-failure watch, trends."
-  - forum: "Quarterly business review"
-    frequency: "Quarterly"
-    attendees: "Supplier executive sponsor; Customer DCO leadership"
-    inputs: "Trend analysis, SLA change proposals, roadmap and capacity plan, program-wide lessons learned."
-
-# -----------------------------------------------------------------------------
 # STAFFING AND QUALIFICATIONS
 # -----------------------------------------------------------------------------
 staffing:
@@ -1307,47 +1080,10 @@ staffing:
   qualification_rule: "Only badge-verified hours by technicians with current qualifications count toward CSL-10."
 
 # -----------------------------------------------------------------------------
-# CHANGE MANAGEMENT
+# CHANGE MANAGEMENT (IT additions; the general rules are in common.yaml)
 # -----------------------------------------------------------------------------
 change_management:
-  rules:
-    - "All non-emergency changes require Customer change approval before work starts."
-    - "Standard changes (pre-approved runbook FRU swaps) may proceed under an open incident."
-    - "Emergency changes require verbal approval from the Customer Incident Commander, recorded in the ticket within 1 hour."
-    - "Work outside the approved window or scope is an unauthorized change and counts against KM-10."
   firmware: "Firmware may only be loaded from the Customer-approved baseline; any deviation is an unauthorized change."
-
-# -----------------------------------------------------------------------------
-# SECURITY AND CHAIN OF CUSTODY
-# -----------------------------------------------------------------------------
-security:
-  requirements:
-    - "Badge access only for Customer-approved personnel; no tailgating; visitors escorted at all times."
-    - "Daily reconciliation of badge records against the shift roster."
-    - "Storage media (e.g., E1.S drives) never leave the Site intact; media is sanitized or destroyed on site under the Customer's media sanitization standard, with a certificate per serial number."
-    - "Every failed part is logged into chain of custody at removal, with serial, ticket, technician, and timestamp."
-    - "Cameras and photography in the data hall are prohibited except for Customer-approved documentation."
-  incident_reporting: "Suspected security incidents are reported to the Customer within 1 hour of discovery."
-
-# -----------------------------------------------------------------------------
-# ENVIRONMENTAL, HEALTH, AND SAFETY (EHS)
-# -----------------------------------------------------------------------------
-ehs:
-  requirements:
-    - "Every technician has stop-work authority and must use it for any unsafe condition."
-    - "Hazardous energy control (lockout/tagout) for any work requiring de-energization."
-    - "Electrical safety practices appropriate to the task and approach boundaries."
-    - "ESD-safe handling for all electronic components."
-    - "Spill kits staged at every CDU and at row ends; coolant spills handled per the site spill procedure."
-    - "Mechanical lift and team-lift procedures for trays and racks (a fully loaded NVL72 rack weighs well over a metric ton)."
-  reporting:
-    injury_or_recordable_hours: 1
-    near_miss_hours: 24
-  treatment: >-
-    EHS performance is not credit-bearing; safety must never be traded for
-    speed. Any recordable injury or stop-work event triggers an internal S1
-    severity and a joint review. Serious or repeated EHS failures are a
-    material breach of the Agreement.
 
 # -----------------------------------------------------------------------------
 # SPARES AND RMA
@@ -1377,78 +1113,11 @@ spares:
   cycle_count: "Weekly cycle count of high-value FRUs; full count monthly."
 
 # -----------------------------------------------------------------------------
-# SLA CHANGE CONTROL AND CONTINUOUS IMPROVEMENT
-# -----------------------------------------------------------------------------
-sla_change_control:
-  customer_rights:
-    - "Promote a Key Measurement to a Critical Service Level, or demote a CSL, with 90 days notice (maximum 2 changes per contract year)."
-    - "Reallocate credit allocation percentages with 90 days notice, within the pool and per-CSL caps."
-    - "Add new service levels; targets are set from 6 months of measured baseline, or by mutual agreement."
-  continuous_improvement: >-
-    At each contract anniversary, the Expected and Minimum levels of each CSL
-    tighten by 10% of the remaining gap to perfect performance, using the
-    trailing 12 months of results, unless the parties agree otherwise.
-  versioning: "Every change to this file is a new SLA version, reviewed through pull request and approved by both parties."
-
-# -----------------------------------------------------------------------------
-# INTERNAL BREACH SEVERITY INDEX
-# Customer-internal: guides escalation. Not a contractual remedy and not shared
-# with the Supplier.
+# FINDING TYPES (IT partner)
+# Discrepancy types the engine detects for this partner. Severity levels,
+# dimensions, and aggravators are in common.yaml. Customer-internal.
 # -----------------------------------------------------------------------------
 breach_severity:
-  internal_only: true
-  purpose: >-
-    Translates a breach into a single severity so readers immediately understand
-    how serious it was. Severity is the worst level across all dimensions, then
-    adjusted by aggravators.
-  levels:
-    - id: "S1"
-      name: "Critical"
-      rank: 4
-      escalation: "Same-day notification to Customer DCO leadership; Supplier executive engaged within 24 hours; CAP within 5 business days; chronic-failure and contract-remedy review."
-    - id: "S2"
-      name: "Major"
-      rank: 3
-      escalation: "Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure."
-    - id: "S3"
-      name: "Minor"
-      rank: 2
-      escalation: "Supplier RCA within 10 business days; discussed in the weekly operations review."
-    - id: "S4"
-      name: "Watch"
-      rank: 1
-      escalation: "Logged and trended in the weekly scorecard; no formal action unless it repeats."
-  event_dimensions:
-    overrun_pct:
-      description: "How far past the target time the event ran: (actual - target) / target."
-      bands:
-        - {max: 10, level: "S4"}
-        - {max: 50, level: "S3"}
-        - {max: 200, level: "S2"}
-        - {max: null, level: "S1"}
-    gpu_hours_beyond_target:
-      description: "GPU-hours lost after the target expired (GPUs affected x hours late). 72 GPU-hours = one NVL72 rack-hour."
-      bands:
-        - {max: 72, level: "S4"}
-        - {max: 500, level: "S3"}
-        - {max: 5000, level: "S2"}
-        - {max: null, level: "S1"}
-  period_rules:
-    - condition: "met_expected"
-      level: null
-      description: "Expected level met; no breach."
-    - condition: "below_expected"
-      level: "S4"
-      description: "Below Expected but at or above Minimum."
-    - condition: "below_minimum"
-      level: "S3"
-      description: "Below Minimum (credit-bearing default)."
-    - condition: "deep_below_minimum"
-      level: "S2"
-      description: "Below Minimum by more than the Expected-to-Minimum gap."
-    - condition: "chronic"
-      level: "S1"
-      description: "Minimum default on the same CSL for 3 or more consecutive periods (chronic failure CF-1)."
   finding_types:
     - id: "clock_shift"
       name: "Ticket opened late (clock shift)"
@@ -1516,24 +1185,3 @@ breach_severity:
       aggravators: ["AGG-RACKWIDE"]
       sla_refs: ["KM-10"]
       action: "Verify firmware against the approved baseline and roll back if needed. Require a vendor RCA on the change-control breach."
-  aggravators:
-    - id: "AGG-REPEAT"
-      description: "Same CSL or same Service Unit breached within the previous 30 days."
-      effect: "bump"
-      amount: 1
-    - id: "AGG-RACKWIDE"
-      description: "Breach affected an entire NVL72 rack or a CDU loop."
-      effect: "floor"
-      level: "S2"
-    - id: "AGG-INTEGRITY"
-      description: "Breach involved a Record Integrity Finding (vendor record contradicted by telemetry)."
-      effect: "floor"
-      level: "S1"
-    - id: "AGG-EHS"
-      description: "Breach involved an EHS recordable, stop-work event, or uncontained leak."
-      effect: "floor"
-      level: "S1"
-    - id: "AGG-SECURITY"
-      description: "Breach involved a security or chain-of-custody failure."
-      effect: "floor"
-      level: "S1"

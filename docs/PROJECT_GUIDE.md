@@ -16,15 +16,15 @@ At a partner-operated GPU data center site, vendors do the hands-on work and the
 |---|---|
 | Repository | https://github.com/JasonMossotti/dco-vendor-scorecard (public; the owner renamed the account from RexFeral on 2026-10-04) |
 | Live demo (GitHub Pages) | https://jasonmossotti.github.io/dco-vendor-scorecard/ |
-| SLA document (generated) | `docs/SLA.md`: 24 sections plus appendices |
+| SLA (generated) | `docs/sla/IT_PARTNER_SLA.md` from `sla/it_partner.yaml` + `sla/common.yaml`: 24 sections plus appendices |
 | Scorecard and discrepancy reports (generated) | `reports/scorecard.md`, `reports/discrepancy_report.md` |
 | Site model and drawings (generated) | `site/site.yaml` -> `docs/site/SITE.md` plus 7 SVG sheets |
-| Tests | 113 (pytest), run by CI on every push and before every Pages deploy |
+| Tests | 118 (pytest), run by CI on every push and before every Pages deploy |
 | AWS hosting guide | `docs/DEPLOY_AWS.md` |
 
 Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 5 Minimum Service Level Defaults, $222,000 credits payable (capped from $255,300), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
 
-**In progress: multi-vendor expansion.** The site is becoming a customer-owned AI data center in Central Texas with two contracted partners: Ridgeline Site Services (IT partner, the existing SLA) and Caprock Critical Facilities (OT partner, new). Phase 1 (site model and drawings) is complete; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
+**In progress: multi-vendor expansion.** The site is becoming a customer-owned AI data center in Central Texas with two contracted partners: Ridgeline Site Services (IT partner, the existing SLA) and Caprock Critical Facilities (OT partner, new). Phase 1 (site model and drawings) and Phase 2 (SLA split into common terms and the IT partner SLA) are complete; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
 
 **Purpose:** a portfolio project for a Data Center Operations Lead (partner-operated sites) application. Keep everything synthetic and fictional; never imply knowledge of any real company's internal systems.
 
@@ -57,7 +57,7 @@ Working practices that caught real bugs, worth keeping:
 ## Pipeline
 
 ```
-sla/vendor_sla.yaml ──► docs/SLA.md                     (scripts/render_sla.py)
+sla/common.yaml + sla/it_partner.yaml ──► docs/sla/IT_PARTNER_SLA.md   (scripts/render_sla.py)
         │
         ├──► synthetic generator ──► data/sample/        (scripts/generate_data.py; config/synthetic.yaml)
         │                                │
@@ -73,13 +73,14 @@ sla/vendor_sla.yaml ──► docs/SLA.md                     (scripts/render_sl
 site/site.yaml ──► docs/site/SITE.md + drawing sheets        (scripts/render_site.py)
 ```
 
-The SLA YAML is the single source of truth for the contract; `site/site.yaml` is the single source of truth for the equipment, topology, and monitoring. The document, generator, engine, scorecard, and app read the SLA; the drawings and site description read the site model, and tests check that the two agree (halls, rack counts, CDUs, rack-to-CDU mapping).
+The SLA YAML is the single source of truth for the contract (`load_sla()` merges `it_partner.yaml` onto `common.yaml`; a key set in both files is an error, so a partner file can add terms but never override a common one); `site/site.yaml` is the single source of truth for the equipment, topology, and monitoring. The document, generator, engine, scorecard, and app read the SLA; the drawings and site description read the site model, and tests check that the two agree (halls, rack counts, CDUs, rack-to-CDU mapping).
 
 ## Where things live
 
 | Concern | File |
 |---|---|
-| Every target, rule, credit term, severity band, discrepancy type | `sla/vendor_sla.yaml` |
+| Site-wide terms: Customer and site parties, site profile, measurement principles, excused events, corrective action, governance, security, EHS, SLA change control, severity levels and aggravators | `sla/common.yaml` |
+| IT partner terms: commercials, scope, priorities, ticket handling, rule cards, CSLs, KMs, validation, deployment, staffing, spares, chronic failure, finding types | `sla/it_partner.yaml` |
 | SLA document layout | `templates/sla.md.j2` |
 | SLA loading, validation, credit math, severity | `src/scorecard/sla_model.py` |
 | Ticket handling rules TR-1 to TR-6 (Tickets of Record) | `src/scorecard/measurement.py` |
@@ -100,7 +101,7 @@ The SLA YAML is the single source of truth for the contract; `site/site.yaml` is
 
 ## Common changes
 
-**Change a target, window, or credit term.** Edit `sla/vendor_sla.yaml`, then run the regeneration commands below. The validator rejects inconsistent edits (for example, an Expected level easier than its Minimum, or allocations over the pool).
+**Change a target, window, or credit term.** Edit `sla/it_partner.yaml` (or `sla/common.yaml` for a site-wide term), then run the regeneration commands below. The validator rejects inconsistent edits (for example, an Expected level easier than its Minimum, or allocations over the pool).
 
 **Add a Key Measurement or Critical Service Level.** Add it to the YAML (keep total credit allocation within the pool), then add its calculation to `measure_period()` in `kpi.py`. If it is vendor-reported, map it in `VENDOR_FIELDS` in `builder.py`.
 
@@ -134,7 +135,7 @@ python scripts/build_site.py && python -m http.server -d _site 8000
 
 ## Conventions
 
-- **Generated files are never edited by hand:** `docs/SLA.md`, `docs/site/`, `data/sample/`, and everything in `reports/`. Tests fail if they are out of date.
+- **Generated files are never edited by hand:** `docs/sla/`, `docs/site/`, `data/sample/`, and everything in `reports/`. Tests fail if they are out of date.
 - **The engine never reads `ground_truth/`.** Only `engine/evaluate.py` does, after the engine has finished.
 - **A finding means records do not reconcile, not that someone lied.** Keep that framing in report text.
 - **Synthetic data only.** No real company's information, names, or documents.
@@ -160,7 +161,7 @@ python scripts/build_site.py && python -m http.server -d _site 8000
 
 In the order it was built, with the decisions that shaped each step:
 
-1. **SLA as code.** `sla/vendor_sla.yaml` is the single source of truth, rendered to `docs/SLA.md`. Structure: Expected/Minimum levels, an at-risk amount (12% of monthly charges), a 250% allocation pool with a monthly cap, credit doubling, earnback, and chronic-failure termination rights. Telemetry of Record clocks run from T0 to Validated RTS.
+1. **SLA as code.** One YAML file was the single source of truth (split in step 9), rendered to a Markdown contract. Structure: Expected/Minimum levels, an at-risk amount (12% of monthly charges), a 250% allocation pool with a monthly cap, credit doubling, earnback, and chronic-failure termination rights. Telemetry of Record clocks run from T0 to Validated RTS.
 2. **Synthetic GB200 NVL72 data.** A seeded generator for one site (Hall A in production with 32 racks; Hall B in deployment) writes telemetry and vendor records plus an answer key. The 4-hour tray burn-in was cut to 1 hour because it made the 4-hour P1 restore target impossible.
 3. **Measurement specification and ticket handling** (the owner's ideas): one rule card per fault class so the vendor and customer measure identically, and TR-1 to TR-7 so a repair that fails again soon after cannot restart the clock. Also added capacity-weighted availability, a worst-rack floor (CSL-12), and KM-16 to KM-19.
 4. **Discrepancy engine.** Connectors (answer key blocked), Tickets of Record rebuilt from telemetry, and 11 detectors. Severity and corrective actions come from `breach_severity.finding_types` in the SLA. Testing found two real bugs: the engine matched PSU faults by rack instead of slot, and the generator planted a discrepancy inside the SLA's 15-minute tolerance.
@@ -168,10 +169,11 @@ In the order it was built, with the decisions that shaped each step:
 6. **Interactive demo.** A Streamlit app running in the browser through stlite on GitHub Pages, refreshed every Monday with a "latest 4 weeks" dataset. The owner's review caught a reset bug (sliders now reset through an `on_click` callback), dollar signs rendering as math, stacked bars, an unreadable weekly chart (now a vendor-vs-measured gap chart), and corrective action plans that looked overdue (due dates now count from the review date).
 7. **Polish.** README screenshots and a 30-second summary, the AWS guide, and the account rename to JasonMossotti.
 8. **What-if removed; Phase 1 site model.** The sidebar sliders were removed (a test confirms none are drawn). Equipment was researched against manufacturer documentation and chosen for interoperability under one monitoring layer. `site/site.yaml` and `site_model.py` define three halls (A: 32 x GB200 NVL72 in production; B: 32 x GB300 NVL72 in deployment; C: 8-rack 800 VDC pilot, planned), 7 x Cat C175-16 generators (N+1), 11 x Liebert AFC chillers (N+1 at 43 C), 4 x Galaxy VX per hall in a distributed redundant 4-make-3 design, 4 x CoolIT CHx2000 per hall (N+1), and 2 x Eaton MVSST for Hall C. 25 capacity checks pass. Seven schematic sheets (A-001 campus, A-101 building, A-201 to A-203 halls, E-001 one-line, M-001 cooling) are generated and were reviewed visually. Decisions: the MVSST serves only the 800 VDC pilot because GB200 and GB300 power shelves take AC; leak cable senses water and conductive fluids because the coolant is PG25 (hydrocarbon cable only at the diesel tanks); Galaxy VX rather than VXL because the VXL is a 400 V IEC product and the site is 480 V. Regenerating left every report byte-identical.
+9. **Phase 2: SLA split.** `sla/vendor_sla.yaml` became `sla/common.yaml` (site-wide terms) and `sla/it_partner.yaml` (`extends: common.yaml`). `load_sla()` performs an add-only merge (`merge_terms`); the merged result was verified identical to the old file, and every data, report, and site file stayed byte-identical. The rendered contract moved to `docs/sla/IT_PARTNER_SLA.md` and differs from the old `docs/SLA.md` only in its two source lines. Content changes (OT partner replacing the colocation "Facility Provider" wording and RACI column) were deliberately left for Phase 3.
 
 ## Roadmap (agreed with the owner; plan before building each phase)
 
-2. **Split the SLA files.** `sla/common.yaml` (definitions, Telemetry of Record, severity framework), `sla/it_partner.yaml` (today's SLA, moved), rendered per partner. Pure refactor: all tests pass and every output stays byte-identical.
+2b. **EHS strengthening** (owner request; researched, design to be approved). Comprehensive safety standards every vendor must meet, in `sla/common.yaml`, with financial consequences for independently confirmed violations.
 3. **OT partner SLA and interface agreement.** `sla/ot_partner.yaml` (critical power availability per feed, cooling within band, alarm acknowledgment and response, redundancy restoration time, NFPA 110 generator testing, NFPA 72 inspections, coolant chemistry, MOP compliance, record integrity) and `sla/interface_agreement.yaml` (demarcation points, break-fix ownership matrix, joint incident command, fault-attribution rules using the site model's power and cooling paths).
 4. **OT telemetry and detection.** Synthetic OT telemetry with real point and alarm names (UPS NMC SNMP, EMCP 4.4 Modbus, CHx2000 Redfish, VESDA Alert/Action/Fire 1/Fire 2, TraceTek leak location), OT detectors (for example, a generator test reported passed with no load transfer, maintenance marked complete with no evidence, a BMS point overridden or an alarm inhibited with no change record), cross-vendor attribution, OT and site scorecards, robustness runs. Use a separate random stream so the IT sample and its headline numbers do not change.
 5. **App.** Partner selector, site rollup, attribution view.
@@ -183,4 +185,4 @@ Later: a security partner (access control, CCTV, escorts).
 
 - [ ] Fix the repository topic "gp" to "gpu" (GitHub repo page, gear icon next to About).
 - [ ] Confirm the Git commit email uses GitHub's numbered noreply address (`git log -1 --format='%ae'`).
-- [ ] Next: Phase 2 (split the SLA files). Present the plan, then build.
+- [ ] Next: EHS strengthening (2b), then Phase 3. Present the plan, then build.
