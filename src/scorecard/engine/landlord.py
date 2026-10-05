@@ -162,6 +162,25 @@ def build_facility_incidents(ctx: LandlordContext) -> list[FacilityIncident]:
     mod = [e for e in ctx.ups if "Power module" in e["event"]]
     for u, s, e in _pairs(mod, "ups", lambda r: r["event"].endswith("fault"), lambda r: "redundancy restored" in r["event"]):
         add("OT-FC-UPS", u, s["timestamp"], e, f"{u}: {s['event']}", "DS-UPS")
+    # A rack that lost both feeds at its tap-offs: rack capacity lost on the Landlord side (FA-1).
+    open_feeds: dict[str, set] = {}
+    for e in [x for x in ctx.busway if "rack" in x]:
+        feeds = open_feeds.setdefault(e["rack"], set())
+        side = e["busway"][-1]
+        if e["event"] == "Breaker open":
+            feeds.add(side)
+            if len(feeds) == 2:
+                start = e
+        elif e["event"] == "Breaker closed":
+            if len(feeds) == 2:
+                add("OT-FC-PWR", f"Rack {e['rack']}", start["timestamp"], e,
+                    f"Rack {e['rack']} lost both feeds at the tap-offs ({start['tapoff']} opened while the other side was open)",
+                    "DS-BUSWAY")
+                out[-1].room = room_for(start["busway"])
+                out[-1].capacity_lost = True
+                b = ctx.badge_into(out[-1].room, out[-1].t0 - timedelta(minutes=5), out[-1].restored)
+                out[-1].engaged_at = b["timestamp"] if b else None
+            feeds.discard(side)
     feed = [e for e in ctx.busway if "state" in e]
     for u, s, e in _pairs(feed, "busway", lambda r: r["state"] == "out_of_tolerance", lambda r: r["state"] == "in_tolerance"):
         add("OT-FC-PWR", u, s["timestamp"], e, f"{u} feed lost ({s['point']} {s['value_v']} V)", "DS-BUSWAY")
@@ -423,15 +442,19 @@ def measure_landlord(result: LandlordResult) -> dict[str, dict[str, Any]]:
             for r in sgm["racks"]:
                 seg_of[r] = sgm["id"]
     lost = {}
+    rack_dark: dict[str, list] = {}
     for i in inc:
-        if i.fault_class == "OT-FC-PWR":
+        if i.fault_class == "OT-FC-PWR" and i.capacity_lost:
+            rack_dark.setdefault(i.unit.split()[-1], []).append((i.t0, i.restored or end))
+        elif i.fault_class == "OT-FC-PWR":
             lost.setdefault(i.unit, []).append((i.t0, i.restored or end))
     one_feed_ok = both_ok = 0.0
     for r in leased:
         a, b = lost.get(f"{seg_of[r['rack']]}-A", []), lost.get(f"{seg_of[r['rack']]}-B", [])
-        either_down = _intervals_minutes(a + b, start, end)
+        dark = rack_dark.get(r["rack"], [])
+        either_down = _intervals_minutes(a + b + dark, start, end)
         both_down = sum(_intervals_minutes([(max(x[0], y[0]), min(x[1], y[1]))], start, end)
-                        for x in a for y in b if min(x[1], y[1]) > max(x[0], y[0]))
+                        for x in a for y in b if min(x[1], y[1]) > max(x[0], y[0])) + _intervals_minutes(dark, start, end)
         one_feed_ok += window_min - both_down
         both_ok += window_min - either_down
     rack_minutes = window_min * len(leased)

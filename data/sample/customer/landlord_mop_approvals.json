@@ -77,6 +77,17 @@
     "window_start": "2026-09-13T19:20:13Z"
   },
   {
+    "approved_at": "2026-08-27T14:46:03Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "BW-A-R1-PG-A2-A"
+    ],
+    "mop_id": "MOP-310",
+    "title": "Retorque A-side tap-off for rack A07",
+    "window_end": "2026-09-15T17:16:03Z",
+    "window_start": "2026-09-15T14:46:03Z"
+  },
+  {
     "approved_at": "2026-09-05T18:36:52Z",
     "approved_by": "Customer change board",
     "assets": [

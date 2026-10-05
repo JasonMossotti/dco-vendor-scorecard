@@ -12,7 +12,7 @@
 
 The supplier's weekly reports claimed every SLA was met in 4 of 4 weeks, and raised no escalations. Measured from the Telemetry of Record, the period has **4 Minimum Service Level Defaults** (CSL-07, CSL-08, CSL-09, CSL-11), **14 S1 items** in the severity log, and **$188,700 in Service Level Credits**.
 
-Fleet availability looks almost identical either way (99.927% reported, 99.931% measured): a handful of hidden hours disappears inside 74 tickets on a 2,300-GPU hall. The gaps show up in restoration, repair quality, and record integrity, which is why the scorecard measures each incident, not just the average.
+Fleet availability looks almost identical either way (99.927% reported, 99.927% measured): a handful of hidden hours disappears inside 75 tickets on a 2,300-GPU hall. The gaps show up in restoration, repair quality, and record integrity, which is why the scorecard measures each incident, not just the average.
 
 ## Vendor reported vs. measured
 
@@ -22,8 +22,8 @@ Fleet availability looks almost identical either way (99.927% reported, 99.931% 
 | CSL-03 P1 Restoration Within 4 Hours | 100.00% | **100.00%** | +0.00 pts |
 | CSL-04 P2 Restoration Within 8 Hours | 100.00% | **92.31%** | -7.69 pts |
 | CSL-05 P3 Restoration Within 24 Hours | 100.00% | **100.00%** | +0.00 pts |
-| CSL-06 First-Time Fix Rate | 100.00% | **90.14%** | -9.86 pts |
-| CSL-07 Validated Return to Service | 100.00% | **97.18%** | -2.82 pts |
+| CSL-06 First-Time Fix Rate | 100.00% | **90.28%** | -9.72 pts |
+| CSL-07 Validated Return to Service | 100.00% | **97.22%** | -2.78 pts |
 | CSL-10 Qualified Staffing Fill Rate | 100.00% | **98.90%** | -1.10 pts |
 
 Record integrity (CSL-11), repeat failures (CSL-08), deployment adherence (CSL-09), and worst-rack availability (CSL-12) do not appear in the supplier's report at all.
@@ -32,17 +32,17 @@ Record integrity (CSL-11), repeat failures (CSL-08), deployment adherence (CSL-0
 
 | ID | Service level | Expected | Minimum | Measured | Status | Credit | Basis |
 |---|---|:-:|:-:|:-:|---|--:|---|
-| CSL-01 | Supplier-Attributable GPU Availability | ≥ 99.5% | ≥ 99% | 99.93% | Met | - | 1,221 capacity-weighted GPU-hours lost of 1,760,490 installed |
-| CSL-02 | P1 Engaged On-Site Within 15 Minutes | 100% | ≥ 95% | 100.00% | Met | - | 2 of 2 P1 incidents with a badge-verified technician within 15 min. Small-sample rule: 2 events, 0 misses. |
-| CSL-03 | P1 Restoration Within 4 Hours | ≥ 95% | ≥ 90% | 100.00% | Met | - | 2 of 2 P1 Tickets of Record restored within 4 hrs. Small-sample rule: 2 events, 0 misses. |
+| CSL-01 | Supplier-Attributable GPU Availability | ≥ 99.5% | ≥ 99% | 99.93% | Met | - | 1,279 capacity-weighted GPU-hours lost of 1,760,490 installed |
+| CSL-02 | P1 Engaged On-Site Within 15 Minutes | 100% | ≥ 95% | 100.00% | Met | - | 3 of 3 P1 incidents with a badge-verified technician within 15 min. Small-sample rule: 3 events, 0 misses. |
+| CSL-03 | P1 Restoration Within 4 Hours | ≥ 95% | ≥ 90% | 100.00% | Met | - | 3 of 3 P1 Tickets of Record restored within 4 hrs. Small-sample rule: 3 events, 0 misses. |
 | CSL-04 | P2 Restoration Within 8 Hours | ≥ 95% | ≥ 90% | 92.31% | Below Expected | - | 48 of 52 P2 Tickets of Record restored within 8 hrs |
 | CSL-05 | P3 Restoration Within 24 Hours | ≥ 95% | ≥ 90% | 100.00% | Met | - | 17 of 17 P3 Tickets of Record restored within 24 hrs |
-| CSL-06 | First-Time Fix Rate | ≥ 92% | ≥ 88% | 90.14% | Below Expected | - | 64 of 71 repairs fixed the first time |
-| CSL-07 | Validated Return to Service | 100% | ≥ 98% | 97.18% | **Minimum default** | $55,500 | 69 of 71 returns to service had the full validation checklist |
-| CSL-08 | 30-Day Repeat Failure Rate | ≤ 3% | ≤ 5% | 9.86% | **Minimum default (severe)** | $44,400 | 7 of 71 repaired units failed again within 30 days |
+| CSL-06 | First-Time Fix Rate | ≥ 92% | ≥ 88% | 90.28% | Below Expected | - | 65 of 72 repairs fixed the first time |
+| CSL-07 | Validated Return to Service | 100% | ≥ 98% | 97.22% | **Minimum default** | $55,500 | 70 of 72 returns to service had the full validation checklist |
+| CSL-08 | 30-Day Repeat Failure Rate | ≤ 3% | ≤ 5% | 9.72% | **Minimum default (severe)** | $44,400 | 7 of 72 repaired units failed again within 30 days |
 | CSL-09 | Deployment Milestone Adherence | ≥ 95% | ≥ 90% | 76.92% | **Minimum default (severe)** | $44,400 | 10 of 13 racks due this period reached Validated Handoff on time |
 | CSL-10 | Qualified Staffing Fill Rate | ≥ 98% | ≥ 95% | 98.90% | Met | - | 4,320 of 4,368 committed technician hours badge-verified |
-| CSL-11 | Record Integrity | ≥ 99% | ≥ 97% | 82.43% | **Minimum default (severe)** | $44,400 | 13 of 74 closed tickets did not reconcile with telemetry |
+| CSL-11 | Record Integrity | ≥ 99% | ≥ 97% | 82.67% | **Minimum default (severe)** | $44,400 | 13 of 75 closed tickets did not reconcile with telemetry |
 | CSL-12 | Worst-Rack Availability | ≥ 99% | ≥ 97.5% | 99.49% | Met | - | Worst rack A15: 247 GPU-hours lost |
 
 ## Service Level Credits
@@ -63,7 +63,7 @@ Payable after the monthly cap (the At-Risk Amount): **$188,700**.
 |---|:-:|:-:|:-:|:-:|:-:|---|
 | 2026-08-31 | 99.943% / 99.925% | 100.0% / **66.7%** | 100.0% / **68.4%** | 100.0% / 97.8% | 7 | All SLAs met. No open escalations. |
 | 2026-09-07 | 99.954% / 99.955% | 100.0% / **100.0%** | 100.0% / **94.4%** | 100.0% / 100.0% | 5 | All SLAs met. No open escalations. |
-| 2026-09-14 | 99.917% / 99.930% | 100.0% / **100.0%** | 100.0% / **100.0%** | 100.0% / 97.8% | 3 | All SLAs met. No open escalations. |
+| 2026-09-14 | 99.917% / 99.917% | 100.0% / **100.0%** | 100.0% / **100.0%** | 100.0% / 97.8% | 3 | All SLAs met. No open escalations. |
 | 2026-09-21 | 99.895% / 99.917% | 100.0% / **100.0%** | 100.0% / **100.0%** | 100.0% / 100.0% | 3 | All SLAs met. No open escalations. |
 
 ## Corrective action plans
@@ -148,7 +148,7 @@ Discrepancy details and evidence: [discrepancy_report.md](discrepancy_report.md)
 | KM-15 | Training and Certification Currency | 100% | n/a | n/a | Not measured in the demo data |
 | KM-16 | Chronic Units (more than 12 Supplier-attributable down-hours in a rolling 30 days) | ≤ 0 units | 0 units | Met | None |
 | KM-17 | Redundancy Exposure (hours per month running without power or cooling redundancy) | ≤ 24 hrs | 0.8 hrs | Met | 0.8 hours running without power or cooling redundancy |
-| KM-18 | Ticket Reopen Rate (TR-1 early failures and TR-2 reopens) | ≤ 3% | 4.22% | **Missed** | 3 Tickets of Record reopened under TR-1 or TR-2 |
+| KM-18 | Ticket Reopen Rate (TR-1 early failures and TR-2 reopens) | ≤ 3% | 4.17% | **Missed** | 3 Tickets of Record reopened under TR-1 or TR-2 |
 | KM-19 | Manual Data Overrides (manually entered serials and audited timestamp edits) | ≤ 1% | n/a | n/a | Not measured in the demo data |
 
 ## Method

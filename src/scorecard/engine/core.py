@@ -26,6 +26,7 @@ CATEGORY_TO_CLASS = {
     "power_shelf": "FC-SHELF",
     "switch_tray": "FC-SWITCH",
     "cdu_pump": "FC-CDU",
+    "rack_facility": "FC-RACK",
     "leak": "FC-LEAK",
 }
 XID_FAMILY = {79: "bus", 94: "ecc", 48: "ecc", 119: "gsp", 145: "nvlink", 149: "nvlink"}
@@ -75,9 +76,10 @@ def minutes_between(a: datetime, b: datetime) -> float:
 class Context:
     """All site data, parsed and indexed, plus telemetry-derived Tickets of Record."""
 
-    def __init__(self, sla: dict[str, Any], source: SiteDataSource):
+    def __init__(self, sla: dict[str, Any], source: SiteDataSource, attribution: bool = True):
         self.sla = sla
         self.src = source
+        self.attribution = attribution   # Interface Agreement FA-3: start the IT clock at the Landlord's handoff
         g = source.get
         manifest = g("manifest")
         self.window_start: datetime = manifest["window"]["start"]
@@ -109,6 +111,7 @@ class Context:
         self.restore_target = {p["id"]: p["restore_min"] for p in sla["priorities"]}
         self.engaged_target = {p["id"]: p["engaged_on_site_min"] for p in sla["priorities"]}
 
+        self.rack_power_loss = self._rack_power_loss(source)
         self._index()
         self.tors: dict[str, list[TicketOfRecord]] = {
             "FC-GPU": self._gpu_tickets_of_record(),
@@ -153,7 +156,7 @@ class Context:
         if cat == "optic_link":
             link = self.parse_link(t)
             return f"{link['switch']}:swp{link['port']}" if link else t["configuration_item"]
-        if cat == "switch_tray":
+        if cat in ("switch_tray", "rack_facility"):
             return t["rack"]
         return t["configuration_item"]
 
@@ -166,6 +169,8 @@ class Context:
             return (ci, "Compute tray") if _HOST_RE.match(ci) else (t["rack"], "Rack manifold")
         if cat == "switch_tray":
             return t["rack"], "NVLink switch tray"
+        if cat == "rack_facility":
+            return t["rack"], "Rack return to service"
         if cat == "optic_link":
             return t["_unit"], "Optic, cable, or fiber"
         if cat == "psu":
@@ -194,6 +199,14 @@ class Context:
         lower = max(t["opened_at"] - timedelta(hours=12), self.previous_resolution(t) or datetime.min.replace(tzinfo=t["opened_at"].tzinfo))
         upper = t["opened_at"] + timedelta(minutes=5)
         cat, ci, rack = t["category"], t["configuration_item"], t["rack"]
+        if cat == "rack_facility":
+            loss = next((x for x in self.rack_power_loss if x["rack"] == rack
+                         and abs((x["t0"] - t["opened_at"]).total_seconds()) <= 3600), None)
+            if loss is None:
+                return None, None, None
+            if self.attribution:
+                return loss["handoff"], "facility/busway_cpm_events.jsonl", f"Landlord handoff: feed restored at the {rack} tap-off (FA-3)"
+            return loss["t0"], "facility/busway_cpm_events.jsonl", f"Both {rack} tap-offs open: rack power lost"
         cands: list[tuple[datetime, str, str]] = []
         if cat == "tray_gpu":
             cands = [(e["timestamp"], "telemetry/dcgm_xid_events.jsonl", f"XID {e['xid']} ({e['message']}) on {e['host']}")
@@ -224,6 +237,30 @@ class Context:
                      if e["alarm"] == "PumpRedundancyLost" and e["state"] == "active" and e["cdu"] == target]
         cands = [c for c in cands if lower <= c[0] <= upper]
         return min(cands) if cands else (None, None, None)
+
+    @staticmethod
+    def _rack_power_loss(source: SiteDataSource) -> list[dict]:
+        """Racks that lost both feeds at the tap-offs (Landlord side of the demarcation), from the busway monitors."""
+        try:
+            events = source.get("busway_events")
+        except FileNotFoundError:
+            return []
+        open_: dict[str, dict[str, datetime]] = {}
+        out = []
+        for e in events:
+            if "rack" not in e:
+                continue
+            side = e["busway"][-1]
+            feeds = open_.setdefault(e["rack"], {})
+            if e["event"] == "Breaker open":
+                feeds[side] = e["timestamp"]
+                if len(feeds) == 2:
+                    out.append({"rack": e["rack"], "t0": e["timestamp"], "handoff": None})
+            elif e["event"] == "Breaker closed":
+                if len(feeds) == 2 and out and out[-1]["rack"] == e["rack"] and out[-1]["handoff"] is None:
+                    out[-1]["handoff"] = e["timestamp"]
+                feeds.pop(side, None)
+        return [x for x in out if x["handoff"] is not None]
 
     # ------------------------------------------- telemetry-derived outages
     def _tickets_for(self, unit: str, category: str, start: datetime, end: datetime) -> tuple[str, ...]:

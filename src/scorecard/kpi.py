@@ -117,7 +117,7 @@ def build_incidents(ctx: Context, findings: list[Finding]) -> list[ScoredInciden
                   if t0 <= h["started_at"] and h["completed_at"] <= t["resolved_at"] + timedelta(minutes=15)]
         rts = max(checks) if checks else t["resolved_at"]
         cat = t["category"]
-        gpus = 72 if cat == "switch_tray" else (4 if _HOST_RE.match(t["configuration_item"]) else 72) if cat == "leak" else 0
+        gpus = 72 if cat in ("switch_tray", "rack_facility") else (4 if _HOST_RE.match(t["configuration_item"]) else 72) if cat == "leak" else 0
         out.append(ScoredIncident(
             key=t["number"], fault_class=t["_class"], priority=t["priority"], unit=t["_unit"], rack=t["rack"],
             tickets=[t["number"]], t0=t0, rts=rts, intervals=[(t0, rts)], gpus=gpus, factor=1.0,

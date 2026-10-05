@@ -4,13 +4,14 @@ Every facility event in the window, attributed under the Interface Agreement (FA
 
 | T0 | Event | Class | Owner (telemetry) | Rule | Rack capacity lost | Work order | Work order says | Agrees |
 |---|---|---|---|:-:|:-:|---|---|:-:|
-| 2026-09-04 03:24 UTC | BW-A-R3-PG-A4-B feed lost (Voltage L-L avg 0.0 V) | OT-FC-PWR | Landlord | FA-5 | No | WO-41051 | IT Partner | **No** |
-| 2026-09-07 08:44 UTC | Leak Under CDU-A4 at 15.0 m | OT-FC-LEAK | Landlord | FA-5 | No | WO-41060 | Landlord | Yes |
-| 2026-09-13 06:36 UTC | UPS-B3: Power module 6 fault | OT-FC-UPS | Landlord | FA-5 | No | WO-41035 | Landlord | Yes |
-| 2026-09-13 23:43 UTC | CH-01: Compressor trip (high condenser pressure) | OT-FC-CHW | Landlord | FA-5 | No | WO-41070 | Landlord | Yes |
-| 2026-09-14 13:57 UTC | VESDA-B1 Airflow Low | OT-FC-FIRE | Landlord | FA-5 | No | WO-41068 | Landlord | Yes |
-| 2026-09-16 21:51 UTC | CDU-B3 pump redundancy lost (Redfish PumpRedundancy Warning) | OT-FC-CDU | Landlord | FA-5 | No | WO-41032 | Landlord | Yes |
-| 2026-09-17 15:18 UTC | TW-B1: Fan 5 failure | OT-FC-AIR | Landlord | FA-5 | No | WO-41047 | Landlord | Yes |
-| 2026-09-23 21:55 UTC | CDU-A1 pump redundancy lost (Redfish PumpRedundancy Warning) | OT-FC-CDU | Landlord | FA-5 | No | WO-41025 | Landlord | Yes |
+| 2026-09-01 05:00 UTC | CH-08: Compressor trip (high condenser pressure) | OT-FC-CHW | Landlord | FA-5 | No | WO-41035 | Landlord | Yes |
+| 2026-09-06 02:51 UTC | CDU-B3 pump redundancy lost (Redfish PumpRedundancy Warning) | OT-FC-CDU | Landlord | FA-5 | No | WO-41031 | Landlord | Yes |
+| 2026-09-09 16:58 UTC | BW-B-R3-PG-B4-B feed lost (Voltage L-L avg 0.0 V) | OT-FC-PWR | Landlord | FA-5 | No | WO-41043 | IT Partner | **No** |
+| 2026-09-15 15:42 UTC | Rack A07 lost both feeds at the tap-offs (TO-A07-B opened while the other side was open) | OT-FC-PWR | Landlord | FA-1 | Yes | WO-41023 | Landlord | Yes |
+| 2026-09-15 17:09 UTC | VESDA-B2 Airflow Low | OT-FC-FIRE | Landlord | FA-5 | No | WO-41054 | Landlord | Yes |
+| 2026-09-16 10:54 UTC | CH-05: Compressor trip (high condenser pressure) | OT-FC-CHW | Landlord | FA-5 | No | WO-41062 | Landlord | Yes |
+| 2026-09-18 17:50 UTC | Leak Under CDU-A4 at 13.2 m | OT-FC-LEAK | Landlord | FA-5 | No | WO-41051 | Landlord | Yes |
+| 2026-09-22 09:47 UTC | TW-A4: Fan 6 failure | OT-FC-AIR | Landlord | FA-5 | No | WO-41041 | Landlord | Yes |
+| 2026-09-23 00:02 UTC | UPS-A2: Power module 6 fault | OT-FC-UPS | Landlord | FA-5 | No | WO-41034 | Landlord | Yes |
+| 2026-09-23 04:34 UTC | CDU-A2 pump redundancy lost (Redfish PumpRedundancy Warning) | OT-FC-CDU | Landlord | FA-5 | No | WO-41024 | Landlord | Yes |
 | 2026-09-24 21:14 UTC | Utility outage: both 13.8 kV mains tripped on undervoltage | UTILITY | Utility | FA-6 | No | WO-41009 | Utility | Yes |
-| 2026-09-26 00:51 UTC | CH-03: Compressor trip (high condenser pressure) | OT-FC-CHW | Landlord | FA-5 | No | WO-41042 | Landlord | Yes |

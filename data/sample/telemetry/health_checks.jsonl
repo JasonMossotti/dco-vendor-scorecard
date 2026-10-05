@@ -155,6 +155,9 @@
 {"check": "nvlink_domain", "completed_at": "2026-09-15T16:06:06Z", "result": "pass", "started_at": "2026-09-15T16:01:06Z", "target": "a01-ct05"}
 {"check": "nccl_allreduce_rack", "completed_at": "2026-09-15T16:16:06Z", "result": "pass", "started_at": "2026-09-15T16:06:06Z", "target": "a01-ct05"}
 {"check": "burn_in_1h", "completed_at": "2026-09-15T17:16:06Z", "result": "pass", "started_at": "2026-09-15T16:16:06Z", "target": "a01-ct05"}
+{"check": "rack_power_on", "completed_at": "2026-09-15T19:29:36Z", "result": "pass", "started_at": "2026-09-15T19:15:04Z", "target": "A07"}
+{"check": "rack_nvlink_acceptance", "completed_at": "2026-09-15T19:44:09Z", "result": "pass", "started_at": "2026-09-15T19:29:36Z", "target": "A07"}
+{"check": "nccl_allreduce_rack", "completed_at": "2026-09-15T19:55:29Z", "result": "pass", "started_at": "2026-09-15T19:44:09Z", "target": "A07"}
 {"check": "leak_hold_30m", "completed_at": "2026-09-15T21:12:53Z", "result": "pass", "started_at": "2026-09-15T20:42:53Z", "target": "a16-ct01"}
 {"check": "rack_burn_in_24h", "completed_at": "2026-09-16T20:52:23Z", "result": "pass", "started_at": "2026-09-15T20:52:23Z", "target": "B07"}
 {"check": "dcgm_diag_r3", "completed_at": "2026-09-15T21:42:53Z", "result": "pass", "started_at": "2026-09-15T21:12:53Z", "target": "a16-ct01"}

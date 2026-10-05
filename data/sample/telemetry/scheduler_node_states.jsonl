@@ -193,7 +193,43 @@
 {"node": "a07-ct04", "reason": "XID 149", "state": "drain", "timestamp": "2026-09-15T09:32:51Z"}
 {"node": "a07-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T11:23:21Z"}
 {"node": "a01-ct05", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-15T12:49:14Z"}
+{"node": "a07-ct06", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:26Z"}
+{"node": "a07-ct15", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:29Z"}
+{"node": "a07-ct11", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:33Z"}
+{"node": "a07-ct04", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:38Z"}
+{"node": "a07-ct10", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:40Z"}
+{"node": "a07-ct09", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:41Z"}
+{"node": "a07-ct13", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:41Z"}
+{"node": "a07-ct08", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:42Z"}
+{"node": "a07-ct12", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:42Z"}
+{"node": "a07-ct03", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:43Z"}
+{"node": "a07-ct05", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:43Z"}
+{"node": "a07-ct07", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:43Z"}
+{"node": "a07-ct18", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:43Z"}
+{"node": "a07-ct02", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:46Z"}
+{"node": "a07-ct16", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:48Z"}
+{"node": "a07-ct01", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:50Z"}
+{"node": "a07-ct17", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:50Z"}
+{"node": "a07-ct14", "reason": "NotResponding (rack input power lost)", "state": "down", "timestamp": "2026-09-15T15:42:51Z"}
 {"node": "a01-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T17:17:06Z"}
+{"node": "a07-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
+{"node": "a07-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-09-15T20:01:36Z"}
 {"node": "a16-ct01", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-15T20:07:17Z"}
 {"node": "a14-ct14", "reason": "XID 119", "state": "drain", "timestamp": "2026-09-15T20:15:44Z"}
 {"node": "a16-ct14", "reason": "XID 79", "state": "drain", "timestamp": "2026-09-15T21:33:29Z"}

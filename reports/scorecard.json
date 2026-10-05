@@ -384,10 +384,10 @@
   },
   "csl": [
     {
-      "actual": 99.931,
+      "actual": 99.927,
       "allocation_pct": 30,
       "credit": 0.0,
-      "detail": "1,221 capacity-weighted GPU-hours lost of 1,760,490 installed",
+      "detail": "1,279 capacity-weighted GPU-hours lost of 1,760,490 installed",
       "direction": "higher_is_better",
       "events": null,
       "expected": 99.5,
@@ -405,15 +405,15 @@
       "actual": 100.0,
       "allocation_pct": 20,
       "credit": 0.0,
-      "detail": "2 of 2 P1 incidents with a badge-verified technician within 15 min",
+      "detail": "3 of 3 P1 incidents with a badge-verified technician within 15 min",
       "direction": "higher_is_better",
-      "events": 2,
+      "events": 3,
       "expected": 100.0,
       "id": "CSL-02",
       "minimum": 95.0,
       "misses": 0,
       "name": "P1 Engaged On-Site Within 15 Minutes",
-      "note": "Small-sample rule: 2 events, 0 misses.",
+      "note": "Small-sample rule: 3 events, 0 misses.",
       "status": "met_expected",
       "status_text": "Met",
       "unit": "%",
@@ -423,15 +423,15 @@
       "actual": 100.0,
       "allocation_pct": 30,
       "credit": 0.0,
-      "detail": "2 of 2 P1 Tickets of Record restored within 4 hrs",
+      "detail": "3 of 3 P1 Tickets of Record restored within 4 hrs",
       "direction": "higher_is_better",
-      "events": 2,
+      "events": 3,
       "expected": 95.0,
       "id": "CSL-03",
       "minimum": 90.0,
       "misses": 0,
       "name": "P1 Restoration Within 4 Hours",
-      "note": "Small-sample rule: 2 events, 0 misses.",
+      "note": "Small-sample rule: 3 events, 0 misses.",
       "status": "met_expected",
       "status_text": "Met",
       "unit": "%",
@@ -474,12 +474,12 @@
       "vendor_reported": 100.0
     },
     {
-      "actual": 90.141,
+      "actual": 90.278,
       "allocation_pct": 25,
       "credit": 0.0,
-      "detail": "64 of 71 repairs fixed the first time",
+      "detail": "65 of 72 repairs fixed the first time",
       "direction": "higher_is_better",
-      "events": 71,
+      "events": 72,
       "expected": 92.0,
       "id": "CSL-06",
       "minimum": 88.0,
@@ -492,12 +492,12 @@
       "vendor_reported": 100.0
     },
     {
-      "actual": 97.183,
+      "actual": 97.222,
       "allocation_pct": 25,
       "credit": 55500.0,
-      "detail": "69 of 71 returns to service had the full validation checklist",
+      "detail": "70 of 72 returns to service had the full validation checklist",
       "direction": "higher_is_better",
-      "events": 71,
+      "events": 72,
       "expected": 100.0,
       "id": "CSL-07",
       "minimum": 98.0,
@@ -510,12 +510,12 @@
       "vendor_reported": 100.0
     },
     {
-      "actual": 9.859,
+      "actual": 9.722,
       "allocation_pct": 20,
       "credit": 44400.0,
-      "detail": "7 of 71 repaired units failed again within 30 days",
+      "detail": "7 of 72 repaired units failed again within 30 days",
       "direction": "lower_is_better",
-      "events": 71,
+      "events": 72,
       "expected": 3.0,
       "id": "CSL-08",
       "minimum": 5.0,
@@ -564,12 +564,12 @@
       "vendor_reported": 100.0
     },
     {
-      "actual": 82.432,
+      "actual": 82.667,
       "allocation_pct": 20,
       "credit": 44400.0,
-      "detail": "13 of 74 closed tickets did not reconcile with telemetry",
+      "detail": "13 of 75 closed tickets did not reconcile with telemetry",
       "direction": "higher_is_better",
-      "events": 74,
+      "events": 75,
       "expected": 99.0,
       "id": "CSL-11",
       "minimum": 97.0,
@@ -1999,6 +1999,39 @@
     },
     {
       "early_failures": 0,
+      "engaged_at": "2026-09-15T19:12:02Z",
+      "engaged_min": 5.1,
+      "factor": 1.0,
+      "fault_class": "FC-RACK",
+      "first_time_fix": true,
+      "gpus": 72,
+      "integrity_issue": false,
+      "intervals": [
+        [
+          "2026-09-15T19:06:55Z",
+          "2026-09-15T19:55:29Z"
+        ]
+      ],
+      "is_child": false,
+      "key": "INC3900001",
+      "linked_child": false,
+      "measured_min": 48.6,
+      "priority": "P1",
+      "rack": "A07",
+      "reopens": 0,
+      "rts": "2026-09-15T19:55:29Z",
+      "t0": "2026-09-15T19:06:55Z",
+      "tickets": [
+        "INC3900001"
+      ],
+      "unit": "A07",
+      "validated": true,
+      "vendor_restore_min": [
+        54.6833
+      ]
+    },
+    {
+      "early_failures": 0,
       "engaged_at": "2026-09-15T20:16:25Z",
       "engaged_min": 10.1,
       "factor": 1.0,
@@ -3127,7 +3160,7 @@
       "unit": " hrs"
     },
     {
-      "actual": 4.225,
+      "actual": 4.167,
       "detail": "3 Tickets of Record reopened under TR-1 or TR-2",
       "direction": "lower_is_better",
       "id": "KM-18",
@@ -3407,7 +3440,7 @@
     {
       "action": "Supplier RCA and corrective action plan for CSL-08 (SLA Section 17).",
       "at": "2026-09-28T00:00:00Z",
-      "description": "7 of 71 repaired units failed again within 30 days. CSL-08 actual 9.859 vs expected 3 / minimum 5: Below Minimum by more than the Expected-to-Minimum gap.",
+      "description": "7 of 72 repaired units failed again within 30 days. CSL-08 actual 9.722 vs expected 3 / minimum 5: Below Minimum by more than the Expected-to-Minimum gap.",
       "kind": "Service level",
       "level": "S2",
       "ref": "CSL-08",
@@ -3429,7 +3462,7 @@
     {
       "action": "Supplier RCA and corrective action plan for CSL-11 (SLA Section 17).",
       "at": "2026-09-28T00:00:00Z",
-      "description": "13 of 74 closed tickets did not reconcile with telemetry. CSL-11 actual 82.432 vs expected 99 / minimum 97: Below Minimum by more than the Expected-to-Minimum gap.",
+      "description": "13 of 75 closed tickets did not reconcile with telemetry. CSL-11 actual 82.667 vs expected 99 / minimum 97: Below Minimum by more than the Expected-to-Minimum gap.",
       "kind": "Service level",
       "level": "S2",
       "ref": "CSL-11",
@@ -3475,7 +3508,7 @@
     {
       "action": "Supplier RCA and corrective action plan for CSL-07 (SLA Section 17).",
       "at": "2026-09-28T00:00:00Z",
-      "description": "69 of 71 returns to service had the full validation checklist. CSL-07 actual 97.183 vs expected 100 / minimum 98: Below Minimum (credit-bearing default).",
+      "description": "70 of 72 returns to service had the full validation checklist. CSL-07 actual 97.222 vs expected 100 / minimum 98: Below Minimum (credit-bearing default).",
       "kind": "Service level",
       "level": "S3",
       "ref": "CSL-07",
@@ -3497,7 +3530,7 @@
     {
       "action": "Supplier RCA and corrective action plan for CSL-06 (SLA Section 17).",
       "at": "2026-09-28T00:00:00Z",
-      "description": "64 of 71 repairs fixed the first time. CSL-06 actual 90.141 vs expected 92 / minimum 88: Below Expected but at or above Minimum.",
+      "description": "65 of 72 repairs fixed the first time. CSL-06 actual 90.278 vs expected 92 / minimum 88: Below Expected but at or above Minimum.",
       "kind": "Service level",
       "level": "S4",
       "ref": "CSL-06",
@@ -3511,11 +3544,11 @@
   "totals": {
     "defaults": 4,
     "findings": 18,
-    "gpu_hours_lost": 1220.9206,
-    "incidents": 71,
+    "gpu_hours_lost": 1279.2006,
+    "incidents": 72,
     "s1": 14,
-    "tickets": 74,
-    "vendor_gpu_hours_lost": 1188.3969
+    "tickets": 75,
+    "vendor_gpu_hours_lost": 1254.0169
   },
   "weeks": [
     {
@@ -3601,17 +3634,17 @@
     {
       "findings": 3,
       "measured": {
-        "CSL-01": 99.93,
+        "CSL-01": 99.917,
         "CSL-02": 100.0,
         "CSL-03": 100.0,
         "CSL-04": 100.0,
         "CSL-05": 100.0,
         "CSL-06": 100.0,
-        "CSL-07": 92.308,
+        "CSL-07": 92.857,
         "CSL-08": 0.0,
         "CSL-09": 80.0,
         "CSL-10": 97.802,
-        "CSL-11": 92.308,
+        "CSL-11": 92.857,
         "CSL-12": 98.32,
         "KM-01": 90.909,
         "KM-02": 100.0,

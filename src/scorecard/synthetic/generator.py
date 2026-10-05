@@ -1100,6 +1100,51 @@ class SiteGenerator:
         return weeks
 
     # ============================================================== run
+    def _facility_rack_effects(self, outages: list[dict], streams: dict[str, list]) -> None:
+        """The IT side of a Landlord-caused rack outage: nodes down, the IT Partner validates after the handoff (HO-1).
+
+        Uses its own random stream, so every IT incident generated above is unchanged.
+        """
+        rng = random.Random(f"{self.seed}:rackfx")
+        for k, o in enumerate(outages, 1):
+            rack = next(r for r in self.racks if r["rack"] == o["rack"])
+            t0, handoff = o["t0"], o["handoff"]
+            tech = rng.choice(self.on_duty_techs(handoff))
+            badge_id = next(b["badge_id"] for b in streams["badge"] if b["person_id"] == tech["person_id"])
+            arrive = handoff + minutes(rng.uniform(4, 9))
+            streams["badge"].append({"timestamp": iso(arrive), "badge_id": badge_id, "person_id": tech["person_id"],
+                                     "door": f"HALL-{rack['hall'][-1]}", "direction": "in"})
+            t, checks = handoff + minutes(rng.uniform(8, 14)), []
+            for check, dur in (("rack_power_on", rng.uniform(8, 15)), ("rack_nvlink_acceptance", rng.uniform(10, 18)),
+                               ("nccl_allreduce_rack", rng.uniform(10, 15))):
+                checks.append({"check": check, "started_at": iso(t), "completed_at": iso(t + minutes(dur)),
+                               "result": "pass", "target": rack["rack"]})
+                t += minutes(dur)
+            rts = t + minutes(rng.uniform(3, 8))
+            streams["health"] += checks
+            for tray in rack["compute_trays"]:
+                streams["scheduler"] += [
+                    {"node": tray["host"], "reason": "NotResponding (rack input power lost)", "state": "down",
+                     "timestamp": iso(t0 + timedelta(seconds=rng.randint(15, 40)))},
+                    {"node": tray["host"], "reason": "returned to service", "state": "idle", "timestamp": iso(rts)}]
+            opened = t0 + minutes(rng.uniform(2, 4))
+            name = tech["name"]
+            streams["tickets"].append({
+                "number": f"INC39{k:05d}", "category": "rack_facility", "priority": "P1", "state": "Closed",
+                "hall": rack["hall"], "rack": rack["rack"], "configuration_item": f"Rack {rack['rack']}",
+                "short_description": f"Rack {rack['rack']} down: input power lost on both feeds (Landlord {o['wo']})",
+                "opened_at": iso(opened), "acknowledged_at": iso(opened + minutes(2)), "assigned_to": tech["person_id"],
+                "reported_outage_start": iso(handoff), "resolved_at": iso(rts), "close_code": "Facility restored; validated",
+                "parts_used": [], "validation_attached": True,
+                "work_notes": [
+                    {"at": iso(opened + minutes(2)), "author": name, "text": f"Acknowledged. Rack dark; Landlord working {o['wo']}. Standing by for handoff (HO-1)."},
+                    {"at": iso(arrive + minutes(1)), "author": name, "text": f"On site at rack {rack['rack']} ({rack['hall']})."},
+                    {"at": iso(handoff + minutes(10)), "author": name, "text": "Landlord handoff received; feed restored. Powering on and validating."},
+                    {"at": iso(rts), "author": name, "text": "Validation complete; all return-to-service checks passed. Returned to production."}]})
+        for key in ("badge", "health", "scheduler", "tickets"):
+            field_ = {"badge": "timestamp", "health": "started_at", "scheduler": "timestamp", "tickets": "opened_at"}[key]
+            streams[key].sort(key=lambda r: r[field_])      # stable: existing records keep their order
+
     def run(self) -> dict[str, Any]:
         self.build_topology()
         self.build_staffing()
@@ -1133,6 +1178,7 @@ class SiteGenerator:
             from .facility import FacilityGenerator
             facility = FacilityGenerator(site_model.load_site(), load_sla(PARTNER_FILES["landlord"]), self.cfg,
                                          self.start, self.end, self.seed, self.utc_offset).run()
+            self._facility_rack_effects(facility["rack_outages"], streams)
         return {
             "facility": facility,
             "window": {"start": iso(self.start), "end": iso(self.end), "weeks": self.weeks, "seed": self.seed},

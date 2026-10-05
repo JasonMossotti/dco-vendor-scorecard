@@ -1,69 +1,17 @@
 {
   "attribution": [
     {
-      "agrees": false,
-      "capacity_lost": false,
-      "claimed_owner": "IT Partner",
-      "event": "BW-A-R3-PG-A4-B feed lost (Voltage L-L avg 0.0 V)",
-      "fault_class": "OT-FC-PWR",
-      "owner": "Landlord",
-      "restored": "2026-09-04T05:15:29Z",
-      "rule": "FA-5",
-      "t0": "2026-09-04T03:24:58Z",
-      "unit": "BW-A-R3-PG-A4-B",
-      "work_order": "WO-41051"
-    },
-    {
       "agrees": true,
       "capacity_lost": false,
       "claimed_owner": "Landlord",
-      "event": "Leak Under CDU-A4 at 15.0 m",
-      "fault_class": "OT-FC-LEAK",
-      "owner": "Landlord",
-      "restored": "2026-09-07T12:00:52Z",
-      "rule": "FA-5",
-      "t0": "2026-09-07T08:44:01Z",
-      "unit": "TTDM-A/C8",
-      "work_order": "WO-41060"
-    },
-    {
-      "agrees": true,
-      "capacity_lost": false,
-      "claimed_owner": "Landlord",
-      "event": "UPS-B3: Power module 6 fault",
-      "fault_class": "OT-FC-UPS",
-      "owner": "Landlord",
-      "restored": "2026-09-13T16:53:57Z",
-      "rule": "FA-5",
-      "t0": "2026-09-13T06:36:59Z",
-      "unit": "UPS-B3",
-      "work_order": "WO-41035"
-    },
-    {
-      "agrees": true,
-      "capacity_lost": false,
-      "claimed_owner": "Landlord",
-      "event": "CH-01: Compressor trip (high condenser pressure)",
+      "event": "CH-08: Compressor trip (high condenser pressure)",
       "fault_class": "OT-FC-CHW",
       "owner": "Landlord",
-      "restored": "2026-09-14T04:39:25Z",
+      "restored": "2026-09-01T09:33:43Z",
       "rule": "FA-5",
-      "t0": "2026-09-13T23:43:49Z",
-      "unit": "CH-01",
-      "work_order": "WO-41070"
-    },
-    {
-      "agrees": true,
-      "capacity_lost": false,
-      "claimed_owner": "Landlord",
-      "event": "VESDA-B1 Airflow Low",
-      "fault_class": "OT-FC-FIRE",
-      "owner": "Landlord",
-      "restored": "2026-09-14T15:05:22Z",
-      "rule": "FA-5",
-      "t0": "2026-09-14T13:57:24Z",
-      "unit": "VESDA-B1",
-      "work_order": "WO-41068"
+      "t0": "2026-09-01T05:00:35Z",
+      "unit": "CH-08",
+      "work_order": "WO-41035"
     },
     {
       "agrees": true,
@@ -72,37 +20,115 @@
       "event": "CDU-B3 pump redundancy lost (Redfish PumpRedundancy Warning)",
       "fault_class": "OT-FC-CDU",
       "owner": "Landlord",
-      "restored": "2026-09-17T00:53:43Z",
+      "restored": "2026-09-06T08:30:41Z",
       "rule": "FA-5",
-      "t0": "2026-09-16T21:51:46Z",
+      "t0": "2026-09-06T02:51:39Z",
       "unit": "CDU-B3",
-      "work_order": "WO-41032"
+      "work_order": "WO-41031"
+    },
+    {
+      "agrees": false,
+      "capacity_lost": false,
+      "claimed_owner": "IT Partner",
+      "event": "BW-B-R3-PG-B4-B feed lost (Voltage L-L avg 0.0 V)",
+      "fault_class": "OT-FC-PWR",
+      "owner": "Landlord",
+      "restored": "2026-09-09T19:08:24Z",
+      "rule": "FA-5",
+      "t0": "2026-09-09T16:58:25Z",
+      "unit": "BW-B-R3-PG-B4-B",
+      "work_order": "WO-41043"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": true,
+      "claimed_owner": "Landlord",
+      "event": "Rack A07 lost both feeds at the tap-offs (TO-A07-B opened while the other side was open)",
+      "fault_class": "OT-FC-PWR",
+      "owner": "Landlord",
+      "restored": "2026-09-15T19:06:55Z",
+      "rule": "FA-1",
+      "t0": "2026-09-15T15:42:11Z",
+      "unit": "Rack A07",
+      "work_order": "WO-41023"
     },
     {
       "agrees": true,
       "capacity_lost": false,
       "claimed_owner": "Landlord",
-      "event": "TW-B1: Fan 5 failure",
+      "event": "VESDA-B2 Airflow Low",
+      "fault_class": "OT-FC-FIRE",
+      "owner": "Landlord",
+      "restored": "2026-09-15T20:24:53Z",
+      "rule": "FA-5",
+      "t0": "2026-09-15T17:09:01Z",
+      "unit": "VESDA-B2",
+      "work_order": "WO-41054"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "CH-05: Compressor trip (high condenser pressure)",
+      "fault_class": "OT-FC-CHW",
+      "owner": "Landlord",
+      "restored": "2026-09-16T14:15:48Z",
+      "rule": "FA-5",
+      "t0": "2026-09-16T10:54:33Z",
+      "unit": "CH-05",
+      "work_order": "WO-41062"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "Leak Under CDU-A4 at 13.2 m",
+      "fault_class": "OT-FC-LEAK",
+      "owner": "Landlord",
+      "restored": "2026-09-18T19:25:35Z",
+      "rule": "FA-5",
+      "t0": "2026-09-18T17:50:43Z",
+      "unit": "TTDM-A/C8",
+      "work_order": "WO-41051"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "TW-A4: Fan 6 failure",
       "fault_class": "OT-FC-AIR",
       "owner": "Landlord",
-      "restored": "2026-09-18T04:47:30Z",
+      "restored": "2026-09-22T12:41:31Z",
       "rule": "FA-5",
-      "t0": "2026-09-17T15:18:50Z",
-      "unit": "TW-B1",
-      "work_order": "WO-41047"
+      "t0": "2026-09-22T09:47:39Z",
+      "unit": "TW-A4",
+      "work_order": "WO-41041"
     },
     {
       "agrees": true,
       "capacity_lost": false,
       "claimed_owner": "Landlord",
-      "event": "CDU-A1 pump redundancy lost (Redfish PumpRedundancy Warning)",
+      "event": "UPS-A2: Power module 6 fault",
+      "fault_class": "OT-FC-UPS",
+      "owner": "Landlord",
+      "restored": "2026-09-23T05:48:33Z",
+      "rule": "FA-5",
+      "t0": "2026-09-23T00:02:56Z",
+      "unit": "UPS-A2",
+      "work_order": "WO-41034"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "CDU-A2 pump redundancy lost (Redfish PumpRedundancy Warning)",
       "fault_class": "OT-FC-CDU",
       "owner": "Landlord",
-      "restored": "2026-09-24T02:47:22Z",
+      "restored": "2026-09-23T08:18:06Z",
       "rule": "FA-5",
-      "t0": "2026-09-23T21:55:06Z",
-      "unit": "CDU-A1",
-      "work_order": "WO-41025"
+      "t0": "2026-09-23T04:34:15Z",
+      "unit": "CDU-A2",
+      "work_order": "WO-41024"
     },
     {
       "agrees": true,
@@ -116,28 +142,15 @@
       "t0": "2026-09-24T21:14:20Z",
       "unit": "138 kV utility service",
       "work_order": "WO-41009"
-    },
-    {
-      "agrees": true,
-      "capacity_lost": false,
-      "claimed_owner": "Landlord",
-      "event": "CH-03: Compressor trip (high condenser pressure)",
-      "fault_class": "OT-FC-CHW",
-      "owner": "Landlord",
-      "restored": "2026-09-26T04:47:58Z",
-      "rule": "FA-5",
-      "t0": "2026-09-26T00:51:18Z",
-      "unit": "CH-03",
-      "work_order": "WO-41042"
     }
   ],
   "credits": {
     "capped": false,
     "items": [
       {
-        "credit": 23600.0,
-        "csl": "OT-CSL-05",
-        "explanation": "At-Risk Amount $118,000 (10% of $1,180,000) \u00d7 20% allocation = $23,600"
+        "credit": 35400.0,
+        "csl": "OT-CSL-01",
+        "explanation": "At-Risk Amount $118,000 (10% of $1,180,000) \u00d7 30% allocation = $35,400"
       },
       {
         "credit": 23600.0,
@@ -155,24 +168,24 @@
         "explanation": "At-Risk Amount $118,000 (10% of $1,180,000) \u00d7 25% allocation = $29,500"
       }
     ],
-    "payable": 94400.0,
-    "uncapped": 94400.0
+    "payable": 106200.0,
+    "uncapped": 106200.0
   },
   "csl": [
     {
-      "actual": 100.0,
-      "credit": 0.0,
+      "actual": 99.99206607556216,
+      "credit": 35400.0,
       "detail": "64 leased racks; minutes with at least one feed in tolerance",
       "direction": "higher_is_better",
       "expected": 99.999,
       "id": "OT-CSL-01",
       "minimum": 99.995,
       "name": "Rack Power Availability",
-      "status": "met_expected",
+      "status": "below_minimum",
       "vendor_reported": 99.999
     },
     {
-      "actual": 99.97858602533896,
+      "actual": 99.96688019283233,
       "credit": 0.0,
       "detail": "64 leased racks; minutes with both feeds in tolerance",
       "direction": "higher_is_better",
@@ -198,7 +211,7 @@
     {
       "actual": 100.0,
       "credit": 0.0,
-      "detail": "2 of 2 P1 events acknowledged and attended in time (badge)",
+      "detail": "3 of 3 P1 events acknowledged and attended in time (badge)",
       "direction": "higher_is_better",
       "expected": 98.0,
       "id": "OT-CSL-04",
@@ -208,15 +221,15 @@
       "vendor_reported": 98.0
     },
     {
-      "actual": 83.33333333333333,
-      "credit": 23600.0,
-      "detail": "5 of 6 redundancy events restored within target (telemetry)",
+      "actual": 100.0,
+      "credit": 0.0,
+      "detail": "7 of 7 redundancy events restored within target (telemetry)",
       "direction": "higher_is_better",
       "expected": 95.0,
       "id": "OT-CSL-05",
       "minimum": 90.0,
       "name": "Redundancy Restored Within Target",
-      "status": "deep_below_minimum",
+      "status": "met_expected",
       "vendor_reported": 95.0
     },
     {
@@ -232,9 +245,9 @@
       "vendor_reported": 98.0
     },
     {
-      "actual": 90.0,
+      "actual": 83.33333333333333,
       "credit": 17700.0,
-      "detail": "9 of 10 critical work events under an approved MOP",
+      "detail": "10 of 12 critical work events under an approved MOP",
       "direction": "higher_is_better",
       "expected": 100.0,
       "id": "OT-CSL-07",
@@ -244,9 +257,9 @@
       "vendor_reported": 100.0
     },
     {
-      "actual": 80.64516129032258,
+      "actual": 81.25,
       "credit": 29500.0,
-      "detail": "25 of 31 work orders and maintenance records reconcile",
+      "detail": "26 of 32 work orders and maintenance records reconcile",
       "direction": "higher_is_better",
       "expected": 98.0,
       "id": "OT-CSL-08",
@@ -281,12 +294,12 @@
     }
   ],
   "defaults": [
-    "OT-CSL-05",
+    "OT-CSL-01",
     "OT-CSL-06",
     "OT-CSL-07",
     "OT-CSL-08"
   ],
-  "findings": 7,
+  "findings": 8,
   "km": [
     {
       "actual": 85.71428571428571,
@@ -349,8 +362,8 @@
       "unit": "%"
     },
     {
-      "actual": 77.77777777777777,
-      "detail": "7 of 9 MOPs approved at least 10 business days before the work",
+      "actual": 80.0,
+      "detail": "8 of 10 MOPs approved at least 10 business days before the work",
       "direction": "higher_is_better",
       "id": "OT-KM-07",
       "met": false,
@@ -369,7 +382,7 @@
       "unit": "%"
     }
   ],
-  "s1": 6,
+  "s1": 7,
   "supplier": "Caprock Critical Facilities, LLC",
   "window": {
     "end": "2026-09-28T00:00:00Z",

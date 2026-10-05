@@ -381,6 +381,7 @@ Each fault class below is a rule card: the single approved way to detect, classi
 |---|---|---|---|:-:|:-:|:-:|
 | FC-GPU | GPU fault on a compute tray | Compute tray host (e.g., a14-ct07) | DS-DCGM | P2 | 24 hrs | 7 days |
 | FC-SWITCH | NVLink switch tray failure | Rack (the NVLink domain) | DS-NMX | P1 | 24 hrs | 7 days |
+| FC-RACK | Rack outage caused by a facility event (power or cooling) | Rack | DS-SCHED | P1 | 24 hrs | 7 days |
 | FC-LINK | Back-end fabric link fault | Link: host and HCA on one end, switch and port on the other (both ends together) | DS-UFM | P3 | 24 hrs | 7 days |
 | FC-PSU | Single PSU failure (redundancy intact) | PSU slot (rack, power shelf, PSU number) | DS-REDFISH | P3 | 24 hrs | 7 days |
 | FC-SHELF | Power shelf failure (redundancy lost) | Power shelf slot (rack, shelf number) | DS-REDFISH | P2 | 24 hrs | 7 days |
@@ -419,6 +420,23 @@ Each fault class below is a rule card: the single approved way to detect, classi
 | **Stability window** | 24 hours in production (TR-2, TR-3) |
 | **Recurrence window** | 7 days (TR-5) |
 | **Capacity impact** | Rack drained: 72 GPUs × 1.0 |
+
+### FC-RACK: Rack outage caused by a facility event (power or cooling)
+
+| | |
+|---|---|
+| **Service Unit Key** | Rack |
+| **Detection signal** | All compute nodes in a rack stop responding together while the Landlord's equipment upstream of the demarcation is out (both feeds at the tap-offs, or cooling out of band). Source: DS-SCHED. |
+| **T0 rule** | Under Interface Agreement FA-3 the IT Partner's clock starts at the Landlord's restoration handoff (first feed back in tolerance, or cooling back in band), not at the power or cooling loss. |
+| **Recurrence signal** | Any rack-wide outage on the same rack. |
+| **Priority** | P1 by default. |
+| **Additional ticket fields** | Landlord work order; Handoff time |
+| **Repair evidence** | No parts expected; any part replaced follows the normal serial-scan rules. |
+| **Validation** | Section 12 checklist: Rack return to service |
+| **Clock stops** | All 18 compute nodes back in service after rack validation, measured from the handoff. |
+| **Stability window** | 24 hours in production (TR-2, TR-3) |
+| **Recurrence window** | 7 days (TR-5) |
+| **Capacity impact** | Rack down: 72 GPUs × 1.0 |
 
 ### FC-LINK: Back-end fabric link fault
 
@@ -688,6 +706,12 @@ Each check is recorded in the health-check system under a standard check ID, so 
 
 - [ ] Redfish reports PSU health OK and redundancy restored.
 - [ ] Serial number change recorded in inventory.
+
+**Rack return to service** (check IDs: `rack_power_on`, `rack_nvlink_acceptance`, `nccl_allreduce_rack`)
+
+- [ ] All power shelves report input power on both feeds (or the restored feed) and all trays power on.
+- [ ] NVLink domain healthy for the rack after power-on.
+- [ ] Rack NCCL all-reduce bandwidth within 5% of the rack's baseline.
 
 **Rack manifold** (check IDs: `leak_hold_30m`, `rack_nvlink_acceptance`, `nccl_allreduce_rack`)
 

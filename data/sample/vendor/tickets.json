@@ -2003,6 +2003,46 @@
     ]
   },
   {
+    "acknowledged_at": "2026-09-15T15:48:04Z",
+    "assigned_to": "RSS-004",
+    "category": "rack_facility",
+    "close_code": "Facility restored; validated",
+    "configuration_item": "Rack A07",
+    "hall": "HALL-A",
+    "number": "INC3900001",
+    "opened_at": "2026-09-15T15:46:04Z",
+    "parts_used": [],
+    "priority": "P1",
+    "rack": "A07",
+    "reported_outage_start": "2026-09-15T19:06:55Z",
+    "resolved_at": "2026-09-15T20:01:36Z",
+    "short_description": "Rack A07 down: input power lost on both feeds (Landlord WO-41023)",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-09-15T15:48:04Z",
+        "author": "Lane Haddad",
+        "text": "Acknowledged. Rack dark; Landlord working WO-41023. Standing by for handoff (HO-1)."
+      },
+      {
+        "at": "2026-09-15T19:13:02Z",
+        "author": "Lane Haddad",
+        "text": "On site at rack A07 (HALL-A)."
+      },
+      {
+        "at": "2026-09-15T19:16:55Z",
+        "author": "Lane Haddad",
+        "text": "Landlord handoff received; feed restored. Powering on and validating."
+      },
+      {
+        "at": "2026-09-15T20:01:36Z",
+        "author": "Lane Haddad",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
     "acknowledged_at": "2026-09-15T20:13:06Z",
     "assigned_to": "RSS-007",
     "category": "tray_gpu",

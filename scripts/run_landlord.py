@@ -107,6 +107,43 @@ def attribution_md(sc) -> str:
     return "\n".join(L) + "\n"
 
 
+def site_summary_md(it_sc, it_plain, ll_sc, ll_ev, it_ev, it_result) -> str:
+    """Both partners side by side, and what attribution changed."""
+    rack = [r for r in ll_sc["attribution"] if r["capacity_lost"]]
+    it_rack = [i for i in it_result.context.tickets if i["category"] == "rack_facility"]
+    L = ["# Site Summary: Site AUS-1", "",
+         f"Window {ll_sc['window']['start']:%Y-%m-%d} to {ll_sc['window']['end']:%Y-%m-%d}. Each partner is measured against "
+         "its own SLA from the Customer's Telemetry of Record; outages that cross the demarcation are attributed under the "
+         "Interface Agreement. Synthetic data; all names fictional.", "",
+         "| | IT Partner (Ridgeline) | Landlord (Caprock) |", "|---|:-:|:-:|",
+         f"| Self-report | Every SLA met or minor exceptions | Every SLA met |",
+         f"| Minimum defaults (measured) | {it_sc['totals']['defaults']} | {len(ll_sc['defaults'])} |",
+         f"| Credits payable | ${it_sc['credits']['payable']:,.0f} | ${ll_sc['credits']['payable']:,.0f} (against rent) |",
+         f"| Findings (S1) | {it_sc['totals']['findings']} ({it_sc['totals']['s1']}) | {ll_sc['findings']} ({ll_sc['s1']}) |"]
+    if it_ev and ll_ev:
+        L.append(f"| Engine self-check | {it_ev.detected} of {it_ev.planted}, {len(it_ev.false_positives)} false positives | "
+                 f"{ll_ev.detected} of {ll_ev.planted}, {len(ll_ev.false_positives)} false positives |")
+    L += ["", "## Outages that crossed the demarcation", ""]
+    for r in rack:
+        t = next((x for x in it_rack if r["unit"].endswith(x["rack"])), None)
+        L += [f"**{r['event']}.** Telemetry attributes it to the **{r['owner']}** ({r['rule']}): both of the rack's feeds were "
+              f"out at the tap-offs from {fmt_t(r['t0'])} until the Landlord's handoff at {fmt_t(r['restored'])}. Under FA-3 the "
+              f"IT Partner's clock started at the handoff"
+              + (f"; its ticket {t['number']} validated the rack and returned it to service at {fmt_t(t['resolved_at'])}." if t else "."), ""]
+    rows = lambda sc: {c["id"]: c for c in sc["csl"]}
+    a, b = rows(it_sc), rows(it_plain)
+    L += ["## What attribution changed for the IT Partner", "",
+          "The same telemetry, scored with the IT Partner's clock starting at the power loss instead of the Landlord's handoff:", "",
+          "| | With attribution (contract) | Without attribution |", "|---|:-:|:-:|",
+          f"| Minimum defaults | {it_sc['totals']['defaults']} | {it_plain['totals']['defaults']} |",
+          f"| Credits payable | ${it_sc['credits']['payable']:,.0f} | ${it_plain['credits']['payable']:,.0f} |",
+          f"| CSL-03 P1 restoration within 4 hours | {a['CSL-03']['actual']:.1f}% | {b['CSL-03']['actual']:.1f}% |",
+          f"| CSL-12 worst-rack availability | {a['CSL-12']['actual']:.3f}% | {b['CSL-12']['actual']:.3f}% |", "",
+          "Without attribution the IT Partner would be charged for hours the Landlord's equipment kept the rack dark. "
+          "With it, each party is charged only for its own side of the demarcation.", ""]
+    return "\n".join(L)
+
+
 def outputs(data_dir: Path = SAMPLE) -> dict[Path, str]:
     sla = load_sla(PARTNER_FILES["landlord"])
     result = run_landlord(sla, FileConnector(data_dir))
@@ -121,7 +158,20 @@ def outputs(data_dir: Path = SAMPLE) -> dict[Path, str]:
         REPORTS / "landlord_discrepancy_report.md": findings_md(result, ev),
         REPORTS / "landlord_findings.json": json.dumps(findings, indent=2, sort_keys=True, default=_json_default) + "\n",
         REPORTS / "attribution_report.md": attribution_md(sc),
+        REPORTS / "site_summary.md": _site_summary(data_dir, sc, ev),
     }
+
+
+def _site_summary(data_dir: Path, ll_sc, ll_ev) -> str:
+    from scorecard.builder import build_scorecard
+    from scorecard.engine import run_engine
+    from scorecard.engine.evaluate import evaluate
+    it_sla = load_sla()
+    src = FileConnector(data_dir)
+    it_result = run_engine(it_sla, src)
+    it_ev = evaluate(it_result.findings, data_dir) if (data_dir / "ground_truth").exists() else None
+    return site_summary_md(build_scorecard(it_sla, it_result), build_scorecard(it_sla, run_engine(it_sla, src, attribution=False)),
+                           ll_sc, ll_ev, it_ev, it_result)
 
 
 def robustness(n: int) -> tuple[int, int, int]:

@@ -107,6 +107,10 @@ These are real performance outcomes the scorecard should report, not discrepanci
 
 One utility outage (UPS ride-through on battery for about 12 seconds, 7 generators carry the site, closed-transition retransfer), 7 monthly generator tests, maintenance on CDUs, UPS, chillers, VESDA, and switchgear, 3 planned tap-off energizations for Hall B, and faults across the Landlord rule cards (CDU pump, UPS module, chiller, thermal wall, busway feed, building leak, VESDA fault).
 
+### A rack outage that crosses the demarcation
+
+During planned A-side tap-off work on a Hall A rack (under a MOP), the Landlord opens the B-side tap-off by mistake. The rack loses both feeds; the B tap-off unit fails on reclose and is replaced, so the rack is dark for 3 to 4 hours. The busway monitors record every tap-off breaker operation with the rack, and the Landlord's work order is a P1 for `Rack Axx`. On the IT side (generated from its own random stream, so no existing IT record changes), all 18 nodes go `down` with reason `NotResponding (rack input power lost)`, an IT technician badges in after the handoff, the rack passes the `Rack return to service` checks, and an IT ticket in category `rack_facility` records the work with its clock starting at the handoff (Interface Agreement FA-3). The B-side opening is in the Landlord answer key as `critical_work_no_mop`.
+
 ### Planted Landlord discrepancies
 
 Answer key: `ground_truth/facility_planted_discrepancies.json` (blocked from the engine).

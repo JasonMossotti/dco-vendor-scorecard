@@ -91,6 +91,7 @@ class FacilityGenerator:
         self.out: dict[str, list] = {k: [] for k in (
             "ups_events", "ups_status", "busway", "emcp", "cdu", "bms", "epms", "leak", "fire", "badges",
             "work_orders", "pm", "mops", "roster", "weekly", "gt_incidents", "planted")}
+        self.rack_outages: list[dict] = []     # handed to the IT generator for the IT side of the event
         self.incidents: list[FacIncident] = []
         self._n = 0
         self._wo = 41000
@@ -502,6 +503,46 @@ class FacilityGenerator:
             ]
             self._plant("bms_override_unrecorded", device=dev, point=point, set_at=iso(t), hours=round(hold, 1))
 
+    # ------------------------------------------------------------------ rack outage caused by Landlord work
+    def rack_power_outage(self) -> None:
+        """Planned A-side tap-off work under a MOP; the B-side tap-off for the same rack is opened by mistake.
+
+        The rack loses both feeds (FA-1: Landlord). The B tap-off unit fails on reclose and is replaced, so the
+        rack is dark for 3 to 4 hours. The IT Partner validates the rack after the handoff (HO-1, FA-3).
+        """
+        prod = next(h for h in self.halls if h["state"] == "production")
+        for _ in range(self.cfg.get("rack_power_outages", 0)):
+            rack = f"{prod['letter']}{self.rng.randint(1, S.rack_count(prod)):02d}"
+            seg = next(s for s in S.busway_segments(self.site, prod["id"]) if rack in s["racks"])
+            bw_a, bw_b = f"{seg['id']}-A", f"{seg['id']}-B"
+            t_a = self._rand_t(30, 50, local_hours=(9, 13))
+            eng = self.rng.choice(self.on_duty(t_a))
+            self.badge(eng, self.room(bw_a), t_a - mins(8))
+            mop = self.mop(f"Retorque A-side tap-off for rack {rack}", [bw_a], t_a - mins(30), t_a + mins(120))
+            t0 = t_a + mins(self.rng.uniform(10, 30))
+            handoff = t0 + mins(self.rng.uniform(190, 250))
+            a_close = handoff + mins(self.rng.uniform(15, 30))
+            tap = f"TO-{rack}"
+            self.out["busway"] += [
+                {"timestamp": iso(t_a), "busway": bw_a, "tapoff": f"{tap}-A", "rack": rack, "point": "Tap-off breaker", "event": "Breaker open"},
+                {"timestamp": iso(t0), "busway": bw_b, "tapoff": f"{tap}-B", "rack": rack, "point": "Tap-off breaker", "event": "Breaker open"},
+                {"timestamp": iso(handoff), "busway": bw_b, "tapoff": f"{tap}-B", "rack": rack, "point": "Tap-off breaker", "event": "Breaker closed"},
+                {"timestamp": iso(a_close), "busway": bw_a, "tapoff": f"{tap}-A", "rack": rack, "point": "Tap-off breaker", "event": "Breaker closed"},
+            ]
+            inc = FacIncident(self._gt(), "OT-FC-PWR", f"Rack {rack}", self.room(bw_a), t0, "P1",
+                              f"Rack {rack} lost both feeds: B-side tap-off opened in error during A-side work; B tap-off unit replaced")
+            inc.ack_at = t0 + mins(self.rng.uniform(1, 3))
+            inc.engineer, inc.engaged_at = eng, t0 + mins(self.rng.uniform(1, 4))
+            self.badge(eng, inc.room, inc.engaged_at)
+            inc.restored_at = inc.wo_restored_at = handoff
+            inc.wo_engaged_at, inc.wo = inc.engaged_at, self._next_wo()
+            inc.notes = f"Wrong tap-off ({tap}-B) opened during {mop}; B tap-off unit failed on reclose and was replaced"
+            self.incidents.append(inc)
+            self.bms_alarm(f"Rack {rack}", "Rack input power lost (both feeds)", t0, "P1", handoff, inc.ack_at, eng)
+            self._plant("critical_work_no_mop", busway=bw_b, at=iso(t0), wo=inc.wo, scenario="rack_power_outage",
+                        evidence="B-side tap-off opened with no MOP; the MOP covered only the A side")
+            self.rack_outages.append({"rack": rack, "t0": t0, "handoff": handoff, "wo": inc.wo, "gt_id": inc.gt_id})
+
     # ------------------------------------------------------------------ faults, with planted record problems
     def faults(self) -> None:
         planted = self.cfg["planted"]
@@ -576,6 +617,7 @@ class FacilityGenerator:
                 "priority": inc.priority, "acknowledged_at": iso(inc.ack_at) if inc.ack_at else None,
                 "engaged_at": iso(inc.engaged_at) if inc.engaged_at else None, "restored_at": iso(inc.restored_at),
                 "true_attribution": "Utility" if inc.fault_class == "UTILITY" else "Landlord",
+                "rack_capacity_lost": inc.unit.startswith("Rack "),
                 "description": inc.description})
         for p in self.out["planted"]:
             if "gt_id" in p:
@@ -605,9 +647,11 @@ class FacilityGenerator:
         self.utility_outage()
         self.maintenance()
         self.planned_work()
+        self.rack_power_outage()
         self.faults()
         self.plant_quiet_records()
         self.finalize()
+        self.out["rack_outages"] = self.rack_outages
         return self.out
 
 

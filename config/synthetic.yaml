@@ -64,6 +64,7 @@ deployment:
 facility:
   site_load_mw: [7.0, 8.0]          # Site load carried by the generators in a utility outage
   utility_outages: 1                 # Utility interruptions in the window (Utility-attributed; Landlord carries the load)
+  rack_power_outages: 1              # Landlord opens a rack's second tap-off by mistake during planned work (rack down; FA-1)
   fault_counts:                      # Expected faults in the 4-week window, by Landlord rule card
     OT-FC-CDU: 2
     OT-FC-UPS: 1

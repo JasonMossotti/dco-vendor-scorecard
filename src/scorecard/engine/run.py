@@ -32,8 +32,9 @@ def _apply_severity(sla: dict[str, Any], f: Finding) -> None:
     f.severity, f.severity_name, f.escalation, f.severity_reasons = res.level, res.name, res.escalation, res.reasons
 
 
-def run_engine(sla: dict[str, Any], source: SiteDataSource) -> EngineResult:
-    ctx = Context(sla, source)
+def run_engine(sla: dict[str, Any], source: SiteDataSource, attribution: bool = True) -> EngineResult:
+    """``attribution=False`` measures the IT Partner from the power loss instead of the Landlord's handoff (for comparison)."""
+    ctx = Context(sla, source, attribution=attribution)
     findings: list[Finding] = []
     for detect in DETECTORS:
         findings.extend(detect(ctx))

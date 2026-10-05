@@ -48,18 +48,29 @@ def badged(src, room, start, end, person=None):
 
 
 # ------------------------------------------------------------------ independence
-def test_facility_stream_never_changes_the_it_data(config):
+def test_facility_stream_only_adds_the_it_side_of_rack_outages(config):
+    """Every IT record is unchanged; the only additions are the IT side of Landlord-caused rack outages."""
     start = date(2026, 8, 31)
     it_only = {k: v for k, v in config.items() if k != "facility"}
     a = SiteGenerator(load_sla(), it_only, start=start).run()
     b = SiteGenerator(load_sla(), config, start=start).run()
-    assert a["facility"] is None and b["facility"] is not None
-    assert json.dumps(a["streams"], sort_keys=True, default=str) == json.dumps(b["streams"], sort_keys=True, default=str)
-    assert a["planted"] == b["planted"]
+    assert a["facility"] is None and b["facility"] is not None and a["planted"] == b["planted"]
+    racks = {o["rack"] for o in b["facility"]["rack_outages"]}
+    assert racks
+    for key, rows in a["streams"].items():
+        before = [json.dumps(r, sort_keys=True, default=str) for r in rows]
+        after = [json.dumps(r, sort_keys=True, default=str) for r in b["streams"][key]]
+        extra = list(after)
+        for r in before:
+            extra.remove(r)               # raises if any original record changed or vanished
+        for r in map(json.loads, extra):
+            assert (r.get("rack") in racks or r.get("target") in racks or r.get("category") == "rack_facility"
+                    or any(r.get("node", "").startswith(x.lower() + "-") for x in racks) or key == "badge"), (key, r)
 
 
 def test_every_configured_landlord_discrepancy_is_planted(planted, config):
     want = {k: v for k, v in config["facility"]["planted"].items() if v}
+    want["critical_work_no_mop"] = want.get("critical_work_no_mop", 0) + config["facility"].get("rack_power_outages", 0)
     got = {}
     for p in planted:
         got[p["type"]] = got.get(p["type"], 0) + 1
@@ -88,7 +99,7 @@ def test_device_names_and_values_match_the_site_and_the_standards(src):
     for e in src.get("vesda_events"):
         assert e["level"] in (None, "Alert", "Action", "Fire 1", "Fire 2")
     for wo in src.get("work_orders"):
-        assert wo["unit"] in names or wo["unit"].startswith(("TTDM-", "VESDA-", "138 kV"))
+        assert wo["unit"] in names or wo["unit"].startswith(("TTDM-", "VESDA-", "138 kV", "Rack "))
 
 
 def test_generator_readings_are_consistent(src):
@@ -185,5 +196,5 @@ def test_landlord_self_report_claims_every_service_level_met(src):
 def test_other_seeds_generate_cleanly(config, tmp_path):
     for seed in (3, 11, 42):
         out = SiteGenerator(load_sla(), config, start=date(2026, 3, 2), seed=seed).run()["facility"]
-        assert len([p for p in out["planted"]]) == sum(config["facility"]["planted"].values())
+        assert len(out["planted"]) == sum(config["facility"]["planted"].values()) + config["facility"].get("rack_power_outages", 0)
         assert out["work_orders"] and out["emcp"]

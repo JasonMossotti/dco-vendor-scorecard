@@ -5,7 +5,7 @@
 > Synthetic data for a portfolio demonstration. All sites, people, serials, and events are fictional.
 
 **Window:** 2026-08-31 00:00 UTC to 2026-09-28 00:00 UTC  
-**Vendor tickets reviewed:** 74  
+**Vendor tickets reviewed:** 75  
 **Findings:** 18 (10 S1 Critical, 5 S2 Major, 3 S3 Minor)
 
 Each finding is a place where the vendor's records do not reconcile with the Telemetry of Record. A finding starts a review; it is not by itself proof of intent. Severity follows the SLA's internal breach severity index, where any record-integrity finding is S1.

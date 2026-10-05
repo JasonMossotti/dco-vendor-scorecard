@@ -1,8 +1,12 @@
-{"busway": "BW-A-R3-PG-A4-B", "point": "Voltage L-L avg", "state": "out_of_tolerance", "timestamp": "2026-09-04T03:24:58Z", "value_v": 0.0}
-{"busway": "BW-A-R3-PG-A4-B", "point": "Voltage L-L avg", "state": "in_tolerance", "timestamp": "2026-09-04T05:15:29Z", "value_v": 480.7}
 {"busway": "BW-B-R1-PG-B1-B", "event": "Breaker open", "point": "Tap-off breaker", "tapoff": "TO-B29", "timestamp": "2026-09-04T18:09:27Z"}
 {"busway": "BW-B-R1-PG-B1-B", "event": "Breaker closed", "point": "Tap-off breaker", "tapoff": "TO-B29", "timestamp": "2026-09-04T18:50:12Z"}
+{"busway": "BW-B-R3-PG-B4-B", "point": "Voltage L-L avg", "state": "out_of_tolerance", "timestamp": "2026-09-09T16:58:25Z", "value_v": 0.0}
+{"busway": "BW-B-R3-PG-B4-B", "point": "Voltage L-L avg", "state": "in_tolerance", "timestamp": "2026-09-09T19:08:24Z", "value_v": 477.5}
 {"busway": "BW-B-R3-PG-B4-B", "event": "Breaker open", "point": "Tap-off breaker", "tapoff": "TO-B18", "timestamp": "2026-09-13T17:54:59Z"}
 {"busway": "BW-B-R3-PG-B4-B", "event": "Breaker closed", "point": "Tap-off breaker", "tapoff": "TO-B18", "timestamp": "2026-09-13T18:15:54Z"}
+{"busway": "BW-A-R1-PG-A2-A", "event": "Breaker open", "point": "Tap-off breaker", "rack": "A07", "tapoff": "TO-A07-A", "timestamp": "2026-09-15T15:16:03Z"}
+{"busway": "BW-A-R1-PG-A2-B", "event": "Breaker open", "point": "Tap-off breaker", "rack": "A07", "tapoff": "TO-A07-B", "timestamp": "2026-09-15T15:42:11Z"}
+{"busway": "BW-A-R1-PG-A2-B", "event": "Breaker closed", "point": "Tap-off breaker", "rack": "A07", "tapoff": "TO-A07-B", "timestamp": "2026-09-15T19:06:55Z"}
+{"busway": "BW-A-R1-PG-A2-A", "event": "Breaker closed", "point": "Tap-off breaker", "rack": "A07", "tapoff": "TO-A07-A", "timestamp": "2026-09-15T19:22:05Z"}
 {"busway": "BW-B-R3-PG-B4-A", "event": "Breaker open", "point": "Tap-off breaker", "tapoff": "TO-B09", "timestamp": "2026-09-24T17:22:19Z"}
 {"busway": "BW-B-R3-PG-B4-A", "event": "Breaker closed", "point": "Tap-off breaker", "tapoff": "TO-B09", "timestamp": "2026-09-24T18:02:49Z"}

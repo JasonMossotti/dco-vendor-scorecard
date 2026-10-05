@@ -1,5 +1,5 @@
 {"detail": "Inspection", "detector": "VESDA-B1", "event": "Isolate", "level": null, "timestamp": "2026-09-05T17:25:03Z"}
 {"detail": "Smoke test", "detector": "VESDA-B1", "event": "Alarm", "level": "Fire 1", "timestamp": "2026-09-05T17:40:03Z"}
 {"detail": "De-isolated", "detector": "VESDA-B1", "event": "Normal", "level": null, "timestamp": "2026-09-05T18:10:03Z"}
-{"detail": "Airflow Low", "detector": "VESDA-B1", "event": "Fault", "level": null, "timestamp": "2026-09-14T13:57:24Z"}
-{"detail": "Fault cleared", "detector": "VESDA-B1", "event": "Normal", "level": null, "timestamp": "2026-09-14T15:05:22Z"}
+{"detail": "Airflow Low", "detector": "VESDA-B2", "event": "Fault", "level": null, "timestamp": "2026-09-15T17:09:01Z"}
+{"detail": "Fault cleared", "detector": "VESDA-B2", "event": "Normal", "level": null, "timestamp": "2026-09-15T20:24:53Z"}

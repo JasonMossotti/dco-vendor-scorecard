@@ -34,7 +34,7 @@ def sc(sla, result):
 
 def test_every_planted_landlord_discrepancy_is_detected_with_no_false_positives(result):
     ev = evaluate_landlord(result.findings, SAMPLE)
-    assert ev.detected == ev.planted == 7 and not ev.false_positives, (ev.missed, ev.false_positives)
+    assert ev.detected == ev.planted == 8 and not ev.false_positives, (ev.missed, ev.false_positives)
 
 
 def test_findings_do_not_depend_on_the_answer_key(sla, result, tmp_path):
@@ -62,15 +62,19 @@ def test_attribution_follows_the_interface_agreement(result, sc):
     for i in result.incidents:
         if i.fault_class == "UTILITY":
             assert (i.owner, i.rule) == ("Utility", "FA-6")
+        elif i.capacity_lost:
+            continue
         else:
             assert (i.owner, i.rule) == ("Landlord", "FA-5"), "no rack capacity lost: a redundancy event"
+    rack = [i for i in result.incidents if i.capacity_lost]
+    assert rack and all((i.owner, i.rule) == ("Landlord", "FA-1") for i in rack)
     disagree = [r for r in sc["attribution"] if not r["agrees"]]
     assert len(disagree) == 1 and disagree[0]["claimed_owner"] == "IT Partner"
 
 
 def test_measurement_reflects_the_telemetry(result):
     m = measure_landlord(result)
-    assert m["OT-CSL-01"]["actual"] == 100.0, "no rack lost both feeds"
+    assert m["OT-CSL-01"]["actual"] < 100.0, "the rack that lost both feeds counts against rack power availability"
     assert m["OT-CSL-02"]["actual"] < 100.0, "one busway feed was lost, so some racks ran on one feed"
     assert m["OT-KM-02"]["actual"] < 100.0, "the unloaded generator test does not count"
     assert m["OT-KM-05"]["actual"] == 1.0
@@ -93,3 +97,40 @@ def test_landlord_engine_on_unseen_months():
     import run_landlord
     planted, detected, fps = run_landlord.robustness(3)
     assert detected == planted and fps == 0
+
+
+# ------------------------------------------------------------------ cross-partner attribution (Interface Agreement FA-1, FA-3)
+@pytest.fixture(scope="module")
+def it_runs():
+    from scorecard.builder import build_scorecard
+    from scorecard.engine import run_engine
+    it = load_sla()
+    src = FileConnector(SAMPLE)
+    on, off = run_engine(it, src), run_engine(it, src, attribution=False)
+    return on, off, build_scorecard(it, on), build_scorecard(it, off)
+
+
+def test_it_partner_clock_starts_at_the_landlords_handoff(it_runs, result):
+    on, off, *_ = it_runs
+    rack_event = next(i for i in result.incidents if i.capacity_lost)
+    ticket = next(t for t in on.context.tickets if t["category"] == "rack_facility")
+    assert on.context.telemetry_t0(ticket)[0] == rack_event.restored, "IT clock starts at the Landlord's handoff"
+    assert off.context.telemetry_t0(ticket)[0] == rack_event.t0, "without attribution it would start at the power loss"
+
+
+def test_attribution_keeps_the_landlords_outage_off_the_it_scorecard(it_runs):
+    *_, with_attr, without = it_runs
+    assert (with_attr["totals"]["defaults"], with_attr["credits"]["payable"]) == (4, 188700.0), \
+        "the IT headline is unchanged by a Landlord-caused rack outage"
+    assert without["totals"]["defaults"] > with_attr["totals"]["defaults"]
+    assert without["credits"]["payable"] > with_attr["credits"]["payable"]
+    rows = lambda sc: {c["id"]: c["actual"] for c in sc["csl"]}
+    assert rows(without)["CSL-03"] < rows(with_attr)["CSL-03"]
+
+
+def test_it_engine_is_unchanged_by_the_facility_event(it_runs):
+    from scorecard.engine.evaluate import evaluate
+    on, *_ = it_runs
+    ev = evaluate(on.findings, SAMPLE)
+    assert ev.detected == ev.planted and not ev.false_positives
+    assert not any("rack_facility" == on.context.ticket_by_no[n]["category"] for f in on.findings for n in f.tickets)

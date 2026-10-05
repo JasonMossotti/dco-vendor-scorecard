@@ -3,32 +3,32 @@
     "id": "L-001",
     "severity": "S1",
     "sla_refs": [
-      "OT-CSL-01",
-      "OT-CSL-02",
-      "OT-CSL-08"
-    ],
-    "summary": "WO-41051 attributes the BW-A-R3-PG-A4-B event to the IT Partner ('Tenant whip fault on rack A18; Landlord equipment healthy'), but the Telemetry of Record shows the fault on Landlord equipment (BW-A-R3-PG-A4-B feed lost (Voltage L-L avg 0.0 V)). Rule FA-5 applies.",
-    "tickets": [
-      "WO-41051"
-    ],
-    "title": "Fault attributed to another party against the telemetry",
-    "type": "attribution_contradicted",
-    "unit": "BW-A-R3-PG-A4-B"
-  },
-  {
-    "id": "L-002",
-    "severity": "S1",
-    "sla_refs": [
       "OT-CSL-06",
       "OT-CSL-08"
     ],
-    "summary": "PM-0018 (Infrared thermography under load, Hall A electrical room) was closed by CCF-E02 at 2026-09-10 20:08 UTC, but CCF-E02 never badged into Hall A electrical room in the 6 hours before.",
+    "summary": "PM-0018 (Infrared thermography under load, Hall A electrical room) was closed by CCF-E07 at 2026-09-05 15:09 UTC, but CCF-E07 never badged into Hall A electrical room in the 6 hours before.",
     "tickets": [
       "PM-0018"
     ],
     "title": "Maintenance closed without evidence",
     "type": "pm_without_evidence",
     "unit": "Hall A electrical room"
+  },
+  {
+    "id": "L-002",
+    "severity": "S1",
+    "sla_refs": [
+      "OT-CSL-01",
+      "OT-CSL-02",
+      "OT-CSL-08"
+    ],
+    "summary": "WO-41043 attributes the BW-B-R3-PG-B4-B event to the IT Partner ('Tenant whip fault on rack B21; Landlord equipment healthy'), but the Telemetry of Record shows the fault on Landlord equipment (BW-B-R3-PG-B4-B feed lost (Voltage L-L avg 0.0 V)). Rule FA-5 applies.",
+    "tickets": [
+      "WO-41043"
+    ],
+    "title": "Fault attributed to another party against the telemetry",
+    "type": "attribution_contradicted",
+    "unit": "BW-B-R3-PG-B4-B"
   },
   {
     "id": "L-003",
@@ -50,6 +50,18 @@
     "id": "L-004",
     "severity": "S1",
     "sla_refs": [
+      "OT-CSL-07"
+    ],
+    "summary": "Tap-off TO-A07-B breaker opened on BW-A-R1-PG-A2-B at 2026-09-15 15:42 UTC with no approved MOP covering that asset and time.",
+    "tickets": [],
+    "title": "Critical work without an approved MOP",
+    "type": "critical_work_no_mop",
+    "unit": "BW-A-R1-PG-A2-B"
+  },
+  {
+    "id": "L-005",
+    "severity": "S1",
+    "sla_refs": [
       "OT-CSL-07",
       "OT-KM-05"
     ],
@@ -60,22 +72,22 @@
     "unit": "TW-B2"
   },
   {
-    "id": "L-005",
+    "id": "L-006",
     "severity": "S1",
     "sla_refs": [
       "OT-CSL-05",
       "OT-CSL-08"
     ],
-    "summary": "WO-41025 records CDU-A1 restored at 2026-09-24 00:12 UTC, 154 minutes before the telemetry shows restoration at 2026-09-24 02:47 UTC. Measured restoration is 292 minutes, not 138.",
+    "summary": "WO-41024 records CDU-A2 restored at 2026-09-23 05:18 UTC, 180 minutes before the telemetry shows restoration at 2026-09-23 08:18 UTC. Measured restoration is 224 minutes, not 44.",
     "tickets": [
-      "WO-41025"
+      "WO-41024"
     ],
     "title": "Work order restored before the telemetry",
     "type": "landlord_clock_shift",
-    "unit": "CDU-A1"
+    "unit": "CDU-A2"
   },
   {
-    "id": "L-006",
+    "id": "L-007",
     "severity": "S1",
     "sla_refs": [
       "OT-CSL-07"
@@ -89,18 +101,18 @@
     "unit": "BW-B-R3-PG-B4-A"
   },
   {
-    "id": "L-007",
+    "id": "L-008",
     "severity": "S2",
     "sla_refs": [
       "OT-CSL-04",
       "OT-CSL-05"
     ],
-    "summary": "CH-01 alarm acknowledged at 2026-09-13 23:46 UTC and WO-41070 says an engineer attended at 2026-09-13 23:57 UTC, but nobody badged into Chiller yard before it cleared at 2026-09-14 04:39 UTC.",
+    "summary": "CH-05 alarm acknowledged at 2026-09-16 11:03 UTC and WO-41062 says an engineer attended at 2026-09-16 11:13 UTC, but nobody badged into Chiller yard before it cleared at 2026-09-16 14:15 UTC.",
     "tickets": [
-      "WO-41070"
+      "WO-41062"
     ],
     "title": "Alarm acknowledged but never dispatched",
     "type": "alarm_acked_no_dispatch",
-    "unit": "CH-01"
+    "unit": "CH-05"
   }
 ]

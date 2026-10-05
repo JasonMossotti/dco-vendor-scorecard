@@ -435,6 +435,27 @@ measurement_spec:
       gpus: 72
       states: [{state: "Rack drained", gpus: 72, factor: 1.0}]
     redundancy_exposure: false
+  - id: "FC-RACK"
+    name: "Rack outage caused by a facility event (power or cooling)"
+    service_unit_key: "Rack"
+    detection:
+      source: "DS-SCHED"
+      signal: "All compute nodes in a rack stop responding together while the Landlord's equipment upstream of the demarcation is out (both feeds at the tap-offs, or cooling out of band)."
+      t0_rule: "Under Interface Agreement FA-3 the IT Partner's clock starts at the Landlord's restoration handoff (first feed back in tolerance, or cooling back in band), not at the power or cooling loss."
+    recurrence_signal: "Any rack-wide outage on the same rack."
+    default_priority: "P1"
+    priority_rules: []
+    additional_fields: ["Landlord work order", "Handoff time"]
+    repair_evidence:
+      - "No parts expected; any part replaced follows the normal serial-scan rules."
+    validation_class: ["Rack return to service"]
+    clock_stop: "All 18 compute nodes back in service after rack validation, measured from the handoff."
+    stability_window_hours: 24
+    recurrence_window_days: 7
+    capacity_impact:
+      gpus: 72
+      states: [{state: "Rack down", gpus: 72, factor: 1.0}]
+    redundancy_exposure: false
   - id: "FC-LINK"
     name: "Back-end fabric link fault"
     service_unit_key: "Link: host and HCA on one end, switch and port on the other (both ends together)"
@@ -885,6 +906,12 @@ rts_validation:
       checks:
         - "Redfish reports PSU health OK and redundancy restored."
         - "Serial number change recorded in inventory."
+    - component: "Rack return to service"
+      check_ids: ["rack_power_on", "rack_nvlink_acceptance", "nccl_allreduce_rack"]
+      checks:
+        - "All power shelves report input power on both feeds (or the restored feed) and all trays power on."
+        - "NVLink domain healthy for the rack after power-on."
+        - "Rack NCCL all-reduce bandwidth within 5% of the rack's baseline."
     - component: "Rack manifold"
       check_ids: ["leak_hold_30m", "rack_nvlink_acceptance", "nccl_allreduce_rack"]
       checks:
