@@ -8,7 +8,7 @@ Each finding is a place where the Landlord's work orders or maintenance records 
 | L-002 | S1 Critical | Fault attributed to another party against the telemetry | BW-B-R3-PG-B4-B | WO-41043 attributes the BW-B-R3-PG-B4-B event to the IT Partner ('Tenant whip fault on rack B21; Landlord equipment healthy'), but the Telemetry of Record shows the fault on Landlord equipment (BW-B-R3-PG-B4-B feed lost (Voltage L-L avg 0.0 V)). Rule FA-5 applies. |
 | L-003 | S1 Critical | Generator test reported without load | GEN-4 | GEN-4 monthly test recorded as 'Pass at 40% load', but the EMCP shows 38 running minutes peaking at 3% of rated kW. NFPA 110 needs 30% for 30 minutes. |
 | L-004 | S1 Critical | Critical work without an approved MOP | BW-A-R1-PG-A2-B | Tap-off TO-A07-B breaker opened on BW-A-R1-PG-A2-B at 2026-09-15 15:42 UTC with no approved MOP covering that asset and time. |
-| L-005 | S1 Critical | BMS override or alarm inhibit without a change record | TW-B2 | Inhibit on TW-B2 'High supply air temperature alarm' set to Inhibited by CCF-E09 with no change reference, held 34.3 hours. |
+| L-005 | S1 Critical | BMS override or alarm inhibit without a change record | TW-B2 | Inhibit on TW-B2 'High supply air temperature alarm' set to Inhibited by CCF-E09 with no change reference or approved MOP, held 34.3 hours. |
 | L-006 | S1 Critical | Work order restored before the telemetry | CDU-A2 | WO-41024 records CDU-A2 restored at 2026-09-23 05:18 UTC, 180 minutes before the telemetry shows restoration at 2026-09-23 08:18 UTC. Measured restoration is 224 minutes, not 44. |
 | L-007 | S1 Critical | Critical work without an approved MOP | BW-B-R3-PG-B4-A | Tap-off TO-B09 breaker opened on BW-B-R3-PG-B4-A at 2026-09-24 17:22 UTC with no approved MOP covering that asset and time (WO-41014: Tap-off TO-B09 retorque and energization). |
 | L-008 | S2 Major | Alarm acknowledged but never dispatched | CH-05 | CH-05 alarm acknowledged at 2026-09-16 11:03 UTC and WO-41062 says an engineer attended at 2026-09-16 11:13 UTC, but nobody badged into Chiller yard before it cleared at 2026-09-16 14:15 UTC. |
@@ -67,7 +67,7 @@ Tap-off TO-A07-B breaker opened on BW-A-R1-PG-A2-B at 2026-09-15 15:42 UTC with 
 
 ## L-005: BMS override or alarm inhibit without a change record (S1 Critical)
 
-Inhibit on TW-B2 'High supply air temperature alarm' set to Inhibited by CCF-E09 with no change reference, held 34.3 hours.
+Inhibit on TW-B2 'High supply air temperature alarm' set to Inhibited by CCF-E09 with no change reference or approved MOP, held 34.3 hours.
 
 | Source | When | Detail |
 |---|---|---|

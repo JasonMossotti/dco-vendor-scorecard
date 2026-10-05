@@ -65,7 +65,7 @@
       "OT-CSL-07",
       "OT-KM-05"
     ],
-    "summary": "Inhibit on TW-B2 'High supply air temperature alarm' set to Inhibited by CCF-E09 with no change reference, held 34.3 hours.",
+    "summary": "Inhibit on TW-B2 'High supply air temperature alarm' set to Inhibited by CCF-E09 with no change reference or approved MOP, held 34.3 hours.",
     "tickets": [],
     "title": "BMS override or alarm inhibit without a change record",
     "type": "bms_override_unrecorded",

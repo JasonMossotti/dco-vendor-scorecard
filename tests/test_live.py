@@ -216,7 +216,7 @@ def test_modbus_reader_refuses_tables_it_could_write_to():
 # --------------------------------------------------------------------------- #
 def test_example_config_loads_and_keeps_secrets_out():
     cfg = load_config(ROOT / "config" / "collector.example.yaml")
-    assert {d["kind"] for d in cfg["devices"]} == {"cdu", "generator", "busway", "leak"}
+    assert {d["kind"] for d in cfg["devices"]} == {"cdu", "generator", "busway", "leak", "ups", "bms"}
     text = (ROOT / "config" / "collector.example.yaml").read_text(encoding="utf-8")
     assert "PLACEHOLDER" in text and "password:" not in text
 
@@ -369,3 +369,218 @@ def test_live_dataset_runs_through_the_landlord_engine(tmp_path, redfish):
     ctx = LandlordContext(load_sla(PARTNER_FILES["landlord"]), FileConnector(tmp_path))
     (inc,) = build_facility_incidents(ctx)
     assert inc.fault_class == "OT-FC-CDU" and inc.unit == "CDU-A1" and round(inc.restore_min) == 180
+
+
+# --------------------------------------------------------------------------- #
+# SNMPv3 (UPS) and BACnet/IP (BMS)
+# --------------------------------------------------------------------------- #
+pysnmp = pytest.importorskip("pysnmp")
+bacpypes3 = pytest.importorskip("bacpypes3")
+
+
+def free_udp_port() -> int:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind(("127.0.0.1", 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port
+
+
+class UpsCardSim:
+    """SNMPv3 agent with one authPriv read-only user, answering from a dict; logs every operation."""
+
+    OID = "1.3.6.1.4.1.318.1.1.1.4.1.1.0"
+
+    def __init__(self):
+        from pysnmp.carrier.asyncio.dgram import udp
+        from pysnmp.entity import config as snmp_config, engine
+        from pysnmp.entity.rfc3413 import cmdrsp, context
+        from pysnmp.proto.api import v2c
+        from pysnmp.smi import instrum
+        self.values = {self.OID: 2}
+        self.ops: list[str] = []
+        self.port = free_udp_port()
+        sim = self
+
+        class Card(instrum.AbstractMibInstrumController):
+            def read_variables(self, *binds, **ctx):
+                sim.ops.append("get")
+                out = [(n, v2c.Integer(sim.values[".".join(map(str, n))]) if ".".join(map(str, n)) in sim.values
+                        else v2c.NoSuchObject()) for n, _ in binds]
+                if ctx.get("cbFun"):
+                    ctx["cbFun"](out, **ctx)
+                return out
+
+            def write_variables(self, *binds, **ctx):
+                sim.ops.append("set")
+                raise PermissionError("read-only")
+
+        self.loop = asyncio.new_event_loop()
+
+        def run():
+            asyncio.set_event_loop(self.loop)
+            eng = engine.SnmpEngine()
+            snmp_config.add_transport(eng, udp.DOMAIN_NAME, udp.UdpTransport().open_server_mode(("127.0.0.1", sim.port)))
+            snmp_config.add_v3_user(eng, "tor-ro", snmp_config.USM_AUTH_HMAC96_SHA, "auth-key-123",
+                                    snmp_config.USM_PRIV_CFB128_AES, "priv-key-123")
+            snmp_config.add_vacm_user(eng, 3, "tor-ro", "authPriv", (1, 3, 6, 1, 4, 1, 318), ())
+            ctx = context.SnmpContext(eng)
+            ctx.unregister_context_name(v2c.OctetString(""))
+            ctx.register_context_name(v2c.OctetString(""), Card())
+            cmdrsp.GetCommandResponder(eng, ctx)
+            cmdrsp.SetCommandResponder(eng, ctx)
+            eng.transport_dispatcher.job_started(1)
+            self.loop.run_forever()
+
+        threading.Thread(target=run, daemon=True).start()
+        time.sleep(0.8)
+
+
+@pytest.fixture
+def ups(monkeypatch):
+    monkeypatch.setenv("UPS_AUTH", "auth-key-123")
+    monkeypatch.setenv("UPS_PRIV", "priv-key-123")
+    return UpsCardSim()
+
+
+def ups_device(sim):
+    return {"name": "ups-a1", "kind": "ups", "protocol": "snmp", "site_id": "UPS-A1", "host": "127.0.0.1",
+            "port": sim.port, "user": "tor-ro", "auth_key_env": "UPS_AUTH", "priv_key_env": "UPS_PRIV"}
+
+
+def test_ups_battery_transfer_over_snmpv3_authpriv(ups):
+    clock = Clock()
+    c = Collector(config(ups_device(ups)), clock=clock)
+    first = c.poll_once()
+    assert "facility/ups_nmc_events.jsonl" not in first and first["facility/ups_status.jsonl"][0]["upsBasicOutputStatus"] == "onLine"
+    ups.values[UpsCardSim.OID] = 3
+    clock.tick()
+    (e,) = c.poll_once()["facility/ups_nmc_events.jsonl"]
+    assert e["event"] == "upsBasicOutputStatus onBattery" and e["severity"] == "warning" and e["ups"] == "UPS-A1"
+    ups.values[UpsCardSim.OID] = 2
+    clock.tick()
+    assert c.poll_once()["facility/ups_nmc_events.jsonl"][0]["event"] == "upsBasicOutputStatus onLine"
+    assert set(ups.ops) == {"get"}, "the collector only ever issued SNMP GET"
+
+
+def test_snmp_wrong_key_is_a_feed_gap(monkeypatch, ups):
+    monkeypatch.setenv("UPS_AUTH", "not-the-key-999")
+    (h,) = Collector(config(ups_device(ups)), clock=Clock()).poll_once()["collector/feed_health.jsonl"]
+    assert not h["ok"] and "SNMPv3" in h["error"]
+
+
+def test_snmp_v2c_and_inline_keys_are_rejected(tmp_path):
+    p = tmp_path / "c.yaml"
+    p.write_text(yaml.safe_dump({"devices": [{"name": "u", "kind": "ups", "protocol": "snmp", "version": 2, "community": "public"}]}))
+    with pytest.raises(ConfigError, match="SNMPv3") as e:
+        load_config(p)
+    assert "community" in str(e.value)
+
+
+class BmsSim:
+    """A BACnet/IP device with one commandable analog value (a chiller condenser fan speed)."""
+
+    def __init__(self):
+        from bacpypes3.app import Application
+        from bacpypes3.local.analog import AnalogValueObjectCmd
+        from bacpypes3.local.device import DeviceObject
+        from bacpypes3.local.networkport import NetworkPortObject
+        self.port = free_udp_port()
+        self.loop = asyncio.new_event_loop()
+        ready = threading.Event()
+
+        def run():
+            asyncio.set_event_loop(self.loop)
+
+            async def start():
+                self.fan = AnalogValueObjectCmd(objectIdentifier=("analog-value", 1), objectName="CH-03 Condenser fan speed",
+                                                presentValue=55.0, relinquishDefault=55.0, units="percent")
+                self.app = Application.from_object_list([
+                    DeviceObject(objectIdentifier=("device", 599), objectName="EBO-SIM", vendorIdentifier=999),
+                    NetworkPortObject(f"127.0.0.1:{self.port}", objectIdentifier=("network-port", 1), objectName="NP-1"),
+                    self.fan])
+                ready.set()
+
+            self.loop.run_until_complete(start())
+            self.loop.run_forever()
+
+        threading.Thread(target=run, daemon=True).start()
+        ready.wait(5)
+
+    def stop(self):
+        def _stop():
+            self.app.close()
+            self.loop.stop()
+        self.loop.call_soon_threadsafe(_stop)
+        time.sleep(0.2)
+
+    def operator_override(self, value):
+        from bacpypes3.primitivedata import Real
+        asyncio.run_coroutine_threadsafe(self.fan.write_property("presentValue", Real(value), priority=8), self.loop).result(5)
+
+    def relinquish(self):
+        from bacpypes3.primitivedata import Null
+        asyncio.run_coroutine_threadsafe(self.fan.write_property("presentValue", Null(()), priority=8), self.loop).result(5)
+
+
+@pytest.fixture
+def bms():
+    sim = BmsSim()
+    yield sim
+    sim.stop()
+
+
+def bms_device(sim):
+    return {"name": "ebo", "kind": "bms", "protocol": "bacnet", "address": f"127.0.0.1:{sim.port}",
+            "local_address": f"127.0.0.1:{free_udp_port()}",
+            "points": [{"object": "analog-value,1", "device": "CH-03", "label": "Condenser fan speed"}]}
+
+
+def test_bms_operator_override_and_release_from_the_priority_array(bms):
+    sim = bms
+    clock = Clock()
+    c = Collector(config(bms_device(sim)), clock=clock)
+    assert "facility/bms_events.jsonl" not in c.poll_once()
+    sim.operator_override(100.0)
+    clock.tick()
+    (e,) = c.poll_once()["facility/bms_events.jsonl"]
+    assert (e["kind"], e["action"], e["device"], e["priority"], e["value"]) == ("override", "set", "CH-03", 8, 100.0)
+    assert e["change_ref"] is None, "a device cannot know the change reference; the engine reconciles it"
+    sim.relinquish()
+    clock.tick(60)
+    (r,) = c.poll_once()["facility/bms_events.jsonl"]
+    assert (r["kind"], r["action"]) == ("override", "release")
+    assert float(sim.fan.presentValue) == 55.0, "the collector never changed the device"
+
+
+def test_live_override_is_reconciled_against_approved_mops(tmp_path, bms):
+    """No change reference and no MOP: a finding. The same override inside an approved MOP window: none."""
+    from scorecard.connectors import FileConnector
+    from scorecard.engine.landlord import LandlordContext, detect_bms_override_unrecorded
+    from scorecard.sla_model import PARTNER_FILES, load_sla
+    sim = bms
+    clock = Clock()
+    c = Collector(config(bms_device(sim)), clock=clock)
+    w = DatasetWriter(tmp_path, T0)
+    w.append(c.poll_once(), clock())
+    sim.operator_override(100.0)
+    clock.tick()
+    w.append(c.poll_once(), clock())
+    sla = load_sla(PARTNER_FILES["landlord"])
+    findings = detect_bms_override_unrecorded(LandlordContext(sla, FileConnector(tmp_path)), [])
+    assert len(findings) == 1 and findings[0].unit == "CH-03"
+    mop = [{"mop_id": "MOP-900", "title": "Condenser fan test", "assets": ["CH-03"], "window_start": "2026-10-05T11:00:00Z",
+            "window_end": "2026-10-05T14:00:00Z", "approved_by": "Customer change board", "approved_at": "2026-09-20T00:00:00Z"}]
+    (tmp_path / "customer" / "landlord_mop_approvals.json").write_text(json.dumps(mop))
+    assert detect_bms_override_unrecorded(LandlordContext(sla, FileConnector(tmp_path)), []) == []
+
+
+def test_a_bacnet_error_is_contained_to_its_device(redfish, bms):
+    """bacpypes3 raises BACnet errors as BaseException; the adapter must convert them so one point cannot stop the collector."""
+    sim = bms
+    bad = bms_device(sim)
+    bad["points"] = [{"object": "analog-value,99", "device": "CH-99", "label": "Does not exist"}]
+    out = Collector(config(bad, cdu_device(redfish)), clock=Clock()).poll_once()
+    health = {h["device"]: (h["ok"], h["error"]) for h in out["collector/feed_health.jsonl"]}
+    assert health["ebo"][0] is False and ("BACnet error" in health["ebo"][1] or "Timeout" in health["ebo"][1])
+    assert health["cdu-a1"][0] is True

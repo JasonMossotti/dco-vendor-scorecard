@@ -296,15 +296,18 @@ def detect_pm_without_evidence(ctx, incidents):
 @detector
 def detect_bms_override_unrecorded(ctx, incidents):
     out = []
-    sets = [e for e in ctx.bms if e["kind"] in ("override", "inhibit") and e["action"] == "set" and not e["change_ref"]]
+    # Unrecorded: no change reference in the BMS and no approved MOP covering that device at that time.
+    # (Live BACnet data cannot carry a change reference, so the MOP check is what reconciles it.)
+    sets = [e for e in ctx.bms if e["kind"] in ("override", "inhibit") and e["action"] == "set" and not e["change_ref"]
+            and not ctx.mop_covering(e["device"], e["timestamp"])]
     for s in sets:
         rel = next((e for e in ctx.bms if e["kind"] == s["kind"] and e["device"] == s["device"] and e["point"] == s["point"]
                     and e["action"] == "release" and e["timestamp"] > s["timestamp"]), None)
         hours = (rel["timestamp"] - s["timestamp"]).total_seconds() / 3600 if rel else None
         out.append(new_finding(
             ctx, "bms_override_unrecorded",
-            f"{s['kind'].capitalize()} on {s['device']} '{s['point']}' set to {s['value']} by {s['user']} with no change "
-            f"reference" + (f", held {hours:.1f} hours." if hours else ", still in place at the end of the window."),
+            f"{s['kind'].capitalize()} on {s['device']} '{s['point']}' set to {s['value']}"
+            + (f" by {s['user']}" if s.get("user") else "") + " with no change reference or approved MOP" + (f", held {hours:.1f} hours." if hours else ", still in place at the end of the window."),
             [], s["device"], s["timestamp"],
             [ev("facility/bms_events.jsonl", s["timestamp"], f"{s['kind']} set: {s['point']} = {s['value']}, change_ref empty"),
              ev("facility/bms_events.jsonl", rel["timestamp"] if rel else None, "released" if rel else "not released")],

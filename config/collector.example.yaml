@@ -67,3 +67,27 @@ devices:
       - {name: c5_distance, register: 401, type: uint16, table: holding, scale: 0.1}
     circuits:
       - {circuit: 5, label: Under CDU-A1, alarm_point: c5_alarm, distance_point: c5_distance}
+
+  - name: ups-a1
+    kind: ups
+    protocol: snmp                        # SNMPv3 authPriv only; v1/v2c are rejected
+    site_id: UPS-A1
+    host: ups-a1-nmc.mon.example.invalid  # Galaxy network management card
+    port: 161
+    user: tor-ro                          # a read-only USM user with no write view
+    auth_protocol: sha                    # or sha256
+    priv_protocol: aes128
+    auth_key_env: UPS_A1_AUTH_KEY
+    priv_key_env: UPS_A1_PRIV_KEY
+    # load_oid: 1.3.6.1.4.1.318.1.1.1.4.2.3.0   # PLACEHOLDER: verify against the card's PowerNet MIB revision
+
+  - name: ebo-bms
+    kind: bms
+    protocol: bacnet
+    address: 10.20.30.40:47808            # the BMS's BACnet/IP address
+    local_address: 10.20.30.50:47808      # this collector's BACnet/IP address on the monitoring network
+    local_device_id: 3999                 # a device instance agreed with the Landlord's BMS integrator
+    override_priorities: [1, 2, 3, 4, 5, 6, 7, 8]   # manual slots; slot 8 is "manual operator"
+    points:                               # PLACEHOLDER object identifiers: take them from the BMS points list
+      - {object: "analog-value,1", device: CH-03, label: Condenser fan speed}
+      - {object: "binary-value,12", device: TW-A2, label: High supply air temperature alarm enable}

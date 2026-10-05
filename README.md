@@ -105,9 +105,9 @@ In the sample month the Landlord, doing planned work on one side of rack A07's p
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
 
-- **Redfish** (CDUs, DMTF `ThermalEquipment` schema) and **Modbus TCP** (generator controllers, busway monitors, leak controllers) are built; SNMPv3 and BACnet/IP are next.
+- **Four protocols:** Redfish (CDUs, DMTF `ThermalEquipment` schema), Modbus TCP (generator controllers, busway monitors, leak controllers), SNMPv3 with authentication and AES privacy (UPS management cards, PowerNet MIB `upsBasicOutputStatus`), and BACnet/IP (BMS points, with overrides read from the priority array).
 - **Read-only by construction:** the collector issues only Redfish GET and Modbus read requests (function codes 3 and 4). A test scans the collector's code and fails on any write-capable call, and the simulators record every request to prove it.
-- **Tested against device simulators** in CI: a local Redfish server with authentication, and pymodbus's own Modbus server. An end-to-end test drives a simulated CDU pump failure through the collector and the unchanged Landlord engine.
+- **Tested against device simulators** in CI: a Redfish server with authentication, pymodbus's Modbus server, a pysnmp SNMPv3 agent, and a bacpypes3 BACnet device. End-to-end tests drive a simulated CDU pump failure and a BMS operator override through the collector into the unchanged Landlord engine. [`docs/LIVE_READINESS.md`](docs/LIVE_READINESS.md) lists what is proven and what a real deployment still needs.
 - **Credentials stay out of the repository** (named environment variables only), register maps are site configuration verified at commissioning ([example](config/collector.example.yaml)), and a device that stops answering becomes a measured feed gap with backoff, not a silent one.
 
 ```bash
@@ -166,7 +166,7 @@ scripts/render_sla.py            Generates docs/sla/IT_PARTNER_SLA.md from the Y
 scripts/generate_data.py         Generates the synthetic dataset
 scripts/run_engine.py            Runs the engine and writes reports/
 scripts/run_landlord.py          Runs the Landlord engine; writes the Landlord scorecard, discrepancy, and attribution reports
-scripts/collect.py               Read-only live collector (Redfish, Modbus) writing the dataset contract
+scripts/collect.py               Read-only live collector (Redfish, Modbus, SNMPv3, BACnet/IP) writing the dataset contract
 src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard
 scripts/build_scorecard.py       Builds the scorecard and writes reports/

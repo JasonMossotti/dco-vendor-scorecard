@@ -3,3 +3,6 @@
 -r requirements.txt
 pymodbus==3.15.0      # Modbus TCP (read function codes only); its simulator is used in tests
 requests>=2.31        # Redfish over HTTPS (GET only)
+pysnmp==7.1.30        # SNMPv3 (GET only, authPriv only)
+cryptography>=47      # AES for SNMPv3 privacy: pysnmp 7.1.30 imports CFB from cryptography.hazmat.decrepit (absent in 46)
+bacpypes3==0.0.110    # BACnet/IP (ReadProperty only)

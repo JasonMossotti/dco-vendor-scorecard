@@ -14,8 +14,8 @@ from typing import Any
 
 import yaml
 
-PROTOCOLS = {"redfish", "modbus"}          # SNMP and BACnet arrive in Phase 6b
-KINDS = {"cdu", "generator", "busway", "leak"}
+PROTOCOLS = {"redfish", "modbus", "snmp", "bacnet"}
+KINDS = {"cdu", "generator", "busway", "leak", "ups", "bms"}
 
 
 class ConfigError(ValueError):
@@ -34,7 +34,9 @@ def load_config(path: str | Path) -> dict[str, Any]:
             errors.append(f"{d.get('name')}: protocol must be one of {sorted(PROTOCOLS)}")
         if d.get("kind") not in KINDS:
             errors.append(f"{d.get('name')}: kind must be one of {sorted(KINDS)}")
-        for k in ("password", "username", "secret", "community"):
+        if d.get("protocol") == "snmp" and d.get("version", 3) != 3:
+            errors.append(f"{d.get('name')}: only SNMPv3 (authPriv) is allowed; v1 and v2c send community strings in cleartext")
+        for k in ("password", "username", "secret", "community", "auth_key", "priv_key"):
             if k in d:
                 errors.append(f"{d.get('name')}: '{k}' must not be in the config; use '{k}_env' to name an environment variable")
     if errors:

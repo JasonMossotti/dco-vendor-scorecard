@@ -129,6 +129,47 @@ class Collector:
             st.last[key] = closed
         return recs
 
+    def _poll_ups(self, d, st: DeviceState, now: datetime):
+        from .snmp import OUTPUT_STATUS, UPS_BASIC_OUTPUT_STATUS, SnmpV3Reader
+        r = SnmpV3Reader(d["host"], d.get("port", 161), d["user"], secret(d, "auth_key"), secret(d, "priv_key"),
+                         d.get("auth_protocol", "sha"), d.get("priv_protocol", "aes128"), timeout=self.cfg["timeout_s"])
+        oids = [UPS_BASIC_OUTPUT_STATUS] + ([d["load_oid"]] if d.get("load_oid") else [])
+        v = r.get(oids)
+        code = int(v[UPS_BASIC_OUTPUT_STATUS])
+        status = OUTPUT_STATUS.get(code, f"code {code}")
+        recs = []
+        if st.last.get("status", "onLine") != status:
+            recs.append(("facility/ups_nmc_events.jsonl", {"timestamp": iso(now), "ups": d["site_id"],
+                         "event": f"upsBasicOutputStatus {status}",
+                         "severity": "informational" if status in ("onLine", "eConversion") else "warning"}))
+        st.last["status"] = status
+        row = {"timestamp": iso(now), "ups": d["site_id"], "upsBasicOutputStatus": status}
+        if d.get("load_oid"):
+            row["load_pct"] = float(v[d["load_oid"]])
+        recs.append(("facility/ups_status.jsonl", row))
+        return recs
+
+    def _poll_bms(self, d, st: DeviceState, now: datetime):
+        from .bacnet import read_points
+        pts = {p["object"]: p for p in d["points"]}
+        v = read_points(d["address"], d["local_address"], d.get("local_device_id", 3999), list(pts), self.cfg["timeout_s"])
+        manual = set(d.get("override_priorities", list(range(1, 9))))
+        recs = []
+        for obj, val in v.items():
+            p = pts[obj]
+            held = {s: x for s, x in val["slots"].items() if s in manual}
+            for kind, active, value in (("override", bool(held), next(iter(held.values()), None)),
+                                        ("inhibit", val["out_of_service"], "Out of service")):
+                key = (obj, kind)
+                if st.last.get(key, False) != active:
+                    recs.append(("facility/bms_events.jsonl", {
+                        "timestamp": iso(now), "kind": kind, "device": p["device"], "point": p["label"],
+                        "value": value if active else "Auto", "user": None, "change_ref": None,
+                        "action": "set" if active else "release", "source": "bacnet",
+                        "priority": min(held) if active and kind == "override" else None}))
+                st.last[key] = active
+        return recs
+
     def _poll_leak(self, d, st: DeviceState, now: datetime):
         r = self._modbus(d)
         try:
