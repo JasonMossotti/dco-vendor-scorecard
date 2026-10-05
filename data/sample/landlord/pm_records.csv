@@ -1,0 +1,19 @@
+task_id,system,asset,task,due_start,due_end,completed_at,engineer,result,evidence,mop_ref
+PM-0001,Generators,GEN-1,Monthly loaded exercise,2026-09-01T00:00:00Z,2026-09-08T00:00:00Z,2026-09-01T15:10:07Z,CCF-E03,Pass at 54% load,EMCP run record; portable load bank,
+PM-0002,Generators,GEN-2,Monthly loaded exercise,2026-09-04T00:00:00Z,2026-09-11T00:00:00Z,2026-09-04T17:36:59Z,CCF-E08,Pass at 44% load,EMCP run record; portable load bank,
+PM-0010,CDUs,CDU-B3,Filter change and coolant sample,2026-09-02T19:06:50Z,2026-09-09T19:06:50Z,2026-09-04T19:36:50Z,CCF-E08,Pass,"Pump 2 isolated in Redfish; coolant pH 8.8, conductivity 413 uS/cm",MOP-303
+PM-0017,Fire protection,VESDA-B1,VESDA inspection and smoke test,2026-09-03T17:25:03Z,2026-09-10T17:25:03Z,2026-09-05T18:10:03Z,CCF-E05,Pass,"VESDA isolate, test alarm, and de-isolate recorded",MOP-307
+PM-0011,CDUs,CDU-B4,Filter change and coolant sample,2026-09-06T13:30:30Z,2026-09-13T13:30:30Z,2026-09-08T14:00:30Z,CCF-E01,Pass,"Pump 2 isolated in Redfish; coolant pH 8.6, conductivity 330 uS/cm",MOP-304
+PM-0003,Generators,GEN-3,Monthly loaded exercise,2026-09-08T00:00:00Z,2026-09-15T00:00:00Z,2026-09-08T16:11:35Z,CCF-E02,Pass at 47% load,EMCP run record; portable load bank,
+PM-0014,Chillers,CH-06,Preventive maintenance,2026-09-06T14:21:24Z,2026-09-13T14:21:24Z,2026-09-08T17:21:24Z,CCF-E01,Pass,BMS shows the chiller locked out for the work window,
+PM-0018,Switchgear and busway,Hall A electrical room,Infrared thermography under load,2026-09-08T20:08:19Z,2026-09-15T20:08:19Z,2026-09-10T20:08:19Z,CCF-E02,Pass,Engineer sign-off,
+PM-0008,CDUs,CDU-B2,Filter change and coolant sample,2026-09-09T13:53:49Z,2026-09-16T13:53:49Z,2026-09-11T14:23:49Z,CCF-E08,Pass,"Pump 2 isolated in Redfish; coolant pH 8.7, conductivity 285 uS/cm",MOP-301
+PM-0016,Chillers,CH-10,Preventive maintenance,2026-09-09T19:27:23Z,2026-09-16T19:27:23Z,2026-09-11T22:27:23Z,CCF-E06,Pass,BMS shows the chiller locked out for the work window,
+PM-0004,Generators,GEN-4,Monthly loaded exercise,2026-09-12T00:00:00Z,2026-09-19T00:00:00Z,2026-09-12T18:08:03Z,CCF-E08,Pass at 40% load,EMCP run record; portable load bank,
+PM-0015,Chillers,CH-03,Preventive maintenance,2026-09-11T17:08:28Z,2026-09-18T17:08:28Z,2026-09-13T20:08:28Z,CCF-E06,Pass,BMS shows the chiller locked out for the work window,
+PM-0012,UPS and batteries,UPS-A1,Preventive maintenance and battery health check,2026-09-11T19:50:13Z,2026-09-18T19:50:13Z,2026-09-13T22:20:13Z,CCF-E08,Pass,NMC shows maintenance bypass for the work window,MOP-305
+PM-0005,Generators,GEN-5,Monthly loaded exercise,2026-09-15T00:00:00Z,2026-09-22T00:00:00Z,2026-09-15T19:04:38Z,CCF-E02,Pass at 43% load,EMCP run record; portable load bank,
+PM-0006,Generators,GEN-6,Monthly loaded exercise,2026-09-19T00:00:00Z,2026-09-26T00:00:00Z,2026-09-19T17:55:25Z,CCF-E06,Pass at 36% load,EMCP run record; portable load bank,
+PM-0009,CDUs,CDU-A3,Filter change and coolant sample,2026-09-18T19:06:52Z,2026-09-25T19:06:52Z,2026-09-20T19:36:52Z,CCF-E06,Pass,"Pump 2 isolated in Redfish; coolant pH 9.0, conductivity 240 uS/cm",MOP-302
+PM-0007,Generators,GEN-7,Monthly loaded exercise,2026-09-23T00:00:00Z,2026-09-30T00:00:00Z,2026-09-23T17:02:09Z,CCF-E04,Pass at 50% load,EMCP run record; portable load bank,
+PM-0013,UPS and batteries,UPS-B3,Preventive maintenance and battery health check,2026-09-21T19:21:58Z,2026-09-28T19:21:58Z,2026-09-23T21:51:58Z,CCF-E02,Pass,NMC shows maintenance bypass for the work window,MOP-306

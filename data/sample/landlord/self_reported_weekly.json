@@ -1,0 +1,70 @@
+[
+  {
+    "note": "All SLAs met.",
+    "reported_by": "Caprock Critical Facilities, LLC",
+    "results": {
+      "OT-CSL-01": 99.999,
+      "OT-CSL-02": 99.9,
+      "OT-CSL-03": 99.99,
+      "OT-CSL-04": 98.0,
+      "OT-CSL-05": 95.0,
+      "OT-CSL-06": 98.0,
+      "OT-CSL-07": 100.0,
+      "OT-CSL-08": 98.0,
+      "OT-CSL-09": 98.0,
+      "OT-CSL-10": 99.95
+    },
+    "week_start": "2026-08-31T00:00:00Z"
+  },
+  {
+    "note": "All SLAs met.",
+    "reported_by": "Caprock Critical Facilities, LLC",
+    "results": {
+      "OT-CSL-01": 99.999,
+      "OT-CSL-02": 99.9,
+      "OT-CSL-03": 99.99,
+      "OT-CSL-04": 98.0,
+      "OT-CSL-05": 95.0,
+      "OT-CSL-06": 98.0,
+      "OT-CSL-07": 100.0,
+      "OT-CSL-08": 98.0,
+      "OT-CSL-09": 98.0,
+      "OT-CSL-10": 99.95
+    },
+    "week_start": "2026-09-07T00:00:00Z"
+  },
+  {
+    "note": "All SLAs met.",
+    "reported_by": "Caprock Critical Facilities, LLC",
+    "results": {
+      "OT-CSL-01": 99.999,
+      "OT-CSL-02": 99.9,
+      "OT-CSL-03": 99.99,
+      "OT-CSL-04": 98.0,
+      "OT-CSL-05": 95.0,
+      "OT-CSL-06": 98.0,
+      "OT-CSL-07": 100.0,
+      "OT-CSL-08": 98.0,
+      "OT-CSL-09": 98.0,
+      "OT-CSL-10": 99.95
+    },
+    "week_start": "2026-09-14T00:00:00Z"
+  },
+  {
+    "note": "All SLAs met. Utility event handled with no customer impact.",
+    "reported_by": "Caprock Critical Facilities, LLC",
+    "results": {
+      "OT-CSL-01": 99.999,
+      "OT-CSL-02": 99.9,
+      "OT-CSL-03": 99.99,
+      "OT-CSL-04": 98.0,
+      "OT-CSL-05": 95.0,
+      "OT-CSL-06": 98.0,
+      "OT-CSL-07": 100.0,
+      "OT-CSL-08": 98.0,
+      "OT-CSL-09": 98.0,
+      "OT-CSL-10": 99.95
+    },
+    "week_start": "2026-09-21T00:00:00Z"
+  }
+]

@@ -51,6 +51,22 @@ SOURCES: dict[str, str] = {
     "deployment_milestones": "vendor/deployment_milestones.csv",
     "vendor_weekly": "vendor/self_reported_weekly.json",
     "manifest": "manifest.json",
+    # Facility (Landlord) sources, read by the Customer under the Interface Agreement
+    "ups_nmc_events": "facility/ups_nmc_events.jsonl",        # UPS network management cards (SNMPv3)
+    "ups_status": "facility/ups_status.jsonl",
+    "busway_events": "facility/busway_cpm_events.jsonl",      # Starline Critical Power Monitors (Modbus TCP)
+    "emcp_readings": "facility/emcp_readings.jsonl",          # Generator controllers (EMCP 4.4, Modbus TCP)
+    "cdu_events": "facility/cdu_redfish_events.jsonl",        # CDU controllers (Redfish ThermalEquipment)
+    "facility_bms": "facility/bms_events.jsonl",              # BMS alarms, acknowledgments, overrides, inhibits
+    "epms_events": "facility/epms_events.jsonl",              # Power monitoring: breakers and sources
+    "leak_events": "facility/leak_events.jsonl",              # TraceTek TTDM-128 controllers
+    "vesda_events": "facility/vesda_events.jsonl",            # VESDA via high-level interface
+    "landlord_badges": "access/landlord_badge_events.csv",
+    "landlord_mops": "customer/landlord_mop_approvals.json",  # Customer change board approvals
+    "work_orders": "landlord/work_orders.json",              # Landlord maintenance system
+    "pm_records": "landlord/pm_records.csv",
+    "landlord_roster": "landlord/roster.csv",
+    "landlord_weekly": "landlord/self_reported_weekly.json",
 }
 
 _ISO = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")

@@ -56,3 +56,30 @@ deployment:
   racks_received_in_window: 14
   late_probability: 0.25
   late_days: [1, 4]
+
+# -----------------------------------------------------------------------------
+# Facility (Landlord) data. Generated from its own random stream, so changing
+# anything here never changes the IT partner's data.
+# -----------------------------------------------------------------------------
+facility:
+  site_load_mw: [7.0, 8.0]          # Site load carried by the generators in a utility outage
+  utility_outages: 1                 # Utility interruptions in the window (Utility-attributed; Landlord carries the load)
+  fault_counts:                      # Expected faults in the 4-week window, by Landlord rule card
+    OT-FC-CDU: 2
+    OT-FC-UPS: 1
+    OT-FC-CHW: 1
+    OT-FC-AIR: 1
+    OT-FC-PWR: 1
+    OT-FC-LEAK: 1
+    OT-FC-FIRE: 1
+  behavior:
+    late_engagement_probability: 0.08
+    late_restore_probability: 0.15
+  planted:                           # Landlord discrepancies, recorded in ground_truth/ for the answer key
+    gen_test_no_load: 1              # Monthly generator test reported passed; EMCP shows it ran unloaded
+    pm_without_evidence: 1           # Maintenance closed with no badge entry and no device signal
+    bms_override_unrecorded: 1       # BMS override with no change reference
+    alarm_acked_no_dispatch: 1       # Alarm acknowledged, no engineer badged in; work order claims attendance
+    critical_work_no_mop: 1          # Tap-off breaker operated with no approved MOP
+    landlord_clock_shift: 1          # Work order restore time earlier than the telemetry
+    attribution_contradicted: 1      # Work order blames the tenant side; busway shows the feed lost upstream

@@ -1125,7 +1125,16 @@ class SiteGenerator:
             if "gt_ids" in p:
                 p["tickets"] = [i.ticket_number for i in self.incidents if i.gt_id in p["gt_ids"]]
             planted.append(p)
+        facility = None
+        if "facility" in self.cfg:
+            # Separate random stream: the facility data never changes the IT data above.
+            from scorecard import site_model
+            from scorecard.sla_model import PARTNER_FILES, load_sla
+            from .facility import FacilityGenerator
+            facility = FacilityGenerator(site_model.load_site(), load_sla(PARTNER_FILES["landlord"]), self.cfg,
+                                         self.start, self.end, self.seed, self.utc_offset).run()
         return {
+            "facility": facility,
             "window": {"start": iso(self.start), "end": iso(self.end), "weeks": self.weeks, "seed": self.seed},
             "topology": topology,
             "personnel": self.personnel,
@@ -1192,6 +1201,11 @@ def write_dataset(data: dict[str, Any], out_dir: str | Path) -> dict[str, int]:
         "ground_truth/incidents.json": ("json", s["gt_incidents"]),
         "ground_truth/planted_discrepancies.json": ("json", data["planted"]),
     }
+    if data.get("facility"):
+        from .facility import FACILITY_FILES
+        for rel, key in FACILITY_FILES.items():
+            kind = "jsonl" if rel.endswith(".jsonl") else "csv" if rel.endswith(".csv") else "json"
+            files[rel] = (kind, data["facility"][key])
     counts: dict[str, int] = {}
     for rel, (kind, obj) in files.items():
         path = out / rel

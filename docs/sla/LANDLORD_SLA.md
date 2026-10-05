@@ -942,6 +942,8 @@ The discrepancy engine reports each mismatch between vendor records and the Tele
 | Maintenance closed without evidence (`pm_without_evidence`) | S2 | AGG-INTEGRITY | OT-CSL-06, OT-CSL-08 | Reopen the task. Audit the engineer's other closures in the period against badge and device records. |
 | BMS override or alarm inhibit without a change record (`bms_override_unrecorded`) | S1 | AGG-INTEGRITY | OT-CSL-07, OT-KM-05 | Release the override or inhibit, or record it under an approved change with an expiry. Review alarm suppression controls. |
 | Alarm acknowledged but never dispatched (`alarm_acked_no_dispatch`) | S2 | None | OT-CSL-04, OT-CSL-05 | Recalculate response from badge evidence. Review the acknowledgment workflow so an acknowledgment cannot stand in for a response. |
+| Work order restored before the telemetry (`landlord_clock_shift`) | S2 | AGG-INTEGRITY | OT-CSL-05, OT-CSL-08 | Recalculate restoration from the device telemetry. Confirm work orders take their restore time from the telemetry, not from the engineer's entry. |
+| Fault attributed to another party against the telemetry (`attribution_contradicted`) | S1 | AGG-INTEGRITY | OT-CSL-01, OT-CSL-02, OT-CSL-08 | Apply the Interface Agreement attribution rules from the Telemetry of Record and correct the work order. Review with both parties at the monthly service review. |
 | Critical work without an approved MOP (`critical_work_no_mop`) | S1 | None | OT-CSL-07 | Stop similar work until MOP control is confirmed. Joint review with the Customer change board. |
 
 ## Appendix B: Worked Examples

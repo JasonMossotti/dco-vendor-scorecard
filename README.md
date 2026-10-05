@@ -22,7 +22,8 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 |---|---|
 | SLA as code (`sla/common.yaml` + `sla/it_partner.yaml`) | Done |
 | Generated IT partner SLA ([`docs/sla/IT_PARTNER_SLA.md`](docs/sla/IT_PARTNER_SLA.md)) | Done |
-| Landlord SLA ([`docs/sla/LANDLORD_SLA.md`](docs/sla/LANDLORD_SLA.md)) and Interface Agreement ([`docs/sla/INTERFACE_AGREEMENT.md`](docs/sla/INTERFACE_AGREEMENT.md)) | Done, tested; Landlord telemetry and detection next |
+| Landlord SLA ([`docs/sla/LANDLORD_SLA.md`](docs/sla/LANDLORD_SLA.md)) and Interface Agreement ([`docs/sla/INTERFACE_AGREEMENT.md`](docs/sla/INTERFACE_AGREEMENT.md)) | Done, tested |
+| Synthetic facility data: UPS, busway, generators, CDUs, BMS, leak, VESDA, Landlord records ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md#facility-landlord-data)) | Done, tested; Landlord detection and attribution next |
 | SLA model: validation, credits, breach severity | Done, tested |
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |

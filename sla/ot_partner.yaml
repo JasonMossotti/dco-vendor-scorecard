@@ -892,6 +892,27 @@ breach_severity:
         - OT-CSL-05
       action: Recalculate response from badge evidence. Review the acknowledgment workflow so an acknowledgment
         cannot stand in for a response.
+    - id: landlord_clock_shift
+      name: Work order restored before the telemetry
+      base_level: S2
+      aggravators:
+        - AGG-INTEGRITY
+      sla_refs:
+        - OT-CSL-05
+        - OT-CSL-08
+      action: Recalculate restoration from the device telemetry. Confirm work orders take their restore time from the
+        telemetry, not from the engineer's entry.
+    - id: attribution_contradicted
+      name: Fault attributed to another party against the telemetry
+      base_level: S1
+      aggravators:
+        - AGG-INTEGRITY
+      sla_refs:
+        - OT-CSL-01
+        - OT-CSL-02
+        - OT-CSL-08
+      action: Apply the Interface Agreement attribution rules from the Telemetry of Record and correct the work order. Review
+        with both parties at the monthly service review.
     - id: critical_work_no_mop
       name: Critical work without an approved MOP
       base_level: S1

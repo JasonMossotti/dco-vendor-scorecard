@@ -72,6 +72,57 @@ These are real performance outcomes the scorecard should report, not discrepanci
 - Incidents start at least 36 hours before the window ends, so every ticket is closed within the window.
 - Fault rates are illustrative, tuned for roughly 20 tickets per week in one production hall.
 
+## Facility (Landlord) data
+
+`src/scorecard/synthetic/facility.py` generates the Landlord's month from its own random stream (seed plus `:facility`), so it never changes the IT data. It covers Halls A and B, the generator and chiller yards, and the switchgear. Tuning is under `facility:` in `config/synthetic.yaml`.
+
+### What the devices recorded (read by the Customer under the Interface Agreement)
+
+| File | Source | Contents |
+|---|---|---|
+| `facility/ups_nmc_events.jsonl` | UPS network management cards (SNMPv3) | Module faults and repairs; output state changes using PowerNet MIB `upsBasicOutputStatus` values (`onLine`, `onBattery`, `switchedBypass`, ...) |
+| `facility/ups_status.jsonl` | Same, polled every 4 hours | `upsBasicOutputStatus` and load percent per UPS |
+| `facility/busway_cpm_events.jsonl` | Starline Critical Power Monitors | Feed lost and restored per busway (voltage), tap-off breaker operations |
+| `facility/emcp_readings.jsonl` | Generator controllers (EMCP 4.4) | One reading a minute while running: engine state, kW, percent of rated kW |
+| `facility/cdu_redfish_events.jsonl` | CDU controllers (Redfish) | Changes on `/redfish/v1/ThermalEquipment/CDUs/{id}` resources: pump `Status.Health` and `Status.State`, `PumpRedundancy` health |
+| `facility/bms_events.jsonl` | BMS (EcoStruxure Building Operation export) | Alarms with acknowledgments (user) and clears; overrides and alarm inhibits with the change reference (or none) |
+| `facility/epms_events.jsonl` | Power monitoring | Utility trips, generator bus, breaker trips and closes |
+| `facility/leak_events.jsonl` | TraceTek TTDM-128 | Leak alarms with circuit and distance along the cable, and returns to normal |
+| `facility/vesda_events.jsonl` | VESDA high-level interface | Alarm levels (Alert, Action, Fire 1, Fire 2), faults, isolates |
+| `access/landlord_badge_events.csv` | Access control | Landlord engineers' shift entries and equipment-room entries |
+| `customer/landlord_mop_approvals.json` | Customer change board | Approved methods of procedure with assets and windows |
+
+**Point-name provenance.** The PowerNet MIB output-state names and the Redfish `ThermalEquipment`, `CoolantConnector`, and pump status names follow the published MIB and DMTF schemas. VESDA alarm levels and the TraceTek distance-located leak alarm follow the manufacturers' documentation. EMCP 4.4 values use descriptive parameter names (engine operating state, total kW, percent of rated kW) rather than register numbers, and BMS and EPMS events use descriptive text, because those exports are site-configured.
+
+### What the Landlord recorded
+
+| File | Contents |
+|---|---|
+| `landlord/work_orders.json` | Work orders: priority, fault class, unit, acknowledged, engaged (as claimed), restored (as claimed), MOP reference, the party the Landlord attributes the fault to, notes |
+| `landlord/pm_records.csv` | Maintenance tasks with completion time, engineer, result, and claimed evidence |
+| `landlord/roster.csv` | Engineers by shift |
+| `landlord/self_reported_weekly.json` | The Landlord's weekly self-report (every service level met) |
+
+### Facility scenarios in the sample month
+
+One utility outage (UPS ride-through on battery for about 12 seconds, 7 generators carry the site, closed-transition retransfer), 7 monthly generator tests, maintenance on CDUs, UPS, chillers, VESDA, and switchgear, 3 planned tap-off energizations for Hall B, and faults across the Landlord rule cards (CDU pump, UPS module, chiller, thermal wall, busway feed, building leak, VESDA fault).
+
+### Planted Landlord discrepancies
+
+Answer key: `ground_truth/facility_planted_discrepancies.json` (blocked from the engine).
+
+| Type | What the records say | What the telemetry shows |
+|---|---|---|
+| `gen_test_no_load` | Monthly test passed at 40% load | EMCP shows the engine ran unloaded |
+| `pm_without_evidence` | Maintenance completed and signed off | No badge into the equipment's room and no device signal |
+| `bms_override_unrecorded` | Nothing | An override or alarm inhibit with no change reference, held for a day or more |
+| `alarm_acked_no_dispatch` | Engineer attended and reset the unit | Acknowledged in the BMS; nobody badged in before it cleared |
+| `critical_work_no_mop` | Routine tap-off work | Breaker operated with no approved MOP |
+| `landlord_clock_shift` | Redundancy restored at time X | Redfish shows redundancy restored hours later |
+| `attribution_contradicted` | Tenant whip fault; Landlord not responsible | Busway monitor shows the feed lost at the busway, upstream of the tap-off |
+
+Planted "nobody was there" records are placed after all other activity, so no coincidental badge can make them look evidenced. `python scripts/check_facility_data.py` runs the evidence tests against 60 freshly generated months.
+
 ## Regenerating
 
 ```bash
