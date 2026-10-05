@@ -9,29 +9,29 @@
   },
   {
     "anomaly_id": "FPD-002",
-    "at": "2026-09-08T14:21:52Z",
-    "busway": "BW-B-R2-PG-B2-A",
+    "at": "2026-09-24T17:22:19Z",
+    "busway": "BW-B-R3-PG-B4-A",
     "evidence": "Breaker operated with no approved MOP",
-    "tapoff": "TO-B24",
+    "tapoff": "TO-B09",
     "type": "critical_work_no_mop",
     "wo": "WO-41014"
   },
   {
     "anomaly_id": "FPD-003",
-    "device": "CH-03",
-    "hours": 52.2,
-    "point": "Condenser fan speed",
-    "set_at": "2026-09-08T03:27:49Z",
+    "device": "TW-B2",
+    "hours": 34.3,
+    "point": "High supply air temperature alarm",
+    "set_at": "2026-09-19T01:27:21Z",
     "type": "bms_override_unrecorded"
   },
   {
     "anomaly_id": "FPD-004",
     "gt_id": "FGT-0002",
-    "telemetry_restored": "2026-09-21T09:55:13Z",
+    "telemetry_restored": "2026-09-24T02:47:22Z",
     "type": "landlord_clock_shift",
-    "unit": "CDU-A2",
-    "wo": "WO-41023",
-    "wo_restored": "2026-09-21T07:20:44Z"
+    "unit": "CDU-A1",
+    "wo": "WO-41025",
+    "wo_restored": "2026-09-24T00:12:53Z"
   },
   {
     "anomaly_id": "FPD-005",
@@ -40,7 +40,7 @@
     "rack": "A18",
     "type": "attribution_contradicted",
     "unit": "BW-A-R3-PG-A4-B",
-    "wo": "WO-41049"
+    "wo": "WO-41051"
   },
   {
     "anomaly_id": "FPD-006",
@@ -56,7 +56,7 @@
     "gt_id": "FGT-0010",
     "t0": "2026-09-13T23:43:49Z",
     "type": "alarm_acked_no_dispatch",
-    "wo": "WO-41068",
+    "wo": "WO-41070",
     "wo_unit": "CH-01"
   }
 ]

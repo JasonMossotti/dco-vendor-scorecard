@@ -23,7 +23,8 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 | SLA as code (`sla/common.yaml` + `sla/it_partner.yaml`) | Done |
 | Generated IT partner SLA ([`docs/sla/IT_PARTNER_SLA.md`](docs/sla/IT_PARTNER_SLA.md)) | Done |
 | Landlord SLA ([`docs/sla/LANDLORD_SLA.md`](docs/sla/LANDLORD_SLA.md)) and Interface Agreement ([`docs/sla/INTERFACE_AGREEMENT.md`](docs/sla/INTERFACE_AGREEMENT.md)) | Done, tested |
-| Synthetic facility data: UPS, busway, generators, CDUs, BMS, leak, VESDA, Landlord records ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md#facility-landlord-data)) | Done, tested; Landlord detection and attribution next |
+| Synthetic facility data: UPS, busway, generators, CDUs, BMS, leak, VESDA, Landlord records ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md#facility-landlord-data)) | Done, tested |
+| Landlord engine and scorecard ([`reports/landlord_scorecard.md`](reports/landlord_scorecard.md)), attribution of facility events ([`reports/attribution_report.md`](reports/attribution_report.md)) | Done, tested; rack-impacting outages next |
 | SLA model: validation, credits, breach severity | Done, tested |
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
@@ -90,6 +91,12 @@ The vendor's weekly notes said all SLAs were met or showed only minor exceptions
 
 `build_scorecard(sla, result)` is a pure function of the SLA and the data. A contract amendment is a one-line change to the YAML, and rerunning shows its effect on breaches, credits, and corrective actions from the same telemetry.
 
+## The Landlord scorecard
+
+`scripts/run_landlord.py` holds Caprock, the Landlord, to its SLA the same way: it rebuilds every facility event from device telemetry the Customer reads under the Interface Agreement (UPS management cards, busway monitors, generator controllers, CDU Redfish, leak and VESDA controllers, the BMS, and badge entries), compares that with the Landlord's work orders and maintenance records, and scores the result. On the committed sample the Landlord reported every service level met; measured, there are 4 Minimum defaults (redundancy restoration, evidence-verified maintenance, work under an approved MOP, record integrity) and $94,400 in credits against rent ([Landlord scorecard](reports/landlord_scorecard.md), [discrepancy report](reports/landlord_discrepancy_report.md)).
+
+Examples of what it catches: a monthly generator test recorded as "Pass at 40% load" while the generator controller shows it ran unloaded (NFPA 110 needs 30% for 30 minutes), maintenance closed by an engineer who never badged into that room, a BMS override left on for two days with no change record, and a work order that blames the tenant's whip for a power loss the busway monitor shows happening upstream. It finds all 7 planted Landlord discrepancies on the sample and **420 of 420 across 60 generated months with 0 false positives**. Every facility event is also attributed under the Interface Agreement ([attribution report](reports/attribution_report.md)).
+
 ## Discrepancy engine
 
 `scripts/run_engine.py` reads the telemetry and vendor records through a connector layer, rebuilds every incident from telemetry alone using the SLA's ticket handling rules, and reports each place the vendor's records do not reconcile, with the exact evidence, an S1 to S4 severity, and the corrective action defined in the SLA.
@@ -138,6 +145,8 @@ src/scorecard/synthetic/         Synthetic GB200 site data generator
 scripts/render_sla.py            Generates docs/sla/IT_PARTNER_SLA.md from the YAML
 scripts/generate_data.py         Generates the synthetic dataset
 scripts/run_engine.py            Runs the engine and writes reports/
+scripts/run_landlord.py          Runs the Landlord engine; writes the Landlord scorecard, discrepancy, and attribution reports
+src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard
 scripts/build_scorecard.py       Builds the scorecard and writes reports/
 scripts/build_site.py            Builds the static GitHub Pages site
 templates/sla.md.j2              Document template

@@ -1,0 +1,378 @@
+{
+  "attribution": [
+    {
+      "agrees": false,
+      "capacity_lost": false,
+      "claimed_owner": "IT Partner",
+      "event": "BW-A-R3-PG-A4-B feed lost (Voltage L-L avg 0.0 V)",
+      "fault_class": "OT-FC-PWR",
+      "owner": "Landlord",
+      "restored": "2026-09-04T05:15:29Z",
+      "rule": "FA-5",
+      "t0": "2026-09-04T03:24:58Z",
+      "unit": "BW-A-R3-PG-A4-B",
+      "work_order": "WO-41051"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "Leak Under CDU-A4 at 15.0 m",
+      "fault_class": "OT-FC-LEAK",
+      "owner": "Landlord",
+      "restored": "2026-09-07T12:00:52Z",
+      "rule": "FA-5",
+      "t0": "2026-09-07T08:44:01Z",
+      "unit": "TTDM-A/C8",
+      "work_order": "WO-41060"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "UPS-B3: Power module 6 fault",
+      "fault_class": "OT-FC-UPS",
+      "owner": "Landlord",
+      "restored": "2026-09-13T16:53:57Z",
+      "rule": "FA-5",
+      "t0": "2026-09-13T06:36:59Z",
+      "unit": "UPS-B3",
+      "work_order": "WO-41035"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "CH-01: Compressor trip (high condenser pressure)",
+      "fault_class": "OT-FC-CHW",
+      "owner": "Landlord",
+      "restored": "2026-09-14T04:39:25Z",
+      "rule": "FA-5",
+      "t0": "2026-09-13T23:43:49Z",
+      "unit": "CH-01",
+      "work_order": "WO-41070"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "VESDA-B1 Airflow Low",
+      "fault_class": "OT-FC-FIRE",
+      "owner": "Landlord",
+      "restored": "2026-09-14T15:05:22Z",
+      "rule": "FA-5",
+      "t0": "2026-09-14T13:57:24Z",
+      "unit": "VESDA-B1",
+      "work_order": "WO-41068"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "CDU-B3 pump redundancy lost (Redfish PumpRedundancy Warning)",
+      "fault_class": "OT-FC-CDU",
+      "owner": "Landlord",
+      "restored": "2026-09-17T00:53:43Z",
+      "rule": "FA-5",
+      "t0": "2026-09-16T21:51:46Z",
+      "unit": "CDU-B3",
+      "work_order": "WO-41032"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "TW-B1: Fan 5 failure",
+      "fault_class": "OT-FC-AIR",
+      "owner": "Landlord",
+      "restored": "2026-09-18T04:47:30Z",
+      "rule": "FA-5",
+      "t0": "2026-09-17T15:18:50Z",
+      "unit": "TW-B1",
+      "work_order": "WO-41047"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "CDU-A1 pump redundancy lost (Redfish PumpRedundancy Warning)",
+      "fault_class": "OT-FC-CDU",
+      "owner": "Landlord",
+      "restored": "2026-09-24T02:47:22Z",
+      "rule": "FA-5",
+      "t0": "2026-09-23T21:55:06Z",
+      "unit": "CDU-A1",
+      "work_order": "WO-41025"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Utility",
+      "event": "Utility outage: both 13.8 kV mains tripped on undervoltage",
+      "fault_class": "UTILITY",
+      "owner": "Utility",
+      "restored": "2026-09-24T21:56:06Z",
+      "rule": "FA-6",
+      "t0": "2026-09-24T21:14:20Z",
+      "unit": "138 kV utility service",
+      "work_order": "WO-41009"
+    },
+    {
+      "agrees": true,
+      "capacity_lost": false,
+      "claimed_owner": "Landlord",
+      "event": "CH-03: Compressor trip (high condenser pressure)",
+      "fault_class": "OT-FC-CHW",
+      "owner": "Landlord",
+      "restored": "2026-09-26T04:47:58Z",
+      "rule": "FA-5",
+      "t0": "2026-09-26T00:51:18Z",
+      "unit": "CH-03",
+      "work_order": "WO-41042"
+    }
+  ],
+  "credits": {
+    "capped": false,
+    "items": [
+      {
+        "credit": 23600.0,
+        "csl": "OT-CSL-05",
+        "explanation": "At-Risk Amount $118,000 (10% of $1,180,000) \u00d7 20% allocation = $23,600"
+      },
+      {
+        "credit": 23600.0,
+        "csl": "OT-CSL-06",
+        "explanation": "At-Risk Amount $118,000 (10% of $1,180,000) \u00d7 20% allocation = $23,600"
+      },
+      {
+        "credit": 17700.0,
+        "csl": "OT-CSL-07",
+        "explanation": "At-Risk Amount $118,000 (10% of $1,180,000) \u00d7 15% allocation = $17,700"
+      },
+      {
+        "credit": 29500.0,
+        "csl": "OT-CSL-08",
+        "explanation": "At-Risk Amount $118,000 (10% of $1,180,000) \u00d7 25% allocation = $29,500"
+      }
+    ],
+    "payable": 94400.0,
+    "uncapped": 94400.0
+  },
+  "csl": [
+    {
+      "actual": 100.0,
+      "credit": 0.0,
+      "detail": "64 leased racks; minutes with at least one feed in tolerance",
+      "direction": "higher_is_better",
+      "expected": 99.999,
+      "id": "OT-CSL-01",
+      "minimum": 99.995,
+      "name": "Rack Power Availability",
+      "status": "met_expected",
+      "vendor_reported": 99.999
+    },
+    {
+      "actual": 99.97858602533896,
+      "credit": 0.0,
+      "detail": "64 leased racks; minutes with both feeds in tolerance",
+      "direction": "higher_is_better",
+      "expected": 99.9,
+      "id": "OT-CSL-02",
+      "minimum": 99.5,
+      "name": "Power Redundancy Availability",
+      "status": "met_expected",
+      "vendor_reported": 99.9
+    },
+    {
+      "actual": 100.0,
+      "credit": 0.0,
+      "detail": "No rack-level cooling excursion in the window",
+      "direction": "higher_is_better",
+      "expected": 99.99,
+      "id": "OT-CSL-03",
+      "minimum": 99.95,
+      "name": "Cooling Within Band at the Rack",
+      "status": "met_expected",
+      "vendor_reported": 99.99
+    },
+    {
+      "actual": 100.0,
+      "credit": 0.0,
+      "detail": "2 of 2 P1 events acknowledged and attended in time (badge)",
+      "direction": "higher_is_better",
+      "expected": 98.0,
+      "id": "OT-CSL-04",
+      "minimum": 95.0,
+      "name": "Critical Alarm Response",
+      "status": "met_expected",
+      "vendor_reported": 98.0
+    },
+    {
+      "actual": 83.33333333333333,
+      "credit": 23600.0,
+      "detail": "5 of 6 redundancy events restored within target (telemetry)",
+      "direction": "higher_is_better",
+      "expected": 95.0,
+      "id": "OT-CSL-05",
+      "minimum": 90.0,
+      "name": "Redundancy Restored Within Target",
+      "status": "deep_below_minimum",
+      "vendor_reported": 95.0
+    },
+    {
+      "actual": 88.88888888888889,
+      "credit": 23600.0,
+      "detail": "16 of 18 tasks on time with evidence",
+      "direction": "higher_is_better",
+      "expected": 98.0,
+      "id": "OT-CSL-06",
+      "minimum": 95.0,
+      "name": "Preventive Maintenance On Time, Evidence-Verified",
+      "status": "deep_below_minimum",
+      "vendor_reported": 98.0
+    },
+    {
+      "actual": 90.0,
+      "credit": 17700.0,
+      "detail": "9 of 10 critical work events under an approved MOP",
+      "direction": "higher_is_better",
+      "expected": 100.0,
+      "id": "OT-CSL-07",
+      "minimum": 98.0,
+      "name": "Critical Work Under Approved MOP",
+      "status": "deep_below_minimum",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 80.64516129032258,
+      "credit": 29500.0,
+      "detail": "25 of 31 work orders and maintenance records reconcile",
+      "direction": "higher_is_better",
+      "expected": 98.0,
+      "id": "OT-CSL-08",
+      "minimum": 95.0,
+      "name": "Record Integrity",
+      "status": "deep_below_minimum",
+      "vendor_reported": 98.0
+    },
+    {
+      "actual": 100.0,
+      "credit": 0.0,
+      "detail": "168 of 168 rostered shifts badge-verified",
+      "direction": "higher_is_better",
+      "expected": 98.0,
+      "id": "OT-CSL-09",
+      "minimum": 95.0,
+      "name": "Qualified Staffing Fill",
+      "status": "met_expected",
+      "vendor_reported": 98.0
+    },
+    {
+      "actual": 100.0,
+      "credit": 0.0,
+      "detail": "No hall-level cooling excursion in the window",
+      "direction": "higher_is_better",
+      "expected": 99.95,
+      "id": "OT-CSL-10",
+      "minimum": 99.9,
+      "name": "Worst-Hall Cooling Within Band",
+      "status": "met_expected",
+      "vendor_reported": 99.95
+    }
+  ],
+  "defaults": [
+    "OT-CSL-05",
+    "OT-CSL-06",
+    "OT-CSL-07",
+    "OT-CSL-08"
+  ],
+  "findings": 7,
+  "km": [
+    {
+      "actual": 85.71428571428571,
+      "detail": "6 of 7 P2 events acknowledged and attended in time (badge)",
+      "direction": "higher_is_better",
+      "id": "OT-KM-01",
+      "met": false,
+      "name": "P2 Alarm Response (acknowledge 15 min, at equipment 30 min)",
+      "target": 95.0,
+      "unit": "%"
+    },
+    {
+      "actual": 85.71428571428571,
+      "detail": "6 of 7 monthly tests met 30% for 30 minutes (EMCP)",
+      "direction": "higher_is_better",
+      "id": "OT-KM-02",
+      "met": false,
+      "name": "Generator Monthly Tests Meeting NFPA 110 Load (30% for 30 min)",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": 100.0,
+      "detail": "4 coolant samples, all within specification",
+      "direction": "higher_is_better",
+      "id": "OT-KM-03",
+      "met": true,
+      "name": "Coolant Samples Within Specification",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "No fuel quality test due in the window",
+      "direction": "higher_is_better",
+      "id": "OT-KM-04",
+      "met": null,
+      "name": "Annual Fuel Quality Tests On Schedule",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": 1.0,
+      "detail": "1 override or inhibit held over 24 hours without a change reference",
+      "direction": "lower_is_better",
+      "id": "OT-KM-05",
+      "met": false,
+      "name": "BMS Overrides or Alarm Inhibits Open Over 24 Hours Without a Change Reference",
+      "target": 0.0,
+      "unit": " items"
+    },
+    {
+      "actual": 100.0,
+      "detail": "No gap in the Customer's facility feeds",
+      "direction": "higher_is_better",
+      "id": "OT-KM-06",
+      "met": true,
+      "name": "Monitoring Feed Availability to the Customer",
+      "target": 99.9,
+      "unit": "%"
+    },
+    {
+      "actual": 77.77777777777777,
+      "detail": "7 of 9 MOPs approved at least 10 business days before the work",
+      "direction": "higher_is_better",
+      "id": "OT-KM-07",
+      "met": false,
+      "name": "Planned Maintenance Notified 10 Business Days Ahead",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "No corrective action plan due in the window",
+      "direction": "higher_is_better",
+      "id": "OT-KM-08",
+      "met": null,
+      "name": "Corrective Action Plans Closed On Time",
+      "target": 95.0,
+      "unit": "%"
+    }
+  ],
+  "s1": 6,
+  "supplier": "Caprock Critical Facilities, LLC",
+  "window": {
+    "end": "2026-09-28T00:00:00Z",
+    "start": "2026-08-31T00:00:00Z"
+  }
+}

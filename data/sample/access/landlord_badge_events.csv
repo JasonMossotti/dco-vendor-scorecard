@@ -32,7 +32,7 @@ timestamp,person_id,reader,direction
 2026-09-04T11:55:47Z,CCF-E06,Main lobby,in
 2026-09-04T11:56:54Z,CCF-E05,Main lobby,in
 2026-09-04T16:44:51Z,CCF-E08,Generator yard,in
-2026-09-04T18:24:09Z,CCF-E05,Hall B,in
+2026-09-04T18:03:27Z,CCF-E08,Hall B,in
 2026-09-04T19:00:45Z,CCF-E08,Hall B,in
 2026-09-04T23:50:05Z,CCF-E11,Main lobby,in
 2026-09-05T00:01:58Z,CCF-E12,Main lobby,in
@@ -40,7 +40,7 @@ timestamp,person_id,reader,direction
 2026-09-05T11:57:05Z,CCF-E08,Main lobby,in
 2026-09-05T11:57:27Z,CCF-E07,Main lobby,in
 2026-09-05T12:00:48Z,CCF-E05,Main lobby,in
-2026-09-05T17:20:44Z,CCF-E05,Hall B,in
+2026-09-05T17:21:45Z,CCF-E05,Hall B,in
 2026-09-05T23:53:06Z,CCF-E11,Main lobby,in
 2026-09-05T23:59:37Z,CCF-E12,Main lobby,in
 2026-09-06T11:50:17Z,CCF-E06,Main lobby,in
@@ -62,7 +62,6 @@ timestamp,person_id,reader,direction
 2026-09-08T11:58:23Z,CCF-E03,Main lobby,in
 2026-09-08T13:24:22Z,CCF-E01,Hall B,in
 2026-09-08T14:12:39Z,CCF-E01,Chiller yard,in
-2026-09-08T14:15:52Z,CCF-E01,Hall B,in
 2026-09-08T15:17:11Z,CCF-E02,Generator yard,in
 2026-09-08T23:50:34Z,CCF-E09,Main lobby,in
 2026-09-08T23:53:04Z,CCF-E10,Main lobby,in
@@ -82,7 +81,7 @@ timestamp,person_id,reader,direction
 2026-09-11T11:56:32Z,CCF-E07,Main lobby,in
 2026-09-11T12:00:08Z,CCF-E05,Main lobby,in
 2026-09-11T12:02:07Z,CCF-E06,Main lobby,in
-2026-09-11T13:44:30Z,CCF-E08,Hall B,in
+2026-09-11T13:44:31Z,CCF-E08,Hall B,in
 2026-09-11T19:23:11Z,CCF-E06,Chiller yard,in
 2026-09-11T23:51:49Z,CCF-E12,Main lobby,in
 2026-09-12T00:02:43Z,CCF-E11,Main lobby,in
@@ -99,6 +98,7 @@ timestamp,person_id,reader,direction
 2026-09-13T11:52:55Z,CCF-E08,Main lobby,in
 2026-09-13T11:57:28Z,CCF-E05,Main lobby,in
 2026-09-13T17:04:48Z,CCF-E06,Chiller yard,in
+2026-09-13T17:48:59Z,CCF-E07,Hall B,in
 2026-09-13T19:45:17Z,CCF-E08,Hall A electrical room,in
 2026-09-13T23:51:08Z,CCF-E11,Main lobby,in
 2026-09-14T00:01:14Z,CCF-E12,Main lobby,in
@@ -140,7 +140,6 @@ timestamp,person_id,reader,direction
 2026-09-19T11:51:09Z,CCF-E08,Main lobby,in
 2026-09-19T11:55:35Z,CCF-E05,Main lobby,in
 2026-09-19T11:59:11Z,CCF-E06,Main lobby,in
-2026-09-19T15:18:24Z,CCF-E06,Hall B,in
 2026-09-19T17:05:16Z,CCF-E06,Generator yard,in
 2026-09-19T23:52:47Z,CCF-E12,Main lobby,in
 2026-09-19T23:58:50Z,CCF-E11,Main lobby,in
@@ -151,7 +150,6 @@ timestamp,person_id,reader,direction
 2026-09-20T19:02:39Z,CCF-E06,Hall A,in
 2026-09-20T23:51:45Z,CCF-E11,Main lobby,in
 2026-09-21T00:00:08Z,CCF-E12,Main lobby,in
-2026-09-21T05:20:17Z,CCF-E11,Hall A,in
 2026-09-21T11:49:42Z,CCF-E07,Main lobby,in
 2026-09-21T11:52:57Z,CCF-E05,Main lobby,in
 2026-09-21T11:55:04Z,CCF-E06,Main lobby,in
@@ -170,12 +168,14 @@ timestamp,person_id,reader,direction
 2026-09-23T11:58:24Z,CCF-E01,Main lobby,in
 2026-09-23T16:15:07Z,CCF-E04,Generator yard,in
 2026-09-23T19:14:31Z,CCF-E02,Hall B electrical room,in
+2026-09-23T22:15:10Z,CCF-E02,Hall A,in
 2026-09-23T23:51:18Z,CCF-E10,Main lobby,in
 2026-09-23T23:54:40Z,CCF-E09,Main lobby,in
 2026-09-24T11:48:16Z,CCF-E03,Main lobby,in
 2026-09-24T11:49:29Z,CCF-E04,Main lobby,in
 2026-09-24T11:50:52Z,CCF-E01,Main lobby,in
 2026-09-24T11:58:18Z,CCF-E02,Main lobby,in
+2026-09-24T17:16:19Z,CCF-E03,Hall B,in
 2026-09-24T21:22:27Z,CCF-E03,MV switchgear,in
 2026-09-24T23:58:15Z,CCF-E10,Main lobby,in
 2026-09-25T00:01:06Z,CCF-E09,Main lobby,in

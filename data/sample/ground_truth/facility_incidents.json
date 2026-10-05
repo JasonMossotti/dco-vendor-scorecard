@@ -10,7 +10,7 @@
     "t0": "2026-09-04T03:24:58Z",
     "true_attribution": "Landlord",
     "unit": "BW-A-R3-PG-A4-B",
-    "wo": "WO-41049"
+    "wo": "WO-41051"
   },
   {
     "acknowledged_at": "2026-09-07T08:46:46Z",
@@ -23,7 +23,7 @@
     "t0": "2026-09-07T08:44:01Z",
     "true_attribution": "Landlord",
     "unit": "TTDM-A/C8",
-    "wo": "WO-41058"
+    "wo": "WO-41060"
   },
   {
     "acknowledged_at": "2026-09-13T06:44:17Z",
@@ -36,7 +36,7 @@
     "t0": "2026-09-13T06:36:59Z",
     "true_attribution": "Landlord",
     "unit": "UPS-B3",
-    "wo": "WO-41033"
+    "wo": "WO-41035"
   },
   {
     "acknowledged_at": "2026-09-13T23:46:27Z",
@@ -49,7 +49,7 @@
     "t0": "2026-09-13T23:43:49Z",
     "true_attribution": "Landlord",
     "unit": "CH-01",
-    "wo": "WO-41068"
+    "wo": "WO-41070"
   },
   {
     "acknowledged_at": "2026-09-14T13:59:56Z",
@@ -62,7 +62,7 @@
     "t0": "2026-09-14T13:57:24Z",
     "true_attribution": "Landlord",
     "unit": "VESDA-B1",
-    "wo": "WO-41066"
+    "wo": "WO-41068"
   },
   {
     "acknowledged_at": "2026-09-16T21:59:16Z",
@@ -75,7 +75,7 @@
     "t0": "2026-09-16T21:51:46Z",
     "true_attribution": "Landlord",
     "unit": "CDU-B3",
-    "wo": "WO-41030"
+    "wo": "WO-41032"
   },
   {
     "acknowledged_at": "2026-09-17T16:05:05Z",
@@ -88,20 +88,20 @@
     "t0": "2026-09-17T15:18:50Z",
     "true_attribution": "Landlord",
     "unit": "TW-B1",
-    "wo": "WO-41045"
+    "wo": "WO-41047"
   },
   {
-    "acknowledged_at": "2026-09-21T05:05:52Z",
-    "description": "CDU-A2 pump 1 failed; pump redundancy lost",
-    "engaged_at": "2026-09-21T05:20:17Z",
+    "acknowledged_at": "2026-09-23T22:00:45Z",
+    "description": "CDU-A1 pump 1 failed; pump redundancy lost",
+    "engaged_at": "2026-09-23T22:15:10Z",
     "fault_class": "OT-FC-CDU",
     "gt_id": "FGT-0002",
     "priority": "P2",
-    "restored_at": "2026-09-21T09:55:13Z",
-    "t0": "2026-09-21T05:02:57Z",
+    "restored_at": "2026-09-24T02:47:22Z",
+    "t0": "2026-09-23T21:55:06Z",
     "true_attribution": "Landlord",
-    "unit": "CDU-A2",
-    "wo": "WO-41023"
+    "unit": "CDU-A1",
+    "wo": "WO-41025"
   },
   {
     "acknowledged_at": "2026-09-24T21:16:39Z",
@@ -127,6 +127,6 @@
     "t0": "2026-09-26T00:51:18Z",
     "true_attribution": "Landlord",
     "unit": "CH-03",
-    "wo": "WO-41040"
+    "wo": "WO-41042"
   }
 ]

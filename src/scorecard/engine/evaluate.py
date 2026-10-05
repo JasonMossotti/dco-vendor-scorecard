@@ -84,3 +84,41 @@ def evaluate(findings: list[Finding], dataset_dir: str | Path) -> Evaluation:
         else:
             false_pos.append(f)
     return Evaluation(len(planted), len(planted) - len(missed), by_type, missed, corroborating, false_pos)
+
+
+# --------------------------------------------------------------------------- #
+# Landlord engine
+# --------------------------------------------------------------------------- #
+def _landlord_match(p: dict[str, Any], f: Finding) -> bool:
+    k = f.keys
+    if f.type != p["type"]:
+        return False
+    if p["type"] == "gen_test_no_load":
+        return k.get("asset") == p["generator"]
+    if p["type"] == "pm_without_evidence":
+        return k.get("task") == p["task"]
+    if p["type"] == "bms_override_unrecorded":
+        return k.get("device") == p["device"] and k.get("set_at").strftime("%Y-%m-%dT%H:%M:%SZ") == p["set_at"]
+    if p["type"] == "critical_work_no_mop":
+        return k.get("asset") == p["busway"]
+    return p.get("wo") in f.tickets
+
+
+def evaluate_landlord(findings: list[Finding], data_dir: str | Path) -> Evaluation:
+    """Score the Landlord engine against the facility answer key (read only here, after the engine ran)."""
+    planted = json.loads((Path(data_dir) / "ground_truth" / "facility_planted_discrepancies.json").read_text(encoding="utf-8"))
+    by_type: dict[str, dict[str, int]] = {}
+    matched: set[int] = set()
+    missed = []
+    for p in planted:
+        bt = by_type.setdefault(p["type"], {"planted": 0, "detected": 0})
+        bt["planted"] += 1
+        hit = next((i for i, f in enumerate(findings) if _landlord_match(p, f)), None)
+        if hit is None:
+            missed.append(p)
+        else:
+            bt["detected"] += 1
+            matched.add(hit)
+    fps = [f for i, f in enumerate(findings) if i not in matched]
+    return Evaluation(planted=len(planted), detected=len(planted) - len(missed), by_type=by_type,
+                      missed=missed, false_positives=fps)

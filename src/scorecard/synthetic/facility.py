@@ -181,7 +181,7 @@ class FacilityGenerator:
         m = self._next_mop()
         self.out["mops"].append({"mop_id": m, "title": title, "assets": assets, "window_start": iso(start),
                                  "window_end": iso(end), "approved_by": "Customer change board",
-                                 "approved_at": iso(start - timedelta(days=self.rng.randint(5, 12)))})
+                                 "approved_at": iso(start - timedelta(days=self.rng.randint(12, 21)))})
         return m
 
     # ------------------------------------------------------------------ alarms and response
@@ -219,6 +219,8 @@ class FacilityGenerator:
         else:
             dur = min(dur, restore_t * 0.9)
         inc.restored_at = inc.t0 + mins(dur)
+        if dispatch and inc.engaged_at and inc.restored_at < inc.engaged_at + mins(15):
+            inc.restored_at = inc.engaged_at + mins(self.rng.uniform(15, 45))   # hands-on repair starts when someone arrives
         inc.wo = self._next_wo()
         inc.wo_engaged_at = inc.engaged_at
         inc.wo_restored_at = inc.restored_at

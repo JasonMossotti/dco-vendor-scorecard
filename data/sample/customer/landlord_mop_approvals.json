@@ -1,17 +1,17 @@
 [
   {
-    "approved_at": "2026-08-26T18:00:09Z",
+    "approved_at": "2026-08-18T17:39:27Z",
     "approved_by": "Customer change board",
     "assets": [
-      "BW-B-R3-PG-B5-B"
+      "BW-B-R1-PG-B1-B"
     ],
-    "mop_id": "MOP-309",
-    "title": "Energize tap-off TO-B22 for a new rack (HO-4)",
-    "window_end": "2026-09-04T20:00:09Z",
-    "window_start": "2026-09-04T18:00:09Z"
+    "mop_id": "MOP-308",
+    "title": "Energize tap-off TO-B29 for a new rack (HO-4)",
+    "window_end": "2026-09-04T19:39:27Z",
+    "window_start": "2026-09-04T17:39:27Z"
   },
   {
-    "approved_at": "2026-08-28T18:36:50Z",
+    "approved_at": "2026-08-21T18:36:50Z",
     "approved_by": "Customer change board",
     "assets": [
       "CDU-B3"
@@ -22,7 +22,7 @@
     "window_start": "2026-09-04T18:36:50Z"
   },
   {
-    "approved_at": "2026-08-31T16:55:03Z",
+    "approved_at": "2026-08-15T16:55:03Z",
     "approved_by": "Customer change board",
     "assets": [
       "VESDA-B1"
@@ -33,7 +33,7 @@
     "window_start": "2026-09-05T16:55:03Z"
   },
   {
-    "approved_at": "2026-09-02T13:00:30Z",
+    "approved_at": "2026-08-26T13:00:30Z",
     "approved_by": "Customer change board",
     "assets": [
       "CDU-B4"
@@ -44,7 +44,7 @@
     "window_start": "2026-09-08T13:00:30Z"
   },
   {
-    "approved_at": "2026-09-06T13:23:49Z",
+    "approved_at": "2026-08-22T13:23:49Z",
     "approved_by": "Customer change board",
     "assets": [
       "CDU-B2"
@@ -55,7 +55,18 @@
     "window_start": "2026-09-11T13:23:49Z"
   },
   {
-    "approved_at": "2026-09-08T19:20:13Z",
+    "approved_at": "2026-08-28T17:24:59Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "BW-B-R3-PG-B4-B"
+    ],
+    "mop_id": "MOP-309",
+    "title": "Energize tap-off TO-B18 for a new rack (HO-4)",
+    "window_end": "2026-09-13T19:24:59Z",
+    "window_start": "2026-09-13T17:24:59Z"
+  },
+  {
+    "approved_at": "2026-09-01T19:20:13Z",
     "approved_by": "Customer change board",
     "assets": [
       "UPS-A1"
@@ -66,18 +77,7 @@
     "window_start": "2026-09-13T19:20:13Z"
   },
   {
-    "approved_at": "2026-09-07T14:54:24Z",
-    "approved_by": "Customer change board",
-    "assets": [
-      "BW-B-R1-PG-B1-B"
-    ],
-    "mop_id": "MOP-308",
-    "title": "Energize tap-off TO-B28 for a new rack (HO-4)",
-    "window_end": "2026-09-19T16:54:24Z",
-    "window_start": "2026-09-19T14:54:24Z"
-  },
-  {
-    "approved_at": "2026-09-12T18:36:52Z",
+    "approved_at": "2026-09-05T18:36:52Z",
     "approved_by": "Customer change board",
     "assets": [
       "CDU-A3"
@@ -88,7 +88,7 @@
     "window_start": "2026-09-20T18:36:52Z"
   },
   {
-    "approved_at": "2026-09-11T18:51:58Z",
+    "approved_at": "2026-09-04T18:51:58Z",
     "approved_by": "Customer change board",
     "assets": [
       "UPS-B3"

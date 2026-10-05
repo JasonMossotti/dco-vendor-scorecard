@@ -11,8 +11,8 @@
 {"cdu": "CDU-B3", "property": "Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-B3/Pumps/2", "timestamp": "2026-09-17T00:53:43Z", "value": "OK"}
 {"cdu": "CDU-A3", "property": "Status.State", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A3/Pumps/2", "timestamp": "2026-09-20T19:06:52Z", "value": "Disabled"}
 {"cdu": "CDU-A3", "property": "Status.State", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A3/Pumps/2", "timestamp": "2026-09-20T19:36:52Z", "value": "Enabled"}
-{"cdu": "CDU-A2", "property": "PumpRedundancy.Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A2", "timestamp": "2026-09-21T05:02:57Z", "value": "Warning"}
-{"cdu": "CDU-A2", "property": "Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A2/Pumps/1", "timestamp": "2026-09-21T05:02:57Z", "value": "Critical"}
-{"cdu": "CDU-A2", "property": "Status.State", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A2/Pumps/1", "timestamp": "2026-09-21T09:43:13Z", "value": "InTest"}
-{"cdu": "CDU-A2", "property": "PumpRedundancy.Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A2", "timestamp": "2026-09-21T09:55:13Z", "value": "OK"}
-{"cdu": "CDU-A2", "property": "Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A2/Pumps/1", "timestamp": "2026-09-21T09:55:13Z", "value": "OK"}
+{"cdu": "CDU-A1", "property": "PumpRedundancy.Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A1", "timestamp": "2026-09-23T21:55:06Z", "value": "Warning"}
+{"cdu": "CDU-A1", "property": "Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A1/Pumps/1", "timestamp": "2026-09-23T21:55:06Z", "value": "Critical"}
+{"cdu": "CDU-A1", "property": "Status.State", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A1/Pumps/1", "timestamp": "2026-09-24T02:35:22Z", "value": "InTest"}
+{"cdu": "CDU-A1", "property": "PumpRedundancy.Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A1", "timestamp": "2026-09-24T02:47:22Z", "value": "OK"}
+{"cdu": "CDU-A1", "property": "Status.Health", "resource": "/redfish/v1/ThermalEquipment/CDUs/CDU-A1/Pumps/1", "timestamp": "2026-09-24T02:47:22Z", "value": "OK"}

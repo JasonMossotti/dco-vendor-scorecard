@@ -14,24 +14,24 @@
     "restored_at": "2026-09-04T05:15:29Z",
     "room": "Hall A",
     "unit": "BW-A-R3-PG-A4-B",
-    "wo": "WO-41049"
+    "wo": "WO-41051"
   },
   {
     "acknowledged_at": null,
     "attribution": "Landlord",
-    "closed": "2026-09-04T19:30:09Z",
-    "engaged_at": "2026-09-04T18:30:09Z",
-    "engineer": "CCF-E05",
+    "closed": "2026-09-04T19:09:27Z",
+    "engaged_at": "2026-09-04T18:09:27Z",
+    "engineer": "CCF-E08",
     "fault_class": null,
-    "mop_ref": "MOP-309",
-    "notes": "Tap-off TO-B22 retorque and energization",
-    "opened": "2026-09-04T17:45:09Z",
+    "mop_ref": "MOP-308",
+    "notes": "Tap-off TO-B29 retorque and energization",
+    "opened": "2026-09-04T17:24:27Z",
     "parts": "",
     "priority": "P4",
     "restored_at": null,
     "room": "Hall B",
-    "unit": "BW-B-R3-PG-B5-B",
-    "wo": "WO-41019"
+    "unit": "BW-B-R1-PG-B1-B",
+    "wo": "WO-41017"
   },
   {
     "acknowledged_at": "2026-09-07T08:46:46Z",
@@ -48,24 +48,7 @@
     "restored_at": "2026-09-07T12:00:52Z",
     "room": "Hall A",
     "unit": "TTDM-A/C8",
-    "wo": "WO-41058"
-  },
-  {
-    "acknowledged_at": null,
-    "attribution": "Landlord",
-    "closed": "2026-09-08T15:21:52Z",
-    "engaged_at": "2026-09-08T14:21:52Z",
-    "engineer": "CCF-E01",
-    "fault_class": null,
-    "mop_ref": "",
-    "notes": "Tap-off TO-B24 retorque and energization",
-    "opened": "2026-09-08T13:36:52Z",
-    "parts": "",
-    "priority": "P4",
-    "restored_at": null,
-    "room": "Hall B",
-    "unit": "BW-B-R2-PG-B2-A",
-    "wo": "WO-41014"
+    "wo": "WO-41060"
   },
   {
     "acknowledged_at": "2026-09-13T06:44:17Z",
@@ -82,7 +65,24 @@
     "restored_at": "2026-09-13T16:53:57Z",
     "room": "Hall B electrical room",
     "unit": "UPS-B3",
-    "wo": "WO-41033"
+    "wo": "WO-41035"
+  },
+  {
+    "acknowledged_at": null,
+    "attribution": "Landlord",
+    "closed": "2026-09-13T18:54:59Z",
+    "engaged_at": "2026-09-13T17:54:59Z",
+    "engineer": "CCF-E07",
+    "fault_class": null,
+    "mop_ref": "MOP-309",
+    "notes": "Tap-off TO-B18 retorque and energization",
+    "opened": "2026-09-13T17:09:59Z",
+    "parts": "",
+    "priority": "P4",
+    "restored_at": null,
+    "room": "Hall B",
+    "unit": "BW-B-R3-PG-B4-B",
+    "wo": "WO-41021"
   },
   {
     "acknowledged_at": "2026-09-13T23:46:27Z",
@@ -99,7 +99,7 @@
     "restored_at": "2026-09-14T04:39:25Z",
     "room": "Chiller yard",
     "unit": "CH-01",
-    "wo": "WO-41068"
+    "wo": "WO-41070"
   },
   {
     "acknowledged_at": "2026-09-14T13:59:56Z",
@@ -116,7 +116,7 @@
     "restored_at": "2026-09-14T15:05:22Z",
     "room": "Hall B",
     "unit": "VESDA-B1",
-    "wo": "WO-41066"
+    "wo": "WO-41068"
   },
   {
     "acknowledged_at": "2026-09-16T21:59:16Z",
@@ -133,7 +133,7 @@
     "restored_at": "2026-09-17T00:53:43Z",
     "room": "Hall B",
     "unit": "CDU-B3",
-    "wo": "WO-41030"
+    "wo": "WO-41032"
   },
   {
     "acknowledged_at": "2026-09-17T16:05:05Z",
@@ -150,41 +150,41 @@
     "restored_at": "2026-09-18T04:47:30Z",
     "room": "Hall B",
     "unit": "TW-B1",
-    "wo": "WO-41045"
+    "wo": "WO-41047"
+  },
+  {
+    "acknowledged_at": "2026-09-23T22:00:45Z",
+    "attribution": "Landlord",
+    "closed": "2026-09-24T00:58:49Z",
+    "engaged_at": "2026-09-23T22:15:10Z",
+    "engineer": "CCF-E02",
+    "fault_class": "OT-FC-CDU",
+    "mop_ref": "",
+    "notes": "CDU-A1 pump 1 failed; pump redundancy lost",
+    "opened": "2026-09-23T21:55:40Z",
+    "parts": "Pump assembly SN CHX-P23681 installed",
+    "priority": "P2",
+    "restored_at": "2026-09-24T00:12:53Z",
+    "room": "Hall A",
+    "unit": "CDU-A1",
+    "wo": "WO-41025"
   },
   {
     "acknowledged_at": null,
     "attribution": "Landlord",
-    "closed": "2026-09-19T16:24:24Z",
-    "engaged_at": "2026-09-19T15:24:24Z",
-    "engineer": "CCF-E06",
+    "closed": "2026-09-24T18:22:19Z",
+    "engaged_at": "2026-09-24T17:22:19Z",
+    "engineer": "CCF-E03",
     "fault_class": null,
-    "mop_ref": "MOP-308",
-    "notes": "Tap-off TO-B28 retorque and energization",
-    "opened": "2026-09-19T14:39:24Z",
+    "mop_ref": "",
+    "notes": "Tap-off TO-B09 retorque and energization",
+    "opened": "2026-09-24T16:37:19Z",
     "parts": "",
     "priority": "P4",
     "restored_at": null,
     "room": "Hall B",
-    "unit": "BW-B-R1-PG-B1-B",
-    "wo": "WO-41018"
-  },
-  {
-    "acknowledged_at": "2026-09-21T05:05:52Z",
-    "attribution": "Landlord",
-    "closed": "2026-09-21T08:06:40Z",
-    "engaged_at": "2026-09-21T05:20:17Z",
-    "engineer": "CCF-E11",
-    "fault_class": "OT-FC-CDU",
-    "mop_ref": "",
-    "notes": "CDU-A2 pump 1 failed; pump redundancy lost",
-    "opened": "2026-09-21T05:03:31Z",
-    "parts": "Pump assembly SN CHX-P23681 installed",
-    "priority": "P2",
-    "restored_at": "2026-09-21T07:20:44Z",
-    "room": "Hall A",
-    "unit": "CDU-A2",
-    "wo": "WO-41023"
+    "unit": "BW-B-R3-PG-B4-A",
+    "wo": "WO-41014"
   },
   {
     "acknowledged_at": "2026-09-24T21:16:39Z",
@@ -218,6 +218,6 @@
     "restored_at": "2026-09-26T04:47:58Z",
     "room": "Chiller yard",
     "unit": "CH-03",
-    "wo": "WO-41040"
+    "wo": "WO-41042"
   }
 ]
