@@ -94,6 +94,10 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_pir
     (out / "pir").mkdir(parents=True, exist_ok=True)
     (out / "pir" / "index.html").write_text(render_pir.html_page(), encoding="utf-8")
+    # The weekly operations review, served at /weekly/.
+    import render_weekly
+    (out / "weekly").mkdir(parents=True, exist_ok=True)
+    (out / "weekly" / "index.html").write_text(render_weekly.html_page(), encoding="utf-8")
     return {"files_in_bundle": len(members), "bundle_bytes": (out / "app_bundle.zip").stat().st_size}
 
 

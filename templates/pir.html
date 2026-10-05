@@ -40,7 +40,7 @@ textarea { min-height:70px; resize:vertical; }
 </head>
 <body>
 <header class="top">
-  <div><strong>Post-Incident Review</strong> · Site AUS-1 (fictional) · <a href="../">back to the scorecard demo</a></div>
+  <div><strong>Post-Incident Review</strong> · Site AUS-1 (fictional) · <a href="../">back to the scorecard demo</a> · <a href="../weekly/">weekly review</a></div>
   <div class="tabs"><button id="t-example" class="on">Example: Rack A07</button> <button id="t-blank">Blank form</button></div>
   <div class="tools">
     <label style="font-size:13px;"><input type="checkbox" id="plainonly"> Plain-language view</label>
@@ -65,10 +65,11 @@ function swimlane(f) {
   let s = `<svg viewBox="0 0 ${W} 150" width="100%" role="img" aria-label="Timeline by party">`;
   lanes.forEach(p => s += `<text x="8" y="${y(p) + 4}" font-size="12" fill="#5b6774">${p}</text><line x1="${L}" x2="${W - 20}" y1="${y(p)}" y2="${y(p)}" stroke="#d5dbe2"/>`);
   s += `<rect x="${x(f.power_lost)}" y="${y("Landlord") - 9}" width="${x(f.handoff) - x(f.power_lost)}" height="18" fill="#b45309" opacity=".85"/>`;
-  s += `<text x="${(x(f.power_lost) + x(f.handoff)) / 2}" y="${y("Landlord") + 4}" font-size="11" fill="#fff" text-anchor="middle">Landlord-attributed (FA-1)</text>`;
+  const barLabels = `<text x="${(x(f.power_lost) + x(f.handoff)) / 2}" y="${y("Landlord") - 13}" font-size="11" fill="#b45309" text-anchor="middle">Landlord-attributed (FA-1)</text>`;
   s += `<rect x="${x(f.handoff)}" y="${y("IT Partner") - 9}" width="${Math.max(2, x(f.rts) - x(f.handoff))}" height="18" fill="#1f5fbf" opacity=".85"/>`;
-  s += `<text x="${x(f.handoff) + 4}" y="${y("IT Partner") + 4}" font-size="11" fill="#fff">IT validation (FA-3)</text>`;
+  const itLabel = `<text x="${(x(f.handoff) + x(f.rts)) / 2}" y="${y("IT Partner") + 22}" font-size="11" fill="#1f5fbf" text-anchor="middle">IT validation (FA-3)</text>`;
   rows.forEach(r => s += `<circle cx="${x(r.t)}" cy="${y(r.party)}" r="3" fill="#1e2933"><title>${esc(r.local + " " + r.event)}</title></circle>`);
+  s += barLabels + itLabel;   // labels sit outside the bars, so event dots never cover them
   [f.power_lost, f.handoff, f.rts].forEach((v, i) => {
     const lbl = ["Power lost", "Handoff", "Back in service"][i];
     s += `<line x1="${x(v)}" x2="${x(v)}" y1="14" y2="128" stroke="#1e2933" stroke-dasharray="3 3"/><text x="${x(v)}" y="142" font-size="11" text-anchor="middle">${lbl} ${new Date(v).toLocaleTimeString("en-US", {timeZone: "America/Chicago", hour: "numeric", minute: "2-digit"})}</text>`;
@@ -129,7 +130,7 @@ function render(f, a, edit) {
   h += `<h2>Lessons</h2><div class="plain">` + [["What went well", "went_well"], ["What went poorly", "went_poorly"], ["Where we got lucky", "lucky"]].map(([t, k]) =>
     `<div class="card"><h3>${t}</h3>${edit ? `<textarea data-f="lessons.${k}" rows="5">${esc((ls[k] || []).join("\n"))}</textarea>` : `<ul>${(ls[k] || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`}</div>`).join("") + `</div>`;
   h += `<h2>Action items</h2><p class="note">Status as of ${edit ? `<input type="text" data-f="status_as_of" value="${esc(a.status_as_of || "")}" placeholder="YYYY-MM-DD">` : esc(a.status_as_of)}</p><table><tr><th>ID</th><th>Action</th><th>Factor</th><th>Owner</th><th>Priority</th><th>Due</th><th>Success criterion</th><th>Status</th></tr>` +
-    (a.actions || [{id: "A1"}, {id: "A2"}, {id: "A3"}]).map((x, i) => `<tr><td>${esc(x.id)}</td>` + ["action", "factor", "owner", "priority", "due", "success", "status"].map(k => `<td>${edit ? `<input type="text" data-f="actions.${i}.${k}" value="${esc(x[k] || "")}">` : esc(x[k])}</td>`).join("") + `</tr>`).join("") + `</table>`;
+    (a.actions || [{id: "A1"}, {id: "A2"}, {id: "A3"}]).map((x, i) => `<tr><td>${esc(x.id)}</td>` + ["action", "factor", "owner", "priority", "due", "success", "status"].map(k => `<td${k === "due" ? ' class="num"' : ""}>${edit ? `<input type="text" data-f="actions.${i}.${k}" value="${esc(x[k] || "")}">` : esc(x[k])}</td>`).join("") + `</tr>`).join("") + `</table>`;
   h += `<div class="tech"><h2>Communications log</h2><table><tr><th>Time</th><th>To</th><th>Message</th></tr>` +
     (a.communications || [{}, {}]).map((x, i) => `<tr>` + ["local", "to", "message"].map(k => `<td>${edit ? `<input type="text" data-f="communications.${i}.${k}" value="${esc(x[k] || "")}">` : esc(x[k])}</td>`).join("") + `</tr>`).join("") + `</table>`;
   if (f && f.repeats.length) {

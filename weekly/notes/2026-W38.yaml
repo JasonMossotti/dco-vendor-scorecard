@@ -1,0 +1,45 @@
+# Weekly operations review: what people wrote at the meeting. Every fact in the pack (service levels,
+# incidents, findings, look-ahead) comes from the dataset via src/scorecard/weekly.py. Tests check that
+# every reference below (finding, action, MOP, rack, service level) exists in that week's facts.
+week: 2026-W38
+meeting: "2026-09-21"
+chair: "Customer Site Lead"
+attendees: ["Customer Site Lead", "Customer EHS", "IT Partner Site Manager (Ridgeline Site Services)", "Landlord Chief Engineer (Caprock Critical Facilities)"]
+commentary:
+  IT Partner: >-
+    Both P1s this week were restored within target, and the rack A07 validation after the Landlord's handoff
+    went cleanly. The concerns are deployment pace, repeat failures, and records: CSL-09 and CSL-08 are the
+    furthest below Minimum month to date, F-008 is the month's second return to service without validation,
+    and CSL-07 and CSL-11 are below Minimum as well.
+  Landlord: >-
+    The rack A07 outage (WO-41023) is reviewed in PIR-2026-001 and is behind most of this week's change: OT-CSL-01
+    and OT-CSL-07 fell below Minimum month to date. Three new Landlord findings (L-004, L-005, L-008) go to the
+    monthly service review.
+decisions:
+  - id: D1
+    owner: "Customer Site Lead"
+    text: >-
+      Until action A1's MOP template is approved, the Customer change board will approve one-sided tap-off work
+      only if the MOP locks and tags the feed that stays energized and requires a second-person check of the
+      tap-off identity. No tap-off work is scheduled next week; MOP-306 is UPS maintenance.
+  - id: D2
+    owner: "Customer Site Lead"
+    text: >-
+      L-004, L-005, and L-008 go to the monthly service review on 2026-09-28. Caprock brings its account of each;
+      corrective action plans are raised there, not here.
+  - id: D3
+    owner: "IT Partner Site Manager"
+    text: >-
+      Ridgeline re-runs the return-to-service checks on the unit in F-008 this week and attaches the results, as
+      an interim step ahead of the monthly corrective action plan.
+priorities:
+  # Next week's priorities, set by the Customer Site Lead for each partner, in order.
+  - {to: "IT Partner", text: "Hall B handoffs: B10 to B13 are due next week. Report milestone status at each daily standup, and raise any rack that will miss its committed date the day it is known (CSL-09)."}
+  - {to: "IT Partner", text: "Repeat failures: no reseat-only closure for a unit's second fault inside 30 days; replace the part or escalate for RMA. Review F-014 with the Customer before the monthly review (CSL-08)."}
+  - {to: "IT Partner", text: "Validation: every return to service attaches its checks before the ticket closes; complete D3 on F-008 first (CSL-07)."}
+  - {to: "Landlord", text: "Clear or reference the override in L-005, and complete PM-0013 on UPS-B3 under MOP-306 with badge and device evidence (OT-CSL-06)."}
+  - {to: "Landlord", text: "Hold to D1 for any one-sided tap-off work until A1 is approved (OT-CSL-07)."}
+asks:
+  - {id: Q1, to: "Landlord", due: "2026-09-23", text: "Confirm the BMS override or inhibit in L-005 is cleared, and give the change reference for any override still in place."}
+  - {id: Q2, to: "IT Partner", due: "2026-09-23", text: "Explain the unfilled rostered shift in F-018 and confirm next week's roster is fully staffed."}
+  - {id: Q3, to: "Customer Site Lead", due: "2026-09-22", text: "Get a new delivery date from the OEM for rack B15, planned for receipt on 2026-09-19 and not yet received."}

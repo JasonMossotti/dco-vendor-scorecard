@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Operations Review · Site AUS-1</title>
+<style>
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --ll:#b45309; --it:#1f5fbf; --ok:#1d7a46; --warn:#a15c00; --bad:#b42318; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#1e2933; color:#fff; padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top a { color:#cfe0ff; }
+.tabs button, .tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+.tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
+.tabs button .dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--ll); margin-left:6px; vertical-align:middle; }
+main { max-width:1120px; margin:20px auto; background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); } h3 { font-size:14px; margin:16px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.banner { background:var(--panel); border-left:4px solid var(--it); padding:8px 12px; border-radius:4px; font-size:13px; margin:10px 0; }
+.status { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }
+.card { background:var(--panel); border-radius:8px; padding:12px 14px; } .card h3 { margin:0 0 6px; }
+.chip { display:inline-block; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; color:#fff; white-space:nowrap; }
+.chip.ok { background:var(--ok); } .chip.warn { background:var(--warn); } .chip.bad { background:var(--bad); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.num, td.nw { white-space:nowrap; }
+tr.default td { background:#fdf0ef; } .gap { color:var(--bad); font-size:12px; }
+.met { color:var(--ok); font-weight:600; } .missed, .over { color:var(--bad); font-weight:600; } .open { color:var(--warn); font-weight:600; }
+.la { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; } .la ul { margin:4px 0 0; padding-left:18px; font-size:13px; }
+.wide { overflow-x:auto; }
+@media print { header.top { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } h2 { break-after:avoid; } tr { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div><strong>Weekly Operations Review</strong> · Site AUS-1 (fictional) · <a href="../">scorecard demo</a> · <a href="../pir/">post-incident review</a></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="tools"><button id="print">Print / save PDF</button></div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const DEFAULTS = ["below_minimum", "deep_below_minimum"];
+const table = (head, rows, cls) => `<div class="wide"><table><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr>${rows.join("")}</table></div>`;
+const result = r => r.met === null ? `<span class="open">${esc(r.result)}</span>` : `<span class="${r.met ? "met" : "missed"}">${esc(r.result)}</span>`;
+const list = (items, fmt, none) => items.length ? `<ul>${items.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : `<p class="note">${none}</p>`;
+
+function render(w) {
+  const n = DATA.notes[w.id];
+  let h = `<h1>Weekly Operations Review ${esc(w.id)}</h1>`;
+  h += `<p class="sub">${esc(w.title)} · Prepared ${esc(w.prepared_local)} from data through the end of the week.</p>`;
+  h += `<div class="banner">Weekly results are early warnings. The contract settles service levels and credits monthly, so this pack shows each service level for the week and for the month to date, and never a weekly credit.</div>`;
+  if (n) h += `<p class="note">Meeting ${esc(n.meeting)} · Chair: ${esc(n.chair)} · Attendees: ${n.attendees.map(esc).join(", ")}</p>`;
+
+  h += `<h2>1. Status</h2><div class="status">` + w.partners.map(p => `<div class="card"><h3>${esc(p.name)} <span class="note">(${esc(p.role)})</span></h3>
+    <span class="chip ${p.chip}">${esc(p.status)}</span>
+    ${p.reasons.length ? `<ul class="note">${p.reasons.map(r => `<li>${esc(r)}</li>`).join("")}</ul>` : `<p class="note">All service levels at or above Expected.</p>`}
+    ${n && n.commentary[p.role] ? `<p style="font-size:13px">${esc(n.commentary[p.role])}</p>` : ""}</div>`).join("") + `</div>`;
+
+  h += `<h2>2. Service levels (week and month to date)</h2><p class="note">Rows shaded red are below Minimum month to date. "Overstated" marks a self-reported figure better than the measurement.</p>`;
+  w.partners.forEach(p => {
+    h += `<h3>${esc(p.name)} (${esc(p.role)})</h3>` + table(["ID", "Service level", "Minimum", "This week", "Self-reported", "Month to date", "Month-to-date status"],
+      p.levels.map(r => `<tr class="${DEFAULTS.includes(r.mtd_status) ? "default" : ""}"><td class="nw">${esc(r.id)}</td><td>${esc(r.name)}</td><td class="nw">${esc(r.min_txt)}</td>
+        <td class="nw" title="${esc(r.week_detail)}">${esc(r.week_txt)} <span class="note">${esc(r.week_status_txt)}</span></td>
+        <td class="nw">${esc(r.reported_txt)}${r.gap_txt ? `<br><span class="gap">${esc(r.gap_txt)}</span>` : ""}</td>
+        <td class="nw">${esc(r.mtd_txt)}</td><td>${DEFAULTS.includes(r.mtd_status) ? `<b>${esc(r.mtd_status_txt)}</b>` : esc(r.mtd_status_txt)}</td></tr>`));
+  });
+
+  const it = w.incidents.it, ll = w.incidents.landlord;
+  h += `<h2>3. Incidents</h2><p class="note">P1 incidents in full; P2 incidents summarized with every one that missed its target or was still open at the end of the week. Restore times are the SLA clock (Telemetry of Record, to Validated RTS).</p>`;
+  h += `<h3>IT Partner: ${it.p1.length} P1; ${it.p2_count} P2, ${it.p2_met} restored within target</h3>`;
+  const itRows = it.p1.concat(it.p2_exceptions);
+  h += itRows.length ? table(["Priority", "Tickets", "Class", "Unit", "Start (Central)", "SLA clock", "Target", "Result", "Notes"], itRows.map(r =>
+    `<tr><td>${r.priority}</td><td class="nw">${r.tickets.map(esc).join("<br>")}</td><td class="nw">${esc(r.fault_class)}</td><td>${esc(r.unit)}</td><td class="nw">${esc(r.t0_local)}</td>
+     <td class="nw">${esc(r.restore || "—")}</td><td class="nw">${esc(r.target)}</td><td>${result(r)}</td>
+     <td>${r.facility_caused ? "Facility-caused; IT clock from the Landlord's handoff (FA-3). " : ""}${r.pir ? `Reviewed in <a href="../pir/">${esc(r.pir.id)}</a>` : ""}</td></tr>`)) : `<p class="note">No P1 incidents and no P2 exceptions.</p>`;
+  h += `<h3>Landlord: ${ll.length} P1 and P2 facility events</h3>`;
+  h += ll.length ? table(["Priority", "Work order", "Unit", "What", "Start (Central)", "Restore", "Target", "Result", "Owner"], ll.map(r =>
+    `<tr><td>${r.priority}</td><td class="nw">${esc(r.work_order || "—")}</td><td>${esc(r.unit)}</td><td>${esc(r.description)}</td><td class="nw">${esc(r.t0_local)}</td>
+     <td class="nw">${esc(r.restore || "—")}</td><td class="nw">${esc(r.target)}</td><td>${result(r)}</td>
+     <td>${esc(r.owner)} (${esc(r.rule)})${r.pir ? `; reviewed in <a href="../pir/">${esc(r.pir.id)}</a>` : ""}</td></tr>`)) : `<p class="note">No P1 or P2 facility events.</p>`;
+
+  const fd = w.findings;
+  h += `<h2>4. New findings</h2><p class="note">Raised this week, in the week each discrepancy was observed. ${fd.awaiting_monthly_review} findings so far this month go to the monthly service review, where corrective action plans are raised. A finding means the records do not reconcile, not that anyone acted in bad faith.</p>`;
+  h += fd.new.length ? table(["ID", "Partner", "Severity", "Finding", "Summary", "Observed"], fd.new.map(f =>
+    `<tr><td class="nw">${esc(f.id)}</td><td class="nw">${esc(f.partner)}</td><td>${esc(f.severity)}</td><td>${esc(f.title)}</td><td>${esc(f.summary)}</td><td class="nw">${esc(f.known_local)}</td></tr>`)) : `<p class="note">No new findings.</p>`;
+
+  h += `<h2>5. Open actions</h2>`;
+  h += w.actions.length ? `<p class="note">From completed post-incident reviews. Status as recorded on ${esc(w.actions[0].status_as_of)}.</p>` + table(["Source", "ID", "Action", "Owner", "Priority", "Due", "Status"], w.actions.map(a =>
+    `<tr><td class="nw"><a href="../pir/">${esc(a.source)}</a></td><td>${esc(a.id)}</td><td>${esc(a.action)}</td><td>${esc(a.owner)}</td><td>${esc(a.priority)}</td><td class="nw">${esc(a.due)}</td>
+     <td>${esc(a.status)}${a.overdue ? ` <span class="over">overdue</span>` : ""}</td></tr>`)) : `<p class="note">No open actions from post-incident reviews.</p>`;
+
+  const la = w.lookahead;
+  h += `<h2>6. Look-ahead: ${esc(la.title)}</h2><p class="note">Only work approved or scheduled by the end of this week.${la.beyond_data ? " The dataset ends on Sep 28, so anything planned after that is not shown." : ""}</p><div class="la">`;
+  h += `<div class="card"><h3>Landlord MOPs approved</h3>${list(la.mops, m => `${esc(m.id)} ${esc(m.title)} <span class="note">(${esc(m.when)})</span>`, "None")}</div>`;
+  h += `<div class="card"><h3>IT changes approved</h3>${list(la.changes, c => `${esc(c.id)} ${esc(c.summary)} <span class="note">(${esc(c.when)})</span>`, "None")}<p class="note">The change records do not carry an approval time.</p></div>`;
+  h += `<div class="card"><h3>Maintenance due</h3>${list(la.maintenance, p => `${esc(p.id)} ${esc(p.asset)} ${esc(p.task)} <span class="note">(due ${esc(p.due)})</span>`, "None")}</div>`;
+  h += `<div class="card"><h3>Hall B deployment</h3>${list(la.handoffs_due, x => `${esc(x.rack)} handoff ${esc(x.due)} <span class="note">(at ${esc(x.milestone)} ${esc(x.milestone_name)})</span>`, "No handoffs due")}
+    ${la.handoffs_late.length ? `<p class="over" style="margin:6px 0 0">Past commitment</p>${list(la.handoffs_late, x => `${esc(x.rack)} committed ${esc(x.due)} <span class="note">(at ${esc(x.milestone)} ${esc(x.milestone_name)})</span>`, "")}` : ""}
+    ${la.receipts_overdue.length ? `<p class="over" style="margin:6px 0 0">Not yet received</p>${list(la.receipts_overdue, x => `${esc(x.rack)} planned ${esc(x.planned)} <span class="note">(${x.days_overdue} day${x.days_overdue === 1 ? "" : "s"} late)</span>`, "")}` : ""}</div>`;
+  h += `<div class="card"><h3>Rostered shifts</h3><p style="font-size:13px;margin:0">IT Partner ${la.rostered_shifts.it} · Landlord ${la.rostered_shifts.landlord}</p></div></div>`;
+
+  const rs = w.resources;
+  h += `<h2>7. Resources</h2>` + table(["Measure", "This week", "Target", "Detail"],
+    rs.staffing.map(s => `<tr><td>${esc(s.id)} ${esc(s.name)}</td><td class="nw">${esc(s.week_txt)} <span class="note">${esc(s.status_txt)}</span></td><td class="nw">≥ ${s.minimum}%</td><td>${esc(s.detail)}</td></tr>`)
+    .concat(rs.spares.map(k => `<tr><td>${esc(k.id)} ${esc(k.name)}</td><td class="nw ${k.met === false ? "missed" : ""}">${esc(k.actual_txt)}</td><td class="nw">≥ ${k.target}%</td><td>${esc(k.detail)}</td></tr>`)));
+  h += `<p class="note">Failed parts awaiting shipment to the OEM at the end of the week: ${rs.rma_open}${rs.rma_open ? ` (oldest removed ${rs.rma_oldest_days} days ago)` : ""}.</p>`;
+
+  const e = w.ehs;
+  h += `<h2>8. Safety (EHS)</h2><ul><li><b>Injuries this week:</b> ${e.injuries}</li>` +
+    e.events.map(x => `<li><b>Event:</b> <a href="../pir/">${esc(x.pir)}</a>: ${esc(x.screening)}</li>`).join("") +
+    e.open_investigations.map(x => `<li><b>Open investigation:</b> ${esc(x.pir)} action ${esc(x.action)}, due ${esc(x.due)}${x.overdue ? ` <span class="over">overdue</span>` : ""}. ${esc(x.referral)}</li>`).join("") +
+    (!e.events.length && !e.open_investigations.length ? `<li>No events and no open investigations.</li>` : "") + `</ul>`;
+
+  h += `<h2>9. Decisions, priorities, and asks</h2>`;
+  if (n) {
+    h += `<h3>Decisions</h3><ul>${n.decisions.map(x => `<li><b>${esc(x.id)}</b> <span class="note">(${esc(x.owner)})</span>: ${esc(x.text)}</li>`).join("")}</ul>`;
+    h += `<h3>Priorities for next week</h3><p class="note">Set by the Customer Site Lead, in order.</p><div class="status">` + ["IT Partner", "Landlord"].map(role =>
+      `<div class="card"><h3>${role}</h3><ol style="margin:0;padding-left:20px;font-size:13px">${n.priorities.filter(p => p.to === role).map(p => `<li>${esc(p.text)}</li>`).join("")}</ol></div>`).join("") + `</div>`;
+    h += `<h3>Asks</h3>`;
+    h += table(["Ask", "To", "Due", "Request"], n.asks.map(x => `<tr><td>${esc(x.id)}</td><td class="nw">${esc(x.to)}</td><td class="nw">${esc(x.due)}</td><td>${esc(x.text)}</td></tr>`));
+  } else h += `<p class="note">No meeting notes recorded for this week; the facts above stand on their own.</p>`;
+  h += `<p class="note" style="margin-top:24px">Synthetic data for a portfolio demonstration; all names and events are fictional. Facts are generated from the dataset by src/scorecard/weekly.py; meeting notes are in weekly/notes/.</p>`;
+  return h;
+}
+
+function show(id) {
+  const w = DATA.weeks.find(x => x.id === id);
+  document.getElementById("doc").innerHTML = render(w);
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.week === id));
+  history.replaceState(null, "", "#" + id);
+}
+
+document.getElementById("tabs").innerHTML = DATA.weeks.map(w =>
+  `<button data-week="${w.id}">${w.id.slice(5)}${DATA.notes[w.id] ? `<span class="dot" title="Meeting notes recorded"></span>` : ""}</button>`).join(" ");
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => show(b.dataset.week));
+document.getElementById("print").onclick = () => window.print();
+const wanted = location.hash.slice(1);
+const noted = DATA.weeks.find(w => DATA.notes[w.id]);
+show(DATA.weeks.some(w => w.id === wanted) ? wanted : (noted || DATA.weeks[DATA.weeks.length - 1]).id);
+</script>
+</body>
+</html>

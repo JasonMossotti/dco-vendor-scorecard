@@ -22,8 +22,9 @@ At a partner-operated GPU data center site, partners do the hands-on work and th
 | Landlord SLA and Interface Agreement (generated) | `docs/sla/LANDLORD_SLA.md`, `docs/sla/INTERFACE_AGREEMENT.md` |
 | Landlord and site reports (generated) | `reports/landlord_scorecard.md`, `landlord_discrepancy_report.md`, `attribution_report.md`, `site_summary.md` |
 | Post-incident review | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/pir/ (built by `scripts/build_site.py`); completed review `docs/pir/PIR-2026-001.md` from `pir/reviews/PIR-2026-001.yaml` + `src/scorecard/pir.py` |
+| Weekly operations review | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/ (built by `scripts/build_site.py`); packs `docs/weekly/2026-W36.md` to `W39.md` from `src/scorecard/weekly.py` + `scripts/render_weekly.py`; meeting notes `weekly/notes/2026-W38.yaml` |
 | Live collector (Phase 6) | `scripts/collect.py`, `src/scorecard/live/`, `config/collector.example.yaml`, `requirements-live.txt`, `docs/LIVE_READINESS.md` |
-| Tests | 199 (pytest), run by CI on every push and before every Pages deploy. The collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed |
+| Tests | 213 (pytest), run by CI on every push and before every Pages deploy. The collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed |
 | AWS hosting guide | `docs/DEPLOY_AWS.md` |
 
 Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 4 Minimum Service Level Defaults (CSL-07, 08, 09, 11), $188,700 credits payable (inside the $222,000 cap), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
@@ -33,6 +34,21 @@ Landlord (same sample): 4 Minimum defaults (OT-CSL-01, 06, 07, 08), $106,200 cre
 **Multi-vendor expansion (complete).** The site is a leased AI data center in Central Texas with two partners: Ridgeline Site Services (IT partner) and Caprock Critical Facilities (the Landlord, a wholesale owner-operator). Phases 1 (site model and drawings), 2 (SLA split), 2b (EHS), 3 (Landlord SLA and Interface Agreement), 4a (facility data), 4b (Landlord engine, scorecard, and cross-partner attribution), 5 (app views), and 6 (read-only collector: Redfish, Modbus, SNMPv3, BACnet/IP) are complete. **The roadmap is complete.** After it: a post-incident review page (step 18). The owner chose the landlord model: Caprock is a wholesale owner-operator that leases the halls to the Customer, matching the posting's "facility someone else runs"; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
 
 **Purpose:** a portfolio project for a Data Center Operations Lead (partner-operated sites) application. Keep everything synthetic and fictional; never imply knowledge of any real company's internal systems.
+
+**How the project maps to the posting's duties** (checked against the posting on 2026-10-05; the posting text itself is not stored here):
+
+| Duty in the posting | Where the project shows it |
+|---|---|
+| Own availability, deployment milestones, and repair turnaround, verified with independent data rather than vendor self-reporting | Telemetry of Record clocks; measured vs. self-reported on every scorecard and weekly pack; overstated reports flagged |
+| Set daily and weekly priorities; lead standups and business reviews | Weekly operations review (`/weekly/`): decisions, next week's priorities per partner, asks |
+| Author procedures for deployment, break-fix, change, security, EHS | SLAs as code (`sla/`), rule cards, TR-1 to TR-7, Interface Agreement handoffs, EHS terms |
+| Track SLAs and staffing commitments; drive corrective action | Scorecards, credits, severity log, corrective action plans; staffing CSLs badge-verified |
+| Incident Commander; close out post-incident actions | Post-incident review (`/pir/`) with owned, dated actions carried into the weekly pack |
+| Analyze failure patterns; standardize lessons | Repeat-failure and lemon-unit detection (CSL-08, KM-09); open idea: failure-pattern analysis |
+| Break-fix ownership matrices and vendor training | Interface Agreement RACI; open idea: ownership-matrix trainer |
+| Operational readiness for new halls, including spares and security | Hall B deployment tracking and spares KMs; open idea: new-hall readiness tracker |
+| Communicate risks to leadership | PIR plain-language view; open idea: one-page leadership brief |
+| Multi-vendor site; facility someone else runs; liquid-cooled GPU infrastructure | Landlord and IT partner, fault attribution, CDU and GB200/GB300 site model |
 
 ## How we work
 
@@ -112,6 +128,8 @@ The SLA YAML is the single source of truth for the contract (`load_sla()` merges
 | Site equipment, ratings, interfaces, sources, topology, monitoring map | `site/site.yaml` |
 | Site expansion, power and cooling paths, capacity checks | `src/scorecard/site_model.py` |
 | Drawing sheets (SVG), generated from the site model | `src/scorecard/site_drawings.py` |
+| Weekly review facts (week and month to date, incidents, findings, look-ahead, resources, EHS) | `src/scorecard/weekly.py` (Landlord periods via `measure_landlord(result, start, end, findings)`) |
+| Weekly review meeting notes (judgment) | `weekly/notes/<ISO week>.yaml` |
 | App layout | `app/streamlit_app.py` |
 | What each data file represents | `docs/DATA_MODEL.md` |
 
@@ -139,6 +157,7 @@ python scripts/run_engine.py        # discrepancy report
 python scripts/build_scorecard.py   # scorecard
 python scripts/run_landlord.py      # Landlord scorecard, discrepancy, attribution, and site summary reports
 python scripts/render_pir.py        # completed post-incident reviews (docs/pir/)
+python scripts/render_weekly.py     # weekly operations review packs (docs/weekly/)
 pytest -q                           # all tests; CI fails if any generated file is stale
 ```
 
@@ -153,7 +172,7 @@ python scripts/build_site.py && python -m http.server -d _site 8000
 
 ## Conventions
 
-- **Generated files are never edited by hand:** `docs/sla/`, `docs/site/`, `data/sample/`, and everything in `reports/`. Tests fail if they are out of date.
+- **Generated files are never edited by hand:** `docs/sla/`, `docs/site/`, `docs/pir/`, `docs/weekly/`, `data/sample/`, and everything in `reports/`. Tests fail if they are out of date.
 - **The engine never reads `ground_truth/`.** Only `engine/evaluate.py` does, after the engine has finished.
 - **A finding means records do not reconcile, not that someone lied.** Keep that framing in report text.
 - **Synthetic data only.** No real company's information, names, or documents.
@@ -201,6 +220,7 @@ In the order it was built, with the decisions that shaped each step:
 17. **Phase 6b: SNMPv3 and BACnet/IP.** UPS cards over SNMPv3 (pysnmp 7.1.30; GET only; authPriv with SHA and AES; v1/v2c rejected) and BMS points over BACnet/IP (bacpypes3 0.0.110; ReadProperty only; overrides from manual priority-array slots; out-of-service as inhibit). Simulators: a pysnmp agent with a read-only USM user and a custom MIB controller that logs operations (registering a scalar under an absent enterprise branch failed, so the controller pattern is used), and a bacpypes3 commandable analog value. Findings: pysnmp needs `cryptography>=47` for AES; bacpypes3 raises `ErrorRejectAbortNack` as a BaseException, so the adapter converts it and a test proves one bad point cannot stop the collector; BACnet reads retry (UDP), which removed a one-in-three test timeout; simulators are torn down after each test. Engine change: an override without a change reference is reconciled against approved MOPs before it is flagged (live BACnet cannot carry a change reference); sample results unchanged. `docs/LIVE_READINESS.md` states what is proven and what a deployment still needs.
 18. **Post-incident review.** Layout follows the Google SRE blameless postmortem (summary, impact, trigger, detection, resolution, contributing factors rather than a single root cause, lessons including "where we got lucky", owned and dated actions with success criteria) and Uptime Institute practice (Outage Severity Rating 1 to 5; human-error factors classified as procedure not followed vs. procedure inadequate). `src/scorecard/pir.py` builds every fact for any P1/P2 ticket or work order (header, response metrics against targets, impact split by party, timeline with each source record reproduced exactly, attribution, findings, CSL consequence, MOP overrun, repeat events); `pir/reviews/PIR-2026-001.yaml` holds the written judgment for rack A07 (blameless: no individual named). `scripts/render_pir.py` writes `docs/pir/PIR-2026-001.md` and the interactive page (`templates/pir.html`, vanilla JavaScript, data embedded) that `scripts/build_site.py` publishes at `/pir/`. Tests: records match the source files exactly, every number in the prose matches the facts, actions are owned and tied to factors, and a jsdom browser test (`tests/js/pir_page.cjs`, run in CI) exercises both tabs, auto-fill, and the plain-language toggle. Data details surfaced by the review: the A-side tap-off stayed open 2 h 06 min past MOP-310's window, and the IT technician was off the floor before the outage and returned at the handoff, as HO-1 requires.
 19. **Post-incident review corrections (assistant review, 2026-10-05).** F5 had said the rack sat "on one feed" for the 2 h 06 min overrun; it had no feeds until 19:06:55Z and one feed only until 19:22:05Z. New factor F6 and action A7: HO-1 does not say whether one restored feed is enough, and the rack was powered on (19:15:04Z) without redundancy. Other fixes: "nobody noticed" became "the window expired mid-incident with no decision to extend it"; action statuses carry `status_as_of` (2026-09-18, the sign-off date) so due dates do not drift into "overdue" as time passes; every repeat event carries a ruling (`repeat_rulings`; INC3100748 not related); the plain-language "over three hours" now matches 4 h 19 min. Badge realism: Landlord readers record entries only (now stated in `docs/DATA_MODEL.md` and on the page); the IT outage stream now badges the technician out after return to service (own random stream; one row added to the sample, every report byte-identical; outage-day hall in/out alternation clean in 58 of 60 generated months, up from 55, the remaining two being overlaps with the ordinary shift stream). Engines unchanged: 17/17 and 1,020/1,020; Landlord 8/8 and 480/480; facility evidence 60/60. Four new Python tests and four new browser checks. The first deploy of step 18 was delayed by a GitHub Actions hosted-runner incident on 2026-10-05, not by the repository.
+20. **Weekly operations review.** One pack per week for the joint review with both partners, published at `/weekly/` and as `docs/weekly/*.md`. `weekly.py` runs both engines once and builds each week's facts: status per partner, every CSL for the week and month to date beside the self-report (only overstated reports are flagged), P1 incidents in full with P2 exceptions, new findings, PIR actions, a seven-day look-ahead, staffing and spares (existing KM-06 to KM-08), and EHS. Rules: weekly results are early warnings, never credits; nothing is known early (look-ahead lists only work approved or scheduled by the week's end; a finding is raised in the week its detector observed it, because later evidence such as an RMA shipment only corroborates; a first draft used the latest evidence, which a 20-month sweep showed could push a finding past the window); weeks reconcile with the month. `measure_landlord` gained an optional period (no period = the monthly path, unchanged byte for byte); maintenance counts in the week it was completed, as the month counts it (a first draft used the due date and failed reconciliation). Notes are written only for W38 (commentary, decisions, next week's priorities per partner, and asks; priorities were added after checking the pack against the job posting's "set daily and weekly priorities") and are tested: every reference must exist in that week's facts, every service level named in commentary or a priority must be one flagged for that partner, and no individual is named. Checks: last week's month to date equals both monthly scorecards; weekly OT-CSL-01 averages exactly to the month; findings and incidents counted once; the same checks pass on 20 generated months. Along the way: the PIR's repeat ruling now names F-008 (the same tray ticket), with a test; the PIR swimlane labels moved off the bars so event dots cannot cover them (checked by rendering the SVG); due dates no longer wrap; the deployment plan's late racks (B15 on) are documented as a late OEM shipment. The IT SLA clock for the A07 validation is 49 min (to Validated RTS, the last check), while the PIR's 55 min runs to the scheduler's return to service; the pack labels its column "SLA clock".
 
 ## Roadmap (agreed with the owner; plan before building each phase)
 
@@ -215,4 +235,8 @@ Later: a security partner (access control, CCTV, escorts).
 
 - [ ] Fix the repository topic "gp" to "gpu" (GitHub repo page, gear icon next to About).
 - [x] Git commit email uses GitHub's numbered noreply address (confirmed 2026-10-05).
-- [ ] Next: owner reviews the post-incident review page live once the Pages deploy completes (judgment calls to defend: F6/A7 on one-feed handoff, and the 2026-09-18 status snapshot). Then update the repository's About description, website link, and topics (the repo is now more than a scorecard), and refresh README screenshots. Other showcase ideas discussed: weekly operations review pack, new-hall readiness tracker, failure-pattern analysis, ownership-matrix trainer, one-page leadership brief; plus the owner's separate project idea. Optional later: the two generated months (seeds 24 and 38) where the outage technician's badges overlap the ordinary shift stream; an IT-side planted misattribution (an IT ticket blaming the facility against the telemetry); the Landlord-side version already exists.
+- [x] Owner reviewed the post-incident review page live (2026-10-05); two display fixes folded into step 20.
+- [ ] Next: owner reviews the weekly operations review page live. Judgment calls to defend: weekly results never show credits; findings raised when observed; W38 notes and decision D1 (interim rule on one-sided tap-off work); the late OEM shipment for racks B15 on.
+- [ ] Update the repository's About description, website link, and topics (the repo is now more than a scorecard), and refresh README screenshots (add the PIR and weekly pages).
+- [ ] Other showcase ideas discussed: new-hall readiness tracker, failure-pattern analysis, ownership-matrix trainer, one-page leadership brief; plus the owner's separate project idea.
+- [ ] Optional later: the two generated months (seeds 24 and 38) where the outage technician's badges overlap the ordinary shift stream; an IT-side planted misattribution (an IT ticket blaming the facility against the telemetry); the Landlord-side version already exists.

@@ -26,7 +26,7 @@ Then it plants realistic discrepancies between the two views. The answer key in 
 | `telemetry/scheduler_node_states.jsonl` | Workload scheduler | node, state (drain/idle) | When capacity was lost and returned |
 | `access/badge_events.csv` | Access control system | person_id, door, direction | Staffing presence; technician on site |
 | `customer/cab_changes.json` | Customer change management | rack, window_start, window_end | Whether changes were approved |
-| `customer/deployment_plan.csv` | Customer deployment plan | rack, committed_handoff | Milestone commitments |
+| `customer/deployment_plan.csv` | Customer deployment plan | rack, planned_receipt, committed_handoff | Milestone commitments. Only the first 14 Hall B racks arrive in the sample month (`deployment.racks_received_in_window`); the OEM shipment for the rest is late, so racks from B15 on have a planned receipt but no milestones yet |
 | `vendor/tickets.json` | Vendor ticketing system (ServiceNow-style) | opened_at, work_notes, parts_used, resolved_at | The vendor's account of each incident |
 | `vendor/personnel.csv` | Vendor staff list | person_id, role, crew, badge_id | Joins badges to people |
 | `vendor/roster.csv` | Vendor shift roster | shift_start, person_id, status | Committed staffing |

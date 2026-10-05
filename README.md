@@ -110,6 +110,14 @@ In the sample month the Landlord, doing planned work on one side of rack A07's p
 
 Tests hold the written review to the data: every time, duration, and count in the prose must match the telemetry, every source record must be reproduced exactly, and the review may not name an individual. A browser test exercises the page in CI.
 
+## Weekly operations review
+
+**[Open the weekly operations review](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/)**: the pack the Customer's site lead brings to the weekly joint review with both partners, one per week of the sample month ([Markdown versions](docs/weekly/)).
+
+The agenda runs in meeting order: a status line per partner (on track, at risk, or below Minimum month to date), every service level for the week and month to date beside the partner's own report with overstated figures flagged, P1 incidents in full with P2 exceptions, new findings, open actions from post-incident reviews, a seven-day look-ahead (approved MOPs and changes, maintenance due, Hall B handoffs and late receipts, rostered shifts), staffing and spares, safety, and the meeting's decisions, next week's priorities for each partner, and asks.
+
+Three rules keep it honest. Weekly results are early warnings only: the contract settles credits monthly, so the pack never shows a weekly credit. Nothing is known early: each pack uses only what existed by the end of its week, and a finding appears in the week its discrepancy was observed. And the weeks reconcile with the month: tests check that the last week's month-to-date results equal the monthly scorecards for both partners, that weekly power availability averages exactly to the monthly figure, and that every finding and incident is counted exactly once, on the sample and on 20 generated months.
+
 ## Toward live data: the read-only collector
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
@@ -177,6 +185,9 @@ scripts/run_engine.py            Runs the engine and writes reports/
 scripts/run_landlord.py          Runs the Landlord engine; writes the Landlord scorecard, discrepancy, and attribution reports
 scripts/render_pir.py            Post-incident reviews: docs/pir/*.md and the interactive /pir/ page
 pir/reviews/*.yaml               The written (judgment) part of each completed review
+src/scorecard/weekly.py          Weekly operations review facts (week and month to date, look-ahead, as of the week's end)
+scripts/render_weekly.py         Weekly review packs: docs/weekly/*.md and the interactive /weekly/ page
+weekly/notes/*.yaml              The written part of a weekly review (decisions, asks, commentary)
 scripts/collect.py               Read-only live collector (Redfish, Modbus, SNMPv3, BACnet/IP) writing the dataset contract
 src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard

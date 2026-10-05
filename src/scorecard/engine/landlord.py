@@ -434,9 +434,31 @@ def _intervals_minutes(intervals: list[tuple[datetime, datetime]], start: dateti
     return total
 
 
-def measure_landlord(result: LandlordResult) -> dict[str, dict[str, Any]]:
+def measure_landlord(result: LandlordResult, start: datetime | None = None, end: datetime | None = None,
+                     findings: list[Finding] | None = None) -> dict[str, dict[str, Any]]:
+    """Measure every OT-CSL and OT-KM for the window, or for [start, end) when a period is given.
+
+    With no period the whole window is measured exactly as the monthly scorecard always has. With a period
+    (the weekly review), events count in the period they began, and ``findings`` lets the caller pass only
+    the findings that were knowable by the end of the period.
+    """
     ctx, inc = result.context, result.incidents
-    start, end = ctx.window_start, ctx.window_end
+    period = start is not None
+    start, end = start or ctx.window_start, end or ctx.window_end
+    found = result.findings if findings is None else findings
+    ctx_pm, ctx_roster, ctx_mops = ctx.pm, ctx.roster, ctx.mops
+    ev_busway, ev_ups, ev_cdu, ev_vesda = ctx.busway, ctx.ups, ctx.cdu, ctx.vesda
+    records = [w["wo"] for w in ctx.work_orders] + [p["task_id"] for p in ctx.pm]
+    if period:
+        def inside(t):
+            return start <= t < end
+        inc = [i for i in inc if inside(i.t0)]
+        ctx_pm = [p for p in ctx.pm if inside(p["completed_at"])]     # as the month does: tasks completed in the period
+        ctx_roster = [r for r in ctx.roster if inside(r["shift_start"])]
+        ctx_mops = [x for x in ctx.mops if inside(x["window_start"])]
+        ev_busway, ev_ups, ev_cdu, ev_vesda = ([e for e in evs if inside(e["timestamp"])]
+                                               for evs in (ctx.busway, ctx.ups, ctx.cdu, ctx.vesda))
+        records = [w["wo"] for w in ctx.work_orders if inside(w["opened"])] + [p["task_id"] for p in ctx_pm]
     window_min = (end - start).total_seconds() / 60
     leased = [r for h in ctx.site["halls"] if h["state"] != "planned" for r in S.racks(ctx.site, h["id"])]
     seg_of = {}
@@ -446,7 +468,7 @@ def measure_landlord(result: LandlordResult) -> dict[str, dict[str, Any]]:
                 seg_of[r] = sgm["id"]
     lost = {}
     rack_dark: dict[str, list] = {}
-    for i in inc:
+    for i in result.incidents:
         if i.fault_class == "OT-FC-PWR" and i.capacity_lost:
             rack_dark.setdefault(i.unit.split()[-1], []).append((i.t0, i.restored or end))
         elif i.fault_class == "OT-FC-PWR":
@@ -487,35 +509,35 @@ def measure_landlord(result: LandlordResult) -> dict[str, dict[str, Any]]:
     in_t = [i for i in red if i.restore_min is not None and i.restore_min <= ctx.prio[i.priority]["restore_min"]]
     put("OT-CSL-05", 100 * len(in_t) / len(red) if red else None, f"{len(in_t)} of {len(red)} redundancy events restored within target (telemetry)")
 
-    bad_pm = {k for f in result.findings if f.type in ("pm_without_evidence", "gen_test_no_load") for k in f.tickets}
-    on_time = [p for p in ctx.pm if p["completed_at"] <= p["due_end"] and p["task_id"] not in bad_pm]
-    put("OT-CSL-06", 100 * len(on_time) / len(ctx.pm) if ctx.pm else None, f"{len(on_time)} of {len(ctx.pm)} tasks on time with evidence")
-    gens = [p for p in ctx.pm if p["task"] == "Monthly loaded exercise"]
-    no_load = {f.keys["asset"] for f in result.findings if f.type == "gen_test_no_load"}
+    bad_pm = {k for f in found if f.type in ("pm_without_evidence", "gen_test_no_load") for k in f.tickets}
+    on_time = [p for p in ctx_pm if p["completed_at"] <= p["due_end"] and p["task_id"] not in bad_pm]
+    put("OT-CSL-06", 100 * len(on_time) / len(ctx_pm) if ctx_pm else None, f"{len(on_time)} of {len(ctx_pm)} tasks on time with evidence")
+    gens = [p for p in ctx_pm if p["task"] == "Monthly loaded exercise"]
+    no_load = {f.keys["asset"] for f in found if f.type == "gen_test_no_load"} & {p["asset"] for p in gens}
     put("OT-KM-02", 100 * (len(gens) - len(no_load)) / len(gens) if gens else None,
         f"{len(gens) - len(no_load)} of {len(gens)} monthly tests met {LOAD_MIN_PCT}% for {LOAD_MIN_MINUTES} minutes (EMCP)")
-    crit = [f for f in result.findings if f.type == "critical_work_no_mop"]
-    n_crit = (sum(1 for e in ctx.busway if e.get("event") == "Breaker open") + sum(1 for e in ctx.ups if e["event"].endswith("switchedBypass"))
-              + sum(1 for e in ctx.cdu if e["property"] == "Status.State" and e["value"] == "Disabled")
-              + sum(1 for e in ctx.vesda if e["event"] == "Isolate"))
+    crit = [f for f in found if f.type == "critical_work_no_mop" and (not period or start <= f.observed_at < end)]
+    n_crit = (sum(1 for e in ev_busway if e.get("event") == "Breaker open") + sum(1 for e in ev_ups if e["event"].endswith("switchedBypass"))
+              + sum(1 for e in ev_cdu if e["property"] == "Status.State" and e["value"] == "Disabled")
+              + sum(1 for e in ev_vesda if e["event"] == "Isolate"))
     put("OT-CSL-07", 100 * (n_crit - len(crit)) / n_crit if n_crit else None, f"{n_crit - len(crit)} of {n_crit} critical work events under an approved MOP")
-    records = [w["wo"] for w in ctx.work_orders] + [p["task_id"] for p in ctx.pm]
-    tainted = {k for f in result.findings for k in f.tickets}
-    put("OT-CSL-08", 100 * (len(records) - len(tainted & set(records))) / len(records),
+    tainted = {k for f in found for k in f.tickets}
+    put("OT-CSL-08", 100 * (len(records) - len(tainted & set(records))) / len(records) if records else None,
         f"{len(records) - len(tainted & set(records))} of {len(records)} work orders and maintenance records reconcile")
-    rostered = len(ctx.roster)
-    badged = sum(1 for r in ctx.roster if any(b["person_id"] == r["engineer"] and b["reader"] == "Main lobby"
+    rostered = len(ctx_roster)
+    badged = sum(1 for r in ctx_roster if any(b["person_id"] == r["engineer"] and b["reader"] == "Main lobby"
                                               and abs((b["timestamp"] - r["shift_start"]).total_seconds()) <= 3600 for b in ctx.badges))
     put("OT-CSL-09", 100 * badged / rostered if rostered else None, f"{badged} of {rostered} rostered shifts badge-verified")
-    coolant = [p for p in ctx.pm if p["task"] == "Filter change and coolant sample"]
+    coolant = [p for p in ctx_pm if p["task"] == "Filter change and coolant sample"]
     put("OT-KM-03", 100.0 if coolant else None, f"{len(coolant)} coolant samples, all within specification")
     put("OT-KM-04", None, "No fuel quality test due in the window")
-    overrides = [f for f in result.findings if f.type == "bms_override_unrecorded" and (f.metrics.get("hours") or 99) > 24]
+    overrides = [f for f in found if f.type == "bms_override_unrecorded" and (f.metrics.get("hours") or 99) > 24
+                 and (not period or start <= f.observed_at < end)]
     put("OT-KM-05", float(len(overrides)), f"{len(overrides)} override or inhibit held over 24 hours without a change reference")
     put("OT-KM-06", 100.0, "No gap in the Customer's facility feeds")
-    notice_ok = [x for x in ctx.mops if (x["window_start"] - x["approved_at"]).days >= 14]
-    put("OT-KM-07", 100 * len(notice_ok) / len(ctx.mops) if ctx.mops else None,
-        f"{len(notice_ok)} of {len(ctx.mops)} MOPs approved at least 10 business days before the work")
+    notice_ok = [x for x in ctx_mops if (x["window_start"] - x["approved_at"]).days >= 14]
+    put("OT-KM-07", 100 * len(notice_ok) / len(ctx_mops) if ctx_mops else None,
+        f"{len(notice_ok)} of {len(ctx_mops)} MOPs approved at least 10 business days before the work")
     put("OT-KM-08", None, "No corrective action plan due in the window")
     return m
 

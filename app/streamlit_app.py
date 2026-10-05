@@ -59,6 +59,7 @@ view = st.sidebar.radio("View", VIEWS, index=0)
 
 st.sidebar.divider()
 st.sidebar.markdown(f"[Post-incident review: rack A07](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) (blank form and completed example)")
+st.sidebar.markdown(f"[Weekly operations review](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) (one pack per week, both partners)")
 st.sidebar.markdown(f"[Source code and contracts on GitHub]({REPO})")
 
 # --------------------------------------------------------------------------- #

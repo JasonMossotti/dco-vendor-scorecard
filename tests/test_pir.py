@@ -151,3 +151,15 @@ def test_outage_technician_badges_out_after_return_to_service(facts):
     i = next(i for i, r in enumerate(rows) if r["timestamp"] > facts["handoff"] and r["direction"] == "in")
     nxt = rows[i + 1]
     assert nxt["direction"] == "out" and nxt["door"] == rows[i]["door"] and nxt["timestamp"] > facts["rts"]
+
+
+def test_repeat_rulings_name_findings_on_the_same_ticket(review):
+    """A reader of the scorecard should not find a finding on a repeat ticket that the review never mentions."""
+    from scorecard.connectors import FileConnector
+    from scorecard.engine import run_engine
+    from scorecard.sla_model import load_sla
+    findings = run_engine(load_sla(), FileConnector(SAMPLE)).findings
+    for ref, rl in review["repeat_rulings"].items():
+        for f in findings:
+            if ref in f.tickets:
+                assert f.id in rl["reason"], f"{ref} has {f.id}, which the ruling does not mention"
