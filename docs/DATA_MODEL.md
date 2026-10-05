@@ -89,7 +89,7 @@ These are real performance outcomes the scorecard should report, not discrepanci
 | `facility/epms_events.jsonl` | Power monitoring | Utility trips, generator bus, breaker trips and closes |
 | `facility/leak_events.jsonl` | TraceTek TTDM-128 | Leak alarms with circuit and distance along the cable, and returns to normal |
 | `facility/vesda_events.jsonl` | VESDA high-level interface | Alarm levels (Alert, Action, Fire 1, Fire 2), faults, isolates |
-| `access/landlord_badge_events.csv` | Access control | Landlord engineers' shift entries and equipment-room entries |
+| `access/landlord_badge_events.csv` | Access control | Landlord engineers' shift entries and equipment-room entries. These readers record entries only, so two entries in a row mean the person left and came back; `access/badge_events.csv` records entries and exits |
 | `customer/landlord_mop_approvals.json` | Customer change board | Approved methods of procedure with assets and windows |
 
 **Point-name provenance.** The PowerNet MIB output-state names and the Redfish `ThermalEquipment`, `CoolantConnector`, and pump status names follow the published MIB and DMTF schemas. VESDA alarm levels and the TraceTek distance-located leak alarm follow the manufacturers' documentation. EMCP 4.4 values use descriptive parameter names (engine operating state, total kW, percent of rated kW) rather than register numbers, and BMS and EPMS events use descriptive text, because those exports are site-configured.
@@ -109,7 +109,7 @@ One utility outage (UPS ride-through on battery for about 12 seconds, 7 generato
 
 ### A rack outage that crosses the demarcation
 
-During planned A-side tap-off work on a Hall A rack (under a MOP), the Landlord opens the B-side tap-off by mistake. The rack loses both feeds; the B tap-off unit fails on reclose and is replaced, so the rack is dark for 3 to 4 hours. The busway monitors record every tap-off breaker operation with the rack, and the Landlord's work order is a P1 for `Rack Axx`. On the IT side (generated from its own random stream, so no existing IT record changes), all 18 nodes go `down` with reason `NotResponding (rack input power lost)`, an IT technician badges in after the handoff, the rack passes the `Rack return to service` checks, and an IT ticket in category `rack_facility` records the work with its clock starting at the handoff (Interface Agreement FA-3). The B-side opening is in the Landlord answer key as `critical_work_no_mop`.
+During planned A-side tap-off work on a Hall A rack (under a MOP), the Landlord opens the B-side tap-off by mistake. The rack loses both feeds; the B tap-off unit fails on reclose and is replaced, so the rack is dark for 3 to 4 hours. The busway monitors record every tap-off breaker operation with the rack, and the Landlord's work order is a P1 for `Rack Axx`. On the IT side (generated from its own random stream, so no existing IT record changes), all 18 nodes go `down` with reason `NotResponding (rack input power lost)`, an IT technician badges in after the handoff and out after return to service, the rack passes the `Rack return to service` checks, and an IT ticket in category `rack_facility` records the work with its clock starting at the handoff (Interface Agreement FA-3). The B-side opening is in the Landlord answer key as `critical_work_no_mop`.
 
 ### Planted Landlord discrepancies
 

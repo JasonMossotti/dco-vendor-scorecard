@@ -1121,6 +1121,17 @@ class SiteGenerator:
                                "result": "pass", "target": rack["rack"]})
                 t += minutes(dur)
             rts = t + minutes(rng.uniform(3, 8))
+            # The technician leaves the hall after return to service. IT readers record exits, so the
+            # outage's badge-in needs a matching badge-out. Drawn from its own stream (no other value moves)
+            # and kept before the technician's next badge event.
+            leave = rts + minutes(random.Random(f"{self.seed}:rackfx:out:{k}").uniform(4, 12))
+            later = [datetime.fromisoformat(b["timestamp"].replace("Z", "+00:00")) for b in streams["badge"]
+                     if b["person_id"] == tech["person_id"] and b["timestamp"] > iso(arrive)]
+            if later and min(later) <= leave:
+                leave = min(later) - minutes(1)
+            if leave > rts:
+                streams["badge"].append({"timestamp": iso(leave), "badge_id": badge_id, "person_id": tech["person_id"],
+                                         "door": f"HALL-{rack['hall'][-1]}", "direction": "out"})
             streams["health"] += checks
             for tray in rack["compute_trays"]:
                 streams["scheduler"] += [

@@ -23,6 +23,8 @@ from scorecard.pir import OSR, Dataset, build_index, build_review  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 REVIEWS = ROOT / "pir" / "reviews"
+BADGE_NOTE = ("Landlord badge readers record entries only, so two entries in a row mean the person left and came back; "
+              "IT Partner readers record entries and exits.")
 OUT = ROOT / "docs" / "pir"
 
 
@@ -54,7 +56,7 @@ def markdown(f: dict, a: dict) -> str:
     for m in f["metrics"]:
         L.append(f"| {m['measure']} | {m['from'][11:19]} | {m['to'][11:19]} | {m['elapsed']} | {str(m['target']) + ' min' if m['target'] else '—'} | "
                  f"{'—' if m['met'] is None else 'Met' if m['met'] else '**Missed**'} |")
-    L += ["", "## Alarm and event timeline (exact source records)", "", "| UTC | Central | Party | Event | Source | Record |", "|---|---|---|---|---|---|"]
+    L += ["", "## Alarm and event timeline (exact source records)", "", BADGE_NOTE, "", "| UTC | Central | Party | Event | Source | Record |", "|---|---|---|---|---|---|"]
     for r in f["timeline"]:
         L.append(f"| {r['t'][11:19]} | {r['local']} | {r['party']} | {r['event'].replace('|', '/')} | `{r['source']}` | "
                  f"{('`' + r['record'].replace('|', '/') + '`') if r['record'] else ''} |")
@@ -75,13 +77,16 @@ def markdown(f: dict, a: dict) -> str:
     L += [f"| {x['id']} | {x['type']} | {x['text']} |" for x in a["factors"]]
     for t, k in (("What went well", "went_well"), ("What went poorly", "went_poorly"), ("Where we got lucky", "lucky")):
         L += ["", f"## {t}", ""] + [f"- {x}" for x in ls[k]]
-    L += ["", "## Action items", "", "| ID | Action | Factor | Owner | Priority | Due | Success criterion | Status |", "|---|---|---|---|---|---|---|---|"]
+    L += ["", "## Action items", "", f"Status as of {a['status_as_of']}.", "", "| ID | Action | Factor | Owner | Priority | Due | Success criterion | Status |", "|---|---|---|---|---|---|---|---|"]
     L += [f"| {x['id']} | {x['action']} | {x['factor']} | {x['owner']} | {x['priority']} | {x['due']} | {x['success']} | {x['status']} |" for x in a["actions"]]
     L += ["", "## Communications log", "", "| Time | To | Message |", "|---|---|---|"]
     L += [f"| {x['local']} | {x['to']} | {x['message']} |" for x in a["communications"]]
     if f["repeats"]:
         L += ["", "## Repeat-event check", "", "Other records in the window on the same rack or busway; each is ruled in or out as related.", ""]
-        L += [f"- {r['ref']} ({r['opened'][:16].replace('T', ' ')}Z): {r['what']}" for r in f["repeats"]]
+        for r in f["repeats"]:
+            rl = a["repeat_rulings"][r["ref"]]
+            L.append(f"- {r['ref']} ({r['opened'][:16].replace('T', ' ')}Z): {r['what']}. "
+                     f"**{'Related' if rl['related'] else 'Not related'}:** {rl['reason']}")
     L += ["", "## Sign-off", "", "| Role | Signed |", "|---|---|"] + [f"| {s['role']} | {s['date']} |" for s in a["signoff"]]
     L += ["", "*Synthetic data for a portfolio demonstration; all names and events are fictional.*", ""]
     return "\n".join(L)
@@ -99,7 +104,7 @@ def outputs() -> dict[Path, str]:
 def html_page() -> str:
     ds = Dataset(SAMPLE)
     rv = reviews()
-    data = {"index": build_index(ds), "example": rv[0], "osr": {k: list(v) for k, v in OSR.items()}}
+    data = {"index": build_index(ds), "example": rv[0], "osr": {k: list(v) for k, v in OSR.items()}, "badge_note": BADGE_NOTE}
     tpl = (ROOT / "templates" / "pir.html").read_text(encoding="utf-8")
     return tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/"))
 

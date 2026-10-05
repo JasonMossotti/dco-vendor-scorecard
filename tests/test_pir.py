@@ -110,3 +110,44 @@ def test_interactive_page_builds_and_works(tmp_path):
         pytest.skip("node and jsdom not installed (CI runs this check)")
     proc = subprocess.run([node, "pir_page.cjs", str(out)], capture_output=True, text=True, cwd=ROOT / "tests" / "js")
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_every_repeat_event_is_ruled(facts, review):
+    """The review says each repeat event is ruled in or out, so every one must be."""
+    rulings = review.get("repeat_rulings", {})
+    assert set(rulings) == {r["ref"] for r in facts["repeats"]}
+    for ref, rl in rulings.items():
+        assert isinstance(rl["related"], bool) and rl["reason"].strip(), ref
+
+
+def test_action_statuses_are_dated(review):
+    """Statuses are a snapshot. Nothing may be shown open past its due date as of that snapshot."""
+    as_of = review["status_as_of"]
+    assert as_of >= review["review_meeting"]
+    for a in review["actions"]:
+        assert a["status"] in ("Not started", "In progress", "Complete"), a["id"]
+        assert a["status"] == "Complete" or a["due"] > as_of, f"{a['id']} is overdue as of {as_of}"
+
+
+def test_one_feed_power_on_matches_the_data(review):
+    """F6: the rack was powered on after the handoff but before the A-side tap-off closed."""
+    checks = [json.loads(x) for x in (SAMPLE / "telemetry" / "health_checks.jsonl").read_text().splitlines() if x.strip()]
+    power_on = next(c for c in checks if c["target"] == "A07" and c["check"] == "rack_power_on")["started_at"]
+    events = [json.loads(x) for x in (SAMPLE / "facility" / "busway_cpm_events.jsonl").read_text().splitlines() if x.strip()]
+    a_close = next(e for e in events if e.get("tapoff") == "TO-A07-A" and e["event"] == "Breaker closed")["timestamp"]
+    b_close = next(e for e in events if e.get("tapoff") == "TO-A07-B" and e["event"] == "Breaker closed")["timestamp"]
+    assert b_close < power_on < a_close
+    f6 = next(f for f in review["factors"] if f["id"] == "F6")["text"]
+    assert power_on[11:19] + "Z" in f6 and b_close[11:19] + "Z" in f6
+    assert power_on[11:19] + "Z" in review["summary_technical"]
+
+
+def test_outage_technician_badges_out_after_return_to_service(facts):
+    """IT readers record exits, so the outage's badge-in must be followed by a badge-out once the rack is back."""
+    import csv
+    tech = facts["people"]["it_technician"]
+    rows = sorted((r for r in csv.DictReader((SAMPLE / "access" / "badge_events.csv").open(encoding="utf-8"))
+                   if r["person_id"] == tech), key=lambda r: r["timestamp"])
+    i = next(i for i, r in enumerate(rows) if r["timestamp"] > facts["handoff"] and r["direction"] == "in")
+    nxt = rows[i + 1]
+    assert nxt["direction"] == "out" and nxt["door"] == rows[i]["door"] and nxt["timestamp"] > facts["rts"]

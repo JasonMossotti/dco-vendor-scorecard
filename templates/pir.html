@@ -112,7 +112,7 @@ function render(f, a, edit) {
   if (f) {
     h += `<h2>Response against targets</h2><table><tr><th>Measure</th><th>From (UTC)</th><th>To (UTC)</th><th>Elapsed</th><th>Target</th><th>Result</th></tr>` +
       f.metrics.map(m => `<tr><td>${esc(m.measure)}</td><td class="num">${m.from.slice(11, 19)}</td><td class="num">${m.to.slice(11, 19)}</td><td class="num">${m.elapsed}</td><td>${m.target ? m.target + " min" : "—"}</td><td>${m.met === null ? "—" : m.met ? "<span class='met'>Met</span>" : "<span class='missed'>Missed</span>"}</td></tr>`).join("") + `</table>`;
-    h += `<h2>Alarm and event timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored.</p><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Event</th><th>Source</th></tr>` +
+    h += `<h2>Alarm and event timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored. ${esc(DATA.badge_note)}</p><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Event</th><th>Source</th></tr>` +
       f.timeline.map(r => `<tr><td class="num">${r.t.slice(11, 19)}</td><td class="num">${r.local}</td><td><span class="tag ${partyCls(r.party)}">${r.party}</span></td><td>${esc(r.event)}${r.record ? `<details><summary>record</summary><code class="rec">${esc(r.record)}</code></details>` : ""}</td><td><code>${esc(r.source)}</code></td></tr>`).join("") + `</table>`;
     h += `<h2>Attribution (Interface Agreement)</h2><div class="box"><b>Owner: ${esc(f.attribution.owner)}</b> · rules ${f.attribution.rules.join(", ")}<br>${esc(f.attribution.evidence)}${f.handoff ? `<br>Under FA-3 the IT Partner's clock started at the Landlord's handoff, ${f.handoff.slice(11, 19)}Z.` : ""}</div>`;
     h += `<h2>Contract and compliance consequences</h2><ul>` +
@@ -128,11 +128,21 @@ function render(f, a, edit) {
   const ls = a.lessons || {};
   h += `<h2>Lessons</h2><div class="plain">` + [["What went well", "went_well"], ["What went poorly", "went_poorly"], ["Where we got lucky", "lucky"]].map(([t, k]) =>
     `<div class="card"><h3>${t}</h3>${edit ? `<textarea data-f="lessons.${k}" rows="5">${esc((ls[k] || []).join("\n"))}</textarea>` : `<ul>${(ls[k] || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`}</div>`).join("") + `</div>`;
-  h += `<h2>Action items</h2><table><tr><th>ID</th><th>Action</th><th>Factor</th><th>Owner</th><th>Priority</th><th>Due</th><th>Success criterion</th><th>Status</th></tr>` +
+  h += `<h2>Action items</h2><p class="note">Status as of ${edit ? `<input type="text" data-f="status_as_of" value="${esc(a.status_as_of || "")}" placeholder="YYYY-MM-DD">` : esc(a.status_as_of)}</p><table><tr><th>ID</th><th>Action</th><th>Factor</th><th>Owner</th><th>Priority</th><th>Due</th><th>Success criterion</th><th>Status</th></tr>` +
     (a.actions || [{id: "A1"}, {id: "A2"}, {id: "A3"}]).map((x, i) => `<tr><td>${esc(x.id)}</td>` + ["action", "factor", "owner", "priority", "due", "success", "status"].map(k => `<td>${edit ? `<input type="text" data-f="actions.${i}.${k}" value="${esc(x[k] || "")}">` : esc(x[k])}</td>`).join("") + `</tr>`).join("") + `</table>`;
   h += `<div class="tech"><h2>Communications log</h2><table><tr><th>Time</th><th>To</th><th>Message</th></tr>` +
     (a.communications || [{}, {}]).map((x, i) => `<tr>` + ["local", "to", "message"].map(k => `<td>${edit ? `<input type="text" data-f="communications.${i}.${k}" value="${esc(x[k] || "")}">` : esc(x[k])}</td>`).join("") + `</tr>`).join("") + `</table>`;
-  if (f && f.repeats.length) h += `<h2>Repeat-event check</h2><p class="note">Other records in the window on the same rack or busway. Each should be ruled in or out as related.</p><ul>${f.repeats.map(r => `<li>${esc(r.ref)} (${r.opened.slice(0, 16).replace("T", " ")}Z): ${esc(r.what)}</li>`).join("")}</ul>`;
+  if (f && f.repeats.length) {
+    const rr = a.repeat_rulings || {};
+    h += `<h2>Repeat-event check</h2><p class="note">Other records in the window on the same rack or busway. Each is ruled in or out as related.</p><ul>` +
+      f.repeats.map(r => {
+        const rl = rr[r.ref] || {};
+        const ruling = edit
+          ? `<br><select data-f="repeat.${esc(r.ref)}.related">${["", "Related", "Not related"].map(o => `<option${o === (rl.related === undefined ? "" : rl.related ? "Related" : "Not related") ? " selected" : ""}>${o}</option>`).join("")}</select> <input type="text" data-f="repeat.${esc(r.ref)}.reason" value="${esc(rl.reason || "")}" placeholder="Why it is or is not related">`
+          : rl.related === undefined ? ` <b>Not yet ruled.</b>` : ` <b>${rl.related ? "Related" : "Not related"}:</b> ${esc(rl.reason)}`;
+        return `<li>${esc(r.ref)} (${r.opened.slice(0, 16).replace("T", " ")}Z): ${esc(r.what)}.${ruling}</li>`;
+      }).join("") + `</ul>`;
+  }
   h += `</div>`;
   h += `<h2>Sign-off</h2><div class="sign">${(a.signoff || [{role: "Customer Site Lead (Incident Commander)"}, {role: "Landlord"}, {role: "IT Partner"}]).map(s => `<div>${esc(s.role)}<br><span class="note">${s.date ? "Signed " + esc(s.date) : "Signature and date"}</span></div>`).join("")}</div>`;
   h += `<p class="note" style="margin-top:24px">Synthetic data for a portfolio demonstration; all names and events are fictional. Facts are generated from the dataset by src/scorecard/pir.py; this review's judgment fields are in pir/reviews/${esc(a.id || "")}.yaml.</p>`;
@@ -179,7 +189,7 @@ function wireBlank() {
     const f = DATA.index[ref];
     const keep = collect();
     if (!f) { document.getElementById("refnote").textContent = `No P1 or P2 ticket or work order "${ref}" in this dataset. Try INC3900001 or WO-41023.`; return; }
-    const a = {title: keep.title || f.title, status: keep.status || "Draft", id: "PIR-draft",
+    const a = {title: keep.title || f.title, status: keep.status || "Draft", id: "PIR-draft", status_as_of: keep.status_as_of || "",
       plain_language: {what_happened: keep["pl.what_happened"] || `On ${f.date}, ${f.unit} was affected for ${f.impact.duration}. [Describe in everyday words what happened.]`,
         who_was_affected: keep["pl.who_was_affected"] || (f.impact.gpus ? `${f.impact.gpus} GPUs (${f.impact.gpu_hours_total} GPU-hours) were unavailable. Injuries: ${f.impact.injuries}.` : "No compute capacity was lost."),
         why: keep["pl.why"] || "", what_we_are_doing: keep["pl.what_we_are_doing"] || ""},

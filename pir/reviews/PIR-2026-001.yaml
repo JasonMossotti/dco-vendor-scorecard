@@ -7,6 +7,8 @@ title: "Rack A07 lost both power feeds during planned maintenance"
 incident_commander: "Customer Site Lead"
 authors: ["Customer Site Lead", "Landlord Chief Engineer", "IT Partner Site Manager"]
 review_meeting: "2026-09-18"
+# Action statuses are a snapshot taken on this date, so due dates stay meaningful as time passes.
+status_as_of: "2026-09-18"
 severity:
   osr_level: 2
   osr_rationale: "One of 32 production racks was offline; its jobs were rescheduled onto other racks. No customer-facing service, safety, or financial loss beyond contract credits."
@@ -23,12 +25,13 @@ plain_language:
   why: >-
     The approved procedure covered only the feed being worked on. Nothing in it protected the second feed,
     whose breaker sits next to the first and looks the same, so the wrong one could be opened. When that
-    breaker was switched back on it failed and had to be replaced, which is most of why the outage lasted
-    over three hours.
+    breaker was switched back on it failed and had to be replaced, which accounts for most of the 4 hours
+    19 minutes.
   what_we_are_doing: >-
     The Landlord is changing its procedure so the feed that must stay on is locked and tagged before
     one-sided work begins, and is relabeling every breaker by rack and side. The Customer is adding an
-    automatic alert for any rack left on one feed outside an approved window. The Landlord owes contract
+    automatic alert for any rack left on one feed outside an approved window, and the handoff rule will say
+    whether both feeds must be back before a rack is powered on. The Landlord owes contract
     credits for the lost power availability, and the event is under independent safety review.
 summary_technical: >-
   At 15:42:11Z the B-side tap-off (TO-A07-B) on BW-A-R1-PG-A2-B was opened while the A-side tap-off
@@ -36,7 +39,8 @@ summary_technical: >-
   within 40 seconds. The B-side tap-off unit failed on reclose and was replaced; the Landlord restored the
   B feed at 19:06:55Z (handoff, FA-3). The IT Partner powered on and validated the rack (rack_power_on,
   rack_nvlink_acceptance, nccl_allreduce_rack, all pass) and returned it to service at 20:01:36Z. The
-  A-side tap-off stayed open until 19:22:05Z, 2 h 06 min past the MOP-310 window.
+  A-side tap-off stayed open until 19:22:05Z, 2 h 06 min past the MOP-310 window, so the rack was powered
+  on (19:15:04Z) and ran on one feed until then.
 trigger: "Opening the B-side tap-off breaker for rack A07 while the A-side tap-off was open for planned work."
 detection: "Immediate: the BMS raised a P1 'Rack input power lost (both feeds)' alarm at the same second the breaker opened; the scheduler marked all 18 nodes down within 40 seconds."
 resolution: "B-side tap-off unit replaced and reclosed by the Landlord; rack powered on and validated by the IT Partner; A-side work completed and its tap-off closed."
@@ -55,7 +59,10 @@ factors:
     text: "The B-side tap-off unit failed on reclose and had to be replaced, which turned a few-minute interruption into a 3 h 25 min outage."
   - id: F5
     type: "Change control"
-    text: "The A-side tap-off stayed open 2 h 06 min beyond the MOP-310 window, leaving rack A07 on one feed with no approval and no alert."
+    text: "The MOP-310 window expired at 17:16:03Z during the incident with no decision to extend or close it. The A-side tap-off stayed open until 19:22:05Z, 2 h 06 min past the window, and nothing alerted on it."
+  - id: F6
+    type: "Procedure inadequate"
+    text: "HO-1 has the Customer confirm restoration from telemetry, but does not say whether one restored feed is enough. The handoff at 19:06:55Z was accepted with only the B feed closed, and the IT Partner powered the rack on at 19:15:04Z without redundancy."
 lessons:
   went_well:
     - "Detection was instant: the BMS alarm fired the same second the breaker opened."
@@ -64,12 +71,12 @@ lessons:
     - "Attribution was settled from telemetry the moment the busway data was read; the Landlord's work order agreed (Landlord, FA-1), so there was no dispute."
   went_poorly:
     - "Protection of the second feed depended on attention rather than on a lock, a tag, or a verification step."
-    - "Nobody noticed in real time that the A-side work had run 2 h 06 min past its approved window."
+    - "The MOP-310 window expired during the incident with no decision to extend it, and the rack was handed back and powered on with only one feed closed."
     - "The B-side operation was not reported as work outside an approved MOP; the Customer's engine found it (L-004)."
   lucky:
     - "A replacement tap-off unit was in stock (the Landlord SLA requires two per hall). Without it, restoration would have waited for a delivery."
     - "The error was on a single rack's tap-off. The same mistake on a busway feeder breaker would have darkened the five or six racks of a whole power group."
-    - "The Landlord engineer was already in Hall A for the planned work, so response was immediate."
+    - "The Landlord engineer was already on site for the planned work and was back in Hall A within 3 minutes."
 ehs:
   injuries: 0
   screening: "Operating the wrong breaker on energized distribution is a hazardous-energy control concern under EHS-R2. No injury and no arc flash occurred."
@@ -81,6 +88,9 @@ actions:
   - {id: A4, factor: F4, owner: "Landlord Chief Engineer", priority: P2, due: "2026-10-15", status: "In progress", action: "Find out with the manufacturer why the tap-off unit failed on reclose, and inspect units from the same batch.", success: "Failure analysis report received; same-batch units inspected or replaced."}
   - {id: A5, factor: F2, owner: "Customer EHS", priority: P1, due: "2026-09-29", status: "In progress", action: "Complete the independent EHS investigation and classify the event under the common terms.", success: "Finding issued with classification and any EHS Credit."}
   - {id: A6, factor: F1, owner: "Customer Site Lead", priority: P3, due: "2026-12-15", status: "Not started", action: "Add a one-sided power work scenario to the quarterly joint incident drill with both partners.", success: "Drill run; both partners' leads complete the handoff steps (HO-1, HO-2) without prompting."}
+  - {id: A7, factor: F6, owner: "Customer Site Lead", priority: P2, due: "2026-10-31", status: "Not started", action: "Amend HO-1 through Interface Agreement change control: the restoration declaration states which feeds are in tolerance, and powering a rack on with one feed needs the Incident Commander's approval.", success: "Amendment signed by all three parties; the next joint drill's handoff records feed status."}
+repeat_rulings:
+  INC3100748: {related: false, reason: "Single compute-tray fault on a07-ct04, closed with a tray replacement at 11:26Z, more than 4 hours before the power loss; no power event on either feed of rack A07 before the planned work at 15:16Z."}
 communications:
   - {local: "10:49 CDT", to: "Customer infrastructure leadership", message: "P1: rack A07 (72 GPUs) without power after a breaker was opened during Landlord maintenance. Jobs being rescheduled. No safety impact. Next update 11:30."}
   - {local: "11:30 CDT", to: "Customer infrastructure leadership", message: "B-side breaker failed on reclose; Landlord replacing it from site spares. Estimated restoration 2:00 p.m. IT Partner standing by to validate."}
