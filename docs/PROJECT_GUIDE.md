@@ -6,11 +6,11 @@ How this project fits together and how to change it. Written so that someone new
 
 ## The idea in one paragraph
 
-At a partner-operated GPU data center site, vendors do the hands-on work and the customer's site lead owns the outcome. This project shows how to hold that vendor accountable with **independent telemetry instead of vendor self-reporting**: a machine-readable SLA, synthetic site data with planted discrepancies, an engine that reconciles vendor records against telemetry, and a scorecard comparing what the vendor reported with what actually happened. Everything is synthetic and fictional.
+At a partner-operated GPU data center site, partners do the hands-on work and the customer's site lead owns the outcome. This project shows how to hold them accountable with **independent telemetry instead of self-reporting**. The fictional Site AUS-1 in Central Texas is leased from a Landlord (Caprock Critical Facilities, which runs the building, power, and cooling), and an IT partner (Ridgeline Site Services) does the data hall work. Each partner has a machine-readable SLA; synthetic telemetry carries planted discrepancies; one engine per partner reconciles their records against the telemetry; an Interface Agreement attributes outages that cross the boundary between them; and scorecards compare what each partner reported with what actually happened. A read-only collector shows how the same pipeline would run on real equipment. Everything is synthetic and fictional.
 
-## Current status (as of 2026-10-04)
+## Current status (as of 2026-10-05)
 
-**Complete and live.** Every planned component is built, tested, and deployed:
+**Complete and live.** The original project and the six-phase multi-vendor roadmap are built, tested, and deployed:
 
 | Component | Where |
 |---|---|
@@ -21,13 +21,16 @@ At a partner-operated GPU data center site, vendors do the hands-on work and the
 | Site model and drawings (generated) | `site/site.yaml` -> `docs/site/SITE.md` plus 7 SVG sheets |
 | Landlord SLA and Interface Agreement (generated) | `docs/sla/LANDLORD_SLA.md`, `docs/sla/INTERFACE_AGREEMENT.md` |
 | Landlord and site reports (generated) | `reports/landlord_scorecard.md`, `landlord_discrepancy_report.md`, `attribution_report.md`, `site_summary.md` |
+| Post-incident review | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/pir/ (built by `scripts/build_site.py`); completed review `docs/pir/PIR-2026-001.md` from `pir/reviews/PIR-2026-001.yaml` + `src/scorecard/pir.py` |
 | Live collector (Phase 6) | `scripts/collect.py`, `src/scorecard/live/`, `config/collector.example.yaml`, `requirements-live.txt`, `docs/LIVE_READINESS.md` |
-| Tests | 187 (pytest; the collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed) |, run by CI on every push and before every Pages deploy |
+| Tests | 195 (pytest), run by CI on every push and before every Pages deploy. The collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed |
 | AWS hosting guide | `docs/DEPLOY_AWS.md` |
 
 Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 4 Minimum Service Level Defaults (CSL-07, 08, 09, 11), $188,700 credits payable (inside the $222,000 cap), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
 
-**In progress: multi-vendor expansion.** The site is a leased AI data center in Central Texas with two partners: Ridgeline Site Services (IT partner) and Caprock Critical Facilities (the Landlord, a wholesale owner-operator). Phases 1 (site model and drawings), 2 (SLA split), 2b (EHS), 3 (Landlord SLA and Interface Agreement), 4a (facility data), 4b (Landlord engine, scorecard, and cross-partner attribution), 5 (app views), and 6 (read-only collector: Redfish, Modbus, SNMPv3, BACnet/IP) are complete. **The roadmap is complete.** The owner chose the landlord model: Caprock is a wholesale owner-operator that leases the halls to the Customer, matching the posting's "facility someone else runs"; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
+Landlord (same sample): 4 Minimum defaults (OT-CSL-01, 06, 07, 08), $106,200 credits against rent, 8 findings (7 S1); 8 of 8 planted Landlord discrepancies detected, and 480 of 480 across 60 generated months with zero false positives. Cross-partner: one Landlord wrong-breaker event darkens rack A07 for 3.4 hours; attribution keeps it off the IT scorecard (scored without attribution, the IT partner would show 5 defaults and $222,000).
+
+**Multi-vendor expansion (complete).** The site is a leased AI data center in Central Texas with two partners: Ridgeline Site Services (IT partner) and Caprock Critical Facilities (the Landlord, a wholesale owner-operator). Phases 1 (site model and drawings), 2 (SLA split), 2b (EHS), 3 (Landlord SLA and Interface Agreement), 4a (facility data), 4b (Landlord engine, scorecard, and cross-partner attribution), 5 (app views), and 6 (read-only collector: Redfish, Modbus, SNMPv3, BACnet/IP) are complete. **The roadmap is complete.** After it: a post-incident review page (step 18). The owner chose the landlord model: Caprock is a wholesale owner-operator that leases the halls to the Customer, matching the posting's "facility someone else runs"; see "Roadmap" below for Phases 2 to 6. The "What if the SLA were different?" sliders were removed from the app at the owner's request: the SLA is the signed contract, and the app reports against it.
 
 **Purpose:** a portfolio project for a Data Center Operations Lead (partner-operated sites) application. Keep everything synthetic and fictional; never imply knowledge of any real company's internal systems.
 
@@ -47,14 +50,16 @@ The delivery loop that has worked well:
    git commit -m "Describe the change"
    git push
    ```
+   Copying never deletes files. When a delivery removes or renames a file, the assistant must give the owner a `git rm <path>` line to run before `git add .` (Phase 2's removals lingered for two deliveries because this was missed). Before building, the assistant clones the repository and compares its working copy with `origin/main` (`git diff origin/main --stat`) to confirm what the owner actually pushed.
 4. The owner checks that the GitHub Actions runs are green (CI and "Deploy demo to GitHub Pages"), then checks the live demo and sends screenshots of anything that looks wrong.
 
 Working practices that caught real bugs, worth keeping:
 
 - **Plan before building** larger features, and say which judgment calls the owner should be ready to defend.
 - **Never ship untested UI code.** The app is tested end to end against `tests/fake_streamlit.py`. If the app uses a new Streamlit feature, teach the stand-in that feature, including the real-world behavior that matters (for example, a pair of `$` signs renders as math, widgets read from session state, and buttons run their `on_click` callback first).
-- **Measure the engine on months it was not tuned on** (`python scripts/run_engine.py --robustness 60`). Investigate every miss or false positive to its root cause before changing anything.
-- **Verify fast-changing external facts** (GitHub Actions versions, stlite version, AWS commands) against current documentation rather than memory. The stlite version is pinned in one constant in `scripts/build_site.py`.
+- **Measure every engine on months it was not tuned on**: `python scripts/run_engine.py --robustness 60` (IT partner), `python scripts/run_landlord.py --robustness 60` (Landlord), and `python scripts/check_facility_data.py` (facility evidence tests across 60 generated months). Investigate every miss or false positive to its root cause before changing anything; several were generator realism bugs, not engine bugs.
+- **Keep new data streams independent.** New synthetic data uses its own random stream, and tests prove existing records are unchanged, so earlier results stay comparable.
+- **Verify fast-changing external facts** (GitHub Actions versions, stlite version, AWS commands, library APIs such as pymodbus, pysnmp, and bacpypes3) against current documentation or PyPI rather than memory; `docs/LIVE_READINESS.md` records what that turned up. The stlite version is pinned in one constant in `scripts/build_site.py`.
 - **Review the live app screen by screen** before sharing; several display bugs were only visible there.
 
 ## Pipeline
@@ -127,12 +132,13 @@ The SLA YAML is the single source of truth for the contract (`load_sla()` merges
 ## Regenerate everything after a change
 
 ```bash
-python scripts/render_sla.py        # SLA document
+python scripts/render_sla.py        # all three contracts (IT partner SLA, Landlord SLA, Interface Agreement)
 python scripts/render_site.py       # site description and drawings
 python scripts/generate_data.py     # committed sample data
 python scripts/run_engine.py        # discrepancy report
 python scripts/build_scorecard.py   # scorecard
 python scripts/run_landlord.py      # Landlord scorecard, discrepancy, attribution, and site summary reports
+python scripts/render_pir.py        # completed post-incident reviews (docs/pir/)
 pytest -q                           # all tests; CI fails if any generated file is stale
 ```
 
@@ -193,6 +199,7 @@ In the order it was built, with the decisions that shaped each step:
 15. **Phase 5: app views.** A sidebar "View" (Site summary by default, IT Partner, Landlord). The IT view is the previous app unchanged (`render_it`). The site summary shows both partners side by side, the outage that crossed the demarcation in plain language, and the with/without attribution table. The Landlord view mirrors the IT tabs (Overview, Service levels, Findings, Facility events, About). Logic lives in `app_support.py` (`run_landlord_pipeline`, `site_rows`, `crossing_outages`, `attribution_change_rows`, `landlord_*_rows`); a dataset without facility data falls back to the IT view. The browser bundle now includes `site/site.yaml` (the Landlord engine needs it; the bundle test caught it). Tests cover each view, escaped dollar signs, and the bundle contents.
 16. **Phase 6a: read-only collector (Redfish, Modbus).** `src/scorecard/live/` writes the dataset contract from real devices, so the engines run unchanged. Libraries verified on PyPI in October 2026: pymodbus 3.15.0 (uses `device_id=`; its old `ModbusDeviceContext`/`ModbusServerContext` are deprecated for v4, so the test simulator uses the new `SimDevice` API, whose access hook logs every function code), requests for Redfish. Adapters: CDU over Redfish (`ThermalEquipment/CDUs`, pump status, `PumpRedundancy`, connector readings); generator, busway (voltage tolerance and tap-off breakers), and leak controllers over Modbus with configurable point maps (placeholder addresses, verified at commissioning). Read-only by construction: only GET and Modbus function codes 3 and 4; a static scan of the package fails on write-capable calls, a self-test proves the scan fires, the Modbus reader refuses coil tables, and the simulators record every request. Credentials only via named environment variables (inline secrets rejected); per-device backoff; feed-health records. An end-to-end test drives a simulated pump failure through the collector into the unchanged Landlord engine. CI installs `requirements-live.txt`; the browser bundle excludes `live/`.
 17. **Phase 6b: SNMPv3 and BACnet/IP.** UPS cards over SNMPv3 (pysnmp 7.1.30; GET only; authPriv with SHA and AES; v1/v2c rejected) and BMS points over BACnet/IP (bacpypes3 0.0.110; ReadProperty only; overrides from manual priority-array slots; out-of-service as inhibit). Simulators: a pysnmp agent with a read-only USM user and a custom MIB controller that logs operations (registering a scalar under an absent enterprise branch failed, so the controller pattern is used), and a bacpypes3 commandable analog value. Findings: pysnmp needs `cryptography>=47` for AES; bacpypes3 raises `ErrorRejectAbortNack` as a BaseException, so the adapter converts it and a test proves one bad point cannot stop the collector; BACnet reads retry (UDP), which removed a one-in-three test timeout; simulators are torn down after each test. Engine change: an override without a change reference is reconciled against approved MOPs before it is flagged (live BACnet cannot carry a change reference); sample results unchanged. `docs/LIVE_READINESS.md` states what is proven and what a deployment still needs.
+18. **Post-incident review.** Layout follows the Google SRE blameless postmortem (summary, impact, trigger, detection, resolution, contributing factors rather than a single root cause, lessons including "where we got lucky", owned and dated actions with success criteria) and Uptime Institute practice (Outage Severity Rating 1 to 5; human-error factors classified as procedure not followed vs. procedure inadequate). `src/scorecard/pir.py` builds every fact for any P1/P2 ticket or work order (header, response metrics against targets, impact split by party, timeline with each source record reproduced exactly, attribution, findings, CSL consequence, MOP overrun, repeat events); `pir/reviews/PIR-2026-001.yaml` holds the written judgment for rack A07 (blameless: no individual named). `scripts/render_pir.py` writes `docs/pir/PIR-2026-001.md` and the interactive page (`templates/pir.html`, vanilla JavaScript, data embedded) that `scripts/build_site.py` publishes at `/pir/`. Tests: records match the source files exactly, every number in the prose matches the facts, actions are owned and tied to factors, and a jsdom browser test (`tests/js/pir_page.cjs`, run in CI) exercises both tabs, auto-fill, and the plain-language toggle. Data details surfaced by the review: the A-side tap-off stayed open 2 h 06 min past MOP-310's window, and the IT technician was off the floor before the outage and returned at the handoff, as HO-1 requires.
 
 ## Roadmap (agreed with the owner; plan before building each phase)
 
@@ -207,4 +214,4 @@ Later: a security partner (access control, CCTV, escorts).
 
 - [ ] Fix the repository topic "gp" to "gpu" (GitHub repo page, gear icon next to About).
 - [ ] Confirm the Git commit email uses GitHub's numbered noreply address (`git log -1 --format='%ae'`).
-- [ ] Next: the roadmap is complete. Owner reviews; refresh README screenshots (the overview image predates the multi-vendor work). Then the owner's next project idea (mentioned at the start of this work). Optional later: an IT-side planted misattribution (an IT ticket blaming the facility against the telemetry); the Landlord-side version already exists.
+- [ ] Next: owner reviews the post-incident review page live. Then update the repository's About description, website link, and topics (the repo is now more than a scorecard), and refresh README screenshots. Other showcase ideas discussed: weekly operations review pack, new-hall readiness tracker, failure-pattern analysis, ownership-matrix trainer, one-page leadership brief; plus the owner's separate project idea. Optional later: an IT-side planted misattribution (an IT ticket blaming the facility against the telemetry); the Landlord-side version already exists.

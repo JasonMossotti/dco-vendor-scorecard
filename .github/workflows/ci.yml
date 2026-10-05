@@ -21,5 +21,9 @@ jobs:
         run: python scripts/render_site.py --check
       - name: Check Landlord reports are current
         run: python scripts/run_landlord.py --check
+      - name: Check the post-incident review is current
+        run: python scripts/render_pir.py --check
+      - name: Install jsdom for the review page's browser test
+        run: cd tests/js && npm install --no-save jsdom@24
       - name: Run tests (includes check that data/sample is current)
         run: pytest -q

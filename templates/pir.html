@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post-Incident Review · Site AUS-1</title>
+<style>
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --ll:#b45309; --it:#1f5fbf; --cu:#4b5563; --ok:#1d7a46; --bad:#b42318; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#1e2933; color:#fff; padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top a { color:#cfe0ff; }
+.tabs button, .tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+.tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
+.tools { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+main { max-width:1080px; margin:20px auto; background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+.sub { color:var(--muted); margin:0 0 16px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px 18px; }
+.kv { font-size:13px; } .kv b { display:block; color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+.plain { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; }
+.card { background:var(--panel); border-radius:8px; padding:12px 14px; } .card h3 { margin:0 0 6px; font-size:14px; }
+.strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:12px; }
+.stat { border:1px solid var(--line); border-radius:8px; padding:10px 12px; } .stat .v { font-size:20px; font-weight:700; } .stat .l { font-size:12px; color:var(--muted); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.num { white-space:nowrap; }
+.tag { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; color:#fff; white-space:nowrap; }
+.Landlord { background:var(--ll); } .IT { background:var(--it); } .Customer { background:var(--cu); }
+.met { color:var(--ok); font-weight:600; } .missed { color:var(--bad); font-weight:600; }
+details summary { cursor:pointer; color:var(--muted); font-size:12px; } code.rec { display:block; white-space:pre-wrap; word-break:break-all; font-size:11px; background:#f7f7f2; padding:6px; border-radius:4px; }
+.box { border-left:4px solid var(--ll); background:#fdf6ec; padding:10px 14px; border-radius:4px; }
+textarea, input[type=text], select { width:100%; font:inherit; border:1px solid var(--line); border-radius:6px; padding:6px 8px; background:#fffef6; }
+textarea { min-height:70px; resize:vertical; }
+.autofill { display:flex; gap:8px; align-items:center; background:var(--panel); padding:12px; border-radius:8px; margin-bottom:12px; }
+.autofill input { max-width:240px; } .note { font-size:12px; color:var(--muted); }
+.plainonly .tech { display:none; }
+.sign { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; } .sign div { border-top:1px solid var(--ink); padding-top:6px; font-size:13px; min-height:60px; }
+@media print { header.top, .autofill, .addrow { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } h2 { break-after:avoid; } tr { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div><strong>Post-Incident Review</strong> · Site AUS-1 (fictional) · <a href="../">back to the scorecard demo</a></div>
+  <div class="tabs"><button id="t-example" class="on">Example: Rack A07</button> <button id="t-blank">Blank form</button></div>
+  <div class="tools">
+    <label style="font-size:13px;"><input type="checkbox" id="plainonly"> Plain-language view</label>
+    <button id="print">Print / save PDF</button><button id="md">Export Markdown</button>
+  </div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const partyCls = p => p === "IT Partner" ? "IT" : p;
+let mode = "example";
+
+function swimlane(f) {
+  if (!f.power_lost || !f.rts) return "";
+  const t = s => new Date(s).getTime();
+  const rows = f.timeline.filter(r => r.t >= f.timeline[0].t);
+  const t0 = Math.min(...rows.map(r => t(r.t))), t1 = Math.max(...rows.map(r => t(r.t)));
+  const W = 960, L = 120, x = v => L + (W - L - 20) * (t(v) - t0) / (t1 - t0 || 1);
+  const lanes = ["Landlord", "IT Partner", "Customer"], y = p => 30 + lanes.indexOf(p) * 34;
+  let s = `<svg viewBox="0 0 ${W} 150" width="100%" role="img" aria-label="Timeline by party">`;
+  lanes.forEach(p => s += `<text x="8" y="${y(p) + 4}" font-size="12" fill="#5b6774">${p}</text><line x1="${L}" x2="${W - 20}" y1="${y(p)}" y2="${y(p)}" stroke="#d5dbe2"/>`);
+  s += `<rect x="${x(f.power_lost)}" y="${y("Landlord") - 9}" width="${x(f.handoff) - x(f.power_lost)}" height="18" fill="#b45309" opacity=".85"/>`;
+  s += `<text x="${(x(f.power_lost) + x(f.handoff)) / 2}" y="${y("Landlord") + 4}" font-size="11" fill="#fff" text-anchor="middle">Landlord-attributed (FA-1)</text>`;
+  s += `<rect x="${x(f.handoff)}" y="${y("IT Partner") - 9}" width="${Math.max(2, x(f.rts) - x(f.handoff))}" height="18" fill="#1f5fbf" opacity=".85"/>`;
+  s += `<text x="${x(f.handoff) + 4}" y="${y("IT Partner") + 4}" font-size="11" fill="#fff">IT validation (FA-3)</text>`;
+  rows.forEach(r => s += `<circle cx="${x(r.t)}" cy="${y(r.party)}" r="3" fill="#1e2933"><title>${esc(r.local + " " + r.event)}</title></circle>`);
+  [f.power_lost, f.handoff, f.rts].forEach((v, i) => {
+    const lbl = ["Power lost", "Handoff", "Back in service"][i];
+    s += `<line x1="${x(v)}" x2="${x(v)}" y1="14" y2="128" stroke="#1e2933" stroke-dasharray="3 3"/><text x="${x(v)}" y="142" font-size="11" text-anchor="middle">${lbl} ${new Date(v).toLocaleTimeString("en-US", {timeZone: "America/Chicago", hour: "numeric", minute: "2-digit"})}</text>`;
+  });
+  return s + "</svg>";
+}
+
+function field(name, value, edit, rows = 3) {
+  return edit ? `<textarea data-f="${name}" rows="${rows}">${esc(value)}</textarea>` : `<div>${esc(value) || "<span class='note'>(not completed)</span>"}</div>`;
+}
+
+function render(f, a, edit) {
+  a = a || {};
+  const pl = a.plain_language || {};
+  const sev = a.severity || {};
+  const osr = sev.osr_level || (f && f.osr_suggested.level);
+  let h = "";
+  if (edit) h += `<div class="autofill"><b>Auto-fill from</b><input type="text" id="ref" placeholder="Ticket or work order, e.g. INC3900001" value="${esc(f ? f.ref : "")}"><button id="go">Fill facts</button><span class="note" id="refnote">${Object.keys(DATA.index).length} incidents indexed: every P1 and P2 ticket and work order in the sample month.</span></div>`;
+  h += `<h1>${edit ? `<input type="text" data-f="title" value="${esc(a.title || (f ? f.title : ""))}" placeholder="Incident title">` : esc(a.title)}</h1>`;
+  h += `<p class="sub">${esc(a.id || "PIR-draft")} · Status: ${edit ? `<select data-f="status">${["Draft", "In review", "Approved; action items in progress", "Action items closed"].map(o => `<option${o === a.status ? " selected" : ""}>${o}</option>`).join("")}</select>` : esc(a.status)} · Blameless review: findings describe systems and procedures, not individuals.</p>`;
+  h += `<div class="grid">` + [
+    ["Incident date", f && f.date], ["Ticket", f && f.ticket], ["Work order", f && f.work_order], ["MOP", f && f.mops.join(", ")],
+    ["Unit", f && f.unit], ["Uptime severity (OSR)", osr ? `${osr} · ${DATA.osr[osr][0]}` : ""], ["Internal severity", sev.internal || (f && f.findings.length ? f.findings[0].severity : "")],
+    ["Priority", sev.priority || ""], ["Incident Commander", a.incident_commander || ""], ["Review meeting", a.review_meeting || ""]
+  ].map(([k, v]) => `<div class="kv"><b>${k}</b>${edit && ["Priority", "Incident Commander", "Review meeting"].includes(k) ? `<input type="text" data-f="${k}" value="${esc(v)}">` : esc(v || "—")}</div>`).join("") + `</div>`;
+  if (osr) h += `<p class="note">OSR ${osr} (${DATA.osr[osr][0]}): ${esc(DATA.osr[osr][1])} ${esc(sev.osr_rationale || "")}</p>`;
+
+  h += `<h2>In plain language</h2><div class="plain">` + [["What happened?", "what_happened"], ["Who was affected?", "who_was_affected"], ["Why did it happen?", "why"], ["What are we doing about it?", "what_we_are_doing"]]
+    .map(([q, k]) => `<div class="card"><h3>${q}</h3>${field("pl." + k, pl[k], edit, 5)}</div>`).join("") + `</div>`;
+  if (f) {
+    const im = f.impact;
+    h += `<div class="strip">` + [[im.duration, "Power loss to back in service"], [im.gpus + " GPUs", "One rack offline"], [im.gpu_hours_total, "GPU-hours lost"],
+      [im.gpu_hours_landlord + " / " + im.gpu_hours_it, "GPU-hours: Landlord / IT validation"], [im.injuries, "Injuries"],
+      [f.credits_landlord != null ? "$" + Math.round(f.credits_landlord).toLocaleString() : "—", "Landlord credits this month (all causes)"]]
+      .map(([v, l]) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${l}</div></div>`).join("") + `</div>`;
+    h += `<h2>Timeline at a glance</h2>${swimlane(f)}`;
+  }
+  h += `<div class="tech">`;
+  h += `<h2>Summary (technical)</h2>${field("summary_technical", a.summary_technical, edit, 6)}`;
+  h += `<div class="grid" style="margin-top:10px">` + [["Trigger", "trigger"], ["Detection", "detection"], ["Resolution", "resolution"]].map(([k, n]) => `<div class="kv"><b>${k}</b>${field(n, a[n], edit)}</div>`).join("") + `</div>`;
+  if (f) {
+    h += `<h2>Response against targets</h2><table><tr><th>Measure</th><th>From (UTC)</th><th>To (UTC)</th><th>Elapsed</th><th>Target</th><th>Result</th></tr>` +
+      f.metrics.map(m => `<tr><td>${esc(m.measure)}</td><td class="num">${m.from.slice(11, 19)}</td><td class="num">${m.to.slice(11, 19)}</td><td class="num">${m.elapsed}</td><td>${m.target ? m.target + " min" : "—"}</td><td>${m.met === null ? "—" : m.met ? "<span class='met'>Met</span>" : "<span class='missed'>Missed</span>"}</td></tr>`).join("") + `</table>`;
+    h += `<h2>Alarm and event timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored.</p><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Event</th><th>Source</th></tr>` +
+      f.timeline.map(r => `<tr><td class="num">${r.t.slice(11, 19)}</td><td class="num">${r.local}</td><td><span class="tag ${partyCls(r.party)}">${r.party}</span></td><td>${esc(r.event)}${r.record ? `<details><summary>record</summary><code class="rec">${esc(r.record)}</code></details>` : ""}</td><td><code>${esc(r.source)}</code></td></tr>`).join("") + `</table>`;
+    h += `<h2>Attribution (Interface Agreement)</h2><div class="box"><b>Owner: ${esc(f.attribution.owner)}</b> · rules ${f.attribution.rules.join(", ")}<br>${esc(f.attribution.evidence)}${f.handoff ? `<br>Under FA-3 the IT Partner's clock started at the Landlord's handoff, ${f.handoff.slice(11, 19)}Z.` : ""}</div>`;
+    h += `<h2>Contract and compliance consequences</h2><ul>` +
+      f.findings.map(x => `<li>Finding ${esc(x.id)} (${esc(x.severity)}): ${esc(x.summary)}</li>`).join("") +
+      (f.csl["OT-CSL-01"] ? `<li>OT-CSL-01 Rack Power Availability measured ${f.csl["OT-CSL-01"].actual.toFixed(4)}% against a Minimum of ${f.csl["OT-CSL-01"].minimum}%: ${esc(f.csl["OT-CSL-01"].status.replace(/_/g, " "))}${f.csl["OT-CSL-01"].credit ? `, credit $${Math.round(f.csl["OT-CSL-01"].credit).toLocaleString()}` : ""}.</li>` : "") +
+      (f.mop_overrun ? `<li>${esc(f.mop_overrun.mop)} window ended ${f.mop_overrun.window_end.slice(11, 19)}Z; its equipment was closed at ${f.mop_overrun.closed.slice(11, 19)}Z, ${esc(f.mop_overrun.overrun)} past the approved window.</li>` : "") + `</ul>`;
+  }
+  const ehs = a.ehs || {};
+  h += `<h2>EHS screening</h2><div class="grid"><div class="kv"><b>Injuries</b>${edit ? `<input type="text" data-f="ehs.injuries" value="${esc(ehs.injuries ?? 0)}">` : esc(ehs.injuries ?? 0)}</div><div class="kv"><b>Screening</b>${field("ehs.screening", ehs.screening, edit)}</div><div class="kv"><b>Referral</b>${field("ehs.referral", ehs.referral, edit)}</div></div>`;
+  h += `<h2>Contributing factors</h2><p class="note">Classified as Uptime Institute does for human-error outages: procedure not followed, procedure inadequate, plus equipment, design, and change control.</p><table><tr><th>ID</th><th>Type</th><th>Factor</th></tr>` +
+    (a.factors || [{id: "F1", type: "", text: ""}, {id: "F2", type: "", text: ""}]).map((x, i) => `<tr><td>${esc(x.id)}</td><td>${edit ? `<select data-f="factors.${i}.type">${["", "Procedure not followed", "Procedure inadequate", "Equipment", "Design and identification", "Change control", "External"].map(o => `<option${o === x.type ? " selected" : ""}>${o}</option>`).join("")}</select>` : esc(x.type)}</td><td>${field(`factors.${i}.text`, x.text, edit, 2)}</td></tr>`).join("") + `</table>`;
+  h += `</div>`;
+  const ls = a.lessons || {};
+  h += `<h2>Lessons</h2><div class="plain">` + [["What went well", "went_well"], ["What went poorly", "went_poorly"], ["Where we got lucky", "lucky"]].map(([t, k]) =>
+    `<div class="card"><h3>${t}</h3>${edit ? `<textarea data-f="lessons.${k}" rows="5">${esc((ls[k] || []).join("\n"))}</textarea>` : `<ul>${(ls[k] || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`}</div>`).join("") + `</div>`;
+  h += `<h2>Action items</h2><table><tr><th>ID</th><th>Action</th><th>Factor</th><th>Owner</th><th>Priority</th><th>Due</th><th>Success criterion</th><th>Status</th></tr>` +
+    (a.actions || [{id: "A1"}, {id: "A2"}, {id: "A3"}]).map((x, i) => `<tr><td>${esc(x.id)}</td>` + ["action", "factor", "owner", "priority", "due", "success", "status"].map(k => `<td>${edit ? `<input type="text" data-f="actions.${i}.${k}" value="${esc(x[k] || "")}">` : esc(x[k])}</td>`).join("") + `</tr>`).join("") + `</table>`;
+  h += `<div class="tech"><h2>Communications log</h2><table><tr><th>Time</th><th>To</th><th>Message</th></tr>` +
+    (a.communications || [{}, {}]).map((x, i) => `<tr>` + ["local", "to", "message"].map(k => `<td>${edit ? `<input type="text" data-f="communications.${i}.${k}" value="${esc(x[k] || "")}">` : esc(x[k])}</td>`).join("") + `</tr>`).join("") + `</table>`;
+  if (f && f.repeats.length) h += `<h2>Repeat-event check</h2><p class="note">Other records in the window on the same rack or busway. Each should be ruled in or out as related.</p><ul>${f.repeats.map(r => `<li>${esc(r.ref)} (${r.opened.slice(0, 16).replace("T", " ")}Z): ${esc(r.what)}</li>`).join("")}</ul>`;
+  h += `</div>`;
+  h += `<h2>Sign-off</h2><div class="sign">${(a.signoff || [{role: "Customer Site Lead (Incident Commander)"}, {role: "Landlord"}, {role: "IT Partner"}]).map(s => `<div>${esc(s.role)}<br><span class="note">${s.date ? "Signed " + esc(s.date) : "Signature and date"}</span></div>`).join("")}</div>`;
+  h += `<p class="note" style="margin-top:24px">Synthetic data for a portfolio demonstration; all names and events are fictional. Facts are generated from the dataset by src/scorecard/pir.py; this review's judgment fields are in pir/reviews/${esc(a.id || "")}.yaml.</p>`;
+  return h;
+}
+
+function collect() {
+  const out = {};
+  document.querySelectorAll("[data-f]").forEach(el => out[el.dataset.f] = el.value);
+  return out;
+}
+
+function toMarkdown() {
+  const doc = document.getElementById("doc").cloneNode(true);
+  doc.querySelectorAll("textarea,input,select").forEach(el => { const s = document.createElement("span"); s.textContent = el.value; el.replaceWith(s); });
+  doc.querySelectorAll("details,.autofill,svg").forEach(el => el.remove());
+  let md = "";
+  doc.childNodes.forEach(function walk(n) {
+    if (n.nodeType === 3) { md += n.textContent; return; }
+    const tag = n.tagName;
+    if (tag === "H1") md += "\n# " + n.textContent.trim() + "\n\n";
+    else if (tag === "H2") md += "\n## " + n.textContent.trim() + "\n\n";
+    else if (tag === "H3") md += "\n**" + n.textContent.trim() + "**\n\n";
+    else if (tag === "TABLE") { [...n.rows].forEach((r, i) => { md += "| " + [...r.cells].map(c => c.textContent.trim().replace(/\|/g, "/")).join(" | ") + " |\n"; if (i === 0) md += "|" + [...r.cells].map(() => "---").join("|") + "|\n"; }); md += "\n"; }
+    else if (tag === "LI") md += "- " + n.textContent.trim() + "\n";
+    else { n.childNodes.forEach(walk); if (["P", "DIV", "UL"].includes(tag)) md += "\n"; }
+  });
+  return md.replace(/\n{3,}/g, "\n\n");
+}
+
+function show() {
+  const doc = document.getElementById("doc");
+  if (mode === "example") doc.innerHTML = render(DATA.index[DATA.example.ref], DATA.example, false);
+  else {
+    const ref = (document.getElementById("ref") || {}).value || "";
+    doc.innerHTML = render(null, {}, true);
+    wireBlank();
+  }
+}
+
+function wireBlank() {
+  document.getElementById("go").onclick = () => {
+    const ref = document.getElementById("ref").value.trim().toUpperCase();
+    const f = DATA.index[ref];
+    const keep = collect();
+    if (!f) { document.getElementById("refnote").textContent = `No P1 or P2 ticket or work order "${ref}" in this dataset. Try INC3900001 or WO-41023.`; return; }
+    const a = {title: keep.title || f.title, status: keep.status || "Draft", id: "PIR-draft",
+      plain_language: {what_happened: keep["pl.what_happened"] || `On ${f.date}, ${f.unit} was affected for ${f.impact.duration}. [Describe in everyday words what happened.]`,
+        who_was_affected: keep["pl.who_was_affected"] || (f.impact.gpus ? `${f.impact.gpus} GPUs (${f.impact.gpu_hours_total} GPU-hours) were unavailable. Injuries: ${f.impact.injuries}.` : "No compute capacity was lost."),
+        why: keep["pl.why"] || "", what_we_are_doing: keep["pl.what_we_are_doing"] || ""},
+      severity: {osr_level: f.osr_suggested.level, priority: keep.Priority || ""}};
+    document.getElementById("doc").innerHTML = render(f, a, true);
+    wireBlank();
+  };
+}
+
+document.getElementById("t-example").onclick = () => { mode = "example"; document.getElementById("t-example").classList.add("on"); document.getElementById("t-blank").classList.remove("on"); show(); };
+document.getElementById("t-blank").onclick = () => { mode = "blank"; document.getElementById("t-blank").classList.add("on"); document.getElementById("t-example").classList.remove("on"); show(); };
+document.getElementById("plainonly").onchange = e => document.body.classList.toggle("plainonly", e.target.checked);
+document.getElementById("print").onclick = () => window.print();
+document.getElementById("md").onclick = () => {
+  const blob = new Blob([toMarkdown()], {type: "text/markdown"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = (mode === "example" ? DATA.example.id : "PIR-draft") + ".md"; a.click();
+};
+show();
+</script>
+</body>
+</html>

@@ -101,6 +101,15 @@ Examples of what it catches: a monthly generator test recorded as "Pass at 40% l
 
 In the sample month the Landlord, doing planned work on one side of rack A07's power, opens the other side's tap-off by mistake. The rack goes dark for more than three hours, and the IT partner's telemetry shows 72 GPUs down. The Customer's telemetry decides who owns it: both feeds were out at the tap-offs, on the Landlord's side of the demarcation, so the Interface Agreement attributes the outage to the Landlord (FA-1) and starts the IT partner's clock only at the Landlord's handoff (FA-3). The IT partner's headline stays at 4 defaults and $188,700; scored without attribution, it would show 5 defaults and $222,000 for hours that were not its fault. The Landlord takes a rack power availability default instead, and the wrong-breaker operation is flagged as critical work with no approved MOP ([site summary](reports/site_summary.md)). Across 60 generated months, each with such an outage, the IT engine still finds 1,020 of 1,020 with 0 false positives.
 
+## Post-incident review
+
+**[Open the post-incident review page](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/)**: a standardized, blameless review form built on Google SRE practice and Uptime Institute's Outage Severity Rating, with two tabs.
+
+- **Example: Rack A07.** The completed review of the month's cross-partner outage ([Markdown version](docs/pir/PIR-2026-001.md)). Page one answers four questions in plain language for any reader (what happened, who was affected, why, what we are doing), with an impact strip and a swimlane timeline that shows the Landlord's time and the IT partner's time in different colors. The technical sections follow: response times against SLA targets, every alarm and event reproduced exactly from its source record, the attribution decision, contract and EHS consequences, contributing factors classified as Uptime does for human-error outages, lessons (including where we got lucky), owned and dated action items, the communications log, a repeat-event check, and sign-off.
+- **Blank form.** Enter any P1 or P2 ticket or work order number and every factual field fills from the data; narratives, factors, and actions stay editable. A plain-language toggle hides the technical sections for leadership readers; the review prints to PDF or exports to Markdown.
+
+Tests hold the written review to the data: every time, duration, and count in the prose must match the telemetry, every source record must be reproduced exactly, and the review may not name an individual. A browser test exercises the page in CI.
+
 ## Toward live data: the read-only collector
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
@@ -166,6 +175,8 @@ scripts/render_sla.py            Generates docs/sla/IT_PARTNER_SLA.md from the Y
 scripts/generate_data.py         Generates the synthetic dataset
 scripts/run_engine.py            Runs the engine and writes reports/
 scripts/run_landlord.py          Runs the Landlord engine; writes the Landlord scorecard, discrepancy, and attribution reports
+scripts/render_pir.py            Post-incident reviews: docs/pir/*.md and the interactive /pir/ page
+pir/reviews/*.yaml               The written (judgment) part of each completed review
 scripts/collect.py               Read-only live collector (Redfish, Modbus, SNMPv3, BACnet/IP) writing the dataset contract
 src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard

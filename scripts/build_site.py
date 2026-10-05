@@ -89,6 +89,11 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     reqs = "[" + ", ".join(f'"{r}"' for r in REQUIREMENTS) + "]"
     (out / "index.html").write_text(INDEX_HTML.format(version=STLITE_VERSION, requirements=reqs),
                                     encoding="utf-8", newline="\n")
+    # The interactive post-incident review page, served at /pir/ beside the app.
+    sys.path.insert(0, str(root / "scripts"))
+    import render_pir
+    (out / "pir").mkdir(parents=True, exist_ok=True)
+    (out / "pir" / "index.html").write_text(render_pir.html_page(), encoding="utf-8")
     return {"files_in_bundle": len(members), "bundle_bytes": (out / "app_bundle.zip").stat().st_size}
 
 

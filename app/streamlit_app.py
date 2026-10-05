@@ -58,6 +58,7 @@ VIEWS = ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)"]
 view = st.sidebar.radio("View", VIEWS, index=0)
 
 st.sidebar.divider()
+st.sidebar.markdown(f"[Post-incident review: rack A07](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) (blank form and completed example)")
 st.sidebar.markdown(f"[Source code and contracts on GitHub]({REPO})")
 
 # --------------------------------------------------------------------------- #
