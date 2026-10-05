@@ -127,6 +127,15 @@ Answer key: `ground_truth/facility_planted_discrepancies.json` (blocked from the
 
 Planted "nobody was there" records are placed after all other activity, so no coincidental badge can make them look evidenced. `python scripts/check_facility_data.py` runs the evidence tests against 60 freshly generated months.
 
+## Live collector output
+
+`scripts/collect.py` (see `src/scorecard/live/`) writes the same contract files from real devices. It creates every contract file, leaves the ones it does not collect empty, and lists them in `manifest.json` under `not_collected` (Landlord work orders and maintenance records come from Landlord system exports, not device polling). It adds two files the synthetic data does not have:
+
+| File | Contents |
+|---|---|
+| `facility/cdu_readings.jsonl` | One row per CDU per poll: secondary connector `SupplyTemperatureCelsius`, `ReturnTemperatureCelsius`, `FlowLitersPerMinute`, `SupplyPressurekPa` |
+| `collector/feed_health.jsonl` | One row per device per poll: ok or error, latency. A device that stops answering is a measured gap (OT-KM-06), and the collector backs off from it |
+
 ## Regenerating
 
 ```bash

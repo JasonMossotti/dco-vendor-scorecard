@@ -1,0 +1,5 @@
+# Live collector only (scripts/collect.py, src/scorecard/live/). The core project,
+# the browser app, and the synthetic pipeline do not need these.
+-r requirements.txt
+pymodbus==3.15.0      # Modbus TCP (read function codes only); its simulator is used in tests
+requests>=2.31        # Redfish over HTTPS (GET only)

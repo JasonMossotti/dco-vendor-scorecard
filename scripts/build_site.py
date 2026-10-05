@@ -67,7 +67,8 @@ INDEX_HTML = """<!doctype html>
 
 
 def bundle_members(root: Path) -> list[Path]:
-    files = [p for p in (root / "src" / "scorecard").rglob("*.py")]
+    # The live collector is not part of the browser app.
+    files = [p for p in (root / "src" / "scorecard").rglob("*.py") if "live" not in p.relative_to(root / "src" / "scorecard").parts]
     files += sorted((root / "sla").glob("*.yaml")) + [root / "config" / "synthetic.yaml", root / "site" / "site.yaml"]
     for ds in ("sample", "latest"):
         d = root / "data" / ds

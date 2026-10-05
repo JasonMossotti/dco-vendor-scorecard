@@ -101,6 +101,20 @@ Examples of what it catches: a monthly generator test recorded as "Pass at 40% l
 
 In the sample month the Landlord, doing planned work on one side of rack A07's power, opens the other side's tap-off by mistake. The rack goes dark for more than three hours, and the IT partner's telemetry shows 72 GPUs down. The Customer's telemetry decides who owns it: both feeds were out at the tap-offs, on the Landlord's side of the demarcation, so the Interface Agreement attributes the outage to the Landlord (FA-1) and starts the IT partner's clock only at the Landlord's handoff (FA-3). The IT partner's headline stays at 4 defaults and $188,700; scored without attribution, it would show 5 defaults and $222,000 for hours that were not its fault. The Landlord takes a rack power availability default instead, and the wrong-breaker operation is flagged as critical work with no approved MOP ([site summary](reports/site_summary.md)). Across 60 generated months, each with such an outage, the IT engine still finds 1,020 of 1,020 with 0 false positives.
 
+## Toward live data: the read-only collector
+
+`scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
+
+- **Redfish** (CDUs, DMTF `ThermalEquipment` schema) and **Modbus TCP** (generator controllers, busway monitors, leak controllers) are built; SNMPv3 and BACnet/IP are next.
+- **Read-only by construction:** the collector issues only Redfish GET and Modbus read requests (function codes 3 and 4). A test scans the collector's code and fails on any write-capable call, and the simulators record every request to prove it.
+- **Tested against device simulators** in CI: a local Redfish server with authentication, and pymodbus's own Modbus server. An end-to-end test drives a simulated CDU pump failure through the collector and the unchanged Landlord engine.
+- **Credentials stay out of the repository** (named environment variables only), register maps are site configuration verified at commissioning ([example](config/collector.example.yaml)), and a device that stops answering becomes a measured feed gap with backoff, not a silent one.
+
+```bash
+pip install -r requirements-live.txt
+python scripts/collect.py --config /secure/collector.yaml --out data/live --once
+```
+
 ## Discrepancy engine
 
 `scripts/run_engine.py` reads the telemetry and vendor records through a connector layer, rebuilds every incident from telemetry alone using the SLA's ticket handling rules, and reports each place the vendor's records do not reconcile, with the exact evidence, an S1 to S4 severity, and the corrective action defined in the SLA.
@@ -152,6 +166,8 @@ scripts/render_sla.py            Generates docs/sla/IT_PARTNER_SLA.md from the Y
 scripts/generate_data.py         Generates the synthetic dataset
 scripts/run_engine.py            Runs the engine and writes reports/
 scripts/run_landlord.py          Runs the Landlord engine; writes the Landlord scorecard, discrepancy, and attribution reports
+scripts/collect.py               Read-only live collector (Redfish, Modbus) writing the dataset contract
+src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard
 scripts/build_scorecard.py       Builds the scorecard and writes reports/
 scripts/build_site.py            Builds the static GitHub Pages site

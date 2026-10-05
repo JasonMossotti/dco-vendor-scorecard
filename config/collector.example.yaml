@@ -1,0 +1,69 @@
+# =============================================================================
+# Live collector configuration (EXAMPLE)
+# -----------------------------------------------------------------------------
+# Copy to a location outside the repository, fill in hosts, and set the
+# credential environment variables. Credentials are NEVER written here: a
+# device names the variables (username_env, password_env) instead.
+#
+# Register addresses below are PLACEHOLDERS. Modbus register maps differ by
+# vendor, firmware, and gateway configuration; every address, data type, and
+# scale must be verified against the vendor's documentation and on the device
+# at commissioning, before any value is used to measure an SLA.
+# Read-only is enforced in code: the collector issues only Redfish GET and
+# Modbus read requests (function codes 3 and 4).
+# =============================================================================
+
+poll_interval_s: 60
+timeout_s: 5
+max_backoff_s: 900
+
+devices:
+  - name: cdu-a1
+    kind: cdu
+    protocol: redfish
+    site_id: CDU-A1                       # name in site/site.yaml
+    base_url: https://cdu-a1.mon.example.invalid
+    cdu_id: "1"                           # the CDU's member id under /redfish/v1/ThermalEquipment/CDUs
+    username_env: CDU_RO_USER             # a read-only Redfish account
+    password_env: CDU_RO_PASSWORD
+    verify_tls: true                      # or a path to the site CA bundle
+
+  - name: gen-1
+    kind: generator
+    protocol: modbus
+    site_id: GEN-1
+    host: emcp-gen1.mon.example.invalid   # EMCP 4.4 Modbus TCP
+    port: 502
+    device_id: 1
+    rated_kw: 3000
+    points:                               # PLACEHOLDER addresses: verify with the EMCP 4.4 Modbus documentation
+      - {name: engine_operating_state, register: 100, type: uint16, table: holding}
+      - {name: gen_total_kw, register: 102, type: int32, table: holding, scale: 1}
+    engine_state_codes: {0: Stopped, 1: Starting, 2: Running, 3: Cooldown}   # PLACEHOLDER mapping
+
+  - name: busway-a-r1-pg-a1-a
+    kind: busway
+    protocol: modbus
+    site_id: BW-A-R1-PG-A1-A
+    host: cpm-a-r1.mon.example.invalid    # Critical Power Monitor
+    port: 502
+    device_id: 1
+    tolerance_v: [432, 528]               # 480 V nominal, +/- 10%
+    points:                               # PLACEHOLDER addresses
+      - {name: voltage_ll_avg, register: 200, type: float32, table: input}
+      - {name: tap_a01, register: 300, type: uint16, table: holding}
+    tapoffs:
+      - {tapoff: TO-A01-A, rack: A01, point: tap_a01}
+
+  - name: ttdm-a
+    kind: leak
+    protocol: modbus
+    site_id: TTDM-A
+    host: leak-gw-a.mon.example.invalid   # Modbus gateway in front of the TTDM-128
+    port: 502
+    device_id: 1
+    points:                               # PLACEHOLDER addresses
+      - {name: c5_alarm, register: 400, type: uint16, table: holding}
+      - {name: c5_distance, register: 401, type: uint16, table: holding, scale: 0.1}
+    circuits:
+      - {circuit: 5, label: Under CDU-A1, alarm_point: c5_alarm, distance_point: c5_distance}

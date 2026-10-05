@@ -83,7 +83,8 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     home.mkdir()
     with zipfile.ZipFile(site / "app_bundle.zip") as z:
         names = z.namelist()
-        assert {"sla/common.yaml", "sla/it_partner.yaml", "sla/ot_partner.yaml", "site/site.yaml"} <= set(names) and "src/scorecard/app_support.py" in names
+        assert {"sla/common.yaml", "sla/it_partner.yaml", "sla/ot_partner.yaml", "site/site.yaml"} <= set(names)
+        assert not any("/live/" in n for n in names), "the live collector is not shipped to the browser" and "src/scorecard/app_support.py" in names
         assert not any(n.startswith(("tests/", "reports/", "docs/")) for n in names)
         z.extractall(home)
     (home / "streamlit_app.py").write_bytes((site / "streamlit_app.py").read_bytes())
