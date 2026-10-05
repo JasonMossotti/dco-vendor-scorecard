@@ -3,6 +3,7 @@
 The app is a thin display layer over these functions:
 
 * ``run_pipeline``: engine -> scorecard -> self-check, cached per dataset.
+* ``run_landlord_pipeline``: the Landlord engine, its scorecard, and the IT scorecard without attribution.
 * ``generate_month``: make a brand-new synthetic month in a temporary folder.
 * ``*_rows``: plain list-of-dict tables the app turns into DataFrames.
 """
@@ -189,3 +190,117 @@ def severity_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
 def evidence_rows(finding) -> list[dict[str, Any]]:
     return [{"Source": e["source"], "Time": fmt_t(e["at"]) if e["at"] else "-", "Evidence": e["detail"]}
             for e in finding.evidence]
+
+
+# --------------------------------------------------------------------------- #
+# Landlord and site views
+# --------------------------------------------------------------------------- #
+def has_facility(data_dir: str | Path) -> bool:
+    return (Path(data_dir) / "facility").exists()
+
+
+@lru_cache(maxsize=12)
+def _landlord_cached(data_dir: str):
+    from scorecard.engine import run_engine
+    from scorecard.engine.evaluate import evaluate_landlord
+    from scorecard.engine.landlord import build_landlord_scorecard, run_landlord
+    from scorecard.sla_model import PARTNER_FILES
+    sla = load_sla(PARTNER_FILES["landlord"])
+    src = FileConnector(data_dir)
+    result = run_landlord(sla, src)
+    sc = build_landlord_scorecard(sla, result)
+    key = Path(data_dir) / "ground_truth" / "facility_planted_discrepancies.json"
+    ev = evaluate_landlord(result.findings, data_dir) if key.exists() else None
+    it_sla = load_sla()
+    it_plain = build_scorecard(it_sla, run_engine(it_sla, src, attribution=False))
+    return result, sc, ev, it_plain
+
+
+def run_landlord_pipeline(data_dir: str | Path):
+    """(Landlord result, Landlord scorecard, evaluation or None, IT scorecard scored without attribution)."""
+    return _landlord_cached(str(data_dir))
+
+
+_LL_STATUS = {"met_expected": "Met Expected", "below_expected": "Below Expected (RCA)", "below_minimum": "Minimum default",
+              "deep_below_minimum": "Minimum default", "not_applicable": "n/a (no events)"}
+
+
+def landlord_headline(sc: dict[str, Any]) -> str:
+    d = sc["defaults"]
+    return (f"The Landlord's weekly reports claimed every service level was met. Measured from the Customer's read-only "
+            f"facility telemetry: **{len(d)} Minimum defaults**" + (f" ({', '.join(d)})" if d else "")
+            + f", **{sc['s1']} S1 findings**, and **\\${sc['credits']['payable']:,.0f}** in credits against rent.")
+
+
+def landlord_csl_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"ID": r["id"], "Service level": r["name"], "Expected": _threshold(r["direction"], r["expected"]),
+             "Minimum": _threshold(r["direction"], r["minimum"]), "Measured": _pct(r["actual"], 3),
+             "Landlord reported": _pct(r["vendor_reported"]), "Status": _LL_STATUS[r["status"]],
+             "Credit": f"${r['credit']:,.0f}" if r["credit"] else "", "Basis": r["detail"]} for r in sc["csl"]]
+
+
+def landlord_vs_reported_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"Service level": f"{r['id']} {r['name']}", "Landlord reported (%)": _round(r["vendor_reported"], 3),
+             "Measured (%)": _round(r["actual"], 3),
+             "Gap (pts)": None if r["actual"] is None else round(r["actual"] - r["vendor_reported"], 3)} for r in sc["csl"]]
+
+
+def landlord_km_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    rows = []
+    for k in sc["km"]:
+        sym = "≥" if k["direction"] == "higher_is_better" else "≤"
+        unit = k["unit"].strip()
+        noun = unit[:-1] if unit.endswith("s") and k["actual"] == 1 else unit
+        val = "n/a" if k["actual"] is None else (_pct(k["actual"], 1) if unit == "%" else f"{k['actual']:g} {noun}")
+        rows.append({"ID": k["id"], "Key measurement": k["name"], "Target": f"{sym} {k['target']:g}{'%' if unit == '%' else ' ' + unit}",
+                     "Measured": val, "Result": "n/a" if k["met"] is None else ("Met" if k["met"] else "Missed"),
+                     "Basis": k["detail"]})
+    return rows
+
+
+def attribution_display_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"T0": fmt_t(r["t0"]), "Event": r["event"], "Owner (telemetry)": r["owner"], "Rule": r["rule"],
+             "Rack capacity lost": "Yes" if r["capacity_lost"] else "No", "Work order": r["work_order"] or "",
+             "Work order says": r["claimed_owner"] or "", "Agrees": "Yes" if r["agrees"] else "No"}
+            for r in sc["attribution"]]
+
+
+def site_rows(it_sc: dict[str, Any], ll_sc: dict[str, Any], it_ev, ll_ev) -> list[dict[str, Any]]:
+    rows = [{"Measure": "Self-report", "IT Partner": "Every SLA met or minor exceptions", "Landlord": "Every SLA met"},
+            {"Measure": "Minimum defaults (measured)", "IT Partner": str(it_sc["totals"]["defaults"]), "Landlord": str(len(ll_sc["defaults"]))},
+            {"Measure": "Credits payable", "IT Partner": f"${it_sc['credits']['payable']:,.0f}",
+             "Landlord": f"${ll_sc['credits']['payable']:,.0f} (against rent)"},
+            {"Measure": "Findings (S1)", "IT Partner": f"{it_sc['totals']['findings']} ({it_sc['totals']['s1']})",
+             "Landlord": f"{ll_sc['findings']} ({ll_sc['s1']})"}]
+    if it_ev is not None and ll_ev is not None:
+        rows.append({"Measure": "Engine self-check",
+                     "IT Partner": f"{it_ev.detected} of {it_ev.planted}, {len(it_ev.false_positives)} false positives",
+                     "Landlord": f"{ll_ev.detected} of {ll_ev.planted}, {len(ll_ev.false_positives)} false positives"})
+    return rows
+
+
+def crossing_outages(ll_sc: dict[str, Any], it_result) -> list[str]:
+    """Plain-language account of each outage that crossed the demarcation."""
+    out = []
+    tickets = [t for t in it_result.context.tickets if t["category"] == "rack_facility"]
+    for r in [x for x in ll_sc["attribution"] if x["capacity_lost"]]:
+        t = next((x for x in tickets if r["unit"].endswith(x["rack"])), None)
+        hours = (r["restored"] - r["t0"]).total_seconds() / 3600
+        out.append(f"**{r['unit']} went dark for {hours:.1f} hours.** Both feeds were out at the tap-offs, on the Landlord's "
+                   f"side of the demarcation, so the telemetry attributes it to the **{r['owner']}** ({r['rule']}). "
+                   f"The IT Partner's clock started at the Landlord's handoff ({fmt_t(r['restored'])}, rule FA-3)"
+                   + (f"; its ticket {t['number']} returned the rack to service at {fmt_t(t['resolved_at'])}." if t else "."))
+    return out
+
+
+def attribution_change_rows(it_sc: dict[str, Any], it_plain: dict[str, Any]) -> list[dict[str, Any]]:
+    a = {c["id"]: c["actual"] for c in it_sc["csl"]}
+    b = {c["id"]: c["actual"] for c in it_plain["csl"]}
+    return [{"IT Partner": "Minimum defaults", "With attribution (contract)": str(it_sc["totals"]["defaults"]),
+             "Without attribution": str(it_plain["totals"]["defaults"])},
+            {"IT Partner": "Credits payable", "With attribution (contract)": f"${it_sc['credits']['payable']:,.0f}",
+             "Without attribution": f"${it_plain['credits']['payable']:,.0f}"},
+            {"IT Partner": "CSL-03 P1 restoration within 4 hours", "With attribution (contract)": _pct(a["CSL-03"], 1),
+             "Without attribution": _pct(b["CSL-03"], 1)},
+            {"IT Partner": "CSL-12 worst-rack availability", "With attribution (contract)": _pct(a["CSL-12"], 3),
+             "Without attribution": _pct(b["CSL-12"], 3)}]

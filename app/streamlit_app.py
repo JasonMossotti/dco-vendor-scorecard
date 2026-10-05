@@ -54,127 +54,218 @@ if pick == "Generate a new random month":
 else:
     data_dir = str(datasets[pick])
 
-sla = CONTRACT
+VIEWS = ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)"]
+view = st.sidebar.radio("View", VIEWS, index=0)
 
 st.sidebar.divider()
-st.sidebar.markdown(f"[Source code and SLA on GitHub]({REPO})")
+st.sidebar.markdown(f"[Source code and contracts on GitHub]({REPO})")
 
 # --------------------------------------------------------------------------- #
 # Run
 # --------------------------------------------------------------------------- #
 with st.spinner("Reconciling vendor records against telemetry..."):
-    result, sc, ev = A.run_pipeline(sla, data_dir)
-ctx = result.context
+    result, sc, ev = A.run_pipeline(CONTRACT, data_dir)
+facility = A.has_facility(data_dir)
+if facility:
+    with st.spinner("Reconciling the Landlord's records against facility telemetry..."):
+        ll_result, ll_sc, ll_ev, it_plain = A.run_landlord_pipeline(data_dir)
+WINDOW = f"{sc['window']['start']:%b %d} to {sc['window']['end']:%b %d, %Y}"
+FOOT = "Synthetic data for a portfolio demonstration; all names and events are fictional."
 
-st.title("Vendor SLA Scorecard")
-st.caption(f"{sc['site']} · Supplier: {sc['supplier']} · {sc['window']['start']:%b %d} to "
-           f"{sc['window']['end']:%b %d, %Y} · Synthetic data for a portfolio demonstration; all names and events are fictional.")
 
-tabs = st.tabs(["Overview", "Service levels", "Findings", "Corrective actions", "Incidents", "About"])
+def render_it(result, sc, ev) -> None:
+    """The IT Partner (Ridgeline) scorecard: unchanged from the single-vendor demo."""
+    sla = CONTRACT
+    st.title("Vendor SLA Scorecard")
+    st.caption(f"{sc['site']} · Supplier: {sc['supplier']} · {WINDOW} · {FOOT}")
 
-# ---- Overview ----------------------------------------------------------------
-with tabs[0]:
-    st.markdown(A.headline(sc))
-    t = sc["totals"]
-    c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric("Minimum defaults", t["defaults"])
-    c2.metric("Credits payable", f"${sc['credits']['payable']:,.0f}")
-    c3.metric("S1 items", t["s1"])
-    c4.metric("Corrective action plans", len(sc["corrective_actions"]))
-    c5.metric("Discrepancies found", t["findings"])
+    tabs = st.tabs(["Overview", "Service levels", "Findings", "Corrective actions", "Incidents", "About"])
 
-    st.subheader("Vendor reported vs. measured from telemetry")
-    vv = pd.DataFrame(A.vendor_vs_measured_rows(sc))
-    st.dataframe(vv, hide_index=True)
-    chart = vv.assign(**{"Service level": vv["Service level"].str.split(" ").str[0]})
-    chart = chart.set_index("Service level")[["Vendor reported (%)", "Measured (%)"]]
-    st.bar_chart(chart, stack=False)
-    st.caption("Fleet availability is nearly identical either way: a few hidden hours vanish inside millions of "
-               "GPU-hours. The gaps show up in restoration, repair quality, and record integrity.")
+    # ---- Overview ----------------------------------------------------------------
+    with tabs[0]:
+        st.markdown(A.headline(sc))
+        t = sc["totals"]
+        c1, c2, c3, c4, c5 = st.columns(5)
+        c1.metric("Minimum defaults", t["defaults"])
+        c2.metric("Credits payable", f"${sc['credits']['payable']:,.0f}")
+        c3.metric("S1 items", t["s1"])
+        c4.metric("Corrective action plans", len(sc["corrective_actions"]))
+        c5.metric("Discrepancies found", t["findings"])
 
-    if ev is not None:
-        st.subheader("Engine self-check")
-        st.markdown(f"The data generator planted **{ev.planted}** discrepancies in an answer key the engine cannot read. "
-                    f"The engine found **{ev.detected} of {ev.planted}** with **{len(ev.false_positives)} false "
-                    f"positive{'s' if len(ev.false_positives) != 1 else ''}**.")
+        st.subheader("Vendor reported vs. measured from telemetry")
+        vv = pd.DataFrame(A.vendor_vs_measured_rows(sc))
+        st.dataframe(vv, hide_index=True)
+        chart = vv.assign(**{"Service level": vv["Service level"].str.split(" ").str[0]})
+        chart = chart.set_index("Service level")[["Vendor reported (%)", "Measured (%)"]]
+        st.bar_chart(chart, stack=False)
+        st.caption("Fleet availability is nearly identical either way: a few hidden hours vanish inside millions of "
+                   "GPU-hours. The gaps show up in restoration, repair quality, and record integrity.")
 
-# ---- Service levels ----------------------------------------------------------
-with tabs[1]:
-    st.subheader("Critical Service Levels (credit-bearing)")
-    st.dataframe(pd.DataFrame(A.csl_rows(sc)), hide_index=True)
-    cr = sc["credits"]
-    st.markdown(f"**Credits:** \\${cr['uncapped']:,.0f} before the monthly cap; **\\${cr['payable']:,.0f} payable**"
-                + (" (the cap applied)." if cr["capped"] else "."))
-    st.subheader("Week by week: how far the vendor's report was from the telemetry")
-    st.caption("Measured minus vendor-reported, in percentage points. 0 means the vendor's weekly report was "
-               "accurate; below 0 means it overstated performance.")
-    gaps = pd.DataFrame(A.weekly_gap_rows(sc)).set_index("Week")
-    st.line_chart(gaps, color=["#ff4b4b", "#ffa421", "#29b09d", "#7d8cff"])
-    st.dataframe(pd.DataFrame(A.weekly_rows(sc)), hide_index=True)
-    st.subheader("Key Measurements")
-    st.dataframe(pd.DataFrame(A.km_rows(sc)), hide_index=True)
+        if ev is not None:
+            st.subheader("Engine self-check")
+            st.markdown(f"The data generator planted **{ev.planted}** discrepancies in an answer key the engine cannot read. "
+                        f"The engine found **{ev.detected} of {ev.planted}** with **{len(ev.false_positives)} false "
+                        f"positive{'s' if len(ev.false_positives) != 1 else ''}**.")
 
-# ---- Findings ----------------------------------------------------------------
-with tabs[2]:
-    st.markdown("Each finding is a place where vendor records do not reconcile with telemetry. "
-                "A finding starts a review; it is not by itself proof of intent.")
-    types = sorted({f.title for f in result.findings})
-    f1, f2 = st.columns(2)
-    sev_pick = f1.multiselect("Severity", SEV_ORDER, default=SEV_ORDER)
-    type_pick = f2.multiselect("Type", types, default=types)
-    shown = [f for f in result.findings if f.severity in sev_pick and f.title in type_pick]
-    st.caption(f"{len(shown)} of {len(result.findings)} findings")
-    for f in shown:
-        with st.expander(f"{f.id} · {f.severity} {f.severity_name} · {f.title} · {', '.join(f.tickets) or f.unit}"):
-            st.markdown(f.summary)
-            st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
-            st.markdown(f"**Why {f.severity}:** {'; '.join(f.severity_reasons)}.")
-            st.markdown(f"**Recommended action:** {f.recommended_action}")
-            st.markdown(f"**SLA references:** {', '.join(f.sla_refs)}")
+    # ---- Service levels ----------------------------------------------------------
+    with tabs[1]:
+        st.subheader("Critical Service Levels (credit-bearing)")
+        st.dataframe(pd.DataFrame(A.csl_rows(sc)), hide_index=True)
+        cr = sc["credits"]
+        st.markdown(f"**Credits:** \\${cr['uncapped']:,.0f} before the monthly cap; **\\${cr['payable']:,.0f} payable**"
+                    + (" (the cap applied)." if cr["capped"] else "."))
+        st.subheader("Week by week: how far the vendor's report was from the telemetry")
+        st.caption("Measured minus vendor-reported, in percentage points. 0 means the vendor's weekly report was "
+                   "accurate; below 0 means it overstated performance.")
+        gaps = pd.DataFrame(A.weekly_gap_rows(sc)).set_index("Week")
+        st.line_chart(gaps, color=["#ff4b4b", "#ffa421", "#29b09d", "#7d8cff"])
+        st.dataframe(pd.DataFrame(A.weekly_rows(sc)), hide_index=True)
+        st.subheader("Key Measurements")
+        st.dataframe(pd.DataFrame(A.km_rows(sc)), hide_index=True)
 
-# ---- Corrective actions ------------------------------------------------------
-with tabs[3]:
-    st.subheader("Corrective action plans")
-    st.caption("Drafted automatically at this period review for every S1 and S2 item, grouped by affected tickets. "
-               "Due dates count from the review: S1 within 5 business days, S2 within 10.")
-    st.dataframe(pd.DataFrame(A.cap_rows(sc)), hide_index=True)
-    st.subheader("Severity log")
-    sev = pd.DataFrame(A.severity_rows(sc))
-    st.dataframe(sev, hide_index=True)
+    # ---- Findings ----------------------------------------------------------------
+    with tabs[2]:
+        st.markdown("Each finding is a place where vendor records do not reconcile with telemetry. "
+                    "A finding starts a review; it is not by itself proof of intent.")
+        types = sorted({f.title for f in result.findings})
+        f1, f2 = st.columns(2)
+        sev_pick = f1.multiselect("Severity", SEV_ORDER, default=SEV_ORDER)
+        type_pick = f2.multiselect("Type", types, default=types)
+        shown = [f for f in result.findings if f.severity in sev_pick and f.title in type_pick]
+        st.caption(f"{len(shown)} of {len(result.findings)} findings")
+        for f in shown:
+            with st.expander(f"{f.id} · {f.severity} {f.severity_name} · {f.title} · {', '.join(f.tickets) or f.unit}"):
+                st.markdown(f.summary)
+                st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
+                st.markdown(f"**Why {f.severity}:** {'; '.join(f.severity_reasons)}.")
+                st.markdown(f"**Recommended action:** {f.recommended_action}")
+                st.markdown(f"**SLA references:** {', '.join(f.sla_refs)}")
 
-# ---- Incidents ---------------------------------------------------------------
-with tabs[4]:
-    st.markdown("One row per **Ticket of Record**, rebuilt from telemetry. Split vendor tickets are merged "
-                "(TR-1, TR-2), and restoration runs from telemetry T0 to Validated RTS.")
-    targets = {p["id"]: p["restore_min"] for p in sla["priorities"]}
-    inc = pd.DataFrame(A.incident_rows(sc, targets))
-    p_pick = st.multiselect("Priority", ["P1", "P2", "P3"], default=["P1", "P2", "P3"])
-    only_late = st.checkbox("Only incidents past their restore target")
-    view = inc[inc["Priority"].isin(p_pick)]
-    if only_late:
-        view = view[~view["Within target"]]
-    st.dataframe(view, hide_index=True)
+    # ---- Corrective actions ------------------------------------------------------
+    with tabs[3]:
+        st.subheader("Corrective action plans")
+        st.caption("Drafted automatically at this period review for every S1 and S2 item, grouped by affected tickets. "
+                   "Due dates count from the review: S1 within 5 business days, S2 within 10.")
+        st.dataframe(pd.DataFrame(A.cap_rows(sc)), hide_index=True)
+        st.subheader("Severity log")
+        sev = pd.DataFrame(A.severity_rows(sc))
+        st.dataframe(sev, hide_index=True)
 
-# ---- About -------------------------------------------------------------------
-with tabs[5]:
-    st.markdown(f"""
-**What this is.** A portfolio demonstration of vendor oversight at a partner-operated GPU data center
-(a fictional site of NVIDIA GB200 NVL72 racks). The core idea: **verify vendor performance with independent
-telemetry, not vendor self-reporting.**
+    # ---- Incidents ---------------------------------------------------------------
+    with tabs[4]:
+        st.markdown("One row per **Ticket of Record**, rebuilt from telemetry. Split vendor tickets are merged "
+                    "(TR-1, TR-2), and restoration runs from telemetry T0 to Validated RTS.")
+        targets = {p["id"]: p["restore_min"] for p in sla["priorities"]}
+        inc = pd.DataFrame(A.incident_rows(sc, targets))
+        p_pick = st.multiselect("Priority", ["P1", "P2", "P3"], default=["P1", "P2", "P3"])
+        only_late = st.checkbox("Only incidents past their restore target")
+        view = inc[inc["Priority"].isin(p_pick)]
+        if only_late:
+            view = view[~view["Within target"]]
+        st.dataframe(view, hide_index=True)
 
-**How it works.**
-1. A machine-readable SLA defines every service level, ticket handling rule, and severity band.
-2. A synthetic data generator simulates four weeks of hardware telemetry and vendor records,
-   then plants realistic discrepancies (split tickets, unverified part swaps, skipped validation, and more).
-3. A discrepancy engine rebuilds every incident from telemetry alone and flags where the vendor's records disagree.
-4. This scorecard measures every service level from telemetry and compares it with the vendor's own weekly report.
+    # ---- About -------------------------------------------------------------------
+    with tabs[5]:
+        st.markdown(f"""
+    **What this is.** A portfolio demonstration of vendor oversight at a partner-operated GPU data center
+    (a fictional site of NVIDIA GB200 NVL72 racks). The core idea: **verify vendor performance with independent
+    telemetry, not vendor self-reporting.**
 
-**Everything here runs in your browser.** There is no server: Python runs locally via WebAssembly.
+    **How it works.**
+    1. A machine-readable SLA defines every service level, ticket handling rule, and severity band.
+    2. A synthetic data generator simulates four weeks of hardware telemetry and vendor records,
+       then plants realistic discrepancies (split tickets, unverified part swaps, skipped validation, and more).
+    3. A discrepancy engine rebuilds every incident from telemetry alone and flags where the vendor's records disagree.
+    4. This scorecard measures every service level from telemetry and compares it with the vendor's own weekly report.
 
-**Read more:** [README]({REPO}#readme) · [The SLA]({REPO}/blob/main/docs/sla/IT_PARTNER_SLA.md) ·
-[Discrepancy report]({REPO}/blob/main/reports/discrepancy_report.md) ·
-[Data model]({REPO}/blob/main/docs/DATA_MODEL.md)
+    **Everything here runs in your browser.** There is no server: Python runs locally via WebAssembly.
 
-*All data, people, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on
-internal information from, any real company.*
+    **Read more:** [README]({REPO}#readme) · [The SLA]({REPO}/blob/main/docs/sla/IT_PARTNER_SLA.md) ·
+    [Discrepancy report]({REPO}/blob/main/reports/discrepancy_report.md) ·
+    [Data model]({REPO}/blob/main/docs/DATA_MODEL.md)
+
+    *All data, people, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on
+    internal information from, any real company.*
+    """)
+
+
+def render_site() -> None:
+    st.title("Site AUS-1: two partners, one set of telemetry")
+    st.caption(f"{WINDOW} · {FOOT}")
+    st.markdown("The Customer leases the halls from a Landlord that runs the building, power, and cooling, and contracts an "
+                "IT Partner for the data hall work. Each is measured against its own SLA from the Customer's Telemetry of "
+                "Record. Outages that cross the boundary between them are attributed under the Interface Agreement.")
+    st.subheader("Both partners, measured")
+    st.dataframe(pd.DataFrame(A.site_rows(sc, ll_sc, ev, ll_ev)), hide_index=True)
+    st.subheader("Outages that crossed the demarcation")
+    crossing = A.crossing_outages(ll_sc, result)
+    for line in crossing or ["No outage crossed the demarcation in this window."]:
+        st.markdown(line)
+    st.subheader("What attribution changed for the IT Partner")
+    st.caption("The same telemetry, scored with the IT Partner's clock starting at the power loss instead of the Landlord's handoff.")
+    st.dataframe(pd.DataFrame(A.attribution_change_rows(sc, it_plain)), hide_index=True)
+    st.markdown("Without attribution, the IT Partner would be charged for hours the Landlord's equipment kept the rack dark. "
+                "With it, each party is charged only for its own side of the demarcation.")
+    st.caption("Switch views in the sidebar for each partner's full scorecard.")
+
+
+def render_landlord() -> None:
+    st.title("Landlord SLA Scorecard")
+    st.caption(f"{ll_sc['supplier']} · {WINDOW} · {FOOT}")
+    tabs = st.tabs(["Overview", "Service levels", "Findings", "Facility events", "About"])
+    with tabs[0]:
+        st.markdown(A.landlord_headline(ll_sc))
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Minimum defaults", len(ll_sc["defaults"]))
+        c2.metric("Credits against rent", f"${ll_sc['credits']['payable']:,.0f}")
+        c3.metric("S1 findings", ll_sc["s1"])
+        c4.metric("Discrepancies found", ll_sc["findings"])
+        st.subheader("Landlord reported vs. measured from telemetry")
+        st.dataframe(pd.DataFrame(A.landlord_vs_reported_rows(ll_sc)), hide_index=True)
+        if ll_ev is not None:
+            st.subheader("Engine self-check")
+            st.markdown(f"The data generator planted **{ll_ev.planted}** Landlord discrepancies in an answer key the engine "
+                        f"cannot read. The engine found **{ll_ev.detected} of {ll_ev.planted}** with "
+                        f"**{len(ll_ev.false_positives)} false positive{'s' if len(ll_ev.false_positives) != 1 else ''}**.")
+    with tabs[1]:
+        st.subheader("Critical Service Levels (credit-bearing, against rent)")
+        st.dataframe(pd.DataFrame(A.landlord_csl_rows(ll_sc)), hide_index=True)
+        cr = ll_sc["credits"]
+        st.markdown(f"**Credits:** \\${cr['payable']:,.0f} payable" + (" (the monthly cap applied)." if cr["capped"] else "."))
+        st.subheader("Key Measurements")
+        st.dataframe(pd.DataFrame(A.landlord_km_rows(ll_sc)), hide_index=True)
+    with tabs[2]:
+        st.markdown("Each finding is a place where the Landlord's work orders or maintenance records do not reconcile with "
+                    "device telemetry. A finding starts a review; it is not by itself proof of intent.")
+        for f in ll_result.findings:
+            with st.expander(f"{f.id} · {f.severity} {f.severity_name} · {f.title} · {f.unit or ''}"):
+                st.markdown(f.summary)
+                st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
+                st.markdown(f"**Recommended action:** {f.recommended_action}")
+                st.markdown(f"**SLA references:** {', '.join(f.sla_refs)}")
+    with tabs[3]:
+        st.markdown("Every facility event in the window, rebuilt from device telemetry and attributed under the Interface "
+                    "Agreement, beside the party the Landlord's work order named.")
+        st.dataframe(pd.DataFrame(A.attribution_display_rows(ll_sc)), hide_index=True)
+    with tabs[4]:
+        st.markdown(f"""
+**What this is.** The Landlord's side of the same fictional site: a wholesale owner-operator that runs the building,
+power, and cooling and leases the halls to the Customer. Its SLA is measured from device telemetry the Customer reads
+under a negotiated term of the lease (UPS management cards, busway monitors, generator controllers, CDU Redfish, leak
+and VESDA controllers, the BMS, and badge entries), not from the Landlord's own reports.
+
+**Read more:** [Landlord SLA]({REPO}/blob/main/docs/sla/LANDLORD_SLA.md) ·
+[Interface Agreement]({REPO}/blob/main/docs/sla/INTERFACE_AGREEMENT.md) ·
+[Landlord discrepancy report]({REPO}/blob/main/reports/landlord_discrepancy_report.md) ·
+[Site model and drawings]({REPO}/blob/main/docs/site/SITE.md)
 """)
+
+
+if view == "IT Partner (Ridgeline)" or not facility:
+    if not facility and view != "IT Partner (Ridgeline)":
+        st.info("This dataset has no facility data, so only the IT Partner view is available.")
+    render_it(result, sc, ev)
+elif view == "Landlord (Caprock)":
+    render_landlord()
+else:
+    render_site()

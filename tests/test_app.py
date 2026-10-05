@@ -26,8 +26,26 @@ def run_app(monkeypatch, **kw) -> FakeStreamlit:
     return fake
 
 
-def test_app_renders_with_committed_sample(monkeypatch):
+def test_app_opens_on_the_site_summary(monkeypatch):
     fake = run_app(monkeypatch)
+    assert any("two partners" in t for t in fake.texts("title"))
+    subs = " ".join(fake.texts("subheader"))
+    assert "Both partners, measured" in subs and "What attribution changed" in subs
+    md = " ".join(fake.texts("markdown"))
+    assert "went dark" in md and "FA-3" in md, "the cross-partner outage is explained"
+
+
+def test_landlord_view(monkeypatch):
+    fake = run_app(monkeypatch, overrides={"View": "Landlord (Caprock)"})
+    assert any("Landlord SLA Scorecard" in t for t in fake.texts("title"))
+    assert len(fake.texts("dataframe")) >= 4
+    md = " ".join(fake.texts("markdown"))
+    assert "credits against rent" in md and "8 of 8" in md
+    assert "$" not in md.replace("\\$", ""), "every dollar sign is escaped (a pair renders as math)"
+
+
+def test_app_renders_with_committed_sample(monkeypatch):
+    fake = run_app(monkeypatch, overrides={"View": "IT Partner (Ridgeline)"})
     assert any("Vendor SLA Scorecard" in t for t in fake.texts("title"))
     assert len(fake.texts("dataframe")) >= 6
     md = " ".join(fake.texts("markdown"))
@@ -65,7 +83,7 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     home.mkdir()
     with zipfile.ZipFile(site / "app_bundle.zip") as z:
         names = z.namelist()
-        assert {"sla/common.yaml", "sla/it_partner.yaml"} <= set(names) and "src/scorecard/app_support.py" in names
+        assert {"sla/common.yaml", "sla/it_partner.yaml", "sla/ot_partner.yaml", "site/site.yaml"} <= set(names) and "src/scorecard/app_support.py" in names
         assert not any(n.startswith(("tests/", "reports/", "docs/")) for n in names)
         z.extractall(home)
     (home / "streamlit_app.py").write_bytes((site / "streamlit_app.py").read_bytes())
@@ -77,7 +95,7 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     fake = FakeStreamlit()
     monkeypatch.setitem(sys.modules, "streamlit", fake)
     runpy.run_path(str(home / "streamlit_app.py"), run_name="__main__")
-    assert any("Vendor SLA Scorecard" in t for t in fake.texts("title"))
+    assert any("two partners" in t for t in fake.texts("title"))
     import scorecard
     assert str(home) in scorecard.__file__
 

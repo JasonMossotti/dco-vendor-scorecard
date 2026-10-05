@@ -68,7 +68,7 @@ INDEX_HTML = """<!doctype html>
 
 def bundle_members(root: Path) -> list[Path]:
     files = [p for p in (root / "src" / "scorecard").rglob("*.py")]
-    files += sorted((root / "sla").glob("*.yaml")) + [root / "config" / "synthetic.yaml"]
+    files += sorted((root / "sla").glob("*.yaml")) + [root / "config" / "synthetic.yaml", root / "site" / "site.yaml"]
     for ds in ("sample", "latest"):
         d = root / "data" / ds
         if d.exists():

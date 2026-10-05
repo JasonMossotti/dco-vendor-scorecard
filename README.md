@@ -118,6 +118,8 @@ python scripts/run_engine.py --robustness 20    # also test 20 freshly generated
 
 The [demo](https://jasonmossotti.github.io/dco-vendor-scorecard/) runs the whole pipeline in the browser (Python via WebAssembly, no server). You can:
 
+- Open on the **site summary**: both partners side by side, the outage that crossed the demarcation, and what attribution changed for the IT partner.
+- Switch views to the **IT partner (Ridgeline)** or **Landlord (Caprock)** scorecard: reported vs. measured, service levels, findings with evidence, and (for the Landlord) every facility event with its attribution.
 - Switch between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), or a brand-new random month.
 - Drill into each finding's evidence, the corrective action plans, and every incident.
 
