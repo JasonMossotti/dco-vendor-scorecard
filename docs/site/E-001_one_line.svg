@@ -382,7 +382,8 @@
 <text x="1002.0" y="654.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Equipment numbered odd lands on MV-A,</text>
 <text x="1002.0" y="668.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">even on MV-B; the automatic tie covers</text>
 <text x="1002.0" y="682.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">the loss of either 13.8 kV main.</text>
-<text x="1002.0" y="706.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical details: UPS line-up D-301, busway and tap-off D-303.</text>
+<text x="1002.0" y="706.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical details: UPS line-up D-301, mechanical UPS D-302, busway and tap-off D-303.</text>
+<text x="1002.0" y="720.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">and generator D-401.</text>
 <rect x="8.0" y="8.0" width="1992.0" height="804.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="768.0" x2="2000.0" y2="768.0" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="787.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Electrical one-line</text>

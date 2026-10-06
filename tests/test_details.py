@@ -45,7 +45,8 @@ def test_every_part_has_a_source_or_a_stated_assumption(key):
 def test_sheet_numbers_follow_the_drawing_set():
     nums = [s["sheet"] for s in DETAILS["products"].values()]
     assert len(set(nums)) == len(nums)
-    cat = {"compute_rack": "D-1", "cdu": "D-2", "ups": "D-3", "busway": "D-3"}
+    cat = {"compute_rack": "D-1", "cdu": "D-2", "thermal_wall": "D-2", "chiller": "D-2", "ups": "D-3", "busway": "D-3",
+           "generator": "D-4", "smoke_detection": "D-5", "leak_detection": "D-5", "ib_switch": "D-6"}
     site = S.load_site()
     for k, s in DETAILS["products"].items():
         assert s["sheet"].startswith(cat[site["products"][k]["category"]]), k
@@ -85,12 +86,25 @@ def test_sheets_say_they_are_representative(drawn, key):
     assert "(representative)" in words and "not a manufacturer drawing" in words
 
 
+def test_the_leaf_switch_numbers_ports_two_per_cage(drawn):
+    """Port n is the n-th NDR port; cage c holds ports 2c-1 and 2c (stated as assumed on the sheet)."""
+    marks = drawn["D-601"][1]
+    assert len([k for k in marks if k.startswith("port")]) == 64
+    p1, p2, p3 = marks["port1"][0], marks["port2"][0], marks["port3"][0]
+    assert p1[0] == p2[0] and p2[1] > p1[1], "ports 1 and 2 share a cage"
+    assert p3[0] == p1[0] and p3[1] > p2[1], "cage 2 sits below cage 1"
+
+
 def test_site_sheets_point_to_the_details():
     site = S.load_site()
     docs = ROOT / "docs" / "site"
     hall_a = (docs / "A-201_hall_a_plan.svg").read_text(encoding="utf-8")
     assert "Typical details:" in hall_a and "rack D-101" in hall_a and "CDU D-201" in hall_a
-    assert "UPS line-up D-301" in (docs / "E-001_one_line.svg").read_text(encoding="utf-8")
+    e001 = (docs / "E-001_one_line.svg").read_text(encoding="utf-8")
+    assert "UPS line-up D-301" in e001 and "mechanical UPS D-302" in e001 and "generator D-401" in e001
+    assert "leaf switch D-601" in hall_a and "leak detection D-502" in hall_a and "thermal wall D-202" in hall_a
+    assert "rack D-102" in (docs / "A-202_hall_b_plan.svg").read_text(encoding="utf-8")
+    assert "chiller D-203" in (docs / "M-001_cooling_flow.svg").read_text(encoding="utf-8")
     assert "D-101" not in (docs / "A-202_hall_b_plan.svg").read_text(encoding="utf-8"), "Hall B racks are GB300"
     md = (docs / "SITE.md").read_text(encoding="utf-8")
     for spec in DETAILS["products"].values():
@@ -120,9 +134,22 @@ def test_site_sheets_point_to_the_details():
     ("BW-B-R3-PG-B4-B|Hall B", "Busway undervoltage", ("BW-B-R3-PG-B4-B", "feed-cpm")),
     ("BW-B-R3-PG-B4-B|Hall B", "Tenant whip fault on rack B21; Landlord equipment healthy", ("BW-B-R3-PG-B4-B", "cord")),
     ("TO-A07-B", "", None),                                       # a tap-off with nothing said about it
-    ("leaf-a07-r1 port 18|Hall A, rack A13", "Fabric link down leaf-a07-r1 port 18 to a13-ct18: link down", None),
-    ("B07", "PSU failed PSU 5 in B07 power shelf 1", None),      # GB300: its sheet comes later
-    ("MUPS-A1|Hall A electrical room", "UPS on battery", None),  # Galaxy VL: its sheet comes later
+    # a unit the site plans do not show: its sheet opens, never a part of the recorded location (rack A13)
+    ("leaf-a07-r1 port 18|Hall A, rack A13", "Fabric link down leaf-a07-r1 port 18 to a13-ct18: link down",
+     ("leaf-a07-r1", "port18")),
+    ("TTDM-A|Hall A", "Leak circuit 8 at 13.2 m", ("TTDM-A", "c8")),
+    ("B07", "PSU failed PSU 5 in B07 power shelf 1", ("B07", "ps1-psu5")),
+    ("b03-ct09", "GPU error (XID)", ("B03", "ct9")),
+    ("MUPS-A1|Hall A electrical room", "UPS on battery", ("MUPS-A1", "battery")),
+    ("TW-A4|Hall A", "Fan 6 failure", ("TW-A4", "fan6")),
+    ("TW-B2|Hall B", "Alarm inhibited: High supply air temperature alarm = Inhibited", ("TW-B2", "sat")),
+    ("CH-08|Chiller yard", "Compressor trip (high condenser pressure)", ("CH-08", "compressor")),
+    ("CH-05|Chiller yard", "Condenser fan fault", ("CH-05", "fans")),
+    ("CH-06|Chiller yard", "Point override: Chiller enable = Off", ("CH-06", "controller")),
+    ("VESDA-B2|Hall B electrical room", "Detector fault: airflow low", ("VESDA-B2", "inlets")),
+    ("VESDA-B1|Hall B", "Smoke alarm VESDA-B1 smoke alarm Fire 1 (Smoke test)", ("VESDA-B1", "chamber")),
+    ("VESDA-B1|Hall B", "Detector isolated VESDA-B1 isolated (Inspection)", ("VESDA-B1", "display")),
+    ("MV switchgear|Central plant", "Utility power lost", None),   # no product sheet for the switchgear
 ])
 def test_alarm_text_names_the_part(value, text, expected):
     assert L.resolve_field_part(L.load(), value, text) == expected
@@ -136,7 +163,8 @@ def test_every_sample_alarm_on_a_detailed_product_names_a_part():
     assert checked > 50 and not missing, missing
     tickets = [{"device": k["device"], "location": k["location"], "signal": "", "summary": k["summary"]} for k in f["tickets"]]
     checked, missing = L.part_coverage(L.load(), tickets)
-    assert checked > 20 and not missing, missing
+    # a ticket's summary is the engineer's words; this one is about the whole chiller (a reset), not a part
+    assert checked > 20 and missing == ["CH-05:  (Engineer attended and reset the unit)"], missing
 
 
 def test_every_part_a_point_can_name_exists():
@@ -158,6 +186,8 @@ def test_cards_put_the_detail_sheet_first():
     assert title == "Busway BW-B-R3-PG-B4-B · UPS-B4 output feeder breakers to the busways"
     assert views[0][0]["s"] == "D-301" and views[0][1] == "UPS-B4 · Output feeder breakers to the busways"
     assert views[-1][0]["s"] == "D-303", "the busway's own detail sheet stays, last"
+    title, views = L.card(data, "A13", ("leaf-a07-r1", "port18"))
+    assert title == "Rack A13 · leaf-a07-r1 port 18" and views[0][0]["s"] == "D-601" and views[1][0]["s"] == "A-201"
     _, views = L.card(data, "A07", None)
     assert views[-1][0]["s"] == "D-101" and views[0][0]["s"] == "A-201", "without a part, the site sheets lead"
 

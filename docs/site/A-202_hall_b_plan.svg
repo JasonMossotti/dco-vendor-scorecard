@@ -209,8 +209,12 @@
 <text x="840.2" y="414.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">modules (see sheet E-001).</text>
 <text x="840.2" y="428.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal"></text>
 <text x="840.2" y="442.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical details:</text>
-<text x="840.2" y="456.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  CDU D-201</text>
-<text x="840.2" y="470.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  busway and tap-off D-303</text>
+<text x="840.2" y="456.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  rack D-102</text>
+<text x="840.2" y="470.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  CDU D-201</text>
+<text x="840.2" y="484.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  thermal wall D-202</text>
+<text x="840.2" y="498.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  busway and tap-off D-303</text>
+<text x="840.2" y="512.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  VESDA detector D-501</text>
+<text x="840.2" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  leak detection D-502</text>
 <rect x="8.0" y="8.0" width="1120.2" height="881.2" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="845.2" x2="1128.2" y2="845.2" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="864.2" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Hall B floor plan</text>

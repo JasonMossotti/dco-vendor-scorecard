@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="940" viewBox="0 0 1400 940">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="50.0" y="90.0" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="start" fill="#1e2933" font-weight="bold">SIDE ELEVATION (ENCLOSURE OMITTED)</text>
+<rect x="50.0" y="560.0" width="900.0" height="90.0" rx="0" fill="#fff3d6" stroke="#1e2933" stroke-width="1.0"/>
+<text x="500.0" y="608.6" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Sub-base fuel tank</text>
+<line x1="60.0" y1="640.0" x2="940.0" y2="640.0" stroke="#0f9d8a" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="940.0" y="668.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="end" fill="#0f9d8a" font-weight="normal">Tank leak cable</text>
+<rect x="60.0" y="260.0" width="120.0" height="300.0" rx="0" fill="#e3eef8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="120.0" y="413.6" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Radiator</text>
+<rect x="200.0" y="310.0" width="380.0" height="250.0" rx="0" fill="#e9edf1" stroke="#1e2933" stroke-width="1.4"/>
+<rect x="220.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<rect x="264.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<rect x="308.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<rect x="352.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<rect x="396.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<rect x="440.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<rect x="484.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<rect x="528.0" y="324.0" width="34.0" height="50.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0"/>
+<text x="390.0" y="450.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e2933" font-weight="bold">C175-16 engine</text>
+<text x="390.0" y="466.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">16 cylinders, turbocharged</text>
+<rect x="600.0" y="340.0" width="200.0" height="220.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.4"/>
+<circle cx="700.0" cy="450.0" r="70" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="700.0" y="454.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e2933" font-weight="bold">Alternator</text>
+<rect x="820.0" y="300.0" width="120.0" height="260.0" rx="0" fill="#f4f6f8" stroke="#1e2933" stroke-width="1.4"/>
+<rect x="864.0" y="368.0" width="32.0" height="44.0" rx="2" fill="#eef1f4" stroke="#1e2933" stroke-width="1.2"/>
+<rect x="875.0" y="378.0" width="10.0" height="24.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="0.8"/>
+<rect x="876.0" y="379.0" width="8.0" height="10.0" rx="0" fill="#1e2933" stroke="#1e2933" stroke-width="0.5"/>
+<text x="880.0" y="440.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e2933" font-weight="bold">Breaker</text>
+<line x1="880.0" y1="300.0" x2="880.0" y2="180.0" stroke="#1e2933" stroke-width="3"/>
+<text x="870.0" y="190.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="end" fill="#1e2933" font-weight="normal">13.8 kV to the paralleling bus</text>
+<rect x="610.0" y="190.0" width="130.0" height="90.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<rect x="630.0" y="200.0" width="90.0" height="36.0" rx="0" fill="#cfe0ee" stroke="#6b7785" stroke-width="0.6"/>
+<text x="675.0" y="258.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">EMCP 4.4</text>
+<line x1="675.0" y1="280.0" x2="675.0" y2="340.0" stroke="#6b7785" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="60.0" y1="240.0" x2="180.0" y2="240.0" stroke="#6b7785" stroke-width="1"/>
+<text x="120.0" y="234.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">air out</text>
+<text x="1010.0" y="60.0" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="start" fill="#1e2933" font-weight="bold">Alarm points on this sheet</text>
+<text x="1010.0" y="80.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">EMCP 4.4 panel</text>
+<text x="1020.0" y="94.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Engine state, kW, percent of rated (readings)</text>
+<text x="1020.0" y="108.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">(Modbus TCP)</text>
+<text x="1010.0" y="127.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Generator breaker</text>
+<text x="1020.0" y="141.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Breaker open or closed to the paralleling bus (EPMS)</text>
+<text x="1010.0" y="160.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Fuel tank</text>
+<text x="1020.0" y="174.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Fuel level; tank leak (TraceTek cable) (BMS)</text>
+<text x="1010.0" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="start" fill="#1e2933" font-weight="bold">Notes</text>
+<text x="1010.0" y="221.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Representative drawing from public product</text>
+<text x="1010.0" y="235.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">information; not a manufacturer drawing. Typical of</text>
+<text x="1010.0" y="249.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">every instance on the site: the popup names the</text>
+<text x="1010.0" y="263.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">instance.</text>
+<text x="1010.0" y="287.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Representative package layout: radiator, engine,</text>
+<text x="1010.0" y="301.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">alternator, and breaker in line on a sub-base fuel</text>
+<text x="1010.0" y="315.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">tank. Enclosure omitted for clarity.</text>
+<text x="1010.0" y="339.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Sources and assumptions for every part:</text>
+<text x="1010.0" y="353.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">site/details.yaml.</text>
+<rect x="8.0" y="8.0" width="1384.0" height="924.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
+<line x1="8.0" y1="888.0" x2="1392.0" y2="888.0" stroke="#1e2933" stroke-width="1.4"/>
+<text x="20.0" y="907.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Cat C175-16 generator set, side elevation (representative)</text>
+<text x="20.0" y="925.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Not to scale  |  Schematic, not for construction</text>
+<line x1="1280.0" y1="888.0" x2="1280.0" y2="932.0" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1336.0" y="909.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
+<text x="1336.0" y="928.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">D-401</text>
+</svg>

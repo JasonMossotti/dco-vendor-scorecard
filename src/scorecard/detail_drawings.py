@@ -11,6 +11,7 @@ public product information, not manufacturer drawings; each sheet says so, and
 
 from __future__ import annotations
 
+import math
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -451,8 +452,309 @@ def busway(spec: dict[str, Any], marks: dict | None = None) -> str:
     return svg.done(marks)
 
 
-DRAWERS = {"gb200_nvl72": rack_elevation, "coolit_chx2000": cdu, "galaxy_vx_1500": ups_lineup,
-           "starline_1200t5": busway}
+# --------------------------------------------------------------------------- #
+# D-202 Liebert CWA thermal wall
+# --------------------------------------------------------------------------- #
+def fan(svg: Svg, cx: float, cy: float, r: float = 44) -> None:
+    svg.circle(cx, cy, r, fill=PAPER)
+    svg.circle(cx, cy, r * 0.22, fill=FAINT)
+    for k in range(5):
+        a = k * 2 * math.pi / 5
+        svg.line(cx + r * 0.25 * math.cos(a), cy + r * 0.25 * math.sin(a), cx + r * 0.85 * math.cos(a + 0.5),
+                 cy + r * 0.85 * math.sin(a + 0.5), stroke=MUTED, sw=1.4)
+
+
+def thermal_wall(spec: dict[str, Any], marks: dict | None = None) -> str:
+    svg = Svg(W, H)
+    top = 110
+    fx, fw, fh = 60, 420, 600
+    svg.text(fx + fw / 2, top - 28, "FRONT (DATA HALL SIDE)", size=13, anchor="middle", weight="bold")
+    svg.rect(fx, top, fw, fh, fill="#f4f6f8", stroke=INK, sw=1.6)
+    svg.rect(fx, top + fh, fw, 10, fill=INK, stroke=INK)
+    svg.mark("device", fx, top, fw, fh + 10)
+    for k in range(1, 7):
+        r_, c_ = (k - 1) // 3, (k - 1) % 3
+        x, y = fx + 20 + c_ * 130, top + 40 + r_ * 170
+        svg.rect(x, y, 120, 150, fill=PAPER, stroke=INK)
+        fan(svg, x + 60, y + 62)
+        svg.text(x + 60, y + 136, f"Fan {k}", size=11, anchor="middle", weight="bold")
+        svg.mark(f"fan{k}", x, y, 120, 150)
+    sx, sy = fx + 150, top + 410
+    svg.rect(sx, sy, 120, 40, fill=PAPER, stroke=INK)
+    svg.circle(sx + 18, sy + 20, 6, fill=SUPPLY, stroke=INK)
+    svg.text(sx + 70, sy + 25, "Supply air sensor", size=9, anchor="middle", weight="bold")
+    svg.mark("sat", sx, sy, 120, 40)
+    _tagged(svg, "controller", fx + 290, top + 480, 110, 90, "iCOM", fill="#e9edf1", weight="bold")
+    svg.text(fx + 120, top + 520, "Air to the cold aisle", size=10, anchor="middle", fill=MUTED)
+    svg.line(fx + 60, top + 535, fx + 180, top + 535, stroke=SUPPLY, sw=2)
+    svg.poly([(fx + 172, top + 530), (fx + 182, top + 535), (fx + 172, top + 540)], stroke=SUPPLY, sw=2)
+    # section: hot air in, filters, coil, fans, cold air out
+    sx0, sw_ = 600, 320
+    svg.text(sx0 + sw_ / 2, top - 28, "SECTION (AIR FLOWS RIGHT TO LEFT)", size=13, anchor="middle", weight="bold")
+    svg.rect(sx0, top, sw_, fh, fill="#f4f6f8", stroke=INK, sw=1.6)
+    svg.rect(sx0, top + fh, sw_, 10, fill=INK, stroke=INK)
+    svg.mark("device", sx0, top, sw_, fh + 10)
+    svg.rect(sx0 + 250, top + 30, 50, 480, fill="#eef1f4", stroke=INK)
+    svg.mark("filters", sx0 + 250, top + 30, 50, 480)
+    for k in range(9):
+        svg.line(sx0 + 255, top + 50 + k * 52, sx0 + 295, top + 74 + k * 52, stroke=MUTED, sw=0.8)
+    svg.rect(sx0 + 252, top + 255, 46, 18, fill=PAPER, stroke="none")
+    svg.text(sx0 + 275, top + 268, "Filters", size=9, anchor="middle", weight="bold")
+    svg.rect(sx0 + 160, top + 30, 60, 480, fill=EQUIP, stroke=INK)
+    for k in range(24):
+        svg.line(sx0 + 164, top + 40 + k * 20, sx0 + 216, top + 40 + k * 20, stroke="#9fb9a9", sw=1)
+    svg.rect(sx0 + 162, top + 230, 56, 46, fill=PAPER, stroke="none")
+    svg.text(sx0 + 190, top + 249, "Coil", size=10, anchor="middle", weight="bold")
+    svg.text(sx0 + 190, top + 263, "chilled water", size=7, anchor="middle", fill=MUTED)
+    svg.mark("coil", sx0 + 160, top + 30, 60, 480)
+    for k in range(2):
+        fan(svg, sx0 + 70, top + 140 + k * 220, r=40)
+    svg.text(sx0 + 70, top + 270, "Fans", size=10, anchor="middle", fill=MUTED)
+    svg.rect(sx0 + 150, top + 530, 100, 54, fill=PAPER, stroke=INK)
+    svg.poly([(sx0 + 175, top + 542), (sx0 + 225, top + 562), (sx0 + 225, top + 542), (sx0 + 175, top + 562), (sx0 + 175, top + 542)], sw=1.2)
+    svg.text(sx0 + 200, top + 578, "Valve", size=9, anchor="middle", weight="bold")
+    svg.mark("valve", sx0 + 150, top + 530, 100, 54)
+    svg.line(sx0 + 175, top + 530, sx0 + 175, top + 510, stroke=SUPPLY, sw=3)
+    svg.line(sx0 + 205, top + 510, sx0 + 205, top + fh + 40, stroke=RETURN, sw=3)
+    svg.line(sx0 + 175, top + 584, sx0 + 175, top + fh + 40, stroke=SUPPLY, sw=3)
+    svg.text(sx0 + 150, top + fh + 54, "Facility water from below", size=9, anchor="middle", fill=MUTED)
+    svg.text(sx0 + sw_ + 10, top + 300, "Hot air", size=10, fill=RETURN)
+    svg.text(sx0 + sw_ + 10, top + 314, "from the", size=10, fill=RETURN)
+    svg.text(sx0 + sw_ + 10, top + 328, "gallery", size=10, fill=RETURN)
+    svg.text(sx0 - 10, top + 300, "To the hall", size=10, anchor="end", fill=SUPPLY)
+    notes(svg, spec)
+    frame(svg, spec["sheet"], spec["title"] + " (representative)", "Not to scale")
+    return svg.done(marks)
+
+
+# --------------------------------------------------------------------------- #
+# D-203 Liebert AFC chiller
+# --------------------------------------------------------------------------- #
+def chiller(spec: dict[str, Any], marks: dict | None = None) -> str:
+    svg = Svg(W, H)
+    x0, y0, cw, ch = 60, 170, 880, 420
+    svg.text(x0, 90, "SIDE ELEVATION", size=13, weight="bold")
+    svg.rect(x0, y0, cw, ch, fill="#f4f6f8", stroke=INK, sw=1.6)
+    svg.rect(x0, y0 + ch, cw, 10, fill=INK, stroke=INK)
+    svg.mark("device", x0, y0 - 60, cw, ch + 70)
+    # fans on top
+    svg.rect(x0 + 20, y0 - 60, cw - 40, 60, fill=PAPER, stroke=INK)
+    for k in range(8):
+        cx = x0 + 70 + k * 105
+        svg.rect(cx - 40, y0 - 52, 80, 12, fill=FAINT, stroke=MUTED, sw=0.6)
+    svg.rect(x0 + cw / 2 - 60, y0 - 34, 120, 22, fill=PAPER, stroke="none")
+    svg.text(x0 + cw / 2, y0 - 18, "Condenser fans", size=10, anchor="middle", weight="bold")
+    svg.mark("fans", x0 + 20, y0 - 60, cw - 40, 60)
+    # V coils: condenser (outer) and free-cooling (inner)
+    _tagged(svg, "fc-coil", x0 + 20, y0 + 10, cw - 40, 60, "Free-cooling coil", fill="#e3eef8", weight="bold")
+    _tagged(svg, "condenser", x0 + 20, y0 + 80, cw - 40, 60, "Condenser coil", fill=EQUIP, weight="bold")
+    # machinery
+    my = y0 + 170
+    svg.rect(x0 + 20, my, 300, 220, fill=PAPER, stroke=INK)
+    svg.rect(x0 + 60, my + 40, 200, 110, fill="#e9edf1", stroke=INK, rx=40)
+    svg.text(x0 + 170, my + 190, "Compressor", size=11, anchor="middle", weight="bold")
+    svg.text(x0 + 170, my + 206, "inverter-driven screw", size=9, anchor="middle", fill=MUTED)
+    svg.mark("compressor", x0 + 20, my, 300, 220)
+    svg.rect(x0 + 340, my + 40, 360, 110, fill=PAPER, stroke=INK, rx=50)
+    svg.text(x0 + 520, my + 100, "Evaporator", size=11, anchor="middle", weight="bold")
+    svg.mark("evaporator", x0 + 340, my + 40, 360, 110)
+    svg.line(x0 + 700, my + 70, x0 + cw + 60, my + 70, stroke=RETURN, sw=4)
+    svg.line(x0 + 700, my + 120, x0 + cw + 60, my + 120, stroke=SUPPLY, sw=4)
+    svg.text(x0 + cw + 64, my + 66, "Facility water return in", size=9, fill=RETURN)
+    svg.text(x0 + cw + 64, my + 132, "Facility water supply out", size=9, fill=SUPPLY)
+    _tagged(svg, "controller", x0 + 730, my + 160, 120, 50, "iCOM", fill="#e9edf1", weight="bold")
+    notes(svg, spec)
+    frame(svg, spec["sheet"], spec["title"] + " (representative)", "Not to scale")
+    return svg.done(marks)
+
+
+# --------------------------------------------------------------------------- #
+# D-302 Galaxy VL
+# --------------------------------------------------------------------------- #
+def ups_vl(spec: dict[str, Any], marks: dict | None = None) -> str:
+    svg = Svg(W, H)
+    top, ch = 130, 600
+    x = 120
+    svg.text(x, top - 44, "FRONT ELEVATION", size=13, weight="bold")
+    uw = 300
+    svg.rect(x, top, uw, ch, fill="#e9edf1", stroke=INK, sw=1.6)
+    svg.rect(x, top + ch, uw, 10, fill=INK, stroke=INK)
+    svg.mark("device", x, top, uw, ch + 10)
+    _tagged(svg, "nmc", x + 20, top + 20, 120, 70, "Display and NMC", fill=PAPER, size=9)
+    _tagged(svg, "static", x + 160, top + 20, 120, 70, "Static switch", fill=PAPER, size=9)
+    for k in range(1, 7):
+        y = top + 110 + (k - 1) * 72
+        svg.rect(x + 20, y, uw - 40, 62, fill=EQUIP, stroke=INK)
+        for r in range(4):
+            svg.line(x + 120, y + 14 + r * 11, x + uw - 40, y + 14 + r * 11, stroke="#9fb9a9")
+        svg.text(x + 34, y + 36, f"PM {k}", size=11, weight="bold")
+        svg.text(x + 34, y + 50, "50 kW", size=8, fill=MUTED)
+        svg.mark(f"pm{k}", x + 20, y, uw - 40, 62)
+    svg.text(x + uw / 2, top + ch - 18, "Galaxy VL 300 kW", size=10, anchor="middle", fill=MUTED)
+    bx = x + uw + 40
+    svg.rect(bx, top, 200, ch, fill="#eef4ea", stroke=INK, sw=1.4)
+    svg.rect(bx, top + ch, 200, 10, fill=INK, stroke=INK)
+    for r in range(12):
+        svg.rect(bx + 20, top + 20 + r * 44, 160, 34, fill=PAPER, stroke=FAINT)
+    svg.rect(bx + 20, top + ch - 46, 160, 30, fill=PAPER, stroke=INK)
+    svg.text(bx + 100, top + ch - 26, "Battery cabinet", size=10, anchor="middle", weight="bold")
+    svg.mark("battery", bx, top, 200, ch)
+    svg.text(x, top + ch + 46, "Loads: CDU pumps and thermal-wall fans (2N, with the other mechanical UPS).", size=10, fill=MUTED)
+    notes(svg, spec)
+    frame(svg, spec["sheet"], spec["title"] + " (representative)", "Not to scale")
+    return svg.done(marks)
+
+
+# --------------------------------------------------------------------------- #
+# D-401 Cat C175-16 generator set
+# --------------------------------------------------------------------------- #
+def generator(spec: dict[str, Any], marks: dict | None = None) -> str:
+    svg = Svg(W, H)
+    x0, base = 50, 560
+    svg.text(x0, 90, "SIDE ELEVATION (ENCLOSURE OMITTED)", size=13, weight="bold")
+    _tagged(svg, "tank", x0, base, 900, 90, "Sub-base fuel tank", fill="#fff3d6", weight="bold")
+    svg.mark("device", x0, base - 370, 900, 460)
+    svg.line(x0 + 10, base + 80, x0 + 890, base + 80, stroke=LEAK, sw=2, dash="6 3")
+    svg.text(x0 + 890, base + 108, "Tank leak cable", size=9, anchor="end", fill=LEAK)
+    _tagged(svg, "radiator", x0 + 10, base - 300, 120, 300, "Radiator", fill="#e3eef8", weight="bold")
+    svg.rect(x0 + 150, base - 250, 380, 250, fill="#e9edf1", stroke=INK, sw=1.4)
+    for k in range(8):
+        svg.rect(x0 + 170 + k * 44, base - 236, 34, 50, fill=PAPER, stroke=FAINT)
+    svg.text(x0 + 340, base - 110, "C175-16 engine", size=11, anchor="middle", weight="bold")
+    svg.text(x0 + 340, base - 94, "16 cylinders, turbocharged", size=9, anchor="middle", fill=MUTED)
+    svg.mark("engine", x0 + 150, base - 250, 380, 250)
+    svg.rect(x0 + 550, base - 220, 200, 220, fill=EQUIP, stroke=INK, sw=1.4)
+    svg.circle(x0 + 650, base - 110, 70, fill=PAPER)
+    svg.text(x0 + 650, base - 106, "Alternator", size=11, anchor="middle", weight="bold")
+    svg.mark("alternator", x0 + 550, base - 220, 200, 220)
+    svg.rect(x0 + 770, base - 260, 120, 260, fill="#f4f6f8", stroke=INK, sw=1.4)
+    big_breaker(svg, x0 + 830, base - 170)
+    svg.text(x0 + 830, base - 120, "Breaker", size=11, anchor="middle", weight="bold")
+    svg.mark("breaker", x0 + 770, base - 260, 120, 260)
+    svg.line(x0 + 830, base - 260, x0 + 830, base - 380, stroke=INK, sw=3)
+    svg.text(x0 + 820, base - 370, "13.8 kV to the paralleling bus", size=10, anchor="end")
+    svg.rect(x0 + 560, base - 370, 130, 90, fill=PAPER, stroke=INK)
+    svg.rect(x0 + 580, base - 360, 90, 36, fill="#cfe0ee", stroke=MUTED, sw=0.6)
+    svg.text(x0 + 625, base - 302, "EMCP 4.4", size=10, anchor="middle", weight="bold")
+    svg.mark("emcp", x0 + 560, base - 370, 130, 90)
+    svg.line(x0 + 625, base - 280, x0 + 625, base - 220, stroke=MUTED, sw=1, dash="3 3")
+    svg.line(x0 + 10, base - 320, x0 + 130, base - 320, stroke=MUTED, sw=1)
+    svg.text(x0 + 70, base - 326, "air out", size=9, anchor="middle", fill=MUTED)
+    notes(svg, spec)
+    frame(svg, spec["sheet"], spec["title"] + " (representative)", "Not to scale")
+    return svg.done(marks)
+
+
+# --------------------------------------------------------------------------- #
+# D-501 VESDA-E VEP
+# --------------------------------------------------------------------------- #
+def vesda(spec: dict[str, Any], marks: dict | None = None) -> str:
+    svg = Svg(W, H)
+    x0, y0 = 120, 230
+    svg.text(x0, 90, "DETECTOR, FRONT", size=13, weight="bold")
+    svg.rect(x0, y0, 360, 420, fill="#f4f6f8", stroke=INK, sw=1.6, rx=8)
+    svg.mark("device", x0, y0 - 70, 360, 490)
+    svg.rect(x0 + 20, y0 - 70, 320, 70, fill=PAPER, stroke=INK)
+    for k in range(4):
+        cx = x0 + 60 + k * 80
+        svg.rect(cx - 14, y0 - 60, 28, 50, fill=EQUIP, stroke=INK)
+        svg.text(cx, y0 - 66, str(k + 1), size=9, anchor="middle", fill=MUTED)
+    svg.rect(x0 + 120, y0 - 30, 120, 18, fill=PAPER, stroke="none")
+    svg.text(x0 + 180, y0 - 17, "Pipe inlets", size=10, anchor="middle", weight="bold")
+    svg.mark("inlets", x0 + 20, y0 - 70, 320, 70)
+    _tagged(svg, "display", x0 + 90, y0 + 30, 180, 110, "Display", fill="#cfe0ee", weight="bold")
+    _tagged(svg, "chamber", x0 + 30, y0 + 170, 140, 100, "Detection chamber", fill=PAPER, size=9, weight="bold")
+    _tagged(svg, "filter", x0 + 190, y0 + 170, 140, 100, "Filter", fill=PAPER, weight="bold")
+    _tagged(svg, "aspirator", x0 + 90, y0 + 300, 180, 90, "Aspirator", fill=PAPER, weight="bold")
+    # sampling pipe
+    py = 200
+    svg.text(560, 90, "SAMPLING PIPE (ONE OF FOUR)", size=13, weight="bold")
+    svg.poly([(x0 + 60, y0 - 70), (x0 + 60, py - 40), (940, py - 40)], stroke="#7a4fd0", sw=4)
+    for k in range(8):
+        svg.circle(560 + k * 50, py - 40, 4, fill=PAPER, stroke="#7a4fd0", sw=1.4)
+    svg.rect(540, py - 72, 400, 60, fill="none", stroke="none")
+    svg.text(740, py - 54, "Sampling pipe", size=10, anchor="middle", weight="bold")
+    svg.mark("pipe", 540, py - 72, 400, 60)
+    svg.text(740, py - 4, "Sampling holes along each cold aisle (sheet A-201)", size=9, anchor="middle", fill=MUTED)
+    svg.text(560, 480, "Air drawn in through the holes, through the filter to the chamber; the", size=10, fill=MUTED)
+    svg.text(560, 494, "flow sensor on each inlet raises a flow fault when its pipe is blocked.", size=10, fill=MUTED)
+    notes(svg, spec)
+    frame(svg, spec["sheet"], spec["title"] + " (representative)", "Not to scale")
+    return svg.done(marks)
+
+
+# --------------------------------------------------------------------------- #
+# D-502 TraceTek leak detection
+# --------------------------------------------------------------------------- #
+def leak(spec: dict[str, Any], marks: dict | None = None) -> str:
+    svg = Svg(W, H)
+    svg.text(60, 80, "CONTROLLER AND CIRCUITS (TYPICAL HALL)", size=13, weight="bold")
+    cx, cy = 60, 120
+    svg.rect(cx, cy, 200, 520, fill="#f4f6f8", stroke=INK, sw=1.6)
+    svg.rect(cx + 20, cy + 20, 160, 60, fill="#cfe0ee", stroke=MUTED)
+    svg.text(cx + 100, cy + 104, "TTDM-128", size=12, anchor="middle", weight="bold")
+    svg.mark("controller", cx, cy, 200, 520)
+    svg.mark("device", cx, cy, 200, 520)
+    for k in range(1, 9):
+        y = cy + 150 + (k - 1) * 44
+        svg.rect(cx + 120, y, 80, 30, fill=PAPER, stroke=INK)
+        svg.text(cx + 160, y + 19, f"C{k}", size=9, anchor="middle")
+        x1 = 360
+        svg.line(cx + 200, y + 15, x1, y + 15, stroke=MUTED, sw=1)
+        label = f"along row {k} manifolds" if k <= 4 else f"under CDU {k - 4}"
+        svg.rect(x1, y, 560, 32, fill=PAPER, stroke=INK)
+        svg.line(x1 + 110, y + 16, x1 + 540, y + 16, stroke=LEAK, sw=2.4, dash="6 3")
+        for m in range(0, 21, 5):
+            mx = x1 + 110 + m * 21.5
+            svg.line(mx, y + 9, mx, y + 23, stroke=INK, sw=0.8)
+            svg.text(mx, y + 31, f"{m} m", size=7, anchor="middle", fill=MUTED)
+        svg.text(x1 + 8, y + 14, f"Circuit {k}", size=10, weight="bold")
+        svg.text(x1 + 8, y + 27, label, size=8, fill=MUTED)
+        svg.mark(f"c{k}", x1, y, 560, 32)
+    svg.text(360, cy + 530, "Distance marks run from the start of each cable; the controller reports the leak's", size=10, fill=MUTED)
+    svg.text(360, cy + 544, "circuit and distance (\"Leak circuit 8 at 13.2 m\").", size=10, fill=MUTED)
+    notes(svg, spec)
+    frame(svg, spec["sheet"], spec["title"] + " (representative)", "Not to scale")
+    return svg.done(marks)
+
+
+# --------------------------------------------------------------------------- #
+# D-601 Quantum-2 QM9700
+# --------------------------------------------------------------------------- #
+def leaf_switch(spec: dict[str, Any], marks: dict | None = None) -> str:
+    svg = Svg(W, H)
+    x0, y0, sw_, sh = 40, 200, 940, 170
+    svg.text(x0, 120, "PORT SIDE (1U, SHOWN ENLARGED)", size=13, weight="bold")
+    svg.rect(x0, y0, sw_, sh, fill="#e9edf1", stroke=INK, sw=1.6)
+    svg.mark("device", x0, y0, sw_, sh)
+    cw = 52
+    for c in range(1, 33):
+        col, row = (c - 1) // 2, (c - 1) % 2
+        x, y = x0 + 20 + col * cw, y0 + 20 + row * 72
+        svg.rect(x, y, cw - 6, 62, fill="#c3cbd4", stroke=INK, sw=0.8)
+        for k, p in enumerate((2 * c - 1, 2 * c)):
+            _tagged(svg, f"port{p}", x + 3, y + 3 + k * 29, cw - 12, 27, str(p), fill=PAPER, size=8, sw=0.6)
+    _tagged(svg, "mgmt", x0 + 20 + 16 * cw + 4, y0 + 30, 60, 110, "MGMT", fill=PAPER, size=9, weight="bold")
+    svg.text(x0 + sw_ / 2, y0 + sh + 22, "32 OSFP cages, two 400 Gb/s NDR ports each (64 ports)", size=10, anchor="middle", fill=MUTED)
+    ry = 520
+    svg.text(x0, ry - 30, "POWER SIDE", size=13, weight="bold")
+    svg.rect(x0, ry, sw_, 120, fill="#e9edf1", stroke=INK, sw=1.6)
+    svg.mark("device", x0, ry, sw_, 120)
+    _tagged(svg, "psu", x0 + 20, ry + 20, 160, 80, "PSU", fill=PS_FILL, weight="bold")
+    svg.rect(x0 + 200, ry + 20, 720, 80, fill=PAPER, stroke=INK)
+    for k in range(7):
+        fan(svg, x0 + 250 + k * 100, ry + 56, r=26)
+    svg.text(x0 + 560, ry + 96, "Fans", size=10, anchor="middle", weight="bold")
+    svg.mark("fans", x0 + 200, ry + 20, 720, 80)
+    notes(svg, spec, y=60, x=1010)
+    frame(svg, spec["sheet"], spec["title"] + " (representative)", "Not to scale")
+    return svg.done(marks)
+
+
+DRAWERS = {"gb200_nvl72": rack_elevation, "gb300_nvl72": rack_elevation, "coolit_chx2000": cdu,
+           "liebert_cwa_400": thermal_wall, "liebert_afc_1500": chiller, "galaxy_vx_1500": ups_lineup,
+           "galaxy_vl_300": ups_vl, "starline_1200t5": busway, "cat_c175_16": generator, "vesda_e_vep": vesda,
+           "tracetek_ttdm128": leak, "quantum2_qm9700": leaf_switch}
 
 
 def detail_sheets(marks: dict | None = None) -> list[tuple[str, str, str, str]]:

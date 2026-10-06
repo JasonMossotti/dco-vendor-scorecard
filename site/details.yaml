@@ -123,6 +123,179 @@ products:
       - {id: "to-cpm", tag: "Meter", label: "Critical Power Monitor in the tap-off (current, breaker position)", basis: [cpm]}
       - {id: "cord", tag: "Cord to rack", label: "Cord to the rack's power shelves", basis: "assumption: one 3-phase cord per tap-off to the rack's AC inputs"}
 
+  gb300_nvl72:
+    sheet: D-102
+    title: "GB300 NVL72 rack, front and rear elevation"
+    sources:
+      nvidia: {url: "https://docs.nvidia.com/mission-control/docs/rack-bring-up-install/2.2.0/config-for-provisioning/gb200-rack-verification-checklist.html",
+               says: "GB200/GB300 rack checklist: 18 compute trays, 9 NVLink switch trays, and 8 power shelves per rack"}
+      lenovo_front: {url: "https://pubs.lenovo.com/gb300-nvl72/rack_front_view",
+                     says: "GB300 NVL72 front view: two management switches, six or eight power shelves of up to 33 kW, eighteen compute trays, nine NVLink switch trays, one leakage drip pan"}
+      lenovo_rear: {url: "https://pubs.lenovo.com/gb300-nvl72/rack_rear_view",
+                    says: "Rear view: busbar, cable cartridges joining compute and switch trays, manifold connectors"}
+      sth: {url: "https://www.servethehome.com/?p=76755",
+            says: "NVL72 top to bottom: switches, ten compute trays, nine NVLink switch trays, eight compute trays"}
+    alarm_points:
+      - ["Compute tray n", "GPU error (XID)", "DCGM via the Telemetry of Record"]
+      - ["NVLink switch tray n", "Switch tray failed", "NMX and Redfish"]
+      - ["Power shelf n, PSU m", "PSU or power shelf failed", "Redfish"]
+      - ["Rack manifold", "Rack leak detected", "Redfish"]
+      - ["Drip pan leak rope", "Rack leak detected", "CDU (Redfish)"]
+      - ["AC inputs", "Rack input power lost (both feeds)", "BMS"]
+    order_note: "Same structure as the GB200 NVL72 (sheet D-101); eight power shelves, as this site's 132 kW racks use. Tray order from public descriptions; numbering top to bottom and the split of power shelves are assumed."
+    parts:
+      - {id: "mgmt", tag: "MGMT", label: "Management switches", basis: [lenovo_front]}
+      - {id: "ps{n}", n: [1, 8], tag: "PS {n}", label: "Power shelf {n}", basis: [nvidia, lenovo_front],
+         position: "assumption: shelves 1 to 4 above the trays and 5 to 8 below, numbered top to bottom"}
+      - {id: "ps{n}-psu{m}", n: [1, 8], m: [1, 6], tag: "{m}", label: "PSU {m} in power shelf {n}",
+         basis: "assumption: six PSUs per shelf, as on the GB200 NVL72's 33 kW shelves (Lenovo gives the same 33 kW per shelf)"}
+      - {id: "ct{n}", n: [1, 18], tag: "CT {n}", label: "Compute tray {n}", basis: [nvidia, lenovo_front, sth],
+         position: "assumption: numbered top to bottom, 1 to 10 above the switch trays and 11 to 18 below"}
+      - {id: "nvsw{n}", n: [1, 9], tag: "NVSW {n}", label: "NVLink switch tray {n}", basis: [nvidia, lenovo_front],
+         position: "assumption: numbered top to bottom"}
+      - {id: "drip", tag: "Drip pan and leak rope", label: "Drip pan and leak rope", basis: [lenovo_front],
+         position: "assumption: the leak rope in the drip pan reports through the CDU, as this site's telemetry does"}
+      - {id: "busbar", tag: "Busbar", label: "DC busbar", basis: [lenovo_rear]}
+      - {id: "cartridge", tag: "Cartridges", label: "NVLink cable cartridges", basis: [lenovo_rear]}
+      - {id: "manifold", tag: "Manifold", label: "Rack manifold, supply and return", basis: [lenovo_rear]}
+      - {id: "ac-in", tag: "AC inputs", label: "AC inputs, A and B feeds", basis: [nvidia],
+         position: "assumption: A feed to power shelves 1 to 4, B feed to shelves 5 to 8 (N+N)"}
+
+  liebert_cwa_400:
+    sheet: D-202
+    title: "Liebert CWA thermal wall, front and section"
+    sources:
+      vertiv_spec: {url: "https://www.vertiv.com/globalassets/products/thermal-management/room-cooling/vertiv-liebert-cwa-en-guide-specifications-emea_rev.01_jan2023.pdf",
+                    says: "Variable-speed EC fans; chilled water coil with condensate drain pan; 2-way modulating or pressure-independent valve with actuator; ePM10 filters with optional clogged-filter detection; supply air NTC sensors; Liebert iCOM controller with touchscreen; fans, valves, and filters replaceable without removing other parts"}
+    alarm_points:
+      - ["Fan n", "Fan failure", "BMS"]
+      - ["Supply air sensor", "High supply air temperature; alarm inhibited", "BMS"]
+    order_note: "Six fans, numbered as the BMS numbers them, left to right and top to bottom (assumed). Coil, valve, and filter positions are representative."
+    parts:
+      - {id: "fan{n}", n: [1, 6], tag: "Fan {n}", label: "Fan {n}", basis: [vertiv_spec],
+         position: "assumption: six EC fans in two rows of three, numbered left to right, top row first"}
+      - {id: "coil", tag: "Coil", label: "Chilled water coil", basis: [vertiv_spec]}
+      - {id: "filters", tag: "Filters", label: "Air filters", basis: [vertiv_spec]}
+      - {id: "valve", tag: "Valve", label: "Chilled water valve and actuator", basis: [vertiv_spec]}
+      - {id: "sat", tag: "Supply air sensor", label: "Supply air temperature sensor", basis: [vertiv_spec]}
+      - {id: "controller", tag: "iCOM", label: "Liebert iCOM controller", basis: [vertiv_spec]}
+
+  liebert_afc_1500:
+    sheet: D-203
+    title: "Liebert AFC free-cooling chiller, side elevation"
+    sources:
+      vertiv_ds: {url: "https://www.vertiv.com/49dc08/globalassets/products/thermal-management/free-cooling-chillers/liebert-afc-ds-en-emea-rev0---03.2020.pdf",
+                  says: "Inverter-driven screw compressor; high-efficiency EC fans; free-cooling microchannel coil; iCOM control with a 10 inch touch screen; several pump configurations"}
+    alarm_points:
+      - ["Compressor", "Compressor trip (high condenser pressure)", "BMS"]
+      - ["Condenser fans", "Condenser fan fault", "BMS"]
+      - ["iCOM controller", "Point override (chiller enable)", "BMS"]
+    order_note: "Representative layout of an air-cooled free-cooling chiller. Fan count and coil arrangement are assumed; the BMS reports the compressor and the fans as one point each."
+    parts:
+      - {id: "fans", tag: "Condenser fans", label: "Condenser fans (EC)", basis: [vertiv_ds],
+         position: "assumption: one row of fans along the top"}
+      - {id: "condenser", tag: "Condenser coil", label: "Condenser coil", basis: "assumption: an air-cooled chiller rejects heat through a finned condenser coil under the fans"}
+      - {id: "fc-coil", tag: "Free-cooling coil", label: "Free-cooling coil", basis: [vertiv_ds]}
+      - {id: "compressor", tag: "Compressor", label: "Inverter-driven screw compressor", basis: [vertiv_ds]}
+      - {id: "evaporator", tag: "Evaporator", label: "Evaporator (facility water)", basis: "assumption: a chiller cools the facility water in a shell-and-tube or plate evaporator"}
+      - {id: "controller", tag: "iCOM", label: "iCOM controller", basis: [vertiv_ds]}
+
+  galaxy_vl_300:
+    sheet: D-302
+    title: "Galaxy VL 300 kW UPS, front elevation"
+    sources:
+      se_vl: {url: "https://datacentrereview.com/2021/04/schneider-unveils-its-galaxy-vl-the-most-compact-3-phase-ups-in-its-class/",
+              says: "50 kW power modules scaling from 200 to 500 kW, added or replaced online (Live Swap); lithium-ion battery option"}
+      se_nmc: {url: "https://www.se.com/us/en/product/AP9644/network-management-card-4-nmc4-for-galaxy-vs-galaxy-vl-galaxy-vxl-remote-ups-monitoring-and-management/",
+               says: "Network management card for Galaxy VL"}
+    alarm_points:
+      - ["Battery cabinet", "UPS on battery, back on line", "SNMP card"]
+      - ["Power module n", "Module fault", "SNMP card"]
+    order_note: "Six 50 kW power modules for 300 kW, numbered top to bottom (assumed). The UPS carries the CDU pumps and thermal-wall fans (2N)."
+    parts:
+      - {id: "pm{n}", n: [1, 6], tag: "PM {n}", label: "Power module {n} (50 kW)", basis: [se_vl],
+         position: "assumption: numbered top to bottom"}
+      - {id: "nmc", tag: "Display and NMC", label: "Display and network management card", basis: [se_nmc]}
+      - {id: "static", tag: "Static switch", label: "Static bypass switch", basis: "assumption: a double-conversion UPS transfers to bypass through a static switch"}
+      - {id: "battery", tag: "Battery cabinet", label: "Lithium-ion battery cabinet", basis: [se_vl]}
+
+  cat_c175_16:
+    sheet: D-401
+    title: "Cat C175-16 generator set, side elevation"
+    sources:
+      cat_ds: {url: "https://pesa.com.br/pesaenergia-specsheets/diesel/DataSheetC175-16-3750kVAStand-by.pdf",
+               says: "16-cylinder turbocharged Cat diesel engine, 3,000 ekW standby; matched alternator; EMCP 4 control panel; cooling for 50 C ambient; optional circuit breaker up to 5000 A"}
+      emcp: {url: "https://www.warrencat.com/new/power-systems/electric-power/switchgear-and-paralleling-controls/emcp-4-4-master-control-panel/",
+             says: "EMCP 4.4 generator set control and paralleling"}
+    alarm_points:
+      - ["EMCP 4.4 panel", "Engine state, kW, percent of rated (readings)", "Modbus TCP"]
+      - ["Generator breaker", "Breaker open or closed to the paralleling bus", "EPMS"]
+      - ["Fuel tank", "Fuel level; tank leak (TraceTek cable)", "BMS"]
+    order_note: "Representative package layout: radiator, engine, alternator, and breaker in line on a sub-base fuel tank. Enclosure omitted for clarity."
+    parts:
+      - {id: "radiator", tag: "Radiator", label: "Radiator", basis: [cat_ds]}
+      - {id: "engine", tag: "C175-16 engine", label: "16-cylinder diesel engine", basis: [cat_ds]}
+      - {id: "alternator", tag: "Alternator", label: "Alternator", basis: [cat_ds]}
+      - {id: "emcp", tag: "EMCP 4.4", label: "EMCP 4.4 control panel", basis: [cat_ds, emcp]}
+      - {id: "breaker", tag: "Breaker", label: "Generator breaker", basis: [cat_ds]}
+      - {id: "tank", tag: "Sub-base fuel tank", label: "Sub-base fuel tank", basis: "assumption: 48 hours of fuel at full load held in sub-base tanks (site/site.yaml)"}
+
+  vesda_e_vep:
+    sheet: D-501
+    title: "VESDA-E VEP aspirating smoke detector"
+    sources:
+      xtralis: {url: "https://eurofyre.co.uk/support/knowledge-base/aspirating-smoke-detection/aspirating-smoke-detectors/vesda-e-vep-aspirating-smoke-detector/",
+                says: "Four-pipe model with up to 280 m of sampling pipe; flow fault thresholds for each port; four alarm levels (Alert, Action, Fire 1, Fire 2); smart onboard filter; 3.5 inch touch screen on the VEP-A10"}
+    alarm_points:
+      - ["Pipe inlets and flow sensors", "Detector fault: airflow low", "Modbus HLI"]
+      - ["Detection chamber", "Smoke alarm (Alert, Action, Fire 1, Fire 2)", "Modbus HLI, fire panel"]
+      - ["Display", "Detector isolated", "Modbus HLI"]
+    order_note: "Four pipe inlets on top, numbered left to right (assumed). Pipe run shown schematically; the hall plans show where it runs."
+    parts:
+      - {id: "inlets", tag: "Pipe inlets", label: "Pipe inlets and flow sensors", basis: [xtralis]}
+      - {id: "chamber", tag: "Detection chamber", label: "Detection chamber", basis: [xtralis]}
+      - {id: "display", tag: "Display", label: "Display and status indicators", basis: [xtralis]}
+      - {id: "filter", tag: "Filter", label: "Air filter", basis: [xtralis]}
+      - {id: "aspirator", tag: "Aspirator", label: "Aspirator (fan)", basis: [xtralis]}
+      - {id: "pipe", tag: "Sampling pipe", label: "Sampling pipe with sampling holes", basis: [xtralis]}
+
+  tracetek_ttdm128:
+    sheet: D-502
+    title: "TraceTek leak detection, controller and circuits"
+    unplaced: true
+    devices: '^TTDM-[A-C]\b'
+    sources:
+      chemelex: {url: "https://www.chemelex.com/en-us/raychem/products/ttdm-128-alarm-panel",
+                 says: "Up to 127 sensor circuits and 1500 m of sensor cable; locates and tracks each leak and shows the circuit and location on the display; leak, service, and fault relays; Modbus"}
+      site: {url: "https://github.com/JasonMossotti/dco-vendor-scorecard/blob/main/site/site.yaml",
+             says: "Eight leak circuits per hall: one per row manifold, one under each CDU"}
+    alarm_points:
+      - ["Circuit n", "Leak at a distance along the cable", "Modbus via gateway, BMS"]
+    order_note: "Typical of Halls A and B. Circuits 1 to 4 follow the row manifolds and 5 to 8 run under the CDUs, as the site model and telemetry number them. The controller itself is not drawn on the site plans."
+    parts:
+      - {id: "controller", tag: "TTDM-128", label: "Alarm and locator module", basis: [chemelex]}
+      - {id: "c{n}", n: [1, 8], tag: "Circuit {n}", label: "Leak circuit {n}", basis: [site],
+         position: "assumption: circuit n of 1 to 4 runs along row n; circuit 4 + n runs under CDU n"}
+
+  quantum2_qm9700:
+    sheet: D-601
+    title: "Quantum-2 QM9700 InfiniBand leaf switch, port side"
+    unplaced: true
+    devices: '^leaf-[a-c]\d+-r\d+'
+    sources:
+      nvidia_um: {url: "https://docs.nvidia.com/networking/display/qm97x0um/introduction",
+                  says: "64 NDR ports through 32 OSFP 400 Gb/s interfaces; one management port, console port, and USB; two replaceable power supplies and seven replaceable fans"}
+    alarm_points:
+      - ["Port n", "Fabric link down; symbol errors over threshold", "UFM"]
+    order_note: "Port n is the n-th of 64 NDR ports, two per OSFP cage, cages numbered left to right with odd cages on top (assumed). The site plans do not place the fabric switches; the card shows where the cable lands."
+    parts:
+      - {id: "port{n}", n: [1, 64], tag: "{n}", label: "Port {n}", basis: [nvidia_um],
+         position: "assumption: cage c holds ports 2c-1 and 2c"}
+      - {id: "mgmt", tag: "MGMT", label: "Management, console, and USB ports", basis: [nvidia_um],
+         position: "assumption: at the right end of the port side"}
+      - {id: "psu", tag: "PSU", label: "Power supplies (2)", basis: [nvidia_um]}
+      - {id: "fans", tag: "Fans", label: "Fans (7)", basis: [nvidia_um]}
+
 # Alarm text to part, first match wins. Fields: pattern, flags ("i" for any case), product, part, and
 # optionally the instance when the alarm names a different device than the field (an output feeder belongs
 # to the UPS, though the field names the busway it feeds). {1}.. are the groups; numbers lose leading zeros.
@@ -137,6 +310,16 @@ points:
   - ['(?<![\w-])([A-C]\d{2}) leak rope', "i", gb200_nvl72, "drip", "{1}"]
   - ['leak rope|drip', "i", gb200_nvl72, "drip"]
   - ['input power lost|feeds? lost', "i", gb200_nvl72, "ac-in"]
+  - ['PSU (\d+) in [A-C]\d{2} power shelf (\d+)', "", gb300_nvl72, "ps{2}-psu{1}"]
+  - ['_PowerShelf_(\d+)', "", gb300_nvl72, "ps{1}"]
+  - ['power shelf (\d+)', "i", gb300_nvl72, "ps{1}"]
+  - ['-ct(\d+)(?![\w-])', "i", gb300_nvl72, "ct{1}"]
+  - ['-nvsw(\d+)(?![\w-])', "i", gb300_nvl72, "nvsw{1}"]
+  - ['(?<![\w-])([A-C]\d{2}) rack manifold', "i", gb300_nvl72, "manifold", "{1}"]
+  - ['_RackManifold|rack manifold', "i", gb300_nvl72, "manifold"]
+  - ['(?<![\w-])([A-C]\d{2}) leak rope', "i", gb300_nvl72, "drip", "{1}"]
+  - ['leak rope|drip', "i", gb300_nvl72, "drip"]
+  - ['input power lost|feeds? lost', "i", gb300_nvl72, "ac-in"]
   - ['pump (\d)', "i", coolit_chx2000, "pump{1}"]
   - ['filter', "i", coolit_chx2000, "filters"]
   - ['(UPS-[A-C]\d) output feeder', "", galaxy_vx_1500, "out-brk", "{1}"]
@@ -146,6 +329,27 @@ points:
   - ['static bypass|switched to bypass|on bypass', "i", galaxy_vx_1500, "static"]
   - ['Tap-off \(?(TO-[A-C]\d{2}(?:-[AB])?)(?![\w-])', "i", starline_1200t5, "to-brk", "{1}"]
   - ['tap-off', "i", starline_1200t5, "to-brk"]
+  - ['fan (\d)\b', "i", liebert_cwa_400, "fan{1}"]
+  - ['supply air', "i", liebert_cwa_400, "sat"]
+  - ['valve', "i", liebert_cwa_400, "valve"]
+  - ['filter', "i", liebert_cwa_400, "filters"]
+  - ['compressor', "i", liebert_afc_1500, "compressor"]
+  - ['condenser fan', "i", liebert_afc_1500, "fans"]
+  - ['chiller enable|override|setpoint', "i", liebert_afc_1500, "controller"]
+  - ['free.?cooling', "i", liebert_afc_1500, "fc-coil"]
+  - ['module (\d+)', "i", galaxy_vl_300, "pm{1}"]
+  - ['on battery|on line', "i", galaxy_vl_300, "battery"]
+  - ['bypass', "i", galaxy_vl_300, "static"]
+  - ['breaker', "i", cat_c175_16, "breaker"]
+  - ['fuel', "i", cat_c175_16, "tank"]
+  - ['engine|EMCP|kW', "i", cat_c175_16, "emcp"]
+  - ['airflow|flow fault', "i", vesda_e_vep, "inlets"]
+  - ['smoke|Alert|Action|Fire [12]', "i", vesda_e_vep, "chamber"]
+  - ['isolat', "i", vesda_e_vep, "display"]
+  - ['filter', "i", vesda_e_vep, "filter"]
+  - ['(TTDM-[A-C])\b.*?circuit (\d+)', "i", tracetek_ttdm128, "c{2}", "{1}"]
+  - ['^(TTDM-[A-C])/C(\d+)', "", tracetek_ttdm128, "c{2}", "{1}"]
+  - ['(leaf-[a-c]\d+-r\d+)(?: port |:swp)(\d+)', "", quantum2_qm9700, "port{2}", "{1}"]
   - ['whip|cord', "i", starline_1200t5, "cord"]
   - ['undervoltage|voltage', "i", starline_1200t5, "feed-cpm"]
   - ['output feeder', "i", starline_1200t5, "end-feed"]

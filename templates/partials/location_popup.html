@@ -78,22 +78,30 @@
   }
 
   // The part of a device an alarm's text names, as locations.resolve_part does: [instance, part id] or null.
-  function part(name, text) {
+  function part(name, text, unplacedOnly) {
     for (const [re, prod, partT, instT] of POINTS) {
-      const m = re.exec(text);
-      if (!m) continue;
-      const inst = instT ? fill(instT, m).toUpperCase() : name, e = E[inst];
-      if (!e || e.p !== prod || !D.details[prod]) continue;
+      const m = re.exec(text), det = D.details[prod];
+      if (!m || !det || unplacedOnly && !det.unplaced) continue;
+      let inst;
+      if (det.unplaced) {                 // a unit the site plans do not show: the pattern names it
+        inst = instT ? fill(instT, m) : "";
+        if (!new RegExp(det.unplaced).test(inst)) continue;
+      } else {
+        inst = instT ? fill(instT, m).toUpperCase() : name;
+        if (!E[inst] || E[inst].p !== prod) continue;
+      }
       const id = fillPart(partT, m);
-      if (D.details[prod].parts[id]) return [inst, id];
+      if (det.parts[id]) return [inst, id];
     }
     return null;
   }
+  const productOf = inst => E[inst] ? E[inst].p
+    : Object.keys(D.details).find(k => D.details[k].unplaced && new RegExp(D.details[k].unplaced).test(inst));
   // A field's part, from its data-loc value and its data-part text; none when the field fell back.
   function fieldPart(value, extra) {
     const r = field(value);
-    if (!r || r[1].startsWith("The drawings do not show")) return null;
-    return part(r[0], (value + " " + (extra || "")).trim());
+    if (!r) return null;
+    return part(r[0], (value + " " + (extra || "")).trim(), r[1].startsWith("The drawings do not show"));
   }
 
   function pin(root) {
@@ -108,13 +116,13 @@
       b.dataset.locName = r[0]; b.dataset.locNote = r[1];
       const p = fieldPart(el.dataset.loc, el.dataset.part);
       if (p) b.dataset.locPart = p.join("|");
-      b.title = "Show " + (p ? E[p[0]].title + ", " + partLabel(p).toLowerCase() : E[r[0]].title) + " on the drawings";
+      b.title = "Show " + (p ? (E[p[0]] ? E[p[0]].title : p[0]) + ", " + partLabel(p).toLowerCase() : E[r[0]].title) + " on the drawings";
       b.setAttribute("aria-label", b.title);
       el.appendChild(b);
     }
   }
 
-  const partLabel = p => D.details[E[p[0]].p].parts[p[1]].label;
+  const partLabel = p => D.details[productOf(p[0])].parts[p[1]].label;
 
   // ---- drawings, fetched once each
   const cache = {};
@@ -185,7 +193,7 @@
     const views = e.views.map(v => ({v, label}));
     let title = e.title;
     if (p) {
-      const det = D.details[E[p[0]].p], pl = partLabel(p);
+      const det = D.details[productOf(p[0])], pl = partLabel(p);
       views.splice(0, views.length, {v: {s: det.sheet, b: det.parts[p[1]].b}, label: `${p[0]} · ${pl.replace(/ \(.*\)$/, "")}`},
                    ...views.filter(x => x.v.s !== det.sheet));
       title = p[0] === name ? `${e.title} · ${pl}` : `${e.title} · ${p[0]} ${pl[0].toLowerCase() + pl.slice(1)}`;
