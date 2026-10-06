@@ -26,7 +26,7 @@ At a partner-operated GPU data center site, partners do the hands-on work and th
 | Failure pattern review | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/ (built by `scripts/build_site.py`); report `reports/failure_patterns.md` from `data/history/` (26 weeks before the sample month, `scripts/generate_history.py`, `config/history.yaml`) + `src/scorecard/patterns.py` + judgment in `patterns/lessons.yaml`, rendered by `scripts/render_patterns.py` |
 | Change-aware alarms and alarm board | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/ (built by `scripts/build_site.py`); report `reports/change_alarms.md`; clause in Interface Agreement section 10 (`sla/interface_agreement.yaml`, NT-1 to NT-3, IA-KM-01/02); alarm map and change catalog `config/change_alarms.yaml`; check `src/scorecard/alarms.py`; change layer `data/changes/` (`scripts/generate_changes.py`, `src/scorecard/synthetic/changes.py`); rendered by `scripts/render_alarms.py` |
 | Live collector (Phase 6) | `scripts/collect.py`, `src/scorecard/live/`, `config/collector.example.yaml`, `requirements-live.txt`, `docs/LIVE_READINESS.md` |
-| Tests | 249 (pytest), run by CI on every push and before every Pages deploy. The collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed |
+| Tests | 251 (pytest), run by CI on every push and before every Pages deploy. The collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed |
 | AWS hosting guide | `docs/DEPLOY_AWS.md` |
 
 Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 4 Minimum Service Level Defaults (CSL-07, 08, 09, 11), $188,700 credits payable (inside the $222,000 cap), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
@@ -143,6 +143,7 @@ The SLA YAML is the single source of truth for the contract (`load_sla()` merges
 | One alarm feed for both partners, site relationships, classification against declared changes, notifications owed, scoring | `src/scorecard/alarms.py` (report and board by `scripts/render_alarms.py`; `--robustness N`) |
 | Change layer: declarations, partner delivery logs, answer key (own random stream; plants only in robustness months) | `src/scorecard/synthetic/changes.py`, `scripts/generate_changes.py` -> `data/changes/` |
 | Alarm board page | `templates/alarms.html` (tested by `tests/js/alarms_page.cjs`) |
+| Customer notification routing: on-call schedule, recipient groups, event matrix, escalation (fictional contacts) | `config/customer_notifications.yaml` (shown and replayed on the Notifications tab) |
 | App layout | `app/streamlit_app.py` |
 | What each data file represents | `docs/DATA_MODEL.md` |
 
@@ -253,6 +254,32 @@ In the order it was built, with the decisions that shaped each step:
 
     Ticks update only the parts of the board whose content changed, and one delegated click handler serves everything redrawn while the clock runs. No data, report, or headline number changed: the alarm robustness run is identical (every case 60/60, decoys 0/60, 10 other flags, 6 conflicts). Tests: 249 pytest and 65 jsdom checks, including the live clock under a fixed fake clock, the reap window, each lead time boundary, both conflict types (the change-conflict case injected, since the sample month has none), the banner, the handoff text, and grouping.
 
+25. **Change work tab follows the Board's date range (owner's request).** The Change work tab now lists only the changes whose window overlaps the date range chosen on the Board tab, with a "Showing N of 12" line and a link back to the whole month. Each Landlord MOP shows its planned work order (`alarms.planned_work`: WO-41017 under MOP-308, WO-41021 under MOP-309). A new section lists planned work orders with no approved change in the range (WO-41014, the tap-off retorque with no MOP), because such work has no impact declaration and every alarm it causes reaches the Customer as not change work. Change conflicts follow the same range. No data or report changed. Tests: 250 pytest and 69 jsdom checks.
+
+26. **Customer notification routing (owner's request).** A new section at the bottom of the Notifications tab adds the Customer's own backstop on its alarm aggregate. It decides who at the Customer is told about what, by text or email, at what hour, and who is told next if nobody acknowledges. The partners still owe NT-1 to NT-3 and are still scored on them. The routing judgment lives in `config/customer_notifications.yaml`:
+    - business hours (Mon to Fri 07:00 to 19:00 CDT);
+    - four on-call roles with fictional contacts (example.com, 555-01xx);
+    - a repeating weekly schedule (business hours, weeknight, weekend) with a primary and a secondary;
+    - recipient groups (primary, secondary, by domain, Facilities, IT operations, leadership);
+    - a matrix of 10 event types with channels for business and after hours, recipients, hold-to-morning, and escalation steps.
+
+    The page shows:
+    - the matrix, editable in the browser for the visit, with Export YAML and Reset;
+    - the 7 × 24 on-call grid;
+    - a "who is told, and how" lookup by day, time, event, and domain;
+    - a replay of every message the Customer's layer would have sent in the Board's date range: 215 in the month, 180 emails and 35 texts. Escalations count only while the event is still open, because the sample records no Customer acknowledgements;
+    - "What production needs": a 24x7 server, a paging platform, routing under change control, delivery logs and a heartbeat, flood control, and contact-data security.
+
+    Defaults:
+    - out of scope, out of window, and critical: text and email to the primary and the domain group; secondary at 15 minutes and leadership at 30 for critical and out of scope;
+    - major: email, plus a text to the primary after hours if still open at 15 minutes;
+    - minor and expected: board only;
+    - P1 tickets: email;
+    - partner NT-1 and NT-3 breaches: email to leadership, held to the next business morning;
+    - upcoming trouble and change conflicts: email.
+
+    The routing engine is in the page (JavaScript), so edits re-route the replay instantly. A pytest checks the config: every hour of the week is covered exactly once, every group referenced exists, and every contact is fictional. No data or report changed. Tests: 251 pytest and 78 jsdom checks.
+
 ## Roadmap (agreed with the owner; plan before building each phase)
 
 3. ~~**OT partner SLA and interface agreement.**~~ Done (step 11). `sla/ot_partner.yaml` (critical power availability per feed, cooling within band, alarm acknowledgment and response, redundancy restoration time, NFPA 110 generator testing, NFPA 72 inspections, coolant chemistry, MOP compliance, record integrity) and `sla/interface_agreement.yaml` (demarcation points, break-fix ownership matrix, joint incident command, fault-attribution rules using the site model's power and cooling paths).
@@ -270,6 +297,7 @@ Later: a security partner (access control, CCTV, escorts).
 - [ ] Next: owner reviews the weekly operations review page live. Judgment calls to defend: weekly results never show credits; findings raised when observed; W38 notes and decision D1 (interim rule on one-sided tap-off work); the late OEM shipment for racks B15 on.
 - [ ] Update the repository's About description, website link, and topics (the repo is now more than a scorecard), and refresh README screenshots (add the PIR and weekly pages).
 - [ ] Next: owner reviews the failure pattern review page (`/patterns/`) live. Judgment calls to defend: the history is synthetic and separate (one month is too thin); what counts as a pattern (5 failures, 2 times the rest, Bonferroni per family) and the watch items chance explains; units not events; reseat detection is 41/60 at this window size (a detection limit, not a bug); owner from the RACI, and the CDU drift is the Landlord's although it stayed in band (proposed FA-1 change); the September follow-up (INC3100816) keeps PA6 open.
+- [ ] Owner reviews Customer notification routing (Notifications tab). Judgment calls to defend: the layer is a backstop and duplicates partner notification on purpose; the default matrix and escalation times; NT breaches held to the business morning; escalation counted only while the event is open (no Customer acknowledgements in the sample); holidays are left out of the demo; contacts are fictional and real ones belong in a paging platform, not the repository.
 - [ ] Next: owner reviews the Live Events board and round 2 (PR #4) and decides how to enhance the Live board next. Judgment calls to defend: the Live feed is simulated (the sample re-dated to the viewer's clock), and the real collector would need a small server; the reap time is 6 hours; "live trouble" means an open ticket or an active major or critical alarm on declared or connected equipment in a shared domain, and minor alarms do not block; grouping is by ticket or by rack outage within 10 minutes, and a flag is never hidden; banner acknowledgement lasts for the visit and never writes to a partner; the handoff looks back one 12-hour shift. Earlier refinements (Pause, UTC clock, replay speed, upcoming change work) are merged. Earlier review of the alarm board (`/alarms/`) and Interface Agreement section 10: Judgment calls to defend: "connected" means the site model's power and cooling paths, limited to alarms of a kind the work could cause (domains); 15-minute grace and 4-hour early lookback; an alarm another approved change declared is accounted for, with overlaps reported as change conflicts; notification as a KM, not a CSL; 5 minutes for P1 and change work, two automatic channels, a duty manager's call does not count; NT-3 is owed by the party doing the change and must name it; MOP-310's declaration is generated from its record (A side only); the sample predates the clause, so its notification numbers are a baseline; the 10 robustness "other flags" are real coincident faults and correct to escalate; declarations come from a title catalog until partners file them.
 - [ ] Other showcase ideas discussed: new-hall readiness tracker, ownership-matrix trainer, one-page leadership brief; plus the owner's separate project idea.
 - [ ] Optional later: the two generated months (seeds 24 and 38) where the outage technician's badges overlap the ordinary shift stream; an IT-side planted misattribution (an IT ticket blaming the facility against the telemetry); the Landlord-side version already exists.

@@ -467,6 +467,13 @@ def _link_tickets(rows: list[Alarm], src: FileConnector) -> None:
             a.ack_at, a.ack_by = parse(a.ticket["ack"]), a.ticket["by"]
 
 
+def planned_work(src: FileConnector) -> list[dict]:
+    """Landlord planned work orders (no fault class): those under a MOP, and any with none on file."""
+    return [{"id": w["wo"], "mop_ref": w.get("mop_ref") or "", "unit": w["unit"], "notes": w["notes"],
+             "opened": iso(parse(w["opened"])), "closed": iso(parse(w["closed"]))}
+            for w in src.get("work_orders") if not w.get("fault_class") and w.get("attribution") == "Landlord"]
+
+
 def trouble_tickets(src: FileConnector, cfg: dict | None = None) -> list[dict]:
     """Every trouble ticket from both partners, with the equipment and domain it is about.
 

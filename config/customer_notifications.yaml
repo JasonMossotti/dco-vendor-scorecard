@@ -1,0 +1,59 @@
+# Customer notification routing: the Customer's own backstop on its alarm aggregate.
+#
+# The partners still owe their notifications under Interface Agreement section 10
+# (NT-1 to NT-3), and the board still scores them. This file decides who at the
+# Customer is told about what, by which channel, at what hour, and who is told next
+# if nobody acknowledges. It is judgment, reviewed and changed like the SLAs.
+#
+# Every contact here is fictional: example.com addresses and 555-01xx numbers.
+# In production the real contacts live in the paging platform, never in this repository.
+
+timezone: CDT
+utc_offset_h: -5
+business_hours: {days: [Mon, Tue, Wed, Thu, Fri], start: "07:00", end: "19:00"}
+
+# On-call people by role (no individual is named).
+people:
+  Ops engineer 1: {email: ops-eng-1@example.com, sms: "+1 512 555 0101"}
+  Ops engineer 2: {email: ops-eng-2@example.com, sms: "+1 512 555 0102"}
+  Ops engineer 3: {email: ops-eng-3@example.com, sms: "+1 512 555 0103"}
+  Ops engineer 4: {email: ops-eng-4@example.com, sms: "+1 512 555 0104"}
+
+# One week, repeating, in site time. A shift whose end is before its start runs past midnight.
+schedule:
+  - {label: Business hours, days: [Mon, Tue, Wed, Thu, Fri], start: "07:00", end: "19:00", primary: Ops engineer 1, secondary: Ops engineer 2}
+  - {label: Weeknight on call, days: [Mon, Tue, Wed, Thu], start: "19:00", end: "07:00", primary: Ops engineer 3, secondary: Ops engineer 2}
+  - {label: Weekend on call, days: [Fri, Sat, Sun], start: "19:00", end: "07:00", primary: Ops engineer 4, secondary: Ops engineer 3}
+  - {label: Weekend on call, days: [Sat, Sun], start: "07:00", end: "19:00", primary: Ops engineer 4, secondary: Ops engineer 3}
+
+# Recipient groups. "primary" and "secondary" follow the schedule; "domain" sends power,
+# cooling, and fire events to Facilities engineering and compute and network events to IT operations.
+groups:
+  primary: {label: On-call primary}
+  secondary: {label: On-call secondary}
+  domain: {label: Facilities or IT by the event's domain}
+  facilities: {label: Facilities engineering, email: [facilities-eng@example.com], sms: []}
+  it_ops: {label: IT operations, email: [it-ops@example.com], sms: []}
+  leadership: {label: Site leadership, email: [site-leadership@example.com], sms: ["+1 512 555 0190"]}
+facilities_domains: [power, cooling, fire]
+
+# The matrix. Channels per period: email, sms (text), both, or none. hold_after_hours delivers an
+# after-hours event at the start of the next business day. Escalation fires only while the event is
+# still open (the alarm has not cleared) and, in production, only if nobody has acknowledged it.
+rules:
+  - {event: out_of_scope, label: "Alarm outside approved change work (out of scope)", business: [sms, email], after_hours: [sms, email], to: [primary, domain],
+     escalate: [{after_min: 15, to: secondary, via: [sms]}, {after_min: 30, to: leadership, via: [sms, email]}]}
+  - {event: out_of_window, label: "Change work outside its window (out of window)", business: [sms, email], after_hours: [sms, email], to: [primary, domain],
+     escalate: [{after_min: 15, to: secondary, via: [sms]}]}
+  - {event: critical, label: Critical alarm, business: [sms, email], after_hours: [sms, email], to: [primary, domain],
+     escalate: [{after_min: 15, to: secondary, via: [sms]}, {after_min: 30, to: leadership, via: [sms, email]}]}
+  - {event: major, label: Major alarm, business: [email], after_hours: [email], to: [primary, domain],
+     escalate: [{after_min: 15, to: primary, via: [sms], after_hours_only: true}]}
+  - {event: minor, label: Minor alarm, business: [], after_hours: [], to: [primary]}
+  - {event: expected, label: Expected change-work alarm, business: [], after_hours: [], to: [primary]}
+  - {event: p1_ticket, label: P1 ticket opened by a partner, business: [email], after_hours: [email], to: [primary, domain]}
+  - {event: nt_breach, label: "Partner notification missed or late (NT-1, NT-3)", business: [email], after_hours: [email], to: [leadership], hold_after_hours: true}
+  - {event: upcoming_trouble, label: Upcoming change work with live trouble on its equipment, business: [email], after_hours: [email], to: [primary, domain]}
+  - {event: change_conflict, label: Upcoming change conflict, business: [email], after_hours: [email], to: [primary, leadership]}
+
+lead_h: 6   # upcoming change work is checked this far ahead, as on the board
