@@ -135,7 +135,7 @@ Each rack contains 72 GPUs and 36 CPUs across 18 compute trays (4 GPUs per tray)
 
 ### 4.3 Break-fix ownership matrix
 
-Exhibit from the Interface Agreement (IA-AUS1-001, version 1.0.0), which governs demarcation, fault attribution, and joint operations between the parties.
+Exhibit from the Interface Agreement (IA-AUS1-001, version 1.1.0), which governs demarcation, fault attribution, and joint operations between the parties.
 
 **R** = Responsible: performs the work; **A** = Accountable: owns the outcome and approves; **C** = Consulted; **I** = Informed.
 

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alarm Board · Site AUS-1</title>
+<style>
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --panel:#f5f7f9; --bg:#eef1f4;
+  --crit:#c0262d; --maj:#e07b00; --min:#d4b106; --clr:#3d8b5a; --oos:#b42318; --oow:#7a3fb8; --exp:#8a96a3;
+  --ll:#b45309; --it:#1f5fbf; --hl:#fff3b0; }
+* { box-sizing:border-box; }
+body { margin:0; font:13px/1.4 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+header.top { background:#1e2933; color:#fff; padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
+header.top a { color:#cfe0ff; }
+.tabs button, .ctl button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:4px 10px; border-radius:5px; cursor:pointer; }
+.tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
+main { margin:12px auto; max-width:1500px; padding:0 12px; }
+section.view { background:#fff; border-radius:8px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:20px; margin:0 0 2px; } h2 { font-size:15px; margin:18px 0 8px; } .sub { color:var(--muted); margin:0 0 10px; }
+.bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:8px 0; }
+.chip { display:inline-flex; gap:6px; align-items:center; border:1px solid var(--line); border-radius:14px; padding:3px 10px; cursor:pointer; background:#fff; user-select:none; }
+.chip b { font-variant-numeric:tabular-nums; } .chip i { width:10px; height:10px; border-radius:2px; display:inline-block; }
+.chip.on { outline:2px solid var(--ink); } .chip.off { opacity:.45; }
+.ctl label { color:var(--muted); font-size:12px; margin-right:4px; } .ctl select, .ctl input { font:inherit; padding:3px 6px; border:1px solid var(--line); border-radius:4px; }
+.replay { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--panel); padding:6px 10px; border-radius:6px; }
+.replay input[type=range] { flex:1; min-width:180px; } #now { font-weight:600; font-variant-numeric:tabular-nums; min-width:150px; }
+.wide { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; } th, td { text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); vertical-align:top; white-space:nowrap; }
+th { background:var(--panel); font-weight:600; position:sticky; top:0; } td.sum { white-space:normal; min-width:260px; }
+td.sev { width:6px; padding:0; } tr.critical td.sev { background:var(--crit); } tr.major td.sev { background:var(--maj); } tr.minor td.sev { background:var(--min); }
+tr.cleared td.sev { background:var(--clr); } tr.cleared td { color:var(--muted); }
+tr.out_of_scope { background:#fdeceb; } tr.out_of_window { background:#f3ecfb; } tr.expected td { color:var(--exp); }
+tr.hl td { background:var(--hl) !important; } tr.row { cursor:pointer; } tr.detail td { white-space:normal; background:var(--panel); }
+.badge { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; font-weight:600; color:#fff; }
+.badge.out_of_scope { background:var(--oos); } .badge.out_of_window { background:var(--oow); } .badge.expected { background:var(--exp); }
+.badge.Landlord { background:var(--ll); } .badge.IT { background:var(--it); } .badge.ok { background:var(--clr); } .badge.bad { background:var(--oos); } .badge.warn { background:var(--maj); }
+.ack { font-weight:700; } .ack.no { color:var(--crit); } .ack.yes { color:var(--clr); }
+.changes { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:8px; margin:8px 0; }
+.ch { border:1px solid var(--line); border-left:4px solid var(--exp); border-radius:6px; padding:6px 10px; background:#fff; cursor:pointer; }
+.ch.flag { border-left-color:var(--oos); } .ch h3 { margin:0; font-size:13px; } .ch .n { color:var(--muted); font-size:12px; }
+.note { font-size:12px; color:var(--muted); } .empty { color:var(--muted); padding:10px 0; }
+ul.rules li { margin:4px 0; }
+@media (max-width:700px) { header.top { padding:8px 12px; } main { padding:0 8px; } section.view { padding:10px; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div><strong>Alarm Board</strong> · Site AUS-1 (fictional) · <a href="../">scorecard demo</a> · <a href="../pir/">post-incident review</a> · <a href="../weekly/">weekly review</a> · <a href="../patterns/">failure patterns</a></div>
+  <div class="tabs" id="tabs">
+    <button data-view="board">Board</button><button data-view="changes">Change work</button><button data-view="notify">Notifications</button><button data-view="about">How it works</button>
+  </div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ms = iso => iso ? Date.parse(iso) : null;
+const OFF = D.offset_h * 3600e3, MIN = 60e3, GRACE = D.declarations.length ? D.declarations[0].grace_min * MIN : 15 * MIN;
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const p2 = n => String(n).padStart(2, "0");
+const local = t => { if (t == null) return ""; const d = new Date(t + OFF); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`; };
+const zulu = t => t == null ? "" : new Date(t).toISOString().slice(0, 16).replace("T", " ") + "Z";
+const W0 = ms(D.window.start), W1 = ms(D.window.end);
+const A = D.alarms.map(a => ({...a, t:ms(a.raised), tc:ms(a.cleared), ta:ms(a.ack_at)}));
+const CT = D.class_text, FLAG = ["out_of_scope", "out_of_window"];
+const START = ms(D.a07.overrun.raised) + 9 * MIN;   // opens during the rack A07 outage, just after the overrun alert
+const S = { view:"board", T:START, sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1, q:"", hl:"", change:"", open:new Set(), timer:null };
+
+const stateAt = (a, T) => (a.tc != null && a.tc <= T) ? "cleared" : "active";
+function base(T) {
+  const q = S.q.toLowerCase();
+  return A.filter(a => a.t <= T && a.t >= S.from && a.t <= S.to + 864e5 - 1
+    && (S.party === "all" || a.partner === S.party) && (S.hall === "all" || a.hall === S.hall)
+    && (!S.change || a.change === S.change)
+    && (!q || [a.id, a.device, a.summary, a.signal, a.location, a.change, a.ticket && a.ticket.id, a.source].join(" ").toLowerCase().includes(q)));
+}
+const sevKey = (a, T) => stateAt(a, T) === "cleared" ? "clear" : a.severity;
+function visible(T) {
+  return base(T).filter(a => (!S.sev.size || S.sev.has(sevKey(a, T))) && (!S.cls.size || S.cls.has(a.cls)));
+}
+function ticketAt(a, T) {
+  const k = a.ticket; if (!k || ms(k.opened) > T) return ["", ""];
+  return [k.id, (k.resolved && ms(k.resolved) <= T) ? "Resolved" : "Open"];
+}
+const partyBadge = p => `<span class="badge ${p === "Landlord" ? "Landlord" : "IT"}">${p === "Landlord" ? "Landlord" : "IT Partner"}</span>`;
+const clsBadge = c => c === "not_change_work" ? "" : `<span class="badge ${c}">${esc(CT[c])}</span>`;
+
+function chips(T) {
+  const b = base(T);
+  const n = k => b.filter(a => sevKey(a, T) === k).length, m = c => b.filter(a => a.cls === c).length;
+  const sevs = [["critical","Critical","var(--crit)"],["major","Major","var(--maj)"],["minor","Minor","var(--min)"],["clear","Clear","var(--clr)"]];
+  const cls = [["out_of_scope","Out of scope","var(--oos)"],["out_of_window","Out of window","var(--oow)"],["expected","Expected (change work)","var(--exp)"]];
+  const c = (set, k, label, color, count, grp) => `<span class="chip ${set.size ? (set.has(k) ? "on" : "off") : ""}" data-grp="${grp}" data-k="${k}"><i style="background:${color}"></i>${label} <b>${count}</b></span>`;
+  return `<div class="bar" id="chips">${sevs.map(([k,l,col]) => c(S.sev, k, l, col, n(k), "sev")).join("")}<span class="note">|</span>${cls.map(([k,l,col]) => c(S.cls, k, l, col, m(k), "cls")).join("")}</div>`;
+}
+
+function changePanel(T) {
+  const act = D.declarations.filter(d => (ms(d.window_start) - GRACE <= T && T <= ms(d.window_end) + GRACE)
+    || A.some(a => a.change === d.change_id && FLAG.includes(a.cls) && a.t <= T && stateAt(a, T) === "active"));
+  if (!act.length) return `<div class="empty" id="active-changes">No change work in progress at ${esc(local(T))} CDT.</div>`;
+  return `<div class="changes" id="active-changes">${act.map(d => {
+    const mine = A.filter(a => a.change === d.change_id && a.t <= T);
+    const f = mine.filter(a => FLAG.includes(a.cls)).length, e = mine.filter(a => a.cls === "expected").length;
+    return `<div class="ch ${f ? "flag" : ""}" data-change="${esc(d.change_id)}"><h3>${esc(d.change_id)} · ${partyBadge(d.owner)} ${esc(d.title)}</h3>
+      <div class="n">Window ${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)))} CDT · declared ${esc(d.assets.map(x => x.replace("rack:", "rack ")).join(", "))} · worst ${esc(d.max_severity)}</div>
+      <div class="n">${e} expected · <b style="color:var(--oos)">${f} not reconciled</b></div></div>`; }).join("")}</div>`;
+}
+
+function rowHtml(a, T) {
+  const st = stateAt(a, T), [tk, ts] = ticketAt(a, T), acked = a.ta != null && a.ta <= T;
+  const hl = S.hl && [a.device, a.summary, a.location, a.change, tk].join(" ").toLowerCase().includes(S.hl.toLowerCase());
+  let h = `<tr class="row ${a.severity} ${st} ${a.cls}${hl ? " hl" : ""}" data-id="${a.id}">
+    <td class="sev" title="${esc(a.severity)}"></td>
+    <td><span class="ack ${acked ? "yes" : "no"}" title="${acked ? esc("Acknowledged " + local(a.ta) + " CDT by " + (a.ack_by || "")) : "Not acknowledged"}">${acked ? "✓" : "○"}</span></td>
+    <td>${partyBadge(a.partner)}<div class="note">${esc(a.source)}</div></td>
+    <td>${esc(tk)}<div class="note">${esc(ts)}</div></td>
+    <td>${esc(a.device)}</td><td>${esc(a.location)}</td>
+    <td class="sum">${esc(a.summary)}</td>
+    <td>${clsBadge(a.cls)} ${a.change ? `<div class="note">${esc(a.change)}</div>` : ""}</td>
+    <td>${a.tally}</td>
+    <td title="${esc(zulu(a.t))}">${esc(local(a.t))}</td>
+    <td title="${esc(zulu(a.tc))}">${st === "cleared" ? esc(local(a.tc)) : "active"}</td></tr>`;
+  if (S.open.has(a.id)) {
+    const ow = (a.owed || []).map(o => `${esc(o.rule)} owed by ${esc(o.party)} within ${o.within_min} min: <b>${esc(o.status.replace("_", " "))}</b>${o.sent ? ` (first sent ${esc(local(ms(o.sent)))} CDT by ${esc((o.channels || []).join(", "))})` : ""}`);
+    h += `<tr class="detail"><td></td><td colspan="10">
+      ${a.reason ? `<div><b>${esc(CT[a.cls])}:</b> ${esc(a.reason)}</div>` : ""}
+      <div><b>Signal:</b> ${esc(a.signal)} · <b>Severity:</b> ${esc(a.severity)} · <b>Domain:</b> ${esc(a.domains.join(", "))} · <b>Alarm:</b> ${esc(a.id)}</div>
+      ${a.evidence.length ? `<div><b>Also seen:</b> ${a.evidence.map(esc).join("; ")}</div>` : ""}
+      ${a.ticket ? `<div><b>${esc(a.ticket.id)}</b> (${esc(a.ticket.priority)}) opened ${esc(local(ms(a.ticket.opened)))} CDT${a.ticket.resolved ? `, resolved ${esc(local(ms(a.ticket.resolved)))} CDT` : ""}</div>` : ""}
+      <div><b>Notifications owed (Interface Agreement section 10):</b> ${ow.length ? ow.join("; ") : "none"}</div>
+      <div class="note">Customer alerted by its own board at ${esc(local(a.t))} CDT${ow.length ? "" : " (not required: expected or minor)"}.</div></td></tr>`;
+  }
+  return h;
+}
+
+function board() {
+  const T = S.T, rows = visible(T);
+  rows.sort((x, y) => (FLAG.includes(y.cls) && stateAt(y, T) === "active") - (FLAG.includes(x.cls) && stateAt(x, T) === "active") || y.t - x.t);
+  const halls = [...new Set(A.map(a => a.hall))].sort();
+  const date = t => new Date(t).toISOString().slice(0, 10);
+  return `<section class="view"><h1>Customer alarm board</h1>
+    <p class="sub">Both partners' alarm feeds in one table, checked against declared change work. Replay of the synthetic sample month (${esc(local(W0))} to ${esc(local(W1 - 1))} CDT). Rows that do not reconcile with an approved change are pinned to the top. ${S.T === START ? "Opened during the rack A07 outage on Sep 15; press End of data for the whole month." : ""}</p>
+    <div class="replay ctl"><span id="now">${esc(local(T))} CDT</span>
+      <button data-step="-60">−1 h</button><input id="t" type="range" min="${W0}" max="${W1}" step="${MIN}" value="${T}"><button data-step="60">+1 h</button>
+      <button id="play">${S.timer ? "Pause" : "Play"}</button><button id="end">End of data</button>
+      <button id="a07">Replay Sep 15 (rack A07)</button></div>
+    ${chips(T)}
+    <div class="bar ctl">
+      <span><label>Partner</label><select id="party"><option value="all">Both</option><option${S.party === "Landlord" ? " selected" : ""}>Landlord</option><option value="IT Partner"${S.party === "IT Partner" ? " selected" : ""}>IT Partner</option></select></span>
+      <span><label>Hall</label><select id="hall"><option value="all">All</option>${halls.map(h => `<option${S.hall === h ? " selected" : ""}>${h}</option>`).join("")}</select></span>
+      <span><label>From</label><input id="from" type="date" value="${date(S.from)}"> <label>to</label><input id="to" type="date" value="${date(S.to)}"></span>
+      <span><label>Search</label><input id="q" value="${esc(S.q)}" placeholder="device, ticket, change"></span>
+      <span><label>Highlight</label><input id="hl" value="${esc(S.hl)}" placeholder="text to mark"></span>
+      ${S.change ? `<span class="chip on" id="clearchange">Change ${esc(S.change)} ✕</span>` : ""}
+      <button id="reset">Reset filters</button></div>
+    <h2>Change work in progress</h2>${changePanel(T)}
+    <h2>Alarms <span class="note" id="count">${rows.length} shown</span></h2>
+    <div class="wide"><table id="alarms"><tr><th></th><th>Ack</th><th>Source</th><th>Ticket</th><th>Device</th><th>Location</th><th>Summary</th><th>Change work</th><th>Tally</th><th>First (CDT)</th><th>Cleared</th></tr>
+    ${rows.map(a => rowHtml(a, T)).join("") || `<tr><td colspan="11" class="empty">No alarms match.</td></tr>`}</table></div>
+    <p class="note">Synthetic data; all names, devices, and events are fictional. Acknowledgment comes from the BMS or the partner's ticket. Ack on this board is read-only: it never writes back to a partner's system.</p></section>`;
+}
+
+function changes() {
+  return `<section class="view"><h1>Change work and declared impact</h1>
+    <p class="sub">Every approved change from both partners with its impact declaration (Interface Agreement section 10). Click a change to replay its window on the board.</p>
+    <div class="wide"><table id="changelist"><tr><th>Change</th><th>Owner</th><th>Title</th><th>Window (CDT)</th><th>Declared assets</th><th>Expected alarms</th><th>Worst</th><th>Expected</th><th>Out of scope</th><th>Out of window</th></tr>
+    ${D.declarations.map(d => `<tr class="row" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>${partyBadge(d.owner)}</td><td>${esc(d.title)}</td>
+      <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td>${esc(d.assets.map(x => x.replace("rack:", "rack ")).join(", "))}</td>
+      <td>${esc(d.expected.map(e => e.alarms.join(", ")).join("; "))}</td><td>${esc(d.max_severity)}</td>
+      <td>${d.counts.expected}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${d.counts.out_of_scope}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${d.counts.out_of_window}</b>` : 0}</td></tr>`).join("")}</table></div>
+    <h2>Change conflicts</h2>${D.conflicts.length ? `<ul>${D.conflicts.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None this month: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
+}
+
+function notify() {
+  const st = s => `<span class="badge ${s === "on_time" ? "ok" : s === "missing" ? "bad" : "warn"}">${esc(s.replace("_", " "))}</span>`;
+  const key = D.owed.filter(o => o.rule.includes("NT-1") || o.rule.includes("NT-3"));
+  return `<section class="view"><h1>Notifications owed to the Customer</h1>
+    <p class="sub">What each partner owed under Interface Agreement section 10 (NT-1 critical within 5 minutes with a page; NT-2 major within 15 minutes on two automatic channels; NT-3 change work within 5 minutes, naming the change), compared with its delivery log. The sample month predates the clause, so this is the baseline it starts from.</p>
+    <div class="wide"><table id="km"><tr><th>Measure</th><th>Party</th><th>Owed</th><th>On time</th><th>Late</th><th>Single channel or no change named</th><th>Missing</th><th>Actual</th><th>Target</th><th>NT-1</th><th>NT-2</th><th>NT-3</th></tr>
+    ${D.key_measures.map(k => `<tr><td>${esc(k.id)}</td><td>${partyBadge(k.party)}</td><td>${k.owed}</td><td>${k.on_time}</td><td>${k.late}</td><td>${k.incomplete}</td><td>${k.missing}</td><td><b>${k.actual}%</b></td><td>${k.target}%</td>
+      ${["NT-1","NT-2","NT-3"].map(r => `<td>${k.by_rule[r].on_time} of ${k.by_rule[r].owed}</td>`).join("")}</tr>`).join("")}</table></div>
+    <p class="note">Key measures carry no service credit; they drive corrective action.</p>
+    <h2>Critical and change-work notifications</h2>
+    <div class="wide"><table id="owed"><tr><th>Alarm</th><th>Raised (CDT)</th><th>Device</th><th>Alarm</th><th>Owed by</th><th>Rule</th><th>First sent</th><th>Channels</th><th>Result</th></tr>
+    ${key.map(o => `<tr><td>${esc(o.alarm)}</td><td>${esc(local(ms(o.raised)))}</td><td>${esc(o.device)}</td><td>${esc(o.signal)}</td><td>${partyBadge(o.party)}</td><td>${esc(o.rule)}</td><td>${o.sent ? esc(local(ms(o.sent))) : "none"}</td><td>${esc((o.channels || []).join(", "))}</td><td>${st(o.status)}</td></tr>`).join("")}</table></div></section>`;
+}
+
+function about() {
+  const r = D.rules;
+  return `<section class="view"><h1>How the board works</h1>
+    <p>${esc(r.principle)}</p>
+    <h2>Classification</h2><ul class="rules">
+      <li><span class="badge expected">Expected</span> a declared asset raises a declared alarm, no worse than the declared severity, inside the window (15 minutes grace either side). Shown dimmed.</li>
+      <li><span class="badge out_of_scope">Out of scope</span> ${esc(r.out_of_scope[0].replace(/^Out of scope: /, ""))}</li>
+      <li><span class="badge out_of_window">Out of window</span> ${esc(r.out_of_scope[1].replace(/^Out of window: /, ""))}</li>
+      <li>Anything else is not change work, including alarms during a window on equipment that is not connected.</li></ul>
+    <p>${esc(r.out_of_scope[2])}</p>
+    <h2>Notifications</h2><ul class="rules">${r.notifications.map(n => `<li><b>${esc(n.id)}</b> ${esc(n.trigger)}: within ${n.within_min} minutes, ${esc(n.channels.toLowerCase())}. Owed by ${esc(n.owed_by.toLowerCase())}.</li>`).join("")}</ul>
+    <p>${esc(r.customer_backstop)}</p>
+    <h2>Sources</h2><p>Landlord: BMS alarms (the alarm of record), UPS cards, busway monitors, power monitoring, CDU controllers, leak and VESDA panels. IT Partner: rack leak ropes, Redfish, NVLink manager, fabric manager, GPU telemetry, scheduler. Severity follows each partner SLA's P1 and P2 criteria. Every name, device, and event is synthetic.</p>
+    <p class="note">Report: <code>reports/change_alarms.md</code>. Rules: Interface Agreement section 10. Code: <code>src/scorecard/alarms.py</code>.</p></section>`;
+}
+
+function render() {
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.view === S.view));
+  const doc = document.getElementById("doc");
+  doc.innerHTML = {board, changes, notify, about}[S.view]();
+  wire();
+}
+function setT(t) { S.T = Math.max(W0, Math.min(W1, t)); render(); }
+function stop() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
+function go(view) { S.view = view; if (location.hash !== "#" + view) history.replaceState(null, "", "#" + view); render(); }
+function focusChange(id) {
+  const d = D.declarations.find(x => x.change_id === id);
+  stop(); S.change = id; S.view = "board"; history.replaceState(null, "", "#board");
+  const flags = A.filter(a => a.change === id && FLAG.includes(a.cls));
+  setT(Math.max(ms(d.window_end) + GRACE, ...flags.map(a => a.t)) + MIN);
+}
+function wire() {
+  const $ = id => document.getElementById(id);
+  document.querySelectorAll("[data-change]").forEach(el => el.onclick = () => focusChange(el.dataset.change));
+  if (S.view !== "board") return;
+  $("t").oninput = e => { stop(); setT(+e.target.value); };
+  document.querySelectorAll("[data-step]").forEach(b => b.onclick = () => { stop(); setT(S.T + (+b.dataset.step) * MIN); });
+  $("end").onclick = () => { stop(); setT(W1); };
+  $("play").onclick = () => { if (S.timer) { stop(); render(); return; } if (S.T >= W1) S.T = W0; S.timer = setInterval(() => { if (S.T >= W1) stop(); setT(S.T + 10 * MIN); }, 150); render(); };
+  $("a07").onclick = () => { stop(); S.change = D.a07.change; setT(ms(D.a07.window_start) + MIN); };
+  document.querySelectorAll("#chips .chip").forEach(c => c.onclick = () => { const set = S[c.dataset.grp]; set.has(c.dataset.k) ? set.delete(c.dataset.k) : set.add(c.dataset.k); render(); });
+  $("party").onchange = e => { S.party = e.target.value; render(); };
+  $("hall").onchange = e => { S.hall = e.target.value; render(); };
+  $("from").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.from = v; render(); };
+  $("to").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.to = v; render(); };
+  const typed = (id, k) => { $(id).oninput = e => { S[k] = e.target.value; render(); const el = $(id); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }; };
+  typed("q", "q"); typed("hl", "hl");
+  if ($("clearchange")) $("clearchange").onclick = () => { S.change = ""; render(); };
+  $("reset").onclick = () => { Object.assign(S, {sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1, q:"", hl:"", change:""}); render(); };
+  document.querySelectorAll("#alarms tr.row").forEach(r => r.onclick = () => { S.open.has(r.dataset.id) ? S.open.delete(r.dataset.id) : S.open.add(r.dataset.id); render(); });
+}
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => { stop(); go(b.dataset.view); });
+const h = location.hash.slice(1);
+S.view = ["board", "changes", "notify", "about"].includes(h) ? h : "board";
+render();
+</script>
+</body>
+</html>

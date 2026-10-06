@@ -146,6 +146,19 @@ The 26 weeks before the sample month for Hall A, written by `scripts/generate_hi
 
 Planted patterns (moved and resized on each robustness history): an optic lot that fails several times faster than the others; a CDU whose filter fouls so its supply creeps up but stays under the alarm, with GPU thermal slowdowns in the racks it serves until the next quarterly filter change; reseats of one XID that usually come back within 30 days; and a decoy rack with extra unrelated faults that must not be flagged. Tuning lives in `config/history.yaml`.
 
+## Change layer (`data/changes/`)
+
+Derived from `data/sample/` by `scripts/generate_changes.py` with its own random stream; the sample itself is never written.
+
+| File | What it represents |
+|---|---|
+| `impact_declarations.json` | One structured impact declaration per approved change (Landlord MOPs and IT CAB changes): owner, assets, expected alarms per asset, worst severity, domains, redundancy reduced, window, grace. Derived from the change-type catalog in `config/change_alarms.yaml`; under Interface Agreement section 10 the partners file these themselves |
+| `notification_log.json` | Each partner's delivery log: alarm (device, signal, time), channel (page, email, phone), recipient, sent time, and the change it names (empty today). Reflects the current SLAs: P1 paged, P2 one call or email, nothing on change scope |
+| `ground_truth/change_alarm_key.json` | Answer key: the flags the check must raise (the natural rack outage in every month; planted cases and decoys in robustness months only) and planted notification failures. The check never reads it |
+| `manifest.json` | Window, seed, source dataset, counts |
+
+Planted only in generated robustness months (appended to that month's own files): the wrong CDU isolated during a filter change, an NVLink switch tray failure during tray firmware work, a tap-off opened before its window, a CDU pump left isolated past its window, and three decoys (a chiller alarm during a CDU change, a GPU error on a rack fed by a UPS under maintenance, a UPS back online inside the grace), plus one missing and one late P1 page.
+
 ## Live collector output
 
 `scripts/collect.py` (see `src/scorecard/live/`) writes the same contract files from real devices. It creates every contract file, leaves the ones it does not collect empty, and lists them in `manifest.json` under `not_collected` (Landlord work orders and maintenance records come from Landlord system exports, not device polling). It adds two files the synthetic data does not have:

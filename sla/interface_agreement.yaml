@@ -17,8 +17,8 @@ document:
   id: "IA-AUS1-001"
   title: "Interface Agreement: Site AUS-1"
   subtitle: "Joined to the Data Center Lease (Schedule C) and the IT Partner Services Agreement (Schedule B)"
-  version: "1.0.0"
-  effective_date: "2026-10-05"
+  version: "1.1.0"
+  effective_date: "2026-10-06"
   status: "MOCK / ILLUSTRATIVE"
   disclaimer: >-
     This is a fictional, illustrative interface agreement created for a
@@ -152,6 +152,72 @@ change_coordination:
   - "Landlord work that reduces redundancy is notified at least 10 business days ahead and done in a Customer-approved window; emergency work is notified as soon as it is known and at least 1 hour ahead where possible."
   - "Group lockout under EHS-R2 for any multi-party work."
   - "BMS point overrides and alarm inhibits carry a change reference and an expiry, and are visible to the Customer in real time."
+
+alarm_notification:
+  principle: >-
+    Planned work causes alarms the parties can predict. Each change therefore
+    declares the alarms it expects, and anything else that happens on the
+    equipment it touches reaches the Customer at once, automatically, from the
+    party doing the work. The Customer runs its own check on the same feeds so
+    that it never depends on a party's notification alone.
+  impact_declaration:
+    - "Every change record, method of procedure, and planned work order (other than routine preventive maintenance with no expected alarm) declares its impact in the Customer's schema before approval: the assets touched, the alarms each asset is expected to raise, the worst severity the work may cause, whether redundancy is reduced, and the window."
+    - "A change without a declaration is not approved. A declaration is part of the approved change: work outside it is outside the approval (common terms, change management)."
+    - "An alarm counts as expected only on a declared asset, with a declared alarm, at or below the declared severity, inside the window plus 15 minutes either side."
+  out_of_scope:
+    - "Out of scope: during a window, an alarm on a declared asset that the declaration did not list or that exceeds the declared severity, or an alarm on equipment connected to a declared asset (the same load, a redundant partner, or the load it serves, from the site model) of a kind the work could cause."
+    - "Out of window: a declared alarm raised before the window opens, or a declared asset still in its maintenance state 15 minutes after the window closes."
+    - "An out-of-scope or out-of-window alarm means the records do not reconcile with the approved change; it is not by itself a finding against anyone."
+  notifications:
+    - id: "NT-1"
+      trigger: "Critical alarm (P1 under either partner SLA) not expected under a declared change"
+      within_min: 5
+      channels: "Page to the Customer Incident Commander plus email or SMS"
+      channels_min: 2
+      page: true
+      owed_by: "The party that owns the equipment"
+    - id: "NT-2"
+      trigger: "Major alarm (P2) not expected under a declared change"
+      within_min: 15
+      channels: "Two of email, SMS, and the Customer alarm feed"
+      channels_min: 2
+      page: false
+      owed_by: "The party that owns the equipment"
+    - id: "NT-3"
+      trigger: "Any out-of-scope or out-of-window alarm on change work"
+      within_min: 5
+      channels: "Two of email, SMS, and the Customer alarm feed; a page as well if the alarm is critical"
+      channels_min: 2
+      page: false
+      owed_by: "The party doing the change, whoever owns the equipment"
+  rules:
+    - "Notifications are sent by each party's monitoring system without a person deciding whether to send. A call from a duty manager does not count toward the two channels."
+    - "Each notification carries the alarm, device, location, severity, the change it relates to, and the party's ticket or work order."
+    - "Each party keeps a delivery log (alarm, channel, recipient, sent, delivered) and gives the Customer read access to it, with the alarm feeds under section 9."
+    - "Whether a notification was owed is decided from the Customer's Telemetry of Record and the declarations, not from the party's own classification."
+  customer_backstop: >-
+    The Customer's alarm board reads both parties' feeds, classifies every alarm
+    against the declared changes, and alerts the Customer's on-call directly. A
+    missed or late party notification is still counted against that party.
+  key_measures:
+    - id: "IA-KM-01"
+      party: "Landlord"
+      name: "Change-aware notifications on time (NT-1 to NT-3)"
+      unit: "%"
+      direction: "higher_is_better"
+      target: 99.0
+      data_sources: "Customer alarm board; Landlord delivery log"
+    - id: "IA-KM-02"
+      party: "IT Partner"
+      name: "Change-aware notifications on time (NT-1 to NT-3)"
+      unit: "%"
+      direction: "higher_is_better"
+      target: 99.0
+      data_sources: "Customer alarm board; IT Partner delivery log"
+  measurement_note: >-
+    Key measures report and trigger corrective action; they carry no service
+    credit. Moving them to credit-bearing service levels is a later negotiation
+    once both delivery logs have proved reliable.
 
 data_access:
   principle: >-

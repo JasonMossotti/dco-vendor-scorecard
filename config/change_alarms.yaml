@@ -1,0 +1,130 @@
+# =============================================================================
+# Change-aware alarms: Site AUS-1 (portfolio demo; all data fictional)
+# -----------------------------------------------------------------------------
+# Three things the Customer's check needs that are not contract text:
+#   1. alarm_map: how each source's signals become one alarm feed with four
+#      severities (critical, major, minor, plus clear), following the partner
+#      SLAs' P1/P2/P3 criteria. Every alarm also gets a domain (power, cooling,
+#      fire, compute, network, maintenance) so a change is only blamed for
+#      alarms of the kind its work could cause.
+#   2. change_types: the catalog that turns a change record into a structured
+#      impact declaration (assets, expected alarms, worst severity, window).
+#      Under Interface Agreement section 10 the partners file these themselves;
+#      for the synthetic site they are derived from each record's title.
+#   3. synthetic: how the partners notify today (before section 10) and what the
+#      robustness months plant. Read by src/scorecard/synthetic/changes.py only.
+# =============================================================================
+
+grace_min: 15            # a declared alarm this close to the window still counts as inside it
+early_lookback_h: 4      # declared work signals this long before the window are "started early"
+repeat_merge_min: 30     # the same signal on the same device within this time is one row with a tally
+bms_merge_s: 120         # a device event this close to a BMS alarm on the same device is that alarm's evidence
+
+severity_rank: {minor: 1, major: 2, critical: 3}
+
+# Severity follows the partner SLAs: Landlord P1 / IT P1 criteria are critical,
+# P2 (lost redundancy, single tray down, fabric link down) major, the rest minor.
+alarm_map:
+  bms_priority: {P1: critical, P2: major, P3: minor, P4: minor}
+  bms_domain:                                   # by device prefix; the BMS is the Landlord's alarm of record
+    "Rack ": [power, compute]
+    "UPS-": [power]
+    "BW-": [power]
+    "MV ": [power]
+    "CDU-": [cooling]
+    "CH-": [cooling]
+    "TW-": [cooling]
+    "TTDM-": [cooling]
+    "VESDA-": [fire]
+  ups_status:                                   # PowerNet MIB upsBasicOutputStatus values; onLine clears
+    switchedBypass: {signal: UPS on maintenance bypass, severity: major}
+    onBattery: {signal: UPS on battery, severity: major}
+    hardwareFailureBypass: {signal: UPS on fault bypass, severity: major}
+  ups_module_fault: {signal: UPS power module fault, severity: major}
+  busway:
+    breaker_open: {signal: Tap-off breaker open, severity: major}
+    undervoltage: {signal: Busway voltage out of tolerance, severity: major}
+  epms_trip: {signal: Breaker trip, severity: major}
+  cdu:
+    pump_disabled: {signal: Pump isolated, severity: major}
+    pump_critical: {signal: Pump failed, severity: major}
+    redundancy_warning: {signal: Pump redundancy lost, severity: major}
+  leak: {signal: Leak detected, severity: critical}
+  vesda:
+    isolate: {signal: Detector isolated, severity: major}
+    fault: {signal: Detector fault, severity: minor}
+    alarm_levels: {Alert: minor, Action: critical, "Fire 1": critical, "Fire 2": critical}
+  bms_override: {severity: minor}
+  it:
+    rack_leak: {signal: Rack leak detected, severity: critical, domain: [cooling]}
+    psu_failed: {signal: PSU failed, severity: minor, domain: [power]}
+    shelf_failed: {signal: Power shelf failed, severity: major, domain: [power]}
+    nvlink_failed: {signal: NVLink switch tray failed, severity: critical, domain: [compute]}
+    link_down: {signal: Fabric link down, severity: major, domain: [network]}
+    symbol_threshold: {signal: Fabric symbol errors over threshold, severity: minor, domain: [network]}
+    node_down: {signal: Node not responding, severity: major, domain: [power, compute]}
+    rack_outage: {signal: Rack outage, severity: critical, domain: [power, compute]}
+    rack_outage_nodes: 9                     # half an NVL72 rack's 18 trays down within 10 minutes
+    xid_major: [48, 79, 119, 145, 149]       # anything else is minor
+    xid_signal: GPU error (XID)
+
+# Each change record's title picks one type. A record no type matches is an error.
+change_types:
+  - id: ups_pm
+    match: "^Preventive maintenance and battery health check"
+    domains: [power]
+    expected: ["UPS on maintenance bypass"]
+    max_severity: major
+    redundancy_reduced: true
+  - id: cdu_filter
+    match: "^Filter change and coolant sample"
+    domains: [cooling]
+    expected: ["Pump isolated"]
+    max_severity: major
+    redundancy_reduced: true
+  - id: vesda_test
+    match: "^VESDA inspection and smoke test"
+    domains: [fire]
+    expected: ["Detector isolated", "Smoke alarm"]
+    max_severity: critical
+    redundancy_reduced: false
+  - id: tapoff_energize
+    match: "^Energize tap-off"
+    domains: [power]
+    expected: ["Tap-off breaker open"]
+    max_severity: major
+    redundancy_reduced: false
+  - id: tapoff_work
+    match: "^Retorque"
+    domains: [power]
+    expected: ["Tap-off breaker open"]
+    max_severity: major
+    redundancy_reduced: true
+  - id: tray_firmware
+    match: "^Compute tray firmware"
+    domains: [compute]
+    expected: ["Node not responding"]
+    max_severity: major
+    redundancy_reduced: false
+
+synthetic:
+  # How the partners notify the Customer today, under their current SLAs:
+  # P1 is an immediate page (both SLAs); P2 is a call from the Landlord duty
+  # manager or an email from the IT shift lead. Nobody notifies on change scope,
+  # because no change record declares one.
+  notify_today:
+    critical: {channels: [page, email], delay_min: [0.5, 4.0]}
+    major:
+      Landlord: {channels: [phone], delay_min: [5, 30]}
+      IT Partner: {channels: [email], delay_min: [5, 30]}
+  # Planted only in the robustness months (the committed sample keeps its numbers).
+  robustness_plants:
+    undeclared_equipment: 1    # the wrong CDU is isolated during a filter change
+    exceeds_declared: 1        # an NVLink switch tray fails during tray firmware work
+    early_start: 1             # a tap-off opened before its window
+    overrun: 1                 # a CDU pump left isolated well past the window
+    decoy_unconnected: 1       # a chiller alarm during a CDU change (not connected)
+    decoy_other_domain: 1      # a GPU error on a rack fed by a UPS under maintenance
+    decoy_within_grace: 1      # a UPS back online inside the grace
+    notify_missing: 1          # a P1 page never sent
+    notify_late: 1             # a P1 page sent 9 to 20 minutes after the alarm

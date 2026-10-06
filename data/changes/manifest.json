@@ -1,0 +1,18 @@
+{
+  "disclaimer": "Synthetic data for a portfolio demonstration. All sites, people, and events are fictional.",
+  "files": {
+    "ground_truth/change_alarm_key.json": 4,
+    "impact_declarations.json": 12,
+    "notification_log.json": 96
+  },
+  "generator": "scorecard.synthetic.changes",
+  "note": "Derived from the dataset beside it with its own random stream; ground_truth/ is the answer key and the check never reads it.",
+  "seed": 2026,
+  "source_dataset": "data/sample",
+  "window": {
+    "end": "2026-09-28T00:00:00Z",
+    "seed": 2026,
+    "start": "2026-08-31T00:00:00Z",
+    "weeks": 4
+  }
+}

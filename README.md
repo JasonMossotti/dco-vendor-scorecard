@@ -124,6 +124,12 @@ Three rules keep it honest. Weekly results are early warnings only: the contract
 
 Failures come from telemetry, not tickets, and are grouped by what they have in common: rack, the racks a CDU serves, tray slot, optic lot, and the fix applied. A group is a pattern only when it is too large to be chance after correcting for the number of groups tested. Three patterns stand out, each with a different owner from the Interface Agreement's ownership matrix: an optic lot failing at 4.8 times the rate of the others (Customer and IT Partner), reseats that do not fix XID 79 faults (IT Partner), and GPU thermal slowdowns caused by a CDU that ran warm for 48 days without reaching its alarm (Landlord, although every ticket sat in the IT Partner's queue). The rack with the most tickets is not a pattern. Root causes, lessons, standard-work changes, and owned actions are written by people and tested against the facts; the analysis is scored on 60 generated histories with the patterns moved each time.
 
+## Change-aware alarms and the Customer alarm board
+
+**[Open the alarm board](https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/)**: both partners' alarm feeds in one table, checked against declared change work ([Markdown version](reports/change_alarms.md)).
+
+Planned work causes alarms anyone can predict. Under the Interface Agreement's section 10, every change declares the assets it touches, the alarms it expects, the worst severity it may cause, and its window. The Customer's check classifies every alarm as expected, out of scope (undeclared, too severe, or on connected equipment from the site model), or out of window (started early or left in maintenance after the window), and the partners owe automatic notifications on two channels within 5 minutes for P1 alarms and anything outside a change (15 minutes for P2). On the sample month the check flags exactly the rack A07 outage: the B-side tap-off opening during A-side work at 15:42:11Z, and the A side still open after the window closed, which the post-incident review says nothing alerted on. The board replays the month, with severity and change-work filters, acknowledgment, tickets, and repeat counts. Cases are planted in 60 generated months to score the check; a flag means the records do not reconcile with the approved change, not that anyone did anything wrong.
+
 ## Toward live data: the read-only collector
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
@@ -198,6 +204,10 @@ scripts/generate_history.py      Failure history for the pattern review (data/hi
 src/scorecard/patterns.py        Failure pattern analysis: statistics, evidence for a cause, owner from the RACI
 scripts/render_patterns.py       Failure pattern review: reports/failure_patterns.md and the /patterns/ page
 patterns/lessons.yaml            The written part of the pattern review (root causes, lessons, actions)
+src/scorecard/alarms.py          Change-aware alarms: one feed for both partners, classified against declared changes
+scripts/generate_changes.py      Change layer for the sample (data/changes/: declarations, delivery logs, own random stream)
+scripts/render_alarms.py         Change-aware alarm review: reports/change_alarms.md and the /alarms/ board
+config/change_alarms.yaml        Alarm map (severity, domain), change-type catalog, robustness plants
 scripts/collect.py               Read-only live collector (Redfish, Modbus, SNMPv3, BACnet/IP) writing the dataset contract
 src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard
