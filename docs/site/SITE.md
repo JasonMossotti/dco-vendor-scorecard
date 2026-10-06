@@ -25,6 +25,10 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 | A-203 | [Hall C (800 VDC pilot) floor plan](A-203_hall_c_plan.svg) |
 | E-001 | [Electrical one-line](E-001_one_line.svg) |
 | M-001 | [Cooling flow diagram](M-001_cooling_flow.svg) |
+| D-101 | [GB200 NVL72 rack, front and rear elevation](D-101_gb200_nvl72_rack.svg) |
+| D-201 | [CHx2000 CDU, front and rear](D-201_chx2000_cdu.svg) |
+| D-301 | [Galaxy VX 1500 kW UPS line-up](D-301_galaxy_vx_1500_kw_ups_line_up.svg) |
+| D-303 | [Track busway section and tap-off](D-303_track_busway_section_and_tap_off.svg) |
 
 ### A-001 Campus plan
 
@@ -53,6 +57,22 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 ### M-001 Cooling flow diagram
 
 ![Cooling flow diagram](M-001_cooling_flow.svg)
+
+### D-101 GB200 NVL72 rack, front and rear elevation
+
+![GB200 NVL72 rack, front and rear elevation](D-101_gb200_nvl72_rack.svg)
+
+### D-201 CHx2000 CDU, front and rear
+
+![CHx2000 CDU, front and rear](D-201_chx2000_cdu.svg)
+
+### D-301 Galaxy VX 1500 kW UPS line-up
+
+![Galaxy VX 1500 kW UPS line-up](D-301_galaxy_vx_1500_kw_ups_line_up.svg)
+
+### D-303 Track busway section and tap-off
+
+![Track busway section and tap-off](D-303_track_busway_section_and_tap_off.svg)
 
 ## Who operates what
 

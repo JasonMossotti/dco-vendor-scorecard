@@ -58,7 +58,7 @@ with right:
 with codes:
     # The static pages explain each code in a popup; here a small panel does, without leaving the page.
     with st.popover("Look up a code"):
-        code_q = st.text_input("Code or ID", placeholder="CSL-07, TR-1, INC3100816, A07, CDU-B3", key="code_lookup")
+        code_q = st.text_input("Code or ID", placeholder="CSL-07, TR-1, INC3100816, A07, CDU-B3 pump 2", key="code_lookup")
         loc = A.location_view(code_q)
         lines = A.lookup_lines(code_q)
         if loc is None or not lines[0].startswith("No code"):

@@ -202,7 +202,7 @@ function ticketPanel(T) {
   const ch = D.declarations.filter(d => ms(d.window_start) - GRACE <= T && ms(d.window_end) + GRACE > T - REAP && (S.party === "all" || d.owner === S.party));
   if (!tr.length && !ch.length) return `<div class="empty" id="tickets">No open tickets and nothing closed in the last 6 hours.</div>`;
   const trRow = k => { const o = openAt(k, T);
-    return `<tr class="tk ${o ? "open" : "closed"}"><td>${esc(k.id)}</td><td>Trouble</td><td>${partyBadge(k.partner)}</td><td>${esc(k.priority)}</td><td data-loc="${esc(k.device + "|" + k.location)}">${esc(k.device)}</td><td class="sum">${esc(k.summary)}</td><td>${esc(local(k.t))}</td>
+    return `<tr class="tk ${o ? "open" : "closed"}"><td>${esc(k.id)}</td><td>Trouble</td><td>${partyBadge(k.partner)}</td><td>${esc(k.priority)}</td><td data-loc="${esc(k.device + "|" + k.location)}" data-part="${esc(k.summary)}">${esc(k.device)}</td><td class="sum">${esc(k.summary)}</td><td>${esc(local(k.t))}</td>
       <td>${o ? `<b>Open</b> ${dur(Math.floor((T - k.t) / MIN))}` : `Closed ${esc(hhmm(k.tc))}`}</td></tr>`; };
   const chRow = d => { const done = T > ms(d.window_end) + GRACE;
     return `<tr class="tk ${done ? "closed" : "open"}" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>Change</td><td>${partyBadge(d.owner)}</td><td></td><td data-loc="${esc(assetsLoc(d))}">${esc(assetsText(d))}</td><td class="sum">${esc(d.title)}</td><td>${esc(local(ms(d.window_start)))}</td>
@@ -304,7 +304,7 @@ function rowHtml(a, T, kids = [], child = false) {
     <td><span class="ack ${acked ? "yes" : "no"}" title="${acked ? esc("Acknowledged " + local(a.ta) + " CDT by " + (a.ack_by || "")) : "Not acknowledged"}">${acked ? "✓" : "○"}</span></td>
     <td>${partyBadge(a.partner)}<div class="note">${esc(a.source)}</div></td>
     <td>${esc(tk)}<div class="note">${esc(ts)}</div></td>
-    <td>${esc(a.device)}</td><td data-loc="${esc(a.device + "|" + a.location)}">${esc(a.location)}</td>
+    <td>${esc(a.device)}</td><td data-loc="${esc(a.device + "|" + a.location)}" data-part="${esc(a.signal + " " + a.summary)}">${esc(a.location)}</td>
     <td class="sum">${child ? "↳ " : ""}${esc(a.summary)}${kids.length ? ` <span class="grp" data-g="${esc(g)}">${S.xopen.has(g) ? "−" : "+"}${kids.length} related${nf ? `, ${nf} flagged` : ""}</span>` : ""}</td>
     <td>${clsBadge(a.cls)} ${a.change ? `<div class="note">${esc(a.change)}</div>` : ""}</td>
     <td>${a.tally}</td>
@@ -537,7 +537,7 @@ function notify() {
     <p class="note">Key measures carry no service credit; they drive corrective action.</p>
     <h2>Critical and change-work notifications</h2>
     <div class="wide"><table id="owed"><tr><th>Alarm</th><th>Raised (CDT)</th><th>Device</th><th>Alarm</th><th>Owed by</th><th>Rule</th><th>First sent</th><th>Channels</th><th>Result</th></tr>
-    ${key.map(o => `<tr><td>${esc(o.alarm)}</td><td>${esc(local(ms(o.raised)))}</td><td data-loc="${esc(o.device)}">${esc(o.device)}</td><td>${esc(o.signal)}</td><td>${partyBadge(o.party)}</td><td>${esc(o.rule)}</td><td>${o.sent ? esc(local(ms(o.sent))) : "none"}</td><td>${esc((o.channels || []).join(", "))}</td><td>${st(o.status)}</td></tr>`).join("")}</table></div>
+    ${key.map(o => `<tr><td>${esc(o.alarm)}</td><td>${esc(local(ms(o.raised)))}</td><td data-loc="${esc(o.device)}" data-part="${esc(o.signal)}">${esc(o.device)}</td><td>${esc(o.signal)}</td><td>${partyBadge(o.party)}</td><td>${esc(o.rule)}</td><td>${o.sent ? esc(local(ms(o.sent))) : "none"}</td><td>${esc((o.channels || []).join(", "))}</td><td>${st(o.status)}</td></tr>`).join("")}</table></div>
     ${routingSection()}</section>`;
 }
 

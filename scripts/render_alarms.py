@@ -211,6 +211,9 @@ def robustness(n: int) -> int:
     by_type: dict[str, list[int]] = {}
     tot = Counter()
     unexplained, explained, conflicts = [], Counter(), 0
+    from scorecard import locations
+    loc = locations.load()
+    parts_checked, parts_missing = 0, []
     for k in range(n):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
@@ -235,6 +238,9 @@ def robustness(n: int) -> int:
                     unexplained.append(f"month {k}: {o}")
             tot["other"] += len(s["other_flags"])
             conflicts += len(r["conflicts"])
+            n_p, miss = locations.part_coverage(loc, [A.alarm_dict(a) for a in r["alarms"]])
+            parts_checked += n_p
+            parts_missing += [f"month {k}: {m}" for m in miss]
     print(f"Change-aware alarm check on {n} generated months (cases moved each month):")
     for t, (ok, tt) in sorted(by_type.items()):
         word = "not flagged" if t.startswith("decoy") else "found"
@@ -245,8 +251,11 @@ def robustness(n: int) -> int:
     for u in unexplained:
         print("   ", u)
     print(f"  change conflicts       {conflicts} in {n} months")
+    print(f"  detail-sheet parts     {parts_checked - len(parts_missing)}/{parts_checked} alarms on detailed products name a part")
+    for m in parts_missing:
+        print("   ", m)
     bad = sum(tt - ok for t, (ok, tt) in by_type.items())
-    return 1 if bad or unexplained else 0
+    return 1 if bad or unexplained or parts_missing else 0
 
 
 def main() -> int:

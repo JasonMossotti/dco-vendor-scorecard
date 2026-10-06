@@ -245,8 +245,8 @@ families:
      text: "The serial number of a replaced facility part: a CDU pump assembly (CHX-P) or a UPS power module (GVX-M)."}
   - {key: EHS-EX, label: "EHS-#", pattern: 'EHS-\d', type: safety, title: Worked safety example, example: EHS-1, pages: [agreements],
      text: "A numbered example event in an SLA's worked safety credit example (Appendix B)."}
-  - {key: SHEET, label: "A-###, E-###, M-###", pattern: '[AEM]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site],
-     text: "A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical."}
+  - {key: SHEET, label: "A-###, E-###, M-###, D-###", pattern: '[AEMD]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site],
+     text: "A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical, D for equipment details (one representative sheet per product, typical of every unit of it)."}
   # --- Records that only mean something on one page
   - {key: PIR-A, label: "A# (post-incident review)", pattern: 'A\d', type: record, title: Post-incident review action, example: A3,
      pages: [pir, weekly], text: "An owned, dated action from the post-incident review, carried into the weekly pack until done."}
