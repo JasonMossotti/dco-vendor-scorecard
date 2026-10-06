@@ -366,19 +366,24 @@ def _site_drawings() -> tuple[dict, dict]:
 
 def location_view(query: str) -> dict[str, Any] | None:
     """For the lookup box: when the query names a rack, room, or piece of equipment, what it is and each
-    drawing that shows it, highlighted (title, sheet label, SVG). None when it names no location."""
+    drawing that shows it, highlighted (title, sheet label, SVG). A query that names a part ("CDU-B3 pump 2",
+    "a23-ct18") shows the equipment detail sheet first. None when it names no location."""
     from scorecard import locations
     q = (query or "").strip()
     if not q:
         return None
     data, svgs = _site_drawings()
-    hit = locations.resolve_field(data, q) or locations.resolve_field(data, q.upper())
+    for text in (q, q.upper()):
+        hit = locations.resolve_field(data, text)
+        if hit:
+            break
     if not hit:
         return None
     name, note = hit
     e = data["entries"][name]
-    label = e["title"] if name.startswith(("HALL-", "ER-")) else name
-    return {"name": name, "title": e["title"], "kind": locations.KIND_LABEL[e["kind"]],
-            "text": (note + ". " if note else "") + e["text"],
+    part = locations.resolve_field_part(data, text)
+    title, views = locations.card(data, name, part)
+    return {"name": name, "title": title, "kind": locations.KIND_LABEL[e["kind"]],
+            "text": (note + ". " if note and not part else "") + e["text"],
             "views": [(f"{v['s']} {data['sheets'][v['s']]['title']}", locations.highlighted_svg(data, svgs[v["s"]], v, label))
-                      for v in e["views"]]}
+                      for v, label in views]}

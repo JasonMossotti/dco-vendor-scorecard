@@ -176,6 +176,10 @@ def test_pins_in_a_browser(site, page, expected, redraw):
     for value, got in fields.items():   # the script reads every field exactly as locations.resolve_field does
         exp = L.resolve_field(data, value)
         assert (list(exp) if exp else None) == got, value
+    parts = json.loads(next(line for line in out.splitlines() if line.startswith("PARTS "))[6:])
+    for value, text, got in parts:       # and finds the same part as locations.resolve_field_part
+        exp = L.resolve_field_part(data, value, text)
+        assert (list(exp) if exp else None) == got, (value, text)
 
 
 # ------------------------------------------------------------------ the Scorecards app

@@ -348,7 +348,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | Code | Meaning | Defined in | Used on |
 |---|---|---|---|
 | A# (post-incident review) | **Post-incident review action.** An owned, dated action from the post-incident review, carried into the weekly pack until done. *(On: pir, weekly.)* | - | Post-Incident Review, Weekly Review |
-| A-###, E-###, M-### | **Site drawing sheet.** A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical. *(On: site.)* | - | Site model document |
+| A-###, E-###, M-###, D-### | **Site drawing sheet.** A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical, D for equipment details (one representative sheet per product, typical of every unit of it). *(On: site.)* | - | Site model document |
 | ALM-#### | **Alarm.** One alarm on the Alarm Board, checked against the change work that declared it. | - | Alarm Board |
 | B##### | **Access badge.** An access badge; badge-ins and badge-outs at the hall doors are the evidence for on-site times. | - | Post-Incident Review |
 | CAP-### | **Corrective action plan.** A corrective action plan drafted at the period review for each serious finding, grouped by the tickets it affects. | - | Scorecards |

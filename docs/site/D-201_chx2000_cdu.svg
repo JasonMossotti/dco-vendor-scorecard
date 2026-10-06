@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="940" viewBox="0 0 1400 940">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="270.0" y="82.0" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="middle" fill="#1e2933" font-weight="bold">FRONT</text>
+<rect x="120.0" y="110.0" width="300.0" height="640.0" rx="0" fill="#f4f6f8" stroke="#1e2933" stroke-width="1.6"/>
+<rect x="120.0" y="750.0" width="300.0" height="10.0" rx="0" fill="#1e2933" stroke="#1e2933" stroke-width="1.0"/>
+<text x="710.0" y="82.0" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="middle" fill="#1e2933" font-weight="bold">REAR</text>
+<rect x="560.0" y="110.0" width="300.0" height="640.0" rx="0" fill="#f4f6f8" stroke="#1e2933" stroke-width="1.6"/>
+<rect x="560.0" y="750.0" width="300.0" height="10.0" rx="0" fill="#1e2933" stroke="#1e2933" stroke-width="1.0"/>
+<rect x="190.0" y="150.0" width="160.0" height="90.0" rx="0" fill="#e9edf1" stroke="#1e2933" stroke-width="1.0"/>
+<rect x="210.0" y="160.0" width="120.0" height="50.0" rx="0" fill="#cfe0ee" stroke="#6b7785" stroke-width="0.8"/>
+<text x="270.0" y="228.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Controller</text>
+<rect x="140.0" y="280.0" width="260.0" height="180.0" rx="0" fill="#ffffff" stroke="#c9d0d8" stroke-width="1.0" stroke-dasharray="4 3"/>
+<text x="270.0" y="302.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#6b7785" font-weight="normal">Service panel</text>
+<rect x="140.0" y="510.0" width="125.0" height="200.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<circle cx="202.0" cy="600.0" r="26" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<polyline points="189.0,583.9 222.8,600.0 189.0,616.1" fill="none" stroke="#1e2933" stroke-width="1.2"/>
+<text x="202.0" y="670.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e2933" font-weight="bold">Pump 1</text>
+<text x="202.0" y="688.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">sliding tray</text>
+<rect x="275.0" y="510.0" width="125.0" height="200.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<circle cx="337.0" cy="600.0" r="26" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<polyline points="324.0,583.9 357.8,600.0 324.0,616.1" fill="none" stroke="#1e2933" stroke-width="1.2"/>
+<text x="337.0" y="670.0" font-family="Helvetica, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e2933" font-weight="bold">Pump 2</text>
+<text x="337.0" y="688.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">sliding tray</text>
+<rect x="580.0" y="130.0" width="120.0" height="70.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="640.0" y="190.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Facility water</text>
+<line x1="614.0" y1="144.0" x2="614.0" y2="104.0" stroke="#0b78a8" stroke-width="7"/>
+<circle cx="614.0" cy="152.0" r="9" fill="#0b78a8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="614.0" y="176.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#0b78a8" font-weight="bold">S</text>
+<line x1="666.0" y1="144.0" x2="666.0" y2="104.0" stroke="#c2362b" stroke-width="7"/>
+<circle cx="666.0" cy="152.0" r="9" fill="#c2362b" stroke="#1e2933" stroke-width="1.0"/>
+<text x="666.0" y="176.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#c2362b" font-weight="bold">R</text>
+<rect x="720.0" y="130.0" width="120.0" height="70.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="780.0" y="190.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Secondary loop</text>
+<line x1="754.0" y1="144.0" x2="754.0" y2="104.0" stroke="#2f8f5b" stroke-width="7"/>
+<circle cx="754.0" cy="152.0" r="9" fill="#2f8f5b" stroke="#1e2933" stroke-width="1.0"/>
+<text x="754.0" y="176.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#2f8f5b" font-weight="bold">S</text>
+<line x1="806.0" y1="144.0" x2="806.0" y2="104.0" stroke="#7cbf96" stroke-width="7"/>
+<circle cx="806.0" cy="152.0" r="9" fill="#7cbf96" stroke="#1e2933" stroke-width="1.0"/>
+<text x="806.0" y="176.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#7cbf96" font-weight="bold">R</text>
+<text x="640.0" y="98.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">4 in tri-clamp</text>
+<rect x="590.0" y="240.0" width="100.0" height="70.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<polyline points="620.0,254.0 660.0,274.0 660.0,254.0 620.0,274.0 620.0,254.0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
+<text x="640.0" y="296.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Control valve</text>
+<rect x="580.0" y="350.0" width="260.0" height="150.0" rx="0" fill="#e3efe8" stroke="#1e2933" stroke-width="1.0"/>
+<text x="710.0" y="428.6" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Heat exchanger</text>
+<line x1="601.7" y1="360.0" x2="601.7" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="623.4" y1="360.0" x2="623.4" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="645.1" y1="360.0" x2="645.1" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="666.8" y1="360.0" x2="666.8" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="688.5" y1="360.0" x2="688.5" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="710.2" y1="360.0" x2="710.2" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="731.9" y1="360.0" x2="731.9" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="753.6" y1="360.0" x2="753.6" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="775.3" y1="360.0" x2="775.3" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="797.0" y1="360.0" x2="797.0" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<line x1="818.7" y1="360.0" x2="818.7" y2="410.0" stroke="#9fb9a9" stroke-width="1"/>
+<rect x="580.0" y="540.0" width="260.0" height="170.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<rect x="630.0" y="560.0" width="60.0" height="110.0" rx="6" fill="#eef1f4" stroke="#1e2933" stroke-width="1.0"/>
+<rect x="730.0" y="560.0" width="60.0" height="110.0" rx="6" fill="#eef1f4" stroke="#1e2933" stroke-width="1.0"/>
+<text x="710.0" y="695.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e2933" font-weight="bold">Filters</text>
+<text x="1010.0" y="60.0" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="start" fill="#1e2933" font-weight="bold">Alarm points on this sheet</text>
+<text x="1010.0" y="80.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Pump n</text>
+<text x="1020.0" y="94.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Pump fault, pump isolated, redundancy lost (Redfish</text>
+<text x="1020.0" y="108.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">and BMS)</text>
+<text x="1010.0" y="135.0" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="start" fill="#1e2933" font-weight="bold">Notes</text>
+<text x="1010.0" y="155.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Representative drawing from public product</text>
+<text x="1010.0" y="169.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">information; not a manufacturer drawing. Typical of</text>
+<text x="1010.0" y="183.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">every instance on the site: the popup names the</text>
+<text x="1010.0" y="197.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">instance.</text>
+<text x="1010.0" y="221.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Pump numbering left to right is assumed. Internal</text>
+<text x="1010.0" y="235.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">layout is representative.</text>
+<text x="1010.0" y="259.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Sources and assumptions for every part:</text>
+<text x="1010.0" y="273.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">site/details.yaml.</text>
+<rect x="8.0" y="8.0" width="1384.0" height="924.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
+<line x1="8.0" y1="888.0" x2="1392.0" y2="888.0" stroke="#1e2933" stroke-width="1.4"/>
+<text x="20.0" y="907.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">CHx2000 CDU, front and rear (representative)</text>
+<text x="20.0" y="925.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Not to scale  |  Schematic, not for construction</text>
+<line x1="1280.0" y1="888.0" x2="1280.0" y2="932.0" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1336.0" y="909.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
+<text x="1336.0" y="928.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">D-201</text>
+</svg>

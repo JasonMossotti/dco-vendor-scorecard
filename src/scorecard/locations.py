@@ -13,6 +13,12 @@ specific name in it wins, so "Hall A, rack A07" points at the rack, and
 "a23-ct18" (compute tray 18) points at rack A23 with a note naming the tray.
 Names the drawings do not show (a fabric leaf switch, a leak controller) do
 not resolve, and the field gets no pin.
+
+Racks, CDUs, UPSs, busways, and tap-offs also have an equipment detail sheet
+(``detail_drawings``, one per product). ``resolve_part`` reads an alarm's text
+for the part it names ("Pump 2 fault" on CDU-B3 is pump 2), using the
+``points`` patterns in ``site/details.yaml``, so the popup can open the detail
+sheet with that part outlined.
 """
 
 from __future__ import annotations
@@ -24,6 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from . import site_model as S
+from .detail_drawings import load_details, parts as product_parts
 from .site_drawings import sheets
 
 # How specific each kind is: when a field names several things, the most specific wins.
@@ -67,10 +74,17 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
                 boxes += [b + [p] for b in marks[sheet][n]]
         return {"s": sheet, "b": boxes}
 
-    def add(name: str, kind: str, title: str, text: str, views: list[dict[str, Any]]) -> None:
+    details = load_details()
+    detail_of = {k: v["sheet"] for k, v in details["products"].items()}
+
+    def add(name: str, kind: str, title: str, text: str, views: list[dict[str, Any]], product: str | None = None) -> None:
         if name in entries:
             raise ValueError(f"duplicate location {name}")
         entries[name] = {"kind": kind, "title": title, "text": text, "rank": RANK[kind], "views": views}
+        if product:
+            entries[name]["p"] = product
+            if product in detail_of:           # the product's detail sheet, last: "what it looks like"
+                views.append(view(detail_of[product], ["device"]))
 
     pl = site["plants"]
     aliases: dict[str, str] = {}
@@ -106,7 +120,7 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
                 f"{rp['model']} in {short}, row {r['row']}, position {r['position']}. {pw} Cooled by the {short} "
                 f"CDU header ({cdus[0]} to {cdus[-1]}, N+{c['cdu_redundancy']}).",
                 [view(hs, [rid]), e_view, view("M-001", [f"racks:{hid}"], [f"header:{hid}"] + cdus),
-                 view("A-101", [rid], [hid])])
+                 view("A-101", [rid], [hid])], h["rack_product"])
         # busways, tap-offs, power groups
         for s in S.busway_segments(site, hid):
             for side in "AB":
@@ -114,17 +128,18 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
                 add(f"{s['id']}-{side}", "busway", f"Busway {s['id']}-{side}",
                     f"{side}-side overhead busway over racks {s['racks'][0]} to {s['racks'][-1]} (row {s['row']}, "
                     f"power group {s['group']}), fed by {u}.",
-                    [view(hs, [f"{s['id']}-{side}"], s["racks"]), view("E-001", [u], [s["group"]])])
+                    [view(hs, [f"{s['id']}-{side}"], s["racks"]), view("E-001", [u], [s["group"]])], p.get("busway_product"))
             for rid in s["racks"]:
                 add(f"TO-{rid}", "tapoff", f"Tap-offs above rack {rid}",
                     f"The A and B tap-offs feeding rack {rid}, on busways {s['id']}-A ({s['feeds']['A']}) and "
                     f"{s['id']}-B ({s['feeds']['B']}).",
                     [view(hs, [f"TO-{rid}-A", f"TO-{rid}-B"], [rid]),
-                     view("E-001", [s["feeds"]["A"], s["feeds"]["B"]], [s["group"]])])
+                     view("E-001", [s["feeds"]["A"], s["feeds"]["B"]], [s["group"]])], p.get("busway_product"))
                 for side in "AB":
                     add(f"TO-{rid}-{side}", "tapoff", f"Tap-off {rid} {side} side",
                         f"Plugs rack {rid}'s {side} feed into busway {s['id']}-{side}, fed by {s['feeds'][side]}.",
-                        [view(hs, [f"TO-{rid}-{side}"], [rid]), view("E-001", [s["feeds"][side]], [s["group"]])])
+                        [view(hs, [f"TO-{rid}-{side}"], [rid]), view("E-001", [s["feeds"][side]], [s["group"]])],
+                        p.get("busway_product"))
         for g in p.get("groups", []):
             gr = [r["rack"] for r in racks if r["group"] == g["id"]]
             a, b = f"UPS-{L}{g['feeds'][0]}", f"UPS-{L}{g['feeds'][1]}"
@@ -136,7 +151,7 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
             fed = [g["id"] for g in p.get("groups", []) if i in g["feeds"]]
             add(u, "equipment", u, f"{S.product(site, p['ups_product'])['model']} UPS in the {short} electrical room, "
                 f"fed by USS-{L}{i} on {S.mv_bus_for(i)}. Feeds power groups {_join(fed)}.",
-                [view("E-001", [u], [f"USS-{L}{i}"] + fed), view("A-101", [f"ER-{L}"])])
+                [view("E-001", [u], [f"USS-{L}{i}"] + fed), view("A-101", [f"ER-{L}"])], p["ups_product"])
             add(f"USS-{L}{i}", "equipment", f"USS-{L}{i}", f"Unit substation, 13.8 kV to 480 V, from {S.mv_bus_for(i)} to {u}.",
                 [view("E-001", [f"USS-{L}{i}"], [u, S.mv_bus_for(i)]), view("A-101", [f"ER-{L}"])])
         for i in range(1, p.get("mech_ups_count", 0) + 1):
@@ -152,7 +167,7 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
             add(cdu, "equipment", cdu, f"{S.product(site, c['cdu_product'])['model']} in {short}, on the shared "
                 f"secondary header with {_join([x for x in cdus if x != cdu])} (N+{c['cdu_redundancy']}). "
                 "Racks draw from the header, not from one CDU.",
-                [view(hs, [cdu]), view("M-001", [cdu], [f"header:{hid}"]), view("A-101", [cdu], [hid])])
+                [view(hs, [cdu]), view("M-001", [cdu], [f"header:{hid}"]), view("A-101", [cdu], [hid])], c["cdu_product"])
         for i in range(1, c.get("thermal_wall_count", 0) + 1):
             add(f"TW-{L}{i}", "equipment", f"TW-{L}{i}",
                 f"{S.product(site, c['thermal_wall_product'])['model']}, in the {short} gallery: "
@@ -205,7 +220,16 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
                        ("Spares cage", "On-site spares: trays, PSUs, optics."), ("Security lobby", "Mantrap and guard desk."),
                        ("Pump room", "Facility water pumps."), ("Fire riser", "Fire alarm control panel.")):
         add(room, "room", room, text, [view("A-101", [room])])
-    return {"sheets": sheet_meta, "entries": entries, "aliases": aliases, "rules": [list(r) for r in RULES]}
+    parts_out = {}
+    for key, spec in details["products"].items():
+        num = spec["sheet"]
+        ps = {}
+        for pid, part in product_parts(spec).items():
+            rel = [pid.split("-")[0]] if "-psu" in pid else []          # a PSU shows its shelf, dashed
+            ps[pid] = {"label": part["label"], "b": view(num, [pid], rel)["b"]}
+        parts_out[key] = {"sheet": num, "parts": ps}
+    return {"sheets": sheet_meta, "entries": entries, "aliases": aliases, "rules": [list(r) for r in RULES],
+            "details": parts_out, "points": [list(p) + [""] * (5 - len(p)) for p in details["points"]]}
 
 
 LOCATIONS_JSON = Path(__file__).resolve().parents[2] / "docs" / "site" / "locations.json"
@@ -258,6 +282,74 @@ def resolve_field(data: dict[str, Any], value: str) -> tuple[str, str] | None:
     return None
 
 
+def _fill_part(t: str, m: re.Match) -> str:
+    """Like ``_fill``, but numbers lose leading zeros: "a22-ct07" is compute tray 7."""
+    return re.sub(r"\{(\d)\}", lambda x: str(int(m.group(int(x.group(1))))) if m.group(int(x.group(1))).isdigit()
+                  else m.group(int(x.group(1))), t)
+
+
+def resolve_part(data: dict[str, Any], name: str, text: str) -> tuple[str, str] | None:
+    """(instance, part id) for the part of a device that ``text`` (an alarm's device, signal, and summary)
+    names, when ``name`` (the location the field resolved to) or the device the pattern names has a detail
+    sheet with that part. None when the text names no part: the card then opens the site sheets as before."""
+    for pat, flags, product, part_t, inst_t in data["points"]:
+        m = re.search(pat, text, re.I if "i" in flags else 0)
+        if not m:
+            continue
+        inst = _fill(inst_t, m).upper() if inst_t else name
+        e = data["entries"].get(inst)
+        if not e or e.get("p") != product or product not in data["details"]:
+            continue
+        pid = _fill_part(part_t, m)
+        if pid in data["details"][product]["parts"]:
+            return inst, pid
+    return None
+
+
+def resolve_field_part(data: dict[str, Any], value: str, part_text: str = "") -> tuple[str, str] | None:
+    """The part a field names, as the popup script reads it: from the field's ``data-loc`` value and its
+    ``data-part`` text. Fields that fell back to a recorded location name no part."""
+    r = resolve_field(data, value)
+    if not r or r[1].startswith("The drawings do not show"):
+        return None
+    return resolve_part(data, r[0], (value + " " + part_text).strip())
+
+
+def part_coverage(data: dict[str, Any], alarms: list[dict[str, Any]]) -> tuple[int, list[str]]:
+    """How many alarms land on a device whose product has a detail sheet, and those whose text names no
+    part on it (other than the whole-device alarms listed in site/details.yaml). Used by the tests and by
+    ``scripts/render_alarms.py --robustness``, so a new kind of alarm cannot silently lose its part."""
+    whole = set(load_details().get("whole_device", []))
+    checked, missing = 0, []
+    for a in alarms:
+        value, text = f"{a['device']}|{a['location']}", f"{a['signal']} {a['summary']}"
+        r = resolve_field(data, value)
+        if not r or r[1].startswith("The drawings do not show"):
+            continue
+        if data["entries"][r[0]].get("p") not in data["details"]:
+            continue
+        checked += 1
+        if a["signal"] not in whole and not resolve_field_part(data, value, text):
+            missing.append(f"{a['device']}: {a['signal']} ({a['summary']})")
+    return checked, missing
+
+
+def card(data: dict[str, Any], name: str, part: tuple[str, str] | None) -> tuple[str, list[tuple[dict, str]]]:
+    """The card's title and its views with the label each one outlines, as the popup script builds them:
+    a named part puts its product's detail sheet first, labeled with the instance ("CDU-B3 · Pump 2")."""
+    e = data["entries"][name]
+    label = e["title"] if name.startswith(("HALL-", "ER-")) else name
+    views = [(v, label) for v in e["views"]]
+    if not part:
+        return e["title"], views
+    inst, pid = part
+    det = data["details"][data["entries"][inst]["p"]]
+    pl = det["parts"][pid]["label"]
+    first = ({"s": det["sheet"], "b": det["parts"][pid]["b"]}, f"{inst} · {re.sub(r' [(].*[)]$', '', pl)}")
+    title = f"{e['title']} · {pl}" if inst == name else f"{e['title']} · {inst} {pl[0].lower() + pl[1:]}"
+    return title, [first] + [x for x in views if x[0]["s"] != det["sheet"]]
+
+
 def subset(data: dict[str, Any], text: str) -> dict[str, Any]:
     """The entries a page can need: every location named anywhere in its text, and the sheets they use."""
     used: set[str] = set()
@@ -265,10 +357,17 @@ def subset(data: dict[str, Any], text: str) -> dict[str, Any]:
         for m in re.finditer(pat, text, re.I if "i" in flags else 0):
             used.add(_fill(name_t, m).upper())
     used |= {data["aliases"].get(m.group(0), m.group(0)) for m in _names_re(data).finditer(text)}
+    # an alarm can name a device by pattern only (the UPS behind "UPS-B4 output feeder"): keep those too
+    for pat, flags, _, _, inst_t in data["points"]:
+        if inst_t:
+            used |= {_fill(inst_t, m).upper() for m in re.finditer(pat, text, re.I if "i" in flags else 0)}
     entries = {n: e for n, e in data["entries"].items() if n in used}
+    products = {e["p"] for e in entries.values() if e.get("p") in data["details"]}
     sheets_used = {v["s"] for e in entries.values() for v in e["views"]}
     return {"sheets": {k: v for k, v in data["sheets"].items() if k in sheets_used}, "entries": entries,
-            "aliases": {a: n for a, n in data["aliases"].items() if n in entries}, "rules": data["rules"]}
+            "aliases": {a: n for a, n in data["aliases"].items() if n in entries}, "rules": data["rules"],
+            "details": {k: v for k, v in data["details"].items() if k in products},
+            "points": [p for p in data["points"] if p[2] in products]}
 
 
 # --------------------------------------------------------------------------- #
@@ -307,7 +406,7 @@ def highlighted_svg(data: dict[str, Any], svg: str, view: dict[str, Any], label:
             parts.append(f'<rect x="{x - 2 * f:.1f}" y="{y - 2 * f:.1f}" width="{w + 4 * f:.1f}" height="{h + 4 * f:.1f}" rx="{2 * f:.1f}" '
                          f'fill="none" stroke="#e8833a" stroke-width="{2 * f:.1f}" stroke-dasharray="{6 * f:.1f} {4 * f:.1f}"/>')
     x, y, w, _, _ = next(b for b in view["b"] if b[4])
-    right, up = x + w + 140 * f < vb[0] + vb[2], y - 90 * f > vb[1]
+    right, up = x + w + (60 + len(label) * 7.6 + 16) * f < vb[0] + vb[2], y - 90 * f > vb[1]
     tip_x, tip_y = (x + w + 3 * f if right else x - 3 * f), (y - 3 * f if up else y + 3 * f)
     tx, ty = tip_x + (46 if right else -46) * f, tip_y + (-40 if up else 40) * f
     parts.append(f'<line x1="{tx:.1f}" y1="{ty:.1f}" x2="{tip_x + (7 if right else -7) * f:.1f}" y2="{tip_y + (-6 if up else 6) * f:.1f}" '

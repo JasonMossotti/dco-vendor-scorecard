@@ -34,7 +34,9 @@
 /* Location popups: a field that names a rack, room, or piece of equipment gets a pin. The pin opens the
    site drawing with the item outlined in red and an arrow pointing at it; nearby items that answer the next
    question (what feeds it, what it serves) are dashed. Data from src/scorecard/locations.py. The field's own
-   text is never changed, and codes inside it keep their meaning popups. */
+   text is never changed, and codes inside it keep their meaning popups. A field may also carry data-part (an
+   alarm's signal and summary): when the field names a part that has an equipment detail sheet (pump 2,
+   compute tray 18), the card opens that sheet first with the part outlined. */
 (function () {
   const D = JSON.parse(document.getElementById("loc-data").textContent);
   const ROOT = D.root, E = D.entries, NS = "http://www.w3.org/2000/svg";
@@ -43,7 +45,9 @@
   const names = Object.keys(E).concat(Object.keys(D.aliases)).sort((a, b) => b.length - a.length || (a < b ? -1 : 1));
   const NAMES = names.length ? new RegExp("(?<![\\w-])(?:" + names.map(reEsc).join("|") + ")(?![\\w-])", "g") : null;
   const RULES = D.rules.map(([p, f, n, t]) => [new RegExp(p, "g" + f), n, t]);
+  const POINTS = D.points.map(([p, f, prod, part, inst]) => [new RegExp(p, f), prod, part, inst]);
   const fill = (t, m) => t.replace(/\{(\d)\}/g, (_, i) => m[+i]);
+  const fillPart = (t, m) => t.replace(/\{(\d)\}/g, (_, i) => /^\d+$/.test(m[+i]) ? String(+m[+i]) : m[+i]);
   const PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>';
 
   // The most specific location named in a text, as locations.resolve does: [name, note] or null.
@@ -73,6 +77,25 @@
     return null;
   }
 
+  // The part of a device an alarm's text names, as locations.resolve_part does: [instance, part id] or null.
+  function part(name, text) {
+    for (const [re, prod, partT, instT] of POINTS) {
+      const m = re.exec(text);
+      if (!m) continue;
+      const inst = instT ? fill(instT, m).toUpperCase() : name, e = E[inst];
+      if (!e || e.p !== prod || !D.details[prod]) continue;
+      const id = fillPart(partT, m);
+      if (D.details[prod].parts[id]) return [inst, id];
+    }
+    return null;
+  }
+  // A field's part, from its data-loc value and its data-part text; none when the field fell back.
+  function fieldPart(value, extra) {
+    const r = field(value);
+    if (!r || r[1].startsWith("The drawings do not show")) return null;
+    return part(r[0], (value + " " + (extra || "")).trim());
+  }
+
   function pin(root) {
     const els = root.nodeType === 1 && root.matches("[data-loc]") ? [root] : [];
     if (root.querySelectorAll) els.push(...root.querySelectorAll("[data-loc]"));
@@ -83,11 +106,15 @@
       const b = document.createElement("button");
       b.type = "button"; b.className = "loc-pin"; b.innerHTML = PIN;
       b.dataset.locName = r[0]; b.dataset.locNote = r[1];
-      b.title = "Show " + E[r[0]].title + " on the site drawing";
+      const p = fieldPart(el.dataset.loc, el.dataset.part);
+      if (p) b.dataset.locPart = p.join("|");
+      b.title = "Show " + (p ? E[p[0]].title + ", " + partLabel(p).toLowerCase() : E[r[0]].title) + " on the drawings";
       b.setAttribute("aria-label", b.title);
       el.appendChild(b);
     }
   }
+
+  const partLabel = p => D.details[E[p[0]].p].parts[p[1]].label;
 
   // ---- drawings, fetched once each
   const cache = {};
@@ -127,7 +154,7 @@
     if (!prim.length) return;
     // Arrow from a label to the first outlined item, kept inside the frame.
     const [x, y, w] = prim[0];
-    const right = x + w + 140 * f < vb[0] + vb[2], up = y - 90 * f > vb[1];
+    const right = x + w + (60 + label.length * 7.6 + 16) * f < vb[0] + vb[2], up = y - 90 * f > vb[1];
     const tipX = right ? x + w + 3 * f : x - 3 * f, tipY = up ? y - 3 * f : y + 3 * f;
     const tx = tipX + (right ? 46 : -46) * f, ty = tipY + (up ? -40 : 40) * f;
     el("line", {x1: tx, y1: ty, x2: tipX + (right ? 7 : -7) * f, y2: tipY + (up ? -6 : 6) * f, stroke: "#d62728", "stroke-width": 3 * f, "stroke-linecap": "round"}, g);
@@ -153,24 +180,35 @@
     from = btn;
     const name = btn.dataset.locName, note = btn.dataset.locNote, e = E[name];
     const label = name.startsWith("HALL-") || name.startsWith("ER-") ? e.title : name;
+    // A named part opens its product's detail sheet first, outlined and labeled with the instance.
+    const p = btn.dataset.locPart ? btn.dataset.locPart.split("|") : null;
+    const views = e.views.map(v => ({v, label}));
+    let title = e.title;
+    if (p) {
+      const det = D.details[E[p[0]].p], pl = partLabel(p);
+      views.splice(0, views.length, {v: {s: det.sheet, b: det.parts[p[1]].b}, label: `${p[0]} · ${pl.replace(/ \(.*\)$/, "")}`},
+                   ...views.filter(x => x.v.s !== det.sheet));
+      title = p[0] === name ? `${e.title} · ${pl}` : `${e.title} · ${p[0]} ${pl[0].toLowerCase() + pl.slice(1)}`;
+    }
     bg = document.createElement("div");
     bg.className = "loc-bg";
-    bg.innerHTML = `<div class="loc-pop" role="dialog" aria-modal="true" aria-label="${esc(e.title)} on the site drawings">
-      <div class="loc-h"><b>${esc(e.title)}</b><span class="loc-type">${esc(D.kinds[e.kind])}</span><button class="loc-x" type="button" aria-label="Close">×</button></div>
-      <div class="loc-t">${note ? `<span class="loc-note">${esc(note)}.</span> ` : ""}${esc(e.text)}</div>
-      <div class="loc-chips" role="tablist">${e.views.map((v, i) => `<button type="button" role="tab" data-i="${i}">${esc(v.s)} ${esc(D.sheets[v.s].title)}</button>`).join("")}</div>
+    bg.innerHTML = `<div class="loc-pop" role="dialog" aria-modal="true" aria-label="${esc(title)} on the drawings">
+      <div class="loc-h"><b>${esc(title)}</b><span class="loc-type">${esc(D.kinds[e.kind])}</span><button class="loc-x" type="button" aria-label="Close">×</button></div>
+      <div class="loc-t">${note && !p ? `<span class="loc-note">${esc(note)}.</span> ` : ""}${esc(e.text)}</div>
+      <div class="loc-chips" role="tablist">${views.map((x, i) => `<button type="button" role="tab" data-i="${i}">${esc(x.v.s)} ${esc(D.sheets[x.v.s].title)}</button>`).join("")}</div>
       <div class="loc-fig"></div>
       <div class="loc-f"><button type="button" class="loc-full">Full sheet</button><a class="loc-open" href="#">Open the drawing</a>
-        <span class="loc-key" data-gl-skip><span><i></i>${esc(label)}</span><span class="loc-rel"><i class="rel"></i>Connected</span></span></div></div>`;
+        <span class="loc-key" data-gl-skip><span><i></i><span class="loc-lbl"></span></span><span class="loc-rel"><i class="rel"></i>Connected</span></span></div></div>`;
     document.body.appendChild(bg);
     const pop = bg.querySelector(".loc-pop");
     let cur = 0, full = false;
     function show() {
-      const v = e.views[cur], s = D.sheets[v.s];
+      const v = views[cur].v, lbl = views[cur].label, s = D.sheets[v.s];
       pop.querySelectorAll(".loc-chips button").forEach(b => { const on = +b.dataset.i === cur; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
       pop.querySelector(".loc-full").textContent = full ? "Zoom to the item" : "Full sheet";
       pop.querySelector(".loc-open").href = ROOT + "site/" + s.file;
       pop.querySelector(".loc-rel").hidden = !v.b.some(b => !b[4]);
+      pop.querySelector(".loc-lbl").textContent = lbl;
       const fig = pop.querySelector(".loc-fig");
       fig.innerHTML = `<div class="loc-msg">Loading ${esc(v.s)}…</div>`;
       const want = cur;
@@ -183,8 +221,8 @@
         svg.removeAttribute("width"); svg.removeAttribute("height");
         svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
         svg.setAttribute("role", "img");
-        svg.setAttribute("aria-label", `${v.s} ${s.title}, with ${e.title} outlined in red`);
-        overlay(svg, v, vb, label);
+        svg.setAttribute("aria-label", `${v.s} ${s.title}, with ${lbl} outlined in red`);
+        overlay(svg, v, vb, lbl);
         fig.innerHTML = "";
         fig.appendChild(svg);
       }).catch(() => {
@@ -217,6 +255,6 @@
       pin(n);
     }
   }).observe(document.body, {childList: true, subtree: true});
-  window.LOCATIONS = {resolve, field, open, close};
+  window.LOCATIONS = {resolve, field, part, fieldPart, open, close};
 })();
 </script>

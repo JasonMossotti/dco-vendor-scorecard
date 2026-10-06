@@ -6,7 +6,8 @@ Usage:
     python scripts/render_site.py --check    # fail if docs/site/ is out of date (used in CI)
 
 Writes docs/site/SITE.md (equipment, capacity checks, monitoring map), one
-SVG per drawing sheet, and locations.json (where each item is drawn, for the
+SVG per drawing sheet (the site sheets, and the equipment detail sheets from
+site/details.yaml), and locations.json (where each item is drawn, for the
 location popups). Nothing in docs/site/ is edited by hand.
 """
 

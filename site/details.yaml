@@ -1,0 +1,155 @@
+# =============================================================================
+# Site AUS-1: equipment detail sheets as data
+# =============================================================================
+# One detail sheet per product (D-1xx compute racks, D-2xx cooling, D-3xx
+# power), drawn by src/scorecard/detail_drawings.py in the style of the site
+# sheets. Each sheet is "typical of" every instance of the product: rack A07
+# and rack A23 share D-101, and the popup names the instance.
+#
+# These are representative drawings, not manufacturer drawings. Each part's
+# count and position cites a public source (`sources`) or is marked
+# `basis: assumption` with the reason; a test fails if a part has neither.
+# Parts are numbered the way this site's telemetry numbers them (Redfish,
+# SNMP, BMS points); where a manufacturer's own physical order is not public,
+# the sheet says the order is assumed.
+#
+# `points` turns an alarm into a part: the first pattern that matches the
+# alarm's text (device, signal, and summary) and names an instance of the
+# product wins. Patterns must stay JavaScript-safe: the popup script runs them.
+# =============================================================================
+
+products:
+  gb200_nvl72:
+    sheet: D-101
+    title: "GB200 NVL72 rack, front and rear elevation"
+    sources:
+      nvidia: {url: "https://docs.nvidia.com/mission-control/docs/rack-bring-up-install/2.2.0/config-for-provisioning/gb200-rack-verification-checklist.html",
+               says: "18 compute trays, 9 NVLink switch trays, and 8 power shelves per rack"}
+      supermicro: {url: "https://supermicro.com/datasheet/datasheet_SuperCluster_GB200_NVL72.pdf",
+                   says: "Compute trays grouped as 10 and 8; 9 NVLink switches; 8 x 1U 33 kW power shelves of 6 x 5.5 kW PSUs; in-band and out-of-band management switches"}
+      sth: {url: "https://www.servethehome.com/?p=76755",
+            says: "Top to bottom: switches, ten compute trays, nine NVLink switch trays, eight compute trays; busbar power and blind-mate liquid and NVLink connections at the rear"}
+      lenovo_front: {url: "https://pubs.lenovo.com/gb300-nvl72/rack_front_view",
+                     says: "Front view: two management switches, six or eight power shelves, eighteen compute trays, nine NVLink switch trays, one leakage drip pan"}
+      lenovo_rear: {url: "https://pubs.lenovo.com/gb300-nvl72/rack_rear_view",
+                    says: "Rear view: busbar, cable cartridges joining compute and switch trays, manifold connectors"}
+    alarm_points:
+      - ["Compute tray n", "GPU error (XID)", "DCGM via the Telemetry of Record"]
+      - ["NVLink switch tray n", "Switch tray failed", "NMX and Redfish"]
+      - ["Power shelf n, PSU m", "PSU or power shelf failed", "Redfish"]
+      - ["Rack manifold", "Rack leak detected", "Redfish"]
+      - ["Drip pan leak rope", "Rack leak detected", "CDU (Redfish)"]
+      - ["AC inputs", "Rack input power lost (both feeds)", "BMS"]
+    order_note: "Tray order from public descriptions. Numbering top to bottom, and four power shelves above and four below the trays, are assumed."
+    parts:
+      - {id: "mgmt", tag: "MGMT", label: "Management switches", basis: [lenovo_front, sth]}
+      - {id: "ps{n}", n: [1, 8], tag: "PS {n}", label: "Power shelf {n}", basis: [nvidia, supermicro],
+         position: "assumption: shelves 1 to 4 above the trays and 5 to 8 below, numbered top to bottom"}
+      - {id: "ps{n}-psu{m}", n: [1, 8], m: [1, 6], tag: "{m}", label: "PSU {m} in power shelf {n}", basis: [supermicro],
+         position: "assumption: PSUs numbered left to right as seen from the front"}
+      - {id: "ct{n}", n: [1, 18], tag: "CT {n}", label: "Compute tray {n}", basis: [nvidia, supermicro, sth],
+         position: "assumption: numbered top to bottom, 1 to 10 above the switch trays and 11 to 18 below"}
+      - {id: "nvsw{n}", n: [1, 9], tag: "NVSW {n}", label: "NVLink switch tray {n}", basis: [nvidia, sth],
+         position: "assumption: numbered top to bottom"}
+      - {id: "drip", tag: "Drip pan and leak rope", label: "Drip pan and leak rope", basis: [lenovo_front],
+         position: "assumption: the leak rope in the drip pan reports through the CDU, as this site's telemetry does"}
+      - {id: "busbar", tag: "Busbar", label: "DC busbar", basis: [lenovo_rear, sth]}
+      - {id: "cartridge", tag: "Cartridges", label: "NVLink cable cartridges", basis: [lenovo_rear]}
+      - {id: "manifold", tag: "Manifold", label: "Rack manifold, supply and return", basis: [lenovo_rear, sth]}
+      - {id: "ac-in", tag: "AC inputs", label: "AC inputs, A and B feeds", basis: [nvidia],
+         position: "assumption: A feed to power shelves 1 to 4, B feed to shelves 5 to 8 (N+N)"}
+
+  coolit_chx2000:
+    sheet: D-201
+    title: "CHx2000 CDU, front and rear"
+    sources:
+      coolit: {url: "https://www.coolitsystems.com/product/chx2000-cdu/",
+               says: "Dual pumps; front sliding access to pumps and rear access to filters; 4 inch tri-clamp connections; Redfish monitoring"}
+    alarm_points:
+      - ["Pump n", "Pump fault, pump isolated, redundancy lost", "Redfish and BMS"]
+    order_note: "Pump numbering left to right is assumed. Internal layout is representative."
+    parts:
+      - {id: "pump{n}", n: [1, 2], tag: "Pump {n}", label: "Pump {n}", basis: [coolit],
+         position: "assumption: pump 1 on the left as seen from the front"}
+      - {id: "controller", tag: "Controller", label: "Controller and touchscreen", basis: [coolit]}
+      - {id: "hx", tag: "Heat exchanger", label: "Liquid-to-liquid heat exchanger", basis: [coolit]}
+      - {id: "filters", tag: "Filters", label: "Secondary loop filters", basis: [coolit]}
+      - {id: "facility", tag: "Facility water", label: "Facility water supply and return connections", basis: [coolit],
+         position: "assumption: top connections at the rear"}
+      - {id: "secondary", tag: "Secondary loop", label: "Secondary loop supply and return connections", basis: [coolit],
+         position: "assumption: top connections at the rear"}
+      - {id: "valve", tag: "Control valve", label: "Facility water control valve", basis: "assumption: a CDU regulates secondary supply temperature with a facility-side valve"}
+
+  galaxy_vx_1500:
+    sheet: D-301
+    title: "Galaxy VX 1500 kW UPS line-up"
+    sources:
+      se_overview: {url: "https://productinfo.se.com/galaxyvx_ul/5968bd3b46e0fb0001f24e08/990-5451E%20Technical%20Specifications%20480%20V/English/990-5451%20Technical%20Specifications%20UL_0000087143.xml/$/SystemOverviewREF_0000103717",
+                    says: "An I/O cabinet containing the static switch, backfeed disconnect BF2, and user interface, and a number of 250 kW power cabinets; the 1500 kW I/O cabinet takes up to seven (1500 kW N+1)"}
+      se_nmc: {url: "https://www.se.com/us/en/product/AP9644/network-management-card-4-nmc4-for-galaxy-vs-galaxy-vl-galaxy-vxl-remote-ups-monitoring-and-management/",
+               says: "Network management card for remote monitoring"}
+    alarm_points:
+      - ["Power module n", "Module fault, replaced, redundancy restored", "SNMP card and BMS"]
+      - ["Battery cabinets", "UPS on battery", "SNMP card"]
+      - ["Maintenance bypass", "UPS on maintenance bypass", "SNMP card"]
+      - ["Output feeders", "Breaker trip", "EPMS"]
+    order_note: "Power module n in the telemetry is power cabinet n, numbered left to right from the I/O cabinet (assumed). Battery cabinet count and the output switchboard are assumed."
+    parts:
+      - {id: "io", tag: "I/O cabinet", label: "I/O cabinet", basis: [se_overview]}
+      - {id: "static", tag: "Static switch", label: "Static bypass switch", basis: [se_overview]}
+      - {id: "nmc", tag: "Display and NMC", label: "User interface and network management card", basis: [se_overview, se_nmc]}
+      - {id: "pm{n}", n: [1, 7], tag: "PM {n}", label: "Power module {n} (250 kW power cabinet)", basis: [se_overview],
+         position: "assumption: numbered left to right from the I/O cabinet"}
+      - {id: "battery", tag: "Battery cabinets", label: "Lithium-ion battery cabinets", basis: "assumption: four lithium-ion cabinets for five minutes at full load"}
+      - {id: "mbb", tag: "Maintenance bypass", label: "Maintenance bypass breaker", basis: "assumption: external maintenance bypass in the output switchboard"}
+      - {id: "out-brk", tag: "Output feeders", label: "Output feeder breakers to the busways", basis: "assumption: one feeder breaker per busway in the output switchboard"}
+
+  starline_1200t5:
+    sheet: D-303
+    title: "Track busway section and tap-off"
+    sources:
+      starline: {url: "https://starlinepower.com/products", says: "Track busway with plug-in units"}
+      cpm: {url: "https://starlinepower.com/sites/default/files/2025-08/Starline_CPM%20Product%20Brochure_V2011.pdf",
+            says: "Critical Power Monitor in end feed units (feed voltage L-L and L-N, line currents) and plug-in units (outlet currents, circuit breaker position sensing)"}
+    alarm_points:
+      - ["Tap-off breaker", "Tap-off breaker open or closed", "Critical Power Monitor, BMS"]
+      - ["End feed meter", "Voltage L-L out of tolerance, busway undervoltage", "Critical Power Monitor, BMS"]
+    order_note: "One rack's A and B tap-offs shown; every tap-off on the site is the same."
+    parts:
+      - {id: "track", tag: "Busway track", label: "Busway track", basis: [starline]}
+      - {id: "end-feed", tag: "End feed", label: "End feed unit", basis: [cpm]}
+      - {id: "feed-cpm", tag: "Feed meter", label: "Critical Power Monitor at the end feed (voltage L-L, current)", basis: [cpm]}
+      - {id: "to-brk", tag: "Breaker", label: "Tap-off breaker", basis: [cpm]}
+      - {id: "to-cpm", tag: "Meter", label: "Critical Power Monitor in the tap-off (current, breaker position)", basis: [cpm]}
+      - {id: "cord", tag: "Cord to rack", label: "Cord to the rack's power shelves", basis: "assumption: one 3-phase cord per tap-off to the rack's AC inputs"}
+
+# Alarm text to part, first match wins. Fields: pattern, flags ("i" for any case), product, part, and
+# optionally the instance when the alarm names a different device than the field (an output feeder belongs
+# to the UPS, though the field names the busway it feeds). {1}.. are the groups; numbers lose leading zeros.
+points:
+  - ['PSU (\d+) in [A-C]\d{2} power shelf (\d+)', "", gb200_nvl72, "ps{2}-psu{1}"]
+  - ['_PowerShelf_(\d+)', "", gb200_nvl72, "ps{1}"]
+  - ['power shelf (\d+)', "i", gb200_nvl72, "ps{1}"]
+  - ['-ct(\d+)(?![\w-])', "i", gb200_nvl72, "ct{1}"]
+  - ['-nvsw(\d+)(?![\w-])', "i", gb200_nvl72, "nvsw{1}"]
+  - ['(?<![\w-])([A-C]\d{2}) rack manifold', "i", gb200_nvl72, "manifold", "{1}"]
+  - ['_RackManifold|rack manifold', "i", gb200_nvl72, "manifold"]
+  - ['(?<![\w-])([A-C]\d{2}) leak rope', "i", gb200_nvl72, "drip", "{1}"]
+  - ['leak rope|drip', "i", gb200_nvl72, "drip"]
+  - ['input power lost|feeds? lost', "i", gb200_nvl72, "ac-in"]
+  - ['pump (\d)', "i", coolit_chx2000, "pump{1}"]
+  - ['filter', "i", coolit_chx2000, "filters"]
+  - ['(UPS-[A-C]\d) output feeder', "", galaxy_vx_1500, "out-brk", "{1}"]
+  - ['module (\d+)', "i", galaxy_vx_1500, "pm{1}"]
+  - ['on battery', "i", galaxy_vx_1500, "battery"]
+  - ['maintenance bypass', "i", galaxy_vx_1500, "mbb"]
+  - ['static bypass|switched to bypass|on bypass', "i", galaxy_vx_1500, "static"]
+  - ['Tap-off \(?(TO-[A-C]\d{2}(?:-[AB])?)(?![\w-])', "i", starline_1200t5, "to-brk", "{1}"]
+  - ['tap-off', "i", starline_1200t5, "to-brk"]
+  - ['whip|cord', "i", starline_1200t5, "cord"]
+  - ['undervoltage|voltage', "i", starline_1200t5, "feed-cpm"]
+  - ['output feeder', "i", starline_1200t5, "end-feed"]
+
+# Alarms that are about the whole device: they open the device's sheet with nothing more specific outlined.
+whole_device:
+  - "Rack outage"

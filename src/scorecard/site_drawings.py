@@ -89,6 +89,21 @@ class Svg:
                 f'<rect width="100%" height="100%" fill="{PAPER}"/>\n{body}\n</svg>\n')
 
 
+def detail_refs(site: dict, keys: list[str], halls: list[dict] | None = None) -> str:
+    """ "rack D-101, CDU D-201": the detail sheets for the products these halls use (keys into the hall,
+    its power, or its cooling), in sheet order. Products without a detail sheet are left out."""
+    from scorecard.detail_drawings import sheet_products
+    have = sheet_products()
+    word = {"rack_product": "rack", "cdu_product": "CDU", "ups_product": "UPS line-up", "busway_product": "busway and tap-off"}
+    found = {}
+    for h in halls or site["halls"]:
+        for k in keys:
+            p = h.get(k) or h["power"].get(k) or h["cooling"].get(k)
+            if p in have:
+                found.setdefault(have[p], f"{word[k]} {have[p]}")
+    return ", ".join(found[n] for n in sorted(found))
+
+
 def frame(svg: Svg, sheet: str, title: str, scale: str) -> None:
     """Border plus a title strip along the bottom edge."""
     W, H = svg.width, svg.height
@@ -306,6 +321,9 @@ def hall_plan(site: dict, hall_id: str, sheet: str, marks: dict | None = None) -
                   "modules (see sheet E-001)."]
     else:
         notes += ["", "800 VDC busway layout is set in", "pilot design (see sheet E-001)."]
+    refs = detail_refs(site, ["rack_product", "cdu_product", "busway_product"], [hall])
+    if refs:
+        notes += ["", "Typical details:"] + [f"  {r}" for r in refs.split(", ")]
     for i, n in enumerate(notes):
         svg.text(lx, yy + 16 + i * 14, n, size=10, fill=MUTED if n else INK)
     frame(svg, sheet, f"{hall['name']} floor plan", "Scale: grid 1 m")
@@ -705,6 +723,7 @@ def one_line(site: dict, sheet: str = "E-001", marks: dict | None = None) -> str
     svg.text(mx, my + 104, "Equipment numbered odd lands on MV-A,", size=10, fill=MUTED)
     svg.text(mx, my + 118, "even on MV-B; the automatic tie covers", size=10, fill=MUTED)
     svg.text(mx, my + 132, "the loss of either 13.8 kV main.", size=10, fill=MUTED)
+    svg.text(mx, my + 156, "Typical details: " + detail_refs(site, ["ups_product", "busway_product"]) + ".", size=10, fill=MUTED)
     frame(svg, sheet, "Electrical one-line", "Not to scale")
     return svg.done(marks)
 
@@ -797,9 +816,11 @@ def cooling_flow(site: dict, sheet: str = "M-001", marks: dict | None = None) ->
         svg.rect(x0 + 286, ry - 4, 148, 68, stroke=LEAK, sw=1.2, dash="6 3")
         svg.text(x0 + 290, ry + 78, "leak cable at manifolds and CDUs", size=8.5, fill=LEAK)
         svg.text(x0 + 290, ry + 92, f"CDUs N+{c['cdu_redundancy']} on the header", size=8.5, fill=MUTED)
-    legend(svg, left + (len(halls) - 1) * col_w + 44, 640, [("line", SUPPLY, "Facility water supply"), ("line", RETURN, "Facility water return"),
-                                ("line", SECONDARY, "CDU secondary supply (PG25)"),
-                                ("dash", SECONDARY, "CDU secondary return"), ("dash", LEAK, "Leak detection zone")])
+    ly = legend(svg, left + (len(halls) - 1) * col_w + 44, 640, [("line", SUPPLY, "Facility water supply"), ("line", RETURN, "Facility water return"),
+                                     ("line", SECONDARY, "CDU secondary supply (PG25)"),
+                                     ("dash", SECONDARY, "CDU secondary return"), ("dash", LEAK, "Leak detection zone")])
+    svg.text(left + (len(halls) - 1) * col_w + 44, ly + 8, "Typical details: " + detail_refs(site, ["cdu_product", "rack_product"]) + ".",
+             size=10, fill=MUTED)
     frame(svg, sheet, "Cooling flow diagram", "Not to scale")
     return svg.done(marks)
 
@@ -819,4 +840,5 @@ def sheets(site: dict, marks: dict | None = None) -> list[tuple[str, str, str, s
         out.append((num, f"{num}_{slug}_plan.svg", f"{h['name']} floor plan", hall_plan(site, h["id"], num, marks=m(num))))
     out.append(("E-001", "E-001_one_line.svg", "Electrical one-line", one_line(site, marks=m("E-001"))))
     out.append(("M-001", "M-001_cooling_flow.svg", "Cooling flow diagram", cooling_flow(site, marks=m("M-001"))))
-    return out
+    from scorecard.detail_drawings import detail_sheets
+    return out + detail_sheets(marks)

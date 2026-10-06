@@ -1,8 +1,10 @@
 // Location pins on a static page: only marked fields get a pin, each pin names what the field names,
 // a click opens the drawing with the item outlined and an arrow, sheets switch, Esc closes, and the
-// field's own text (and its code popups) is unchanged.
+// field's own text (and its code popups) is unchanged. A field whose alarm names a part (pump 2, compute
+// tray 18) opens the equipment detail sheet first, with the part outlined and labeled with the instance.
 // Usage: node location_popups.cjs SITE_DIR PAGE_PATH EXPECTED_NAME [REDRAW_BUTTON_SELECTOR]
-// Prints one line "FIELDS {json}" with every field's value and what its pin opens, for the Python test.
+// Prints one line "FIELDS {json}" with every field's value and what its pin opens, and one line
+// "PARTS {json}" with each field's value and part text and the part its pin opens, for the Python test.
 const { JSDOM, VirtualConsole } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
@@ -34,6 +36,14 @@ const tick = (ms = 0) => new Promise(r => w.setTimeout(r, ms));
   const fields = {};
   for (const f of d.querySelectorAll("[data-loc]")) fields[f.dataset.loc] = w.LOCATIONS.field(f.dataset.loc);
   console.log("FIELDS " + JSON.stringify(fields));
+  const parts = [];
+  for (const f of d.querySelectorAll("[data-loc]")) {
+    const p = w.LOCATIONS.fieldPart(f.dataset.loc, f.dataset.part);
+    parts.push([f.dataset.loc, f.dataset.part || "", p]);
+    const btn = f.querySelector(":scope > .loc-pin");
+    if (btn && (btn.dataset.locPart || null) !== (p ? p.join("|") : null)) { ok(false, `the pin carries the field's part: ${f.dataset.loc}`); break; }
+  }
+  console.log("PARTS " + JSON.stringify(parts));
   for (const f of d.querySelectorAll("[data-loc]")) {
     const has = !!f.querySelector(":scope > .loc-pin");
     if (has !== !!fields[f.dataset.loc]) { ok(false, `pin present exactly when the field resolves: ${f.dataset.loc}`); break; }
@@ -56,7 +66,8 @@ const tick = (ms = 0) => new Promise(r => w.setTimeout(r, ms));
   bg.querySelector(".loc-full").click();
   await tick(); await tick(); await tick();
   svg = bg.querySelector(".loc-fig svg");
-  ok(svg && svg.getAttribute("viewBox") !== vb1 && svg.getAttribute("viewBox").startsWith("0.0 0.0"), "Full sheet shows the whole drawing");
+  ok(svg && svg.getAttribute("viewBox").startsWith("0.0 0.0") && (svg.getAttribute("viewBox") !== vb1 || vb1.startsWith("0.0 0.0")),
+     "Full sheet shows the whole drawing");
   const chips = [...bg.querySelectorAll(".loc-chips button")];
   if (chips.length > 1) {
     chips[1].click();
@@ -64,6 +75,22 @@ const tick = (ms = 0) => new Promise(r => w.setTimeout(r, ms));
     ok(chips[1].classList.contains("on") && bg.querySelector(".loc-fig svg .loc-hl") !== null, "another sheet opens with its own highlight");
   }
   ok(/site\/[A-Z]-\d{3}_[\w]+\.svg$/.test(bg.querySelector(".loc-open").getAttribute("href")), "the card links to the drawing");
+  d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  // a part opens the equipment detail sheet first
+  const partPin = pins.find(p => p.dataset.locPart);
+  if (partPin) {
+    const [inst, id] = partPin.dataset.locPart.split("|");
+    partPin.click();
+    bg = d.querySelector(".loc-bg");
+    await tick(); await tick(); await tick();
+    const first = bg.querySelector(".loc-chips button");
+    ok(/^D-\d{3} /.test(first.textContent) && first.classList.contains("on"), `a named part opens its detail sheet first (${first.textContent})`);
+    ok(bg.querySelector(".loc-h b").textContent.includes(" · "), "the card names the instance and the part");
+    const lbl = bg.querySelector(".loc-fig svg .loc-hl text");
+    ok(lbl && lbl.textContent.startsWith(inst + " · "), `the arrow names the instance: ${lbl && lbl.textContent} (${id})`);
+    ok(/site\/D-\d{3}_[\w]+\.svg$/.test(bg.querySelector(".loc-open").getAttribute("href")), "the card links to the detail sheet");
+    ok([...bg.querySelectorAll(".loc-chips button")].some(b => /^[AEM]-\d{3} /.test(b.textContent)), "the site sheets follow");
+  }
   d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
   ok(d.querySelector(".loc-bg") === null, "Esc closes the card");
   ok(field.textContent === before, "the field's text is unchanged");
