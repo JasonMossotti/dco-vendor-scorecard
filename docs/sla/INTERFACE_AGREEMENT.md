@@ -12,7 +12,7 @@
 
 | Document ID | Version | Effective date |
 |---|---|---|
-| IA-AUS1-001 | 1.0.0 | 2026-10-05 |
+| IA-AUS1-001 | 1.1.0 | 2026-10-06 |
 
 ## Contents
 
@@ -25,6 +25,7 @@
 7. [Handoffs](#7-handoffs)
 8. [Change Coordination](#8-change-coordination)
 9. [Customer Data Access](#9-customer-data-access)
+10. [Change-Aware Alarm Notification](#10-change-aware-alarm-notification)
 
 ---
 
@@ -141,6 +142,46 @@ The Customer's right to read facility telemetry is a negotiated term of the Leas
 - All systems are NTP-synchronized; clock skew over 5 seconds is flagged under the common measurement terms.
 - The Customer uses the data only to measure the SLAs, attribute outages, and protect safety, and shares it with the IT Partner only as needed for attribution.
 
+## 10. Change-Aware Alarm Notification
+
+Planned work causes alarms the parties can predict. Each change therefore declares the alarms it expects, and anything else that happens on the equipment it touches reaches the Customer at once, automatically, from the party doing the work. The Customer runs its own check on the same feeds so that it never depends on a party's notification alone.
+
+**Impact declaration**
+
+- Every change record, method of procedure, and planned work order (other than routine preventive maintenance with no expected alarm) declares its impact in the Customer's schema before approval: the assets touched, the alarms each asset is expected to raise, the worst severity the work may cause, whether redundancy is reduced, and the window.
+- A change without a declaration is not approved. A declaration is part of the approved change: work outside it is outside the approval (common terms, change management).
+- An alarm counts as expected only on a declared asset, with a declared alarm, at or below the declared severity, inside the window plus 15 minutes either side.
+
+**Out of scope and out of window**
+
+- Out of scope: during a window, an alarm on a declared asset that the declaration did not list or that exceeds the declared severity, or an alarm on equipment connected to a declared asset (the same load, a redundant partner, or the load it serves, from the site model) of a kind the work could cause.
+- Out of window: a declared alarm raised before the window opens, or a declared asset still in its maintenance state 15 minutes after the window closes.
+- An out-of-scope or out-of-window alarm means the records do not reconcile with the approved change; it is not by itself a finding against anyone.
+
+**Notifications owed to the Customer**
+
+| ID | Trigger | Within | Channels | Owed by |
+|---|---|---|---|---|
+| NT-1 | Critical alarm (P1 under either partner SLA) not expected under a declared change | 5 min | Page to the Customer Incident Commander plus email or SMS | The party that owns the equipment |
+| NT-2 | Major alarm (P2) not expected under a declared change | 15 min | Two of email, SMS, and the Customer alarm feed | The party that owns the equipment |
+| NT-3 | Any out-of-scope or out-of-window alarm on change work | 5 min | Two of email, SMS, and the Customer alarm feed; a page as well if the alarm is critical | The party doing the change, whoever owns the equipment |
+
+- Notifications are sent by each party's monitoring system without a person deciding whether to send. A call from a duty manager does not count toward the two channels.
+- Each notification carries the alarm, device, location, severity, the change it relates to, and the party's ticket or work order.
+- Each party keeps a delivery log (alarm, channel, recipient, sent, delivered) and gives the Customer read access to it, with the alarm feeds under section 9.
+- Whether a notification was owed is decided from the Customer's Telemetry of Record and the declarations, not from the party's own classification.
+
+**Customer backstop:** The Customer's alarm board reads both parties' feeds, classifies every alarm against the declared changes, and alerts the Customer's on-call directly. A missed or late party notification is still counted against that party.
+
+**Key measures**
+
+| ID | Party | Measure | Target | Data sources |
+|---|---|---|---|---|
+| IA-KM-01 | Landlord | Change-aware notifications on time (NT-1 to NT-3) | 99.0% | Customer alarm board; Landlord delivery log |
+| IA-KM-02 | IT Partner | Change-aware notifications on time (NT-1 to NT-3) | 99.0% | Customer alarm board; IT Partner delivery log |
+
+Key measures report and trigger corrective action; they carry no service credit. Moving them to credit-bearing service levels is a later negotiation once both delivery logs have proved reliable.
+
 ---
 
-*Generated from `sla/interface_agreement.yaml` (version 1.0.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/interface_agreement.yaml` (version 1.1.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*

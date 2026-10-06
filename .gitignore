@@ -9,6 +9,7 @@ venv/
 data/*
 !data/sample/
 !data/history/
+!data/changes/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/

@@ -1,0 +1,962 @@
+[
+  {
+    "alarm_time": "2026-09-01T05:00:35Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CH-08",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-01T05:15:00Z",
+    "signal": "Compressor trip (high condenser pressure)"
+  },
+  {
+    "alarm_time": "2026-09-01T13:46:47Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a23-ct18",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-01T14:09:34Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-02T13:39:38Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a20-ct15",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-02T14:00:47Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-03T12:04:38Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a07-r1 port 18",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-03T12:31:32Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-04T00:35:24Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a05-ct18",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T00:45:13Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-04T09:37:29Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a06-ct13",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T09:43:29Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-04T16:22:13Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a06-ct13",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T16:27:36Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-04T18:09:27Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "BW-B-R1-PG-B1-B",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T18:22:28Z",
+    "signal": "Tap-off breaker open"
+  },
+  {
+    "alarm_time": "2026-09-04T19:06:50Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CDU-B3",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T19:29:19Z",
+    "signal": "Pump isolated"
+  },
+  {
+    "alarm_time": "2026-09-04T20:23:10Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a03-ct14",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T20:47:11Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-04T21:52:50Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a28-ct04",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T22:18:01Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-04T23:33:03Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a29-ct03",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-04T23:53:47Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-05T17:40:03Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "VESDA-B1",
+    "party": "Landlord",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-05T17:42:40Z",
+    "signal": "Smoke alarm"
+  },
+  {
+    "alarm_time": "2026-09-05T17:40:03Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "VESDA-B1",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-05T17:42:52Z",
+    "signal": "Smoke alarm"
+  },
+  {
+    "alarm_time": "2026-09-05T17:25:03Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "VESDA-B1",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-05T17:45:21Z",
+    "signal": "Detector isolated"
+  },
+  {
+    "alarm_time": "2026-09-06T02:51:39Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CDU-B3",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-06T03:19:08Z",
+    "signal": "Pump 2 fault"
+  },
+  {
+    "alarm_time": "2026-09-06T08:52:39Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a09-ct10",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-06T09:04:51Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-06T16:20:52Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a23-ct18",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-06T16:42:22Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-07T02:24:27Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a22-ct07",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-07T02:29:33Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-07T12:17:22Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a04-r3 port 26",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-07T12:43:35Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-08T03:04:06Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a16-r0 port 33",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-08T03:16:58Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-08T06:46:41Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a07-r1 port 34",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-08T07:13:23Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-08T13:01:44Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a26-ct16",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-08T13:06:51Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-08T13:30:30Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CDU-B4",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-08T13:43:19Z",
+    "signal": "Pump isolated"
+  },
+  {
+    "alarm_time": "2026-09-08T15:20:32Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a02-r2 port 11",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-08T15:37:03Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-09T16:58:25Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "BW-B-R3-PG-B4-B",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-09T17:19:12Z",
+    "signal": "Busway undervoltage"
+  },
+  {
+    "alarm_time": "2026-09-09T16:58:24Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-B4 output feeder to BW-B-R3-PG-B4-B",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-09T17:22:26Z",
+    "signal": "Breaker trip"
+  },
+  {
+    "alarm_time": "2026-09-09T21:06:27Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a14-ct02",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-09T21:35:37Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-11T13:53:49Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CDU-B2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-11T14:10:15Z",
+    "signal": "Pump isolated"
+  },
+  {
+    "alarm_time": "2026-09-11T16:01:07Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a31-ct17",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-11T16:18:26Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-11T16:17:59Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a13-r3 port 10",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-11T16:25:52Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-11T22:03:51Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a11-r3 port 2",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-11T22:21:26Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-12T07:45:40Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a23-ct18",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-12T07:59:53Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-13T03:06:06Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a14-ct07",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-13T03:34:42Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-13T07:13:04Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a31-ct15",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-13T07:23:06Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-13T08:10:51Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a23-ct04",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-13T08:18:38Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-13T10:44:21Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a02-r3 port 8",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-13T10:54:32Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-13T17:54:59Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "BW-B-R3-PG-B4-B",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-13T18:01:47Z",
+    "signal": "Tap-off breaker open"
+  },
+  {
+    "alarm_time": "2026-09-13T19:50:13Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-A1",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-13T20:12:24Z",
+    "signal": "UPS on maintenance bypass"
+  },
+  {
+    "alarm_time": "2026-09-14T02:15:12Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a10-r0 port 21",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-14T02:45:10Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-14T09:40:57Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "Rack A06",
+    "party": "IT Partner",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-14T09:43:52Z",
+    "signal": "Rack leak detected"
+  },
+  {
+    "alarm_time": "2026-09-14T09:40:57Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "Rack A06",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-14T09:44:04Z",
+    "signal": "Rack leak detected"
+  },
+  {
+    "alarm_time": "2026-09-14T09:41:57Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "CDU-A1",
+    "party": "IT Partner",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-14T09:45:51Z",
+    "signal": "Rack leak detected"
+  },
+  {
+    "alarm_time": "2026-09-14T09:41:57Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "CDU-A1",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-14T09:46:03Z",
+    "signal": "Rack leak detected"
+  },
+  {
+    "alarm_time": "2026-09-14T18:30:00Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a13-r1 port 35",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-14T18:58:10Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-15T09:31:51Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a07-ct04",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T09:54:45Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-15T12:48:14Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a01-ct05",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T13:16:46Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-15T15:16:03Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "BW-A-R1-PG-A2-A",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T15:37:57Z",
+    "signal": "Tap-off breaker open"
+  },
+  {
+    "alarm_time": "2026-09-15T15:42:11Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "Rack A07",
+    "party": "Landlord",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-15T15:43:07Z",
+    "signal": "Rack input power lost (both feeds)"
+  },
+  {
+    "alarm_time": "2026-09-15T15:42:11Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "Rack A07",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T15:43:19Z",
+    "signal": "Rack input power lost (both feeds)"
+  },
+  {
+    "alarm_time": "2026-09-15T15:42:26Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "Rack A07",
+    "party": "IT Partner",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-15T15:45:54Z",
+    "signal": "Rack outage"
+  },
+  {
+    "alarm_time": "2026-09-15T15:42:26Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "Rack A07",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T15:46:06Z",
+    "signal": "Rack outage"
+  },
+  {
+    "alarm_time": "2026-09-15T15:42:11Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "BW-A-R1-PG-A2-B",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T15:49:10Z",
+    "signal": "Tap-off breaker open"
+  },
+  {
+    "alarm_time": "2026-09-15T17:09:01Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "VESDA-B2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T17:18:11Z",
+    "signal": "Detector fault: airflow low"
+  },
+  {
+    "alarm_time": "2026-09-15T20:14:44Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a14-ct14",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T20:23:42Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-15T20:06:17Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a16-ct01",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T20:30:21Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-15T21:32:29Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a16-ct14",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-15T21:53:34Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-16T01:29:51Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a23-ct04",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-16T01:40:23Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-16T10:54:33Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CH-05",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-16T11:23:43Z",
+    "signal": "Compressor trip (high condenser pressure)"
+  },
+  {
+    "alarm_time": "2026-09-17T10:47:35Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "A23_PowerShelf_7",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-17T11:05:23Z",
+    "signal": "Power shelf failed"
+  },
+  {
+    "alarm_time": "2026-09-17T13:12:31Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a03-ct02",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-17T13:26:56Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-18T17:50:43Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "TTDM-A",
+    "party": "Landlord",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-18T17:51:27Z",
+    "signal": "Leak circuit 8 at 13.2 m"
+  },
+  {
+    "alarm_time": "2026-09-18T17:50:43Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "TTDM-A",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-18T17:51:39Z",
+    "signal": "Leak circuit 8 at 13.2 m"
+  },
+  {
+    "alarm_time": "2026-09-20T19:06:52Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CDU-A3",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-20T19:19:08Z",
+    "signal": "Pump isolated"
+  },
+  {
+    "alarm_time": "2026-09-21T00:54:07Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a13-ct10",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-21T01:00:01Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-21T05:14:39Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a10-ct13",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-21T05:32:42Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-22T00:47:12Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a22-ct02",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-22T01:09:00Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-22T21:03:17Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a10-ct12",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-22T21:28:26Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-23T00:02:56Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-A2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-23T00:17:57Z",
+    "signal": "Module 6 fault"
+  },
+  {
+    "alarm_time": "2026-09-23T04:34:15Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "CDU-A2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-23T04:51:39Z",
+    "signal": "Pump 2 fault"
+  },
+  {
+    "alarm_time": "2026-09-23T12:33:52Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a13-ct01",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-23T12:39:33Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-23T19:21:58Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-B3",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-23T19:49:25Z",
+    "signal": "UPS on maintenance bypass"
+  },
+  {
+    "alarm_time": "2026-09-24T04:20:02Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a12-r0 port 2",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T04:43:26Z",
+    "signal": "Fabric link down"
+  },
+  {
+    "alarm_time": "2026-09-24T16:57:06Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a01-ct10",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T17:17:33Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-24T17:22:19Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "BW-B-R3-PG-B4-A",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T17:38:01Z",
+    "signal": "Tap-off breaker open"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "MV switchgear",
+    "party": "Landlord",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-24T21:18:06Z",
+    "signal": "Utility power lost"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "MV switchgear",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:18:18Z",
+    "signal": "Utility power lost"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "MUPS-B2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:23:09Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-B4",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:25:13Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-B2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:25:21Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "MUPS-A2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:25:39Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-A3",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:25:48Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-B3",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:28:59Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-A1",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:29:47Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "MV-A main breaker",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:29:52Z",
+    "signal": "Breaker trip"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-A4",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:30:05Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "MUPS-B1",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:32:34Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "MV-B main breaker",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:35:59Z",
+    "signal": "Breaker trip"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-A2",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:38:58Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "MUPS-A1",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:44:13Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-24T21:14:20Z",
+    "change_ref": "",
+    "channel": "phone",
+    "device": "UPS-B1",
+    "party": "Landlord",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-24T21:44:15Z",
+    "signal": "UPS on battery"
+  },
+  {
+    "alarm_time": "2026-09-25T08:09:50Z",
+    "change_ref": "",
+    "channel": "page",
+    "device": "a15-nvsw3",
+    "party": "IT Partner",
+    "recipient": "Customer Incident Commander",
+    "sent_at": "2026-09-25T08:12:56Z",
+    "signal": "NVLink switch tray failed"
+  },
+  {
+    "alarm_time": "2026-09-25T08:09:50Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a15-nvsw3",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-25T08:13:08Z",
+    "signal": "NVLink switch tray failed"
+  },
+  {
+    "alarm_time": "2026-09-25T22:34:52Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a01-ct03",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-25T22:43:13Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-25T23:56:04Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "a20-ct07",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-26T00:11:25Z",
+    "signal": "GPU error (XID)"
+  },
+  {
+    "alarm_time": "2026-09-26T04:13:31Z",
+    "change_ref": "",
+    "channel": "email",
+    "device": "leaf-a15-r0 port 17",
+    "party": "IT Partner",
+    "recipient": "Customer site lead",
+    "sent_at": "2026-09-26T04:36:23Z",
+    "signal": "Fabric link down"
+  }
+]

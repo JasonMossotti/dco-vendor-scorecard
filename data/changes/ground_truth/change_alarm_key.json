@@ -1,0 +1,42 @@
+[
+  {
+    "at": "2026-09-15T15:42:11Z",
+    "case_id": "CK-001",
+    "change": "MOP-310",
+    "device": "Rack A07",
+    "expect": "out_of_scope",
+    "kind": "change",
+    "signal": "Rack outage",
+    "type": "natural_rack_outage"
+  },
+  {
+    "at": "2026-09-15T15:42:11Z",
+    "case_id": "CK-002",
+    "change": "MOP-310",
+    "device": "Rack A07",
+    "expect": "out_of_scope",
+    "kind": "change",
+    "signal": "Rack input power lost (both feeds)",
+    "type": "natural_rack_power"
+  },
+  {
+    "at": "2026-09-15T15:42:11Z",
+    "case_id": "CK-003",
+    "change": "MOP-310",
+    "device": "BW-A-R1-PG-A2-B",
+    "expect": "out_of_scope",
+    "kind": "change",
+    "signal": "Tap-off breaker open",
+    "type": "natural_wrong_feed"
+  },
+  {
+    "at": "2026-09-15T17:31:03Z",
+    "case_id": "CK-004",
+    "change": "MOP-310",
+    "device": "BW-A-R1-PG-A2-A",
+    "expect": "out_of_window",
+    "kind": "change",
+    "signal": "Change window overrun",
+    "type": "natural_overrun"
+  }
+]

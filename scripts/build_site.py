@@ -102,6 +102,10 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_patterns
     (out / "patterns").mkdir(parents=True, exist_ok=True)
     (out / "patterns" / "index.html").write_text(render_patterns.html_page(), encoding="utf-8")
+    # The Customer alarm board (change-aware alarms), served at /alarms/.
+    import render_alarms
+    (out / "alarms").mkdir(parents=True, exist_ok=True)
+    (out / "alarms" / "index.html").write_text(render_alarms.html_page(), encoding="utf-8")
     return {"files_in_bundle": len(members), "bundle_bytes": (out / "app_bundle.zip").stat().st_size}
 
 

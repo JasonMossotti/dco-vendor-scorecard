@@ -25,6 +25,7 @@
 7. [Handoffs](#7-handoffs)
 8. [Change Coordination](#8-change-coordination)
 9. [Customer Data Access](#9-customer-data-access)
+10. [Change-Aware Alarm Notification](#10-change-aware-alarm-notification)
 
 ---
 
@@ -104,6 +105,44 @@ This agreement joins the Landlord SLA and the IT Partner SLA. It says where each
 {% for x in ia.data_access.rights -%}
 - {{ x }}
 {% endfor %}
+
+
+## 10. Change-Aware Alarm Notification
+
+{{ ia.alarm_notification.principle }}
+
+**Impact declaration**
+
+{% for x in ia.alarm_notification.impact_declaration -%}
+- {{ x }}
+{% endfor %}
+**Out of scope and out of window**
+
+{% for x in ia.alarm_notification.out_of_scope -%}
+- {{ x }}
+{% endfor %}
+**Notifications owed to the Customer**
+
+| ID | Trigger | Within | Channels | Owed by |
+|---|---|---|---|---|
+{% for n in ia.alarm_notification.notifications -%}
+| {{ n.id }} | {{ n.trigger }} | {{ n.within_min }} min | {{ n.channels }} | {{ n.owed_by }} |
+{% endfor %}
+
+{% for x in ia.alarm_notification.rules -%}
+- {{ x }}
+{% endfor %}
+**Customer backstop:** {{ ia.alarm_notification.customer_backstop }}
+
+**Key measures**
+
+| ID | Party | Measure | Target | Data sources |
+|---|---|---|---|---|
+{% for k in ia.alarm_notification.key_measures -%}
+| {{ k.id }} | {{ k.party }} | {{ k.name }} | {{ k.target }}{{ k.unit }} | {{ k.data_sources }} |
+{% endfor %}
+
+{{ ia.alarm_notification.measurement_note }}
 
 ---
 

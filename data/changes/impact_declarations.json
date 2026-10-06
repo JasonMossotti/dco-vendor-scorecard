@@ -1,0 +1,303 @@
+[
+  {
+    "assets": [
+      "BW-B-R1-PG-B1-B"
+    ],
+    "change_id": "MOP-308",
+    "domains": [
+      "power"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Tap-off breaker open"
+        ],
+        "asset": "BW-B-R1-PG-B1-B"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": false,
+    "title": "Energize tap-off TO-B29 for a new rack (HO-4)",
+    "type": "tapoff_energize",
+    "window_end": "2026-09-04T19:39:27Z",
+    "window_start": "2026-09-04T17:39:27Z"
+  },
+  {
+    "assets": [
+      "CDU-B3"
+    ],
+    "change_id": "MOP-303",
+    "domains": [
+      "cooling"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Pump isolated"
+        ],
+        "asset": "CDU-B3"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": true,
+    "title": "Filter change and coolant sample: CDU-B3",
+    "type": "cdu_filter",
+    "window_end": "2026-09-04T20:36:50Z",
+    "window_start": "2026-09-04T18:36:50Z"
+  },
+  {
+    "assets": [
+      "VESDA-B1"
+    ],
+    "change_id": "MOP-307",
+    "domains": [
+      "fire"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Detector isolated",
+          "Smoke alarm"
+        ],
+        "asset": "VESDA-B1"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "critical",
+    "owner": "Landlord",
+    "redundancy_reduced": false,
+    "title": "VESDA inspection and smoke test: VESDA-B1",
+    "type": "vesda_test",
+    "window_end": "2026-09-05T19:10:03Z",
+    "window_start": "2026-09-05T16:55:03Z"
+  },
+  {
+    "assets": [
+      "rack:A18"
+    ],
+    "change_id": "CHG2040062",
+    "domains": [
+      "compute"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Node not responding"
+        ],
+        "asset": "rack:A18"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "IT Partner",
+    "redundancy_reduced": false,
+    "title": "Compute tray firmware 1.3.6 -> 1.3.7 on rack A18",
+    "type": "tray_firmware",
+    "window_end": "2026-09-07T10:00:00Z",
+    "window_start": "2026-09-07T06:00:00Z"
+  },
+  {
+    "assets": [
+      "CDU-B4"
+    ],
+    "change_id": "MOP-304",
+    "domains": [
+      "cooling"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Pump isolated"
+        ],
+        "asset": "CDU-B4"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": true,
+    "title": "Filter change and coolant sample: CDU-B4",
+    "type": "cdu_filter",
+    "window_end": "2026-09-08T15:00:30Z",
+    "window_start": "2026-09-08T13:00:30Z"
+  },
+  {
+    "assets": [
+      "CDU-B2"
+    ],
+    "change_id": "MOP-301",
+    "domains": [
+      "cooling"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Pump isolated"
+        ],
+        "asset": "CDU-B2"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": true,
+    "title": "Filter change and coolant sample: CDU-B2",
+    "type": "cdu_filter",
+    "window_end": "2026-09-11T15:23:49Z",
+    "window_start": "2026-09-11T13:23:49Z"
+  },
+  {
+    "assets": [
+      "BW-B-R3-PG-B4-B"
+    ],
+    "change_id": "MOP-309",
+    "domains": [
+      "power"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Tap-off breaker open"
+        ],
+        "asset": "BW-B-R3-PG-B4-B"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": false,
+    "title": "Energize tap-off TO-B18 for a new rack (HO-4)",
+    "type": "tapoff_energize",
+    "window_end": "2026-09-13T19:24:59Z",
+    "window_start": "2026-09-13T17:24:59Z"
+  },
+  {
+    "assets": [
+      "UPS-A1"
+    ],
+    "change_id": "MOP-305",
+    "domains": [
+      "power"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "UPS on maintenance bypass"
+        ],
+        "asset": "UPS-A1"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": true,
+    "title": "Preventive maintenance and battery health check: UPS-A1",
+    "type": "ups_pm",
+    "window_end": "2026-09-13T23:20:13Z",
+    "window_start": "2026-09-13T19:20:13Z"
+  },
+  {
+    "assets": [
+      "rack:A05"
+    ],
+    "change_id": "CHG2040031",
+    "domains": [
+      "compute"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Node not responding"
+        ],
+        "asset": "rack:A05"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "IT Partner",
+    "redundancy_reduced": false,
+    "title": "Compute tray firmware 1.3.6 -> 1.3.7 on rack A05",
+    "type": "tray_firmware",
+    "window_end": "2026-09-14T10:00:00Z",
+    "window_start": "2026-09-14T06:00:00Z"
+  },
+  {
+    "assets": [
+      "BW-A-R1-PG-A2-A"
+    ],
+    "change_id": "MOP-310",
+    "domains": [
+      "power"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Tap-off breaker open"
+        ],
+        "asset": "BW-A-R1-PG-A2-A"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": true,
+    "title": "Retorque A-side tap-off for rack A07",
+    "type": "tapoff_work",
+    "window_end": "2026-09-15T17:16:03Z",
+    "window_start": "2026-09-15T14:46:03Z"
+  },
+  {
+    "assets": [
+      "CDU-A3"
+    ],
+    "change_id": "MOP-302",
+    "domains": [
+      "cooling"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "Pump isolated"
+        ],
+        "asset": "CDU-A3"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": true,
+    "title": "Filter change and coolant sample: CDU-A3",
+    "type": "cdu_filter",
+    "window_end": "2026-09-20T20:36:52Z",
+    "window_start": "2026-09-20T18:36:52Z"
+  },
+  {
+    "assets": [
+      "UPS-B3"
+    ],
+    "change_id": "MOP-306",
+    "domains": [
+      "power"
+    ],
+    "expected": [
+      {
+        "alarms": [
+          "UPS on maintenance bypass"
+        ],
+        "asset": "UPS-B3"
+      }
+    ],
+    "grace_min": 15,
+    "max_severity": "major",
+    "owner": "Landlord",
+    "redundancy_reduced": true,
+    "title": "Preventive maintenance and battery health check: UPS-B3",
+    "type": "ups_pm",
+    "window_end": "2026-09-23T22:51:58Z",
+    "window_start": "2026-09-23T18:51:58Z"
+  }
+]
