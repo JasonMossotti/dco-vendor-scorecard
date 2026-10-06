@@ -18,6 +18,8 @@ ok(errors.length === 0, "no script errors " + errors.join(";"));
 ok(tab("board").classList.contains("on") && t().includes("Customer alarm board"), "opens on the board");
 ok(d.getElementById("now").textContent.startsWith("Sep 15 12:40") && ["out_of_scope", "out_of_window"].some(c => rows()[0].classList.contains(c)) && d.querySelector('#active-changes .ch.flag[data-change="MOP-310"]'),
    "opens during the rack A07 outage with the flagged rows pinned");
+ok(d.getElementById("utc").textContent.startsWith("Sep 15 17:40") && d.getElementById("utc").textContent.endsWith(" UTC"), "UTC clock under CDT in the same format: " + d.getElementById("utc").textContent);
+ok([...d.getElementById("speed").options].map(o => o.textContent).includes("Real time"), "replay speed offers real time");
 d.getElementById("end").click();
 ok(rows().length === D.alarms.length, `every alarm at the end of the month (${rows().length})`);
 ok(["critical", "major", "minor", "clear"].reduce((s, k) => s + count(k), 0) === D.alarms.length, "severity chips add up to the alarms shown");
@@ -45,6 +47,12 @@ at("2026-09-15T17:32:00Z");
 ok(rows()[0].classList.contains("out_of_window") && rows()[0].textContent.includes("still in effect"), "the overrun alarm fires at the window plus 15 minutes");
 rows()[0].click();
 ok(t().includes("2 h 06 min after the window closed") && t().includes("NT-3 owed by Landlord within 5 min: missing"), "the detail row explains the overrun and the missing notification");
+
+at("2026-09-15T10:00:00Z");
+ok(d.querySelector('#upcoming-changes .ch.soon[data-change="MOP-310"]') && d.getElementById("upcoming-changes").textContent.includes("Starts in 4 h 47 min"), "MOP-310 is upcoming 6 hours ahead, with a countdown: " + d.getElementById("upcoming-changes").textContent.trim().slice(0, 120));
+ok(!d.querySelector('#active-changes .ch[data-change="MOP-310"]'), "upcoming work is not yet in progress");
+at("2026-09-15T08:00:00Z");
+ok(!d.querySelector('#upcoming-changes .ch[data-change="MOP-310"]'), "beyond the 6-hour lead time it is not listed yet");
 
 // Filters.
 d.getElementById("clearchange").click();
@@ -75,4 +83,29 @@ tab("about").click();
 ok(t().includes("not by itself a finding against anyone") && t().includes("NT-3"), "rules in plain words, with the framing");
 const dom2 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/alarms/#notify", virtualConsole: vc() });
 ok(dom2.window.document.getElementById("doc").textContent.includes("Notifications owed to the Customer"), "a link to a view opens that view");
-ok(errors.length === 0, "still no script errors " + errors.join(";"));
+
+// Play and Pause: ticks update the board in place, so the Pause button is the same element and stops the replay.
+tab("board").click();
+d.getElementById("a07").click();
+const playBtn = d.getElementById("play");
+playBtn.click();
+const t0 = d.getElementById("now").textContent;
+setTimeout(() => {
+  ok(d.getElementById("play") === playBtn && playBtn.textContent === "Pause", "the Pause button survives replay ticks");
+  ok(d.getElementById("now").textContent !== t0, "the replay advanced: " + d.getElementById("now").textContent);
+  playBtn.click();
+  const t1 = d.getElementById("now").textContent;
+  ok(playBtn.textContent === "Play", "Pause stops the replay");
+  setTimeout(() => {
+    ok(d.getElementById("now").textContent === t1, "the clock stays put after Pause");
+    const sp = d.getElementById("speed"); sp.value = "1"; fire(sp, "change");
+    playBtn.click();
+    setTimeout(() => {
+      const dt = Date.parse("2026 " + d.getElementById("utc").textContent.replace(" UTC", "") + "Z") - Date.parse("2026 " + t1.replace(" CDT", "") + "Z") - 5 * 3600e3;
+      ok(dt >= 1000 && dt <= 3000, `real time advances about one second per second (${dt} ms)`);
+      playBtn.click();
+      ok(errors.length === 0, "still no script errors " + errors.join(";"));
+      w.close(); dom2.window.close();
+    }, 1600);
+  }, 500);
+}, 700);
