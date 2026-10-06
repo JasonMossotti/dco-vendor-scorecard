@@ -72,7 +72,8 @@ def prepare() -> dict:
                       "alarms": [a.id for a in mine]})
     ia = load_interface_agreement()
     return {"window": r["window"], "alarms": rows, "declarations": decls, "owed": r["owed"], "key_measures": r["key_measures"],
-            "conflicts": r["conflicts"], "tickets": A.trouble_tickets(src), "planned_work": A.planned_work(src), "score": s, "rules": ia["alarm_notification"],
+            "conflicts": r["conflicts"], "tickets": A.trouble_tickets(src), "planned_work": A.planned_work(src),
+            "routing": yaml.safe_load((ROOT / "config" / "customer_notifications.yaml").read_text(encoding="utf-8")), "score": s, "rules": ia["alarm_notification"],
             "class_text": A.CLASS_TEXT, "offset_h": OFFSET.total_seconds() / 3600, "pir": PIR,
             "a07": a07_facts(alarms, r["declarations"], r["owed"])}
 

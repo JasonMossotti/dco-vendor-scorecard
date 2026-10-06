@@ -244,3 +244,29 @@ def test_planned_work_orders_attach_to_their_mop():
     assert set(pw) == {"WO-41017", "WO-41021", "WO-41014"}                # the utility outage WO-41009 is not planned work
     assert pw["WO-41017"]["mop_ref"] == "MOP-308" and pw["WO-41021"]["mop_ref"] == "MOP-309"
     assert pw["WO-41014"]["mop_ref"] == ""                                 # planned work with no MOP on file
+
+
+def test_customer_routing_config_is_complete_and_fictional():
+    import re
+    rc = yaml.safe_load((ROOT / "config" / "customer_notifications.yaml").read_text(encoding="utf-8"))
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    hours = {}
+    for s in rc["schedule"]:
+        a, b = int(s["start"][:2]), int(s["end"][:2])
+        assert s["primary"] in rc["people"] and s["secondary"] in rc["people"] and s["primary"] != s["secondary"]
+        for d in s["days"]:
+            span = range(a, b) if a < b else list(range(a, 24)) + [24 + h for h in range(0, b)]
+            for h in span:
+                k = ((days.index(d) * 24 + h) % 168)
+                assert k not in hours, f"schedule overlap at {days[k // 24]} {k % 24:02d}:00"
+                hours[k] = s["label"]
+    assert len(hours) == 168                                   # every hour of the week, exactly once
+    events = {r["event"] for r in rc["rules"]}
+    assert events == {"out_of_scope", "out_of_window", "critical", "major", "minor", "expected", "p1_ticket", "nt_breach",
+                      "upcoming_trouble", "change_conflict"}
+    for r in rc["rules"]:
+        assert set(r["business"]) | set(r["after_hours"]) <= {"email", "sms"}
+        assert set(r["to"]) <= set(rc["groups"]) and all(x["to"] in rc["groups"] for x in r.get("escalate", []))
+    contacts = [p["email"] for p in rc["people"].values()] + [p["sms"] for p in rc["people"].values()]
+    contacts += [c for g in rc["groups"].values() for c in g.get("email", []) + g.get("sms", [])]
+    assert all(c.endswith("@example.com") or re.fullmatch(r"\+1 512 555 01\d\d", c) for c in contacts)

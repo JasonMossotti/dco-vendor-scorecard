@@ -49,6 +49,11 @@ ul.rules li { margin:4px 0; }
 .alert button { font:inherit; border:1px solid var(--oos); background:#fff; color:var(--oos); padding:3px 10px; border-radius:5px; cursor:pointer; font-weight:600; }
 .ch.soon.flag { border-left-color:var(--oos); }
 button.link { font:inherit; border:0; background:none; color:var(--it); text-decoration:underline; cursor:pointer; padding:0; }
+table.grid th, table.grid td { padding:2px 3px; text-align:center; font-size:11px; } table.grid td { border:1px solid #fff; }
+.sw { display:inline-block; width:10px; height:10px; border-radius:2px; vertical-align:middle; } tr.escal td { background:#fff8e6; }
+label.ck { display:inline-flex; align-items:center; gap:2px; margin-right:6px; font-size:12px; white-space:nowrap; } td.rcp { white-space:normal; min-width:260px; }
+#matrix td.sum { min-width:180px; }
+.panel { background:var(--panel); border-radius:6px; padding:4px 12px; } #matrix input { margin:0 3px; }
 .ch .warn { color:var(--oos); font-size:12px; font-weight:600; margin-top:2px; }
 .grp { display:inline-block; margin-left:6px; padding:0 7px; border:1px solid var(--it); border-radius:9px; font-size:11px; color:var(--it); background:#fff; cursor:pointer; white-space:nowrap; }
 tr.child { background:#fafbfc; } tr.tk.closed td { color:var(--muted); } tr.tk[data-change] { cursor:pointer; }
@@ -389,6 +394,134 @@ function changes() {
     <h2>Change conflicts</h2>${cf.length ? `<ul>${cf.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None in this date range: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
 }
 
+// Customer notification routing: the Customer's own backstop on this aggregate (config/customer_notifications.yaml).
+// Edits on the page stay in this browser for this visit; Export gives the YAML a reviewer would commit.
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const CHANNELS = [["email", "Email"], ["sms", "Text"]];
+const GROUPS = ["primary", "secondary", "domain", "facilities", "it_ops", "leadership"];
+const hm2min = s => +s.slice(0, 2) * 60 + +s.slice(3, 5);
+const siteDay = t => DAYS[new Date(t + OFF).getUTCDay()];
+const siteMin = t => { const d = new Date(t + OFF); return d.getUTCHours() * 60 + d.getUTCMinutes(); };
+S.rc = JSON.parse(JSON.stringify(D.routing));
+S.look = {day: "Mon", time: "03:00", event: "critical", domain: "power"};
+function shiftAt(t) {
+  const day = siteDay(t), prev = DAYS[(DAYS.indexOf(day) + 6) % 7], m = siteMin(t);
+  return S.rc.schedule.find(s => { const a = hm2min(s.start), b = hm2min(s.end);
+    return a < b ? s.days.includes(day) && m >= a && m < b : (s.days.includes(day) && m >= a) || (s.days.includes(prev) && m < b); });
+}
+const isBusiness = t => { const b = S.rc.business_hours, m = siteMin(t); return b.days.includes(siteDay(t)) && m >= hm2min(b.start) && m < hm2min(b.end); };
+function nextBusiness(t) {
+  for (let k = 0; k < 8; k++) {
+    const d = new Date(t + OFF + k * DAY), start = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) + hm2min(S.rc.business_hours.start) * MIN - OFF;
+    if (start >= t && isBusiness(start)) return start;
+  }
+  return t;
+}
+function recipients(group, t, domains) {
+  if (group === "primary" || group === "secondary") { const s = shiftAt(t), n = s[group], p = S.rc.people[n]; return [{name: n, email: p.email, sms: p.sms}]; }
+  const g = group === "domain" ? (domains.some(x => S.rc.facilities_domains.includes(x)) ? "facilities" : "it_ops") : group;
+  const G = S.rc.groups[g];
+  return [{name: G.label, email: (G.email || []).join(", "), sms: (G.sms || []).join(", ")}];
+}
+// Trouble on an upcoming change's equipment (the board's warning without the conflict half).
+const troubleAt = (d, T) => warnings(d, T).filter(w => w.startsWith("Live trouble"));
+function routeEvents() {
+  const ev = [];
+  A.forEach(a => ev.push({t: a.t, end: a.tc, type: FLAG.includes(a.cls) || a.cls === "expected" ? a.cls : a.severity, domains: a.domains, ref: a.id, what: `${a.device}: ${a.summary}`}));
+  TK.filter(k => k.priority === "P1").forEach(k => ev.push({t: k.t, end: k.tc, type: "p1_ticket", domains: k.domains, ref: k.id, what: `${k.device}: ${k.summary}`}));
+  D.owed.filter(o => o.status !== "on_time" && /NT-[13]/.test(o.rule)).forEach(o => ev.push({t: ms(o.raised) + o.within_min * MIN, end: null, type: "nt_breach", domains: [], ref: o.alarm,
+    what: `${o.party} ${o.rule} ${o.status.replace("_", " ")}: ${o.device}, ${o.signal}`}));
+  D.declarations.forEach(d => {
+    const s0 = ms(d.window_start), from = s0 - S.rc.lead_h * HOUR, until = s0 - GRACE;
+    const hit = [from, ...TK.map(k => k.t), ...A.map(a => a.t)].filter(x => x >= from && x < until).sort((x, y) => x - y).find(x => troubleAt(d, x).length);
+    if (hit != null) ev.push({t: hit, end: s0, type: "upcoming_trouble", domains: d.domains, ref: d.change_id, what: `${d.change_id} starts ${local(s0)} CDT. ${troubleAt(d, hit)[0]}`});
+  });
+  D.conflicts.forEach(c => ev.push({t: ms(c.overlap_start) - S.rc.lead_h * HOUR, end: ms(c.overlap_start), type: "change_conflict", domains: [], ref: c.changes.join(" + "), what: c.text}));
+  return ev.sort((x, y) => x.t - y.t);
+}
+function dispatch(e) {
+  const rule = S.rc.rules.find(r => r.event === e.type); if (!rule) return [];
+  const out = [], biz = isBusiness(e.t);
+  let ch = biz ? rule.business : rule.after_hours, at = e.t, why = "";
+  if (!biz && rule.hold_after_hours && ch.length) { at = nextBusiness(e.t); ch = rule.business; why = "held to the next business morning"; }
+  const send = (groups, via, when, note) => groups.forEach(g => recipients(g, when, e.domains).forEach(r =>
+    via.forEach(c => { const addr = c === "sms" ? r.sms : r.email; if (addr) out.push({at: when, e, to: r.name, ch: c, addr, why: note}); })));
+  if (ch.length) send(rule.to, ch, at, why);
+  (rule.escalate || []).forEach(x => {
+    const when = e.t + x.after_min * MIN;
+    if ((x.after_hours_only && biz) || (e.end != null && e.end <= when)) return;   // cleared first: nothing to escalate
+    send([x.to], x.via, when, `escalation: still open after ${x.after_min} min`);
+  });
+  return out;
+}
+const sendAll = () => routeEvents().flatMap(dispatch).sort((x, y) => x.at - y.at);
+const chText = c => c.length ? c.map(x => x === "sms" ? "text" : "email").join(" and ") : "board only";
+const groupText = g => S.rc.groups[g].label;
+function lookupText() {
+  const L = S.look, rule = S.rc.rules.find(r => r.event === L.event);
+  let t = Date.UTC(2026, 7, 31, 5);   // Monday Aug 31, 00:00 CDT (sample week)
+  while (siteDay(t) !== L.day) t += DAY;
+  t += hm2min(L.time) * MIN;
+  const biz = isBusiness(t), sh = shiftAt(t), e = {t, end: null, type: L.event, domains: [L.domain], ref: "", what: ""};
+  const msgs = dispatch(e), first = msgs.filter(m => !m.why.startsWith("escalation"));
+  const who = list => [...new Set(list.map(m => `${m.to} by ${m.ch === "sms" ? "text" : "email"} (${m.addr})`))].join("; ");
+  return `<p><b>${esc(L.day)} ${esc(L.time)} CDT</b> is ${biz ? "business hours" : "after hours"} (${esc(sh.label)}: primary ${esc(sh.primary)}, secondary ${esc(sh.secondary)}).</p>
+    <p>A <b>${esc(rule.label.toLowerCase())}</b>${L.domain ? ` (${esc(L.domain)})` : ""} goes to: ${first.length ? esc(who(first)) : "nobody; it shows on the board only"}${first.length && first[0].why ? ` (${esc(first[0].why)}, ${esc(local(first[0].at).slice(-5))} CDT)` : ""}.</p>
+    ${(rule.escalate || []).length ? `<p>If nobody acknowledges: ${(rule.escalate || []).map(x => `after ${x.after_min} min, ${esc(groupText(x.to))} by ${esc(chText(x.via))}${x.after_hours_only ? " (after hours only)" : ""}`).join("; ")}.</p>` : ""}`;
+}
+function routingYaml() {
+  const arr = a => `[${a.join(", ")}]`;
+  return "rules:\n" + S.rc.rules.map(r => `  - {event: ${r.event}, label: "${r.label}", business: ${arr(r.business)}, after_hours: ${arr(r.after_hours)}, to: ${arr(r.to)}`
+    + (r.hold_after_hours ? ", hold_after_hours: true" : "")
+    + (r.escalate ? `,\n     escalate: [${r.escalate.map(x => `{after_min: ${x.after_min}, to: ${x.to}, via: ${arr(x.via)}${x.after_hours_only ? ", after_hours_only: true" : ""}}`).join(", ")}]` : "") + "}").join("\n") + "\n";
+}
+function routingSection() {
+  const msgs = sendAll(), evs = routeEvents();
+  const r0 = S.from, r1 = S.to + DAY, inR = m => m.at >= r0 && m.at < r1, shown = msgs.filter(inR);
+  const count = (type, c) => msgs.filter(m => m.e.type === type && (!c || m.ch === c)).length;
+  const SHORT = {primary:"Primary", secondary:"Secondary", domain:"By domain", facilities:"Facilities", it_ops:"IT ops", leadership:"Leadership", email:"Email", sms:"Text"};
+  const box = (i, k, c, on) => `<label class="ck" title="${esc(k === "to" ? groupText(c) : SHORT[c])}"><input type="checkbox" data-rc="${i}" data-k="${k}" data-v="${c}"${on ? " checked" : ""}>${SHORT[c]}</label>`;
+  const colors = {}, palette = ["#dbe8fb", "#e9e2f7", "#fde7d2", "#dff1e5"];
+  S.rc.schedule.forEach(s => { if (!(s.label in colors)) colors[s.label] = palette[Object.keys(colors).length % palette.length]; });
+  const at = (day, h) => { let t = Date.UTC(2026, 7, 31, 5); while (siteDay(t) !== day) t += DAY; return t + h * HOUR; };
+  return `<h1 style="margin-top:26px">Customer notification routing</h1>
+    <p class="sub">The Customer's own backstop on this board: who at the Customer is told about what, by text or email, at what hour, and who is told next if nobody acknowledges. The partners still owe NT-1 to NT-3 above, and are still scored on them. Every contact is fictional. Edits here stay in this browser for this visit; export the YAML to propose a change to <code>config/customer_notifications.yaml</code>.</p>
+    <h2>Routing matrix <span class="note">sample month: events, emails, and texts this matrix would send</span></h2>
+    <div class="wide"><table id="matrix"><tr><th>Event</th><th>Business hours</th><th>After hours</th><th>Recipients <span class="note">(by domain: power, cooling, fire to Facilities; compute, network to IT)</span></th><th>If nobody acknowledges</th><th>Events</th><th>Emails</th><th>Texts</th></tr>
+    ${S.rc.rules.map((r, i) => `<tr data-event="${esc(r.event)}"><td class="sum">${esc(r.label)}</td>
+      <td>${CHANNELS.map(([c]) => box(i, "business", c, r.business.includes(c))).join(" ")}</td>
+      <td>${CHANNELS.map(([c]) => box(i, "after_hours", c, r.after_hours.includes(c))).join(" ")}${r.hold_after_hours ? `<div class="note">held to morning</div>` : ""}</td>
+      <td class="rcp">${GROUPS.map(g => box(i, "to", g, r.to.includes(g))).join(" ")}</td>
+      <td class="sum">${(r.escalate || []).map(x => `${x.after_min} min: ${esc(groupText(x.to))} by ${esc(chText(x.via))}${x.after_hours_only ? " (after hours)" : ""}`).join("<br>") || "none"}</td>
+      <td>${evs.filter(e => e.type === r.event).length}</td><td>${count(r.event, "email")}</td><td>${count(r.event, "sms")}</td></tr>`).join("")}</table></div>
+    <div class="bar ctl"><button id="rcexport">Export YAML</button><button id="rcreset">Reset to the reviewed file</button><span class="note">${msgs.length} messages in the sample month: ${msgs.filter(m => m.ch === "email").length} emails and ${msgs.filter(m => m.ch === "sms").length} texts.</span></div>
+    ${S.rcyaml ? `<textarea id="rcyaml" readonly rows="16" style="width:100%;font:12px/1.4 ui-monospace,Consolas,monospace">${esc(S.rcyaml)}</textarea>` : ""}
+    <h2>On-call schedule <span class="note">one week, repeating, site time (CDT)</span></h2>
+    <div class="wide"><table id="oncall" class="grid"><tr><th></th>${Array.from({length: 24}, (_, h) => `<th>${p2(h)}</th>`).join("")}</tr>
+      ${WEEK.map(day => `<tr><th>${day}</th>${Array.from({length: 24}, (_, h) => { const s = shiftAt(at(day, h));
+        return `<td style="background:${colors[s.label]}" title="${esc(`${day} ${p2(h)}:00 ${s.label}: primary ${s.primary}, secondary ${s.secondary}`)}">${esc(s.primary.replace("Ops engineer ", "E"))}</td>`; }).join("")}</tr>`).join("")}</table></div>
+    <p class="note">${[...new Set(S.rc.schedule.map(s => s.label))].map(l => { const s = S.rc.schedule.find(x => x.label === l);
+      return `<span class="sw" style="background:${colors[l]}"></span> ${esc(l)}: primary ${esc(s.primary)}, secondary ${esc(s.secondary)}`; }).join(" · ")}. E1 to E4 are the on-call roles; business hours are ${esc(S.rc.business_hours.days.join(", "))} ${esc(S.rc.business_hours.start)} to ${esc(S.rc.business_hours.end)}.</p>
+    <h2>Who is told, and how</h2>
+    <div class="bar ctl"><span><label>Day</label><select id="lkday">${WEEK.map(d => `<option${S.look.day === d ? " selected" : ""}>${d}</option>`).join("")}</select></span>
+      <span><label>Time (CDT)</label><input id="lktime" type="time" value="${esc(S.look.time)}"></span>
+      <span><label>Event</label><select id="lkevent">${S.rc.rules.map(r => `<option value="${esc(r.event)}"${S.look.event === r.event ? " selected" : ""}>${esc(r.label)}</option>`).join("")}</select></span>
+      <span><label>Domain</label><select id="lkdomain">${["power", "cooling", "fire", "compute", "network"].map(d => `<option${S.look.domain === d ? " selected" : ""}>${d}</option>`).join("")}</select></span></div>
+    <div id="lookup" class="panel">${lookupText()}</div>
+    <h2>Messages the Customer's layer would have sent <span class="note">${shown.length} in the Board's date range, ${esc(fmt(r0, 0, false).slice(0, -6))} to ${esc(fmt(S.to, 0, false).slice(0, -6))}</span></h2>
+    <div class="wide"><table id="dispatch"><tr><th>Sent (CDT)</th><th>Event</th><th>Source</th><th>What</th><th>To</th><th>Channel</th><th>Address</th><th>Note</th></tr>
+      ${shown.map(m => `<tr class="${m.why.startsWith("escalation") ? "escal" : ""}"><td>${esc(local(m.at))}</td><td>${esc(S.rc.rules.find(r => r.event === m.e.type).label)}</td><td>${esc(m.e.ref)}</td><td class="sum">${esc(m.e.what)}</td>
+        <td>${esc(m.to)}</td><td>${m.ch === "sms" ? "Text" : "Email"}</td><td>${esc(m.addr)}</td><td class="note">${esc(m.why)}</td></tr>`).join("") || `<tr><td colspan="8" class="empty">Nothing in this date range.</td></tr>`}</table></div>
+    <p class="note">Escalations are shown when the event was still open at the escalation time; in production they also stop when someone acknowledges, which the sample does not record.</p>
+    <h2>What production needs</h2><ol class="rules">
+      <li><b>A server that runs around the clock.</b> This page is static and sends nothing. The aggregate needs a service that ingests both partners' feeds (BMS, SNMP traps, Redfish, ticket webhooks; the read-only collector already reads the devices), classifies each alarm against declared change work as this board does, and routes the result. Run it on at least two hosts.</li>
+      <li><b>A paging platform, not home-built texting.</b> An incident-management or paging service already does on-call schedules, escalation, acknowledgement by reply or link, delivery receipts, and voice fallback; the aggregate sends it events through its API. Plain email (an SMTP relay) and text (a messaging provider) are the minimum; US texting needs a registered sender and recipient opt-in.</li>
+      <li><b>Routing as reviewed configuration.</b> This matrix, the groups, and the schedule (time zone, holidays, overrides) live in a file under change control, like the SLAs, with escalation when nobody acknowledges.</li>
+      <li><b>Proof it works.</b> Log every send with its delivery receipt and acknowledgement; a heartbeat that alerts on silence, so a stopped aggregate is itself an alarm; a monthly test page and a drill; a second provider or channel for critical events.</li>
+      <li><b>Flood control.</b> Group related alarms (the board's grouping), limit messages per person, and summarize storms.</li>
+      <li><b>Contact data is personal data.</b> Access control and single sign-on to edit routing, an audit trail of changes, retention limits, and no partner can edit the Customer's routing.</li></ol>`;
+}
+
 function notify() {
   const st = s => `<span class="badge ${s === "on_time" ? "ok" : s === "missing" ? "bad" : "warn"}">${esc(s.replace("_", " "))}</span>`;
   const key = D.owed.filter(o => o.rule.includes("NT-1") || o.rule.includes("NT-3"));
@@ -400,7 +533,8 @@ function notify() {
     <p class="note">Key measures carry no service credit; they drive corrective action.</p>
     <h2>Critical and change-work notifications</h2>
     <div class="wide"><table id="owed"><tr><th>Alarm</th><th>Raised (CDT)</th><th>Device</th><th>Alarm</th><th>Owed by</th><th>Rule</th><th>First sent</th><th>Channels</th><th>Result</th></tr>
-    ${key.map(o => `<tr><td>${esc(o.alarm)}</td><td>${esc(local(ms(o.raised)))}</td><td>${esc(o.device)}</td><td>${esc(o.signal)}</td><td>${partyBadge(o.party)}</td><td>${esc(o.rule)}</td><td>${o.sent ? esc(local(ms(o.sent))) : "none"}</td><td>${esc((o.channels || []).join(", "))}</td><td>${st(o.status)}</td></tr>`).join("")}</table></div></section>`;
+    ${key.map(o => `<tr><td>${esc(o.alarm)}</td><td>${esc(local(ms(o.raised)))}</td><td>${esc(o.device)}</td><td>${esc(o.signal)}</td><td>${partyBadge(o.party)}</td><td>${esc(o.rule)}</td><td>${o.sent ? esc(local(ms(o.sent))) : "none"}</td><td>${esc((o.channels || []).join(", "))}</td><td>${st(o.status)}</td></tr>`).join("")}</table></div>
+    ${routingSection()}</section>`;
 }
 
 function about() {
@@ -478,6 +612,17 @@ function focusChange(id) {
 }
 function wire() {
   const $ = id => document.getElementById(id);
+  if (S.view === "notify") {
+    document.querySelectorAll("#matrix input[data-rc]").forEach(el => el.onchange = () => {
+      const r = S.rc.rules[+el.dataset.rc], k = el.dataset.k, set = new Set(r[k]);
+      el.checked ? set.add(el.dataset.v) : set.delete(el.dataset.v);
+      r[k] = (k === "to" ? GROUPS : CHANNELS.map(c => c[0])).filter(x => set.has(x)); S.rcyaml = ""; render();
+    });
+    $("rcexport").onclick = () => { S.rcyaml = routingYaml(); render(); };
+    $("rcreset").onclick = () => { S.rc = JSON.parse(JSON.stringify(D.routing)); S.rcyaml = ""; render(); };
+    const lk = (id, k) => { $(id).onchange = e => { S.look[k] = e.target.value; $("lookup").innerHTML = lookupText(); }; };
+    lk("lkday", "day"); lk("lktime", "time"); lk("lkevent", "event"); lk("lkdomain", "domain");
+  }
   if ($("allrange")) $("allrange").onclick = () => { S.from = W0; S.to = W1; render(); };
   if (S.view !== "board") return;
   if (S.mode === "history") {

@@ -125,6 +125,26 @@ ok(tab("board").classList.contains("on") && rows().length >= 1 && rows().every(r
 tab("notify").click();
 ok(d.querySelectorAll("#km tr").length === 3 && t().includes("IA-KM-01") && t().includes("IA-KM-02"), "both key measures");
 ok(t().includes("Change window overrun") && d.querySelectorAll("#owed .badge.bad").length >= 2, "missing change-work notifications shown");
+// Customer notification routing.
+const mrow = ev => d.querySelector(`#matrix tr[data-event="${ev}"]`);
+const counts = ev => [...mrow(ev).children].slice(-3).map(c => +c.textContent);
+ok(d.querySelectorAll("#matrix tr[data-event]").length === 10 && counts("out_of_scope").join(",") === "3,9,9" && counts("nt_breach").join(",") === "4,4,0", "routing matrix with the sample month's events, emails, and texts");
+ok(d.querySelectorAll("#oncall td").length === 168, "on-call schedule covers every hour of the week");
+const look = () => d.getElementById("lookup").textContent;
+ok(look().includes("after hours") && look().includes("Ops engineer 4") && look().includes("+1 512 555 0104"), "Monday 03:00 is the weekend on-call");
+const lkd = d.getElementById("lkday"), lkt = d.getElementById("lktime");
+lkd.value = "Tue"; fire(lkd, "change"); lkt.value = "10:00"; fire(lkt, "change");
+ok(look().includes("business hours") && look().includes("Ops engineer 1"), "Tuesday 10:00 is business hours: " + look().slice(0, 80));
+const lke = d.getElementById("lkevent"); lke.value = "minor"; fire(lke, "change");
+ok(look().includes("board only"), "a minor alarm goes on the board only");
+const majorEmails = counts("major")[1];
+const mb = mrow("major").querySelector('input[data-k="business"][data-v="email"]'); mb.checked = false; fire(mb, "change");
+ok(counts("major")[1] < majorEmails, `turning off business-hours email for major alarms cuts emails (${majorEmails} to ${counts("major")[1]})`);
+d.getElementById("rcexport").click();
+ok(d.getElementById("rcyaml").value.includes("{event: major, label: \"Major alarm\", business: [], after_hours: [email]"), "export gives the edited YAML");
+d.getElementById("rcreset").click();
+ok(counts("major")[1] === majorEmails && !d.getElementById("rcyaml"), "reset to the reviewed file");
+ok(d.querySelectorAll("#dispatch tr").length > 100 && d.querySelector("#dispatch tr.escal"), "the dispatch replay lists messages and escalations");
 tab("about").click();
 ok(t().includes("not by itself a finding against anyone") && t().includes("NT-3"), "rules in plain words, with the framing");
 const dom2 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/alarms/#notify", virtualConsole: vc() });
