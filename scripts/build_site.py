@@ -9,6 +9,7 @@ Output (default _site/):
     alarms/ pir/ weekly/ patterns/   the static pages, each with the same tab bar
     agreements/             the Interface Agreement and both SLAs, readable (scripts/render_agreements.py)
     glossary/               every code, acronym, and record ID (scripts/render_glossary.py)
+    site/                   the site drawings (docs/site/*.svg), which the location popups open
 
 Usage:
     python scripts/build_site.py                 # -> _site/
@@ -137,6 +138,10 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     render_agreements.write(out / "agreements")
     (out / "glossary").mkdir(parents=True, exist_ok=True)
     (out / "glossary" / "index.html").write_text(render_glossary.html_page(), encoding="utf-8", newline="\n")
+    # The site drawings, which the location popups open (highlighted) on every page.
+    (out / "site").mkdir(parents=True, exist_ok=True)
+    for svg in sorted((root / "docs" / "site").glob("*.svg")):
+        shutil.copy2(svg, out / "site" / svg.name)
     return {"files_in_bundle": len(members), "bundle_bytes": (app / "app_bundle.zip").stat().st_size}
 
 

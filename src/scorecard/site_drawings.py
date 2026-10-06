@@ -43,6 +43,12 @@ class Svg:
     width: float
     height: float
     parts: list[str] = field(default_factory=list)
+    marks: dict[str, list[list[float]]] = field(default_factory=dict)
+
+    def mark(self, name: str, x: float, y: float, w: float, h: float) -> None:
+        """Record where ``name`` is drawn (a box in sheet coordinates). Not rendered: the location
+        popups read these boxes to outline an item on the sheet (see ``scorecard.locations``)."""
+        self.marks.setdefault(name, []).append([round(x, 1), round(y, 1), round(w, 1), round(h, 1)])
 
     def add(self, s: str) -> None:
         self.parts.append(s)
@@ -70,6 +76,11 @@ class Svg:
         st = ' font-style="italic"' if italic else ""
         self.add(f'<text x="{x:.1f}" y="{y:.1f}" font-family="{FONT}" font-size="{size}" '
                  f'text-anchor="{anchor}" fill="{fill}" font-weight="{weight}"{st}>{escape(str(s))}</text>')
+
+    def done(self, marks: dict | None) -> str:
+        if marks is not None:
+            marks.update(self.marks)
+        return self.render()
 
     def render(self) -> str:
         body = "\n".join(self.parts)
@@ -140,7 +151,7 @@ def row_origin(site: dict, hall: dict, g: dict, row: int) -> tuple[float, float,
 # --------------------------------------------------------------------------- #
 # A-201..: hall plans
 # --------------------------------------------------------------------------- #
-def hall_plan(site: dict, hall_id: str, sheet: str) -> str:
+def hall_plan(site: dict, hall_id: str, sheet: str, marks: dict | None = None) -> str:
     hall = S.hall_by_id(site, hall_id)
     g = hall_geometry(site, hall)
     k = 52.0                                            # px per meter
@@ -166,6 +177,7 @@ def hall_plan(site: dict, hall_id: str, sheet: str) -> str:
     for j in range(int(g["depth"]) + 1):
         svg.line(X(0), Y(j), X(g["width"]), Y(j), stroke=GRID, sw=0.6)
     svg.rect(X(0), Y(0), g["width"] * k, g["depth"] * k, stroke=INK, sw=2.4)
+    svg.mark(hall_id, X(0), Y(0), g["width"] * k, g["depth"] * k)
     lay = site["layout"]
     inner_x0, inner_x1 = g["gallery"], g["width"] - g["gallery"]
     for p in range(g["pods"] + 1):
@@ -185,6 +197,7 @@ def hall_plan(site: dict, hall_id: str, sheet: str) -> str:
             for i in range(count):
                 n = i + 1 + (0 if side == 0 else per_side)
                 svg.rect(X(gx + 0.35), Y(i * h + 0.5), (g["gallery"] - 0.7) * k, (h - 1.0) * k, fill="#dfe9f3", stroke=INK, sw=1)
+                svg.mark(f"TW-{L}{n}", X(gx + 0.35), Y(i * h + 0.5), (g["gallery"] - 0.7) * k, (h - 1.0) * k)
                 svg.text(X(gx + g["gallery"] / 2), Y(i * h + h / 2) + 4, f"TW-{L}{n}", size=11, anchor="middle", weight="bold")
                 ax = X(gx + g["gallery"]) + 4 if side == 0 else X(gx) - 4
                 arrow = "→" if side == 0 else "←"
@@ -205,17 +218,20 @@ def hall_plan(site: dict, hall_id: str, sheet: str) -> str:
         for r in row_racks:
             rx = X(x0 + (r["position"] - 1) * g["rack_w"])
             svg.rect(rx, Y(y0), g["rack_w"] * k, g["rack_d"] * k, fill=RACK, stroke=INK, sw=0.9)
+            svg.mark(r["rack"], rx, Y(y0), g["rack_w"] * k, g["rack_d"] * k)
             svg.text(rx + g["rack_w"] * k / 2, Y(y0 + g["rack_d"] / 2) + 4, r["rack"], size=9.5, anchor="middle")
         # CDU at the east end of the row (and an extra one at the west end where needed)
         cx = X(x0 + len(row_racks) * g["rack_w"])
         cdu_name = f"CDU-{L}{row}"
         svg.rect(cx, Y(y0), g["cdu_w"] * k, g["rack_d"] * k, fill=EQUIP, stroke=SECONDARY, sw=1.6)
+        svg.mark(cdu_name, cx, Y(y0), g["cdu_w"] * k, g["rack_d"] * k)
         svg.text(cx + g["cdu_w"] * k / 2, Y(y0 + g["rack_d"] / 2) - 2, "CDU", size=8, anchor="middle", fill=SECONDARY)
         svg.text(cx + g["cdu_w"] * k / 2, Y(y0 + g["rack_d"] / 2) + 9, cdu_name[4:], size=9, anchor="middle", weight="bold")
         if g["extra_cdus"] and row <= g["extra_cdus"]:
             ex = X(x0 - g["cdu_w"])
             n = hall["rows"] + row
             svg.rect(ex, Y(y0), g["cdu_w"] * k, g["rack_d"] * k, fill=EQUIP, stroke=SECONDARY, sw=1.6)
+            svg.mark(f"CDU-{L}{n}", ex, Y(y0), g["cdu_w"] * k, g["rack_d"] * k)
             svg.text(ex + g["cdu_w"] * k / 2, Y(y0 + g["rack_d"] / 2) - 2, "CDU", size=8, anchor="middle", fill=SECONDARY)
             svg.text(ex + g["cdu_w"] * k / 2, Y(y0 + g["rack_d"] / 2) + 9, f"{L}{n}", size=9, anchor="middle", weight="bold")
             svg.rect(ex - 3, Y(y0) - 3, g["cdu_w"] * k + 6, g["rack_d"] * k + 6, stroke=LEAK, sw=1.4, dash="6 3")
@@ -232,6 +248,12 @@ def hall_plan(site: dict, hall_id: str, sheet: str) -> str:
             base = Y(y0) + 6 if north else Y(y0 + g["rack_d"]) - 12
             svg.line(sx0, base, sx1, base, stroke=FEED_A, sw=2.6)
             svg.line(sx0, base + 6, sx1, base + 6, stroke=FEED_B, sw=2.6)
+            for side, yy_ in (("A", base), ("B", base + 6)):
+                svg.mark(f"{s['id']}-{side}", sx0, yy_ - 2.5, sx1 - sx0, 5)
+                svg.mark(s["group"], sx0, yy_ - 2.5, sx1 - sx0, 5)
+                for i_, rk in enumerate(s["racks"]):
+                    tx_ = X(x0 + (first - 1 + i_) * g["rack_w"])
+                    svg.mark(f"TO-{rk}-{side}", tx_ + 2, yy_ - 2.5, g["rack_w"] * k - 4, 5)
             ty = Y(y0) - 6 if north else Y(y0 + g["rack_d"]) + 14
             svg.text((sx0 + sx1) / 2, ty, s["group"], size=8.5, anchor="middle", fill=MUTED)
 
@@ -240,6 +262,7 @@ def hall_plan(site: dict, hall_id: str, sheet: str) -> str:
         y = p * (lay["cold_aisle_m"] + g["pod_d"]) + lay["cold_aisle_m"] * 0.8
         svg.line(X(inner_x0 + 0.4), Y(y), X(inner_x1 - 0.4), Y(y), stroke=VESDA, sw=1.6, dash="1.5 3")
     svg.rect(X(inner_x0 + 0.2), Y(0.15), 44, 14, fill="#efe9fb", stroke=VESDA, sw=1)
+    svg.mark(f"VESDA-{L}1", X(inner_x0 + 0.2), Y(0.15), 44, 14)
     svg.text(X(inner_x0 + 0.2) + 22, Y(0.15) + 10.5, "VESDA", size=8.5, anchor="middle", fill=VESDA)
 
     # scale bar
@@ -286,7 +309,7 @@ def hall_plan(site: dict, hall_id: str, sheet: str) -> str:
     for i, n in enumerate(notes):
         svg.text(lx, yy + 16 + i * 14, n, size=10, fill=MUTED if n else INK)
     frame(svg, sheet, f"{hall['name']} floor plan", "Scale: grid 1 m")
-    return svg.render()
+    return svg.done(marks)
 
 
 DOCK_W, NORTH_D, SOUTH_D = 11.0, 9.0, 7.0
@@ -301,7 +324,7 @@ def building_dims(site: dict) -> tuple[float, float]:
 # --------------------------------------------------------------------------- #
 # A-101: building plan
 # --------------------------------------------------------------------------- #
-def building_plan(site: dict, sheet: str = "A-101") -> str:
+def building_plan(site: dict, sheet: str = "A-101", marks: dict | None = None) -> str:
     k = 17.0
     ox, oy = 50.0, 110.0
     halls = site["halls"]
@@ -337,6 +360,7 @@ def building_plan(site: dict, sheet: str = "A-101") -> str:
     for h, g in zip(halls, geos):
         # electrical room band
         svg.rect(X(x), Y(0), g["width"] * k, north_d * k, fill="#fdf6ec", stroke=INK, sw=1.2)
+        svg.mark(f"ER-{h['letter']}", X(x), Y(0), g["width"] * k, north_d * k)
         short = h["name"].split(" (")[0]
         if h["power"].get("ups_count"):
             split = g["width"] * 0.62
@@ -355,15 +379,22 @@ def building_plan(site: dict, sheet: str = "A-101") -> str:
             svg.text(X(x + g["width"] / 2), Y(5.5), "distribution", size=8.5, anchor="middle", fill=MUTED)
         # hall
         svg.rect(X(x), Y(north_d), g["width"] * k, hall_d * k, fill=PAPER, stroke=INK, sw=2.0)
+        svg.mark(h["id"], X(x), Y(north_d), g["width"] * k, hall_d * k)
         for row in range(1, h["rows"] + 1):
             rx, ry, _ = row_origin(site, h, g, row)
             n = h["racks_per_row"]
             svg.rect(X(x + rx), Y(north_d + ry), n * g["rack_w"] * k, g["rack_d"] * k, fill=RACK, stroke=INK, sw=0.7)
+            for p_ in range(n):
+                svg.mark(f"{h['letter']}{(row - 1) * n + p_ + 1:02d}", X(x + rx + p_ * g["rack_w"]), Y(north_d + ry),
+                         g["rack_w"] * k, g["rack_d"] * k)
             svg.rect(X(x + rx + n * g["rack_w"]), Y(north_d + ry), g["cdu_w"] * k, g["rack_d"] * k,
                      fill=EQUIP, stroke=SECONDARY, sw=1.0)
+            svg.mark(f"CDU-{h['letter']}{row}", X(x + rx + n * g["rack_w"]), Y(north_d + ry), g["cdu_w"] * k, g["rack_d"] * k)
             if g["extra_cdus"] and row <= g["extra_cdus"]:
                 svg.rect(X(x + rx - g["cdu_w"]), Y(north_d + ry), g["cdu_w"] * k, g["rack_d"] * k,
                          fill=EQUIP, stroke=SECONDARY, sw=1.0)
+                svg.mark(f"CDU-{h['letter']}{h['rows'] + row}", X(x + rx - g["cdu_w"]), Y(north_d + ry),
+                         g["cdu_w"] * k, g["rack_d"] * k)
         if g["gallery"]:
             for gx in (x, x + g["width"] - g["gallery"]):
                 svg.rect(X(gx), Y(north_d), g["gallery"] * k, hall_d * k, fill="#dfe9f3", stroke=FAINT, sw=0.6)
@@ -384,6 +415,7 @@ def building_plan(site: dict, sheet: str = "A-101") -> str:
     rx = 0.0
     for name, sub, w in rooms:
         svg.rect(X(rx), Y(sy + 2.4), w * k, (south_d - 2.4) * k, fill=PAPER, stroke=INK, sw=1.0)
+        svg.mark(name, X(rx), Y(sy + 2.4), w * k, (south_d - 2.4) * k)
         svg.text(X(rx + w / 2), Y(sy + 4.4), name, size=10, anchor="middle", weight="bold")
         svg.text(X(rx + w / 2), Y(sy + 5.5), sub, size=8.5, anchor="middle", fill=MUTED)
         rx += w
@@ -400,13 +432,13 @@ def building_plan(site: dict, sheet: str = "A-101") -> str:
     legend(svg, X(bw) + 28, oy + 80, [("box", RACK, "Compute racks"), ("box", EQUIP, "CDUs"),
                                       ("box", "#dfe9f3", "Thermal-wall gallery"), ("box", "#fdf6ec", "Electrical rooms")])
     frame(svg, sheet, "Building plan", "Scale: as shown")
-    return svg.render()
+    return svg.done(marks)
 
 
 # --------------------------------------------------------------------------- #
 # A-001: campus plan
 # --------------------------------------------------------------------------- #
-def campus_plan(site: dict, sheet: str = "A-001") -> str:
+def campus_plan(site: dict, sheet: str = "A-001", marks: dict | None = None) -> str:
     k = 3.4
     ox, oy = 50.0, 100.0
     PW, PD = 250.0, 160.0
@@ -428,6 +460,7 @@ def campus_plan(site: dict, sheet: str = "A-001") -> str:
     bw_, bd_ = building_dims(site)
     bx, by = 95.0, 58.0
     svg.rect(X(bx), Y(by), bw_ * k, bd_ * k, fill="#e9edf1", stroke=INK, sw=2.2)
+    svg.mark("Data center", X(bx), Y(by), bw_ * k, bd_ * k)
     svg.text(X(bx + bw_ / 2), Y(by + bd_ / 2), "Data center", size=11, anchor="middle", weight="bold")
     svg.text(X(bx + bw_ / 2), Y(by + bd_ / 2) + 14, f"{bw_:.0f} x {bd_:.0f} m (sheet A-101)", size=9,
              anchor="middle", fill=MUTED)
@@ -450,9 +483,11 @@ def campus_plan(site: dict, sheet: str = "A-001") -> str:
     gw, gap = 12.0, 2.5
     gx0, gy = bx - 4, 30.0
     svg.rect(X(gx0 - 2), Y(gy - 3), (g["count"] * (gw + gap) + 1.5) * k, 11 * k, stroke=MUTED, sw=0.8, dash="3 3")
+    svg.mark("Generator yard", X(gx0 - 2), Y(gy - 3), (g["count"] * (gw + gap) + 1.5) * k, 11 * k)
     for i in range(g["count"]):
         x = gx0 + i * (gw + gap)
         svg.rect(X(x), Y(gy), gw * k, 5 * k, fill="#fff3d6", stroke=INK, sw=1.0)
+        svg.mark(f"GEN-{i + 1}", X(x), Y(gy), gw * k, 5 * k)
         svg.text(X(x + gw / 2), Y(gy + 3.3), f"GEN-{i + 1}", size=8.5, anchor="middle")
     svg.text(X(gx0 - 2), Y(gy - 6), f"Generator yard: {g['count']} x Cat C175-16 on sub-base fuel tanks "
              f"({g['fuel_hours_at_full_load']} h), hydrocarbon leak cable", size=9.5)
@@ -465,11 +500,15 @@ def campus_plan(site: dict, sheet: str = "A-001") -> str:
         r, c = divmod(i, per_row)
         x = bx + c * 13.0
         svg.rect(X(x), Y(cy0 + r * 8), 11.5 * k, 4.5 * k, fill="#dff0f7", stroke=INK, sw=1.0)
+        svg.mark(f"CH-{i + 1:02d}", X(x), Y(cy0 + r * 8), 11.5 * k, 4.5 * k)
+        svg.mark("Chiller yard", X(x), Y(cy0 + r * 8), 11.5 * k, 4.5 * k)
         svg.text(X(x + 5.75), Y(cy0 + r * 8 + 3.0), f"CH-{i + 1:02d}", size=8.5, anchor="middle")
     svg.text(X(bx), Y(cy0 - 4), f"Chiller yard: {hr['chiller_count']} x Liebert AFC free-cooling chillers "
              f"(N+{hr['chiller_redundancy']}), air-cooled, no process water", size=9.5)
     ux = bx + per_row * 13.0 + 3
     svg.rect(X(ux), Y(cy0), 14 * k, 12.5 * k, fill="#fdf6ec", stroke=INK, sw=1.0)
+    for i in range(1, site["plants"]["mechanical_power"]["chiller_unit_subs"] + 1):
+        svg.mark(f"USS-CH{i}", X(ux), Y(cy0), 14 * k, 12.5 * k)
     svg.text(X(ux + 7), Y(cy0 + 5.5), "USS-CH", size=8.5, anchor="middle")
     svg.text(X(ux + 7), Y(cy0 + 8.5), f"1..{site['plants']['mechanical_power']['chiller_unit_subs']}",
              size=8.5, anchor="middle")
@@ -477,9 +516,13 @@ def campus_plan(site: dict, sheet: str = "A-001") -> str:
     # MV switchgear, MVSST pad (by Hall C at the east end), utility substation
     mx = bx + bw_ + 8
     svg.rect(X(mx), Y(by + 2), 26 * k, 11 * k, fill="#fdf6ec", stroke=INK, sw=1.2)
+    svg.mark("MV switchgear", X(mx), Y(by + 2), 26 * k, 11 * k)
     svg.text(X(mx + 13), Y(by + 6.6), "MV switchgear", size=9, anchor="middle")
     svg.text(X(mx + 13), Y(by + 9.8), "13.8 kV", size=8.5, anchor="middle", fill=MUTED)
     svg.rect(X(mx), Y(by + 17), 16 * k, 9 * k, fill="#e9f1e8", stroke=INK, sw=1.0)
+    for h in site["halls"]:
+        for i in range(1, h["power"].get("mvsst_count", 0) + 1):
+            svg.mark(f"MVSST-{h['letter']}{i}", X(mx), Y(by + 17), 16 * k, 9 * k)
     svg.text(X(mx + 8), Y(by + 20.8), "MVSST", size=8.5, anchor="middle")
     svg.text(X(mx + 8), Y(by + 23.8), "C1 / C2", size=8.5, anchor="middle", fill=MUTED)
     sx = mx + 34
@@ -488,6 +531,7 @@ def campus_plan(site: dict, sheet: str = "A-001") -> str:
     svg.text(X(sx + 25), Y(53), "138 kV, utility-owned", size=9, anchor="middle", fill=MUTED)
     for i in (0, 1):
         svg.circle(X(sx + 13 + i * 24), Y(65), 15)
+        svg.mark(f"TX-{i + 1}", X(sx + 13 + i * 24) - 15, Y(65) - 15, 30, 30)
         svg.text(X(sx + 13 + i * 24), Y(65) + 3.5, f"TX-{i + 1}", size=8.5, anchor="middle")
 
     # compass, scale, legend
@@ -504,7 +548,7 @@ def campus_plan(site: dict, sheet: str = "A-001") -> str:
                                       ("box", "#dff0f7", "Chillers"), ("box", "#fdf6ec", "Electrical"),
                                       ("box", "#e9f1e8", "800 VDC pilot (MVSST)")])
     frame(svg, sheet, "Campus plan", "Scale: as shown")
-    return svg.render()
+    return svg.done(marks)
 
 
 # --------------------------------------------------------------------------- #
@@ -519,7 +563,7 @@ def transformer(svg: Svg, x: float, y: float, r: float = 9) -> None:
     svg.circle(x, y + r * 0.6, r, fill="none")
 
 
-def one_line(site: dict, sheet: str = "E-001") -> str:
+def one_line(site: dict, sheet: str = "E-001", marks: dict | None = None) -> str:
     pl = site["plants"]
     feeders: dict[str, list[tuple[str, str, str]]] = {"MV-A": [], "MV-B": []}   # (id, kind, label)
     for h in site["halls"]:
@@ -546,7 +590,8 @@ def one_line(site: dict, sheet: str = "E-001") -> str:
     b_tx = b_feed0 + (nB - 1) * step + 80
     b_end = b_tx + 20
     W = b_end + 60
-    H = 760
+    max_groups = max((len(h["power"].get("groups", [])) for h in site["halls"]), default=0)
+    H = max(760, 300 + 250 + 62 + max_groups * 22 + 76)   # the power-group matrix stays clear of the title strip
     svg = Svg(W, H)
     svg.text(left, 40, "Electrical one-line", size=17, weight="bold")
     svg.text(left, 60, "13.8 kV main-tie-main with a generator paralleling bus. Halls A and B: distributed redundant UPS "
@@ -557,13 +602,17 @@ def one_line(site: dict, sheet: str = "E-001") -> str:
         svg.text(tx, 111, "Utility 138 kV", size=10, anchor="middle")
         svg.line(tx, 122, tx, 145, sw=1.4)
         transformer(svg, tx, 160, 11)
+        svg.mark(f"TX-{i + 1}", tx - 12, 142, 24, 36)
         lx, anchor = (tx + 18, "start") if i == 0 else (tx - 18, "end")
         svg.text(lx, 158, f"TX-{i + 1}", size=10, weight="bold", anchor=anchor)
         svg.text(lx, 171, "25 MVA, 138/13.8 kV", size=9, fill=MUTED, anchor=anchor)
         svg.line(tx, 178, tx, yb, sw=1.4)
         breaker(svg, tx, 250)
+        svg.mark(f"MV-{'AB'[i]} main breaker", tx - 7, 243, 14, 14)
         svg.text(tx + (12 if i == 0 else -12), 254, "main", size=9, fill=MUTED, anchor=anchor)
         svg.line(bx0, yb, bx1, yb, sw=4)
+        svg.mark(f"MV-{'AB'[i]}", bx0, yb - 4, bx1 - bx0, 8)
+        svg.mark("MV switchgear", bx0, yb - 4, bx1 - bx0, 8)
         svg.text((a_feed0 if i == 0 else b_feed0) - 20, yb - 10, f"MV-{'AB'[i]}  13.8 kV", size=11, weight="bold")
     # tie
     svg.line(a_end, yb, b_start, yb, sw=2)
@@ -581,6 +630,7 @@ def one_line(site: dict, sheet: str = "E-001") -> str:
     for i in range(n):
         x = gx0 + 20 + i * (span - 40) / (n - 1)
         svg.circle(x, gy - 22, 11)
+        svg.mark(f"GEN-{i + 1}", x - 12, gy - 34, 24, 24)
         svg.text(x, gy - 18, "G", size=11, anchor="middle", weight="bold")
         svg.text(x, gy - 37, f"GEN-{i + 1}", size=8, anchor="middle", fill=MUTED)
         svg.line(x, gy - 11, x, gy, sw=1.2)
@@ -595,6 +645,8 @@ def one_line(site: dict, sheet: str = "E-001") -> str:
             breaker(svg, x, yb + 30)
             if kind in ("ups", "chiller", "mups"):
                 transformer(svg, x, yb + 62, 9)
+                svg.mark(fid if kind == "chiller" else f"USS-{fid[4:]}" if kind == "ups" else f"{fid}-sub",
+                         x - 10, yb + 47, 20, 30)
                 svg.text(x + 12, yb + 66, sub if kind != "chiller" else fid, size=8, fill=MUTED)
                 svg.line(x, yb + 71, x, yb + 110, sw=1.3)
             else:
@@ -605,6 +657,7 @@ def one_line(site: dict, sheet: str = "E-001") -> str:
             if kind in box:
                 fill, l1, l2, below = box[kind]
                 svg.rect(x - 36, yb + 110, 72, 50, fill=fill, stroke=INK, sw=1.2)
+                svg.mark(fid, x - 36, yb + 110, 72, 50)
                 svg.text(x, yb + 126, fid, size=10, anchor="middle", weight="bold")
                 svg.text(x, yb + 139, l1, size=8, anchor="middle", fill=MUTED)
                 svg.text(x, yb + 151, l2, size=8, anchor="middle", fill=MUTED)
@@ -633,6 +686,7 @@ def one_line(site: dict, sheet: str = "E-001") -> str:
         for gi, g in enumerate(h["power"]["groups"]):
             yy = y0 + 32 + gi * rh
             svg.text(mx, yy + 15, f"{g['id']}  ({g['racks']} racks)", size=9.5)
+            svg.mark(g["id"], mx - 4, yy + 1, 140 + n_ups * cw, rh - 2)
             for u in range(n_ups):
                 cx = mx + 140 + u * cw
                 svg.rect(cx + 4, yy + 3, cw - 8, rh - 6, fill=PAPER, stroke=FAINT, sw=0.6)
@@ -652,13 +706,13 @@ def one_line(site: dict, sheet: str = "E-001") -> str:
     svg.text(mx, my + 118, "even on MV-B; the automatic tie covers", size=10, fill=MUTED)
     svg.text(mx, my + 132, "the loss of either 13.8 kV main.", size=10, fill=MUTED)
     frame(svg, sheet, "Electrical one-line", "Not to scale")
-    return svg.render()
+    return svg.done(marks)
 
 
 # --------------------------------------------------------------------------- #
 # M-001: cooling flow diagram
 # --------------------------------------------------------------------------- #
-def cooling_flow(site: dict, sheet: str = "M-001") -> str:
+def cooling_flow(site: dict, sheet: str = "M-001", marks: dict | None = None) -> str:
     hr = site["plants"]["heat_rejection"]
     halls = site["halls"]
     n_ch = hr["chiller_count"]
@@ -677,6 +731,7 @@ def cooling_flow(site: dict, sheet: str = "M-001") -> str:
     for i in range(n_ch):
         x = left + i * (cw + 8)
         svg.rect(x, 86, cw, 40, fill="#dff0f7", stroke=INK, sw=1.0)
+        svg.mark(f"CH-{i + 1:02d}", x, 86, cw, 40)
         svg.text(x + cw / 2, 104, f"CH-{i + 1:02d}", size=9.5, anchor="middle", weight="bold")
         svg.text(x + cw / 2, 118, "AFC", size=8, anchor="middle", fill=MUTED)
         svg.line(x + cw * 0.3, 126, x + cw * 0.3, yp, stroke=SUPPLY, sw=1.6)
@@ -686,6 +741,7 @@ def cooling_flow(site: dict, sheet: str = "M-001") -> str:
     for i in range(hr["pump_count"]):
         x = left + n_ch * (cw + 8) + 22 + i * 34
         svg.circle(x, yp, 10, fill=PAPER, stroke=SUPPLY, sw=1.6)
+        svg.mark(f"FWP-{i + 1}", x - 11, yp - 11, 22, 22)
         svg.poly([(x - 5, yp + 5), (x + 6, yp), (x - 5, yp - 5)], stroke=SUPPLY, sw=1.2)
     svg.text(left + n_ch * (cw + 8) + 10, yp - 16, f"FWP-1..{hr['pump_count']} (N+{hr['pump_redundancy']})",
              size=9, fill=MUTED)
@@ -717,6 +773,7 @@ def cooling_flow(site: dict, sheet: str = "M-001") -> str:
             svg.line(sx, y + 10, bx, y + 10, stroke=SUPPLY, sw=1.2)
             svg.line(rx_, y + 22, bx, y + 22, stroke=RETURN, sw=1.2)
             svg.rect(bx, y, 92, 32, fill=fill, stroke=INK, sw=1.0)
+            svg.mark(name, bx, y, 92, 32)
             svg.text(bx + 46, y + 14, name, size=9.5, anchor="middle", weight="bold")
             sub = {"cdu": "CHx2000", "tw": "Liebert CWA", "crah": "elec. room"}[kind]
             svg.text(bx + 46, y + 26, sub, size=8, anchor="middle", fill=MUTED)
@@ -732,6 +789,8 @@ def cooling_flow(site: dict, sheet: str = "M-001") -> str:
         ry = (hy0 + hy1) / 2 - 30
         svg.line(x0 + 250, ry + 30, x0 + 290, ry + 30, stroke=SECONDARY, sw=2)
         svg.rect(x0 + 290, ry, 140, 60, fill=RACK, stroke=INK, sw=1.0)
+        svg.mark(f"racks:{h['id']}", x0 + 290, ry, 140, 60)
+        svg.mark(f"header:{h['id']}", x0 + 246, hy0, 8, hy1 - hy0)
         svg.text(x0 + 360, ry + 22, f"{S.rack_count(h)} racks", size=10.5, anchor="middle", weight="bold")
         svg.text(x0 + 360, ry + 37, rp["model"][:24], size=8.5, anchor="middle", fill=MUTED)
         svg.text(x0 + 360, ry + 50, "cold plates and manifolds", size=8, anchor="middle", fill=MUTED)
@@ -742,20 +801,22 @@ def cooling_flow(site: dict, sheet: str = "M-001") -> str:
                                 ("line", SECONDARY, "CDU secondary supply (PG25)"),
                                 ("dash", SECONDARY, "CDU secondary return"), ("dash", LEAK, "Leak detection zone")])
     frame(svg, sheet, "Cooling flow diagram", "Not to scale")
-    return svg.render()
+    return svg.done(marks)
 
 
 # --------------------------------------------------------------------------- #
 # Sheet index
 # --------------------------------------------------------------------------- #
-def sheets(site: dict) -> list[tuple[str, str, str, str]]:
-    """(sheet number, file name, title, svg) for every drawing."""
-    out = [("A-001", "A-001_campus_plan.svg", "Campus plan", campus_plan(site)),
-           ("A-101", "A-101_building_plan.svg", "Building plan", building_plan(site))]
+def sheets(site: dict, marks: dict | None = None) -> list[tuple[str, str, str, str]]:
+    """(sheet number, file name, title, svg) for every drawing. Pass ``marks`` (a dict) to also collect,
+    per sheet number, where each named item is drawn: {sheet: {name: [[x, y, w, h], ...]}}."""
+    m = (lambda num: marks.setdefault(num, {})) if marks is not None else (lambda num: None)
+    out = [("A-001", "A-001_campus_plan.svg", "Campus plan", campus_plan(site, marks=m("A-001"))),
+           ("A-101", "A-101_building_plan.svg", "Building plan", building_plan(site, marks=m("A-101")))]
     for i, h in enumerate(site["halls"], 1):
         num = f"A-2{i:02d}"
         slug = h["name"].split(" (")[0].lower().replace(" ", "_")
-        out.append((num, f"{num}_{slug}_plan.svg", f"{h['name']} floor plan", hall_plan(site, h["id"], num)))
-    out.append(("E-001", "E-001_one_line.svg", "Electrical one-line", one_line(site)))
-    out.append(("M-001", "M-001_cooling_flow.svg", "Cooling flow diagram", cooling_flow(site)))
+        out.append((num, f"{num}_{slug}_plan.svg", f"{h['name']} floor plan", hall_plan(site, h["id"], num, marks=m(num))))
+    out.append(("E-001", "E-001_one_line.svg", "Electrical one-line", one_line(site, marks=m("E-001"))))
+    out.append(("M-001", "M-001_cooling_flow.svg", "Cooling flow diagram", cooling_flow(site, marks=m("M-001"))))
     return out

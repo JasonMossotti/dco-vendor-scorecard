@@ -101,7 +101,7 @@ function summary() {
     <p class="note">${esc(p.judgment.confidence)}</p></div>`).join("") + `</div>`;
   h += `<h2>The busiest racks</h2><p class="note">What a ticket-count league table would show, tested the same way as everything else.</p>`;
   h += table(["Rack", "Tickets", "Kinds of failure", "Failing units", "Expected by chance", "Rate vs. the rest", "p", "Pattern?"],
-    D.league.map(r => tr([esc(r.rack), r.tickets, r.signatures, r.units, r.expected.toFixed(1), esc(r.ratio_txt), esc(r.p_txt), r.verdict === "pattern" ? "yes" : "no"])));
+    D.league.map(r => tr([`<span data-loc="${esc(r.rack)}">${esc(r.rack)}</span>`, r.tickets, r.signatures, r.units, r.expected.toFixed(1), esc(r.ratio_txt), esc(r.p_txt), r.verdict === "pattern" ? "yes" : "no"])));
   h += `<p style="font-size:13px">${esc(L.league_note)}</p>`;
   return h;
 }
@@ -109,7 +109,7 @@ function summary() {
 function pattern(p) {
   const j = p.judgment;
   let h = `<h1>${esc(p.number)}. ${esc(j.title)}</h1>`;
-  h += `<p class="sub">${esc(p.signature_name)} · grouped by: ${esc(p.dimension_name)} · ${esc(p.span_txt)} · p ${p.p_txt.startsWith("<") ? "" : "= "}${esc(p.p_txt)} (threshold ${esc(p.threshold_txt)})</p>`;
+  h += `<p class="sub"${p.dimension !== "optic_lot" ? ` data-loc="${esc(p.group)}"` : ""}>${esc(p.signature_name)} · grouped by: ${esc(p.dimension_name)} · ${esc(p.span_txt)} · p ${p.p_txt.startsWith("<") ? "" : "= "}${esc(p.p_txt)} (threshold ${esc(p.threshold_txt)})</p>`;
   h += `<p>Owner (Interface Agreement RACI, ${esc(p.raci.component)}): ${chip(p.raci.accountable)} accountable${p.raci.responsible !== p.raci.accountable ? `, ${chip(p.raci.responsible)} does the work` : ""}. <span class="note">${esc(j.confidence)}</span></p>`;
   h += `<h2>What the data shows</h2>` + bars(p) + (p.cdu_weekly ? supply(p) : "") + `<ul class="facts">${p.facts_txt.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
   h += `<h2>Root cause</h2><p>${esc(j.root_cause)}</p><p><strong>Cost.</strong> ${esc(j.cost)}</p><p><strong>Lesson.</strong> ${esc(j.lesson)}</p>`;

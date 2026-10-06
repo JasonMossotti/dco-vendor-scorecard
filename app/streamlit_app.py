@@ -58,8 +58,18 @@ with right:
 with codes:
     # The static pages explain each code in a popup; here a small panel does, without leaving the page.
     with st.popover("Look up a code"):
-        for line in A.lookup_lines(st.text_input("Code or ID", placeholder="CSL-07, TR-1, INC3100816", key="code_lookup")):
-            st.markdown(line)
+        code_q = st.text_input("Code or ID", placeholder="CSL-07, TR-1, INC3100816, A07, CDU-B3", key="code_lookup")
+        loc = A.location_view(code_q)
+        lines = A.lookup_lines(code_q)
+        if loc is None or not lines[0].startswith("No code"):
+            for line in lines:
+                st.markdown(line)
+        if loc:
+            # A rack, room, or piece of equipment: where it is on the site drawings, outlined in red.
+            st.markdown(f"**{A._md(loc['title'])}** · {loc['kind']} · {A._md(loc['text'])}")
+            sheet = st.selectbox("Drawing", [v[0] for v in loc["views"]], key="code_lookup_sheet")
+            st.image(dict(loc["views"])[sheet], width=640,
+                     caption="Outlined in red; dashed: what feeds or serves it. Schematic, fictional site.")
 if pick == GENERATE:
     c1, c2, _ = st.columns([1, 1, 3], vertical_alignment="bottom")
     with c1:

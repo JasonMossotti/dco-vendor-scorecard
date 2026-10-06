@@ -5,13 +5,15 @@ Usage:
     python scripts/render_site.py            # validate + write docs/site/
     python scripts/render_site.py --check    # fail if docs/site/ is out of date (used in CI)
 
-Writes docs/site/SITE.md (equipment, capacity checks, monitoring map) and one
-SVG per drawing sheet. Nothing in docs/site/ is edited by hand.
+Writes docs/site/SITE.md (equipment, capacity checks, monitoring map), one
+SVG per drawing sheet, and locations.json (where each item is drawn, for the
+location popups). Nothing in docs/site/ is edited by hand.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from collections import Counter
 from pathlib import Path
@@ -19,6 +21,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from scorecard import locations  # noqa: E402
 from scorecard import site_model as S  # noqa: E402
 from scorecard.site_drawings import building_dims, sheets  # noqa: E402
 
@@ -153,11 +156,26 @@ def render_markdown(site: dict, sheet_list: list[tuple[str, str, str, str]]) -> 
     return "\n".join(lines)
 
 
+def locations_json(data: dict) -> str:
+    """Valid JSON with one location (or sheet) per line, so a change to the site shows up as a readable diff."""
+    c = lambda v: json.dumps(v, sort_keys=True, separators=(",", ":"))
+    parts = []
+    for key in sorted(data):
+        v = data[key]
+        if isinstance(v, dict):
+            body = ",\n".join(f"  {c(k)}: {c(v[k])}" for k in sorted(v))
+            parts.append(f" {c(key)}: {{\n{body}\n }}")
+        else:
+            parts.append(f" {c(key)}: {c(v)}")
+    return "{\n" + ",\n".join(parts) + "\n}\n"
+
+
 def build_outputs() -> dict[Path, str]:
     site = S.load_site()
     sheet_list = sheets(site)
     out = {OUT_DIR / fn: svg for _, fn, _, svg in sheet_list}
     out[OUT_DIR / "SITE.md"] = render_markdown(site, sheet_list)
+    out[OUT_DIR / "locations.json"] = locations_json(locations.build(site))
     return out
 
 

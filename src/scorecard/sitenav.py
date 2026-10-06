@@ -7,6 +7,10 @@ the pages read as one product. Links are relative, so the site works under any b
 ``inject`` also adds the code popups (``templates/partials/glossary_popup.html``) to every
 static page: each code, acronym, and record ID opens a small card with its meaning.
 The Scorecards app gets none, because Streamlit owns that page's markup.
+
+Pages that mark fields with ``data-loc`` also get the location pins
+(``templates/partials/location_popup.html``): a pin beside the field opens the site
+drawing with that rack, room, or piece of equipment outlined.
 """
 
 from __future__ import annotations
@@ -98,4 +102,17 @@ def finish(html: str) -> str:
     data.update(root=opts["root"], doc_title=opts["doc_title"])
     tpl = (ROOT / "templates" / "partials" / "glossary_popup.html").read_text(encoding="utf-8")
     pop = tpl.replace("__GLOSSARY__", json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))
+    page_text = html[:m.start()] + html[m.end():]
+    if "data-loc" in page_text:
+        pop += location_popups(page_text, opts["root"])
     return html[:m.start()] + pop + html[m.end():]
+
+
+def location_popups(page_text: str, root: str) -> str:
+    """The location pins' style, script, and the locations this page's text names (see ``scorecard.locations``).
+    Pages opt in field by field with ``data-loc``; prose never gets a pin."""
+    from . import locations
+    data = locations.subset(locations.load(), page_text)
+    data.update(root=root, kinds=locations.KIND_LABEL)
+    tpl = (ROOT / "templates" / "partials" / "location_popup.html").read_text(encoding="utf-8")
+    return tpl.replace("__LOCATIONS__", json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))
