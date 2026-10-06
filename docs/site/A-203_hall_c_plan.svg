@@ -91,6 +91,8 @@
 <text x="504.8" y="363.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal"></text>
 <text x="504.8" y="377.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical details:</text>
 <text x="504.8" y="391.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  CDU D-201</text>
+<text x="504.8" y="405.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  VESDA detector D-501</text>
+<text x="504.8" y="419.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">  leak detection D-502</text>
 <rect x="8.0" y="8.0" width="984.0" height="744.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="708.0" x2="992.0" y2="708.0" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="727.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Hall C (800 VDC pilot) floor plan</text>

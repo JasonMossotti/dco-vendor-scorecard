@@ -26,9 +26,17 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 | E-001 | [Electrical one-line](E-001_one_line.svg) |
 | M-001 | [Cooling flow diagram](M-001_cooling_flow.svg) |
 | D-101 | [GB200 NVL72 rack, front and rear elevation](D-101_gb200_nvl72_rack.svg) |
+| D-102 | [GB300 NVL72 rack, front and rear elevation](D-102_gb300_nvl72_rack.svg) |
 | D-201 | [CHx2000 CDU, front and rear](D-201_chx2000_cdu.svg) |
+| D-202 | [Liebert CWA thermal wall, front and section](D-202_liebert_cwa_thermal_wall.svg) |
+| D-203 | [Liebert AFC free-cooling chiller, side elevation](D-203_liebert_afc_free_cooling_chiller.svg) |
 | D-301 | [Galaxy VX 1500 kW UPS line-up](D-301_galaxy_vx_1500_kw_ups_line_up.svg) |
+| D-302 | [Galaxy VL 300 kW UPS, front elevation](D-302_galaxy_vl_300_kw_ups.svg) |
 | D-303 | [Track busway section and tap-off](D-303_track_busway_section_and_tap_off.svg) |
+| D-401 | [Cat C175-16 generator set, side elevation](D-401_cat_c175_16_generator_set.svg) |
+| D-501 | [VESDA-E VEP aspirating smoke detector](D-501_vesda_e_vep_aspirating_smoke_detector.svg) |
+| D-502 | [TraceTek leak detection, controller and circuits](D-502_tracetek_leak_detection.svg) |
+| D-601 | [Quantum-2 QM9700 InfiniBand leaf switch, port side](D-601_quantum_2_qm9700_infiniband_leaf_switch.svg) |
 
 ### A-001 Campus plan
 
@@ -62,17 +70,49 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 
 ![GB200 NVL72 rack, front and rear elevation](D-101_gb200_nvl72_rack.svg)
 
+### D-102 GB300 NVL72 rack, front and rear elevation
+
+![GB300 NVL72 rack, front and rear elevation](D-102_gb300_nvl72_rack.svg)
+
 ### D-201 CHx2000 CDU, front and rear
 
 ![CHx2000 CDU, front and rear](D-201_chx2000_cdu.svg)
+
+### D-202 Liebert CWA thermal wall, front and section
+
+![Liebert CWA thermal wall, front and section](D-202_liebert_cwa_thermal_wall.svg)
+
+### D-203 Liebert AFC free-cooling chiller, side elevation
+
+![Liebert AFC free-cooling chiller, side elevation](D-203_liebert_afc_free_cooling_chiller.svg)
 
 ### D-301 Galaxy VX 1500 kW UPS line-up
 
 ![Galaxy VX 1500 kW UPS line-up](D-301_galaxy_vx_1500_kw_ups_line_up.svg)
 
+### D-302 Galaxy VL 300 kW UPS, front elevation
+
+![Galaxy VL 300 kW UPS, front elevation](D-302_galaxy_vl_300_kw_ups.svg)
+
 ### D-303 Track busway section and tap-off
 
 ![Track busway section and tap-off](D-303_track_busway_section_and_tap_off.svg)
+
+### D-401 Cat C175-16 generator set, side elevation
+
+![Cat C175-16 generator set, side elevation](D-401_cat_c175_16_generator_set.svg)
+
+### D-501 VESDA-E VEP aspirating smoke detector
+
+![VESDA-E VEP aspirating smoke detector](D-501_vesda_e_vep_aspirating_smoke_detector.svg)
+
+### D-502 TraceTek leak detection, controller and circuits
+
+![TraceTek leak detection, controller and circuits](D-502_tracetek_leak_detection.svg)
+
+### D-601 Quantum-2 QM9700 InfiniBand leaf switch, port side
+
+![Quantum-2 QM9700 InfiniBand leaf switch, port side](D-601_quantum_2_qm9700_infiniband_leaf_switch.svg)
 
 ## Who operates what
 

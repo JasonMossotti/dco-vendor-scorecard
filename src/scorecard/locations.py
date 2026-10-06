@@ -33,6 +33,8 @@ from . import site_model as S
 from .detail_drawings import load_details, parts as product_parts
 from .site_drawings import sheets
 
+VESDA_PRODUCT = "vesda_e_vep"   # the halls' aspirating detectors (site/site.yaml lists the product once)
+
 # How specific each kind is: when a field names several things, the most specific wins.
 RANK = {"area": 1, "hall": 2, "room": 3, "group": 4, "equipment": 5, "busway": 6, "rack": 6, "tapoff": 7}
 KIND_LABEL = {"area": "Area", "hall": "Data hall", "room": "Room", "group": "Power group", "equipment": "Equipment",
@@ -157,7 +159,7 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
         for i in range(1, p.get("mech_ups_count", 0) + 1):
             add(f"MUPS-{L}{i}", "equipment", f"MUPS-{L}{i}",
                 f"Mechanical UPS in the {short} electrical room: CDU pumps and thermal-wall fans (2N), on {S.mv_bus_for(i)}.",
-                [view("E-001", [f"MUPS-{L}{i}"]), view("A-101", [f"ER-{L}"])])
+                [view("E-001", [f"MUPS-{L}{i}"]), view("A-101", [f"ER-{L}"])], p.get("mech_ups_product"))
         for i in range(1, p.get("mvsst_count", 0) + 1):
             add(f"MVSST-{L}{i}", "equipment", f"MVSST-{L}{i}",
                 f"Solid-state transformer, 13.8 kV to 800 VDC for {short} (2N), on {S.mv_bus_for(i)}.",
@@ -171,7 +173,8 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
         for i in range(1, c.get("thermal_wall_count", 0) + 1):
             add(f"TW-{L}{i}", "equipment", f"TW-{L}{i}",
                 f"{S.product(site, c['thermal_wall_product'])['model']}, in the {short} gallery: "
-                "cools the air side of the racks.", [view(hs, [f"TW-{L}{i}"]), view("M-001", [f"TW-{L}{i}"])])
+                "cools the air side of the racks.", [view(hs, [f"TW-{L}{i}"]), view("M-001", [f"TW-{L}{i}"])],
+                c["thermal_wall_product"])
         for i in range(1, c.get("electrical_room_crah_count", 0) + 1):
             add(f"CRAH-{L}{i}", "equipment", f"CRAH-{L}{i}", f"Air handler in the {short} electrical room.",
                 [view("M-001", [f"CRAH-{L}{i}"]), view("A-101", [f"ER-{L}"])])
@@ -179,10 +182,10 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
             if n == 1:
                 add(f"VESDA-{L}1", "equipment", f"VESDA-{L}1",
                     f"Aspirating smoke detector for {short}; sampling pipes run along every cold aisle.",
-                    [view(hs, [f"VESDA-{L}1"]), view("A-101", [hid])])
+                    [view(hs, [f"VESDA-{L}1"]), view("A-101", [hid])], VESDA_PRODUCT)
             else:
                 add(f"VESDA-{L}{n}", "equipment", f"VESDA-{L}{n}",
-                    f"Aspirating smoke detector for the {short} electrical room.", [view("A-101", [f"ER-{L}"])])
+                    f"Aspirating smoke detector for the {short} electrical room.", [view("A-101", [f"ER-{L}"])], VESDA_PRODUCT)
 
     # site plants
     for i in range(1, pl["utility"]["transformer_count"] + 1):
@@ -198,13 +201,13 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
     gen = pl["generators"]
     for i in range(1, gen["count"] + 1):
         add(f"GEN-{i}", "equipment", f"GEN-{i}", f"Generator {i} of {gen['count']} (N+{gen['redundancy']}) on the "
-            "paralleling bus.", [view("A-001", [f"GEN-{i}"], ["Generator yard"]), view("E-001", [f"GEN-{i}"])])
+            "paralleling bus.", [view("A-001", [f"GEN-{i}"], ["Generator yard"]), view("E-001", [f"GEN-{i}"])], gen["product"])
     hr = pl["heat_rejection"]
     subs = pl["mechanical_power"]["chiller_unit_subs"]
     for i in range(1, hr["chiller_count"] + 1):
         add(f"CH-{i:02d}", "equipment", f"CH-{i:02d}", f"Free-cooling chiller {i} of {hr['chiller_count']} "
             f"(N+{hr['chiller_redundancy']}), powered from USS-CH{(i - 1) % subs + 1}.",
-            [view("A-001", [f"CH-{i:02d}"]), view("M-001", [f"CH-{i:02d}"])])
+            [view("A-001", [f"CH-{i:02d}"]), view("M-001", [f"CH-{i:02d}"])], hr["chiller_product"])
     for i in range(1, hr["pump_count"] + 1):
         add(f"FWP-{i}", "equipment", f"FWP-{i}", f"Facility water pump {i} of {hr['pump_count']} "
             f"(N+{hr['pump_redundancy']}), in the pump room.", [view("M-001", [f"FWP-{i}"]), view("A-101", ["Pump room"])])
@@ -228,6 +231,8 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
             rel = [pid.split("-")[0]] if "-psu" in pid else []          # a PSU shows its shelf, dashed
             ps[pid] = {"label": part["label"], "b": view(num, [pid], rel)["b"]}
         parts_out[key] = {"sheet": num, "parts": ps}
+        if spec.get("unplaced"):        # not on the site plans: alarms name the unit, the card shows its sheet
+            parts_out[key]["unplaced"] = spec["devices"]
     return {"sheets": sheet_meta, "entries": entries, "aliases": aliases, "rules": [list(r) for r in RULES],
             "details": parts_out, "points": [list(p) + [""] * (5 - len(p)) for p in details["points"]]}
 
@@ -288,7 +293,7 @@ def _fill_part(t: str, m: re.Match) -> str:
                   else m.group(int(x.group(1))), t)
 
 
-def resolve_part(data: dict[str, Any], name: str, text: str) -> tuple[str, str] | None:
+def resolve_part(data: dict[str, Any], name: str, text: str, unplaced_only: bool = False) -> tuple[str, str] | None:
     """(instance, part id) for the part of a device that ``text`` (an alarm's device, signal, and summary)
     names, when ``name`` (the location the field resolved to) or the device the pattern names has a detail
     sheet with that part. None when the text names no part: the card then opens the site sheets as before."""
@@ -296,23 +301,32 @@ def resolve_part(data: dict[str, Any], name: str, text: str) -> tuple[str, str] 
         m = re.search(pat, text, re.I if "i" in flags else 0)
         if not m:
             continue
-        inst = _fill(inst_t, m).upper() if inst_t else name
-        e = data["entries"].get(inst)
-        if not e or e.get("p") != product or product not in data["details"]:
+        det = data["details"].get(product)
+        if not det or (unplaced_only and not det.get("unplaced")):
             continue
+        if det.get("unplaced"):         # a unit the site plans do not show: the pattern names it
+            inst = _fill(inst_t, m) if inst_t else ""
+            if not re.match(det["unplaced"], inst):
+                continue
+        else:
+            inst = _fill(inst_t, m).upper() if inst_t else name
+            e = data["entries"].get(inst)
+            if not e or e.get("p") != product:
+                continue
         pid = _fill_part(part_t, m)
-        if pid in data["details"][product]["parts"]:
+        if pid in det["parts"]:
             return inst, pid
     return None
 
 
 def resolve_field_part(data: dict[str, Any], value: str, part_text: str = "") -> tuple[str, str] | None:
     """The part a field names, as the popup script reads it: from the field's ``data-loc`` value and its
-    ``data-part`` text. Fields that fell back to a recorded location name no part."""
+    ``data-part`` text. A field that fell back to a recorded location names a part only on a unit the site
+    plans do not show (a leaf switch port, a leak circuit), never one of the location's own parts."""
     r = resolve_field(data, value)
-    if not r or r[1].startswith("The drawings do not show"):
+    if not r:
         return None
-    return resolve_part(data, r[0], (value + " " + part_text).strip())
+    return resolve_part(data, r[0], (value + " " + part_text).strip(), r[1].startswith("The drawings do not show"))
 
 
 def part_coverage(data: dict[str, Any], alarms: list[dict[str, Any]]) -> tuple[int, list[str]]:
@@ -324,14 +338,22 @@ def part_coverage(data: dict[str, Any], alarms: list[dict[str, Any]]) -> tuple[i
     for a in alarms:
         value, text = f"{a['device']}|{a['location']}", f"{a['signal']} {a['summary']}"
         r = resolve_field(data, value)
-        if not r or r[1].startswith("The drawings do not show"):
-            continue
-        if data["entries"][r[0]].get("p") not in data["details"]:
+        unplaced = any(d.get("unplaced") and re.match(d["unplaced"], a["device"]) for d in data["details"].values())
+        if not unplaced and (not r or r[1].startswith("The drawings do not show")
+                             or data["entries"][r[0]].get("p") not in data["details"]):
             continue
         checked += 1
-        if a["signal"] not in whole and not resolve_field_part(data, value, text):
+        if a["signal"] not in whole and not (r and resolve_field_part(data, value, text)):
             missing.append(f"{a['device']}: {a['signal']} ({a['summary']})")
     return checked, missing
+
+
+def product_of(data: dict[str, Any], inst: str) -> str:
+    """The product of a unit: from its location entry, or for a unit the site plans do not show, the
+    product whose device pattern it matches."""
+    if inst in data["entries"]:
+        return data["entries"][inst]["p"]
+    return next(k for k, d in data["details"].items() if d.get("unplaced") and re.match(d["unplaced"], inst))
 
 
 def card(data: dict[str, Any], name: str, part: tuple[str, str] | None) -> tuple[str, list[tuple[dict, str]]]:
@@ -343,7 +365,7 @@ def card(data: dict[str, Any], name: str, part: tuple[str, str] | None) -> tuple
     if not part:
         return e["title"], views
     inst, pid = part
-    det = data["details"][data["entries"][inst]["p"]]
+    det = data["details"][product_of(data, inst)]
     pl = det["parts"][pid]["label"]
     first = ({"s": det["sheet"], "b": det["parts"][pid]["b"]}, f"{inst} · {re.sub(r' [(].*[)]$', '', pl)}")
     title = f"{e['title']} · {pl}" if inst == name else f"{e['title']} · {inst} {pl[0].lower() + pl[1:]}"
@@ -363,6 +385,8 @@ def subset(data: dict[str, Any], text: str) -> dict[str, Any]:
             used |= {_fill(inst_t, m).upper() for m in re.finditer(pat, text, re.I if "i" in flags else 0)}
     entries = {n: e for n, e in data["entries"].items() if n in used}
     products = {e["p"] for e in entries.values() if e.get("p") in data["details"]}
+    products |= {k for k, d in data["details"].items()
+                 if d.get("unplaced") and re.search(d["unplaced"].replace("^", r"(?<![\w-])"), text, re.M)}
     sheets_used = {v["s"] for e in entries.values() for v in e["views"]}
     return {"sheets": {k: v for k, v in data["sheets"].items() if k in sheets_used}, "entries": entries,
             "aliases": {a: n for a, n in data["aliases"].items() if n in entries}, "rules": data["rules"],

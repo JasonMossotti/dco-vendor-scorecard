@@ -286,7 +286,7 @@
 <text x="1080.0" y="707.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">CDU secondary return</text>
 <line x1="1054.0" y1="720.0" x2="1072.0" y2="720.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
 <text x="1080.0" y="724.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">Leak detection zone</text>
-<text x="1054.0" y="749.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical details: rack D-101, CDU D-201.</text>
+<text x="1054.0" y="749.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical details: CDU D-201, thermal wall D-202, chiller D-203.</text>
 <rect x="8.0" y="8.0" width="1504.0" height="844.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="808.0" x2="1512.0" y2="808.0" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="827.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Cooling flow diagram</text>

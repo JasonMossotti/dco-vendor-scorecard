@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="940" viewBox="0 0 1400 940">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="60.0" y="80.0" font-family="Helvetica, Arial, sans-serif" font-size="13" text-anchor="start" fill="#1e2933" font-weight="bold">CONTROLLER AND CIRCUITS (TYPICAL HALL)</text>
+<rect x="60.0" y="120.0" width="200.0" height="520.0" rx="0" fill="#f4f6f8" stroke="#1e2933" stroke-width="1.6"/>
+<rect x="80.0" y="140.0" width="160.0" height="60.0" rx="0" fill="#cfe0ee" stroke="#6b7785" stroke-width="1.0"/>
+<text x="160.0" y="224.0" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="middle" fill="#1e2933" font-weight="bold">TTDM-128</text>
+<rect x="180.0" y="270.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="289.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C1</text>
+<line x1="260.0" y1="285.0" x2="360.0" y2="285.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="270.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="286.0" x2="900.0" y2="286.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="279.0" x2="470.0" y2="293.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="301.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="279.0" x2="577.5" y2="293.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="301.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="279.0" x2="685.0" y2="293.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="301.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="279.0" x2="792.5" y2="293.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="301.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="279.0" x2="900.0" y2="293.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="301.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="284.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 1</text>
+<text x="368.0" y="297.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">along row 1 manifolds</text>
+<rect x="180.0" y="314.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="333.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C2</text>
+<line x1="260.0" y1="329.0" x2="360.0" y2="329.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="314.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="330.0" x2="900.0" y2="330.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="323.0" x2="470.0" y2="337.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="345.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="323.0" x2="577.5" y2="337.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="345.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="323.0" x2="685.0" y2="337.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="345.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="323.0" x2="792.5" y2="337.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="345.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="323.0" x2="900.0" y2="337.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="345.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="328.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 2</text>
+<text x="368.0" y="341.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">along row 2 manifolds</text>
+<rect x="180.0" y="358.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="377.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C3</text>
+<line x1="260.0" y1="373.0" x2="360.0" y2="373.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="358.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="374.0" x2="900.0" y2="374.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="367.0" x2="470.0" y2="381.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="389.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="367.0" x2="577.5" y2="381.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="389.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="367.0" x2="685.0" y2="381.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="389.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="367.0" x2="792.5" y2="381.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="389.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="367.0" x2="900.0" y2="381.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="389.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="372.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 3</text>
+<text x="368.0" y="385.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">along row 3 manifolds</text>
+<rect x="180.0" y="402.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="421.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C4</text>
+<line x1="260.0" y1="417.0" x2="360.0" y2="417.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="402.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="418.0" x2="900.0" y2="418.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="411.0" x2="470.0" y2="425.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="433.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="411.0" x2="577.5" y2="425.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="433.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="411.0" x2="685.0" y2="425.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="433.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="411.0" x2="792.5" y2="425.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="433.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="411.0" x2="900.0" y2="425.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="433.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 4</text>
+<text x="368.0" y="429.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">along row 4 manifolds</text>
+<rect x="180.0" y="446.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="465.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C5</text>
+<line x1="260.0" y1="461.0" x2="360.0" y2="461.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="446.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="462.0" x2="900.0" y2="462.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="455.0" x2="470.0" y2="469.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="477.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="455.0" x2="577.5" y2="469.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="477.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="455.0" x2="685.0" y2="469.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="477.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="455.0" x2="792.5" y2="469.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="477.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="455.0" x2="900.0" y2="469.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="477.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="460.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 5</text>
+<text x="368.0" y="473.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">under CDU 1</text>
+<rect x="180.0" y="490.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="509.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C6</text>
+<line x1="260.0" y1="505.0" x2="360.0" y2="505.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="490.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="506.0" x2="900.0" y2="506.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="499.0" x2="470.0" y2="513.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="521.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="499.0" x2="577.5" y2="513.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="521.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="499.0" x2="685.0" y2="513.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="521.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="499.0" x2="792.5" y2="513.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="521.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="499.0" x2="900.0" y2="513.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="521.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="504.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 6</text>
+<text x="368.0" y="517.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">under CDU 2</text>
+<rect x="180.0" y="534.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="553.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C7</text>
+<line x1="260.0" y1="549.0" x2="360.0" y2="549.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="534.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="550.0" x2="900.0" y2="550.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="543.0" x2="470.0" y2="557.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="565.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="543.0" x2="577.5" y2="557.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="565.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="543.0" x2="685.0" y2="557.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="565.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="543.0" x2="792.5" y2="557.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="565.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="543.0" x2="900.0" y2="557.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="565.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="548.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 7</text>
+<text x="368.0" y="561.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">under CDU 3</text>
+<rect x="180.0" y="578.0" width="80.0" height="30.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<text x="220.0" y="597.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#1e2933" font-weight="normal">C8</text>
+<line x1="260.0" y1="593.0" x2="360.0" y2="593.0" stroke="#6b7785" stroke-width="1"/>
+<rect x="360.0" y="578.0" width="560.0" height="32.0" rx="0" fill="#ffffff" stroke="#1e2933" stroke-width="1.0"/>
+<line x1="470.0" y1="594.0" x2="900.0" y2="594.0" stroke="#0f9d8a" stroke-width="2.4" stroke-dasharray="6 3"/>
+<line x1="470.0" y1="587.0" x2="470.0" y2="601.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="470.0" y="609.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">0 m</text>
+<line x1="577.5" y1="587.0" x2="577.5" y2="601.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="577.5" y="609.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">5 m</text>
+<line x1="685.0" y1="587.0" x2="685.0" y2="601.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="685.0" y="609.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">10 m</text>
+<line x1="792.5" y1="587.0" x2="792.5" y2="601.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="792.5" y="609.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">15 m</text>
+<line x1="900.0" y1="587.0" x2="900.0" y2="601.0" stroke="#1e2933" stroke-width="0.8"/>
+<text x="900.0" y="609.0" font-family="Helvetica, Arial, sans-serif" font-size="7" text-anchor="middle" fill="#6b7785" font-weight="normal">20 m</text>
+<text x="368.0" y="592.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit 8</text>
+<text x="368.0" y="605.0" font-family="Helvetica, Arial, sans-serif" font-size="8" text-anchor="start" fill="#6b7785" font-weight="normal">under CDU 4</text>
+<text x="360.0" y="650.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Distance marks run from the start of each cable; the controller reports the leak's</text>
+<text x="360.0" y="664.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">circuit and distance ("Leak circuit 8 at 13.2 m").</text>
+<text x="1010.0" y="60.0" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="start" fill="#1e2933" font-weight="bold">Alarm points on this sheet</text>
+<text x="1010.0" y="80.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="bold">Circuit n</text>
+<text x="1020.0" y="94.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Leak at a distance along the cable (Modbus via</text>
+<text x="1020.0" y="108.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">gateway, BMS)</text>
+<text x="1010.0" y="135.0" font-family="Helvetica, Arial, sans-serif" font-size="12" text-anchor="start" fill="#1e2933" font-weight="bold">Notes</text>
+<text x="1010.0" y="155.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Representative drawing from public product</text>
+<text x="1010.0" y="169.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">information; not a manufacturer drawing. Typical of</text>
+<text x="1010.0" y="183.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">every instance on the site: the popup names the</text>
+<text x="1010.0" y="197.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">instance.</text>
+<text x="1010.0" y="221.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical of Halls A and B. Circuits 1 to 4 follow the</text>
+<text x="1010.0" y="235.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">row manifolds and 5 to 8 run under the CDUs, as the</text>
+<text x="1010.0" y="249.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">site model and telemetry number them. The controller</text>
+<text x="1010.0" y="263.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">itself is not drawn on the site plans.</text>
+<text x="1010.0" y="287.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Sources and assumptions for every part:</text>
+<text x="1010.0" y="301.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">site/details.yaml.</text>
+<rect x="8.0" y="8.0" width="1384.0" height="924.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
+<line x1="8.0" y1="888.0" x2="1392.0" y2="888.0" stroke="#1e2933" stroke-width="1.4"/>
+<text x="20.0" y="907.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">TraceTek leak detection, controller and circuits (representative)</text>
+<text x="20.0" y="925.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Not to scale  |  Schematic, not for construction</text>
+<line x1="1280.0" y1="888.0" x2="1280.0" y2="932.0" stroke="#1e2933" stroke-width="1.0"/>
+<text x="1336.0" y="909.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
+<text x="1336.0" y="928.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">D-502</text>
+</svg>

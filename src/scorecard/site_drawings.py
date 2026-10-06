@@ -90,15 +90,20 @@ class Svg:
 
 
 def detail_refs(site: dict, keys: list[str], halls: list[dict] | None = None) -> str:
-    """ "rack D-101, CDU D-201": the detail sheets for the products these halls use (keys into the hall,
-    its power, or its cooling), in sheet order. Products without a detail sheet are left out."""
+    """ "rack D-101, CDU D-201": the detail sheets for the products these halls (or the site plants) use,
+    in sheet order. Keys name a product in the hall, its power, its cooling, or the site's plants;
+    products without a detail sheet are left out."""
     from scorecard.detail_drawings import sheet_products
     have = sheet_products()
-    word = {"rack_product": "rack", "cdu_product": "CDU", "ups_product": "UPS line-up", "busway_product": "busway and tap-off"}
+    word = {"rack_product": "rack", "cdu_product": "CDU", "ups_product": "UPS line-up", "busway_product": "busway and tap-off",
+            "mech_ups_product": "mechanical UPS", "thermal_wall_product": "thermal wall", "chiller_product": "chiller",
+            "generator": "generator", "vesda": "VESDA detector", "leak": "leak detection", "fabric": "leaf switch"}
+    plants = {"chiller_product": site["plants"]["heat_rejection"]["chiller_product"],
+              "generator": site["plants"]["generators"]["product"], "vesda": "vesda_e_vep", "leak": "tracetek_ttdm128"}
     found = {}
     for h in halls or site["halls"]:
         for k in keys:
-            p = h.get(k) or h["power"].get(k) or h["cooling"].get(k)
+            p = plants.get(k) or h.get(k) or h["power"].get(k) or h["cooling"].get(k)
             if p in have:
                 found.setdefault(have[p], f"{word[k]} {have[p]}")
     return ", ".join(found[n] for n in sorted(found))
@@ -321,7 +326,8 @@ def hall_plan(site: dict, hall_id: str, sheet: str, marks: dict | None = None) -
                   "modules (see sheet E-001)."]
     else:
         notes += ["", "800 VDC busway layout is set in", "pilot design (see sheet E-001)."]
-    refs = detail_refs(site, ["rack_product", "cdu_product", "busway_product"], [hall])
+    refs = detail_refs(site, ["rack_product", "cdu_product", "busway_product", "thermal_wall_product", "vesda", "leak",
+                              "fabric"], [hall])
     if refs:
         notes += ["", "Typical details:"] + [f"  {r}" for r in refs.split(", ")]
     for i, n in enumerate(notes):
@@ -565,6 +571,8 @@ def campus_plan(site: dict, sheet: str = "A-001", marks: dict | None = None) -> 
     legend(svg, X(PW) + 28, oy + 80, [("box", "#e9edf1", "Data center building"), ("box", "#fff3d6", "Generators"),
                                       ("box", "#dff0f7", "Chillers"), ("box", "#fdf6ec", "Electrical"),
                                       ("box", "#e9f1e8", "800 VDC pilot (MVSST)")])
+    svg.text(X(PW) + 28, oy + 190, "Typical details:", size=10, fill=MUTED)
+    svg.text(X(PW) + 28, oy + 204, detail_refs(site, ["generator", "chiller_product"]) + ".", size=10, fill=MUTED)
     frame(svg, sheet, "Campus plan", "Scale: as shown")
     return svg.done(marks)
 
@@ -723,7 +731,9 @@ def one_line(site: dict, sheet: str = "E-001", marks: dict | None = None) -> str
     svg.text(mx, my + 104, "Equipment numbered odd lands on MV-A,", size=10, fill=MUTED)
     svg.text(mx, my + 118, "even on MV-B; the automatic tie covers", size=10, fill=MUTED)
     svg.text(mx, my + 132, "the loss of either 13.8 kV main.", size=10, fill=MUTED)
-    svg.text(mx, my + 156, "Typical details: " + detail_refs(site, ["ups_product", "busway_product"]) + ".", size=10, fill=MUTED)
+    svg.text(mx, my + 156, "Typical details: " + detail_refs(site, ["ups_product", "mech_ups_product", "busway_product"]) + ".",
+             size=10, fill=MUTED)
+    svg.text(mx, my + 170, "and " + detail_refs(site, ["generator"]) + ".", size=10, fill=MUTED)
     frame(svg, sheet, "Electrical one-line", "Not to scale")
     return svg.done(marks)
 
@@ -819,7 +829,7 @@ def cooling_flow(site: dict, sheet: str = "M-001", marks: dict | None = None) ->
     ly = legend(svg, left + (len(halls) - 1) * col_w + 44, 640, [("line", SUPPLY, "Facility water supply"), ("line", RETURN, "Facility water return"),
                                      ("line", SECONDARY, "CDU secondary supply (PG25)"),
                                      ("dash", SECONDARY, "CDU secondary return"), ("dash", LEAK, "Leak detection zone")])
-    svg.text(left + (len(halls) - 1) * col_w + 44, ly + 8, "Typical details: " + detail_refs(site, ["cdu_product", "rack_product"]) + ".",
+    svg.text(left + (len(halls) - 1) * col_w + 44, ly + 8, "Typical details: " + detail_refs(site, ["cdu_product", "thermal_wall_product", "chiller_product"]) + ".",
              size=10, fill=MUTED)
     frame(svg, sheet, "Cooling flow diagram", "Not to scale")
     return svg.done(marks)

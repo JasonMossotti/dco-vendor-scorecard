@@ -103,6 +103,8 @@
 <text x="954.0" y="247.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">Electrical</text>
 <rect x="928.0" y="255.0" width="18.0" height="11.0" rx="0" fill="#e9f1e8" stroke="#1e2933" stroke-width="0.6"/>
 <text x="954.0" y="264.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#1e2933" font-weight="normal">800 VDC pilot (MVSST)</text>
+<text x="928.0" y="290.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Typical details:</text>
+<text x="928.0" y="304.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">chiller D-203, generator D-401.</text>
 <rect x="8.0" y="8.0" width="1164.0" height="748.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="712.0" x2="1172.0" y2="712.0" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="731.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Campus plan</text>
