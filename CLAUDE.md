@@ -1,7 +1,7 @@
 # CLAUDE.md: dco-vendor-scorecard
 
 Portfolio project for a Data Center Operations Lead (partner-operated sites) application. Owner: Jason Mossotti.
-Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (app), `/pir/` (post-incident review), `/weekly/` (weekly operations review).
+Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review).
 
 Fictional Site AUS-1 (Central Texas): the Customer leases halls from a Landlord (Caprock Critical Facilities: building, power, cooling, CDUs) and contracts an IT Partner (Ridgeline Site Services: data hall work). SLAs as code, synthetic telemetry with planted discrepancies, one engine per partner, cross-partner fault attribution, scorecards that compare self-reports with measurement. Everything synthetic; never imply knowledge of any real company's internal systems.
 
@@ -34,9 +34,9 @@ Data center and NOC operations professional; expert in the domain, newer to Git 
 ## Rules that caught real bugs
 
 - **Plan before building** anything larger than a fix; list the judgment calls the owner should be ready to defend, and get a yes.
-- **Generated files are never edited by hand:** `docs/sla/`, `docs/site/`, `docs/pir/`, `docs/weekly/`, `data/sample/`, `reports/`. Tests fail when they are stale.
+- **Generated files are never edited by hand:** `docs/sla/`, `docs/site/`, `docs/pir/`, `docs/weekly/`, `data/sample/`, `data/history/`, `reports/`. Tests fail when they are stale.
 - **Never ship untested UI.** The app is tested against `tests/fake_streamlit.py`; the PIR and weekly pages by jsdom (`tests/js/`, install with `cd tests/js && npm install --no-save jsdom@24`). For visual bugs, render the SVG and look at it.
-- **Measure on months the code was not tuned on:** `python scripts/run_engine.py --robustness 60`, `python scripts/run_landlord.py --robustness 60`, `python scripts/check_facility_data.py`. Find the root cause of every miss before changing anything.
+- **Measure on months the code was not tuned on:** `python scripts/run_engine.py --robustness 60`, `python scripts/run_landlord.py --robustness 60`, `python scripts/check_facility_data.py`, `python scripts/render_patterns.py --robustness 60`. Find the root cause of every miss before changing anything.
 - **New synthetic data uses its own random stream**; prove existing records and every report are unchanged (snapshot and `diff -rq`).
 - **Reconcile new views with existing results** (the weekly pack's month to date must equal the monthly scorecards).
 - **Verify fast-changing facts** (library versions, GitHub Actions, standards editions) against current sources, not memory.
@@ -50,12 +50,13 @@ Data center and NOC operations professional; expert in the domain, newer to Git 
 pip install -r requirements-live.txt          # everything, including the live collector's tests
 python scripts/render_sla.py && python scripts/render_site.py && python scripts/generate_data.py \
   && python scripts/run_engine.py && python scripts/build_scorecard.py && python scripts/run_landlord.py \
-  && python scripts/render_pir.py && python scripts/render_weekly.py
-pytest -q                                      # 213 tests as of 2026-10-05
+  && python scripts/render_pir.py && python scripts/render_weekly.py \
+  && python scripts/generate_history.py && python scripts/render_patterns.py
+pytest -q                                      # 232 tests as of 2026-10-06
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 
-Headline results that must not move unless a change intends it: IT 4 Minimum defaults, $188,700, engine 17/17 and 1,020/1,020; Landlord 4 defaults, $106,200, 8/8 and 480/480; facility evidence 60/60.
+Headline results that must not move unless a change intends it: IT 4 Minimum defaults, $188,700, engine 17/17 and 1,020/1,020; Landlord 4 defaults, $106,200, 8/8 and 480/480; facility evidence 60/60. Failure patterns: 3 found, 0 other flags; robustness lot 60/60, CDU drift 60/60, reseat 41/60, decoys 0/60.
 
 ## Saving tokens
 

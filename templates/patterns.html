@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Failure Pattern Review · Site AUS-1</title>
+<style>
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --ll:#b45309; --it:#1f5fbf; --cu:#1d7a46; --rest:#b8c0c8; --bad:#b42318; --warn:#a15c00; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#1e2933; color:#fff; padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top a { color:#cfe0ff; }
+.tabs button, .tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+.tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
+main { max-width:1120px; margin:20px auto; background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); } h3 { font-size:14px; margin:18px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.banner { background:var(--panel); border-left:4px solid var(--it); padding:8px 12px; border-radius:4px; font-size:13px; margin:10px 0; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }
+.card { background:var(--panel); border-radius:8px; padding:12px 14px; cursor:pointer; } .card h3 { margin:0 0 6px; } .card .big { font-size:22px; font-weight:700; }
+.chip { display:inline-block; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; color:#fff; white-space:nowrap; }
+.chip.Landlord { background:var(--ll); } .chip.IT { background:var(--it); } .chip.Customer { background:var(--cu); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } .nw { white-space:nowrap; }
+ul.facts li { margin:3px 0; } .followup { background:#fdf0ef; border-left:4px solid var(--bad); padding:8px 12px; border-radius:4px; font-size:13px; }
+.wide { overflow-x:auto; } figure { margin:10px 0 4px; } figcaption { font-size:12px; color:var(--muted); }
+.legend { display:flex; gap:14px; font-size:12px; color:var(--muted); margin:2px 0 4px; } .legend i { display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+svg text { font:11px "Inter","Segoe UI",Helvetica,Arial,sans-serif; fill:var(--muted); }
+@media print { header.top { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div><strong>Failure Pattern Review</strong> · Site AUS-1 (fictional) · <a href="../">scorecard demo</a> · <a href="../pir/">post-incident review</a> · <a href="../weekly/">weekly review</a></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="tools"><button id="print">Print / save PDF</button></div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const L = D.lessons;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const table = (head, rows) => `<div class="wide"><table><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr>${rows.join("")}</table></div>`;
+const tr = cells => `<tr>${cells.map(c => `<td>${c}</td>`).join("")}</tr>`;
+const chip = party => `<span class="chip ${esc(party.split(" ")[0])}">${esc(party)}</span>`;
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const md = iso => { const [y, m, d] = iso.slice(0, 10).split("-"); return `${MON[+m - 1]} ${+d}`; };
+
+// Weekly bars: the group in color, the rest of the hall in gray, side by side (one axis, counts).
+function bars(p) {
+  const W = 1000, H = 190, l = 34, b = 26, t = 10, n = p.weekly.length, bw = (W - l - 10) / n;
+  const max = Math.max(1, ...p.weekly.map(w => Math.max(w.group, w.rest)));
+  const y = v => H - b - (H - b - t) * v / max;
+  const fix = p.dimension === "fix";
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Failures per week">`;
+  for (let v = 0; v <= max; v += Math.max(1, Math.ceil(max / 4))) s += `<line x1="${l}" x2="${W - 10}" y1="${y(v)}" y2="${y(v)}" stroke="#eef1f4"/><text x="${l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  p.weekly.forEach((w, i) => {
+    const x = l + i * bw + 2, half = (bw - 6) / 2;
+    const tip = fix ? `Week of ${md(w.week)}: ${w.group} came back, ${w.rest} held` : `Week of ${md(w.week)}: ${w.group} in the group, ${w.rest} in the rest of the hall`;
+    s += `<g class="bar"><title>${esc(tip)}</title><rect x="${x}" y="${t}" width="${bw - 2}" height="${H - b - t}" fill="transparent"/>`;
+    if (w.group) s += `<rect x="${x}" y="${y(w.group)}" width="${half}" height="${H - b - y(w.group)}" rx="2" fill="var(--it)"/>`;
+    if (w.rest) s += `<rect x="${x + half + 2}" y="${y(w.rest)}" width="${half}" height="${H - b - y(w.rest)}" rx="2" fill="var(--rest)"/>`;
+    s += `</g>`;
+    if (i % 4 === 0) s += `<text x="${x}" y="${H - 8}">${md(w.week)}</text>`;
+  });
+  s += `<line x1="${l}" x2="${W - 10}" y1="${H - b}" y2="${H - b}" stroke="#9aa5b1"/></svg>`;
+  const names = fix ? [`'${p.group}' repairs that came back within 30 days`, "Repairs that held"]
+    : [p.dimension === "optic_lot" ? `Failures in ${p.group}` : p.racks ? `Failures in racks ${p.racks[0]} to ${p.racks[p.racks.length - 1]}` : `Failures in ${p.group}`, p.dimension === "optic_lot" ? "Other lots" : "Rest of the hall"];
+  return `<figure><div class="legend"><span><i style="background:var(--it)"></i>${esc(names[0])}</span><span><i style="background:var(--rest)"></i>${esc(names[1])}</span></div>${s}<figcaption>Per week, ${md(D.window.start)} to ${md(p.weekly[p.weekly.length - 1].week)} (week starting). Hover a week for its counts.</figcaption></figure>`;
+}
+
+// CDU secondary supply, weekly mean: this CDU against the hall's other CDUs, with the setpoint and the alarm.
+function supply(p) {
+  const e = p.evidence, W = 1000, H = 190, l = 40, b = 26, t = 10, n = p.cdu_weekly.length, step = (W - l - 10) / (n - 1);
+  const lo = e.setpoint_c - 1, hi = e.alarm_high_c + 0.5, y = v => H - b - (H - b - t) * (v - lo) / (hi - lo), x = i => l + i * step;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="CDU secondary supply temperature">`;
+  for (let v = Math.ceil(lo); v <= hi; v++) s += `<line x1="${l}" x2="${W - 10}" y1="${y(v)}" y2="${y(v)}" stroke="#eef1f4"/><text x="${l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  s += `<line x1="${l}" x2="${W - 10}" y1="${y(e.alarm_high_c)}" y2="${y(e.alarm_high_c)}" stroke="var(--bad)" stroke-dasharray="5 4"/><text x="${W - 12}" y="${y(e.alarm_high_c) - 5}" text-anchor="end">High-supply alarm ${e.alarm_high_c.toFixed(1)} °C</text>`;
+  s += `<line x1="${l}" x2="${W - 10}" y1="${y(e.setpoint_c)}" y2="${y(e.setpoint_c)}" stroke="#9aa5b1" stroke-dasharray="2 3"/><text x="${W - 12}" y="${y(e.setpoint_c) + 14}" text-anchor="end">Setpoint ${e.setpoint_c.toFixed(1)} °C</text>`;
+  const path = k => p.cdu_weekly.map((w, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(w[k]).toFixed(1)}`).join("");
+  s += `<path d="${path("others")}" fill="none" stroke="var(--rest)" stroke-width="2"/><path d="${path("cdu")}" fill="none" stroke="var(--ll)" stroke-width="2"/>`;
+  p.cdu_weekly.forEach((w, i) => {
+    s += `<g class="pt"><title>${esc(`Week of ${md(w.week)}: ${e.cdu} ${w.cdu.toFixed(1)} °C, other CDUs ${w.others.toFixed(1)} °C`)}</title><rect x="${x(i) - step / 2}" y="${t}" width="${step}" height="${H - b - t}" fill="transparent"/><circle cx="${x(i)}" cy="${y(w.cdu)}" r="3" fill="var(--ll)" stroke="#fff" stroke-width="1.5"/></g>`;
+    if (i % 4 === 0) s += `<text x="${x(i) - 12}" y="${H - 8}">${md(w.week)}</text>`;
+  });
+  s += `</svg>`;
+  return `<figure><div class="legend"><span><i style="background:var(--ll)"></i>${esc(e.cdu)} secondary supply</span><span><i style="background:var(--rest)"></i>Other Hall A CDUs</span></div>${s}<figcaption>Weekly mean of the 4-hour readings (Customer read-only Redfish poll), °C.</figcaption></figure>`;
+}
+
+function summary() {
+  let h = `<h1>Failure Pattern Review ${esc(L.id)}</h1>`;
+  h += `<p class="sub">Site AUS-1 (fictional), Hall A · ${esc(D.window_txt)} (${D.window.weeks} weeks, ${D.window.racks} production racks) · Reviewed ${esc(md(L.review_meeting))} by the ${L.authors.map(esc).join(", ")}</p>`;
+  h += `<div class="banner">A pattern means failures cluster beyond what chance explains. It is not proof of a bad batch or a careless partner until the cause is confirmed; the confidence of each cause is stated.</div>`;
+  h += `<p>${esc(L.summary)}</p><div class="cards">` + D.patterns.map(p => `<div class="card" data-go="${p.number}"><h3>${esc(p.number)}. ${esc(p.judgment.title)}</h3>
+    ${chip(p.raci.accountable)} ${p.raci.responsible !== p.raci.accountable ? `<span class="note">work by</span> ${chip(p.raci.responsible)}` : ""}
+    <p><span class="big">${esc(p.ratio_txt)}</span> <span class="note">the rate of the rest · ${esc(p.observed_txt)}, ${esc(p.expected_txt)} expected by chance</span></p>
+    <p class="note">${esc(p.judgment.confidence)}</p></div>`).join("") + `</div>`;
+  h += `<h2>The busiest racks</h2><p class="note">What a ticket-count league table would show, tested the same way as everything else.</p>`;
+  h += table(["Rack", "Tickets", "Kinds of failure", "Failing units", "Expected by chance", "Rate vs. the rest", "p", "Pattern?"],
+    D.league.map(r => tr([esc(r.rack), r.tickets, r.signatures, r.units, r.expected.toFixed(1), esc(r.ratio_txt), esc(r.p_txt), r.verdict === "pattern" ? "yes" : "no"])));
+  h += `<p style="font-size:13px">${esc(L.league_note)}</p>`;
+  return h;
+}
+
+function pattern(p) {
+  const j = p.judgment;
+  let h = `<h1>${esc(p.number)}. ${esc(j.title)}</h1>`;
+  h += `<p class="sub">${esc(p.signature_name)} · grouped by: ${esc(p.dimension_name)} · ${esc(p.span_txt)} · p ${p.p_txt.startsWith("<") ? "" : "= "}${esc(p.p_txt)} (threshold ${esc(p.threshold_txt)})</p>`;
+  h += `<p>Owner (Interface Agreement RACI, ${esc(p.raci.component)}): ${chip(p.raci.accountable)} accountable${p.raci.responsible !== p.raci.accountable ? `, ${chip(p.raci.responsible)} does the work` : ""}. <span class="note">${esc(j.confidence)}</span></p>`;
+  h += `<h2>What the data shows</h2>` + bars(p) + (p.cdu_weekly ? supply(p) : "") + `<ul class="facts">${p.facts_txt.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  h += `<h2>Root cause</h2><p>${esc(j.root_cause)}</p><p><strong>Cost.</strong> ${esc(j.cost)}</p><p><strong>Lesson.</strong> ${esc(j.lesson)}</p>`;
+  h += `<h2>Standard-work changes</h2>` + table(["Document", "Clause", "Change"], j.standard_changes.map(c => tr([esc(D.docs[c.doc]), `<span class="nw">${esc(c.ref)}</span>`, esc(c.change)])));
+  h += `<h2>Actions</h2><p class="note">Status as recorded on ${esc(L.status_as_of)}.</p>` + table(["ID", "Action", "Owner", "Priority", "Due", "Status", "Done when"],
+    j.actions.map(a => tr([esc(a.id), esc(a.action), esc(a.owner), esc(a.priority), `<span class="nw">${esc(a.due)}</span>`, `<span class="nw">${esc(a.status)}</span>`, esc(a.success)])));
+  if (p.followup.length) h += `<h3>Since the review (September data)</h3><div class="followup">${p.followup.map(x => `${esc(x.number)} on ${esc(x.unit)} (${esc(md(x.opened_at))}) was still closed '${esc(p.evidence.fix)}'.`).join(" ")}</div>`;
+  return h;
+}
+
+function watchAndMethod() {
+  const m = D.method;
+  let h = `<h1>Watch items and method</h1><h2>Watch items</h2>`;
+  h += `<p class="note">Groups with at least ${m.min_events} failures and ${m.min_ratio} times the rate of the rest that chance could still explain once the number of tests is accounted for. With ${m.tests_total} tests, about ${m.chance_watch} would reach p &lt; ${m.watch_p} by chance alone.</p>`;
+  h += D.watch.length ? table(["Group", "Observed", "Expected by chance", "Rate vs. the rest", "p", "Ruling"],
+    D.watch.map(w => tr([esc(w.title), esc(w.observed_txt), w.expected.toFixed(1), esc(w.ratio_txt), esc(w.p_txt), esc(w.ruling)]))) : `<p class="note">None.</p>`;
+  h += `<h2>Method</h2><ul>
+    <li><strong>Failures come from the Telemetry of Record</strong>, never from ticket text: DCGM, UFM (with the transceiver DOM alarms that name the failed module), and Redfish. ${D.totals.failures} failures, ${D.totals.matched} matched to the ticket that repaired them; the ticket supplies only the fix applied.</li>
+    <li><strong>Tests.</strong> Location and lot: exact binomial test of the group's share of failing units against its share of the installed base (a unit that fails again counts once). Fix: one-sided Fisher exact test of ${m.recurrence_days}-day recurrence against every other repair. Facility condition: thermal slowdowns in the racks a CDU serves while it ran ${m.drift_c.toFixed(1)} °C or more above setpoint for at least 7 days.</li>
+    <li><strong>A pattern</strong> needs at least ${m.min_events} failures, ${m.min_ratio} times the rate of the rest, and p under ${m.alpha} divided by the number of tests in its family: ${Object.entries(m.thresholds).map(([k, v]) => `${esc(k)} ${esc(v)} (${m.tests[k]} test${m.tests[k] === 1 ? "" : "s"})`).join(", ")}.</li>
+    <li><strong>Owner</strong> is the component's row in the Interface Agreement RACI; a thermal pattern explained by the CDU is the Landlord's (DM-COOL).</li>
+    <li><strong>Judgment</strong> (root cause, lessons, standard-work changes, actions) is written by people and tested against these facts.</li></ul>`;
+  h += `<h3>Failures by signature</h3>` + table(["Signature", "Failures"], D.totals.by_signature.map(s => tr([esc(s.name), s.events])));
+  return h + `<p class="note">Synthetic data for a portfolio demonstration; all names and events are fictional.</p>`;
+}
+
+const VIEWS = [["summary", "Summary", summary], ...D.patterns.map(p => [p.number, p.number, () => pattern(p)]), ["method", "Watch and method", watchAndMethod]];
+function show(id) {
+  const v = VIEWS.find(v => v[0] === id) || VIEWS[0];
+  document.getElementById("doc").innerHTML = v[2]();
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.view === v[0]));
+  document.querySelectorAll("[data-go]").forEach(c => c.addEventListener("click", () => go(c.dataset.go)));
+}
+function go(id) { history.replaceState(null, "", "#" + id); show(id); }
+document.getElementById("tabs").innerHTML = VIEWS.map(v => `<button data-view="${v[0]}">${esc(v[1])}</button>`).join("");
+document.querySelectorAll("#tabs button").forEach(b => b.addEventListener("click", () => go(b.dataset.view)));
+document.getElementById("print").addEventListener("click", () => window.print());
+show(location.hash.slice(1));
+</script>
+</body>
+</html>

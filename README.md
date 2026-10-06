@@ -118,6 +118,12 @@ The agenda runs in meeting order: a status line per partner (on track, at risk, 
 
 Three rules keep it honest. Weekly results are early warnings only: the contract settles credits monthly, so the pack never shows a weekly credit. Nothing is known early: each pack uses only what existed by the end of its week, and a finding appears in the week its discrepancy was observed. And the weeks reconcile with the month: tests check that the last week's month-to-date results equal the monthly scorecards for both partners, that weekly power availability averages exactly to the monthly figure, and that every finding and incident is counted exactly once, on the sample and on 20 generated months.
 
+## Failure pattern review
+
+**[Open the failure pattern review](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/)**: the half-year review of every failure in Hall A before the sample month ([Markdown version](reports/failure_patterns.md)).
+
+Failures come from telemetry, not tickets, and are grouped by what they have in common: rack, the racks a CDU serves, tray slot, optic lot, and the fix applied. A group is a pattern only when it is too large to be chance after correcting for the number of groups tested. Three patterns stand out, each with a different owner from the Interface Agreement's ownership matrix: an optic lot failing at 4.8 times the rate of the others (Customer and IT Partner), reseats that do not fix XID 79 faults (IT Partner), and GPU thermal slowdowns caused by a CDU that ran warm for 48 days without reaching its alarm (Landlord, although every ticket sat in the IT Partner's queue). The rack with the most tickets is not a pattern. Root causes, lessons, standard-work changes, and owned actions are written by people and tested against the facts; the analysis is scored on 60 generated histories with the patterns moved each time.
+
 ## Toward live data: the read-only collector
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
@@ -188,6 +194,10 @@ pir/reviews/*.yaml               The written (judgment) part of each completed r
 src/scorecard/weekly.py          Weekly operations review facts (week and month to date, look-ahead, as of the week's end)
 scripts/render_weekly.py         Weekly review packs: docs/weekly/*.md and the interactive /weekly/ page
 weekly/notes/*.yaml              The written part of a weekly review (decisions, asks, commentary)
+scripts/generate_history.py      Failure history for the pattern review (data/history/, own random stream)
+src/scorecard/patterns.py        Failure pattern analysis: statistics, evidence for a cause, owner from the RACI
+scripts/render_patterns.py       Failure pattern review: reports/failure_patterns.md and the /patterns/ page
+patterns/lessons.yaml            The written part of the pattern review (root causes, lessons, actions)
 scripts/collect.py               Read-only live collector (Redfish, Modbus, SNMPv3, BACnet/IP) writing the dataset contract
 src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard

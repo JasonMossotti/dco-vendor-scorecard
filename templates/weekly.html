@@ -32,7 +32,7 @@ tr.default td { background:#fdf0ef; } .gap { color:var(--bad); font-size:12px; }
 </head>
 <body>
 <header class="top">
-  <div><strong>Weekly Operations Review</strong> · Site AUS-1 (fictional) · <a href="../">scorecard demo</a> · <a href="../pir/">post-incident review</a></div>
+  <div><strong>Weekly Operations Review</strong> · Site AUS-1 (fictional) · <a href="../">scorecard demo</a> · <a href="../pir/">post-incident review</a> · <a href="../patterns/">failure patterns</a></div>
   <div class="tabs" id="tabs"></div>
   <div class="tools"><button id="print">Print / save PDF</button></div>
 </header>
@@ -90,6 +90,8 @@ function render(w) {
   h += w.actions.length ? `<p class="note">From completed post-incident reviews. Status as recorded on ${esc(w.actions[0].status_as_of)}.</p>` + table(["Source", "ID", "Action", "Owner", "Priority", "Due", "Status"], w.actions.map(a =>
     `<tr><td class="nw"><a href="../pir/">${esc(a.source)}</a></td><td>${esc(a.id)}</td><td>${esc(a.action)}</td><td>${esc(a.owner)}</td><td>${esc(a.priority)}</td><td class="nw">${esc(a.due)}</td>
      <td>${esc(a.status)}${a.overdue ? ` <span class="over">overdue</span>` : ""}</td></tr>`)) : `<p class="note">No open actions from post-incident reviews.</p>`;
+  const pa = w.pattern_actions;
+  if (pa) h += `<p class="pattern-line" style="font-size:13px"><strong>Failure pattern review <a href="../patterns/">${esc(pa.id)}</a></strong> (reviewed ${esc(pa.meeting)}): ${pa.patterns} patterns, ${pa.open} actions open${pa.overdue ? `, <span class="over">${pa.overdue} overdue</span>` : ""} as of ${esc(pa.status_as_of)}.</p>`;
 
   const la = w.lookahead;
   h += `<h2>6. Look-ahead: ${esc(la.title)}</h2><p class="note">Only work approved or scheduled by the end of this week.${la.beyond_data ? " The dataset ends on Sep 28, so anything planned after that is not shown." : ""}</p><div class="la">`;

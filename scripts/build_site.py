@@ -98,6 +98,10 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_weekly
     (out / "weekly").mkdir(parents=True, exist_ok=True)
     (out / "weekly" / "index.html").write_text(render_weekly.html_page(), encoding="utf-8")
+    # The failure pattern review, served at /patterns/.
+    import render_patterns
+    (out / "patterns").mkdir(parents=True, exist_ok=True)
+    (out / "patterns" / "index.html").write_text(render_patterns.html_page(), encoding="utf-8")
     return {"files_in_bundle": len(members), "bundle_bytes": (out / "app_bundle.zip").stat().st_size}
 
 

@@ -1,0 +1,11 @@
+{
+  "alarm_high_c": 28.0,
+  "cdus": [
+    "CDU-A1",
+    "CDU-A2",
+    "CDU-A3",
+    "CDU-A4"
+  ],
+  "setpoint_c": 25.0,
+  "source": "BMS configuration export (read-only)"
+}

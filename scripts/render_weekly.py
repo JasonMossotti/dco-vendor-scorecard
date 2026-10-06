@@ -137,6 +137,11 @@ def markdown(w: dict, n: dict | None) -> str:
                     [[a["source"], a["id"], a["action"], a["owner"], a["priority"], a["due"], a["status"] + (" (**overdue**)" if a["overdue"] else "")] for a in w["actions"]])
     else:
         L += ["No open actions from post-incident reviews."]
+    pa = w["pattern_actions"]
+    if pa:
+        L += ["", f"**Failure pattern review {pa['id']}** (reviewed {pa['meeting']}): {pa['patterns']} patterns, {pa['open']} actions open"
+              + (f", {pa['overdue']} overdue" if pa["overdue"] else "") + f" as of {pa['status_as_of']}. "
+              "See the [Failure Pattern Review page](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/)."]
     la = w["lookahead"]
     L += ["", f"## 6. Look-ahead: {la['title']}", "", "Only work approved or scheduled by the end of this week."
           + (" The dataset ends on Sep 28, so anything planned after that is not shown." if la["beyond_data"] else ""), ""]

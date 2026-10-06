@@ -14,6 +14,7 @@ Judgment (decisions, asks, commentary) is written by people in ``weekly/notes/<w
 from __future__ import annotations
 
 import csv
+import json
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -86,6 +87,7 @@ class WeeklyData:
         self.milestones = self._csv("vendor/deployment_milestones.csv")
         self.it_target = {p["id"]: p["restore_min"] for p in self.it_sla["priorities"]}
         self.reviews = self._reviews()
+        self.pattern_review = self._pattern_review()
 
     def _csv(self, rel: str) -> list[dict]:
         p = self.data_dir / rel
@@ -104,6 +106,16 @@ class WeeklyData:
             f = build_review(ds, r["ref"])
             out.append({"review": r, "facts": f, "refs": {f["ticket"], f["work_order"]} - {None}})
         return out
+
+
+    def _pattern_review(self) -> dict | None:
+        """The failure pattern review of the half-year that ends where this dataset begins, if there is one."""
+        lp, mp = ROOT / "patterns" / "lessons.yaml", ROOT / "data" / "history" / "manifest.json"
+        if not lp.exists() or not mp.exists():
+            return None
+        if _t(json.loads(mp.read_text(encoding="utf-8"))["window"]["end"]) != self.window_start:
+            return None
+        return yaml.safe_load(lp.read_text(encoding="utf-8"))
 
 
 # --------------------------------------------------------------------------- service levels
@@ -303,6 +315,13 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
     sev = {"S1": 0, "S2": 1, "S3": 2, "S4": 3}
     new.sort(key=lambda r: (sev.get(r["severity"], 9), r["known"]))
     actions = _actions(d, we)
+    pr = d.pattern_review
+    pattern_actions = None
+    if pr and pr["review_meeting"] < _iso(we)[:10]:
+        acts = [a for p in pr["patterns"].values() for a in p["actions"]]
+        pattern_actions = {"id": pr["id"], "meeting": pr["review_meeting"], "status_as_of": pr["status_as_of"],
+                           "patterns": len(pr["patterns"]), "open": sum(a["status"] != "Complete" for a in acts),
+                           "overdue": sum(a["status"] != "Complete" and a["due"] < _iso(we)[:10] for a in acts)}
     return {
         "id": week_id(ws), "start": _iso(ws), "end": _iso(we), "prepared": _iso(we),
         "number": [s for s, _ in d.weeks].index(ws) + 1, "of": len(d.weeks),
@@ -315,6 +334,7 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
         "incidents": {"it": _it_incidents(d, ws, we), "landlord": _ll_incidents(d, ws, we)},
         "findings": {"new": new, "awaiting_monthly_review": len(it_known) + len(ll_known)},
         "actions": actions,
+        "pattern_actions": pattern_actions,
         "lookahead": _lookahead(d, we),
         "resources": _resources(d, ws, we, it_rows, ll_rows, it_known),
         "ehs": _ehs(d, ws, we, actions),

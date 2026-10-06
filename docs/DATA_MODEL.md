@@ -127,6 +127,25 @@ Answer key: `ground_truth/facility_planted_discrepancies.json` (blocked from the
 
 Planted "nobody was there" records are placed after all other activity, so no coincidental badge can make them look evidenced. `python scripts/check_facility_data.py` runs the evidence tests against 60 freshly generated months.
 
+## Failure history (data/history/)
+
+The 26 weeks before the sample month for Hall A, written by `scripts/generate_history.py` from its own random stream and read only by the failure pattern review. It uses the committed fleet (`data/sample/site/topology.json`); the last tray installed in each slot is the serial the sample month starts with.
+
+| File | What it represents |
+|---|---|
+| `telemetry/dcgm_xid_events.jsonl` | GPU XID events by host and tray serial |
+| `telemetry/dcgm_thermal_events.jsonl` | GPU clock events with reason HW Thermal Slowdown |
+| `telemetry/ufm_port_events.jsonl` | Link down and up, and transceiver DOM alarms that name the failed module's serial |
+| `telemetry/redfish_events.jsonl` | PSU health changes |
+| `facility/cdu_secondary.jsonl` | CDU secondary supply and return temperature and flow, 4-hour averages (Customer read-only Redfish poll) |
+| `facility/cdu_setpoints.json` | The BMS supply setpoint and high-supply alarm (read-only configuration export) |
+| `landlord/pm_records.csv` | Quarterly CDU filter changes |
+| `customer/optic_inventory.csv` | Every optic module installed during the window: location, end, serial, lot, installed, removed |
+| `vendor/tickets.json` | The IT Partner's tickets (fix applied, parts with serials); no work notes and no names |
+| `ground_truth/planted_patterns.json` | Answer key for scoring the review; the analysis never reads it |
+
+Planted patterns (moved and resized on each robustness history): an optic lot that fails several times faster than the others; a CDU whose filter fouls so its supply creeps up but stays under the alarm, with GPU thermal slowdowns in the racks it serves until the next quarterly filter change; reseats of one XID that usually come back within 30 days; and a decoy rack with extra unrelated faults that must not be flagged. Tuning lives in `config/history.yaml`.
+
 ## Live collector output
 
 `scripts/collect.py` (see `src/scorecard/live/`) writes the same contract files from real devices. It creates every contract file, leaves the ones it does not collect empty, and lists them in `manifest.json` under `not_collected` (Landlord work orders and maintenance records come from Landlord system exports, not device polling). It adds two files the synthetic data does not have:
