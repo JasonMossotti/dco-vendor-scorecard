@@ -191,7 +191,7 @@ def html_page() -> str:
     f = prepare()
     f["docs"] = DOCS
     tpl = sitenav.inject((ROOT / "templates" / "patterns.html").read_text(encoding="utf-8"), "patterns")
-    return tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/"))
+    return sitenav.finish(tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/")))
 
 
 def robustness(n: int) -> int:

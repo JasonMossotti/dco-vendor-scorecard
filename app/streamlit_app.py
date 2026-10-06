@@ -49,12 +49,17 @@ def _keep_view() -> None:
 
 
 st.session_state.setdefault("view", VIEWS[0])
-left, right = st.columns([3, 2], vertical_alignment="bottom")
+left, right, codes = st.columns([3, 2, 1], vertical_alignment="bottom")
 with left:
     view = st.segmented_control("View", VIEWS, key="view", on_change=_keep_view) or st.session_state.get("last_view", VIEWS[0])
     st.session_state["last_view"] = view
 with right:
     pick = st.selectbox("Dataset", choices, index=0)
+with codes:
+    # The static pages explain each code in a popup; here a small panel does, without leaving the page.
+    with st.popover("Look up a code"):
+        for line in A.lookup_lines(st.text_input("Code or ID", placeholder="CSL-07, TR-1, INC3100816", key="code_lookup")):
+            st.markdown(line)
 if pick == GENERATE:
     c1, c2, _ = st.columns([1, 1, 3], vertical_alignment="bottom")
     with c1:
@@ -152,7 +157,7 @@ def render_it(result, sc, ev) -> None:
                 st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
                 st.markdown(f"**Why {f.severity}:** {'; '.join(f.severity_reasons)}.")
                 st.markdown(f"**Recommended action:** {f.recommended_action}")
-                st.markdown(f"**SLA references:** {', '.join(f.sla_refs)}")
+                st.markdown(f"**SLA references:** {A.explain_refs(f.sla_refs)}")
 
     # ---- Corrective actions ------------------------------------------------------
     with tabs[3]:
@@ -255,7 +260,7 @@ def render_landlord() -> None:
                 st.markdown(f.summary)
                 st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
                 st.markdown(f"**Recommended action:** {f.recommended_action}")
-                st.markdown(f"**SLA references:** {', '.join(f.sla_refs)}")
+                st.markdown(f"**SLA references:** {A.explain_refs(f.sla_refs)}")
     with tabs[3]:
         st.markdown("Every facility event in the window, rebuilt from device telemetry and attributed under the Interface "
                     "Agreement, beside the party the Landlord's work order named.")

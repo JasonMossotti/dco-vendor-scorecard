@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --it:#1f5fbf; --ll:#b45309; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:12px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.views button, .tools button { font:inherit; font-size:14px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+.views button.on { background:var(--it); color:#fff; border-color:var(--it); }
+#q { font:inherit; font-size:14px; border:1px solid var(--line); border-radius:6px; padding:6px 10px; width:min(320px, 70vw); }
+main { max-width:1120px; margin:20px auto; background:var(--bg); padding:28px 36px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } .sub { color:var(--muted); margin:0 0 14px; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 10px; }
+.chips button { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:3px 10px; border-radius:14px; cursor:pointer; }
+.chips button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+.chips button span { color:var(--muted); margin-left:4px; } .chips button.on span { color:#cdd6df; }
+.az { display:flex; flex-wrap:wrap; gap:2px; margin:0 0 14px; position:sticky; top:0; background:#fff; padding:6px 0; z-index:5; border-bottom:1px solid var(--line); }
+.az a, .az span { display:inline-block; min-width:26px; text-align:center; padding:2px 4px; border-radius:4px; font-weight:600; font-size:13px; text-decoration:none; }
+.az a { color:var(--it); } .az a:hover { background:var(--panel); } .az span { color:#c3ccd6; }
+#count { font-size:13px; color:var(--muted); }
+h2.group { font-size:18px; margin:22px 0 6px; padding-bottom:4px; border-bottom:2px solid var(--ink); scroll-margin-top:52px; }
+.entry { display:grid; grid-template-columns:190px minmax(0,1fr); gap:4px 16px; padding:10px 6px; border-bottom:1px solid var(--line); scroll-margin-top:52px; }
+.entry:target, .entry.flash { background:#fff4cc; }
+.entry .term { font-weight:700; font-size:15px; overflow-wrap:anywhere; }
+.entry .kind { display:block; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:600; margin-top:2px; }
+.entry .title { font-weight:600; }
+.entry p { margin:2px 0 4px; }
+.entry .sense + .sense { margin-top:6px; padding-top:6px; border-top:1px dashed var(--line); }
+.entry .meta { font-size:12px; color:var(--muted); }
+.entry .meta a { color:var(--it); }
+.entry .scope { font-size:12px; color:#a15c00; font-weight:600; }
+.empty { color:var(--muted); padding:20px 0; }
+@media (max-width:700px) { main { padding:18px 14px; } .entry { grid-template-columns:1fr; } }
+@media print { header.top, .chips, .az { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } .entry { break-inside:avoid; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Glossary</strong></div>
+  <div class="views" role="group" aria-label="View"><button id="v-az" class="on" type="button">A to Z</button> <button id="v-type" type="button">By type</button></div>
+  <input id="q" type="search" placeholder="Search codes and meanings" aria-label="Search the glossary">
+  <div class="tools"><button id="print" type="button">Print / save PDF</button></div>
+</header>
+<main>
+  <h1>Glossary</h1>
+  <p class="sub">Every acronym, contract code, and record ID the site's pages and documents use, in one place. Contract codes
+  quote the contract that defines them; click a section link to read the clause. Synthetic site; all names are fictional.</p>
+  <div class="chips" id="chips"></div>
+  <div class="az" id="az"></div>
+  <div id="count" aria-live="polite"></div>
+  <div id="list">__ENTRIES__</div>
+</main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const list = document.getElementById("list");
+const ENTRIES = [...list.querySelectorAll(".entry")];
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const S = {view: "az", type: "", q: ""};
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+
+function shown() {
+  const q = S.q.trim().toLowerCase();
+  return ENTRIES.filter(e => (!S.type || e.dataset.type === S.type) && (!q || e.dataset.search.includes(q)));
+}
+
+function draw() {
+  const vis = shown();
+  list.textContent = "";
+  const groups = S.view === "az"
+    ? LETTERS.map(l => [l, l, vis.filter(e => e.dataset.letter === l)]).concat([["#", "0-9", vis.filter(e => !LETTERS.includes(e.dataset.letter))]])
+    : DATA.types.map(t => [t.key, t.label, vis.filter(e => e.dataset.type === t.key)]);
+  for (const [key, label, items] of groups) {
+    if (!items.length) continue;
+    const h = document.createElement("h2");
+    h.className = "group"; h.id = "g-" + key; h.textContent = label;
+    list.appendChild(h);
+    items.forEach(e => list.appendChild(e));
+  }
+  if (!vis.length) list.innerHTML = `<p class="empty">Nothing matches "${esc(S.q)}".</p>`;
+  document.getElementById("count").textContent = `${vis.length} of ${ENTRIES.length} entries`;
+  const az = document.getElementById("az");
+  if (S.view === "az") {
+    const have = new Set(vis.map(e => e.dataset.letter));
+    az.innerHTML = LETTERS.map(l => have.has(l) ? `<a href="#g-${l}">${l}</a>` : `<span>${l}</span>`).join("");
+  } else {
+    az.innerHTML = DATA.types.filter(t => vis.some(e => e.dataset.type === t.key)).map(t => `<a href="#g-${t.key}">${esc(t.label)}</a>`).join(" ");
+  }
+  document.getElementById("v-az").classList.toggle("on", S.view === "az");
+  document.getElementById("v-type").classList.toggle("on", S.view === "type");
+  document.querySelectorAll("#chips button").forEach(b => b.classList.toggle("on", b.dataset.type === S.type));
+}
+
+function chips() {
+  const count = t => ENTRIES.filter(e => !t || e.dataset.type === t).length;
+  document.getElementById("chips").innerHTML = [{key: "", label: "All"}].concat(DATA.types.filter(t => count(t.key)))
+    .map(t => `<button type="button" data-type="${t.key}">${esc(t.label)}<span>${count(t.key)}</span></button>`).join("");
+  document.querySelectorAll("#chips button").forEach(b => b.onclick = () => { S.type = b.dataset.type; draw(); });
+}
+
+function goTo(key) {   // a deep link such as #CSL-07 shows that entry whatever the filters
+  const el = document.getElementById(key);
+  if (!el || !el.classList.contains("entry")) return false;
+  S.type = ""; S.q = ""; document.getElementById("q").value = "";
+  draw();
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 2500);
+  if (el.scrollIntoView) el.scrollIntoView({block: "center"});
+  return true;
+}
+
+document.getElementById("v-az").onclick = () => { S.view = "az"; draw(); };
+document.getElementById("v-type").onclick = () => { S.view = "type"; draw(); };
+document.getElementById("q").addEventListener("input", ev => { S.q = ev.target.value; draw(); });
+document.getElementById("print").onclick = () => window.print();
+window.addEventListener("hashchange", () => goTo(decodeURIComponent(location.hash.slice(1))));
+chips();
+draw();
+if (location.hash) goTo(decodeURIComponent(location.hash.slice(1)));
+</script>
+</body>
+</html>

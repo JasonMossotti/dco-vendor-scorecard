@@ -26,10 +26,12 @@ from scorecard.sla_model import load_sla  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 BLOB = f"{sitenav.REPO}/blob/main/"
+# The contracts open on the Agreements tab; the rest are files in the repository.
 DOCS = [
-    ("IT Partner SLA", "docs/sla/IT_PARTNER_SLA.md"),
-    ("Landlord SLA", "docs/sla/LANDLORD_SLA.md"),
-    ("Interface Agreement", "docs/sla/INTERFACE_AGREEMENT.md"),
+    ("IT Partner SLA", "agreements/it-partner-sla/"),
+    ("Landlord SLA", "agreements/landlord-sla/"),
+    ("Interface Agreement", "agreements/interface-agreement/"),
+    ("Glossary of codes and acronyms", "glossary/"),
     ("Site model and drawings", "docs/site/SITE.md"),
     ("IT Partner scorecard", "reports/scorecard.md"),
     ("Landlord scorecard", "reports/landlord_scorecard.md"),
@@ -150,7 +152,7 @@ def body(f: dict) -> str:
              [("Open the review", "patterns/")],
              "; ".join(pat["titles"]) + "."),
     ]
-    docs = "".join(f'<li><a href="{BLOB}{p}">{escape(t)}</a></li>' for t, p in DOCS)
+    docs = "".join(f'<li><a href="{p if p.endswith("/") else BLOB + p}">{escape(t)}</a></li>' for t, p in DOCS)
     return (
         f'<section class="hero"><h1>Unified Site Management</h1>'
         f'<p class="sub">Site AUS-1, Central Texas · {escape(f["window"])} · synthetic data; all names and events are fictional.</p>'
@@ -163,7 +165,7 @@ def body(f: dict) -> str:
 
 def html_page() -> str:
     tpl = sitenav.inject((ROOT / "templates" / "hub.html").read_text(encoding="utf-8"), "overview", prefix="")
-    return tpl.replace("__BODY__", body(facts()))
+    return sitenav.finish(tpl.replace("__BODY__", body(facts())))
 
 
 def main() -> int:

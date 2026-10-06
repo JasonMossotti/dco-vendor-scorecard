@@ -180,7 +180,7 @@ def markdown(f: dict) -> str:
 def html_page() -> str:
     f = prepare()
     tpl = sitenav.inject((ROOT / "templates" / "alarms.html").read_text(encoding="utf-8"), "alarms")
-    return tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/"))
+    return sitenav.finish(tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/")))
 
 
 def explain(flag: A.Alarm, d: Path) -> str | None:

@@ -304,3 +304,52 @@ def attribution_change_rows(it_sc: dict[str, Any], it_plain: dict[str, Any]) -> 
              "Without attribution": _pct(b["CSL-03"], 1)},
             {"IT Partner": "CSL-12 worst-rack availability", "With attribution (contract)": _pct(a["CSL-12"], 3),
              "Without attribution": _pct(b["CSL-12"], 3)}]
+
+
+# --------------------------------------------------------------------------- #
+# Codes: what they mean (the static pages show this in a popup; the app in a lookup box)
+# --------------------------------------------------------------------------- #
+def _md(s: str) -> str:
+    """Glossary text, safe for st.markdown (a $ would start LaTeX)."""
+    return s.replace("$", "\\$")
+
+
+def explain_refs(refs: list[str], page: str = "scorecards") -> str:
+    """'CSL-07 (Validated Return to Service), CSL-11 (Record Integrity)': each code with its meaning."""
+    from scorecard import glossary
+    gl = glossary.load()
+    out = []
+    for r in refs:
+        found = gl.lookup(r, page)
+        out.append(f"{r} ({_md(found[0].senses[0].title if not found[0].expansion else found[0].expansion)})" if found else r)
+    return ", ".join(out)
+
+
+def lookup_lines(query: str, page: str = "scorecards", limit: int = 12) -> list[str]:
+    """Markdown for the app's "Look up a code" box: the meaning of an exact code or ID, or the codes that match."""
+    from scorecard import glossary
+    q = (query or "").strip()
+    if not q:
+        return ["Type a code or ID from any table, such as CSL-07, TR-1, FA-5, OT-KM-03, or INC3100816. "
+                "The Glossary tab lists them all."]
+    gl = glossary.load()
+    labels = {t["key"]: t["label"] for t in glossary.config()["types"]}
+    found = gl.lookup(q.upper(), page) or gl.lookup(q, page)
+    if found:
+        lines = []
+        for e in found:
+            d = glossary.entry_data(e)
+            head = f"**{_md(q.upper() if e.pattern else e.term)}** · {labels.get(e.type, e.type)}"
+            if e.expansion:
+                head += f" · {_md(e.expansion)}"
+            lines.append(head)
+            for s in d["senses"]:
+                text = (f"**{_md(s['title'])}.** " if s["title"] and s["title"] != e.expansion else "") + _md(s["text"])
+                where = "; ".join(f"{w['doc']}, {w['section']}" for w in s["where"])
+                lines.append(text + (f" *Defined in {_md(where)} (Agreements tab).*" if where else ""))
+        return lines
+    ql = q.lower()
+    hits = [e for e in gl.entries() if ql in e.term.lower() or ql in e.title.lower()][:limit]
+    if not hits:
+        return [f"No code or ID matches “{_md(q)}”. Check the Glossary tab."]
+    return ["Matching codes:"] + [f"- **{_md(e.term)}** · {_md(e.title)}" for e in hits]

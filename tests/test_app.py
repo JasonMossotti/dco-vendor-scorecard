@@ -100,7 +100,10 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
         names = z.namelist()
         assert {"sla/common.yaml", "sla/it_partner.yaml", "sla/ot_partner.yaml", "site/site.yaml"} <= set(names)
         assert not any("/live/" in n for n in names), "the live collector is not shipped to the browser" and "src/scorecard/app_support.py" in names
-        assert not any(n.startswith(("tests/", "reports/", "docs/")) for n in names)
+        assert not any(n.startswith(("tests/", "reports/")) for n in names)
+        # Of the docs, only the generated contracts ship: the code lookup names the clause that defines a code.
+        assert {n for n in names if n.startswith("docs/")} == {f"docs/sla/{d}.md" for d in ("INTERFACE_AGREEMENT", "IT_PARTNER_SLA", "LANDLORD_SLA")}
+        assert "config/glossary.yaml" in names
         z.extractall(home)
     (home / "streamlit_app.py").write_bytes((site / "streamlit_app.py").read_bytes())
 
@@ -114,6 +117,8 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     assert any("two partners" in t for t in fake.texts("title"))
     import scorecard
     assert str(home) in scorecard.__file__
+    from scorecard import app_support
+    assert "Defined in IT Partner SLA" in " ".join(app_support.lookup_lines("CSL-07")), "the bundled lookup finds the clause"
 
 
 def test_display_tables_are_tidy():

@@ -131,6 +131,10 @@ Failures come from telemetry, not tickets, and are grouped by what they have in 
 
 Planned work causes alarms anyone can predict. Under the Interface Agreement's section 10, every change declares the assets it touches, the alarms it expects, the worst severity it may cause, and its window. The Customer's check classifies every alarm as expected, out of scope (undeclared, too severe, or on connected equipment from the site model), or out of window (started early or left in maintenance after the window), and the partners owe automatic notifications on two channels within 5 minutes for P1 alarms and anything outside a change (15 minutes for P2). On the sample month the check flags exactly the rack A07 outage: the B-side tap-off opening during A-side work at 15:42:11Z, and the A side still open after the window closed, which the post-incident review says nothing alerted on. The board has two modes: **Alarm History** replays the month, and **Live Events** runs the same synthetic feed on the viewer's clock (clearly labeled as simulated) with open trouble and change tickets and a 6-hour reap time. Both modes include severity and change-work filters, acknowledgment, tickets, and repeat counts, plus Customer notification routing (an on-call schedule and an event matrix that decide who is texted or emailed, with escalation and a replay of the month), upcoming change work flagged against conflicting changes and live trouble, a timeline for each change, an alert banner, flood grouping, and a one-click shift handoff. Cases are planted in 60 generated months to score the check; a flag means the records do not reconcile with the approved change, not that anyone did anything wrong.
 
+## Agreements, Glossary, and code popups
+
+**[Read the agreements](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/)** (the Interface Agreement and both SLAs, with contents and print to PDF) and **[open the glossary](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/)** ([Markdown version](docs/glossary/GLOSSARY.md)): every acronym, contract code, and record ID the site uses, A to Z or by type, with search. On every page, each code has a dotted underline; clicking it opens a small card with what it means and a link to the clause that defines it, without leaving the page. Contract meanings are quoted from the same YAML the scorecards are scored against, and CI fails if any page shows a code the glossary does not explain.
+
 ## Toward live data: the read-only collector
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
@@ -211,6 +215,9 @@ src/scorecard/alarms.py          Change-aware alarms: one feed for both partners
 scripts/generate_changes.py      Change layer for the sample (data/changes/: declarations, delivery logs, own random stream)
 scripts/render_alarms.py         Change-aware alarm review: reports/change_alarms.md and the /alarms/ board
 config/change_alarms.yaml        Alarm map (severity, domain), change-type catalog, robustness plants
+config/glossary.yaml             Code meanings: contract paths, acronyms, record families, page-only meanings
+scripts/render_glossary.py       Glossary: docs/glossary/GLOSSARY.md and the /glossary/ page; --check fails on unexplained codes
+scripts/render_agreements.py     The /agreements/ pages, rendered from docs/sla/*.md
 scripts/collect.py               Read-only live collector (Redfish, Modbus, SNMPv3, BACnet/IP) writing the dataset contract
 src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard

@@ -3,15 +3,24 @@
 One definition of the tabs and their look, injected into the hub, the app's wrapper,
 and each static page (``__SITENAV_CSS__`` and ``__SITENAV__`` in the templates), so
 the pages read as one product. Links are relative, so the site works under any base path.
+
+``inject`` also adds the code popups (``templates/partials/glossary_popup.html``) to every
+static page: each code, acronym, and record ID opens a small card with its meaning.
+The Scorecards app gets none, because Streamlit owns that page's markup.
 """
 
 from __future__ import annotations
 
+import json
+import re
 from html import escape
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
 
 REPO = "https://github.com/JasonMossotti/dco-vendor-scorecard"
 
-# (key, label, path from the site root)
+# (key, label, path from the site root); the reference tabs sit on the right of the bar
 TABS = [
     ("overview", "Overview", ""),
     ("scorecards", "Scorecards", "app/"),
@@ -20,20 +29,26 @@ TABS = [
     ("weekly", "Weekly Review", "weekly/"),
     ("patterns", "Failure Patterns", "patterns/"),
 ]
-KEYS = [k for k, _, _ in TABS]
+REFERENCE_TABS = [
+    ("agreements", "Agreements", "agreements/"),
+    ("glossary", "Glossary", "glossary/"),
+]
+KEYS = [k for k, _, _ in TABS + REFERENCE_TABS]
 
 CSS = """
 .usm { background:#1e2933; color:#fff; font:14px/1.4 "Inter","Segoe UI",Helvetica,Arial,sans-serif; }
-.usm-in { display:flex; flex-wrap:wrap; align-items:center; gap:4px 22px; padding:0 20px; }
+.usm-in { display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; padding:0 20px; }
 .usm-brand { display:flex; align-items:baseline; gap:10px; padding:10px 0; color:#fff; text-decoration:none; white-space:nowrap; }
 .usm-brand b { font-size:16px; font-weight:700; letter-spacing:.01em; }
 .usm-brand span { font-size:12px; color:#aab6c3; }
 .usm-tabs { display:flex; flex-wrap:wrap; gap:2px; flex:1; }
-.usm-tabs a { color:#cdd6df; text-decoration:none; padding:12px 12px 10px; border-bottom:3px solid transparent; white-space:nowrap; }
+.usm-ref { flex:none; }
+.usm-tabs a { color:#cdd6df; text-decoration:none; padding:12px 10px 10px; border-bottom:3px solid transparent; white-space:nowrap; }
 .usm-tabs a:hover { color:#fff; background:rgba(255,255,255,.06); }
 .usm-tabs a.on { color:#fff; font-weight:600; border-bottom-color:#5b9cff; }
 .usm-src { color:#aab6c3; font-size:12px; text-decoration:none; white-space:nowrap; }
 .usm-src:hover { color:#fff; }
+@media (max-width:1440px) { .usm-brand span { display:none; } }
 @media (max-width:700px) { .usm-in { padding:0 10px; gap:0 12px; } .usm-tabs a { padding:8px 8px 6px; font-size:13px; } .usm-src { display:none; } }
 @media print { .usm { display:none !important; } }
 """
@@ -45,17 +60,42 @@ def nav_html(active: str, prefix: str = "../") -> str:
         raise ValueError(f"unknown tab {active!r}")
     root = prefix or "./"
     on = ' class="on" aria-current="page"'
-    links = "".join(
+    links = lambda tabs: "".join(
         f'<a href="{escape(prefix + path if path else root)}" data-tab="{key}"{on if key == active else ""}>{escape(label)}</a>'
-        for key, label, path in TABS)
+        for key, label, path in tabs)
     return (f'<nav class="usm" aria-label="Site"><div class="usm-in">'
             f'<a class="usm-brand" href="{escape(root)}"><b>Unified Site Management</b><span>Site AUS-1 · fictional</span></a>'
-            f'<div class="usm-tabs">{links}</div>'
+            f'<div class="usm-tabs">{links(TABS)}</div>'
+            f'<div class="usm-tabs usm-ref">{links(REFERENCE_TABS)}</div>'
             f'<a class="usm-src" href="{REPO}">Source on GitHub</a></div></nav>')
 
 
-def inject(template: str, active: str, prefix: str = "../") -> str:
-    """Fill a page template's tab bar placeholders."""
+_POPUP_MARK = re.compile(r"<!--GLOSSARY_POPUPS (\{.*?\})-->")
+
+
+def inject(template: str, active: str, prefix: str = "../", page: str | None = None, doc_title: str = "") -> str:
+    """Fill a page template's tab bar placeholders and mark where the code popups go (before ``</body>``).
+    ``page`` names the page for page-specific meanings (default: the active tab). Call ``finish`` on the
+    filled page to add the popups with just the entries its codes need."""
     if "__SITENAV__" not in template or "__SITENAV_CSS__" not in template:
         raise ValueError("template is missing the site tab bar placeholders")
-    return template.replace("__SITENAV_CSS__", CSS.strip()).replace("__SITENAV__", nav_html(active, prefix))
+    out = template.replace("__SITENAV_CSS__", CSS.strip()).replace("__SITENAV__", nav_html(active, prefix))
+    if "</body>" not in out:
+        raise ValueError("template has no </body> for the code popups")
+    i = out.rindex("</body>")
+    mark = json.dumps({"page": page or active, "root": prefix, "doc_title": doc_title}, sort_keys=True)
+    return out[:i] + f"<!--GLOSSARY_POPUPS {mark}-->\n" + out[i:]
+
+
+def finish(html: str) -> str:
+    """Add the code popups to a finished page: their style, the data for the codes on this page, and the script."""
+    from . import glossary
+    m = _POPUP_MARK.search(html)
+    if not m:
+        raise ValueError("page has no code popup mark; build it with sitenav.inject")
+    opts = json.loads(m.group(1))
+    data = glossary.popup_data(opts["page"], text=html[:m.start()] + html[m.end():])
+    data.update(root=opts["root"], doc_title=opts["doc_title"])
+    tpl = (ROOT / "templates" / "partials" / "glossary_popup.html").read_text(encoding="utf-8")
+    pop = tpl.replace("__GLOSSARY__", json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))
+    return html[:m.start()] + pop + html[m.end():]
