@@ -1,0 +1,46 @@
+[
+  {
+    "dimension": "optic_lot",
+    "group": "LOT-2544",
+    "owner": "Customer",
+    "rate_multiplier": 3.5,
+    "signature": "optic_module",
+    "type": "optic_lot"
+  },
+  {
+    "dimension": "cdu_row",
+    "drift_begin": "2026-04-20T00:00:00Z",
+    "fixed": "2026-07-06T15:00:00Z",
+    "group": "CDU-A3",
+    "owner": "Landlord",
+    "peak_rise_c": 2.6,
+    "racks": [
+      "A17",
+      "A18",
+      "A19",
+      "A20",
+      "A21",
+      "A22",
+      "A23",
+      "A24"
+    ],
+    "signature": "thermal",
+    "type": "cdu_drift"
+  },
+  {
+    "dimension": "fix",
+    "group": "Cleaned/reseated",
+    "owner": "IT Partner",
+    "recurrence_probability": 0.45,
+    "signature": "xid_79",
+    "type": "reseat_recurrence"
+  },
+  {
+    "dimension": "rack",
+    "extra_events": 6,
+    "group": "A11",
+    "note": "Chance clustering; must not be flagged.",
+    "signature": "all",
+    "type": "decoy"
+  }
+]

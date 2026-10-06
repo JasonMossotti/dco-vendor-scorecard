@@ -1,0 +1,97 @@
+# Failure pattern review: judgment written by people. Every fact (counts, rates, dates, temperatures,
+# owners from the Interface Agreement RACI) comes from the failure history via src/scorecard/patterns.py
+# and is checked by tests/test_patterns.py: every number in the text below must match a fact, every
+# pattern and watch item must be covered, and every standard-work reference must exist in the SLAs.
+id: FPR-2026-H1
+title: "Failure pattern review, Hall A, March to August 2026"
+authors: ["Customer Site Lead", "IT Partner Site Manager", "Landlord Chief Engineer"]
+prepared: "2026-09-08"
+review_meeting: "2026-09-10"
+# Action statuses are a snapshot taken on this date, so due dates stay meaningful as time passes.
+status_as_of: "2026-09-10"
+summary: >-
+  Three patterns stand out from 496 failures in 26 weeks, and each has a different owner. A lot of
+  optic modules is failing at 4.8 times the rate of the other lots; the Customer owns the supplier case
+  and the IT Partner the replacements. Reseats of XID 79 faults do not hold (17 of 23 came back within
+  30 days), which is the IT Partner's to fix. The third pattern looked like the IT Partner's but was
+  not: GPU thermal slowdowns in racks A17 to A24 followed CDU-A3's secondary supply temperature, which
+  stayed under the 28.0 °C alarm the whole time, so no one on the Landlord's side was alerted. The rack
+  with the most tickets, A11, is not a pattern; its 25 tickets are 8 unrelated kinds of failure.
+
+patterns:
+  thermal/cdu_warm/CDU-A3:
+    title: "CDU-A3 ran warm for 48 days and the GPUs it cools throttled"
+    root_cause: >-
+      CDU-A3's filter fouled after its April 6 filter change. Secondary flow fell 5.1% and supply
+      temperature crept up to a peak of 27.9 °C on June 29, just under the 28.0 °C high-supply alarm, so
+      no alarm fired and the Landlord saw nothing to act on. The trays in the 8 racks it serves throttled:
+      20 trays had their first thermal slowdown while it ran warm, against 2.0 expected. The other CDUs
+      never passed 26.0 °C. The quarterly filter change on July 6 restored the supply to setpoint, and the
+      row then had only 2 thermal slowdowns in 55 days.
+    confidence: "Confirmed: the slowdowns stopped when the filter was changed."
+    owner: Landlord
+    cost: >-
+      22 tickets in the IT Partner's queue and 86 tray-hours out of service. 14 trays were replaced and 8
+      reseated for a cause that was on the Landlord's side of the rack manifold valves.
+    lesson: >-
+      A cooling problem can sit inside the alarm band and still cost capacity. Our fault attribution only
+      looks for out-of-band coolant, so these outages were scored against the IT Partner, and every tray
+      swap was the right call on the evidence the technician had.
+    standard_changes:
+      - {doc: interface_agreement, ref: FA-1, change: "Attribute a capacity loss to the Landlord when the CDU secondary supply at the rack ran 1.0 °C or more above setpoint for 7 days, not only when it was out of band."}
+      - {doc: ot_partner, ref: OT-CSL-03, change: "Add a deviation alarm: secondary supply 1.0 °C above setpoint for 24 hours raises a P3 work order, inside the band."}
+      - {doc: it_partner, ref: FC-GPU, change: "Before replacing a tray for a thermal slowdown, check the serving CDU's supply on the Telemetry of Record and attach it to the ticket."}
+    actions:
+      - {id: PA1, owner: "Landlord Chief Engineer", priority: P2, due: "2026-10-15", status: "In progress", action: "Configure the setpoint-deviation alarm on every Hall A and Hall B CDU and change CDU filters on differential pressure, not only on the calendar.", success: "Replaying this history raises the alarm on CDU-A3 within its first warm week."}
+      - {id: PA2, owner: "Customer Site Lead", priority: P2, due: "2026-10-31", status: "Not started", action: "Propose the FA-1 amendment through Interface Agreement change control.", success: "Amendment signed by all three parties."}
+      - {id: PA3, owner: "IT Partner Site Manager", priority: P3, due: "2026-09-30", status: "In progress", action: "Add the CDU supply check to the thermal slowdown runbook and train the night and day crews.", success: "Every thermal slowdown ticket after the training carries the CDU reading."}
+  optic_module/optic_lot/LOT-2544:
+    title: "Optic lot LOT-2544 fails at 4.8 times the rate of the other lots"
+    root_cause: >-
+      Modules from LOT-2544 are 14% of the installed base and 42% of module failures: 47 failures,
+      against 14.8 expected. They fail at both ends of the link (24 on the host side, 23 on the switch side)
+      and across 24 of the 32 racks, so this is not one rack's handling, cabling, or cleaning. That points
+      to the lot itself. It is a probable cause until the manufacturer's failure analysis confirms it.
+    confidence: "Probable: the manufacturer's failure analysis is pending."
+    owner: Customer
+    cost: "47 tickets and 184 link-hours down; 583 of the lot's 632 modules are still installed."
+    lesson: >-
+      Ticket counts by rack would never have shown this, because the lot is spread across the hall.
+      Failures have to be grouped by what they have in common, including the lot, not just by where they
+      happened.
+    standard_changes:
+      - {doc: it_partner, ref: FC-LINK, change: "Record the module serial and lot on every optic replacement and send it to the Customer's asset inventory."}
+    actions:
+      - {id: PA4, owner: "Customer Site Lead", priority: P1, due: "2026-10-08", status: "In progress", action: "Open a supplier quality case with the optics manufacturer and ship failed LOT-2544 modules for failure analysis.", success: "Failure analysis report received."}
+      - {id: PA5, owner: "IT Partner Site Manager", priority: P2, due: "2026-11-30", status: "Not started", action: "Replace the remaining LOT-2544 modules during approved maintenance windows, worst links first, and keep the lot out of the spares pool.", success: "No LOT-2544 modules installed or in spares."}
+  xid_79/fix/Cleaned/reseated:
+    title: "Reseats do not fix XID 79 faults"
+    root_cause: >-
+      17 of 23 reseats for XID 79 (GPU has fallen off the bus) came back within 30 days, a median of 12
+      days later, against 7.5% for every other repair. Replacing the tray for the same fault held: 5 of 42
+      came back. A reseat clears the symptom long enough to pass validation but does not fix whatever
+      takes the GPU off the bus.
+    confidence: "Confirmed by the recurrence data; the hardware cause is for the manufacturer."
+    owner: IT Partner
+    cost: "24 tickets and 97 tray-hours out of service on 18 trays."
+    lesson: >-
+      Passing validation is not the same as holding. A fix that is cheaper at the time costs more when it
+      fails twice, so a fix type needs its own recurrence rate, not just the ticket's.
+    standard_changes:
+      - {doc: it_partner, ref: FC-GPU, change: "For XID 79, a reseat may close the ticket only once per tray; a second XID 79 within 30 days requires a tray replacement and an RMA."}
+      - {doc: it_partner, ref: TR-5, change: "Report the 30-day recurrence rate for each fault class and fix type in the monthly service review."}
+    actions:
+      - {id: PA6, owner: "IT Partner Site Manager", priority: P1, due: "2026-09-30", status: "In progress", action: "Stop reseat-only closes for XID 79 while the rule card change goes through.", success: "No XID 79 ticket closed as reseated after the date of this review."}
+      - {id: PA7, owner: "Customer Site Lead", priority: P2, due: "2026-10-31", status: "Not started", action: "Amend FC-GPU through SLA change control and add fix-type recurrence to the monthly scorecard.", success: "Rule card amended; the October scorecard shows recurrence by fix type."}
+
+# Groups that clear the count and ratio bars but that chance could explain after correcting for the number
+# of tests. Each one is ruled on and looked at again in the next review.
+watch_rulings:
+  optic_fiber/rack/A30: "Inspect. 7 link faults with no module alarm on 6 links in one rack is the most likely of the three to be real: ask the IT Partner to inspect A30's fiber trays and patching, and look again next review."
+  xid_79/rack/A25: "No common factor: 6 faults on 6 different trays, none of them reseats, and only 1 a repeat. Look again next review."
+  optic_module/rack/A01: "Not explained by the lot pattern: only 3 of the 9 failed modules are from LOT-2544. Look again next review."
+
+league_note: >-
+  A11 leads the hall with 25 tickets, but they are 8 different kinds of failure with no common cause, and
+  its failures are within what chance produces across 32 racks. Ranking racks by ticket count would have
+  sent people to the wrong rack.
