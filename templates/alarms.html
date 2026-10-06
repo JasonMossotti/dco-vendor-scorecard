@@ -48,6 +48,7 @@ ul.rules li { margin:4px 0; }
 .alert { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fdeceb; border:1px solid var(--oos); border-left:6px solid var(--oos); border-radius:6px; padding:8px 10px; margin:8px 0; }
 .alert button { font:inherit; border:1px solid var(--oos); background:#fff; color:var(--oos); padding:3px 10px; border-radius:5px; cursor:pointer; font-weight:600; }
 .ch.soon.flag { border-left-color:var(--oos); }
+button.link { font:inherit; border:0; background:none; color:var(--it); text-decoration:underline; cursor:pointer; padding:0; }
 .ch .warn { color:var(--oos); font-size:12px; font-weight:600; margin-top:2px; }
 .grp { display:inline-block; margin-left:6px; padding:0 7px; border:1px solid var(--it); border-radius:9px; font-size:11px; color:var(--it); background:#fff; cursor:pointer; white-space:nowrap; }
 tr.child { background:#fafbfc; } tr.tk.closed td { color:var(--muted); } tr.tk[data-change] { cursor:pointer; }
@@ -364,16 +365,28 @@ function board() {
 }
 
 function changes() {
+  // Only the work that touches the date range chosen on the Board tab (windows that overlap it).
+  const r0 = S.from, r1 = S.to + DAY, inRange = (a, b) => a < r1 && b >= r0;
+  const ds = D.declarations.filter(d => inRange(ms(d.window_start), ms(d.window_end) + GRACE));
+  const wos = id => (D.planned_work || []).filter(w => w.mop_ref === id);
+  const orphan = (D.planned_work || []).filter(w => !w.mop_ref && inRange(ms(w.opened), ms(w.closed) ?? ms(w.opened)));
+  const cf = D.conflicts.filter(c => c.changes.some(id => ds.some(d => d.change_id === id)));
+  const all = ds.length === D.declarations.length;
   return `<section class="view"><h1>Change work and declared impact</h1>
-    <p class="sub">Every approved change from both partners with its impact declaration (Interface Agreement section 10) and its timeline. Click a change to replay its window on the board.</p>
+    <p class="sub">Approved changes from both partners (Landlord MOPs and IT Partner CHGs), with their work orders, impact declarations (Interface Agreement section 10), and timelines. Click a change to replay its window on the board.</p>
+    <p class="note" id="range">Showing <b>${ds.length} of ${D.declarations.length}</b> changes with a window in the Board's date range, ${esc(fmt(r0, 0, false).slice(0, -6))} to ${esc(fmt(S.to, 0, false).slice(0, -6))}${all ? "" : `. <button class="link" id="allrange">Show the whole month</button>`}. Change the range on the Board tab.</p>
     ${TL_LEGEND}
-    <div class="wide"><table id="changelist"><tr><th>Change</th><th>Owner</th><th>Title</th><th>Window (CDT)</th><th>Declared assets</th><th>Expected alarms</th><th>Worst</th><th>Expected</th><th>Out of scope</th><th>Out of window</th></tr>
-    ${D.declarations.map(d => `<tr class="row" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>${partyBadge(d.owner)}</td><td>${esc(d.title)}</td>
+    <div class="wide"><table id="changelist"><tr><th>Change</th><th>Owner</th><th>Work order</th><th>Title</th><th>Window (CDT)</th><th>Declared assets</th><th>Expected alarms</th><th>Worst</th><th>Expected</th><th>Out of scope</th><th>Out of window</th></tr>
+    ${ds.map(d => `<tr class="row" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>${partyBadge(d.owner)}</td><td>${esc(wos(d.change_id).map(w => w.id).join(", "))}</td><td>${esc(d.title)}</td>
       <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td>${esc(assetsText(d))}</td>
       <td>${esc(d.expected.map(e => e.alarms.join(", ")).join("; "))}</td><td>${esc(d.max_severity)}</td>
       <td>${d.counts.expected}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${d.counts.out_of_scope}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${d.counts.out_of_window}</b>` : 0}</td></tr>
-      <tr class="tlrow"><td colspan="10">${timeline(d, null)}</td></tr>`).join("")}</table></div>
-    <h2>Change conflicts</h2>${D.conflicts.length ? `<ul>${D.conflicts.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None this month: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
+      <tr class="tlrow"><td colspan="11">${timeline(d, null)}</td></tr>`).join("") || `<tr><td colspan="11" class="empty">No change work in this date range.</td></tr>`}</table></div>
+    <h2>Planned work orders with no approved change</h2>${orphan.length ? `<div class="wide"><table id="orphans"><tr><th>Work order</th><th>Partner</th><th>Unit</th><th>Work</th><th>Opened (CDT)</th><th>Closed</th></tr>
+      ${orphan.map(w => `<tr><td>${esc(w.id)}</td><td>${partyBadge("Landlord")}</td><td>${esc(w.unit)}</td><td>${esc(w.notes)}</td><td>${esc(local(ms(w.opened)))}</td><td>${esc(hhmm(ms(w.closed)))}</td></tr>`).join("")}</table></div>
+      <p class="note">Planned work with no MOP on file has no impact declaration, so every alarm it causes reaches the Customer as not change work. The records do not reconcile; that is not by itself a finding against anyone.</p>`
+      : `<p class="empty">None in this date range.</p>`}
+    <h2>Change conflicts</h2>${cf.length ? `<ul>${cf.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None in this date range: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
 }
 
 function notify() {
@@ -465,6 +478,7 @@ function focusChange(id) {
 }
 function wire() {
   const $ = id => document.getElementById(id);
+  if ($("allrange")) $("allrange").onclick = () => { S.from = W0; S.to = W1; render(); };
   if (S.view !== "board") return;
   if (S.mode === "history") {
     $("t").oninput = e => { stop(); setT(+e.target.value); };

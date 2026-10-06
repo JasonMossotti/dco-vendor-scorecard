@@ -111,6 +111,15 @@ ok(d.querySelectorAll("#alarms tr.hl").length >= 1 && rows().length === D.alarms
 tab("changes").click();
 ok(d.querySelectorAll("#changelist tr.row").length === D.declarations.length && t().includes("Change conflicts"), "every change with its declaration");
 ok(d.querySelectorAll("#changelist svg.tl").length === D.declarations.length, "every change with its timeline");
+ok(d.getElementById("changelist").textContent.includes("WO-41017") && d.getElementById("orphans").textContent.includes("WO-41014"), "work orders: under their MOP, and the one with no MOP on file");
+const setRange = (a, b) => { tab("board").click(); const f = d.getElementById("from"), e = d.getElementById("to"); f.value = a; fire(f, "change"); d.getElementById("to").value = b; fire(d.getElementById("to"), "change"); tab("changes").click(); };
+setRange("2026-09-13", "2026-09-14");
+const ids = [...d.querySelectorAll("#changelist tr.row")].map(r => r.dataset.change);
+ok(ids.join(",") === "MOP-309,MOP-305,CHG2040031" && t().includes("Showing 3 of 12") && !d.getElementById("orphans"), "the Change work tab follows the Board's date range: " + ids.join(","));
+setRange("2026-09-24", "2026-09-24");
+ok(d.querySelectorAll("#changelist tr.row").length === 0 && d.getElementById("orphans").textContent.includes("WO-41014"), "a day with only unapproved planned work");
+d.getElementById("allrange").click();
+ok(d.querySelectorAll("#changelist tr.row").length === D.declarations.length, "show the whole month again");
 d.querySelector('#changelist tr[data-change="MOP-305"]').click();
 ok(tab("board").classList.contains("on") && rows().length >= 1 && rows().every(r => r.textContent.includes("MOP-305")), "a change opens the board at its window");
 tab("notify").click();

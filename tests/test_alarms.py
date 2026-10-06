@@ -237,3 +237,10 @@ def test_trouble_tickets_cover_both_partners_without_planned_work():
     assert inc["partner"] == "IT Partner" and inc["keys"] == ["rack:A05"] and inc["domains"] == ["compute"]
     utility = next(t for t in tk if t["id"] == "WO-41009")
     assert utility["domains"] == ["power"]
+
+
+def test_planned_work_orders_attach_to_their_mop():
+    pw = {w["id"]: w for w in A.planned_work(FileConnector(SAMPLE))}
+    assert set(pw) == {"WO-41017", "WO-41021", "WO-41014"}                # the utility outage WO-41009 is not planned work
+    assert pw["WO-41017"]["mop_ref"] == "MOP-308" and pw["WO-41021"]["mop_ref"] == "MOP-309"
+    assert pw["WO-41014"]["mop_ref"] == ""                                 # planned work with no MOP on file

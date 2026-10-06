@@ -53,7 +53,7 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/render_pir.py && python scripts/render_weekly.py \
   && python scripts/generate_history.py && python scripts/render_patterns.py \
   && python scripts/generate_changes.py && python scripts/render_alarms.py
-pytest -q                                      # 249 tests as of 2026-10-06
+pytest -q                                      # 250 tests as of 2026-10-06
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 
