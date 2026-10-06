@@ -39,6 +39,12 @@ class _Block:
         return getattr(self._app, name)
 
 
+class _Sidebar(_Block):
+    def __getattr__(self, name):
+        self._app.sidebar_used.append(name)
+        return getattr(self._app, name)
+
+
 class FakeStreamlit:
     def __init__(self, overrides: dict | None = None, buttons: set | None = None,
                  session_state: dict | None = None):
@@ -46,7 +52,8 @@ class FakeStreamlit:
         self.overrides = overrides or {}       # label -> value returned by that widget
         self.buttons = buttons or set()        # labels of buttons that are "pressed"
         self.drawn: list[tuple[str, object]] = []
-        self.sidebar = _Block(self)
+        self.sidebar_used: list[str] = []      # names of st.sidebar calls; the app draws nothing there
+        self.sidebar = _Sidebar(self)
 
     # ---------------------------------------------------------------- record
     def _rec(self, kind, payload=None):
@@ -63,7 +70,7 @@ class FakeStreamlit:
         self._rec("tabs", names)
         return [_Block(self) for _ in names]
 
-    def columns(self, spec):
+    def columns(self, spec, **kw):
         n = spec if isinstance(spec, int) else len(spec)
         return [_Block(self) for _ in range(n)]
 
@@ -122,6 +129,12 @@ class FakeStreamlit:
 
     def radio(self, label, options, index=0, **kw):
         return self._value(label, options[index])
+
+    def segmented_control(self, label, options, default=None, key=None, on_change=None, **kw):
+        self._rec("segmented_control", (label, list(options)))
+        if key and key in self.session_state and default is not None:
+            raise AssertionError(f"'{label}' sets both a default and a session-state value (Streamlit warns on screen)")
+        return self._value(label, default, key)
 
     def selectbox(self, label, options, index=0, format_func=str, key=None, **kw):
         for o in options:

@@ -4,7 +4,7 @@
 
 **Vendor performance and repair-verification scorecard for partner-operated GPU data center sites.**
 
-**▶ [Open the interactive demo](https://jasonmossotti.github.io/dco-vendor-scorecard/)** (runs entirely in your browser; first load takes 20 to 40 seconds)
+**▶ [Open Unified Site Management](https://jasonmossotti.github.io/dco-vendor-scorecard/)**: one landing page with tabs for the scorecards, alarm board, post-incident review, weekly review, and failure patterns
 
 > Portfolio demonstration. All data, parties, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on internal information from, any real company.
 
@@ -29,7 +29,8 @@ At a partner-operated site, the vendor does the hands-on work and the site lead 
 | Synthetic GB200 NVL72 site data generator ([`docs/DATA_MODEL.md`](docs/DATA_MODEL.md)) | Done, tested |
 | Connectors and discrepancy engine ([`reports/discrepancy_report.md`](reports/discrepancy_report.md)) | Done, tested |
 | Weekly scorecard ([`reports/scorecard.md`](reports/scorecard.md)) | Done, tested |
-| Interactive demo ([live](https://jasonmossotti.github.io/dco-vendor-scorecard/)) | Done, tested |
+| Interactive demo ([live](https://jasonmossotti.github.io/dco-vendor-scorecard/app/)) | Done, tested |
+| Unified Site Management overview and tab bar ([live](https://jasonmossotti.github.io/dco-vendor-scorecard/)) | Done, tested |
 | Site model and drawings ([`docs/site/SITE.md`](docs/site/SITE.md)) | Done, tested |
 
 ## The site
@@ -159,10 +160,12 @@ python scripts/run_engine.py --robustness 20    # also test 20 freshly generated
 
 ## Interactive demo
 
-The [demo](https://jasonmossotti.github.io/dco-vendor-scorecard/) runs the whole pipeline in the browser (Python via WebAssembly, no server). You can:
+The site opens on **Unified Site Management**, an overview with each function's headline numbers. A tab bar on every page reaches the Scorecards, Alarm Board, Post-Incident Review, Weekly Review, and Failure Patterns.
+
+The [Scorecards](https://jasonmossotti.github.io/dco-vendor-scorecard/app/) tab runs the whole pipeline in the browser (Python via WebAssembly, no server; the first load takes 20 to 40 seconds). You can:
 
 - Open on the **site summary**: both partners side by side, the outage that crossed the demarcation, and what attribution changed for the IT partner.
-- Switch views to the **IT partner (Ridgeline)** or **Landlord (Caprock)** scorecard: reported vs. measured, service levels, findings with evidence, and (for the Landlord) every facility event with its attribution.
+- Switch views (at the top of the page) to the **IT partner (Ridgeline)** or **Landlord (Caprock)** scorecard: reported vs. measured, service levels, findings with evidence, and (for the Landlord) every facility event with its attribution.
 - Switch between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), or a brand-new random month.
 - Drill into each finding's evidence, the corrective action plans, and every incident.
 

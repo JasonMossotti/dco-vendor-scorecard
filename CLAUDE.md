@@ -1,7 +1,7 @@
 # CLAUDE.md: dco-vendor-scorecard
 
 Portfolio project for a Data Center Operations Lead (partner-operated sites) application. Owner: Jason Mossotti.
-Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/alarms/` (Customer alarm board).
+Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (Unified Site Management overview), `/app/` (scorecard app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/alarms/` (Customer alarm board).
 
 Fictional Site AUS-1 (Central Texas): the Customer leases halls from a Landlord (Caprock Critical Facilities: building, power, cooling, CDUs) and contracts an IT Partner (Ridgeline Site Services: data hall work). SLAs as code, synthetic telemetry with planted discrepancies, one engine per partner, cross-partner fault attribution, scorecards that compare self-reports with measurement. Everything synthetic; never imply knowledge of any real company's internal systems.
 
@@ -53,7 +53,7 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/render_pir.py && python scripts/render_weekly.py \
   && python scripts/generate_history.py && python scripts/render_patterns.py \
   && python scripts/generate_changes.py && python scripts/render_alarms.py
-pytest -q                                      # 251 tests as of 2026-10-06
+pytest -q                                      # 262 tests as of 2026-10-06
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 

@@ -20,6 +20,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from scorecard import sitenav  # noqa: E402
 from scorecard.weekly import STATUS_TEXT, WeeklyData, build_all  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
@@ -191,7 +192,7 @@ def outputs() -> dict[Path, str]:
 
 def html_page() -> str:
     data = {"weeks": packs(), "notes": notes()}
-    tpl = (ROOT / "templates" / "weekly.html").read_text(encoding="utf-8")
+    tpl = sitenav.inject((ROOT / "templates" / "weekly.html").read_text(encoding="utf-8"), "weekly")
     return tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/"))
 
 

@@ -2,7 +2,7 @@ const { JSDOM } = require("jsdom");
 const fs = require("fs");
 const html = fs.readFileSync(process.argv[2], "utf8");
 const errors = [];
-const dom = new JSDOM(html, { runScripts: "dangerously", virtualConsole: new (require("jsdom").VirtualConsole)().on("jsdomError", e => errors.push(String(e))) });
+const dom = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/pir/", virtualConsole: new (require("jsdom").VirtualConsole)().on("jsdomError", e => errors.push(String(e))) });
 const d = dom.window.document;
 const t = () => d.getElementById("doc").textContent;
 const ok = (c, m) => { if (!c) { console.log("FAIL:", m); process.exitCode = 1; } else console.log("ok:", m); };
@@ -30,3 +30,13 @@ ok(d.getElementById("refnote").textContent.includes("No P1 or P2"), "unknown ref
 d.getElementById("plainonly").checked = true; d.getElementById("plainonly").dispatchEvent(new dom.window.Event("change"));
 ok(d.body.classList.contains("plainonly"), "plain-language toggle");
 ok(errors.length === 0, "still no script errors " + errors.join(";"));
+// Deep links: the Overview's "Blank form" button opens /pir/#blank.
+const errs2 = [];
+const dom2 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/pir/#blank", virtualConsole: new (require("jsdom").VirtualConsole)().on("jsdomError", e => errs2.push(String(e))) });
+const d2 = dom2.window.document;
+ok(errs2.length === 0, "no script errors on #blank " + errs2.join(";"));
+ok(d2.getElementById("t-blank").classList.contains("on") && !d2.getElementById("t-example").classList.contains("on"), "#blank opens the blank form tab");
+ok(d2.querySelectorAll("textarea").length >= 8, "#blank shows the editable form");
+d2.getElementById("t-example").click();
+ok(dom2.window.location.hash === "#example" && d2.getElementById("doc").textContent.includes("Rack A07 lost both power feeds"), "switching tabs updates the link");
+ok(d.querySelector("nav.usm a.on").dataset.tab === "pir", "site tab bar marks Post-Incident Review");

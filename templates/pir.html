@@ -5,11 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Post-Incident Review · Site AUS-1</title>
 <style>
+__SITENAV_CSS__
 :root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --ll:#b45309; --it:#1f5fbf; --cu:#4b5563; --ok:#1d7a46; --bad:#b42318; }
 * { box-sizing:border-box; }
 body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
-header.top { background:#1e2933; color:#fff; padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
-header.top a { color:#cfe0ff; }
+header.top { background:#fff; color:var(--ink); border-bottom:1px solid var(--line); padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top a { color:var(--it); }
+header.top strong { font-size:16px; }
 .tabs button, .tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
 .tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
 .tools { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
@@ -39,8 +41,9 @@ textarea { min-height:70px; resize:vertical; }
 </style>
 </head>
 <body>
+__SITENAV__
 <header class="top">
-  <div><strong>Post-Incident Review</strong> · Site AUS-1 (fictional) · <a href="../">back to the scorecard demo</a> · <a href="../weekly/">weekly review</a> · <a href="../patterns/">failure patterns</a> · <a href="../alarms/">alarm board</a></div>
+  <div><strong>Post-Incident Review</strong></div>
   <div class="tabs"><button id="t-example" class="on">Example: Rack A07</button> <button id="t-blank">Blank form</button></div>
   <div class="tools">
     <label style="font-size:13px;"><input type="checkbox" id="plainonly"> Plain-language view</label>
@@ -200,15 +203,23 @@ function wireBlank() {
   };
 }
 
-document.getElementById("t-example").onclick = () => { mode = "example"; document.getElementById("t-example").classList.add("on"); document.getElementById("t-blank").classList.remove("on"); show(); };
-document.getElementById("t-blank").onclick = () => { mode = "blank"; document.getElementById("t-blank").classList.add("on"); document.getElementById("t-example").classList.remove("on"); show(); };
+function setMode(m) {   // #blank deep-links to the blank form
+  mode = m;
+  document.getElementById("t-example").classList.toggle("on", m === "example");
+  document.getElementById("t-blank").classList.toggle("on", m === "blank");
+  const hash = m === "blank" ? "#blank" : "#example";
+  if (location.hash !== hash) history.replaceState(null, "", hash);
+  show();
+}
+document.getElementById("t-example").onclick = () => setMode("example");
+document.getElementById("t-blank").onclick = () => setMode("blank");
 document.getElementById("plainonly").onchange = e => document.body.classList.toggle("plainonly", e.target.checked);
 document.getElementById("print").onclick = () => window.print();
 document.getElementById("md").onclick = () => {
   const blob = new Blob([toMarkdown()], {type: "text/markdown"});
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = (mode === "example" ? DATA.example.id : "PIR-draft") + ".md"; a.click();
 };
-show();
+if (location.hash === "#blank") setMode("blank"); else show();
 </script>
 </body>
 </html>

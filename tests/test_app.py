@@ -57,7 +57,21 @@ def test_app_has_no_what_if_controls(monkeypatch):
     fake = run_app(monkeypatch)
     assert not [k for k, _ in fake.drawn if k == "slider"]
     headers = " ".join(fake.texts("header"))
-    assert "What if" not in headers and "Data" in headers
+    assert "What if" not in headers
+
+
+def test_app_navigation_is_on_the_page_not_in_a_sidebar(monkeypatch):
+    """Views are a segmented control at the top; the site's tab bar carries the links to the other pages."""
+    fake = run_app(monkeypatch)
+    assert fake.sidebar_used == [], f"nothing is drawn in the sidebar: {fake.sidebar_used}"
+    seg = [p for k, p in fake.drawn if k == "segmented_control"]
+    assert seg == [("View", ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)"])]
+
+
+def test_view_survives_being_clicked_off(monkeypatch):
+    """Clicking the selected segment returns None in real Streamlit; the app keeps the last view."""
+    fake = run_app(monkeypatch, overrides={"View": None}, session_state={"last_view": "Landlord (Caprock)"})
+    assert any("Landlord SLA Scorecard" in t for t in fake.texts("title")), "a None view falls back to the last view"
 
 
 def test_app_generate_flow(monkeypatch):
@@ -75,6 +89,7 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     import build_site
     site = tmp_path / "site"
     build_site.build(site)
+    site = site / "app"                              # the app is served at /app/, under the site tab bar
     html = (site / "index.html").read_text(encoding="utf-8")
     assert f"@stlite/browser@{build_site.STLITE_VERSION}/build/stlite.js" in html
     assert 'entrypoint: "streamlit_app.py"' in html and "app_bundle.zip" in html

@@ -34,33 +34,44 @@ SEV_ORDER = ["S1", "S2", "S3", "S4"]
 st.set_page_config(page_title="DCO Vendor Scorecard", page_icon="📊", layout="wide")
 CONTRACT = load_sla(ROOT / "sla" / "it_partner.yaml")
 # --------------------------------------------------------------------------- #
-# Sidebar: dataset
+# Controls: which partner, and which dataset (the site's tab bar sits above the app)
 # --------------------------------------------------------------------------- #
-st.sidebar.header("Data")
+VIEWS = ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)"]
+GENERATE = "Generate a new random month"
 datasets = A.available_datasets(ROOT)
-choices = list(datasets) + ["Generate a new random month"]
-pick = st.sidebar.radio("Dataset", choices, index=0)
-if pick == "Generate a new random month":
-    seed = st.sidebar.number_input("Seed", min_value=1, max_value=99999, value=7, step=1)
-    if st.sidebar.button("Generate"):
-        with st.spinner("Generating a synthetic month..."):
-            st.session_state["generated"] = (int(seed), str(A.generate_month(int(seed), ROOT)))
+choices = list(datasets) + [GENERATE]
+
+
+def _keep_view() -> None:
+    """A segmented control can be clicked off; keep the last view instead of showing none."""
+    if st.session_state.get("view") is None:
+        st.session_state["view"] = st.session_state.get("last_view", VIEWS[0])
+
+
+st.session_state.setdefault("view", VIEWS[0])
+left, right = st.columns([3, 2], vertical_alignment="bottom")
+with left:
+    view = st.segmented_control("View", VIEWS, key="view", on_change=_keep_view) or st.session_state.get("last_view", VIEWS[0])
+    st.session_state["last_view"] = view
+with right:
+    pick = st.selectbox("Dataset", choices, index=0)
+if pick == GENERATE:
+    c1, c2, _ = st.columns([1, 1, 3], vertical_alignment="bottom")
+    with c1:
+        seed = st.number_input("Seed", min_value=1, max_value=99999, value=7, step=1)
+    with c2:
+        if st.button("Generate"):
+            with st.spinner("Generating a synthetic month..."):
+                st.session_state["generated"] = (int(seed), str(A.generate_month(int(seed), ROOT)))
     gen = st.session_state.get("generated")
     if gen is None:
-        st.info("Choose a seed and press **Generate** in the sidebar. Each seed is a different, reproducible month.")
+        st.info("Choose a seed and press **Generate**. Each seed is a different, reproducible month.")
         st.stop()
     data_dir = gen[1]
-    st.sidebar.caption(f"Showing generated month for seed {gen[0]}.")
+    st.caption(f"Showing generated month for seed {gen[0]}.")
 else:
     data_dir = str(datasets[pick])
-
-VIEWS = ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)"]
-view = st.sidebar.radio("View", VIEWS, index=0)
-
-st.sidebar.divider()
-st.sidebar.markdown(f"[Post-incident review: rack A07](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) (blank form and completed example)")
-st.sidebar.markdown(f"[Weekly operations review](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) (one pack per week, both partners)")
-st.sidebar.markdown(f"[Source code and contracts on GitHub]({REPO})")
+st.divider()
 
 # --------------------------------------------------------------------------- #
 # Run
@@ -208,7 +219,7 @@ def render_site() -> None:
     st.dataframe(pd.DataFrame(A.attribution_change_rows(sc, it_plain)), hide_index=True)
     st.markdown("Without attribution, the IT Partner would be charged for hours the Landlord's equipment kept the rack dark. "
                 "With it, each party is charged only for its own side of the demarcation.")
-    st.caption("Switch views in the sidebar for each partner's full scorecard.")
+    st.caption("Use IT Partner and Landlord above for each partner's full scorecard.")
 
 
 def render_landlord() -> None:

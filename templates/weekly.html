@@ -5,11 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weekly Operations Review · Site AUS-1</title>
 <style>
+__SITENAV_CSS__
 :root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --ll:#b45309; --it:#1f5fbf; --ok:#1d7a46; --warn:#a15c00; --bad:#b42318; }
 * { box-sizing:border-box; }
 body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
-header.top { background:#1e2933; color:#fff; padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
-header.top a { color:#cfe0ff; }
+header.top { background:#fff; color:var(--ink); border-bottom:1px solid var(--line); padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top a { color:var(--it); }
+header.top strong { font-size:16px; }
 .tabs button, .tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
 .tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
 .tabs button .dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--ll); margin-left:6px; vertical-align:middle; }
@@ -31,8 +33,9 @@ tr.default td { background:#fdf0ef; } .gap { color:var(--bad); font-size:12px; }
 </style>
 </head>
 <body>
+__SITENAV__
 <header class="top">
-  <div><strong>Weekly Operations Review</strong> · Site AUS-1 (fictional) · <a href="../">scorecard demo</a> · <a href="../pir/">post-incident review</a> · <a href="../patterns/">failure patterns</a> · <a href="../alarms/">alarm board</a></div>
+  <div><strong>Weekly Operations Review</strong></div>
   <div class="tabs" id="tabs"></div>
   <div class="tools"><button id="print">Print / save PDF</button></div>
 </header>

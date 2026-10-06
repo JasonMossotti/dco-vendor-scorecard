@@ -23,6 +23,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from scorecard import sitenav  # noqa: E402
 from scorecard import alarms as A  # noqa: E402
 from scorecard.connectors import FileConnector  # noqa: E402
 from scorecard.sla_model import load_interface_agreement  # noqa: E402
@@ -178,7 +179,7 @@ def markdown(f: dict) -> str:
 
 def html_page() -> str:
     f = prepare()
-    tpl = (ROOT / "templates" / "alarms.html").read_text(encoding="utf-8")
+    tpl = sitenav.inject((ROOT / "templates" / "alarms.html").read_text(encoding="utf-8"), "alarms")
     return tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/"))
 
 
