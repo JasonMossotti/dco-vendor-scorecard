@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from scorecard import alarms as A  # noqa: E402
+from scorecard.connectors import FileConnector  # noqa: E402
 from scorecard.sla_model import load_interface_agreement  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
@@ -59,16 +60,19 @@ def prepare() -> dict:
     for a in alarms:
         d = A.alarm_dict(a)
         d["owed"] = owed_by_alarm.get(a.id, [])
+        d["keys"] = sorted(a.keys)
         rows.append(d)
+    src = FileConnector(SAMPLE)
+    sitemap = A.SiteMap(A.S.load_site(), src.get("topology"))
     decls = []
     for dcl in r["declarations"]:
         mine = [a for a in alarms if a.change == dcl["change_id"]]
         c = Counter(a.cls for a in mine)
-        decls.append({**dcl, "counts": {k: c.get(k, 0) for k in (A.EXPECTED, A.OUT_OF_SCOPE, A.OUT_OF_WINDOW)},
+        decls.append({**dcl, "scope": sorted(set().union(*(sitemap.scope(x) for x in dcl["assets"]))), "counts": {k: c.get(k, 0) for k in (A.EXPECTED, A.OUT_OF_SCOPE, A.OUT_OF_WINDOW)},
                       "alarms": [a.id for a in mine]})
     ia = load_interface_agreement()
     return {"window": r["window"], "alarms": rows, "declarations": decls, "owed": r["owed"], "key_measures": r["key_measures"],
-            "conflicts": r["conflicts"], "score": s, "rules": ia["alarm_notification"],
+            "conflicts": r["conflicts"], "tickets": A.trouble_tickets(src), "score": s, "rules": ia["alarm_notification"],
             "class_text": A.CLASS_TEXT, "offset_h": OFFSET.total_seconds() / 3600, "pir": PIR,
             "a07": a07_facts(alarms, r["declarations"], r["owed"])}
 

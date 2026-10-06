@@ -224,3 +224,16 @@ def test_alarm_board_builds_and_works(tmp_path):
         pytest.skip("node and jsdom not installed (CI runs this check)")
     proc = subprocess.run([node, "alarms_page.cjs", str(out)], capture_output=True, text=True, cwd=ROOT / "tests" / "js")
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_trouble_tickets_cover_both_partners_without_planned_work():
+    tk = A.trouble_tickets(FileConnector(SAMPLE))
+    ids = {t["id"] for t in tk}
+    assert "WO-41017" not in ids and "WO-41021" not in ids          # planned work orders (MOP-308, MOP-309) are change work
+    assert "WO-41014" in ids                                          # Landlord work with no MOP is still a ticket
+    wo = next(t for t in tk if t["id"] == "WO-41023")
+    assert wo["keys"] == ["rack:A07"] and wo["domains"] == ["power", "compute"] and wo["closed"] == "2026-09-15T19:27:55Z"
+    inc = next(t for t in tk if t["id"] == "INC3100629")
+    assert inc["partner"] == "IT Partner" and inc["keys"] == ["rack:A05"] and inc["domains"] == ["compute"]
+    utility = next(t for t in tk if t["id"] == "WO-41009")
+    assert utility["domains"] == ["power"]

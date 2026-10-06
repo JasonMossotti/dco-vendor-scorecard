@@ -55,6 +55,14 @@ alarm_map:
     fault: {signal: Detector fault, severity: minor}
     alarm_levels: {Alert: minor, Action: critical, "Fire 1": critical, "Fire 2": critical}
   bms_override: {severity: minor}
+  it_ticket_domain:                             # IT Partner ticket category -> domain (Landlord work orders use bms_domain)
+    tray_gpu: [compute]
+    switch_tray: [compute]
+    optic_link: [network]
+    psu: [power]
+    power_shelf: [power]
+    rack_facility: [power]
+    leak: [cooling]
   it:
     rack_leak: {signal: Rack leak detected, severity: critical, domain: [cooling]}
     psu_failed: {signal: PSU failed, severity: minor, domain: [power]}

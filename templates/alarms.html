@@ -41,6 +41,20 @@ tr.hl td { background:var(--hl) !important; } tr.row { cursor:pointer; } tr.deta
 .ch.flag { border-left-color:var(--oos); } .ch.soon { border-left-style:dashed; border-left-color:var(--it); } .ch h3 { margin:0; font-size:13px; } .ch .n { color:var(--muted); font-size:12px; }
 .note { font-size:12px; color:var(--muted); } .empty { color:var(--muted); padding:10px 0; }
 ul.rules li { margin:4px 0; }
+.modes { display:inline-flex; border:2px solid var(--ink); border-radius:8px; overflow:hidden; margin:0 0 10px; }
+.modes button { font:inherit; font-weight:700; font-size:14px; padding:7px 18px; border:0; background:#fff; color:var(--ink); cursor:pointer; }
+.modes button.on { background:var(--ink); color:#fff; } .modes button[data-mode=live].on { background:var(--crit); }
+.livebadge { color:var(--crit); font-weight:700; } label.tog { font-size:12px; color:var(--ink); display:inline-flex; gap:4px; align-items:center; }
+.alert { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fdeceb; border:1px solid var(--oos); border-left:6px solid var(--oos); border-radius:6px; padding:8px 10px; margin:8px 0; }
+.alert button { font:inherit; border:1px solid var(--oos); background:#fff; color:var(--oos); padding:3px 10px; border-radius:5px; cursor:pointer; font-weight:600; }
+.ch.soon.flag { border-left-color:var(--oos); }
+.ch .warn { color:var(--oos); font-size:12px; font-weight:600; margin-top:2px; }
+.grp { display:inline-block; margin-left:6px; padding:0 7px; border:1px solid var(--it); border-radius:9px; font-size:11px; color:var(--it); background:#fff; cursor:pointer; white-space:nowrap; }
+tr.child { background:#fafbfc; } tr.tk.closed td { color:var(--muted); } tr.tk[data-change] { cursor:pointer; }
+svg.tl { width:100%; height:auto; display:block; min-width:640px; } tr.tlrow td { padding:0 6px 10px; } #tlwrap svg.tl { margin-bottom:4px; }
+.modal { position:fixed; inset:0; background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; z-index:10; padding:16px; }
+.modal .box { background:#fff; border-radius:8px; padding:14px 16px; width:min(780px,100%); max-height:92vh; overflow:auto; }
+.modal textarea { width:100%; font:12px/1.45 ui-monospace,Consolas,monospace; border:1px solid var(--line); border-radius:4px; padding:8px; }
 @media (max-width:700px) { header.top { padding:8px 12px; } main { padding:0 8px; } section.view { padding:10px; } }
 </style>
 </head>
@@ -57,25 +71,40 @@ ul.rules li { margin:4px 0; }
 const D = JSON.parse(document.getElementById("data").textContent);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ms = iso => iso ? Date.parse(iso) : null;
-const OFF = D.offset_h * 3600e3, MIN = 60e3, GRACE = D.declarations.length ? D.declarations[0].grace_min * MIN : 15 * MIN;
+const OFF = D.offset_h * 3600e3, MIN = 60e3, HOUR = 60 * MIN, DAY = 24 * HOUR;
+const GRACE = D.declarations.length ? D.declarations[0].grace_min * MIN : 15 * MIN;
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const p2 = n => String(n).padStart(2, "0");
-const local = t => { if (t == null) return ""; const d = new Date(t + OFF); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`; };
-const clock = (t, off) => { const d = new Date(t + off); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}:${p2(d.getUTCSeconds())}`; };
-const zulu = t => t == null ? "" : new Date(t).toISOString().slice(0, 16).replace("T", " ") + "Z";
 const W0 = ms(D.window.start), W1 = ms(D.window.end);
-const A = D.alarms.map(a => ({...a, t:ms(a.raised), tc:ms(a.cleared), ta:ms(a.ack_at)}));
-const CT = D.class_text, FLAG = ["out_of_scope", "out_of_window"];
+const A = D.alarms.map(a => ({...a, t:ms(a.raised), tc:ms(a.cleared), ta:ms(a.ack_at), keys:a.keys || []}));
+const TK = (D.tickets || []).map(k => ({...k, t:ms(k.opened), tc:ms(k.closed)}));
+const CT = D.class_text, FLAG = ["out_of_scope", "out_of_window"], RANK = {minor:1, major:2, critical:3};
 const START = ms(D.a07.overrun.raised) + 9 * MIN;   // opens during the rack A07 outage, just after the overrun alert
-const S = { view:"board", T:START, sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1, q:"", hl:"", change:"", open:new Set(), timer:null, speed:3600 };
 const SPEEDS = [[1, "Real time"], [60, "1 min per second"], [600, "10 min per second"], [3600, "1 h per second"]];
-const LEAD = 6 * 60 * MIN;   // upcoming planned change work: 6 hour lead time
+const LEADS = Array.from({length:12}, (_, i) => 2 * (i + 1));   // upcoming change work lead time: 2 to 24 hours
+const REAP = 6 * HOUR;    // cleared alarms and closed tickets stay on the board this long
+const SHIFT = 12 * HOUR;  // the shift handoff looks back one 12-hour shift
+const SPAN = Math.floor((W1 - W0) / DAY) * DAY;   // whole days of sample the simulated live feed cycles through
+const S = { view:"board", mode:"history", T:START, shift:0, sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1, q:"", hl:"",
+  change:"", open:new Set(), xopen:new Set(), timer:null, live:null, speed:3600, lead:6, group:true, sound:false, seen:new Set(), heard:0, handoff:"" };
+
+// Board times. On the live board the sample is re-dated by S.shift so it runs on the viewer's own clock.
+const sh = () => (S.mode === "live" && S.view === "board") ? S.shift : 0;
+const fmt = (t, off, sec) => { const d = new Date(t + off); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}${sec ? ":" + p2(d.getUTCSeconds()) : ""}`; };
+const local = t => t == null ? "" : fmt(t + sh(), OFF, false);
+const clock = (t, off) => fmt(t + sh(), off, true);
+const zulu = t => t == null ? "" : new Date(t + sh()).toISOString().slice(0, 16).replace("T", " ") + "Z";
+const hhmm = t => local(t).slice(-5);
 const dur = m => m >= 60 ? `${Math.floor(m / 60)} h ${p2(m % 60)} min` : `${m} min`;
+const meet = (x, y) => x.some(v => y.includes(v));
+const assetsText = d => d.assets.map(x => x.replace("rack:", "rack ")).join(", ");
+const liveShift = wall => wall - (W0 + ((wall - W0) % SPAN + SPAN) % SPAN);   // whole days, so the time of day is the sample's
 
 const stateAt = (a, T) => (a.tc != null && a.tc <= T) ? "cleared" : "active";
+const openAt = (k, T) => k.t <= T && (k.tc == null || k.tc > T);
 function base(T) {
-  const q = S.q.toLowerCase();
-  return A.filter(a => a.t <= T && a.t >= S.from && a.t <= S.to + 864e5 - 1
+  const q = S.q.toLowerCase(), live = S.mode === "live";
+  return A.filter(a => a.t <= T && (live ? (a.tc == null || a.tc > T - REAP) : (a.t >= S.from && a.t <= S.to + DAY - 1))
     && (S.party === "all" || a.partner === S.party) && (S.hall === "all" || a.hall === S.hall)
     && (!S.change || a.change === S.change)
     && (!q || [a.id, a.device, a.summary, a.signal, a.location, a.change, a.ticket && a.ticket.id, a.source].join(" ").toLowerCase().includes(q)));
@@ -91,6 +120,26 @@ function ticketAt(a, T) {
 const partyBadge = p => `<span class="badge ${p === "Landlord" ? "Landlord" : "IT"}">${p === "Landlord" ? "Landlord" : "IT Partner"}</span>`;
 const clsBadge = c => c === "not_change_work" ? "" : `<span class="badge ${c}">${esc(CT[c])}</span>`;
 
+// Flood grouping: alarms on one ticket, or under a rack outage within 10 minutes, are one event.
+const GK = {};
+A.forEach(a => { if (a.ticket) GK[a.id] = "tk:" + a.ticket.id; });
+A.filter(a => a.signal === "Rack outage").forEach(r => {
+  const k = GK[r.id] || (GK[r.id] = "ro:" + r.id);
+  A.forEach(a => { if (a !== r && !GK[a.id] && a.rack === r.rack && a.partner === r.partner && Math.abs(a.t - r.t) <= 10 * MIN) GK[a.id] = k; });
+});
+const pinned = (a, T) => FLAG.includes(a.cls) && stateAt(a, T) === "active";
+function grouped(rows, T) {
+  if (!S.group) return rows.map(a => [a, []]);
+  const by = new Map(), out = [];
+  rows.forEach(a => { const k = GK[a.id]; if (!k) out.push([a, []]); else if (by.has(k)) by.get(k)[1].push(a); else { const g = [a, []]; by.set(k, g); out.push(g); } });
+  // The parent is a pinned flag if there is one, then a flag, then the most severe, then the earliest: a flag is never hidden.
+  return out.map(([a, kids]) => {
+    if (!kids.length) return [a, kids];
+    const all = [a, ...kids].sort((x, y) => pinned(y, T) - pinned(x, T) || FLAG.includes(y.cls) - FLAG.includes(x.cls) || RANK[y.severity] - RANK[x.severity] || x.t - y.t);
+    return [all[0], all.slice(1)];
+  });
+}
+
 function chips(T) {
   const b = base(T);
   const n = k => b.filter(a => sevKey(a, T) === k).length, m = c => b.filter(a => a.cls === c).length;
@@ -100,37 +149,153 @@ function chips(T) {
   return `<div class="bar" id="chips">${sevs.map(([k,l,col]) => c(S.sev, k, l, col, n(k), "sev")).join("")}<span class="note">|</span>${cls.map(([k,l,col]) => c(S.cls, k, l, col, m(k), "cls")).join("")}</div>`;
 }
 
+// Change work: in progress, upcoming within the lead time, and what stands in the way of upcoming work.
+const inProgress = T => D.declarations.filter(d => (ms(d.window_start) - GRACE <= T && T <= ms(d.window_end) + GRACE)
+  || A.some(a => a.change === d.change_id && FLAG.includes(a.cls) && a.t <= T && stateAt(a, T) === "active"));
+const upcoming = T => D.declarations.filter(d => ms(d.window_start) - GRACE > T && ms(d.window_start) <= T + S.lead * HOUR)
+  .sort((x, y) => ms(x.window_start) - ms(y.window_start));
+function warnings(d, T) {
+  const sc = d.scope || d.assets;
+  const tks = TK.filter(k => openAt(k, T) && meet(k.keys, sc) && meet(k.domains, d.domains));
+  const ids = new Set(tks.map(k => k.id));
+  const als = A.filter(a => a.t <= T && stateAt(a, T) === "active" && RANK[a.severity] >= 2 && a.cls !== "expected"
+    && meet(a.keys, sc) && meet(a.domains, d.domains) && !(a.ticket && ids.has(a.ticket.id)));
+  return [...D.conflicts.filter(c => c.changes.includes(d.change_id)).map(c => `Change conflict: ${c.text}`),
+    ...tks.map(k => `Live trouble: ${k.device} has open ${k.id} (${k.priority}, ${k.summary})`),
+    ...als.map(a => `Live trouble: ${a.device} has an active ${a.severity} alarm since ${hhmm(a.t)} CDT (${a.summary})`)];
+}
 function changePanel(T) {
-  const act = D.declarations.filter(d => (ms(d.window_start) - GRACE <= T && T <= ms(d.window_end) + GRACE)
-    || A.some(a => a.change === d.change_id && FLAG.includes(a.cls) && a.t <= T && stateAt(a, T) === "active"));
+  const act = inProgress(T);
   if (!act.length) return `<div class="empty" id="active-changes">No change work in progress at ${esc(local(T))} CDT.</div>`;
   return `<div class="changes" id="active-changes">${act.map(d => {
     const mine = A.filter(a => a.change === d.change_id && a.t <= T);
     const f = mine.filter(a => FLAG.includes(a.cls)).length, e = mine.filter(a => a.cls === "expected").length;
     return `<div class="ch ${f ? "flag" : ""}" data-change="${esc(d.change_id)}"><h3>${esc(d.change_id)} · ${partyBadge(d.owner)} ${esc(d.title)}</h3>
-      <div class="n">Window ${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)))} CDT · declared ${esc(d.assets.map(x => x.replace("rack:", "rack ")).join(", "))} · worst ${esc(d.max_severity)}</div>
+      <div class="n">Window ${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)))} CDT · declared ${esc(assetsText(d))} · worst ${esc(d.max_severity)}</div>
       <div class="n">${e} expected · <b style="color:var(--oos)">${f} not reconciled</b></div></div>`; }).join("")}</div>`;
 }
-
 function upcomingPanel(T) {
-  const up = D.declarations.filter(d => ms(d.window_start) - GRACE > T && ms(d.window_start) <= T + LEAD)
-    .sort((x, y) => ms(x.window_start) - ms(y.window_start));
-  if (!up.length) return `<div class="empty" id="upcoming-changes">No change work scheduled to start in the next 6 hours.</div>`;
-  return `<div class="changes" id="upcoming-changes">${up.map(d => `<div class="ch soon" data-change="${esc(d.change_id)}"><h3>${esc(d.change_id)} · ${partyBadge(d.owner)} ${esc(d.title)}</h3>
+  const up = upcoming(T);
+  if (!up.length) return `<div class="empty" id="upcoming-changes">No change work scheduled to start in the next ${S.lead} hours.</div>`;
+  return `<div class="changes" id="upcoming-changes">${up.map(d => { const w = warnings(d, T);
+    return `<div class="ch soon${w.length ? " flag" : ""}" data-change="${esc(d.change_id)}"><h3>${esc(d.change_id)} · ${partyBadge(d.owner)} ${esc(d.title)}</h3>
       <div class="n">Starts in <b>${dur(Math.ceil((ms(d.window_start) - T) / MIN))}</b> · window ${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)))} CDT</div>
-      <div class="n">Declared ${esc(d.assets.map(x => x.replace("rack:", "rack ")).join(", "))} · worst ${esc(d.max_severity)}${d.redundancy_reduced ? " · reduces redundancy" : ""}</div></div>`).join("")}</div>`;
+      <div class="n">Declared ${esc(assetsText(d))} · worst ${esc(d.max_severity)}${d.redundancy_reduced ? " · reduces redundancy" : ""}</div>
+      ${w.map(x => `<div class="warn">⚠ ${esc(x)}. Confirm before starting.</div>`).join("")}</div>`; }).join("")}</div>`;
 }
 
-function rowHtml(a, T) {
+// Tickets: open trouble tickets and change tickets, plus anything closed within the reap time.
+function ticketPanel(T) {
+  const pr = p => +String(p).replace(/\D/g, "") || 9;
+  const tr = TK.filter(k => k.t <= T && (k.tc == null || k.tc > T - REAP) && (S.party === "all" || k.partner === S.party))
+    .sort((x, y) => openAt(y, T) - openAt(x, T) || pr(x.priority) - pr(y.priority) || y.t - x.t);
+  const ch = D.declarations.filter(d => ms(d.window_start) - GRACE <= T && ms(d.window_end) + GRACE > T - REAP && (S.party === "all" || d.owner === S.party));
+  if (!tr.length && !ch.length) return `<div class="empty" id="tickets">No open tickets and nothing closed in the last 6 hours.</div>`;
+  const trRow = k => { const o = openAt(k, T);
+    return `<tr class="tk ${o ? "open" : "closed"}"><td>${esc(k.id)}</td><td>Trouble</td><td>${partyBadge(k.partner)}</td><td>${esc(k.priority)}</td><td>${esc(k.device)}</td><td class="sum">${esc(k.summary)}</td><td>${esc(local(k.t))}</td>
+      <td>${o ? `<b>Open</b> ${dur(Math.floor((T - k.t) / MIN))}` : `Closed ${esc(hhmm(k.tc))}`}</td></tr>`; };
+  const chRow = d => { const done = T > ms(d.window_end) + GRACE;
+    return `<tr class="tk ${done ? "closed" : "open"}" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>Change</td><td>${partyBadge(d.owner)}</td><td></td><td>${esc(assetsText(d))}</td><td class="sum">${esc(d.title)}</td><td>${esc(local(ms(d.window_start)))}</td>
+      <td>${done ? `Window closed ${esc(hhmm(ms(d.window_end)))}` : `<b>In progress</b> until ${esc(hhmm(ms(d.window_end)))}`}</td></tr>`; };
+  return `<div class="wide"><table id="tickets"><tr><th>Ticket</th><th>Type</th><th>Partner</th><th>Priority</th><th>Device</th><th>Summary</th><th>Opened (CDT)</th><th>Status</th></tr>
+    ${ch.map(chRow).join("")}${tr.map(trRow).join("")}</table></div>`;
+}
+
+// Per-change timeline: window and grace, each alarm from raised to cleared, and the notifications owed for it.
+function timeline(d, T) {
+  const ws = ms(d.window_start), we = ms(d.window_end);
+  const all = A.filter(a => a.change === d.change_id).sort((x, y) => x.t - y.t);
+  const owed = D.owed.filter(o => all.some(a => a.id === o.alarm));
+  const due = o => ms(o.raised) + o.within_min * MIN;
+  const x0 = Math.min(ws - HOUR, ...all.map(a => a.t - 15 * MIN));
+  const x1 = Math.max(we + GRACE + HOUR, ...all.map(a => (a.tc ?? a.t) + 15 * MIN), ...owed.map(o => (o.sent ? ms(o.sent) : due(o)) + 15 * MIN));
+  const W = 1000, PAD = 14, lane = 22, top = 40, H = top + lane * Math.max(1, all.length) + 6;
+  const X = t => (PAD + (t - x0) / (x1 - x0) * (W - 2 * PAD)).toFixed(1);
+  const seen = t => T == null || t <= T;
+  const col = {expected:"var(--exp)", out_of_scope:"var(--oos)", out_of_window:"var(--oow)", not_change_work:"var(--muted)"};
+  const stepH = [1, 2, 3, 6, 12, 24].find(h => (x1 - x0) / (h * HOUR) <= 9) || 24, step = stepH * HOUR;
+  let s = "";
+  for (let t = Math.ceil((x0 + OFF + sh()) / step) * step - OFF - sh(); t <= x1; t += step)
+    s += `<line x1="${X(t)}" x2="${X(t)}" y1="14" y2="${H}" stroke="var(--line)"/><text x="${X(t)}" y="10" font-size="10" text-anchor="middle" fill="var(--muted)">${esc(hhmm(t))}</text>`;
+  s += `<rect x="${X(ws - GRACE)}" y="18" width="${X(we + GRACE) - X(ws - GRACE)}" height="10" fill="var(--it)" opacity=".18"><title>Grace: 15 minutes either side</title></rect>`;
+  s += `<rect x="${X(ws)}" y="18" width="${X(we) - X(ws)}" height="10" rx="2" fill="var(--it)"><title>${esc(d.change_id)} window ${esc(local(ws))} to ${esc(hhmm(we))} CDT</title></rect>`;
+  all.forEach((a, i) => {
+    if (!seen(a.t)) return;
+    const y = top + i * lane + 12, end = T == null ? (a.tc ?? x1) : Math.min(a.tc ?? Infinity, T), xa = +X(a.t);
+    const label = `${a.device}: ${a.signal}`, right = xa > W * 0.62;
+    s += `<g><title>${esc(a.id)} · ${esc(a.summary)} · ${esc(CT[a.cls] || "Not change work")} · ${esc(local(a.t))} CDT</title>
+      <text x="${right ? X(end) : xa}" y="${y - 5}" font-size="10" fill="var(--ink)" text-anchor="${right ? "end" : "start"}">${esc(label)}</text>
+      <line x1="${xa}" x2="${X(end)}" y1="${y}" y2="${y}" stroke="${col[a.cls]}" stroke-width="5" stroke-linecap="round"/></g>`;
+    owed.filter(o => o.alarm === a.id).forEach(o => {
+      if (seen(due(o))) s += `<line x1="${X(due(o))}" x2="${X(due(o))}" y1="${y - 6}" y2="${y + 6}" stroke="var(--ink)" stroke-dasharray="2 2"><title>${esc(o.rule)} due ${esc(hhmm(due(o)))} CDT</title></line>`;
+      if (o.sent && seen(ms(o.sent))) { const xs = +X(ms(o.sent)), c = o.status === "on_time" ? "var(--clr)" : "var(--maj)";
+        s += `<path d="M${xs} ${y - 6} L${xs + 6} ${y} L${xs} ${y + 6} L${xs - 6} ${y} Z" fill="${c}" stroke="#fff"><title>${esc(o.rule)} by ${esc(o.party)}: ${esc(o.status.replace("_", " "))} (sent ${esc(hhmm(ms(o.sent)))} CDT)</title></path>`; }
+      else if (!o.sent && seen(due(o))) s += `<text x="${X(due(o))}" y="${y + 4}" font-size="13" font-weight="700" text-anchor="middle" fill="var(--crit)">✕<title>${esc(o.rule)} owed by ${esc(o.party)}: missing</title></text>`;
+    });
+  });
+  if (T != null && T >= x0 && T <= x1) s += `<line x1="${X(T)}" x2="${X(T)}" y1="14" y2="${H}" stroke="var(--crit)" stroke-dasharray="4 3"><title>Now</title></line>`;
+  return `<svg class="tl" data-change="${esc(d.change_id)}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Timeline of ${esc(d.change_id)}">${s}</svg>`;
+}
+const TL_LEGEND = `<p class="note">Blue bar: the declared window (pale: 15 minutes grace). Lines: each alarm from raised to cleared, colored by class. ◆ notification sent (green on time, orange late or incomplete); ✕ missing at its due time (dashed tick).</p>`;
+function focusTimeline(T) {
+  const d = S.change && D.declarations.find(x => x.change_id === S.change);
+  return d ? `<h2>Timeline: ${esc(d.change_id)} <span class="note">${esc(d.title)}</span></h2>${timeline(d, T)}${TL_LEGEND}` : "";
+}
+
+// Alert banner: alarms outside approved change work that this viewer has not acknowledged on the board.
+const pending = T => A.filter(a => pinned(a, T) && a.t <= T && !S.seen.has(a.id)).sort((x, y) => y.t - x.t);
+function banner(T) {
+  const p = pending(T); if (!p.length) return "";
+  const a = p[0];
+  return `<div class="alert" id="alert" role="alert"><b>${p.length === 1 ? "1 alarm" : p.length + " alarms"} outside approved change work</b>
+    <span>Newest: ${esc(CT[a.cls])} · ${esc(a.device)} · ${esc(a.summary)} · ${esc(local(a.t))} CDT${a.change ? " · " + esc(a.change) : ""}</span>
+    <button id="seen">Acknowledge</button></div>`;
+}
+function beep() {
+  try {
+    const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+    const c = S.audio || (S.audio = new C()), o = c.createOscillator(), g = c.createGain();
+    o.frequency.value = 880; g.gain.value = 0.08; o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + 0.25);
+  } catch (e) { /* no audio: the banner still shows */ }
+}
+function alertSound() { const n = pending(S.T).length; if (n > S.heard && S.sound) beep(); S.heard = n; }
+
+// Shift handoff: a plain-text summary as of the board's time.
+function handoffText(T) {
+  const L = [], act = A.filter(a => a.t <= T && stateAt(a, T) === "active"), n = s => act.filter(a => a.severity === s).length;
+  const pr = p => +String(p).replace(/\D/g, "") || 9;
+  const list = (title, items) => { L.push("", `${title} (${items.length}):`); if (!items.length) L.push("- none"); items.forEach(x => L.push(...[].concat(x))); };
+  L.push(`Site AUS-1 shift handoff, ${local(T)} CDT (${fmt(T + sh(), 0, false)} UTC)`);
+  L.push(S.mode === "live" ? "Live event board, simulated feed. Synthetic demonstration data." : "Alarm history board replay. Synthetic demonstration data.");
+  L.push("", `Active alarms: ${n("critical")} critical, ${n("major")} major, ${n("minor")} minor`);
+  list("Not reconciled with approved change work", act.filter(a => FLAG.includes(a.cls)).map(a =>
+    `- ${CT[a.cls]}: ${a.device}, ${a.summary} (${a.change}), since ${local(a.t)} CDT${a.ticket ? ", " + a.ticket.id : ""}`));
+  list("Open trouble tickets", TK.filter(k => openAt(k, T)).sort((x, y) => pr(x.priority) - pr(y.priority) || x.t - y.t).map(k =>
+    `- ${k.id} ${k.priority} ${k.partner}: ${k.device}, ${k.summary}, opened ${local(k.t)} CDT`));
+  list("Change work in progress", inProgress(T).map(d => { const mine = A.filter(a => a.change === d.change_id && a.t <= T);
+    return `- ${d.change_id} ${d.owner}: ${d.title}, window ${local(ms(d.window_start))} to ${hhmm(ms(d.window_end))} CDT, ${mine.filter(a => a.cls === "expected").length} expected, ${mine.filter(a => FLAG.includes(a.cls)).length} not reconciled`; }));
+  list(`Upcoming change work, next ${S.lead} hours`, upcoming(T).map(d =>
+    [`- ${d.change_id} ${d.owner}: ${d.title}, starts ${local(ms(d.window_start))} CDT`, ...warnings(d, T).map(w => `  ! ${w}`)]));
+  const since = T - SHIFT, cleared = A.filter(a => a.tc != null && a.tc > since && a.tc <= T), closed = TK.filter(k => k.tc != null && k.tc > since && k.tc <= T);
+  L.push("", `Closed in the last 12 hours: ${cleared.length} alarms cleared; tickets closed: ${closed.map(k => k.id).join(", ") || "none"}`);
+  L.push("", "Facts come from the partners' records. A flag means the records do not reconcile with an approved change, not that anyone did anything wrong.");
+  return L.join("\n");
+}
+const handoffModal = () => `<div class="modal" id="handoff"><div class="box"><h2>Shift handoff</h2>
+  <textarea id="hotext" readonly rows="22">${esc(S.handoff)}</textarea>
+  <div class="bar ctl"><button id="hocopy">Copy</button><button id="hodl">Download .txt</button><button id="hoclose">Close</button><span class="note" id="homsg"></span></div></div></div>`;
+
+function rowHtml(a, T, kids = [], child = false) {
   const st = stateAt(a, T), [tk, ts] = ticketAt(a, T), acked = a.ta != null && a.ta <= T;
   const hl = S.hl && [a.device, a.summary, a.location, a.change, tk].join(" ").toLowerCase().includes(S.hl.toLowerCase());
-  let h = `<tr class="row ${a.severity} ${st} ${a.cls}${hl ? " hl" : ""}" data-id="${a.id}">
+  const nf = kids.filter(k => FLAG.includes(k.cls)).length, g = GK[a.id];
+  let h = `<tr class="row ${a.severity} ${st} ${a.cls}${hl ? " hl" : ""}${child ? " child" : ""}" data-id="${a.id}" data-n="${child ? 0 : 1 + kids.length}">
     <td class="sev" title="${esc(a.severity)}"></td>
     <td><span class="ack ${acked ? "yes" : "no"}" title="${acked ? esc("Acknowledged " + local(a.ta) + " CDT by " + (a.ack_by || "")) : "Not acknowledged"}">${acked ? "✓" : "○"}</span></td>
     <td>${partyBadge(a.partner)}<div class="note">${esc(a.source)}</div></td>
     <td>${esc(tk)}<div class="note">${esc(ts)}</div></td>
     <td>${esc(a.device)}</td><td>${esc(a.location)}</td>
-    <td class="sum">${esc(a.summary)}</td>
+    <td class="sum">${child ? "↳ " : ""}${esc(a.summary)}${kids.length ? ` <span class="grp" data-g="${esc(g)}">${S.xopen.has(g) ? "−" : "+"}${kids.length} related${nf ? `, ${nf} flagged` : ""}</span>` : ""}</td>
     <td>${clsBadge(a.cls)} ${a.change ? `<div class="note">${esc(a.change)}</div>` : ""}</td>
     <td>${a.tally}</td>
     <td title="${esc(zulu(a.t))}">${esc(local(a.t))}</td>
@@ -147,49 +312,67 @@ function rowHtml(a, T) {
   }
   return h;
 }
+function alarmTable(T) {
+  const rows = visible(T);
+  rows.sort((x, y) => pinned(y, T) - pinned(x, T) || y.t - x.t);
+  const g = grouped(rows, T);
+  return `<h2>Alarms <span class="note" id="count">${rows.length} shown${g.length < rows.length ? ` in ${g.length} rows` : ""}${S.mode === "live" ? " · cleared alarms drop off after 6 hours" : ""}</span></h2>
+    <div class="wide"><table id="alarms"><tr><th></th><th>Ack</th><th>Source</th><th>Ticket</th><th>Device</th><th>Location</th><th>Summary</th><th>Change work</th><th>Tally</th><th>First (CDT)</th><th>Cleared</th></tr>
+    ${g.map(([a, kids]) => rowHtml(a, T, kids) + (kids.length && S.xopen.has(GK[a.id]) ? kids.map(k => rowHtml(k, T, [], true)).join("") : "")).join("")
+      || `<tr><td colspan="11" class="empty">No alarms match.</td></tr>`}</table></div>`;
+}
 
 function board() {
-  const T = S.T;
+  const T = S.T, live = S.mode === "live";
   const halls = [...new Set(A.map(a => a.hall))].sort();
   const date = t => new Date(t).toISOString().slice(0, 10);
-  return `<section class="view"><h1>Customer alarm board</h1>
-    <p class="sub">Both partners' alarm feeds in one table, checked against declared change work. Replay of the synthetic sample month (${esc(local(W0))} to ${esc(local(W1 - 1))} CDT). Rows that do not reconcile with an approved change are pinned to the top. ${S.T === START ? "Opened during the rack A07 outage on Sep 15; press End of data for the whole month." : ""}</p>
-    <div class="replay ctl"><span class="clock"><span id="now">${esc(clock(T, OFF))} CDT</span><span id="utc">${esc(clock(T, 0))} UTC</span></span>
+  const tools = `<label class="tog"><input type="checkbox" id="sound"${S.sound ? " checked" : ""}> Sound on new flags</label><button id="handoffbtn">Shift handoff</button>`;
+  const bar = live
+    ? `<div class="replay ctl live"><span class="clock"><span id="now">${esc(clock(T, OFF))} CDT</span><span id="utc">${esc(clock(T, 0))} UTC</span></span>
+      <span class="livebadge">● LIVE · simulated feed</span><button id="liveA07">Start at the rack A07 incident</button><button id="livenow">Today's feed</button>${tools}</div>`
+    : `<div class="replay ctl"><span class="clock"><span id="now">${esc(clock(T, OFF))} CDT</span><span id="utc">${esc(clock(T, 0))} UTC</span></span>
       <button data-step="-60">−1 h</button><input id="t" type="range" min="${W0}" max="${W1}" step="1000" value="${T}"><button data-step="60">+1 h</button>
       <button id="play">${S.timer ? "Pause" : "Play"}</button>
       <select id="speed" title="Replay speed">${SPEEDS.map(([v, l]) => `<option value="${v}"${S.speed === v ? " selected" : ""}>${l}</option>`).join("")}</select>
-      <button id="end">End of data</button>
-      <button id="a07">Replay Sep 15 (rack A07)</button></div>
+      <button id="end">End of data</button><button id="a07">Replay Sep 15 (rack A07)</button>${tools}</div>`;
+  return `<section class="view">
+    <div class="modes" id="modes"><button data-mode="history"${live ? "" : ` class="on"`}>Alarm History</button><button data-mode="live"${live ? ` class="on"` : ""}>Live Events</button></div>
+    <h1>${live ? "Live event board" : "Alarm history board"}</h1>
+    <p class="sub">${live
+      ? "Simulated live feed: the synthetic sample month runs on your clock, re-dated to today, so trouble tickets, change work, and alarms arrive as they would live. Cleared alarms and closed tickets drop off after 6 hours. Nothing here comes from a real system."
+      : `Both partners' alarm feeds in one table, checked against declared change work. Replay of the synthetic sample month (${esc(local(W0))} to ${esc(local(W1 - 1))} CDT). Rows that do not reconcile with an approved change are pinned to the top. ${S.T === START ? "Opened during the rack A07 outage on Sep 15; press End of data for the whole month." : ""}`}</p>
+    ${bar}
+    <div id="alertwrap">${banner(T)}</div>
     <div id="chipwrap">${chips(T)}</div>
     <div class="bar ctl">
       <span><label>Partner</label><select id="party"><option value="all">Both</option><option${S.party === "Landlord" ? " selected" : ""}>Landlord</option><option value="IT Partner"${S.party === "IT Partner" ? " selected" : ""}>IT Partner</option></select></span>
       <span><label>Hall</label><select id="hall"><option value="all">All</option>${halls.map(h => `<option${S.hall === h ? " selected" : ""}>${h}</option>`).join("")}</select></span>
-      <span><label>From</label><input id="from" type="date" value="${date(S.from)}"> <label>to</label><input id="to" type="date" value="${date(S.to)}"></span>
+      ${live ? "" : `<span><label>From</label><input id="from" type="date" value="${date(S.from)}"> <label>to</label><input id="to" type="date" value="${date(S.to)}"></span>`}
       <span><label>Search</label><input id="q" value="${esc(S.q)}" placeholder="device, ticket, change"></span>
       <span><label>Highlight</label><input id="hl" value="${esc(S.hl)}" placeholder="text to mark"></span>
+      <label class="tog"><input type="checkbox" id="group"${S.group ? " checked" : ""}> Group related alarms</label>
       ${S.change ? `<span class="chip on" id="clearchange">Change ${esc(S.change)} ✕</span>` : ""}
       <button id="reset">Reset filters</button></div>
-    <div id="live">${live(T)}</div>
-    <p class="note">Synthetic data; all names, devices, and events are fictional. Acknowledgment comes from the BMS or the partner's ticket. Ack on this board is read-only: it never writes back to a partner's system.</p></section>`;
-}
-function live(T) {
-  const rows = visible(T);
-  rows.sort((x, y) => (FLAG.includes(y.cls) && stateAt(y, T) === "active") - (FLAG.includes(x.cls) && stateAt(x, T) === "active") || y.t - x.t);
-  return `<h2>Upcoming planned change work <span class="note">starting in the next 6 hours</span></h2>${upcomingPanel(T)}
-    <h2>Change work in progress</h2>${changePanel(T)}
-    <h2>Alarms <span class="note" id="count">${rows.length} shown</span></h2>
-    <div class="wide"><table id="alarms"><tr><th></th><th>Ack</th><th>Source</th><th>Ticket</th><th>Device</th><th>Location</th><th>Summary</th><th>Change work</th><th>Tally</th><th>First (CDT)</th><th>Cleared</th></tr>
-    ${rows.map(a => rowHtml(a, T)).join("") || `<tr><td colspan="11" class="empty">No alarms match.</td></tr>`}</table></div>`;
+    <h2>Upcoming planned change work <span class="ctl"><label for="lead">starting in the next</label><select id="lead">${LEADS.map(h => `<option value="${h}"${S.lead === h ? " selected" : ""}>${h} hours</option>`).join("")}</select></span></h2>
+    <div id="up">${upcomingPanel(T)}</div>
+    <h2>Change work in progress</h2><div id="act">${changePanel(T)}</div>
+    <div id="tlwrap">${focusTimeline(T)}</div>
+    <h2>Tickets <span class="note">open, and closed in the last 6 hours</span></h2><div id="tkwrap">${ticketPanel(T)}</div>
+    <div id="tablewrap">${alarmTable(T)}</div>
+    <p class="note">Synthetic data; all names, devices, and events are fictional. Acknowledgment comes from the BMS or the partner's ticket. Acknowledging the banner only marks it seen on this board for this visit: it never writes back to a partner's system.</p>
+    ${S.handoff ? handoffModal() : ""}</section>`;
 }
 
 function changes() {
   return `<section class="view"><h1>Change work and declared impact</h1>
-    <p class="sub">Every approved change from both partners with its impact declaration (Interface Agreement section 10). Click a change to replay its window on the board.</p>
+    <p class="sub">Every approved change from both partners with its impact declaration (Interface Agreement section 10) and its timeline. Click a change to replay its window on the board.</p>
+    ${TL_LEGEND}
     <div class="wide"><table id="changelist"><tr><th>Change</th><th>Owner</th><th>Title</th><th>Window (CDT)</th><th>Declared assets</th><th>Expected alarms</th><th>Worst</th><th>Expected</th><th>Out of scope</th><th>Out of window</th></tr>
     ${D.declarations.map(d => `<tr class="row" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>${partyBadge(d.owner)}</td><td>${esc(d.title)}</td>
-      <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td>${esc(d.assets.map(x => x.replace("rack:", "rack ")).join(", "))}</td>
+      <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td>${esc(assetsText(d))}</td>
       <td>${esc(d.expected.map(e => e.alarms.join(", ")).join("; "))}</td><td>${esc(d.max_severity)}</td>
-      <td>${d.counts.expected}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${d.counts.out_of_scope}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${d.counts.out_of_window}</b>` : 0}</td></tr>`).join("")}</table></div>
+      <td>${d.counts.expected}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${d.counts.out_of_scope}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${d.counts.out_of_window}</b>` : 0}</td></tr>
+      <tr class="tlrow"><td colspan="10">${timeline(d, null)}</td></tr>`).join("")}</table></div>
     <h2>Change conflicts</h2>${D.conflicts.length ? `<ul>${D.conflicts.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None this month: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
 }
 
@@ -225,34 +408,56 @@ function about() {
 
 function render() {
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.view === S.view));
-  const doc = document.getElementById("doc");
-  doc.innerHTML = {board, changes, notify, about}[S.view]();
+  document.getElementById("doc").innerHTML = {board, changes, notify, about}[S.view]();
   wire();
+  if (S.view === "board") alertSound();
 }
-function setT(t) { S.T = Math.max(W0, Math.min(W1, t)); render(); }
-// Replay ticks update the board in place. Rebuilding the whole page on every tick replaced the
-// Pause button under the pointer, so a click (press and release on the same element) never landed.
+// Ticks update the board in place, and only the parts whose content changed. Rebuilding the whole page
+// replaced the buttons under the pointer, so a click (press and release on one element) never landed.
+const put = (id, html) => { const el = document.getElementById(id); if (el && el._h !== html) { el.innerHTML = html; el._h = html; } };
 function refresh() {
   const $ = id => document.getElementById(id);
-  if (S.view !== "board" || !$("live")) return render();
+  if (S.view !== "board" || !$("tablewrap")) return render();
   $("now").textContent = clock(S.T, OFF) + " CDT"; $("utc").textContent = clock(S.T, 0) + " UTC";
-  $("t").value = String(S.T); $("play").textContent = S.timer ? "Pause" : "Play";
-  $("chipwrap").innerHTML = chips(S.T); $("live").innerHTML = live(S.T);
-  wireLive();
+  if ($("t")) $("t").value = String(S.T);
+  if ($("play")) $("play").textContent = S.timer ? "Pause" : "Play";
+  put("alertwrap", banner(S.T)); put("chipwrap", chips(S.T)); put("up", upcomingPanel(S.T)); put("act", changePanel(S.T));
+  put("tlwrap", focusTimeline(S.T)); put("tkwrap", ticketPanel(S.T)); put("tablewrap", alarmTable(S.T));
+  alertSound();
 }
+function setT(t) { S.T = Math.max(W0, Math.min(W1, t)); render(); }
 function stop() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
 function play() {
   if (S.T >= W1) S.T = W0;
   let last = Date.now();
-  const tickMs = S.speed === 1 ? 1000 : 250;
   S.timer = setInterval(() => {
     const now = Date.now(); S.T = Math.min(W1, S.T + (now - last) * S.speed); last = now;
     if (S.T >= W1) stop();
     refresh();
-  }, tickMs);
+  }, S.speed === 1 ? 1000 : 250);
 }
-function go(view) { S.view = view; if (location.hash !== "#" + view) history.replaceState(null, "", "#" + view); render(); }
+// Simulated live feed: the board's time is the viewer's clock minus S.shift.
+function stopLive() { if (S.live) { clearInterval(S.live); S.live = null; } }
+function startLive(shift) {
+  stopLive(); S.shift = shift; S.T = Date.now() - S.shift; S.seen = new Set(); S.heard = 0;
+  S.live = setInterval(() => {
+    if (Date.now() - S.shift >= W1) S.shift = liveShift(Date.now());
+    S.T = Date.now() - S.shift;
+    if (S.view === "board") refresh();
+  }, 1000);
+}
+function setMode(m) {
+  if (m === S.mode) return;
+  stop(); stopLive(); S.mode = m; S.change = ""; S.handoff = ""; S.view = "board";
+  if (m === "live") startLive(liveShift(Date.now()));
+  else { S.shift = 0; S.T = START; S.seen = new Set(); S.heard = 0; }
+  const hash = m === "live" ? "#live" : "#board";
+  if (location.hash !== hash) history.replaceState(null, "", hash);
+  render();
+}
+function go(view) { S.view = view; const hash = view === "board" && S.mode === "live" ? "#live" : "#" + view; if (location.hash !== hash) history.replaceState(null, "", hash); render(); }
 function focusChange(id) {
+  if (S.mode === "live") { S.change = S.change === id ? "" : id; S.view = "board"; return render(); }   // the live clock keeps running
   const d = D.declarations.find(x => x.change_id === id);
   stop(); S.change = id; S.view = "board"; history.replaceState(null, "", "#board");
   const flags = A.filter(a => a.change === id && FLAG.includes(a.cls));
@@ -260,33 +465,60 @@ function focusChange(id) {
 }
 function wire() {
   const $ = id => document.getElementById(id);
-  document.querySelectorAll("[data-change]").forEach(el => el.onclick = () => focusChange(el.dataset.change));
   if (S.view !== "board") return;
-  $("t").oninput = e => { stop(); setT(+e.target.value); };
-  document.querySelectorAll("[data-step]").forEach(b => b.onclick = () => { stop(); setT(S.T + (+b.dataset.step) * MIN); });
-  $("end").onclick = () => { stop(); setT(W1); };
-  $("play").onclick = () => { if (S.timer) stop(); else play(); refresh(); };
-  $("speed").onchange = e => { S.speed = +e.target.value; if (S.timer) { stop(); play(); } };
-  $("a07").onclick = () => { stop(); S.change = D.a07.change; setT(ms(D.a07.window_start) + MIN); };
-  wireLive();
+  if (S.mode === "history") {
+    $("t").oninput = e => { stop(); setT(+e.target.value); };
+    document.querySelectorAll("[data-step]").forEach(b => b.onclick = () => { stop(); setT(S.T + (+b.dataset.step) * MIN); });
+    $("end").onclick = () => { stop(); setT(W1); };
+    $("play").onclick = () => { if (S.timer) stop(); else play(); refresh(); };
+    $("speed").onchange = e => { S.speed = +e.target.value; if (S.timer) { stop(); play(); } };
+    $("a07").onclick = () => { stop(); S.change = D.a07.change; S.seen = new Set(); S.heard = 0; setT(ms(D.a07.window_start) + MIN); };
+    $("from").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.from = v; render(); };
+    $("to").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.to = v; render(); };
+  } else {
+    $("liveA07").onclick = () => { S.change = ""; startLive(Date.now() - (ms(D.a07.first_flag.raised) - 10 * MIN)); render(); };
+    $("livenow").onclick = () => { S.change = ""; startLive(liveShift(Date.now())); render(); };
+  }
+  $("sound").onchange = e => { S.sound = e.target.checked; if (S.sound) beep(); };
+  $("handoffbtn").onclick = () => { stop(); S.handoff = handoffText(S.T); render(); };
+  if ($("handoff")) {
+    const msg = t => { $("homsg").textContent = t; };
+    $("hoclose").onclick = () => { S.handoff = ""; render(); };
+    $("hocopy").onclick = () => {
+      const fallback = () => { const ta = $("hotext"); ta.select(); try { document.execCommand("copy"); msg("Copied."); } catch (e) { msg("Select the text and copy it."); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(S.handoff).then(() => msg("Copied."), fallback); else fallback();
+    };
+    $("hodl").onclick = () => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([S.handoff + "\n"], {type:"text/plain"}));
+      a.download = `AUS-1-shift-handoff-${local(S.T).replace(/[ :]/g, "-")}-CDT.txt`;
+      document.body.appendChild(a); a.click(); a.remove(); msg("Downloaded.");
+    };
+  }
+  $("lead").onchange = e => { S.lead = +e.target.value; refresh(); };
+  $("group").onchange = e => { S.group = e.target.checked; refresh(); };
   $("party").onchange = e => { S.party = e.target.value; render(); };
   $("hall").onchange = e => { S.hall = e.target.value; render(); };
-  $("from").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.from = v; render(); };
-  $("to").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.to = v; render(); };
   const typed = (id, k) => { $(id).oninput = e => { S[k] = e.target.value; render(); const el = $(id); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }; };
   typed("q", "q"); typed("hl", "hl");
   if ($("clearchange")) $("clearchange").onclick = () => { S.change = ""; render(); };
   $("reset").onclick = () => { Object.assign(S, {sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1, q:"", hl:"", change:""}); render(); };
 }
-function wireLive() {
-  document.querySelectorAll("#chips .chip").forEach(c => c.onclick = () => { const set = S[c.dataset.grp]; set.has(c.dataset.k) ? set.delete(c.dataset.k) : set.add(c.dataset.k); refresh(); });
-  document.querySelectorAll("#live [data-change]").forEach(el => el.onclick = () => focusChange(el.dataset.change));
-  document.querySelectorAll("#alarms tr.row").forEach(r => r.onclick = () => { S.open.has(r.dataset.id) ? S.open.delete(r.dataset.id) : S.open.add(r.dataset.id); refresh(); });
-}
+// One click handler for everything that is redrawn while the clock runs (chips, cards, rows, groups, the banner).
+document.getElementById("doc").addEventListener("click", e => {
+  const c = sel => e.target.closest(sel);
+  let el;
+  if ((el = c("[data-mode]"))) return setMode(el.dataset.mode);
+  if ((el = c("#alarms .grp"))) { const k = el.dataset.g; S.xopen.has(k) ? S.xopen.delete(k) : S.xopen.add(k); return refresh(); }
+  if (c("#seen")) { pending(S.T).forEach(a => S.seen.add(a.id)); S.heard = 0; return refresh(); }
+  if ((el = c("#chips .chip"))) { const set = S[el.dataset.grp]; set.has(el.dataset.k) ? set.delete(el.dataset.k) : set.add(el.dataset.k); return refresh(); }
+  if ((el = c("#alarms tr.row"))) { const id = el.dataset.id; S.open.has(id) ? S.open.delete(id) : S.open.add(id); return refresh(); }
+  if ((el = c("[data-change]")) && !c("svg")) return focusChange(el.dataset.change);
+});
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => { stop(); go(b.dataset.view); });
 const h = location.hash.slice(1);
 S.view = ["board", "changes", "notify", "about"].includes(h) ? h : "board";
-render();
+if (h === "live") setMode("live"); else render();
 </script>
 </body>
 </html>

@@ -15,11 +15,27 @@ const D = JSON.parse(d.getElementById("data").textContent);
 const fire = (el, type) => el.dispatchEvent(new w.Event(type, { bubbles: true }));
 
 ok(errors.length === 0, "no script errors " + errors.join(";"));
-ok(tab("board").classList.contains("on") && t().includes("Customer alarm board"), "opens on the board");
+ok(tab("board").classList.contains("on") && t().includes("Alarm history board"), "opens on the history board");
 ok(d.getElementById("now").textContent.startsWith("Sep 15 12:40") && ["out_of_scope", "out_of_window"].some(c => rows()[0].classList.contains(c)) && d.querySelector('#active-changes .ch.flag[data-change="MOP-310"]'),
    "opens during the rack A07 outage with the flagged rows pinned");
 ok(d.getElementById("utc").textContent.startsWith("Sep 15 17:40") && d.getElementById("utc").textContent.endsWith(" UTC"), "UTC clock under CDT in the same format: " + d.getElementById("utc").textContent);
 ok([...d.getElementById("speed").options].map(o => o.textContent).includes("Real time"), "replay speed offers real time");
+const modes = [...d.querySelectorAll("#modes button")].map(b => b.textContent);
+ok(modes.join("|") === "Alarm History|Live Events" && d.querySelector('#modes [data-mode="history"]').classList.contains("on"), "two board buttons, Alarm History selected");
+ok(d.getElementById("alert") && d.getElementById("alert").textContent.includes("4 alarms outside approved change work"), "alert banner for the unacknowledged flags");
+ok(d.querySelector("#tickets") && d.getElementById("tickets").textContent.includes("WO-41023") && d.getElementById("tickets").textContent.includes("MOP-310"), "tickets panel: the open work order and the change ticket");
+d.getElementById("seen").click();
+ok(!d.getElementById("alert"), "acknowledging clears the banner");
+
+// Flood grouping: alarms on one ticket collapse into one row; nothing is lost.
+d.getElementById("end").click();
+const nsum = () => rows().reduce((s, r) => s + +r.dataset.n, 0);
+ok(d.querySelector("#alarms .grp") && nsum() === D.alarms.length && rows().length < D.alarms.length, `grouped rows account for every alarm (${rows().length} rows)`);
+const before = rows().length;
+d.querySelector("#alarms .grp").click();
+ok(rows().length > before && d.querySelector("#alarms tr.child"), "a group expands to show its related alarms");
+const grp = d.getElementById("group"); grp.checked = false; fire(grp, "change");
+ok(rows().length === D.alarms.length, "grouping can be turned off");
 d.getElementById("end").click();
 ok(rows().length === D.alarms.length, `every alarm at the end of the month (${rows().length})`);
 ok(["critical", "major", "minor", "clear"].reduce((s, k) => s + count(k), 0) === D.alarms.length, "severity chips add up to the alarms shown");
@@ -47,12 +63,32 @@ at("2026-09-15T17:32:00Z");
 ok(rows()[0].classList.contains("out_of_window") && rows()[0].textContent.includes("still in effect"), "the overrun alarm fires at the window plus 15 minutes");
 rows()[0].click();
 ok(t().includes("2 h 06 min after the window closed") && t().includes("NT-3 owed by Landlord within 5 min: missing"), "the detail row explains the overrun and the missing notification");
+const tl = d.querySelector('#tlwrap svg.tl[data-change="MOP-310"]');
+ok(tl && tl.querySelectorAll('line[stroke-width="5"]').length >= 4 && tl.textContent.includes("✕"), "the focused change shows its timeline, with the missing notification");
+d.getElementById("handoffbtn").click();
+const ho = d.getElementById("hotext").value;
+ok(ho.startsWith("Site AUS-1 shift handoff, Sep 15 12:32 CDT") && /Not reconciled with approved change work \(4\)/.test(ho) && ho.includes("WO-41023") && ho.includes("Change work in progress (1)"), "shift handoff summary");
+d.getElementById("hoclose").click();
+ok(!d.getElementById("handoff"), "the handoff closes");
 
 at("2026-09-15T10:00:00Z");
 ok(d.querySelector('#upcoming-changes .ch.soon[data-change="MOP-310"]') && d.getElementById("upcoming-changes").textContent.includes("Starts in 4 h 47 min"), "MOP-310 is upcoming 6 hours ahead, with a countdown: " + d.getElementById("upcoming-changes").textContent.trim().slice(0, 120));
 ok(!d.querySelector('#active-changes .ch[data-change="MOP-310"]'), "upcoming work is not yet in progress");
 at("2026-09-15T08:00:00Z");
 ok(!d.querySelector('#upcoming-changes .ch[data-change="MOP-310"]'), "beyond the 6-hour lead time it is not listed yet");
+const lead = d.getElementById("lead");
+ok([...lead.options].map(o => +o.value).join(",") === "2,4,6,8,10,12,14,16,18,20,22,24" && lead.value === "6", "lead time from 2 to 24 hours, default 6");
+lead.value = "8"; fire(lead, "change");
+ok(d.querySelector('#upcoming-changes .ch[data-change="MOP-310"]'), "an 8-hour lead time lists it");
+at("2026-09-15T10:00:00Z"); lead.value = "2"; fire(lead, "change");
+ok(!d.querySelector('#upcoming-changes .ch[data-change="MOP-310"]') && t().includes("next 2 hours"), "a 2-hour lead time does not");
+at("2026-09-13T06:00:00Z"); lead.value = "24"; fire(lead, "change");
+const chg = d.querySelector('#upcoming-changes .ch.flag[data-change="CHG2040031"]');
+ok(chg && chg.textContent.includes("Live trouble: a05-ct15 has open INC3100629") && chg.textContent.includes("Confirm before starting"), "upcoming firmware work on rack A05 is flagged against the rack's open ticket");
+ok(!d.querySelector('#upcoming-changes .ch.flag[data-change="MOP-305"]'), "upcoming work with nothing open on its equipment is not flagged");
+at("2026-09-13T09:00:00Z");
+ok(!d.querySelector('#upcoming-changes .ch.flag[data-change="CHG2040031"]'), "the flag clears when the ticket closes");
+lead.value = "6"; fire(lead, "change");
 
 // Filters.
 d.getElementById("clearchange").click();
@@ -74,6 +110,7 @@ ok(d.querySelectorAll("#alarms tr.hl").length >= 1 && rows().length === D.alarms
 // Other views.
 tab("changes").click();
 ok(d.querySelectorAll("#changelist tr.row").length === D.declarations.length && t().includes("Change conflicts"), "every change with its declaration");
+ok(d.querySelectorAll("#changelist svg.tl").length === D.declarations.length, "every change with its timeline");
 d.querySelector('#changelist tr[data-change="MOP-305"]').click();
 ok(tab("board").classList.contains("on") && rows().length >= 1 && rows().every(r => r.textContent.includes("MOP-305")), "a change opens the board at its window");
 tab("notify").click();
@@ -104,8 +141,43 @@ setTimeout(() => {
       const dt = Date.parse("2026 " + d.getElementById("utc").textContent.replace(" UTC", "") + "Z") - Date.parse("2026 " + t1.replace(" CDT", "") + "Z") - 5 * 3600e3;
       ok(dt >= 1000 && dt <= 3000, `real time advances about one second per second (${dt} ms)`);
       playBtn.click();
-      ok(errors.length === 0, "still no script errors " + errors.join(";"));
-      w.close(); dom2.window.close();
+      live();
     }, 1600);
   }, 500);
 }, 700);
+
+// An upcoming change that overlaps redundancy-reducing work on connected equipment is flagged (none in the sample month).
+const Dc = JSON.parse(JSON.stringify(D));
+Dc.conflicts = [{changes: ["MOP-310", "MOP-305"], assets: [], text: "MOP-310 and MOP-305 both reduce power redundancy on connected equipment in overlapping windows"}];
+const dom3 = new JSDOM(html.replace(d.getElementById("data").textContent, () => JSON.stringify(Dc)), { runScripts: "dangerously", url: "https://example.test/alarms/", virtualConsole: vc() });
+const d3 = dom3.window.document, s3 = d3.getElementById("t");
+s3.value = String(Date.parse("2026-09-15T10:00:00Z")); s3.dispatchEvent(new dom3.window.Event("input", { bubbles: true }));
+ok(d3.querySelector('#upcoming-changes .ch.flag[data-change="MOP-310"]') && d3.getElementById("upcoming-changes").textContent.includes("Change conflict: MOP-310 and MOP-305"), "an upcoming change conflict is flagged");
+dom3.window.close();
+
+// Live Events: the sample runs on the viewer's clock (a fixed fake clock here).
+function live() {
+  let now = Date.parse("2026-10-06T17:00:00Z");
+  w.Date.now = () => now;
+  tab("board").click();
+  d.querySelector('#modes [data-mode="live"]').click();
+  ok(d.querySelector("h1").textContent === "Live event board" && !d.getElementById("t") && d.querySelector(".livebadge"), "Live Events: no replay slider, a live badge");
+  ok(d.getElementById("now").textContent.startsWith("Oct 6 12:00:00") && d.getElementById("utc").textContent.startsWith("Oct 6 17:00:00"), "the live clock is the viewer's clock: " + d.getElementById("now").textContent);
+  const W0 = Date.parse(D.window.start), SPAN = Math.floor((Date.parse(D.window.end) - W0) / 864e5) * 864e5, T = W0 + (now - W0) % SPAN;
+  const byId = Object.fromEntries(D.alarms.map(a => [a.id, a]));
+  ok(rows().every(r => { const a = byId[r.dataset.id]; return Date.parse(a.raised) <= T && (!a.cleared || Date.parse(a.cleared) > T - 6 * 3600e3); }), "only active alarms and those cleared in the last 6 hours");
+  d.getElementById("liveA07").click();
+  ok(d.querySelector('#active-changes .ch[data-change="MOP-310"]') && !rows().some(r => r.classList.contains("out_of_scope")) && !d.getElementById("alert"), "starting at the rack A07 incident: MOP-310 in progress, nothing flagged yet");
+  now += 15 * 60e3;
+  setTimeout(() => {
+    ok(d.getElementById("now").textContent.startsWith("Oct 6 12:15"), "the live clock runs on: " + d.getElementById("now").textContent);
+    ok(rows().some(r => r.classList.contains("out_of_scope")) && d.getElementById("alert") && d.getElementById("tickets").textContent.includes("WO-41023"), "ten minutes in, the B side opens: flagged, alerted, and the work order is open");
+    d.querySelector('#modes [data-mode="history"]').click();
+    ok(d.querySelector("h1").textContent === "Alarm history board" && d.getElementById("t"), "back to Alarm History");
+    const dom4 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/alarms/#live", virtualConsole: vc() });
+    ok(dom4.window.document.querySelector("h1").textContent === "Live event board", "a link to #live opens the Live Events board");
+    dom4.window.close();
+    ok(errors.length === 0, "still no script errors " + errors.join(";"));
+    w.close(); dom2.window.close();
+  }, 1200);
+}
