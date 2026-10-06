@@ -467,6 +467,32 @@ def _link_tickets(rows: list[Alarm], src: FileConnector) -> None:
             a.ack_at, a.ack_by = parse(a.ticket["ack"]), a.ticket["by"]
 
 
+def trouble_tickets(src: FileConnector, cfg: dict | None = None) -> list[dict]:
+    """Every trouble ticket from both partners, with the equipment and domain it is about.
+
+    Landlord work orders that carry a MOP are planned change work, not trouble, and are left out.
+    """
+    cfg = cfg or load_config()
+    am = cfg["alarm_map"]
+    out = []
+    for w in src.get("work_orders"):
+        if w.get("mop_ref"):
+            continue
+        unit = w["unit"]
+        keys = set(_ASSET.findall(unit))
+        if unit.startswith("Rack "):
+            keys.add(f"rack:{unit[5:]}")
+        out.append({"id": w["wo"], "partner": "Landlord", "priority": w["priority"], "device": unit, "location": w["room"],
+                    "summary": w["notes"], "opened": iso(parse(w["opened"])), "closed": iso(parse(w["closed"])),
+                    "keys": sorted(keys), "domains": [d for d in _bms_domain(cfg, unit) if d != "maintenance"] or ["power"]})
+    for k in src.get("tickets"):
+        out.append({"id": k["number"], "partner": "IT Partner", "priority": k["priority"], "device": k["configuration_item"],
+                    "location": f"Hall {k['rack'][0]}, rack {k['rack']}", "summary": k["short_description"],
+                    "opened": iso(parse(k["opened_at"])), "closed": iso(parse(k["resolved_at"])),
+                    "keys": [f"rack:{k['rack']}"], "domains": am["it_ticket_domain"].get(k["category"], ["compute"])})
+    return sorted(out, key=lambda t: (t["opened"], t["id"]))
+
+
 # --------------------------------------------------------------------------- #
 # Change records and declarations
 # --------------------------------------------------------------------------- #
