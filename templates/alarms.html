@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alarm Board · Site AUS-1</title>
 <style>
+__SITENAV_CSS__
 :root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --panel:#f5f7f9; --bg:#eef1f4;
   --crit:#c0262d; --maj:#e07b00; --min:#d4b106; --clr:#3d8b5a; --oos:#b42318; --oow:#7a3fb8; --exp:#8a96a3;
   --ll:#b45309; --it:#1f5fbf; --hl:#fff3b0; }
 * { box-sizing:border-box; }
 body { margin:0; font:13px/1.4 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
-header.top { background:#1e2933; color:#fff; padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
-header.top a { color:#cfe0ff; }
+header.top { background:#fff; color:var(--ink); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
+header.top a { color:var(--it); }
+header.top strong { font-size:16px; }
 .tabs button, .ctl button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:4px 10px; border-radius:5px; cursor:pointer; }
 .tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
 main { margin:12px auto; max-width:1500px; padding:0 12px; }
@@ -65,8 +67,9 @@ svg.tl { width:100%; height:auto; display:block; min-width:640px; } tr.tlrow td 
 </style>
 </head>
 <body>
+__SITENAV__
 <header class="top">
-  <div><strong>Alarm Board</strong> · Site AUS-1 (fictional) · <a href="../">scorecard demo</a> · <a href="../pir/">post-incident review</a> · <a href="../weekly/">weekly review</a> · <a href="../patterns/">failure patterns</a></div>
+  <div><strong>Alarm Board</strong></div>
   <div class="tabs" id="tabs">
     <button data-view="board">Board</button><button data-view="changes">Change work</button><button data-view="notify">Notifications</button><button data-view="about">How it works</button>
   </div>

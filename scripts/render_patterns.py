@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
+from scorecard import sitenav  # noqa: E402
 from scorecard.patterns import (MIN_EVENTS, MIN_RATIO, RECURRENCE_DAYS, WATCH_P, History,  # noqa: E402
                                 build_review, followup, score)
 
@@ -189,7 +190,7 @@ DOCS = {"interface_agreement": "Interface Agreement", "ot_partner": "Landlord SL
 def html_page() -> str:
     f = prepare()
     f["docs"] = DOCS
-    tpl = (ROOT / "templates" / "patterns.html").read_text(encoding="utf-8")
+    tpl = sitenav.inject((ROOT / "templates" / "patterns.html").read_text(encoding="utf-8"), "patterns")
     return tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/"))
 
 

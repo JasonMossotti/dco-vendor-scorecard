@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Build the static GitHub Pages site that runs the app in the browser (stlite).
+"""Build the static GitHub Pages site: Unified Site Management.
 
 Output (default _site/):
-    index.html          loads stlite from the CDN and mounts the app
-    streamlit_app.py    the app entrypoint
-    app_bundle.zip      Python package, SLA, generator config, and datasets
+    index.html              the Unified Site Management overview (scripts/render_hub.py)
+    app/index.html          the site tab bar above the scorecard app, run in the browser by stlite
+    app/streamlit_app.py    the app entrypoint
+    app/app_bundle.zip      Python package, SLA, generator config, and datasets
+    alarms/ pir/ weekly/ patterns/   the static pages, each with the same tab bar
 
 Usage:
     python scripts/build_site.py                 # -> _site/
@@ -14,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 import sys
 import zipfile
@@ -24,24 +27,42 @@ ROOT = Path(__file__).resolve().parents[1]
 # Pinned for reproducibility. To upgrade, change this one line and check the page loads.
 STLITE_VERSION = "1.8.1"
 REQUIREMENTS = ["pyyaml", "pandas"]
+# The light theme every page shares (the same values as .streamlit/config.toml for local runs).
+STREAMLIT_CONFIG = {
+    "client.toolbarMode": "viewer",
+    "theme.base": "light",
+    "theme.primaryColor": "#1f5fbf",
+    "theme.backgroundColor": "#ffffff",
+    "theme.secondaryBackgroundColor": "#f5f7f9",
+    "theme.textColor": "#1e2933",
+}
 
 INDEX_HTML = """<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>DCO Vendor Scorecard: interactive demo</title>
-    <meta name="description" content="Vendor SLA scorecard for partner-operated GPU data center sites. Synthetic data portfolio demo." />
+    <title>Scorecards · Unified Site Management</title>
+    <meta name="description" content="Vendor SLA scorecards for partner-operated GPU data center sites. Synthetic data portfolio demo." />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@{version}/build/stlite.css" />
     <style>
-      .boot {{ font-family: system-ui, sans-serif; max-width: 40rem; margin: 15vh auto; color: #333; line-height: 1.5; }}
-      .boot small {{ color: #777; }}
+      {nav_css}
+      /* One scroll bar: the page itself never scrolls; the app scrolls inside the space under the tab bar.
+         The transform makes the app's fixed-position header sit inside that space instead of over the tab bar. */
+      html, body {{ height: 100%; margin: 0; overflow: hidden; background: #ffffff; }}
+      body {{ display: flex; flex-direction: column; }}
+      .usm {{ flex: none; }}
+      #root {{ flex: 1; min-height: 0; position: relative; overflow: hidden; transform: translateZ(0); }}
+      #root [data-testid="stMainBlockContainer"] {{ padding-top: 3.5rem; }}
+      .boot {{ font-family: "Inter", "Segoe UI", Helvetica, Arial, sans-serif; max-width: 40rem; margin: 12vh auto; padding: 0 16px; color: #1e2933; line-height: 1.5; }}
+      .boot small {{ color: #5b6774; }}
     </style>
   </head>
   <body>
+    {nav}
     <div id="root">
       <div class="boot">
-        <h2>DCO Vendor Scorecard</h2>
+        <h2>Scorecards</h2>
         <p>Starting Python in your browser. The first visit takes about 20 to 40 seconds while the runtime downloads;
         after that it is cached.</p>
         <p><small>Everything runs locally in this tab. Synthetic data only; all names and events are fictional.</small></p>
@@ -56,7 +77,7 @@ INDEX_HTML = """<!doctype html>
           entrypoint: "streamlit_app.py",
           files: {{ "streamlit_app.py": {{ url: "./streamlit_app.py" }} }},
           archives: [{{ url: "./app_bundle.zip", format: "zip", options: {{}} }}],
-          streamlitConfig: {{ "client.toolbarMode": "viewer" }},
+          streamlitConfig: {streamlit_config},
         }},
         document.getElementById("root"),
       );
@@ -78,35 +99,35 @@ def bundle_members(root: Path) -> list[Path]:
 
 
 def build(out: Path, root: Path = ROOT) -> dict[str, int]:
+    sys.path.insert(0, str(root / "src"))
+    sys.path.insert(0, str(root / "scripts"))
+    from scorecard import sitenav
     if out.exists():
         shutil.rmtree(out)
-    out.mkdir(parents=True)
-    shutil.copy2(root / "app" / "streamlit_app.py", out / "streamlit_app.py")
+    app = out / "app"
+    app.mkdir(parents=True)
+    shutil.copy2(root / "app" / "streamlit_app.py", app / "streamlit_app.py")
     members = bundle_members(root)
-    with zipfile.ZipFile(out / "app_bundle.zip", "w", zipfile.ZIP_DEFLATED) as z:
+    with zipfile.ZipFile(app / "app_bundle.zip", "w", zipfile.ZIP_DEFLATED) as z:
         for p in members:
             z.write(p, p.relative_to(root).as_posix())
     reqs = "[" + ", ".join(f'"{r}"' for r in REQUIREMENTS) + "]"
-    (out / "index.html").write_text(INDEX_HTML.format(version=STLITE_VERSION, requirements=reqs),
-                                    encoding="utf-8", newline="\n")
-    # The interactive post-incident review page, served at /pir/ beside the app.
-    sys.path.insert(0, str(root / "scripts"))
-    import render_pir
-    (out / "pir").mkdir(parents=True, exist_ok=True)
-    (out / "pir" / "index.html").write_text(render_pir.html_page(), encoding="utf-8")
-    # The weekly operations review, served at /weekly/.
-    import render_weekly
-    (out / "weekly").mkdir(parents=True, exist_ok=True)
-    (out / "weekly" / "index.html").write_text(render_weekly.html_page(), encoding="utf-8")
-    # The failure pattern review, served at /patterns/.
-    import render_patterns
-    (out / "patterns").mkdir(parents=True, exist_ok=True)
-    (out / "patterns" / "index.html").write_text(render_patterns.html_page(), encoding="utf-8")
-    # The Customer alarm board (change-aware alarms), served at /alarms/.
+    (app / "index.html").write_text(
+        INDEX_HTML.format(version=STLITE_VERSION, requirements=reqs, streamlit_config=json.dumps(STREAMLIT_CONFIG),
+                          nav_css=sitenav.CSS.strip(), nav=sitenav.nav_html("scorecards")),
+        encoding="utf-8", newline="\n")
+    # The Unified Site Management overview, at the site root.
+    import render_hub
+    (out / "index.html").write_text(render_hub.html_page(), encoding="utf-8", newline="\n")
+    # The static pages beside the app: post-incident review, weekly review, failure patterns, alarm board.
     import render_alarms
-    (out / "alarms").mkdir(parents=True, exist_ok=True)
-    (out / "alarms" / "index.html").write_text(render_alarms.html_page(), encoding="utf-8")
-    return {"files_in_bundle": len(members), "bundle_bytes": (out / "app_bundle.zip").stat().st_size}
+    import render_patterns
+    import render_pir
+    import render_weekly
+    for path, mod in (("pir", render_pir), ("weekly", render_weekly), ("patterns", render_patterns), ("alarms", render_alarms)):
+        (out / path).mkdir(parents=True, exist_ok=True)
+        (out / path / "index.html").write_text(mod.html_page(), encoding="utf-8", newline="\n")
+    return {"files_in_bundle": len(members), "bundle_bytes": (app / "app_bundle.zip").stat().st_size}
 
 
 def main() -> int:

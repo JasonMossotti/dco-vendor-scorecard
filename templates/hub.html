@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unified Site Management · Site AUS-1</title>
+<meta name="description" content="Unified Site Management for a partner-operated GPU data center: scorecards, alarm board, post-incident review, weekly review, failure patterns. Synthetic data portfolio demo.">
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --panel:#f5f7f9; --bg:#eef1f4; --ll:#b45309; --it:#1f5fbf; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+main { max-width:1180px; margin:0 auto; padding:24px 20px 40px; }
+a { color:var(--it); }
+h1 { font-size:30px; margin:0 0 4px; letter-spacing:-.01em; }
+h2 { font-size:18px; margin:0 0 6px; }
+h3 { font-size:16px; margin:2px 0 6px; }
+.sub { color:var(--muted); font-size:13px; margin:0 0 10px; }
+.hero p:last-child { max-width:880px; margin:0; }
+.partners { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin:20px 0 14px; }
+.partner { background:#fff; border:1px solid var(--line); border-left:5px solid var(--it); border-radius:8px; padding:12px 16px; }
+.partner.ll { border-left-color:var(--ll); }
+.partner p { margin:0; }
+.role { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.grid { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; }
+.grid .tile { grid-column:span 2; }
+.grid .tile:nth-child(n+4) { grid-column:span 3; }
+@media (max-width:1000px) { .grid .tile, .grid .tile:nth-child(n+4) { grid-column:span 3; } .grid .tile:nth-child(5) { grid-column:span 6; } }
+.tile { background:#fff; border:1px solid var(--line); border-radius:8px; padding:16px 18px; display:flex; flex-direction:column; gap:8px; }
+.tile h2 a { color:var(--ink); text-decoration:none; }
+.tile h2 a:hover { color:var(--it); }
+.tile .lead { margin:0; color:var(--muted); }
+.stats { display:flex; flex-wrap:wrap; gap:8px; }
+.stat { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:6px 10px; min-width:96px; }
+.stat b { display:block; font-size:19px; line-height:1.2; }
+.stat span { font-size:12px; color:var(--muted); }
+.note { margin:0; font-size:13px; color:var(--muted); }
+.links { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:4px; }
+.links a { text-decoration:none; border:1px solid var(--it); color:var(--it); border-radius:6px; padding:5px 12px; font-size:14px; }
+.links a:first-child { background:var(--it); color:#fff; }
+.links a:hover { background:#e8f0fc; }
+.links a:first-child:hover { background:#174a96; }
+.follow, .docs { background:#fff; border:1px solid var(--line); border-radius:8px; padding:16px 18px; margin-top:14px; }
+.follow p { margin:0 0 8px; }
+.follow ol { margin:0; padding-left:22px; }
+.docs ul { columns:2 260px; margin:0; padding-left:18px; }
+footer { color:var(--muted); font-size:12px; text-align:center; padding:0 20px 24px; }
+@media (max-width:700px) { main { padding:16px 12px 30px; } h1 { font-size:24px; } .grid { grid-template-columns:1fr; } .grid .tile, .grid .tile:nth-child(n+4), .grid .tile:nth-child(5) { grid-column:auto; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<main>
+__BODY__
+</main>
+<footer>Portfolio demonstration. Synthetic data; all names, sites, and events are fictional.</footer>
+</body>
+</html>

@@ -19,6 +19,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from scorecard import sitenav  # noqa: E402
 from scorecard.pir import OSR, Dataset, build_index, build_review  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
@@ -105,7 +106,7 @@ def html_page() -> str:
     ds = Dataset(SAMPLE)
     rv = reviews()
     data = {"index": build_index(ds), "example": rv[0], "osr": {k: list(v) for k, v in OSR.items()}, "badge_note": BADGE_NOTE}
-    tpl = (ROOT / "templates" / "pir.html").read_text(encoding="utf-8")
+    tpl = sitenav.inject((ROOT / "templates" / "pir.html").read_text(encoding="utf-8"), "pir")
     return tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/"))
 
 
