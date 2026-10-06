@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__ · Agreements · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --ll:#b45309; --it:#1f5fbf; --cu:#1d7a46; }
+* { box-sizing:border-box; }
+html { scroll-padding-top:12px; }
+body { margin:0; font:15px/1.55 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; color:var(--ink); border-bottom:1px solid var(--line); padding:12px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.doctabs { display:flex; flex-wrap:wrap; gap:6px; }
+.doctabs a, .tools button { font:inherit; font-size:14px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; text-decoration:none; }
+.doctabs a.on { background:var(--it); color:#fff; border-color:var(--it); }
+.layout { max-width:1280px; margin:20px auto; padding:0 20px; display:grid; grid-template-columns:250px minmax(0,1fr); gap:20px; align-items:start; }
+.layout.single { grid-template-columns:minmax(0,1fr); max-width:1120px; }
+nav.toc { position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto; background:#fff; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); padding:14px 12px; font-size:13px; }
+nav.toc b { display:block; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin:0 0 6px 6px; }
+nav.toc a { display:block; color:var(--ink); text-decoration:none; padding:3px 6px; border-radius:4px; }
+nav.toc a:hover { background:var(--panel); color:var(--it); }
+main { background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
+main a { color:var(--it); }
+h1 { font-size:26px; margin:0 0 6px; line-height:1.25; } h2 { font-size:19px; margin:32px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:16px; margin:22px 0 6px; } h4 { font-size:14px; margin:16px 0 4px; }
+p { margin:8px 0; } ul, ol { margin:6px 0; padding-left:24px; } li { margin:2px 0; }
+blockquote { margin:12px 0; background:var(--panel); border-left:4px solid var(--it); padding:4px 14px; border-radius:4px; font-size:14px; }
+code { font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; background:var(--panel); padding:1px 4px; border-radius:3px; }
+hr { border:0; border-top:1px solid var(--line); margin:24px 0; }
+.wide { overflow-x:auto; margin:10px 0; }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; }
+:target, [data-gl-def]:target { background:#fff4cc; transition:background 1.5s; }
+tr:target td { background:#fff4cc; }
+.sub { color:var(--muted); margin:0 0 12px; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin-top:16px; }
+.card { border:1px solid var(--line); border-left:5px solid var(--cu); border-radius:8px; padding:14px 16px; display:flex; flex-direction:column; gap:6px; }
+.card.landlord { border-left-color:var(--ll); } .card.it { border-left-color:var(--it); }
+.card h2 { border:0; margin:0; padding:0; font-size:18px; } .card h2 a { color:var(--ink); text-decoration:none; } .card h2 a:hover { color:var(--it); }
+.card .meta { font-size:12px; color:var(--muted); }
+.card p { margin:0; font-size:14px; }
+.card .go { margin-top:auto; padding-top:6px; } .card .go a { display:inline-block; background:var(--it); color:#fff; border-radius:6px; padding:5px 12px; text-decoration:none; font-size:14px; }
+.how { background:var(--panel); border-radius:8px; padding:10px 14px; font-size:14px; margin-top:18px; }
+@media (max-width:900px) { .layout { grid-template-columns:minmax(0,1fr); padding:0 10px; } nav.toc { position:static; max-height:none; } main { padding:20px 16px; } }
+@media print { header.top, nav.toc { display:none !important; } body { background:#fff; } .layout { display:block; margin:0; max-width:none; padding:0; } main { box-shadow:none; padding:0; } h2, h3 { break-after:avoid; } tr { break-inside:avoid; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Agreements</strong></div>
+  <div class="doctabs">__DOCTABS__</div>
+  <div class="tools"><button id="print" type="button">Print / save PDF</button></div>
+</header>
+<div class="layout__LAYOUT__">
+__TOC__
+<main id="doc">
+__BODY__
+</main>
+</div>
+<script>
+document.getElementById("print").addEventListener("click", () => window.print());
+</script>
+</body>
+</html>

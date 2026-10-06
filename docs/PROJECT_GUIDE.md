@@ -15,7 +15,7 @@ At a partner-operated GPU data center site, partners do the hands-on work and th
 | Component | Where |
 |---|---|
 | Repository | https://github.com/JasonMossotti/dco-vendor-scorecard (public; the owner renamed the account from RexFeral on 2026-10-04) |
-| Live demo (GitHub Pages) | https://jasonmossotti.github.io/dco-vendor-scorecard/ opens on **Unified Site Management**, an overview (`scripts/render_hub.py`, `templates/hub.html`) with a tab bar on every page (`src/scorecard/sitenav.py`): Overview, Scorecards (the app, at `/app/`), Alarm Board, Post-Incident Review, Weekly Review, Failure Patterns |
+| Live demo (GitHub Pages) | https://jasonmossotti.github.io/dco-vendor-scorecard/ opens on **Unified Site Management**, an overview (`scripts/render_hub.py`, `templates/hub.html`) with a tab bar on every page (`src/scorecard/sitenav.py`): Overview, Scorecards (the app, at `/app/`), Alarm Board, Post-Incident Review, Weekly Review, Failure Patterns, and on the right Agreements and Glossary |
 | SLA (generated) | `docs/sla/IT_PARTNER_SLA.md` from `sla/it_partner.yaml` + `sla/common.yaml`: 24 sections plus appendices |
 | Scorecard and discrepancy reports (generated) | `reports/scorecard.md`, `reports/discrepancy_report.md` |
 | Site model and drawings (generated) | `site/site.yaml` -> `docs/site/SITE.md` plus 7 SVG sheets |
@@ -25,8 +25,9 @@ At a partner-operated GPU data center site, partners do the hands-on work and th
 | Weekly operations review | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/ (built by `scripts/build_site.py`); packs `docs/weekly/2026-W36.md` to `W39.md` from `src/scorecard/weekly.py` + `scripts/render_weekly.py`; meeting notes `weekly/notes/2026-W38.yaml` |
 | Failure pattern review | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/ (built by `scripts/build_site.py`); report `reports/failure_patterns.md` from `data/history/` (26 weeks before the sample month, `scripts/generate_history.py`, `config/history.yaml`) + `src/scorecard/patterns.py` + judgment in `patterns/lessons.yaml`, rendered by `scripts/render_patterns.py` |
 | Change-aware alarms and alarm board | Page at https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/ (built by `scripts/build_site.py`); report `reports/change_alarms.md`; clause in Interface Agreement section 10 (`sla/interface_agreement.yaml`, NT-1 to NT-3, IA-KM-01/02); alarm map and change catalog `config/change_alarms.yaml`; check `src/scorecard/alarms.py`; change layer `data/changes/` (`scripts/generate_changes.py`, `src/scorecard/synthetic/changes.py`); rendered by `scripts/render_alarms.py` |
+| Agreements and Glossary tabs, code popups | Pages at `/agreements/` (the three contracts, rendered by `scripts/render_agreements.py` from `docs/sla/*.md`) and `/glossary/` (`scripts/render_glossary.py`, generated `docs/glossary/GLOSSARY.md`); meanings in `src/scorecard/glossary.py` + `config/glossary.yaml`; popups on every static page from `templates/partials/glossary_popup.html`; the app has a "Look up a code" panel |
 | Live collector (Phase 6) | `scripts/collect.py`, `src/scorecard/live/`, `config/collector.example.yaml`, `requirements-live.txt`, `docs/LIVE_READINESS.md` |
-| Tests | 262 (pytest), run by CI on every push and before every Pages deploy. The collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed |
+| Tests | 286 (pytest), run by CI on every push and before every Pages deploy. The collector's 19 run against in-process simulators and are skipped where `requirements-live.txt` is not installed |
 | AWS hosting guide | `docs/DEPLOY_AWS.md` |
 
 Headline results on the committed sample (seed 2026, 2026-08-31 to 2026-09-28): 4 Minimum Service Level Defaults (CSL-07, 08, 09, 11), $188,700 credits payable (inside the $222,000 cap), 18 findings (14 S1 items in the severity log), 17 corrective action plans. Engine accuracy: 17 of 17 planted discrepancies on the sample, and 1,020 of 1,020 across 60 generated months, with zero false positives.
@@ -147,6 +148,10 @@ The SLA YAML is the single source of truth for the contract (`load_sla()` merges
 | App layout | `app/streamlit_app.py` (light theme: `scripts/build_site.py` STREAMLIT_CONFIG and `.streamlit/config.toml`, kept equal by a test) |
 | Site tab bar (one definition for every page) | `src/scorecard/sitenav.py`; pages carry `__SITENAV_CSS__` and `__SITENAV__` placeholders |
 | Unified Site Management overview (site root) | `scripts/render_hub.py` + `templates/hub.html` (tested by `tests/test_hub.py`) |
+| Code meanings: contract codes quoted from the SLA YAML (`contract_terms` paths), plus hand-written acronyms, products, record families (regex), page-only meanings (`pages:`), and words left plain on purpose (`plain`) | `config/glossary.yaml`, loaded by `src/scorecard/glossary.py` |
+| Agreements pages: Markdown renderer, heading anchors, where each code is defined | `src/scorecard/agreements.py`, `scripts/render_agreements.py`, `templates/agreements.html` |
+| Glossary page, page scan (every code on every page must be explained or plain), `--check` | `scripts/render_glossary.py`, `templates/glossary.html` |
+| Code popups (one script; data trimmed per page by `sitenav.finish`) | `templates/partials/glossary_popup.html` (tested by `tests/js/glossary_popups.cjs`, `glossary_page.cjs`) |
 | What each data file represents | `docs/DATA_MODEL.md` |
 
 ## Common changes
@@ -176,6 +181,9 @@ python scripts/render_pir.py        # completed post-incident reviews (docs/pir/
 python scripts/render_weekly.py     # weekly operations review packs (docs/weekly/)
 python scripts/generate_history.py  # failure history (data/history/)
 python scripts/render_patterns.py   # failure pattern review (reports/failure_patterns.md)
+python scripts/generate_changes.py  # change layer (data/changes/)
+python scripts/render_alarms.py     # change-aware alarms (reports/change_alarms.md)
+python scripts/render_glossary.py   # glossary (docs/glossary/GLOSSARY.md); fails if any code on the site is unexplained
 pytest -q                           # all tests; CI fails if any generated file is stale
 ```
 
@@ -284,6 +292,8 @@ In the order it was built, with the decisions that shaped each step:
 
 27. **Unified Site Management (owner's request; plan at `/mnt/project-files/unified-site/PLAN.md`, owner said go 2026-10-06).** The site root is now a static overview named Unified Site Management that loads instantly: both partners' reported vs. measured results, one tile per function with its headline numbers and buttons into its views (including deep links: alarm board `#live`, `#changes`, `#notify`; PIR `#blank`, new; weekly packs by week), a "follow one incident through every tool" path for rack A07, and links to the contracts and reports. Every page carries the same dark tab bar (Overview, Scorecards, Alarm Board, Post-Incident Review, Weekly Review, Failure Patterns) above its own light toolbar; the old per-page cross-links are gone. The Streamlit app moved to `/app/`: the sidebar is gone, views are a segmented control at the top of the page and the dataset a selector beside it, and it uses the light theme. The app page never scrolls itself; the app scrolls inside the space under the tab bar (one scroll bar), checked in Chromium against Streamlit 1.57 (the version stlite 1.8.1 bundles). Every Overview number comes from the code behind the page it summarizes, and tests check them against the headline results and the app's table. No data or report changed. Tests: 262 pytest (new `tests/test_hub.py`).
 
+28. **Agreements, Glossary, and code popups (owner's request; plan at `/mnt/project-files/glossary/PLAN.md`, owner said yes 2026-10-06).** Two tabs on the right of the tab bar. Agreements shows the Interface Agreement and both SLAs as readable pages with a contents rail, print to PDF, and an anchor on every code where it is defined. Glossary lists 359 entries, A to Z or by type, with type chips, search, and deep links (`/glossary/#TR-1`). On every static page each code has a dotted underline; clicking it opens a small card in the same window with the meaning and links to the clause and the glossary entry. Contract codes are quoted from the YAML, never retyped; acronyms, products, record families, and page-only meanings (D1 is a decision on the weekly page and a crew on the scorecards) are written once in `config/glossary.yaml`. Everyday acronyms (IT, UTC, GPU) are listed but not underlined; rack positions such as A07 stay plain. A scan of every page and document fails CI if any code is unexplained or any hand-written entry is unused. The Streamlit app gets a "Look up a code" panel, and its findings' SLA references now carry their meanings; the contracts and glossary config ship in the app bundle. No data or report changed. Tests: 286 pytest (new `tests/test_glossary.py`).
+
 ## Roadmap (agreed with the owner; plan before building each phase)
 
 3. ~~**OT partner SLA and interface agreement.**~~ Done (step 11). `sla/ot_partner.yaml` (critical power availability per feed, cooling within band, alarm acknowledgment and response, redundancy restoration time, NFPA 110 generator testing, NFPA 72 inspections, coolant chemistry, MOP compliance, record integrity) and `sla/interface_agreement.yaml` (demarcation points, break-fix ownership matrix, joint incident command, fault-attribution rules using the site model's power and cooling paths).
@@ -295,6 +305,7 @@ Later: a security partner (access control, CCTV, escorts).
 
 ## Open items
 
+- [ ] Next: owner reviews the Agreements and Glossary tabs and the code popups live. Judgment calls to defend: contract meanings are quoted, not paraphrased; record IDs are explained by family (format and an example), not one by one; some codes mean different things on different pages, and the popup follows the page; everyday acronyms are listed but not underlined; rack positions stay plain; standards get a one-line description, not the standard's text; the app uses a lookup panel because Streamlit owns its markup.
 - [ ] Next: owner reviews Unified Site Management live (overview, tab bar on every page, Scorecards at `/app/`). Judgment calls to defend: the landing page is static so it loads instantly (the app still boots Python on its tab); the app's URL moved to `/app/` (old links land on the overview); one light style everywhere; Overview numbers are computed and tested, never typed; links into the app's partner views are not deep links yet (Streamlit query parameters were not verifiable here).
 - [ ] Fix the repository topic "gp" to "gpu" (GitHub repo page, gear icon next to About).
 - [x] Git commit email uses GitHub's numbered noreply address (confirmed 2026-10-05).

@@ -18,7 +18,9 @@ from scorecard import sitenav
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-PAGES = {"": "overview", "app/": "scorecards", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns"}
+PAGES = {"": "overview", "app/": "scorecards", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns",
+         "agreements/": "agreements", "agreements/interface-agreement/": "agreements", "agreements/it-partner-sla/": "agreements",
+         "agreements/landlord-sla/": "agreements", "glossary/": "glossary"}
 
 
 @pytest.fixture(scope="module")
@@ -77,7 +79,7 @@ def test_every_page_has_the_tab_bar_with_its_own_tab_marked(site):
 
 
 def _links(html):
-    return re.findall(r'href="([^"]+)"', html)
+    return re.findall(r'href="([^"]+)"', re.sub(r"<script\b.*?</script>", "", html, flags=re.S))
 
 
 def test_every_internal_link_resolves(site):
@@ -86,7 +88,7 @@ def test_every_internal_link_resolves(site):
     for path in PAGES:
         html = (site / path / "index.html").read_text(encoding="utf-8")
         nav = re.search(r'<nav class="usm".*?</nav>', html, re.S).group(0)
-        checked = _links(nav) + (_links(html) if path == "" else [])
+        checked = _links(nav) + (_links(html) if path == "" or path.startswith(("agreements/", "glossary/")) else [])
         for href in checked:
             if href.startswith(("http://", "https://", "#")) and not href.startswith(base):
                 continue

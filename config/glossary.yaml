@@ -1,0 +1,300 @@
+# Glossary: every code, acronym, and record ID the site uses.
+#
+# Contract codes (CSL-07, TR-1, NT-2, ...) are NOT written here: src/scorecard/glossary.py reads them
+# from the SLA and Interface Agreement YAML through the "contract_terms" map below, so a popup quotes
+# the contract. Everything else is hand-written here: acronyms ("terms"), ID formats ("families"),
+# and the capitalised words left plain on purpose ("plain").
+#
+# tests/test_glossary.py fails when a page or document shows a code that is neither explained
+# nor listed as plain, and when an entry here is no longer used anywhere.
+#
+# Definitions are generic, written for this fictional site; they describe no real company's systems.
+
+types:   # filter chips on the Glossary tab, in this order
+  - {key: acronym, label: Acronyms}
+  - {key: service_level, label: Service levels}
+  - {key: measure, label: Key measures}
+  - {key: rule, label: Contract rules}
+  - {key: notification, label: Notifications}
+  - {key: priority, label: Priorities and severity}
+  - {key: safety, label: Safety and standards}
+  - {key: scope, label: Scope and fault classes}
+  - {key: data_source, label: Data sources}
+  - {key: ticket_state, label: Ticket states}
+  - {key: record, label: Records and documents}
+  - {key: equipment, label: Site and equipment}
+  - {key: product, label: Products and models}
+
+# Where the contracts define codes. "path" is a dotted path in the loaded contract (partner SLAs are
+# merged onto sla/common.yaml); "title" and "text" quote fields of each item. A sentence whose field is
+# empty is dropped.
+contract_terms:
+  - {path: critical_service_levels, type: service_level, title: "{name}",
+     text: "{description} Expected {expected}{unit}; minimum {minimum}{unit}."}
+  - {path: key_measurements, type: measure, title: "{name}", text: "Target {direction} {target}{unit}. Measured from {data_sources}."}
+  - {path: alarm_notification.key_measures, type: measure, title: "{name}",
+     text: "Owed by the {party}. Target {direction} {target}{unit}. Measured from {data_sources}."}
+  - {path: ticket_handling.stability.rules, type: rule, title: "{name}", text: "{rule}"}
+  - {path: fault_attribution.rules, type: rule, title: "Fault attribution rule", text: "{rule}"}
+  - {path: handoffs, type: rule, title: "{name}", text: "{rule}"}
+  - {path: demarcations, type: rule, title: "{system} demarcation", text: "Boundary: {boundary} Evidence: {evidence}"}
+  - {path: chronic_failure.triggers, type: rule, title: "Chronic failure trigger", text: "{rule}"}
+  - {path: alarm_notification.notifications, type: notification, title: "{trigger}",
+     text: "Within {within_min} minutes, by {channels} (at least {channels_min} channels). Owed by: {owed_by}."}
+  - {path: priorities, type: priority, title: "Priority {id}: {name}",
+     text: "Acknowledge within {acknowledge_min} min; engaged on site within {engaged_on_site_min} min; contained within {containment_min} min; restored within {restore_min} min. {escalation}"}
+  - {path: breach_severity.levels, type: priority, title: "Internal severity {id}: {name}", text: "{escalation}"}
+  - {path: breach_severity.aggravators, type: priority, title: "Severity aggravator", text: "{description}"}
+  - {path: ehs.violation_classes, type: safety, title: "Safety violation class: {name}",
+     text: "Credit of {credit_pct_of_monthly_charges}% of monthly charges. Examples: {examples}"}
+  - {path: ehs.site_rules, type: safety, title: "{title}", text: "{rule}"}
+  - {path: ehs.standards, type: safety, title: "{name}", text: "{scope}"}
+  - {path: scope.in_scope, type: scope, title: "{name}", text: "{description}"}
+  - {path: site.service_units, type: scope, title: "Service unit: {name}", text: "{note}"}
+  - {path: measurement_spec, type: scope, title: "Fault class: {name}", text: "Service unit key: {service_unit_key}. Default priority {default_priority}."}
+  - {path: deployment.milestones, type: scope, title: "Deployment milestone: {name}", text: "Exit criteria: {exit_criteria}"}
+  - {path: measurement.data_sources, type: data_source, title: "{name}", text: "Measures: {measures} Owner: {owner}."}
+  - {path: ticket_handling.states, type: ticket_state, title: "Ticket state", text: "{description} Clock: {clock}.", code_only: true}
+  - {path: ticket_handling.pause_codes, id_field: code, type: ticket_state, title: "Pause code", text: "{description}", code_only: true}
+  - {path: definitions, id_from: term, type: rule, title: "{term}", text: "{definition}"}
+  - {path: document, type: record, title: "{title}", text: "{subtitle}. Version {version}, effective {effective_date}."}
+  - {path: site.halls, type: equipment, title: "Data hall", text: "State: {state}; {racks} racks."}
+
+# In family labels, # stands for a digit and [hall] for a hall letter.
+# Hand-written terms. "link: false" lists an everyday term without underlining it on every page.
+# "pages" limits a term or family to some pages (page keys: overview, scorecards, alarms, pir, weekly,
+# patterns, agreements, site); on those pages its meaning is shown first.
+terms:
+  # --- Acronyms: operations and contracts
+  - {term: CAP, type: acronym, expansion: Corrective action plan, text: "A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure."}
+  - {term: CSL, type: acronym, expansion: Critical service level, text: "A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA and OT-CSL-01 and up in the Landlord SLA."}
+  - {term: DCO, type: acronym, expansion: Data center operations, text: "The Customer's site operations team, which runs the Telemetry of Record and manages both partners."}
+  - {term: EHS, type: acronym, expansion: Environment, health, and safety, text: "The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits."}
+  - {term: CHG, type: acronym, expansion: Change record, text: "The prefix of the IT Partner's change records (CHG + 7 digits)."}
+  - {term: MOP, type: acronym, expansion: Method of procedure, text: "The step-by-step plan for planned work on live equipment: scope, window, isolation, back-out, and the alarms the work is expected to raise."}
+  - {term: PIR, type: acronym, expansion: Post-incident review, text: "The written review after a major incident: timeline, causes, contributing factors, and owned, dated actions.", see: "pir/"}
+  - {term: RACI, type: acronym, expansion: "Responsible, accountable, consulted, informed", text: "The ownership matrix in the Interface Agreement: for each component, who does the work, who owns the outcome, who is asked, and who is told."}
+  - {term: RCA, type: acronym, expansion: Root cause analysis, text: "The investigation that finds why an incident happened, not just what failed. P1 incidents owe a preliminary and a final RCA."}
+  - {term: RMA, type: acronym, expansion: Return merchandise authorization, text: "The return of a failed part to the manufacturer for repair or replacement."}
+  - {term: SLA, type: acronym, expansion: Service level agreement, link: false, text: "The contract schedule that sets service levels, how they are measured, and the credits for missing them. Each partner signs its own."}
+  - {term: OEM, type: acronym, expansion: Original equipment manufacturer, text: "The company that built the equipment (here, the rack and system integrator), with its own warranty and support contract."}
+  - {term: FRU, type: acronym, expansion: Field-replaceable unit, text: "A part a technician can swap on site, such as a compute tray, optic, power supply, or fan."}
+  - {term: PPE, type: acronym, expansion: Personal protective equipment, text: "Gloves, arc-rated clothing, face shields, and similar gear a task's hazard analysis requires."}
+  - {term: ESD, type: acronym, expansion: Electrostatic discharge, text: "Static electricity that can damage components; technicians follow an ESD control program."}
+  - {term: TRIR, type: acronym, expansion: Total recordable incident rate, text: "Recordable injuries per 200,000 hours worked, a standard safety statistic used to qualify partners."}
+  - {term: DART, type: acronym, expansion: "Days away, restricted, or transferred", text: "The rate of injuries serious enough to cost work days or restrict duty, per 200,000 hours worked."}
+  - {term: EMR, type: acronym, expansion: Experience modification rate, text: "An insurer's rating of a company's injury history against its industry; 1.0 is average."}
+  - {term: OSHA, type: acronym, expansion: Occupational Safety and Health Administration, text: "The US federal workplace safety regulator. Its standards are listed in the SLAs' safety section as OSHA-1904, OSHA-1910, and OSHA-1926."}
+  - {term: OSH, type: acronym, expansion: Occupational Safety and Health (Act), text: "The US law that created OSHA; its General Duty Clause is OSHA-GDC."}
+  - {term: CFR, type: acronym, expansion: Code of Federal Regulations, text: "The US federal regulations; workplace safety rules are in Title 29 (29 CFR)."}
+  - {term: NFPA, type: acronym, expansion: National Fire Protection Association, text: "Publisher of the fire and electrical safety codes the SLAs cite, such as NFPA 70E."}
+  - {term: ANSI, type: acronym, expansion: American National Standards Institute, text: "Coordinates US voluntary standards, including ANSI/ASSP Z10.0."}
+  - {term: ASSP, type: acronym, expansion: American Society of Safety Professionals, text: "Publisher of the ANSI/ASSP Z10.0 safety management standard."}
+  - {term: EPA, type: acronym, expansion: Environmental Protection Agency, text: "The US environmental regulator. Refrigerant work requires an EPA Section 608 certified technician."}
+  - {term: ISO, type: acronym, expansion: International Organization for Standardization, text: "Publisher of international standards, such as ISO 45001 (safety management) and ISO 8601 week numbering (an ISO week runs Monday to Sunday)."}
+  - {term: ERCOT, type: acronym, expansion: Electric Reliability Council of Texas, text: "The grid operator for most of Texas, including the site's utility."}
+  - {term: OSR, type: acronym, expansion: Outage severity rating, text: "A public five-level scale for how badly an outage affected services, from 1 (negligible) to 5 (severe). The post-incident review records it beside the internal severity."}
+  - {term: ASN, type: acronym, expansion: Advance ship notice, text: "The shipper's list of what is in a delivery, used to reconcile asset tags and serial numbers at receipt."}
+  - {term: SN, type: acronym, expansion: Serial number, text: "The manufacturer's unique number for a part; a part swap must show a serial change in inventory."}
+  - {term: CCTV, type: acronym, expansion: Closed-circuit television, text: "Security cameras."}
+  - {term: SMS, type: acronym, expansion: Short message service, link: false, text: "Text messaging, one of the notification channels."}
+  - {term: SMTP, type: acronym, expansion: Simple Mail Transfer Protocol, text: "The protocol for sending email; an SMTP relay is the minimum email channel for notifications."}
+  - {term: UTC, type: acronym, expansion: Coordinated Universal Time, link: false, text: "The time standard every record is stamped in. The site is in US Central time (UTC minus 5 in summer)."}
+  - {term: CDT, type: acronym, expansion: Central Daylight Time, link: false, text: "US Central time in summer, UTC minus 5 hours: the site's local time."}
+  - {term: IT, type: acronym, expansion: Information technology, link: false, text: "Here, the data hall equipment and the IT Partner that works on it."}
+  - {term: ID, type: acronym, expansion: Identifier, link: false, text: "A record's unique code."}
+  - {term: LLC, type: acronym, expansion: Limited liability company, link: false, text: "A US company form; both partners are fictional LLCs."}
+  - {term: PDF, type: acronym, expansion: Portable Document Format, link: false, text: "A printable document file."}
+  - {term: YAML, type: acronym, expansion: "YAML (a data file format)", link: false, text: "The plain-text format the contracts and reviews are written in, so they can be tested against the data."}
+  - {term: API, type: acronym, expansion: Application programming interface, link: false, text: "A way for one system to read from or send to another."}
+  - {term: REST, type: acronym, expansion: Representational state transfer, link: false, text: "A common style of web API."}
+  - {term: HTTPS, type: acronym, expansion: Hypertext Transfer Protocol Secure, link: false, text: "Encrypted web traffic."}
+  - {term: IP, type: acronym, expansion: Internet Protocol, link: false, text: "The network protocol; BACnet/IP is building automation over an IP network."}
+  - {term: TCP, type: acronym, expansion: Transmission Control Protocol, link: false, text: "The network transport; Modbus TCP is Modbus over an Ethernet network."}
+  - {term: US, type: acronym, expansion: United States, link: false, text: "The United States."}
+  - {term: USA, type: acronym, expansion: United States of America, link: false, text: "The United States."}
+  # --- Acronyms: facility (Landlord side)
+  - {term: BMS, type: acronym, expansion: Building management system, text: "The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it."}
+  - {term: EPMS, type: acronym, expansion: Electrical power monitoring system, text: "The system that records switchgear, UPS, and meter data for the electrical plant."}
+  - {term: DCIM, type: acronym, expansion: Data center infrastructure management, text: "Software that tracks power, capacity, and assets across the facility."}
+  - {term: SCADA, type: acronym, expansion: Supervisory control and data acquisition, text: "Industrial control and monitoring; here, the utility's own system for its substation."}
+  - {term: CDU, type: acronym, expansion: Coolant distribution unit, text: "Moves coolant between the facility water loop and the racks' liquid loop, and controls its temperature, flow, and pressure. The Landlord owns the CDUs; each serves up to 8 racks."}
+  - {term: CRAH, type: acronym, expansion: Computer room air handler, text: "A chilled-water air handler that cools a room's air, here the electrical rooms."}
+  - {term: UPS, type: acronym, expansion: Uninterruptible power supply, text: "Batteries and power electronics that carry the load through a utility loss until the generators take over."}
+  - {term: MV, type: acronym, expansion: Medium voltage, text: "Here, the 13.8 kV switchgear between the utility, the generators, and the unit substations."}
+  - {term: L-L, type: acronym, expansion: Line to line, text: "Voltage measured between two phases of a three-phase supply; 0 V line to line means the feed is dead."}
+  - {term: MVA, type: acronym, expansion: Megavolt-ampere, text: "A unit of apparent power, used to rate transformers."}
+  - {term: MW, type: acronym, expansion: Megawatt, text: "One million watts."}
+  - {term: VDC, type: acronym, expansion: Volts direct current, text: "DC voltage, as in the 800 VDC pilot racks."}
+  - {term: DC, type: acronym, expansion: Direct current, link: false, text: "Electric current in one direction, as from batteries."}
+  - {term: VFD, type: acronym, expansion: Variable frequency drive, text: "Controls a pump or fan motor's speed."}
+  - {term: LPM, type: acronym, expansion: Liters per minute, text: "Coolant flow rate."}
+  - {term: COP, type: acronym, expansion: Coefficient of performance, text: "Cooling delivered per unit of power used; higher is more efficient."}
+  - {term: HVAC, type: acronym, expansion: "Heating, ventilation, and air conditioning", text: "Building air systems."}
+  - {term: VESDA, type: acronym, expansion: Very early smoke detection apparatus, text: "Aspirating smoke detection that samples room air through pipes and alarms in stages (Alert, Action, Fire 1, Fire 2)."}
+  - {term: HLI, type: acronym, expansion: High-level interface, text: "A data link from the fire alarm panel to the BMS, used for secondary monitoring."}
+  - {term: NMC, type: acronym, expansion: Network management card, text: "The UPS's monitoring card, which sends SNMP traps and answers polls."}
+  - {term: SNMP, type: acronym, expansion: Simple Network Management Protocol, text: "A standard protocol for reading equipment status and receiving alarms (traps)."}
+  - {term: RTU, type: acronym, expansion: Remote terminal unit, text: "Modbus RTU is Modbus over a serial line such as RS-485."}
+  - {term: PG25, type: acronym, expansion: "Propylene glycol, 25%", text: "The coolant in the racks' liquid loop: water with 25% propylene glycol."}
+  - {term: GEN, type: acronym, expansion: Generator, text: "Standby diesel generators; the GEN paralleling bus combines them."}
+  # --- Acronyms: IT equipment and telemetry
+  - {term: GPU, type: acronym, expansion: Graphics processing unit, link: false, text: "The accelerator the site exists to run; 72 per NVL72 rack."}
+  - {term: CPU, type: acronym, expansion: Central processing unit, link: false, text: "The general-purpose processor; each compute tray has two Grace CPUs."}
+  - {term: PSU, type: acronym, expansion: Power supply unit, text: "Converts power for equipment; in a rack's power shelves, each PSU is a field-replaceable unit."}
+  - {term: BMC, type: acronym, expansion: Baseboard management controller, text: "A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system."}
+  - {term: XID, type: acronym, expansion: "Xid error (GPU driver error code)", text: "A numbered error the GPU driver reports, such as XID 79 (GPU fallen off the bus). Critical XIDs start the restoration clock for a GPU fault."}
+  - {term: DCGM, type: acronym, expansion: Data Center GPU Manager, text: "The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM."}
+  - {term: ECC, type: acronym, expansion: Error-correcting code, text: "Memory that detects and corrects bit errors; rising corrected errors can warn of a failing part."}
+  - {term: GSP, type: acronym, expansion: GPU System Processor, text: "A processor on the GPU that runs its firmware; XID 119 is a timeout waiting for it."}
+  - {term: RPC, type: acronym, expansion: Remote procedure call, text: "A request one program sends another, here the GPU driver to the GSP."}
+  - {term: IMEX, type: acronym, expansion: Internode memory exchange, text: "The service that lets GPUs in one NVLink domain share memory; it must be up before a rack returns to service."}
+  - {term: NCCL, type: acronym, expansion: Collective communications library, text: "The GPU vendor's library for multi-GPU communication; an NCCL all-reduce test checks a rack's bandwidth."}
+  - {term: NMX, type: acronym, expansion: NVLink management software, text: "Manages and reports on the NVLink switches inside the racks; the source for DS-NMX."}
+  - {term: UFM, type: acronym, expansion: Unified Fabric Manager, text: "Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM."}
+  - {term: HCA, type: acronym, expansion: Host channel adapter, text: "The InfiniBand network card in a compute tray."}
+  - {term: NDR, type: acronym, expansion: "Next data rate (InfiniBand, 400 Gb/s)", text: "An InfiniBand speed generation."}
+  - {term: XDR, type: acronym, expansion: "Extended data rate (InfiniBand, 800 Gb/s)", text: "An InfiniBand speed generation."}
+  - {term: BER, type: acronym, expansion: Bit error rate, text: "The share of bits received in error on a link; pre-FEC BER drift can warn of a failing optic."}
+  - {term: DOM, type: acronym, expansion: Digital optical monitoring, text: "An optic's own report of temperature, power, and signal levels; a DOM alarm warns the optic is failing."}
+  - {term: OSFP, type: acronym, expansion: Octal small form-factor pluggable, text: "The optic module format for the 800G network links."}
+  - {term: DAC, type: acronym, expansion: Direct attach copper, text: "A short copper network cable with connectors built on."}
+  - {term: OOB, type: acronym, expansion: Out-of-band, text: "The separate management network that reaches equipment even when the main network is down."}
+  - {term: RAID, type: acronym, expansion: Redundant array of independent disks, text: "Disks combined so one can fail without losing data; rebuilt after a drive swap."}
+  - {term: POST, type: acronym, expansion: Power-on self-test, text: "The checks a system runs when it powers on."}
+  # --- Codes the data uses that the contracts do not list
+  - {term: M0, type: scope, title: "Deployment milestone: not received", text: "The rack has not yet arrived at the site; milestone M1 (received and inspected) comes next."}
+  - {term: UTILITY, type: scope, title: "Fault class: utility supply", text: "A loss of the serving utility's power. Neither partner owns it; it is attributed under rule FA-6."}
+  - {term: RESEAT, type: ticket_state, title: "Close code: reseat", code_only: false, text: "The repair was a reseat: the part was removed and reinstalled, no part was used, and inventory shows no serial change."}
+  - {term: OPS-MAIN, type: equipment, title: "Main operations entrance badge reader", text: "The door every shift badges through; the staffing check counts badge-ins here."}
+  - {term: AUS-1, type: equipment, title: "Site AUS-1", text: "The fictional leased AI data center in Central Texas this project models."}
+  - {term: TTDM-A, type: equipment, title: "Hall A leak detection module", text: "The leak alarm and locator module for Hall A's sensing cables. An alarm names the circuit (C1, C2, ...) and the distance along the cable."}
+  - {term: TTDM-B, type: equipment, title: "Hall B leak detection module", text: "The leak alarm and locator module for Hall B's sensing cables."}
+  - {term: MV-A, type: equipment, title: "Medium-voltage bus A", text: "One of the two 13.8 kV switchgear buses (main-tie-main). The A feeds of the halls trace back to it."}
+  - {term: MV-B, type: equipment, title: "Medium-voltage bus B", text: "The other 13.8 kV switchgear bus. The B feeds of the halls trace back to it."}
+  - {term: Z10, type: safety, title: "ANSI/ASSP Z10.0", text: "The US standard for occupational health and safety management systems, accepted in place of ISO 45001."}
+  - {term: RS-485, type: acronym, expansion: "RS-485 (serial line standard)", text: "A two-wire serial link used by Modbus RTU devices such as the leak detection modules."}
+  # --- Products and models named in the site model
+  - {term: NVIDIA, type: product, link: false, title: "GPU and network vendor", text: "Makes the GB200 and GB300 NVL72 racks, the NVLink switches, and the InfiniBand fabric."}
+  - {term: GB200, type: product, title: "GB200 NVL72 rack", text: "A rack-scale GPU system: 72 GPUs and 36 Grace CPUs joined by NVLink, direct-to-chip liquid cooled. Hall A runs 32 of them."}
+  - {term: GB300, type: product, title: "GB300 NVL72 rack", text: "The next generation of the NVL72 rack. Hall B is deploying 32 of them."}
+  - {term: NVL72, type: product, title: "NVL72 rack", text: "A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours."}
+  - {term: QM9700, type: product, title: "Quantum-2 QM9700 InfiniBand switch", text: "The 400 Gb/s (NDR) InfiniBand switch in Hall A's back-end fabric."}
+  - {term: Q3400-RA, type: product, title: "Quantum-X800 Q3400-RA InfiniBand switch", text: "The 800 Gb/s (XDR) InfiniBand switch for Hall B and the planned 800 VDC pilot hall (Hall C)."}
+  - {term: C175-16, type: product, title: "Caterpillar C175-16 generator", text: "The 3,000 kW diesel standby generator model; the site has 7 (N+1)."}
+  - {term: EMCP, type: product, title: "EMCP 4.4 generator controller", text: "The generator's control panel, read over Modbus TCP for run, load, and alarm data."}
+  - {term: TT5000, type: product, title: "TraceTek TT5000 sensing cable", text: "Hydrocarbon leak sensing cable, used around the generators' diesel."}
+  - {term: TTDM-128, type: product, title: "TraceTek TTDM-128 leak module", text: "The leak alarm and locator module that reads sensing cable and reports where along it the leak is."}
+  - {term: RAYCHEM, type: product, link: false, title: "TraceTek product line", text: "The brand line of the leak detection cable and modules."}
+  - {term: VX, type: product, title: "Galaxy VX UPS", text: "The 1,500 kW UPS model for the halls' critical power."}
+  - {term: VL, type: product, title: "Galaxy VL UPS", text: "The 300 kW UPS model for mechanical loads (pumps, CDUs)."}
+  - {term: AP9644, type: product, title: "Network management card 4", text: "The UPS's monitoring card (the NMC), the source of SNMP traps."}
+  - {term: MVSST, type: product, title: "Medium-voltage solid-state transformer", text: "Converts 13.8 kV directly to 800 VDC for the planned 800 VDC racks."}
+  - {term: PME, type: product, title: "Power Monitoring Expert", text: "The electrical power monitoring software (EPMS) that records switchgear and meter data."}
+  - {term: AFC, type: product, title: "Liebert AFC chiller", text: "The air-cooled free-cooling chiller model in the central plant."}
+  - {term: CWA, type: product, title: "Liebert CWA thermal wall", text: "The chilled-water fan wall that cools the halls' air."}
+  - {term: CW, type: product, title: "Liebert CW CRAH", text: "The perimeter air handler model for the electrical rooms."}
+  - {term: VESDA-E, type: product, title: "VESDA-E aspirating smoke detector", text: "The current generation of VESDA detectors."}
+  - {term: VEP, type: product, title: "VESDA-E VEP detector", text: "A VESDA-E model with multiple sampling pipes."}
+
+families:
+  # --- Records
+  - {key: INC, label: "INC#######", pattern: 'INC\d{7}', type: record, title: Incident ticket, example: INC3100816,
+     text: "A ticket in the ticketing system. Faults the telemetry detects open one automatically (the Ticket of Record), stamped with T0, the fault class, and the unit."}
+  - {key: WO, label: "WO-#####", pattern: 'WO-\d{5}', type: record, title: Landlord work order, example: WO-41023,
+     text: "The Landlord's record of facility work: a fault repair, planned maintenance, or a change."}
+  - {key: MOP-N, label: "MOP-###", pattern: 'MOP-\d{3}', type: record, title: Method of procedure (change record), example: MOP-310,
+     text: "An approved plan for planned work on live equipment, with its window and the alarms it declares it will cause. The Alarm Board checks every alarm against it.", see: "alarms/#changes"}
+  - {key: CHG-N, label: "CHG#######", pattern: 'CHG\d{7}', type: record, title: IT Partner change record, example: CHG2040031,
+     text: "A planned change by the IT Partner, such as a firmware update, with its window and declared alarms.", see: "alarms/#changes"}
+  - {key: ALM, label: "ALM-####", pattern: 'ALM-\d{4}', type: record, title: Alarm, example: ALM-0001,
+     text: "One alarm on the Alarm Board, checked against the change work that declared it.", see: "alarms/"}
+  - {key: PM, label: "PM-####", pattern: 'PM-\d{4}', type: record, title: Preventive maintenance record, example: PM-0003,
+     text: "A scheduled maintenance task on facility equipment, such as a generator's monthly loaded exercise."}
+  - {key: CAP-N, label: "CAP-###", pattern: 'CAP-\d{3}', type: record, title: Corrective action plan, example: CAP-001,
+     text: "A corrective action plan drafted at the period review for each serious finding, grouped by the tickets it affects.", see: "app/"}
+  - {key: F-N, label: "F-###", pattern: 'F-\d{3}', type: record, title: IT Partner finding, example: F-001,
+     text: "A place where the IT Partner's records do not reconcile with the telemetry, from the monthly scorecard.", see: "app/"}
+  - {key: L-N, label: "L-###", pattern: 'L-\d{3}', type: record, title: Landlord finding, example: L-001,
+     text: "A place where the Landlord's work orders or maintenance records do not reconcile with the telemetry, from the monthly scorecard.", see: "app/"}
+  - {key: PIR-ID, label: "PIR-YYYY-###", pattern: 'PIR-\d{4}-\d{3}', type: record, title: Post-incident review, example: PIR-2026-001,
+     text: "A completed post-incident review.", see: "pir/"}
+  - {key: FPR, label: "FPR-YYYY-H#", pattern: 'FPR-\d{4}-H[12]', type: record, title: Failure pattern review, example: FPR-2026-H1,
+     text: "The review of six months of failures for patterns, with owners and fixes.", see: "patterns/"}
+  - {key: PA, label: "PA#", pattern: 'PA\d{1,2}', type: record, title: Failure pattern action, example: PA6,
+     text: "An owned, dated action from the failure pattern review.", see: "patterns/"}
+  - {key: W, label: "W##", pattern: 'W\d{2}', type: record, title: ISO week, example: W38,
+     text: "The week of the year (Monday to Sunday, UTC); one weekly operations review pack per week.", see: "weekly/"}
+  - {key: RSS, label: "RSS-###", pattern: 'RSS-\d{3}', type: record, title: IT Partner staff ID, example: RSS-003,
+     text: "A person on the IT Partner's roster (Ridgeline Site Services). The staffing checks match rostered people to badge-ins."}
+  - {key: CCF-E, label: "CCF-E##", pattern: 'CCF-E\d{2}', type: record, title: Landlord engineer ID, example: CCF-E07,
+     text: "An engineer on the Landlord's staff (Caprock Critical Facilities)."}
+  - {key: BADGE, label: "B#####", pattern: 'B\d{5}', type: record, title: Access badge, example: B40028,
+     text: "An access badge; badge-ins and badge-outs at the hall doors are the evidence for on-site times."}
+  - {key: LOT, label: "LOT-####", pattern: 'LOT-\d{4}', type: record, title: Manufacturing lot, example: LOT-2544,
+     text: "A batch of parts made together; a bad lot fails more often than the others."}
+  - {key: SER-CT, label: "CT + 8 characters", pattern: 'CT[A-Z0-9]{8}', type: record, title: Compute tray serial number, example: CT3PQ9DACL,
+     text: "A compute tray's serial number. A part swap must show the serial change in the BMC inventory."}
+  - {key: SER-NS, label: "NS + 8 characters", pattern: 'NS[A-Z0-9]{8}', type: record, title: NVLink switch tray serial number, example: NS82PHK3SG,
+     text: "An NVLink switch tray's serial number."}
+  - {key: SER-PS, label: "PS or PU + 8 characters", pattern: 'P[SU][A-Z0-9]{8}', type: record, title: Power shelf or PSU serial number, example: PS2DWQG7M1,
+     text: "A power shelf's (PS) or power supply's (PU) serial number."}
+  - {key: SER-OP, label: "OP + 8 characters", pattern: 'OP[A-Z0-9]{8}', type: record, title: Optic serial number, example: OP3BY26V5W,
+     text: "A network optic's serial number."}
+  - {key: SER-FAC, label: "CHX-P##### or GVX-M#####", pattern: '(?:CHX-P|GVX-M)\d{5}', type: record, title: Facility part serial number, example: CHX-P24761,
+     text: "The serial number of a replaced facility part: a CDU pump assembly (CHX-P) or a UPS power module (GVX-M)."}
+  - {key: EHS-EX, label: "EHS-#", pattern: 'EHS-\d', type: safety, title: Worked safety example, example: EHS-1, pages: [agreements],
+     text: "A numbered example event in an SLA's worked safety credit example (Appendix B)."}
+  - {key: SHEET, label: "A-###, E-###, M-###", pattern: '[AEM]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site],
+     text: "A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical."}
+  # --- Records that only mean something on one page
+  - {key: PIR-A, label: "A# (post-incident review)", pattern: 'A\d', type: record, title: Post-incident review action, example: A3,
+     pages: [pir, weekly], text: "An owned, dated action from the post-incident review, carried into the weekly pack until done."}
+  - {key: PIR-F, label: "F# (post-incident review)", pattern: 'F\d', type: record, title: Post-incident review contributing factor, example: F5,
+     pages: [pir, alarms], text: "A contributing factor the post-incident review found, such as an inadequate procedure or a missing alert."}
+  - {key: WK-D, label: "D# (weekly review)", pattern: 'D\d', type: record, title: Weekly review decision, example: D1,
+     pages: [weekly], text: "A decision recorded in the weekly operations review's meeting notes."}
+  - {key: WK-Q, label: "Q# (weekly review)", pattern: 'Q\d', type: record, title: Weekly review ask, example: Q1,
+     pages: [weekly], text: "An ask of one party from the weekly operations review, with a due date."}
+  - {key: CREW, label: "D# or N# (shift crew)", pattern: '[DN]\d', type: record, title: Shift crew, example: D1,
+     pages: [scorecards], text: "A rostered shift crew (D for day, N for night); the staffing check compares each crew's roster with badge-ins."}
+  - {key: FP-P, label: "P# (failure pattern review)", pattern: 'P[1-9]', type: record, title: Failure pattern number, example: P2,
+     pages: [patterns], text: "On the Failure Pattern Review, P1, P2, and P3 also number the patterns found. In the action tables, the Priority column uses the SLA priorities."}
+  - {key: ONCALL, label: "E# (on-call role)", pattern: 'E\d', type: record, title: On-call role, example: E1,
+     pages: [alarms], text: "An operations engineer's on-call role in the Customer's notification rota (E1 to E4)."}
+  # --- Equipment tags (from the site model's naming)
+  - {key: EQ-CDU, label: "CDU-[hall]#", pattern: 'CDU-[A-C]\d', type: equipment, title: Coolant distribution unit, example: CDU-A3,
+     text: "A CDU, named by hall and number: CDU-A3 is CDU 3 in Hall A. Each serves up to 8 racks; the Landlord owns it."}
+  - {key: EQ-UPS, label: "UPS-[hall]#", pattern: 'UPS-[A-C]\d', type: equipment, title: UPS module, example: UPS-A1,
+     text: "A hall UPS, named by hall and number. Hall A's four UPSs run distributed redundant (4 make 3)."}
+  - {key: EQ-MUPS, label: "MUPS-[hall]#", pattern: 'MUPS-[A-C]\d', type: equipment, title: Mechanical UPS, example: MUPS-A1,
+     text: "A UPS for a hall's mechanical loads (CDUs and pumps), named by hall and number."}
+  - {key: EQ-USS, label: "USS-[hall]#", pattern: 'USS-[A-C]\d', type: equipment, title: Unit substation, example: USS-A3,
+     text: "Steps 13.8 kV down to 480 V for a UPS, named by hall and number."}
+  - {key: EQ-TX, label: "TX-#", pattern: 'TX-\d', type: equipment, title: Utility transformer, example: TX-1,
+     text: "One of the two utility-owned 138 kV to 13.8 kV transformers."}
+  - {key: EQ-GEN, label: "GEN-#", pattern: 'GEN-\d', type: equipment, title: Standby generator, example: GEN-3,
+     text: "One of the 7 diesel standby generators (N+1) on the paralleling bus."}
+  - {key: EQ-CH, label: "CH-##", pattern: 'CH-\d{2}', type: equipment, title: Chiller, example: CH-05,
+     text: "One of the 11 air-cooled chillers (N+1) in the central plant."}
+  - {key: EQ-TW, label: "TW-[hall]#", pattern: 'TW-[A-C]\d', type: equipment, title: Thermal wall, example: TW-B2,
+     text: "A chilled-water fan wall that cools a hall's air, named by hall and number."}
+  - {key: EQ-VESDA, label: "VESDA-[hall]#", pattern: 'VESDA-[A-C]\d', type: equipment, title: Smoke detector, example: VESDA-B1,
+     text: "An aspirating smoke detector in a hall, named by hall and number."}
+  - {key: EQ-BW, label: "BW-[hall]-R#-PG-[hall]#-[side]", pattern: 'BW-[A-C]-R\d-PG-[A-C]\d-[AB]', type: equipment, title: Busway segment, example: BW-A-R1-PG-A2-A,
+     text: "Overhead busway feeding a row of racks. BW-A-R1-PG-A2-A is Hall A, row 1, power group A2, A side. Each rack takes power from an A and a B busway through tap-offs."}
+  - {key: EQ-TO, label: "TO-[rack]-[side]", pattern: 'TO-[A-C]\d{2}(?:-[AB])?', type: equipment, title: Busway tap-off, example: TO-A07-B,
+     text: "The breaker box that takes power from the busway to one rack: TO-A07-B is rack A07's B-side tap-off. Its output terminals are the power demarcation (DM-PWR)."}
+  - {key: EQ-LEAK, label: "C# (leak circuit)", pattern: 'C\d{1,2}', type: equipment, title: Leak detection circuit, example: C8,
+     text: "A sensing cable circuit on a leak detection module: TTDM-A/C8 is circuit 8 on Hall A's module."}
+
+plain:   # capitalised text that is not a code
+  words:
+    - {terms: [DO, NOT, EDIT, BY, HAND, FILE, GENERATED], why: "The generated-file banner at the top of each contract."}
+    - {terms: [MOCK, ILLUSTRATIVE], why: "The contracts' status banner: fictional and illustrative."}
+    - {terms: [ONLY, OK, LIVE], why: "Words set in capitals for emphasis or as a status label."}
+    - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
+  patterns:
+    - {pattern: '[A-C]-?\d{2}', why: "A rack position (A07 is Hall A, rack 7); the site drawings show where each is."}
+    - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}
+    - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}

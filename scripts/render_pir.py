@@ -107,7 +107,7 @@ def html_page() -> str:
     rv = reviews()
     data = {"index": build_index(ds), "example": rv[0], "osr": {k: list(v) for k, v in OSR.items()}, "badge_note": BADGE_NOTE}
     tpl = sitenav.inject((ROOT / "templates" / "pir.html").read_text(encoding="utf-8"), "pir")
-    return tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/"))
+    return sitenav.finish(tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/")))
 
 
 def main() -> int:

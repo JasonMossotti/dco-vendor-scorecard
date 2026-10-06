@@ -1,0 +1,159 @@
+<style>
+.gl { border-bottom:1px dotted currentColor; cursor:help; border-radius:2px; }
+.gl:hover, .gl:focus { background:#e8f0fc; outline:none; }
+.gl:focus-visible { outline:2px solid #5b9cff; outline-offset:1px; }
+.gl-pop { position:absolute; z-index:1000; width:min(380px, calc(100vw - 16px)); background:#fff; color:#1e2933; border:1px solid #c3ccd6;
+  border-radius:8px; box-shadow:0 6px 24px rgba(30,41,51,.18); font:13px/1.45 "Inter","Segoe UI",Helvetica,Arial,sans-serif; text-align:left;
+  white-space:normal; font-weight:400; letter-spacing:normal; text-transform:none; }
+.gl-pop .gl-h { display:flex; align-items:baseline; gap:8px; padding:10px 12px 6px; border-bottom:1px solid #e3e8ed; }
+.gl-pop .gl-h b { font-size:15px; }
+.gl-pop .gl-type { font-size:11px; color:#5b6774; text-transform:uppercase; letter-spacing:.04em; }
+.gl-pop .gl-x { margin-left:auto; border:0; background:none; font-size:18px; line-height:1; color:#5b6774; cursor:pointer; padding:0 2px; }
+.gl-pop .gl-b { padding:8px 12px; max-height:min(340px, 60vh); overflow:auto; }
+.gl-pop .gl-s + .gl-s { border-top:1px dashed #e3e8ed; margin-top:8px; padding-top:8px; }
+.gl-pop .gl-title { font-weight:600; }
+.gl-pop .gl-exp { color:#5b6774; }
+.gl-pop p { margin:3px 0 4px; }
+.gl-pop .gl-where { font-size:12px; color:#5b6774; }
+.gl-pop .gl-where a, .gl-pop .gl-f a { color:#1f5fbf; }
+.gl-pop .gl-scope { font-size:11px; color:#a15c00; font-weight:600; }
+.gl-pop .gl-f { display:flex; gap:14px; padding:6px 12px 10px; font-size:12px; border-top:1px solid #e3e8ed; }
+@media print { .gl { border-bottom:0; } .gl-pop { display:none !important; } }
+</style>
+<script id="gl-data" type="application/json">__GLOSSARY__</script>
+<script>
+/* Code popups: every code, acronym, and record ID on the page opens a small card with its meaning.
+   Data from src/scorecard/glossary.py; the page's text is never changed, only wrapped. */
+(function () {
+  const G = JSON.parse(document.getElementById("gl-data").textContent);
+  const ROOT = G.root, E = G.entries;
+  const RE = new RegExp(G.re, "g"), RE_BOTH = G.re_code ? new RegExp(G.re_code + "|" + G.re, "g") : RE;
+  const SKIP = "script,style,textarea,input,select,option,button,a,svg,h1,h2,h3,h4,h5,h6,summary,label,nav.usm,.gl,.gl-pop,[data-gl-skip],[contenteditable]";
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const famRe = G.fam.map(([p, i, scoped]) => [new RegExp("^(?:" + p + ")$"), i, scoped]);
+
+  function lookup(code) {   // the page's own meaning first, then the site-wide one (as glossary.lookup does)
+    const out = famRe.filter(([r, , s]) => s && r.test(code)).map(([, i]) => i);
+    if (code in G.exact) out.push(G.exact[code]);
+    else { const f = famRe.find(([r, , s]) => !s && r.test(code)); if (f) out.push(f[1]); }
+    return out;
+  }
+
+  function wrapText(node, re) {
+    const text = node.nodeValue;
+    const def = node.parentElement.closest("[data-gl-def]");   // where a contract defines a code, that code stays plain
+    const own = def ? def.dataset.glDef : null;
+    re.lastIndex = 0;
+    let m, last = 0, frag = null;
+    while ((m = re.exec(text))) {
+      const ids = m[0] === own ? [] : lookup(m[0]);
+      if (!ids.length) continue;
+      frag = frag || document.createDocumentFragment();
+      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+      const s = document.createElement("span");
+      s.className = "gl"; s.tabIndex = 0; s.setAttribute("role", "button");
+      s.dataset.gl = ids.join(","); s.textContent = m[0];
+      s.setAttribute("aria-label", m[0] + ": " + E[ids[0]].title + " (show meaning)");
+      frag.appendChild(s);
+      last = m.index + m[0].length;
+    }
+    if (!frag) return;
+    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  }
+
+  function scan(root) {
+    if (!root || root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return;
+    if (root.nodeType === 1 && root.closest(SKIP)) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => !/[A-Z]/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const n of nodes) {
+      const inCode = n.parentElement && n.parentElement.closest("code");
+      wrapText(n, inCode ? RE_BOTH : RE);
+    }
+  }
+
+  // ---- the card
+  let pop = null, from = null;
+  function close(refocus) {
+    if (!pop) return;
+    pop.remove(); pop = null;
+    if (refocus && from) from.focus();
+    from = null;
+  }
+  function where(w) {
+    return w.map(x => `${esc(x.doc)} · <a href="${esc(ROOT + x.href)}">${esc(x.section || "clause")}</a>`).join("<br>");
+  }
+  function card(code, ids) {
+    const first = E[ids[0]];
+    const doc = G.doc_title || "";
+    let h = `<div class="gl-h"><b>${esc(code)}</b><span class="gl-type">${esc(G.types[first.type] || "")}</span>` +
+            `<button class="gl-x" type="button" aria-label="Close">×</button></div><div class="gl-b">`;
+    for (const i of ids) {
+      const e = E[i];
+      const senses = e.senses.slice().sort((a, b) => (b.where.some(w => w.doc === doc) ? 1 : 0) - (a.where.some(w => w.doc === doc) ? 1 : 0));
+      for (const s of senses) {
+        h += `<div class="gl-s">`;
+        if (e.on && e.on.length) h += `<div class="gl-scope">On this page</div>`;
+        if (e.expansion) h += `<div class="gl-title">${esc(e.expansion)}</div>`;
+        else if (e.pattern) h += `<div class="gl-title">${esc(s.title)} <span class="gl-exp">(${esc(e.term)})</span></div>`;
+        else h += `<div class="gl-title">${esc(s.title)}</div>`;
+        if (s.text) h += `<p>${esc(s.text)}</p>`;
+        if (s.where && s.where.length) h += `<div class="gl-where">Defined in ${where(s.where)}</div>`;
+        h += `</div>`;
+      }
+    }
+    h += `</div><div class="gl-f">`;
+    const see = ids.map(i => E[i].see).find(Boolean);
+    if (see) h += `<a href="${esc(ROOT + see)}">Open the records</a>`;
+    h += `<a href="${esc(ROOT + "glossary/#" + encodeURIComponent(first.key))}">Glossary entry</a></div>`;
+    return h;
+  }
+  function open(el) {
+    if (pop && from === el) { close(true); return; }
+    close(false);
+    from = el;
+    pop = document.createElement("div");
+    pop.className = "gl-pop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", el.textContent);
+    pop.innerHTML = card(el.textContent, el.dataset.gl.split(",").map(Number));
+    document.body.appendChild(pop);
+    const r = el.getBoundingClientRect(), w = pop.offsetWidth || 380, ph = pop.offsetHeight || 0;
+    const vw = document.documentElement.clientWidth || window.innerWidth || 1024, vh = window.innerHeight || 768;
+    const left = Math.max(8, Math.min(r.left, vw - w - 8));
+    const below = r.bottom + 6, above = r.top - ph - 6;
+    const top = below + ph > vh && above > 0 ? above : below;
+    pop.style.left = (left + window.scrollX) + "px";
+    pop.style.top = (top + window.scrollY) + "px";
+    pop.querySelector(".gl-x").addEventListener("click", () => close(true));
+    pop.querySelector(".gl-x").focus({preventScroll: true});
+  }
+  document.addEventListener("click", ev => {
+    const el = ev.target.closest && ev.target.closest(".gl");
+    if (el) { ev.preventDefault(); ev.stopPropagation(); open(el); return; }
+    if (pop && !pop.contains(ev.target)) close(false);
+  }, true);
+  document.addEventListener("keydown", ev => {
+    if (ev.key === "Escape" && pop) { close(true); return; }
+    const el = ev.target.closest && ev.target.closest(".gl");
+    if (el && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); ev.stopPropagation(); open(el); }
+  }, true);
+  window.addEventListener("resize", () => close(false));
+
+  // ---- wrap codes now and whenever the page redraws part of itself
+  scan(document.body);
+  let queue = [];
+  const flush = () => { const q = queue; queue = []; q.forEach(n => n.isConnected && scan(n.nodeType === 3 ? n.parentElement : n)); };
+  new MutationObserver(muts => {
+    for (const m of muts) for (const n of m.addedNodes) {
+      if (n.nodeType === 1 && (n.classList.contains("gl") || n.classList.contains("gl-pop"))) continue;
+      if (n.nodeType === 3 && n.parentElement && n.parentElement.classList.contains("gl")) continue;
+      queue.push(n);
+    }
+    if (queue.length) flush();
+  }).observe(document.body, {childList: true, subtree: true});
+  window.GLOSSARY = {lookup, scan, open, close};
+})();
+</script>

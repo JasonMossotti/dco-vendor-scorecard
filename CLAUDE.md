@@ -1,7 +1,7 @@
 # CLAUDE.md: dco-vendor-scorecard
 
 Portfolio project for a Data Center Operations Lead (partner-operated sites) application. Owner: Jason Mossotti.
-Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (Unified Site Management overview), `/app/` (scorecard app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/alarms/` (Customer alarm board).
+Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (Unified Site Management overview), `/app/` (scorecard app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/alarms/` (Customer alarm board), `/agreements/` (the three contracts), `/glossary/` (every code; popups on every page).
 
 Fictional Site AUS-1 (Central Texas): the Customer leases halls from a Landlord (Caprock Critical Facilities: building, power, cooling, CDUs) and contracts an IT Partner (Ridgeline Site Services: data hall work). SLAs as code, synthetic telemetry with planted discrepancies, one engine per partner, cross-partner fault attribution, scorecards that compare self-reports with measurement. Everything synthetic; never imply knowledge of any real company's internal systems.
 
@@ -34,7 +34,7 @@ Data center and NOC operations professional; expert in the domain, newer to Git 
 ## Rules that caught real bugs
 
 - **Plan before building** anything larger than a fix; list the judgment calls the owner should be ready to defend, and get a yes.
-- **Generated files are never edited by hand:** `docs/sla/`, `docs/site/`, `docs/pir/`, `docs/weekly/`, `data/sample/`, `data/history/`, `data/changes/`, `reports/`. Tests fail when they are stale.
+- **Generated files are never edited by hand:** `docs/sla/`, `docs/site/`, `docs/pir/`, `docs/weekly/`, `data/sample/`, `data/history/`, `data/changes/`, `docs/glossary/`, `reports/`. Tests fail when they are stale.
 - **Never ship untested UI.** The app is tested against `tests/fake_streamlit.py`; the PIR and weekly pages by jsdom (`tests/js/`, install with `cd tests/js && npm install --no-save jsdom@24`). For visual bugs, render the SVG and look at it.
 - **Measure on months the code was not tuned on:** `python scripts/run_engine.py --robustness 60`, `python scripts/run_landlord.py --robustness 60`, `python scripts/check_facility_data.py`, `python scripts/render_patterns.py --robustness 60`, `python scripts/render_alarms.py --robustness 60`. Find the root cause of every miss before changing anything.
 - **New synthetic data uses its own random stream**; prove existing records and every report are unchanged (snapshot and `diff -rq`).
@@ -52,8 +52,8 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/run_engine.py && python scripts/build_scorecard.py && python scripts/run_landlord.py \
   && python scripts/render_pir.py && python scripts/render_weekly.py \
   && python scripts/generate_history.py && python scripts/render_patterns.py \
-  && python scripts/generate_changes.py && python scripts/render_alarms.py
-pytest -q                                      # 262 tests as of 2026-10-06
+  && python scripts/generate_changes.py && python scripts/render_alarms.py && python scripts/render_glossary.py
+pytest -q                                      # 286 tests as of 2026-10-06
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 

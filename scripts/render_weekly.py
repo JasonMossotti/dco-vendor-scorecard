@@ -193,7 +193,7 @@ def outputs() -> dict[Path, str]:
 def html_page() -> str:
     data = {"weeks": packs(), "notes": notes()}
     tpl = sitenav.inject((ROOT / "templates" / "weekly.html").read_text(encoding="utf-8"), "weekly")
-    return tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/"))
+    return sitenav.finish(tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/")))
 
 
 def main() -> int:

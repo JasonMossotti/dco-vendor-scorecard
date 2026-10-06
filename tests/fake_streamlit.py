@@ -81,6 +81,10 @@ class FakeStreamlit:
     def spinner(self, text=""):
         return _Block(self)
 
+    def popover(self, label, **kw):
+        self._rec("popover", label)
+        return _Block(self)
+
     # ---------------------------------------------------------------- text
     def __getattr__(self, name):
         if name in ("title", "header", "subheader", "markdown", "caption", "info", "warning", "error",
@@ -152,6 +156,9 @@ class FakeStreamlit:
 
     def number_input(self, label, min_value=None, max_value=None, value=None, step=None, key=None, **kw):
         return self._value(label, value if value is not None else min_value, key)
+
+    def text_input(self, label, value="", key=None, **kw):
+        return self._value(label, value, key)
 
     def checkbox(self, label, value=False, **kw):
         return self._value(label, value)
