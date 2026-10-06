@@ -107,6 +107,7 @@ const hhmm = t => local(t).slice(-5);
 const dur = m => m >= 60 ? `${Math.floor(m / 60)} h ${p2(m % 60)} min` : `${m} min`;
 const meet = (x, y) => x.some(v => y.includes(v));
 const assetsText = d => d.assets.map(x => x.replace("rack:", "rack ")).join(", ");
+const assetsLoc = d => d.assets.map(x => x.replace("rack:", "")).join("|");   // data-loc: a pin opens the site drawing
 const liveShift = wall => wall - (W0 + ((wall - W0) % SPAN + SPAN) % SPAN);   // whole days, so the time of day is the sample's
 
 const stateAt = (a, T) => (a.tc != null && a.tc <= T) ? "cleared" : "active";
@@ -201,10 +202,10 @@ function ticketPanel(T) {
   const ch = D.declarations.filter(d => ms(d.window_start) - GRACE <= T && ms(d.window_end) + GRACE > T - REAP && (S.party === "all" || d.owner === S.party));
   if (!tr.length && !ch.length) return `<div class="empty" id="tickets">No open tickets and nothing closed in the last 6 hours.</div>`;
   const trRow = k => { const o = openAt(k, T);
-    return `<tr class="tk ${o ? "open" : "closed"}"><td>${esc(k.id)}</td><td>Trouble</td><td>${partyBadge(k.partner)}</td><td>${esc(k.priority)}</td><td>${esc(k.device)}</td><td class="sum">${esc(k.summary)}</td><td>${esc(local(k.t))}</td>
+    return `<tr class="tk ${o ? "open" : "closed"}"><td>${esc(k.id)}</td><td>Trouble</td><td>${partyBadge(k.partner)}</td><td>${esc(k.priority)}</td><td data-loc="${esc(k.device + "|" + k.location)}">${esc(k.device)}</td><td class="sum">${esc(k.summary)}</td><td>${esc(local(k.t))}</td>
       <td>${o ? `<b>Open</b> ${dur(Math.floor((T - k.t) / MIN))}` : `Closed ${esc(hhmm(k.tc))}`}</td></tr>`; };
   const chRow = d => { const done = T > ms(d.window_end) + GRACE;
-    return `<tr class="tk ${done ? "closed" : "open"}" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>Change</td><td>${partyBadge(d.owner)}</td><td></td><td>${esc(assetsText(d))}</td><td class="sum">${esc(d.title)}</td><td>${esc(local(ms(d.window_start)))}</td>
+    return `<tr class="tk ${done ? "closed" : "open"}" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>Change</td><td>${partyBadge(d.owner)}</td><td></td><td data-loc="${esc(assetsLoc(d))}">${esc(assetsText(d))}</td><td class="sum">${esc(d.title)}</td><td>${esc(local(ms(d.window_start)))}</td>
       <td>${done ? `Window closed ${esc(hhmm(ms(d.window_end)))}` : `<b>In progress</b> until ${esc(hhmm(ms(d.window_end)))}`}</td></tr>`; };
   return `<div class="wide"><table id="tickets"><tr><th>Ticket</th><th>Type</th><th>Partner</th><th>Priority</th><th>Device</th><th>Summary</th><th>Opened (CDT)</th><th>Status</th></tr>
     ${ch.map(chRow).join("")}${tr.map(trRow).join("")}</table></div>`;
@@ -303,7 +304,7 @@ function rowHtml(a, T, kids = [], child = false) {
     <td><span class="ack ${acked ? "yes" : "no"}" title="${acked ? esc("Acknowledged " + local(a.ta) + " CDT by " + (a.ack_by || "")) : "Not acknowledged"}">${acked ? "✓" : "○"}</span></td>
     <td>${partyBadge(a.partner)}<div class="note">${esc(a.source)}</div></td>
     <td>${esc(tk)}<div class="note">${esc(ts)}</div></td>
-    <td>${esc(a.device)}</td><td>${esc(a.location)}</td>
+    <td>${esc(a.device)}</td><td data-loc="${esc(a.device + "|" + a.location)}">${esc(a.location)}</td>
     <td class="sum">${child ? "↳ " : ""}${esc(a.summary)}${kids.length ? ` <span class="grp" data-g="${esc(g)}">${S.xopen.has(g) ? "−" : "+"}${kids.length} related${nf ? `, ${nf} flagged` : ""}</span>` : ""}</td>
     <td>${clsBadge(a.cls)} ${a.change ? `<div class="note">${esc(a.change)}</div>` : ""}</td>
     <td>${a.tally}</td>
@@ -386,12 +387,12 @@ function changes() {
     ${TL_LEGEND}
     <div class="wide"><table id="changelist"><tr><th>Change</th><th>Owner</th><th>Work order</th><th>Title</th><th>Window (CDT)</th><th>Declared assets</th><th>Expected alarms</th><th>Worst</th><th>Expected</th><th>Out of scope</th><th>Out of window</th></tr>
     ${ds.map(d => `<tr class="row" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>${partyBadge(d.owner)}</td><td>${esc(wos(d.change_id).map(w => w.id).join(", "))}</td><td>${esc(d.title)}</td>
-      <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td>${esc(assetsText(d))}</td>
+      <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td data-loc="${esc(assetsLoc(d))}">${esc(assetsText(d))}</td>
       <td>${esc(d.expected.map(e => e.alarms.join(", ")).join("; "))}</td><td>${esc(d.max_severity)}</td>
       <td>${d.counts.expected}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${d.counts.out_of_scope}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${d.counts.out_of_window}</b>` : 0}</td></tr>
       <tr class="tlrow"><td colspan="11">${timeline(d, null)}</td></tr>`).join("") || `<tr><td colspan="11" class="empty">No change work in this date range.</td></tr>`}</table></div>
     <h2>Planned work orders with no approved change</h2>${orphan.length ? `<div class="wide"><table id="orphans"><tr><th>Work order</th><th>Partner</th><th>Unit</th><th>Work</th><th>Opened (CDT)</th><th>Closed</th></tr>
-      ${orphan.map(w => `<tr><td>${esc(w.id)}</td><td>${partyBadge("Landlord")}</td><td>${esc(w.unit)}</td><td>${esc(w.notes)}</td><td>${esc(local(ms(w.opened)))}</td><td>${esc(hhmm(ms(w.closed)))}</td></tr>`).join("")}</table></div>
+      ${orphan.map(w => `<tr><td>${esc(w.id)}</td><td>${partyBadge("Landlord")}</td><td data-loc="${esc(w.unit)}">${esc(w.unit)}</td><td>${esc(w.notes)}</td><td>${esc(local(ms(w.opened)))}</td><td>${esc(hhmm(ms(w.closed)))}</td></tr>`).join("")}</table></div>
       <p class="note">Planned work with no MOP on file has no impact declaration, so every alarm it causes reaches the Customer as not change work. The records do not reconcile; that is not by itself a finding against anyone.</p>`
       : `<p class="empty">None in this date range.</p>`}
     <h2>Change conflicts</h2>${cf.length ? `<ul>${cf.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None in this date range: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
@@ -536,7 +537,7 @@ function notify() {
     <p class="note">Key measures carry no service credit; they drive corrective action.</p>
     <h2>Critical and change-work notifications</h2>
     <div class="wide"><table id="owed"><tr><th>Alarm</th><th>Raised (CDT)</th><th>Device</th><th>Alarm</th><th>Owed by</th><th>Rule</th><th>First sent</th><th>Channels</th><th>Result</th></tr>
-    ${key.map(o => `<tr><td>${esc(o.alarm)}</td><td>${esc(local(ms(o.raised)))}</td><td>${esc(o.device)}</td><td>${esc(o.signal)}</td><td>${partyBadge(o.party)}</td><td>${esc(o.rule)}</td><td>${o.sent ? esc(local(ms(o.sent))) : "none"}</td><td>${esc((o.channels || []).join(", "))}</td><td>${st(o.status)}</td></tr>`).join("")}</table></div>
+    ${key.map(o => `<tr><td>${esc(o.alarm)}</td><td>${esc(local(ms(o.raised)))}</td><td data-loc="${esc(o.device)}">${esc(o.device)}</td><td>${esc(o.signal)}</td><td>${partyBadge(o.party)}</td><td>${esc(o.rule)}</td><td>${o.sent ? esc(local(ms(o.sent))) : "none"}</td><td>${esc((o.channels || []).join(", "))}</td><td>${st(o.status)}</td></tr>`).join("")}</table></div>
     ${routingSection()}</section>`;
 }
 

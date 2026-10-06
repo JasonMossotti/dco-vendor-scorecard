@@ -97,7 +97,7 @@ function render(f, a, edit) {
     ["Incident date", f && f.date], ["Ticket", f && f.ticket], ["Work order", f && f.work_order], ["MOP", f && f.mops.join(", ")],
     ["Unit", f && f.unit], ["Uptime severity (OSR)", osr ? `${osr} · ${DATA.osr[osr][0]}` : ""], ["Internal severity", sev.internal || (f && f.findings.length ? f.findings[0].severity : "")],
     ["Priority", sev.priority || ""], ["Incident Commander", a.incident_commander || ""], ["Review meeting", a.review_meeting || ""]
-  ].map(([k, v]) => `<div class="kv"><b>${k}</b>${edit && ["Priority", "Incident Commander", "Review meeting"].includes(k) ? `<input type="text" data-f="${k}" value="${esc(v)}">` : esc(v || "—")}</div>`).join("") + `</div>`;
+  ].map(([k, v]) => `<div class="kv"${k === "Unit" && v ? ` data-loc="${esc(v)}"` : ""}><b>${k}</b>${edit && ["Priority", "Incident Commander", "Review meeting"].includes(k) ? `<input type="text" data-f="${k}" value="${esc(v)}">` : esc(v || "—")}</div>`).join("") + `</div>`;
   if (osr) h += `<p class="note">OSR ${osr} (${DATA.osr[osr][0]}): ${esc(DATA.osr[osr][1])} ${esc(sev.osr_rationale || "")}</p>`;
 
   h += `<h2>In plain language</h2><div class="plain">` + [["What happened?", "what_happened"], ["Who was affected?", "who_was_affected"], ["Why did it happen?", "why"], ["What are we doing about it?", "what_we_are_doing"]]

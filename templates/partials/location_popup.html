@@ -1,0 +1,222 @@
+<style>
+.loc-pin { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; margin:0 0 0 4px; padding:0;
+  border:0; border-radius:4px; background:none; color:#c0392b; cursor:pointer; vertical-align:-3px; }
+.loc-pin:hover, .loc-pin:focus { background:#fde8e8; outline:none; }
+.loc-pin:focus-visible { outline:2px solid #5b9cff; outline-offset:1px; }
+.loc-pin svg { width:13px; height:13px; display:block; }
+.loc-bg { position:fixed; inset:0; z-index:990; background:rgba(30,41,51,.35); display:flex; align-items:center; justify-content:center; padding:8px; }
+.loc-bg *, .loc-bg *::before, .loc-bg *::after { box-sizing:border-box; }
+.loc-pop > * { min-width:0; }
+.loc-pop { width:min(760px, 100%); min-width:0; max-height:calc(100vh - 16px); display:flex; flex-direction:column; background:#fff; color:#1e2933;
+  border:1px solid #c3ccd6; border-radius:8px; box-shadow:0 10px 32px rgba(30,41,51,.25); font:13px/1.45 "Inter","Segoe UI",Helvetica,Arial,sans-serif;
+  text-align:left; white-space:normal; font-weight:400; letter-spacing:normal; text-transform:none; overflow:hidden; }
+.loc-pop .loc-h { display:flex; align-items:baseline; gap:8px; padding:10px 12px 4px; }
+.loc-pop .loc-h b { font-size:16px; }
+.loc-pop .loc-type { font-size:11px; color:#5b6774; text-transform:uppercase; letter-spacing:.04em; }
+.loc-pop .loc-x { margin-left:auto; border:0; background:none; font-size:20px; line-height:1; color:#5b6774; cursor:pointer; padding:0 2px; }
+.loc-pop .loc-t { padding:0 12px 6px; }
+.loc-pop .loc-note { color:#a15c00; font-weight:600; }
+.loc-pop .loc-chips { display:flex; flex-wrap:wrap; gap:6px; padding:2px 12px 8px; }
+.loc-pop .loc-chips button { border:1px solid #c3ccd6; background:#f3f6f9; color:#1e2933; border-radius:14px; padding:3px 10px; font:inherit; font-size:12px; cursor:pointer; }
+.loc-pop .loc-chips button.on { background:#1f5fbf; border-color:#1f5fbf; color:#fff; }
+.loc-pop .loc-fig { margin:0 12px; border:1px solid #e3e8ed; border-radius:4px; background:#fff; flex:1 1 auto; min-height:0; display:flex; }
+.loc-pop .loc-fig svg { display:block; flex:1 1 auto; min-width:0; width:100%; height:auto; max-height:calc(100vh - 230px); }
+.loc-pop .loc-msg { padding:30px 16px; color:#5b6774; }
+.loc-pop .loc-f { display:flex; flex-wrap:wrap; align-items:center; gap:14px; padding:8px 12px 10px; font-size:12px; color:#5b6774; }
+.loc-pop .loc-f a, .loc-pop .loc-f button { color:#1f5fbf; background:none; border:0; padding:0; font:inherit; cursor:pointer; text-decoration:underline; }
+.loc-pop .loc-key { margin-left:auto; display:flex; gap:12px; align-items:center; }
+.loc-pop .loc-key i { display:inline-block; width:14px; height:9px; border:2px solid #d62728; vertical-align:-1px; margin-right:4px; }
+.loc-pop .loc-key i.rel { border:2px dashed #e8833a; }
+@media print { .loc-pin, .loc-bg { display:none !important; } }
+</style>
+<script id="loc-data" type="application/json">__LOCATIONS__</script>
+<script>
+/* Location popups: a field that names a rack, room, or piece of equipment gets a pin. The pin opens the
+   site drawing with the item outlined in red and an arrow pointing at it; nearby items that answer the next
+   question (what feeds it, what it serves) are dashed. Data from src/scorecard/locations.py. The field's own
+   text is never changed, and codes inside it keep their meaning popups. */
+(function () {
+  const D = JSON.parse(document.getElementById("loc-data").textContent);
+  const ROOT = D.root, E = D.entries, NS = "http://www.w3.org/2000/svg";
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const names = Object.keys(E).concat(Object.keys(D.aliases)).sort((a, b) => b.length - a.length || (a < b ? -1 : 1));
+  const NAMES = names.length ? new RegExp("(?<![\\w-])(?:" + names.map(reEsc).join("|") + ")(?![\\w-])", "g") : null;
+  const RULES = D.rules.map(([p, f, n, t]) => [new RegExp(p, "g" + f), n, t]);
+  const fill = (t, m) => t.replace(/\{(\d)\}/g, (_, i) => m[+i]);
+  const PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>';
+
+  // The most specific location named in a text, as locations.resolve does: [name, note] or null.
+  function resolve(text) {
+    let best = null;
+    const take = c => { if (!best || c[0] > best[0] || c[0] === best[0] && c[1] > best[1]) best = c; };
+    for (const [re, n, t] of RULES) {
+      re.lastIndex = 0;
+      let m;
+      while ((m = re.exec(text))) { const name = fill(n, m).toUpperCase(); if (E[name]) take([E[name].rank, -m.index, name, fill(t, m)]); }
+    }
+    if (NAMES) {
+      NAMES.lastIndex = 0;
+      let m;
+      while ((m = NAMES.exec(text))) { const name = D.aliases[m[0]] || m[0]; take([E[name].rank, -m.index, name, ""]); }
+    }
+    return best ? [best[2], best[3]] : null;
+  }
+  // A field lists what it names, most useful first, separated by "|" (e.g. the device, then its room).
+  function field(value) {
+    const parts = value.split("|");
+    for (let i = 0; i < parts.length; i++) {
+      const r = resolve(parts[i]);
+      if (r && i && parts[0].trim()) r[1] = `The drawings do not show ${parts[0].trim()}; shown at its recorded location`;
+      if (r) return r;
+    }
+    return null;
+  }
+
+  function pin(root) {
+    const els = root.nodeType === 1 && root.matches("[data-loc]") ? [root] : [];
+    if (root.querySelectorAll) els.push(...root.querySelectorAll("[data-loc]"));
+    for (const el of els) {
+      if (el.querySelector(":scope > .loc-pin")) continue;
+      const r = field(el.dataset.loc);
+      if (!r) continue;
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "loc-pin"; b.innerHTML = PIN;
+      b.dataset.locName = r[0]; b.dataset.locNote = r[1];
+      b.title = "Show " + E[r[0]].title + " on the site drawing";
+      b.setAttribute("aria-label", b.title);
+      el.appendChild(b);
+    }
+  }
+
+  // ---- drawings, fetched once each
+  const cache = {};
+  function sheet(num) {
+    const f = D.sheets[num].file;
+    if (!cache[f]) cache[f] = fetch(ROOT + "site/" + f).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+    return cache[f];
+  }
+  function focusBox(v, s, full) {
+    if (full) return [0, 0, s.w, s.h];
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const [x, y, w, h] of v.b) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x + w); y1 = Math.max(y1, y + h); }
+    let w = x1 - x0, h = y1 - y0;
+    const pad = Math.max(90, 0.35 * Math.max(w, h));
+    w += 2 * pad; h += 2 * pad;
+    w = Math.max(w, 560); h = Math.max(h, 350);
+    if (w / h < 1.6) w = h * 1.6; else h = w / 1.6;           // a wide frame, like the card
+    if (w >= s.w * 0.85 || h >= s.h * 0.85) return [0, 0, s.w, s.h];
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    const x = Math.min(Math.max(cx - w / 2, 0), s.w - w), y = Math.min(Math.max(cy - h / 2, 0), s.h - h);
+    return [x, y, w, h];
+  }
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function overlay(svg, v, vb, label) {
+    const f = vb[2] / 700;                                      // viewBox units per screen pixel, roughly
+    const g = el("g", {"class": "loc-hl", "pointer-events": "none"}, svg);
+    for (const [x, y, w, h, p] of v.b.filter(b => !b[4]))
+      el("rect", {x: x - 2 * f, y: y - 2 * f, width: w + 4 * f, height: h + 4 * f, fill: "none", stroke: "#e8833a", "stroke-width": 2 * f, "stroke-dasharray": `${6 * f} ${4 * f}`, rx: 2 * f}, g);
+    const prim = v.b.filter(b => b[4]);
+    for (const [x, y, w, h] of prim)
+      el("rect", {x: x - 3 * f, y: y - 3 * f, width: w + 6 * f, height: h + 6 * f, fill: "#d62728", "fill-opacity": "0.08", stroke: "#d62728", "stroke-width": 3 * f, rx: 2 * f}, g);
+    if (!prim.length) return;
+    // Arrow from a label to the first outlined item, kept inside the frame.
+    const [x, y, w] = prim[0];
+    const right = x + w + 140 * f < vb[0] + vb[2], up = y - 90 * f > vb[1];
+    const tipX = right ? x + w + 3 * f : x - 3 * f, tipY = up ? y - 3 * f : y + 3 * f;
+    const tx = tipX + (right ? 46 : -46) * f, ty = tipY + (up ? -40 : 40) * f;
+    el("line", {x1: tx, y1: ty, x2: tipX + (right ? 7 : -7) * f, y2: tipY + (up ? -6 : 6) * f, stroke: "#d62728", "stroke-width": 3 * f, "stroke-linecap": "round"}, g);
+    const a = Math.atan2(tipY - ty, tipX - tx), L = 13 * f, s = 0.45;
+    el("polygon", {points: [[tipX, tipY], [tipX - L * Math.cos(a - s), tipY - L * Math.sin(a - s)], [tipX - L * Math.cos(a + s), tipY - L * Math.sin(a + s)]].map(p => p.join(",")).join(" "), fill: "#d62728"}, g);
+    const fs = 13 * f, lw = (label.length * 7.6 + 16) * f, lh = 22 * f;
+    const lx = right ? tx : tx - lw, ly = up ? ty - lh : ty;
+    el("rect", {x: lx, y: ly, width: lw, height: lh, rx: 3 * f, fill: "#d62728"}, g);
+    const t = el("text", {x: lx + lw / 2, y: ly + lh / 2 + fs * 0.36, "font-family": "Helvetica, Arial, sans-serif", "font-size": fs, "font-weight": "bold", fill: "#fff", "text-anchor": "middle"}, g);
+    t.textContent = label;
+  }
+
+  // ---- the card
+  let bg = null, from = null;
+  function close(refocus) {
+    if (!bg) return;
+    bg.remove(); bg = null;
+    if (refocus && from) from.focus();
+    from = null;
+  }
+  function open(btn) {
+    close(false);
+    from = btn;
+    const name = btn.dataset.locName, note = btn.dataset.locNote, e = E[name];
+    const label = name.startsWith("HALL-") || name.startsWith("ER-") ? e.title : name;
+    bg = document.createElement("div");
+    bg.className = "loc-bg";
+    bg.innerHTML = `<div class="loc-pop" role="dialog" aria-modal="true" aria-label="${esc(e.title)} on the site drawings">
+      <div class="loc-h"><b>${esc(e.title)}</b><span class="loc-type">${esc(D.kinds[e.kind])}</span><button class="loc-x" type="button" aria-label="Close">×</button></div>
+      <div class="loc-t">${note ? `<span class="loc-note">${esc(note)}.</span> ` : ""}${esc(e.text)}</div>
+      <div class="loc-chips" role="tablist">${e.views.map((v, i) => `<button type="button" role="tab" data-i="${i}">${esc(v.s)} ${esc(D.sheets[v.s].title)}</button>`).join("")}</div>
+      <div class="loc-fig"></div>
+      <div class="loc-f"><button type="button" class="loc-full">Full sheet</button><a class="loc-open" href="#">Open the drawing</a>
+        <span class="loc-key" data-gl-skip><span><i></i>${esc(label)}</span><span class="loc-rel"><i class="rel"></i>Connected</span></span></div></div>`;
+    document.body.appendChild(bg);
+    const pop = bg.querySelector(".loc-pop");
+    let cur = 0, full = false;
+    function show() {
+      const v = e.views[cur], s = D.sheets[v.s];
+      pop.querySelectorAll(".loc-chips button").forEach(b => { const on = +b.dataset.i === cur; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+      pop.querySelector(".loc-full").textContent = full ? "Zoom to the item" : "Full sheet";
+      pop.querySelector(".loc-open").href = ROOT + "site/" + s.file;
+      pop.querySelector(".loc-rel").hidden = !v.b.some(b => !b[4]);
+      const fig = pop.querySelector(".loc-fig");
+      fig.innerHTML = `<div class="loc-msg">Loading ${esc(v.s)}…</div>`;
+      const want = cur;
+      sheet(v.s).then(text => {
+        if (!bg || want !== cur) return;
+        const doc = new DOMParser().parseFromString(text, "image/svg+xml");
+        const svg = document.importNode(doc.documentElement, true);
+        const vb = focusBox(v, s, full);
+        svg.setAttribute("viewBox", vb.map(n => n.toFixed(1)).join(" "));
+        svg.removeAttribute("width"); svg.removeAttribute("height");
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+        svg.setAttribute("role", "img");
+        svg.setAttribute("aria-label", `${v.s} ${s.title}, with ${e.title} outlined in red`);
+        overlay(svg, v, vb, label);
+        fig.innerHTML = "";
+        fig.appendChild(svg);
+      }).catch(() => {
+        if (!bg || want !== cur) return;
+        fig.innerHTML = `<div class="loc-msg">The drawing could not be loaded here. <a href="${esc(ROOT + "site/" + s.file)}">Open ${esc(v.s)}</a>.</div>`;
+      });
+    }
+    pop.querySelector(".loc-chips").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) { cur = +b.dataset.i; show(); } });
+    pop.querySelector(".loc-full").addEventListener("click", () => { full = !full; show(); });
+    pop.querySelector(".loc-x").addEventListener("click", () => close(true));
+    show();
+    pop.querySelector(".loc-x").focus({preventScroll: true});
+  }
+  document.addEventListener("click", ev => {
+    const b = ev.target.closest && ev.target.closest(".loc-pin");
+    if (b) { ev.preventDefault(); ev.stopPropagation(); open(b); return; }
+    if (bg && ev.target === bg) close(true);
+  }, true);
+  document.addEventListener("keydown", ev => {
+    if (ev.key === "Escape" && bg) { ev.stopPropagation(); close(true); }
+  }, true);
+
+  // ---- pins now and whenever the page redraws part of itself
+  pin(document.body);
+  new MutationObserver(muts => {
+    if (!document) return;                                       // the page was closed
+    for (const m of muts) for (const n of m.addedNodes) {
+      if (n.nodeType !== 1 || !n.isConnected || n.classList.contains("loc-pin") || n.classList.contains("loc-bg") || n.closest(".loc-bg")) continue;
+      if (n.closest("[data-loc]") && !n.matches("[data-loc]") && !n.querySelector("[data-loc]")) continue;
+      pin(n);
+    }
+  }).observe(document.body, {childList: true, subtree: true});
+  window.LOCATIONS = {resolve, field, open, close};
+})();
+</script>

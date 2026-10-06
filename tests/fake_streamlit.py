@@ -105,6 +105,12 @@ class FakeStreamlit:
         assert isinstance(data, pd.DataFrame), "st.dataframe expects a DataFrame"
         self._rec("dataframe", data)
 
+    def image(self, image, caption=None, width=None, **kw):
+        assert isinstance(image, str) and image.lstrip().startswith("<svg") and 'xmlns="http://www.w3.org/2000/svg"' in image, \
+            "the app shows drawings as SVG strings (st.image renders those in an img tag, which needs xmlns)"
+        assert width is None or isinstance(width, int), "an integer width works on every Streamlit version the app supports"
+        self._rec("image", image)
+
     def _chart(self, kind, data, **kw):
         assert isinstance(data, pd.DataFrame) and not data.empty, f"{kind} needs a non-empty DataFrame"
         self._rec(kind, data)

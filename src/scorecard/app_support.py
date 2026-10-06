@@ -353,3 +353,32 @@ def lookup_lines(query: str, page: str = "scorecards", limit: int = 12) -> list[
     if not hits:
         return [f"No code or ID matches “{_md(q)}”. Check the Glossary tab."]
     return ["Matching codes:"] + [f"- **{_md(e.term)}** · {_md(e.title)}" for e in hits]
+
+
+@lru_cache(maxsize=1)
+def _site_drawings() -> tuple[dict, dict]:
+    """The location entries and the drawings, built from site/site.yaml (the bundle carries no SVG files)."""
+    from scorecard import locations, site_model
+    from scorecard.site_drawings import sheets
+    site = site_model.load_site()
+    return locations.build(site), {num: svg for num, _, _, svg in sheets(site)}
+
+
+def location_view(query: str) -> dict[str, Any] | None:
+    """For the lookup box: when the query names a rack, room, or piece of equipment, what it is and each
+    drawing that shows it, highlighted (title, sheet label, SVG). None when it names no location."""
+    from scorecard import locations
+    q = (query or "").strip()
+    if not q:
+        return None
+    data, svgs = _site_drawings()
+    hit = locations.resolve_field(data, q) or locations.resolve_field(data, q.upper())
+    if not hit:
+        return None
+    name, note = hit
+    e = data["entries"][name]
+    label = e["title"] if name.startswith(("HALL-", "ER-")) else name
+    return {"name": name, "title": e["title"], "kind": locations.KIND_LABEL[e["kind"]],
+            "text": (note + ". " if note else "") + e["text"],
+            "views": [(f"{v['s']} {data['sheets'][v['s']]['title']}", locations.highlighted_svg(data, svgs[v["s"]], v, label))
+                      for v in e["views"]]}
