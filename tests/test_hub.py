@@ -18,7 +18,7 @@ from scorecard import sitenav
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-PAGES = {"": "overview", "app/": "scorecards", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns",
+PAGES = {"": "overview", "app/": "scorecards", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns", "energy/": "energy",
          "agreements/": "agreements", "agreements/interface-agreement/": "agreements", "agreements/it-partner-sla/": "agreements",
          "agreements/landlord-sla/": "agreements", "glossary/": "glossary"}
 
@@ -120,7 +120,7 @@ def test_app_page_keeps_one_scroll_bar_and_the_light_theme(site):
 
 
 def test_static_pages_use_the_light_toolbar():
-    for name in ("alarms", "pir", "weekly", "patterns"):
+    for name in ("alarms", "pir", "weekly", "patterns", "energy"):
         tpl = (ROOT / "templates" / f"{name}.html").read_text(encoding="utf-8")
         assert "header.top { background:#fff;" in tpl, name
         assert "__SITENAV__" in tpl and "__SITENAV_CSS__" in tpl, name

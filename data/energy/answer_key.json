@@ -1,0 +1,11 @@
+{
+  "lockouts": [
+    {
+      "chiller": "CH-03",
+      "end": "2026-09-19T11:23:20Z",
+      "pm": "PM-0015",
+      "start": "2026-09-13T12:24:49Z"
+    }
+  ],
+  "report_error": "ups_input_as_it"
+}

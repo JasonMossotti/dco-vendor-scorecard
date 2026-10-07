@@ -17,6 +17,7 @@ ok(d.querySelectorAll("tr.default").length > 0, "rows below Minimum month to dat
 ok(t().includes("overstated by"), "overstated self-reports are flagged");
 ok(t().includes("PIR-2026-001") && d.querySelector('a[href="../pir/"]'), "the A07 outage links to its review");
 ok(t().includes("D1") && t().includes("Q3"), "decisions and asks shown");
+ok(d.getElementById("energy-line") && d.getElementById("energy-line").textContent.includes("PUE this week") && d.querySelector('#energy-line a[href="../energy/"]'), "the energy line links to the PUE report");
 ok(t().includes("Priorities for next week") && d.querySelectorAll("main ol li").length === 5, "next week's priorities shown for each partner");
 ok(t().includes("never a weekly credit"), "weekly results are framed as early warnings");
 tab("2026-W36").click();

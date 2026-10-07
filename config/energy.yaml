@@ -1,0 +1,59 @@
+# Energy model and PUE report settings for Site AUS-1 (synthetic; portfolio demo).
+#
+# The meters are synthetic. IT energy follows the UPS load readings already in the sample
+# (facility/ups_status.jsonl); cooling follows the weather and the heat the halls reject; every
+# other quantity is sized from site/site.yaml. "basis: assumption" marks an engineering assumption.
+# Read by src/scorecard/synthetic/energy.py (the meters) and src/scorecard/energy.py (the report).
+
+standard:
+  name: "ISO/IEC 30134-2:2026"
+  title: "Information technology - Data centres key performance indicators - Part 2: Power usage effectiveness (PUE)"
+  url: "https://www.iso.org/standard/30134-2"
+  checked: "2026-10-07"           # the 2026 edition supersedes the 2016 edition
+
+# Central Texas weather, synthetic: a monthly normal daily mean dry bulb (rounded long-run normals for
+# the region; basis: assumption), a daily cycle, and a persistent day-to-day anomaly.
+weather:
+  monthly_mean_c: {1: 11, 2: 13, 3: 17, 4: 21, 5: 25, 6: 28, 7: 30, 8: 30, 9: 27, 10: 22, 11: 16, 12: 12}
+  diurnal_half_range_c: 6.5
+  coldest_local_hour: 6
+  anomaly_sd_c: 2.5
+  anomaly_persistence: 0.7
+
+# Chiller plant (Liebert AFC free-cooling chillers on one 20 C supply / 30 C return loop).
+plant:
+  cop_slope_per_c: 0.16           # mechanical COP rises 0.16 per degree below the 43 C design day (3.0 there); basis: assumption
+  cop_max: 7.5
+  free_cooling_full_below_c: 12   # full free cooling below this outdoor dry bulb; basis: assumption
+  free_cooling_none_above_c: 26   # no free cooling above this (4 C under the 30 C return); basis: assumption
+  free_cooling_kw_per_kw: 0.03    # fan power per kW rejected in free cooling; basis: assumption
+  chiller_running_kw: 1300        # load per running chiller when staging; basis: assumption
+  pump_exponent: 2.5              # VFD pump power falls with flow; basis: assumption
+  pump_floor: 0.30                # minimum pump speed fraction; basis: assumption
+  supply_c: 20
+
+distribution_loss_fraction: 0.010  # transformers and MV distribution, unmetered; basis: assumption
+house_day_factor: 1.10             # house load by day (07:00 to 19:00 site time) and night, times house_load_kw
+house_night_factor: 0.90
+meter_noise_sd: 0.004              # hour-to-hour variation on each modeled load
+tariff_usd_per_kwh: 0.065          # blended energy price used to cost findings; basis: assumption
+
+# The 12 four-week periods before the sample: with the sample month, 52 weeks of PUE (the standard asks
+# for a year). Hall B was deploying: its IT load ramps from the first value to the last across them.
+history:
+  periods: 12
+  hall_b_ramp: [0.25, 0.95]
+
+# What the checks call a finding.
+checks:
+  kwh_tolerance: 1000              # a reported energy total may differ from the meters by this much (rounding)
+  pue_tolerance: 0.005
+  lockout_hours: 24                # free cooling disabled on a chiller longer than this with no change record
+  unmetered_band: [0.005, 0.020]   # unmetered share of facility energy expected for distribution losses
+
+# Planted cases for generated months (the committed sample holds one of each kind of finding).
+plants:
+  report_errors: [ups_input_as_it, house_omitted, generator_omitted, none]
+  sample_report_error: ups_input_as_it
+  lockout_days: [3.0, 10.0]
+  decoy_lockout_hours: [2, 8]      # free cooling off while the PM work is done, re-enabled at the end: not a finding

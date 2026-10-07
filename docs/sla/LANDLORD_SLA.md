@@ -37,7 +37,8 @@
 19. [Security and Chain of Custody](#19-security-and-chain-of-custody)
 20. [Environmental, Health, and Safety](#20-environmental-health-and-safety)
 21. [Spares](#21-spares)
-22. [SLA Change Control and Continuous Improvement](#22-sla-change-control-and-continuous-improvement)
+22. [Energy Reporting and PUE](#22-energy-reporting-and-pue)
+23. [SLA Change Control and Continuous Improvement](#23-sla-change-control-and-continuous-improvement)
 - [Appendix A: Internal Breach Severity Index](#appendix-a-internal-breach-severity-index)
 - [Appendix B: Worked Examples](#appendix-b-worked-examples)
 
@@ -884,7 +885,22 @@ Spares are Landlord-owned and Landlord-managed.
 - **Reorder:** Replenished within 10 business days of use.
 - **Cycle counts:** Quarterly, reported to the Customer.
 
-## 22. SLA Change Control and Continuous Improvement
+## 22. Energy Reporting and PUE
+
+The Landlord reports the site's energy use every month from the meters it operates, so the Customer can track power usage effectiveness (PUE) from the same records. The PUE target is a Key Measurement with no service credits; a miss calls for an energy improvement plan.
+
+- **Standard:** ISO/IEC 30134-2:2026, Power usage effectiveness (PUE). PUE is total facility energy divided by IT energy, both measured as energy over the period.
+- **Total facility energy:** Energy delivered to the site by the utility (revenue meters on MV-A and MV-B) and by the generators while they carry the site. Generator energy into a portable load bank during a test is not facility energy.
+- **IT energy:** Measured at the UPS outputs of each hall. UPS losses are facility overhead, not IT load.
+- **Partial PUE:** Cooling (chiller yard, facility water pumps, mechanical UPS for CDUs and thermal walls, electrical-room CRAHs) and the power path (UPS losses and distribution losses) are reported separately, so the overhead can be traced to its source.
+
+| ID | Term | Requirement |
+|---|---|---|
+| OT-EN-01 | Monthly Energy Report | By the fifth business day of each month, the Landlord submits total facility energy, IT energy, PUE, and partial PUE for the prior period, with the meters used. The figures must reconcile with the meter data in the Customer's facility feed within rounding. |
+| OT-EN-02 | PUE Over 52 Weeks | PUE over the most recent 52 weeks at most 1.35. Key Measurement; no service credits. A miss requires an energy improvement plan within 30 days. |
+| OT-EN-03 | Free-Cooling Availability | Free cooling (economizer) on a chiller may be disabled for more than 24 hours only under an approved MOP or change record. A lockout left in place after maintenance is a records discrepancy and is reported with its estimated energy cost. |
+
+## 23. SLA Change Control and Continuous Improvement
 
 - Promote a Key Measurement to a Critical Service Level, or demote a CSL, with 90 days notice (maximum 2 changes per contract year).
 - Reallocate credit allocation percentages with 90 days notice, within the pool and per-CSL caps.

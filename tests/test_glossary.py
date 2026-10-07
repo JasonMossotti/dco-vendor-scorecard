@@ -141,7 +141,7 @@ def test_markdown_renderer():
 
 # ------------------------------------------------------------------ popups on every page
 def test_every_static_page_has_popups_with_just_its_codes(site):
-    pages = ["", "alarms/", "pir/", "weekly/", "patterns/", "agreements/", "agreements/it-partner-sla/", "glossary/"]
+    pages = ["", "alarms/", "pir/", "weekly/", "patterns/", "energy/", "agreements/", "agreements/it-partner-sla/", "glossary/"]
     for path in pages:
         html = (site / path / "index.html").read_text(encoding="utf-8")
         assert html.count('<script id="gl-data"') == 1, path

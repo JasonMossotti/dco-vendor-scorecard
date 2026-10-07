@@ -47,7 +47,7 @@ DOC_DIR = ROOT / "docs" / "sla"
 IT_NUM = {"measurement": 6, "credits": 14, "excused": 16, "rca": 17, "governance": 18, "security": 21, "ehs": 22,
           "change_control": 24, "ehs_example": "B.4"}
 OT_NUM = {"measurement": 5, "credits": 12, "excused": 14, "rca": 15, "governance": 16, "security": 19, "ehs": 20,
-          "change_control": 22, "ehs_example": "B.2"}
+          "change_control": 23, "ehs_example": "B.2"}
 TEMPLATE_DIR = ROOT / "templates"
 
 

@@ -111,6 +111,10 @@ function render(w) {
     rs.staffing.map(s => `<tr><td>${esc(s.id)} ${esc(s.name)}</td><td class="nw">${esc(s.week_txt)} <span class="note">${esc(s.status_txt)}</span></td><td class="nw">≥ ${esc(s.minimum)}%</td><td>${esc(s.detail)}</td></tr>`)
     .concat(rs.spares.map(k => `<tr><td>${esc(k.id)} ${esc(k.name)}</td><td class="nw ${k.met === false ? "missed" : ""}">${esc(k.actual_txt)}</td><td class="nw">≥ ${esc(k.target)}%</td><td>${esc(k.detail)}</td></tr>`)));
   h += `<p class="note">Failed parts awaiting shipment to the OEM at the end of the week: ${esc(rs.rma_open)}${rs.rma_open ? ` (oldest removed ${esc(rs.rma_oldest_days)} days ago)` : ""}.</p>`;
+  if (w.energy) {
+    const en = w.energy, f3 = v => Number(v).toFixed(3);
+    h += `<p class="note" id="energy-line">Energy: PUE this week <b>${esc(f3(en.week.pue))}</b> (cooling pPUE ${esc(f3(en.week.ppue_cooling))}, power pPUE ${esc(f3(en.week.ppue_power))}); month to date ${esc(f3(en.mtd.pue))} over ${esc((en.mtd.facility_kwh / 1000).toLocaleString("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1}))} MWh. Detail in the <a href="../energy/">PUE report</a>.</p>`;
+  }
 
   const e = w.ehs;
   h += `<h2>8. Safety (EHS)</h2><ul><li><b>Injuries this week:</b> ${esc(e.injuries)}</li>` +

@@ -38,6 +38,7 @@ DOCS = [
     ("Fault attribution report", "reports/attribution_report.md"),
     ("Change-aware alarm review", "reports/change_alarms.md"),
     ("Failure pattern review", "reports/failure_patterns.md"),
+    ("PUE report", "reports/pue_report.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
 ]
 
@@ -45,6 +46,7 @@ DOCS = [
 def facts() -> dict:
     """The overview's numbers, each from the module that renders the page it summarizes."""
     import render_alarms
+    import render_energy
     import render_patterns
     import render_pir
     import render_weekly
@@ -58,6 +60,7 @@ def facts() -> dict:
     pir = render_pir.reviews()[0]
     weeks = render_weekly.packs()
     pat = render_patterns.prepare()
+    en = render_energy.prepare()
     from scorecard import tickets as T
     tk = T.build()
     start, end = sc["window"]["start"], sc["window"]["end"]
@@ -83,6 +86,9 @@ def facts() -> dict:
         "patterns": {"id": pat["id"], "window": pat["window_txt"], "failures": pat["totals"]["failures"],
                      "found": len(pat["patterns"]), "watch": len(pat["watch"]),
                      "titles": [p["title"] for p in pat["patterns"]]},
+        "energy": {"pue": en["month"]["pue"], "reported": en["report"]["pue"], "year": en["kpi"]["actual"],
+                   "target": en["kpi"]["target"], "met": en["kpi"]["met"], "cooling": en["month"]["ppue_cooling"],
+                   "findings": [x["title"] for x in en["findings"]]},
     }
 
 
@@ -105,7 +111,7 @@ def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: l
 
 
 def body(f: dict) -> str:
-    it, ll, al, pir, pat, tk = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"]
+    it, ll, al, pir, pat, tk, en = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"], f["energy"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
         '<div class="partners">'
@@ -165,6 +171,12 @@ def body(f: dict) -> str:
              [(f"{pat['failures']:,}", "failures reviewed"), (str(pat["found"]), "patterns found"), (str(pat["watch"]), "watch items")],
              [("Open the review", "patterns/")],
              "; ".join(pat["titles"]) + "."),
+        tile("energy", "Energy",
+             "PUE from the meters (ISO/IEC 30134-2:2026), checked against the Landlord's monthly report.",
+             [(f"{en['pue']:.3f}", "PUE this month"), (f"{en['reported']:.3f}", "Landlord reported"),
+              (f"{en['year']:.3f}", f"52 weeks (target {en['target']:.2f})")],
+             [("Open the energy report", "energy/")],
+             ("; ".join(en["findings"]) + ".") if en["findings"] else "The Landlord's report reconciles with the meters."),
     ]
     docs = "".join(f'<li><a href="{p if p.endswith("/") else BLOB + p}">{escape(t)}</a></li>' for t, p in DOCS)
     return (
