@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Devices · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --it:#1f5fbf; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:12px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+#q { font:inherit; font-size:14px; border:1px solid var(--line); border-radius:6px; padding:6px 10px; width:min(360px, 80vw); }
+.wrap { display:grid; grid-template-columns:300px minmax(0,1fr); gap:16px; max-width:1360px; margin:16px auto; padding:0 16px; align-items:start; }
+nav.list { background:#fff; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); padding:10px 0; position:sticky; top:8px; max-height:calc(100vh - 16px); overflow:auto; }
+nav.list h2 { font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:12px 14px 4px; }
+nav.list h3 { font-size:12px; color:var(--muted); margin:8px 14px 2px; font-weight:600; }
+nav.list a { display:block; padding:2px 14px 2px 22px; color:var(--ink); text-decoration:none; font-size:14px; }
+nav.list a:hover { background:var(--panel); }
+nav.list a.on { background:#e8f0fc; color:var(--it); font-weight:600; }
+nav.list a small { color:var(--muted); margin-left:6px; }
+nav.list .grid { display:flex; flex-wrap:wrap; gap:2px; padding:0 14px 0 22px; }
+nav.list .grid a { padding:1px 6px; border:1px solid var(--line); border-radius:4px; font-size:12px; font-variant-numeric:tabular-nums; }
+#count { font-size:13px; color:var(--muted); margin:0 14px 6px; }
+main { background:var(--bg); padding:22px 28px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
+h1 { font-size:24px; margin:0 0 2px; overflow-wrap:anywhere; }
+.kind { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+.sub { color:var(--muted); margin:0 0 12px; }
+h2.sec { font-size:16px; margin:20px 0 6px; padding-bottom:3px; border-bottom:2px solid var(--ink); }
+table.conn, table.inside { border-collapse:collapse; width:100%; font-size:14px; }
+table.conn th, table.inside th { text-align:left; color:var(--muted); font-weight:600; padding:4px 12px 4px 0; vertical-align:top; white-space:nowrap; }
+table.conn td, table.inside td { padding:4px 12px 4px 0; vertical-align:top; border-top:1px solid #edf0f3; }
+table.inside thead th { border-bottom:1px solid var(--line); }
+table.conn a, table.inside a, .intro a { color:var(--it); }
+.note { color:var(--muted); }
+tr.hit td { background:#fff4cc; }
+.fig { margin-top:6px; }
+.empty { color:var(--muted); padding:20px 0; }
+@media (max-width:860px) { .wrap { grid-template-columns:1fr; } nav.list { position:static; max-height:45vh; } main { padding:16px 14px; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Devices</strong> <span class="note">the site model, device by device</span></div>
+  <input id="q" type="search" placeholder="Find a device: leaf-a07-r1 port 18, a13-ct18, CDU-B3" aria-label="Find a device">
+</header>
+<div class="wrap">
+  <nav class="list" id="list" aria-label="Devices"></nav>
+  <main id="main" aria-live="polite">
+    <h1>Devices</h1>
+    <p class="intro">Every named device at Site AUS-1: what it is, what it connects to, and where it is on the drawings. Pick one on the
+    left, search, or click a device name in any popup. Built from the site model, the rack inventory, and the fabric's cabling standard
+    (src/scorecard/devices.py); synthetic site, all names fictional.</p>
+  </main>
+</div>
+<span hidden data-loc-all data-loc=""></span>
+<script type="application/json" data-gl-skip id="dev-data">__DEVICES__</script>
+<script>
+/* The device directory (docs/site/devices.json): a list by system, search, and one device at a time with its
+   connections (each a link to that device) and its drawings (the location card, shown in place). */
+(function () {
+  const D = JSON.parse(document.getElementById("dev-data").textContent);
+  const DEV = D.devices, KIND = D.kinds;
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const href = n => "#" + encodeURIComponent(n);
+  const PORT_RE = /^(leaf-[a-c]\d{2}-r\d)(?: port |:swp)(\d{1,3})$/;
+  // Every cabled leaf port, read back from the trays' rail links (as devices.ports does).
+  const PORTS = {};
+  for (const [name, e] of Object.entries(DEV))
+    if (e.kind === "compute_tray") for (const [rel, n, note] of e.conn) if (rel.startsWith("Rail ")) PORTS[n] = [name, note.split(" ").pop()];
+
+  // The entry for a name as the pages write it (as devices.lookup does).
+  function lookup(name) {
+    const r = /^[Rr]ack ([A-C]\d{2})$/.exec(name);
+    if (r) name = r[1];
+    if (DEV[name]) return [name, DEV[name]];
+    const m = PORT_RE.exec(name);
+    if (!m || !DEV[m[1]]) return null;
+    const sw = m[1], port = +m[2], key = `${sw} port ${port}`, to = PORTS[key];
+    const conn = [["Switch", sw, `rail ${sw.slice(-1)}`]];
+    let text, rack;
+    if (to) {
+      rack = to[0].slice(0, 3).toUpperCase();
+      conn.push(["Cable to", to[0], `NIC ${to[1]}, rack ${rack}`], ["Rack", rack, ""]);
+      text = `Port ${port} of ${sw}: cabled to compute tray ${+to[0].slice(-2)} in rack ${rack} (${to[0]}, NIC ${to[1]}).`;
+    } else {
+      rack = (DEV[sw].loc || "").split("|").pop();
+      text = `Port ${port} of ${sw}: not cabled to a tray; ports above 36 are uplinks to the spine plane (the spine switches are not in the sample data).`;
+    }
+    return [key, {kind: "leaf_port", title: key, text, conn, loc: `${key}|${rack}`}];
+  }
+  const link = n => n && lookup(n) ? `<a href="${href(lookup(n)[0])}">${esc(n)}</a>` : esc(n);
+
+  // ---- the list: one section per system, by hall; trays, shelves, tap-offs, and ports are found by search or from their rack
+  const TOP = new Set(["rack", "leaf", "tx", "mv", "gen", "uss", "ups", "mups", "mvsst", "group", "busway", "cdu", "tw", "crah", "chiller", "pump", "vesda", "leak"]);
+  const SECTION = {};
+  for (const [g, , kinds] of D.groups) for (const k of kinds) SECTION[k] = g;
+  const list = document.getElementById("list");
+  function drawList(q) {
+    q = q.trim().toLowerCase();
+    let h = "";
+    if (q) {
+      const names = Object.keys(DEV).filter(n => n.toLowerCase().includes(q) || (DEV[n].title || "").toLowerCase().includes(q));
+      const p = lookup(q.replace(/^leaf/, "leaf"));
+      if (p && !DEV[p[0]]) names.unshift(p[0]);
+      h += `<div id="count">${names.length} match${names.length === 1 ? "" : "es"}${names.length > 300 ? ", first 300 shown" : ""}</div>`;
+      h += names.slice(0, 300).map(n => `<a href="${href(n)}">${esc(n)}<small>${esc(KIND[(DEV[n] || {kind: "leaf_port"}).kind])}</small></a>`).join("");
+      if (!names.length) h += `<div class="empty" style="padding:4px 14px">No device by that name.</div>`;
+    } else {
+      for (const [g, label] of D.groups) {
+        h += `<h2>${esc(label)}</h2>`;
+        const names = Object.keys(DEV).filter(n => TOP.has(DEV[n].kind) && SECTION[DEV[n].kind] === g);
+        const byHall = {};
+        for (const n of names) (byHall[DEV[n].hall || "Site"] ||= []).push(n);
+        for (const hall of Object.keys(byHall).sort((a, b) => (a === "Site") - (b === "Site") || (a < b ? -1 : 1))) {
+          const ns = byHall[hall].sort((a, b) => a.localeCompare(b, "en", {numeric: true}));
+          h += `<h3>${esc(hall)}</h3>`;
+          const compact = ns.every(n => ["rack", "leaf"].includes(DEV[n].kind));
+          h += compact ? `<div class="grid">${ns.map(n => `<a href="${href(n)}" title="${esc(DEV[n].title || n)}">${esc(n.replace(/^leaf-/, ""))}</a>`).join("")}</div>`
+            : ns.map(n => `<a href="${href(n)}">${esc(n)}<small>${esc(KIND[DEV[n].kind])}</small></a>`).join("");
+        }
+      }
+    }
+    list.innerHTML = h;
+    mark();
+  }
+  function mark() {
+    const cur = decodeURIComponent(location.hash.slice(1));
+    list.querySelectorAll("a").forEach(a => a.classList.toggle("on", decodeURIComponent(a.hash.slice(1)) === cur));
+  }
+
+  // ---- one device
+  const main = document.getElementById("main"), intro = main.innerHTML;
+  function trayRow(t) {
+    const e = DEV[t], rails = e.conn.filter(c => c[0].startsWith("Rail "));
+    return `<tr><td>${link(t)}</td>${rails.map(c => `<td>${link(c[1])}</td>`).join("")}</tr>`;
+  }
+  function show() {
+    const want = decodeURIComponent(location.hash.slice(1));
+    mark();
+    if (!want) { main.innerHTML = intro; return; }
+    const hit = lookup(want);
+    if (!hit) { main.innerHTML = `<h1>${esc(want)}</h1><p class="empty">No device by that name in the site model.</p>`; return; }
+    const [name, e] = hit;
+    let h = `<div class="kind">${esc(KIND[e.kind])}</div><h1>${esc(e.title || name)}</h1>`;
+    if (e.title && e.title !== name) h += `<div class="sub">${esc(name)}</div>`;
+    h += `<p>${esc(e.text)}</p><h2 class="sec">Connected to</h2><table class="conn"><tbody>`;
+    h += e.conn.map(([rel, n, note]) => `<tr><th scope="row">${esc(rel)}</th><td>${link(n)}${n && note ? " " : ""}<span class="note">${esc(note)}</span></td></tr>`).join("");
+    h += `</tbody></table>`;
+    h += `<h2 class="sec">On the drawings</h2><div class="fig" id="fig"></div>`;
+    if (e.kind === "rack" && DEV[name.toLowerCase() + "-ct01"]) {
+      const L = name.toLowerCase(), trays = Object.keys(DEV).filter(n => n.startsWith(L + "-ct")).sort();
+      h += `<h2 class="sec">Inside the rack</h2><table class="inside"><thead><tr><th>Compute tray</th><th>Rail 0</th><th>Rail 1</th><th>Rail 2</th><th>Rail 3</th></tr></thead><tbody>`;
+      h += trays.map(trayRow).join("") + `</tbody></table>`;
+      const sw = Object.keys(DEV).filter(n => n.startsWith(L + "-nvsw")).sort(), ps = Object.keys(DEV).filter(n => n.startsWith(name + "_PowerShelf_")).sort();
+      h += `<p>NVLink switch trays: ${sw.map(link).join(", ")}.<br>Power shelves: ${ps.map(link).join(", ")}.</p>`;
+    }
+    if (e.kind === "leaf" || e.kind === "leaf_port") {
+      const sw = e.kind === "leaf" ? name : e.conn[0][1], here = e.kind === "leaf_port" ? name : "";
+      const ports = Object.keys(PORTS).filter(k => k.startsWith(sw + " port ")).sort((a, b) => +a.split(" ").pop() - +b.split(" ").pop());
+      h += `<h2 class="sec">Ports of ${esc(sw)}</h2><table class="inside"><thead><tr><th>Port</th><th>Cabled to</th><th>NIC</th></tr></thead><tbody>`;
+      h += ports.map(k => `<tr${k === here ? ' class="hit"' : ""}><td>${link(k)}</td><td>${link(PORTS[k][0])}</td><td>${esc(PORTS[k][1])}</td></tr>`).join("");
+      h += `<tr><td>${ports.length + 1} and up</td><td colspan="2" class="note">Uplinks to the spine plane for rail ${esc(sw.slice(-1))} (the spine switches are not in the sample data)</td></tr></tbody></table>`;
+    }
+    main.innerHTML = h;
+    const fig = document.getElementById("fig");
+    if (!(window.LOCATIONS && window.LOCATIONS.mount(fig, e.loc || name, "")))
+      fig.innerHTML = `<p class="empty">The drawings do not show this device.</p>`;
+    window.scrollTo(0, 0);
+  }
+  const q = document.getElementById("q");
+  q.addEventListener("input", () => drawList(q.value));
+  q.addEventListener("keydown", ev => { if (ev.key === "Enter") { const hit = lookup(q.value.trim()); if (hit) location.hash = href(hit[0]); } });
+  window.addEventListener("hashchange", show);
+  drawList("");
+  window.DEVICES = {lookup, show};
+  // the location card loads after this script; show the device once everything has run
+  window.addEventListener("DOMContentLoaded", show);
+  if (document.readyState !== "loading") setTimeout(show, 0);
+})();
+</script>
+</body>
+</html>

@@ -17,16 +17,26 @@
 .gl-pop .gl-where { font-size:12px; color:#5b6774; }
 .gl-pop .gl-where a, .gl-pop .gl-f a { color:#1f5fbf; }
 .gl-pop .gl-scope { font-size:11px; color:#a15c00; font-weight:600; }
+.gl-pop .gl-dev .gl-title { display:flex; gap:6px; align-items:baseline; }
+.gl-pop .gl-conn { width:100%; border-collapse:collapse; margin:4px 0 2px; font-size:12px; }
+.gl-pop .gl-conn caption { text-align:left; }
+.gl-pop .gl-conn th { text-align:left; font-weight:600; color:#5b6774; white-space:nowrap; padding:2px 8px 2px 0; vertical-align:top; }
+.gl-pop .gl-conn td { padding:2px 0; vertical-align:top; }
+.gl-pop .gl-conn .gl-n { color:#5b6774; }
+.gl-pop .gl-back { border:0; background:none; color:#1f5fbf; padding:0; font:inherit; cursor:pointer; text-decoration:underline; }
 .gl-pop .gl-f { display:flex; gap:14px; padding:6px 12px 10px; font-size:12px; border-top:1px solid #e3e8ed; }
 @media print { .gl { border-bottom:0; } .gl-pop { display:none !important; } }
 </style>
 <script id="gl-data" type="application/json">__GLOSSARY__</script>
 <script>
 /* Code popups: every code, acronym, and record ID on the page opens a small card with its meaning.
-   Data from src/scorecard/glossary.py; the page's text is never changed, only wrapped. */
+   Data from src/scorecard/glossary.py; the page's text is never changed, only wrapped. A device name
+   (leaf-a07-r1 port 18, CDU-B3, UPS-B4) also shows that device's description and what it connects to,
+   from the device directory (src/scorecard/devices.py); each connection opens its own card, and
+   "Site model" opens the device on the Devices page in a new window. */
 (function () {
   const G = JSON.parse(document.getElementById("gl-data").textContent);
-  const ROOT = G.root, E = G.entries;
+  const ROOT = G.root, E = G.entries, DEV = G.dev || {};
   const RE = new RegExp(G.re, "g"), RE_BOTH = G.re_code ? new RegExp(G.re_code + "|" + G.re, "g") : RE;
   const SKIP = "script,style,textarea,input,select,option,button,a,svg,h1,h2,h3,h4,h5,h6,summary,label,nav.usm,.gl,.gl-pop,[data-gl-skip],[contenteditable]";
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -66,7 +76,7 @@
     if (!root || root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return;
     if (root.nodeType === 1 && root.closest(SKIP)) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode: n => !/[A-Z]/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+      acceptNode: n => !/[A-Z]|[a-c]\d\d-/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
     });
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
@@ -77,20 +87,39 @@
   }
 
   // ---- the card
-  let pop = null, from = null;
+  let pop = null, from = null, trail = [], at = null;   // trail: the cards a connection link came from
   function close(refocus) {
     if (!pop) return;
-    pop.remove(); pop = null;
-    if (refocus && from) from.focus();
+    pop.remove(); pop = null; trail = []; at = null;
+    if (refocus && from && from.isConnected) from.focus();
     from = null;
   }
   function where(w) {
     return w.map(x => `${esc(x.doc)} · <a href="${esc(ROOT + x.href)}">${esc(x.section || "clause")}</a>`).join("<br>");
   }
+  // A name in a card's connections: its own card when this page carries it, else plain text.
+  function devLink(name) {
+    if (!name || !DEV[name]) return esc(name);
+    return `<span class="gl" tabindex="0" role="button" data-gl="${lookup(name).join(",")}" data-dev="1">${esc(name)}</span>`;
+  }
+  function devBlock(name) {
+    const d = DEV[name];
+    const kind = G.dev_kinds[d.kind] || "", title = d.title && d.title !== name ? d.title : "";
+    let h = `<div class="gl-s gl-dev"><div class="gl-title">This device<span class="gl-exp">${esc(title || kind)}</span></div>` +
+            `<p>${esc(d.text)}</p>`;
+    if (d.conn.length) {
+      h += `<table class="gl-conn"><caption class="gl-where">Connected to</caption>`;
+      for (const [rel, n, note] of d.conn)
+        h += `<tr><th scope="row">${esc(rel)}</th><td>${devLink(n)}${n && note ? " " : ""}<span class="gl-n">${esc(note)}</span></td></tr>`;
+      h += `</table>`;
+    }
+    return h + `</div>`;
+  }
   function card(code, ids) {
-    const first = E[ids[0]];
+    const first = ids.length ? E[ids[0]] : null;
     const doc = G.doc_title || "";
-    let h = `<div class="gl-h"><b>${esc(code)}</b><span class="gl-type">${esc(G.types[first.type] || "")}</span>` +
+    const type = first ? G.types[first.type] || "" : G.dev_kinds[DEV[code].kind] || "";
+    let h = `<div class="gl-h"><b>${esc(code)}</b><span class="gl-type">${esc(type)}</span>` +
             `<button class="gl-x" type="button" aria-label="Close">×</button></div><div class="gl-b">`;
     for (const i of ids) {
       const e = E[i];
@@ -106,28 +135,50 @@
         h += `</div>`;
       }
     }
+    if (DEV[code]) h += devBlock(code);
     h += `</div><div class="gl-f">`;
+    if (trail.length) h += `<button type="button" class="gl-back">Back to ${esc(trail[trail.length - 1].code)}</button>`;
     const see = ids.map(i => E[i].see).find(Boolean);
     if (see) h += `<a href="${esc(ROOT + see)}">Open the records</a>`;
-    h += `<a href="${esc(ROOT + "glossary/#" + encodeURIComponent(first.key))}">Glossary entry</a></div>`;
-    return h;
+    if (first) h += `<a href="${esc(ROOT + "glossary/#" + encodeURIComponent(first.key))}">Glossary entry</a>`;
+    if (DEV[code]) h += `<a class="gl-site" href="${esc(ROOT + "devices/#" + encodeURIComponent(DEV[code].title && DEV[code].kind === "leaf_port" ? DEV[code].title : code.replace(/^[Rr]ack /, "")))}" target="_blank" rel="noopener">Site model ↗</a>`;
+    return h + `</div>`;
   }
+  const idsOf = el => el.dataset.gl ? el.dataset.gl.split(",").map(Number) : [];
   function open(el) {
     if (pop && from === el) { close(true); return; }
+    // A connection inside a card replaces the card in place, and Back returns to the one before.
+    const inCard = pop && pop.contains(el);
+    const r = inCard ? {left: parseFloat(pop.style.left) - window.scrollX, top: parseFloat(pop.style.top) - window.scrollY, bottom: parseFloat(pop.style.top) - window.scrollY}
+      : el.getBoundingClientRect();
+    const keep = inCard ? trail.concat([at]) : [], anchor = inCard ? from : el;
     close(false);
-    from = el;
+    from = anchor; trail = keep; at = {code: el.textContent, ids: idsOf(el)};
+    render(r);
+  }
+  function back() {
+    const prev = trail.pop(), r = {left: parseFloat(pop.style.left) - window.scrollX, top: parseFloat(pop.style.top) - window.scrollY};
+    r.bottom = r.top;
+    const keep = trail, anchor = from;
+    close(false);
+    from = anchor; trail = keep; at = prev;
+    render(r);
+  }
+  function render(r) {
     pop = document.createElement("div");
-    pop.className = "gl-pop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", el.textContent);
-    pop.innerHTML = card(el.textContent, el.dataset.gl.split(",").map(Number));
+    pop.className = "gl-pop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", at.code);
+    pop.innerHTML = card(at.code, at.ids);
     document.body.appendChild(pop);
-    const r = el.getBoundingClientRect(), w = pop.offsetWidth || 380, ph = pop.offsetHeight || 0;
+    const w = pop.offsetWidth || 380, ph = pop.offsetHeight || 0;
     const vw = document.documentElement.clientWidth || window.innerWidth || 1024, vh = window.innerHeight || 768;
     const left = Math.max(8, Math.min(r.left, vw - w - 8));
     const below = r.bottom + 6, above = r.top - ph - 6;
-    const top = below + ph > vh && above > 0 ? above : below;
+    const top = r.top === r.bottom ? r.top : below + ph > vh && above > 0 ? above : below;
     pop.style.left = (left + window.scrollX) + "px";
     pop.style.top = (top + window.scrollY) + "px";
     pop.querySelector(".gl-x").addEventListener("click", () => close(true));
+    const b = pop.querySelector(".gl-back");
+    if (b) b.addEventListener("click", ev => { ev.stopPropagation(); back(); });
     pop.querySelector(".gl-x").focus({preventScroll: true});
   }
   document.addEventListener("click", ev => {

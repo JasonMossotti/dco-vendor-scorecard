@@ -135,6 +135,10 @@ Planned work causes alarms anyone can predict. Under the Interface Agreement's s
 
 **[Read the agreements](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/)** (the Interface Agreement and both SLAs, with contents and print to PDF) and **[open the glossary](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/)** ([Markdown version](docs/glossary/GLOSSARY.md)): every acronym, contract code, and record ID the site uses, A to Z or by type, with search. On every page, each code has a dotted underline; clicking it opens a small card with what it means and a link to the clause that defines it, without leaving the page. Contract meanings are quoted from the same YAML the scorecards are scored against, and CI fails if any page shows a code the glossary does not explain.
 
+## Devices: every named device and what it connects to
+
+**[Open the device directory](https://jasonmossotti.github.io/dco-vendor-scorecard/devices/)**: all 2,768 named devices at the site (racks, the compute trays, NVLink switch trays and power shelves inside them, InfiniBand leaf switches and their ports, busways, tap-offs, UPSs, substations, generators, CDUs, thermal walls, chillers, pumps, and smoke and leak detection), each with what it connects to and where it is on the drawings. Device names on every page are underlined like codes: clicking "leaf-a07-r1 port 18" shows that it is cabled to compute tray 18 in rack A13 (NIC mlx5_1), and each connection opens its own card. The directory is generated from the site model, the rack inventory, and the fabric's cabling standard, and tests check every cable against the telemetry's own port records.
+
 ## Toward live data: the read-only collector
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, reports, and app run on live data without changes. The dataset contract in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) has two producers: synthetic and live.
@@ -218,6 +222,8 @@ config/change_alarms.yaml        Alarm map (severity, domain), change-type catal
 config/glossary.yaml             Code meanings: contract paths, acronyms, record families, page-only meanings
 scripts/render_glossary.py       Glossary: docs/glossary/GLOSSARY.md and the /glossary/ page; --check fails on unexplained codes
 scripts/render_agreements.py     The /agreements/ pages, rendered from docs/sla/*.md
+src/scorecard/devices.py         Device directory: every named device and its connections (docs/site/devices.json)
+scripts/render_devices.py        The /devices/ page: the directory by system, search, each device with its drawing
 scripts/collect.py               Read-only live collector (Redfish, Modbus, SNMPv3, BACnet/IP) writing the dataset contract
 src/scorecard/live/              Collector, adapters, dataset writer (optional: requirements-live.txt)
 src/scorecard/engine/landlord.py Landlord context, detectors, attribution, measurement, scorecard

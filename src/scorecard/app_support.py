@@ -387,3 +387,32 @@ def location_view(query: str) -> dict[str, Any] | None:
             "text": (note + ". " if note and not part else "") + e["text"],
             "views": [(f"{v['s']} {data['sheets'][v['s']]['title']}", locations.highlighted_svg(data, svgs[v["s"]], v, label))
                       for v, label in views]}
+
+
+@lru_cache(maxsize=1)
+def _device_directory() -> dict:
+    """The device directory, built from the site model and the IT Partner SLA (the bundle carries no docs/site/)."""
+    from scorecard import devices, site_model
+    from scorecard.sla_model import load_sla
+    data, _ = _site_drawings()
+    return devices.build(site_model.load_site(), load_sla(ROOT / "sla" / "it_partner.yaml")["site"], data["entries"])
+
+
+def device_lines(query: str) -> list[str]:
+    """For the lookup box: when the query names a device (leaf-a07-r1 port 18, a13-ct18, CDU-B3, Rack A07),
+    its description and what it connects to, as the code popups show them. Empty when it names no device."""
+    from scorecard import devices
+    q = (query or "").strip()
+    if not q:
+        return []
+    data = _device_directory()
+    for text in (q, q.upper(), q.lower()):
+        e = devices.lookup(data, text)
+        if e:
+            break
+    if not e:
+        return []
+    lines = [f"**This device** · {_md(data['kinds'][e['kind']])}" + (f" · {_md(e['title'])}" if e.get("title") else ""),
+             _md(e["text"]), "**Connected to**"]
+    lines += [f"- {_md(rel)}: " + (f"**{_md(n)}** " if n else "") + _md(note) for rel, n, note in e["conn"]]
+    return lines

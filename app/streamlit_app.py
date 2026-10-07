@@ -61,9 +61,13 @@ with codes:
         code_q = st.text_input("Code or ID", placeholder="CSL-07, TR-1, INC3100816, A07, CDU-B3 pump 2", key="code_lookup")
         loc = A.location_view(code_q)
         lines = A.lookup_lines(code_q)
-        if loc is None or not lines[0].startswith("No code"):
+        dev = A.device_lines(code_q)
+        if (loc is None and not dev) or not lines[0].startswith("No code"):
             for line in lines:
                 st.markdown(line)
+        if dev:
+            # A device: what it is and what it connects to (the static pages show this in the code popup).
+            st.markdown("\n\n".join(dev[:3]) + "\n\n" + "\n".join(dev[3:]))
         if loc:
             # A rack, room, or piece of equipment: where it is on the site drawings, outlined in red.
             st.markdown(f"**{A._md(loc['title'])}** · {loc['kind']} · {A._md(loc['text'])}")

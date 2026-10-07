@@ -119,7 +119,7 @@ def test_agreement_pages_keep_every_line_and_anchor(site, gl):
         for code in G.anchors()[key]:
             assert code in ids, (slug, code)
         rows = len([ln for ln in md.split("\n") if ln.startswith("|") and not re.fullmatch(r"\|(\s*:?-+:?\s*\|)+", ln.strip())])
-        assert html.count("<tr") == rows, slug
+        assert re.sub(r"<script\b.*?</script>", "", html, flags=re.S).count("<tr") == rows, slug
         text = re.sub(r"<[^>]+>", "", re.sub(r"<(script|style)\b.*?</\1>", "", html, flags=re.S))
         for heading in re.findall(r"^#{1,4} (.+)$", md, re.M):
             assert AG._plain(heading).replace("&", "&amp;") in text, (slug, heading)
@@ -192,7 +192,7 @@ def test_glossary_document_is_current():
 def test_tab_bar_has_reference_tabs_on_the_right():
     nav = sitenav.nav_html("glossary")
     main, ref = re.findall(r'<div class="usm-tabs[^"]*">(.*?)</div>', nav)
-    assert re.findall(r'data-tab="(\w+)"', ref) == ["agreements", "glossary"]
+    assert re.findall(r'data-tab="(\w+)"', ref) == ["agreements", "glossary", "devices"]
     assert "agreements" not in main
 
 

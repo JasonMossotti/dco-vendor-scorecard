@@ -8,7 +8,8 @@ Usage:
 Writes docs/site/SITE.md (equipment, capacity checks, monitoring map), one
 SVG per drawing sheet (the site sheets, and the equipment detail sheets from
 site/details.yaml), and locations.json (where each item is drawn, for the
-location popups). Nothing in docs/site/ is edited by hand.
+location popups), and devices.json (every named device and what it connects to, for the
+code popups and the Devices page). Nothing in docs/site/ is edited by hand.
 """
 
 from __future__ import annotations
@@ -22,9 +23,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from scorecard import locations  # noqa: E402
+from scorecard import devices, locations  # noqa: E402
 from scorecard import site_model as S  # noqa: E402
 from scorecard.site_drawings import building_dims, sheets  # noqa: E402
+from scorecard.sla_model import load_sla  # noqa: E402
 
 OUT_DIR = ROOT / "docs" / "site"
 CATEGORY_LABELS = {"ups": "UPS", "cdu": "CDU", "crah": "CRAH", "ib_switch": "InfiniBand switch",
@@ -176,7 +178,10 @@ def build_outputs() -> dict[Path, str]:
     sheet_list = sheets(site)
     out = {OUT_DIR / fn: svg for _, fn, _, svg in sheet_list}
     out[OUT_DIR / "SITE.md"] = render_markdown(site, sheet_list)
-    out[OUT_DIR / "locations.json"] = locations_json(locations.build(site))
+    locs = locations.build(site)
+    out[OUT_DIR / "locations.json"] = locations_json(locs)
+    it_site = load_sla(ROOT / "sla" / "it_partner.yaml")["site"]   # what is inside each rack, as the generator reads it
+    out[OUT_DIR / "devices.json"] = locations_json(devices.build(site, it_site, locs["entries"]))
     return out
 
 

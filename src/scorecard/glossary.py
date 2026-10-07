@@ -17,6 +17,7 @@ explained or deliberately left plain.
 
 from __future__ import annotations
 
+import json
 import re
 from collections import Counter
 from dataclasses import dataclass, field
@@ -39,6 +40,10 @@ DIRECTION = {"higher_is_better": "at least", "lower_is_better": "at most"}
 # Underscores join words in controlled codes (IN_PROGRESS, CUST_HOLD). A plural "s" may follow (CDUs).
 _EDGE_L, _EDGE_R = r"(?<![A-Za-z0-9_-])", r"(?=s?(?![A-Za-z0-9_-]))"
 TOKEN = re.compile(_EDGE_L + r"(?:[A-Z][A-Z0-9_]*(?:-[A-Z0-9_]+)+|[A-Z]+[0-9][A-Z0-9_]*|[A-Z][A-Z0-9_]*[A-Z][A-Z0-9_]*)" + _EDGE_R)
+# Device names TOKEN cannot see: host-style names in lower case (leaf-a07-r1 port 18, a13-ct18, a15-nvsw3),
+# Redfish names (A06_PowerShelf_1), and a rack written with its word (Rack A07; a bare A07 stays plain).
+DEVICE_NAME = re.compile(r"(?<![A-Za-z0-9_-])(?:leaf-[a-c]\d{2}-r\d(?: port \d{1,3}|:swp\d{1,3})?|[a-c]\d{2}-(?:ct\d{2}|nvsw\d)"
+                         r"|[A-C]\d{2}_PowerShelf_\d|[Rr]ack [A-C]\d{2})(?![A-Za-z0-9_-])")
 
 
 @dataclass
@@ -239,7 +244,7 @@ def load(root: Path = ROOT) -> Glossary:
 
 
 def tokens(text: str) -> Counter:
-    return Counter(m.group() for m in TOKEN.finditer(text))
+    return Counter(m.group() for rx in (TOKEN, DEVICE_NAME) for m in rx.finditer(text))
 
 
 # --------------------------------------------------------------------------- #
@@ -284,10 +289,14 @@ def popup_data(page: str, text: str | None = None, root: Path = ROOT) -> dict[st
     the entries. With ``text`` (the finished page), only the entries its codes need."""
     gl = load(root)
     used = keys_in(text, page, root) if text is not None else None
+    dev, dev_kinds = device_data(text, root) if text is not None else ({}, {})
+    if used is not None and dev:     # a card's connections are codes too: their meanings come along
+        used |= keys_in(" ".join(dev), page, root)
     entries = [e for e in gl.entries() if used is None or e.key in used]
     idx = {e.key: i for i, e in enumerate(entries)}
     cfg = config(root / "config" / "glossary.yaml")
     return {
+        "dev": dev, "dev_kinds": dev_kinds,
         "page": page,
         "re": gl.link_pattern(page, keys=used),
         "re_code": gl.link_pattern(page, code_only=True, keys=used),
@@ -296,3 +305,12 @@ def popup_data(page: str, text: str | None = None, root: Path = ROOT) -> dict[st
         "types": {t["key"]: t["label"] for t in cfg["types"]},
         "entries": [entry_data(e, root) for e in entries],
     }
+
+
+def device_data(text: str, root: Path = ROOT) -> tuple[dict[str, Any], dict[str, str]]:
+    """The device directory entries a page needs (``scorecard.devices``): every device named in its text, and
+    the devices their connections name, so a card's connections open their own cards."""
+    from . import devices
+    data = devices.load() if root == ROOT else json.loads((root / "docs" / "site" / "devices.json").read_text(encoding="utf-8"))
+    names = {t for t in tokens(text) if devices.lookup(data, t) is not None}
+    return devices.subset(data, names), data["kinds"]
