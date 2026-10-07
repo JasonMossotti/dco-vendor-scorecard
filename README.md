@@ -332,3 +332,7 @@ tests/                           Pytest suite and jsdom page tests
 </details>
 
 New to the code? Start with [docs/PROJECT_GUIDE.md](docs/PROJECT_GUIDE.md).
+
+---
+
+Copyright 2026 Jason Mossotti. All rights reserved. Shared for portfolio review only. See [LICENSE](LICENSE).
