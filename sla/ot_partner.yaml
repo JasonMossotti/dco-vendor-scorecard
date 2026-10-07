@@ -851,6 +851,37 @@ change_management:
   landlord: Changes to critical power, cooling, or fire systems require an approved MOP, notice under the Interface
     Agreement, and a Customer-approved window when redundancy is reduced.
 
+energy_reporting:
+  principle: The Landlord reports the site's energy use every month from the meters it operates, so the Customer can
+    track power usage effectiveness (PUE) from the same records. The PUE target is a Key Measurement with no service
+    credits; a miss calls for an energy improvement plan.
+  standard: ISO/IEC 30134-2:2026, Power usage effectiveness (PUE). PUE is total facility energy divided by IT energy,
+    both measured as energy over the period.
+  total_facility: Energy delivered to the site by the utility (revenue meters on MV-A and MV-B) and by the generators
+    while they carry the site. Generator energy into a portable load bank during a test is not facility energy.
+  it_energy: Measured at the UPS outputs of each hall. UPS losses are facility overhead, not IT load.
+  partial: Cooling (chiller yard, facility water pumps, mechanical UPS for CDUs and thermal walls, electrical-room
+    CRAHs) and the power path (UPS losses and distribution losses) are reported separately, so the overhead can be
+    traced to its source.
+  terms:
+    - id: OT-EN-01
+      name: Monthly Energy Report
+      rule: By the fifth business day of each month, the Landlord submits total facility energy, IT energy, PUE, and
+        partial PUE for the prior period, with the meters used. The figures must reconcile with the meter data in the
+        Customer's facility feed within rounding.
+    - id: OT-EN-02
+      name: PUE Over 52 Weeks
+      rule: PUE over the most recent 52 weeks at most 1.35. Key Measurement; no service credits. A miss requires an
+        energy improvement plan within 30 days.
+      target: 1.35
+      direction: lower_is_better
+      unit: ''
+    - id: OT-EN-03
+      name: Free-Cooling Availability
+      rule: Free cooling (economizer) on a chiller may be disabled for more than 24 hours only under an approved MOP
+        or change record. A lockout left in place after maintenance is a records discrepancy and is reported with its
+        estimated energy cost.
+
 breach_severity:
   finding_types:
     - id: gen_test_no_load

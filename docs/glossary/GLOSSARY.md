@@ -6,7 +6,7 @@
 
 # Glossary: Site AUS-1
 
-Every acronym, contract code, and record ID the site's pages and documents use: 474 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
+Every acronym, contract code, and record ID the site's pages and documents use: 480 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
 
 ## Acronyms
 
@@ -18,17 +18,17 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | ASSP | **American Society of Safety Professionals.** Publisher of the ANSI/ASSP Z10.0 safety management standard. | - | IT Partner SLA, Landlord SLA |
 | BER | **Bit error rate.** The share of bits received in error on a link; pre-FEC BER drift can warn of a failing optic. | - | IT Partner SLA |
 | BMC | **Baseboard management controller.** A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Site model document, Incident Portal, Weekly Review |
-| BMS | **Building management system.** The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
+| BMS | **Building management system.** The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | CAB | **Change advisory board.** The Customer's board that reviews and approves the IT Partner's change records before work starts. | - | Incident Portal |
 | CAP | **Corrective action plan.** A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure. | - | IT Partner SLA, Landlord SLA, Scorecards |
 | CCTV | **Closed-circuit television.** Security cameras. | - | Site model document |
 | CDT | **Central Daylight Time.** US Central time in summer, UTC minus 5 hours: the site's local time. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
-| CDU | **Coolant distribution unit.** Moves coolant between the facility water loop and the racks' liquid loop, and controls its temperature, flow, and pressure. The Landlord owns the CDUs; each serves up to 8 racks. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Failure Patterns, Site model document, Overview, Incident Portal |
+| CDU | **Coolant distribution unit.** Moves coolant between the facility water loop and the racks' liquid loop, and controls its temperature, flow, and pressure. The Landlord owns the CDUs; each serves up to 8 racks. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Failure Patterns, Energy, Site model document, Overview, Incident Portal |
 | CFR | **Code of Federal Regulations.** The US federal regulations; workplace safety rules are in Title 29 (29 CFR). | - | IT Partner SLA, Landlord SLA |
 | CHG | **Change record.** The prefix of the IT Partner's change records (CHG + 7 digits). | - | Alarm Board |
 | COP | **Coefficient of performance.** Cooling delivered per unit of power used; higher is more efficient. | - | Site model document |
 | CPU | **Central processing unit.** The general-purpose processor; each compute tray has two Grace CPUs. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Failure Patterns |
-| CRAH | **Computer room air handler.** A chilled-water air handler that cools a room's air, here the electrical rooms. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Site model document |
+| CRAH | **Computer room air handler.** A chilled-water air handler that cools a room's air, here the electrical rooms. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Energy, Site model document |
 | CSL | **Critical service level.** A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA and OT-CSL-01 and up in the Landlord SLA. | - | IT Partner SLA, Landlord SLA, Scorecards |
 | DAC | **Direct attach copper.** A short copper network cable with connectors built on. | - | IT Partner SLA |
 | DART | **Days away, restricted, or transferred.** The rate of injuries serious enough to cost work days or restrict duty, per 200,000 hours worked. | - | IT Partner SLA, Landlord SLA |
@@ -41,7 +41,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | EHS | **Environment.** The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Post-Incident Review, Weekly Review |
 | EMR | **Experience modification rate.** An insurer's rating of a company's injury history against its industry; 1.0 is average. | - | IT Partner SLA, Landlord SLA |
 | EPA | **Environmental Protection Agency.** The US environmental regulator. Refrigerant work requires an EPA Section 608 certified technician. | - | Landlord SLA |
-| EPMS | **Electrical power monitoring system.** The system that records switchgear, UPS, and meter data for the electrical plant. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Site model document |
+| EPMS | **Electrical power monitoring system.** The system that records switchgear, UPS, and meter data for the electrical plant. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Energy, Site model document |
 | ERCOT | **Electric Reliability Council of Texas.** The grid operator for most of Texas, including the site's utility. | - | Interface Agreement, Landlord SLA, Site model document |
 | ESD | **Electrostatic discharge.** Static electricity that can damage components; technicians follow an ESD control program. | - | IT Partner SLA |
 | FRU | **Field-replaceable unit.** A part a technician can swap on site, such as a compute tray, optic, power supply, or fan. | - | IT Partner SLA, Landlord SLA, Scorecards, Weekly Review |
@@ -53,14 +53,15 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | HTTPS | **Hypertext Transfer Protocol Secure.** Encrypted web traffic. | - | Site model document |
 | HVAC | **Heating, ventilation, and air conditioning.** Building air systems. | - | Site model document |
 | ID | **Identifier.** A record's unique code. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Failure Patterns, Incident Portal, Post-Incident Review, Weekly Review |
+| IEC | **International Electrotechnical Commission.** Publishes international standards with ISO, such as ISO/IEC 30134-2 (power usage effectiveness). | - | Landlord SLA, Energy, Overview |
 | IMEX | **Internode memory exchange.** The service that lets GPUs in one NVLink domain share memory; it must be up before a rack returns to service. | - | IT Partner SLA |
 | IP | **Internet Protocol.** The network protocol; BACnet/IP is building automation over an IP network. | - | Site model document |
-| ISO | **International Organization for Standardization.** Publisher of international standards, such as ISO 45001 (safety management) and ISO 8601 week numbering (an ISO week runs Monday to Sunday). | - | IT Partner SLA, Landlord SLA |
-| IT | **Information technology.** Here, the data hall equipment and the IT Partner that works on it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| ISO | **International Organization for Standardization.** Publisher of international standards, such as ISO 45001 (safety management) and ISO 8601 week numbering (an ISO week runs Monday to Sunday). | - | IT Partner SLA, Landlord SLA, Energy, Overview |
+| IT | **Information technology.** Here, the data hall equipment and the IT Partner that works on it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Energy, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | L-L | **Line to line.** Voltage measured between two phases of a three-phase supply; 0 V line to line means the feed is dead. | - | Scorecards, Incident Portal, Post-Incident Review, Weekly Review |
-| LLC | **Limited liability company.** A US company form; both partners are fictional LLCs. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Site model document, Overview, Weekly Review |
+| LLC | **Limited liability company.** A US company form; both partners are fictional LLCs. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Energy, Site model document, Overview, Weekly Review |
 | LPM | **Liters per minute.** Coolant flow rate. | - | Site model document |
-| MOP | **Method of procedure.** The step-by-step plan for planned work on live equipment: scope, window, isolation, back-out, and the alarms the work is expected to raise. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| MOP | **Method of procedure.** The step-by-step plan for planned work on live equipment: scope, window, isolation, back-out, and the alarms the work is expected to raise. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | MV | **Medium voltage.** Here, the 13.8 kV switchgear between the utility, the generators, and the unit substations. | - | Alarm Board, Incident Portal, Post-Incident Review |
 | MVA | **Megavolt-ampere.** A unit of apparent power, used to rate transformers. | - | Site model document |
 | MW | **Megawatt.** One million watts. | - | IT Partner SLA, Landlord SLA, Alarm Board, Site model document, Incident Portal, Post-Incident Review |
@@ -75,12 +76,13 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | OSH | **Occupational Safety and Health (Act).** The US law that created OSHA; its General Duty Clause is OSHA-GDC. | - | IT Partner SLA, Landlord SLA |
 | OSHA | **Occupational Safety and Health Administration.** The US federal workplace safety regulator. Its standards are listed in the SLAs' safety section as OSHA-1904, OSHA-1910, and OSHA-1926. | - | IT Partner SLA, Landlord SLA |
 | OSR | **Outage severity rating.** A public five-level scale for how badly an outage affected services, from 1 (negligible) to 5 (severe). The post-incident review records it beside the internal severity. | - | Post-Incident Review |
-| PDF | **Portable Document Format.** A printable document file. | - | Failure Patterns, Post-Incident Review, Weekly Review |
+| PDF | **Portable Document Format.** A printable document file. | - | Failure Patterns, Energy, Post-Incident Review, Weekly Review |
 | PG25 | **Propylene glycol, 25%.** The coolant in the racks' liquid loop: water with 25% propylene glycol. | - | IT Partner SLA, Landlord SLA, Site model document |
 | PIR | **Post-incident review.** The written review after a major incident: timeline, causes, contributing factors, and owned, dated actions. | - | Alarm Board |
 | POST | **Power-on self-test.** The checks a system runs when it powers on. | - | IT Partner SLA |
 | PPE | **Personal protective equipment.** Gloves, arc-rated clothing, face shields, and similar gear a task's hazard analysis requires. | - | IT Partner SLA, Landlord SLA |
 | PSU | **Power supply unit.** Converts power for equipment; in a rack's power shelves, each PSU is a field-replaceable unit. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Failure Patterns, Incident Portal, Post-Incident Review |
+| PUE | **Power usage effectiveness.** Total facility energy divided by IT energy over a period (ISO/IEC 30134-2:2026). 1.0 would mean every kilowatt-hour reaches the IT equipment; the rest is cooling, power path losses, and house load. Partial PUE (pPUE) measures one part of that overhead. Reported on the Energy tab. | - | Landlord SLA, Energy, Overview, Weekly Review |
 | RACI | **Responsible, accountable, consulted, informed.** The ownership matrix in the Interface Agreement: for each component, who does the work, who owns the outcome, who is asked, and who is told. | - | Failure Patterns |
 | RAID | **Redundant array of independent disks.** Disks combined so one can fail without losing data; rebuilt after a drive swap. | - | IT Partner SLA |
 | RCA | **Root cause analysis.** The investigation that finds why an incident happened, not just what failed. P1 incidents owe a preliminary and a final RCA. | - | IT Partner SLA, Landlord SLA, Scorecards, Weekly Review |
@@ -90,7 +92,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | RS-485 | **RS-485 (serial line standard).** A two-wire serial link used by Modbus RTU devices such as the leak detection modules. | - | Site model document |
 | RTU | **Remote terminal unit.** Modbus RTU is Modbus over a serial line such as RS-485. | - | Site model document |
 | SCADA | **Supervisory control and data acquisition.** Industrial control and monitoring; here, the utility's own system for its substation. | - | Site model document |
-| SLA | **Service level agreement.** The contract schedule that sets service levels, how they are measured, and the credits for missing them. Each partner signs its own. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| SLA | **Service level agreement.** The contract schedule that sets service levels, how they are measured, and the credits for missing them. Each partner signs its own. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Energy, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | SMS | **Short message service.** Text messaging, one of the notification channels. | - | Interface Agreement, Alarm Board |
 | SMTP | **Simple Mail Transfer Protocol.** The protocol for sending email; an SMTP relay is the minimum email channel for notifications. | - | Alarm Board |
 | SN | **Serial number.** The manufacturer's unique number for a part; a part swap must show a serial change in inventory. | - | Incident Portal, Post-Incident Review |
@@ -98,10 +100,10 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | TCP | **Transmission Control Protocol.** The network transport; Modbus TCP is Modbus over an Ethernet network. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Site model document |
 | TRIR | **Total recordable incident rate.** Recordable injuries per 200,000 hours worked, a standard safety statistic used to qualify partners. | - | IT Partner SLA, Landlord SLA |
 | UFM | **Unified Fabric Manager.** Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM. | - | Failure Patterns, Site model document |
-| UPS | **Uninterruptible power supply.** Batteries and power electronics that carry the load through a utility loss until the generators take over. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Site model document, Incident Portal, Weekly Review |
+| UPS | **Uninterruptible power supply.** Batteries and power electronics that carry the load through a utility loss until the generators take over. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Energy, Site model document, Incident Portal, Weekly Review |
 | US | **United States.** The United States. | - | Alarm Board |
 | USA | **United States of America.** The United States. | - | Site model document |
-| UTC | **Coordinated Universal Time.** The time standard every record is stamped in. The site is in US Central time (UTC minus 5 in summer). | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| UTC | **Coordinated Universal Time.** The time standard every record is stamped in. The site is in US Central time (UTC minus 5 in summer). | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | VDC | **Volts direct current.** DC voltage, as in the 800 VDC pilot racks. | - | IT Partner SLA, Landlord SLA, Site model document |
 | VESDA | **Very early smoke detection apparatus.** Aspirating smoke detection that samples room air through pipes and alarms in stages (Alert, Action, Fire 1, Fire 2). | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Incident Portal |
 | VFD | **Variable frequency drive.** Controls a pump or fan motor's speed. | - | Landlord SLA, Site model document |
@@ -161,6 +163,9 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | KM-17 | **Redundancy Exposure (hours per month running without power or cooling redundancy).** Target at most 24  hrs. Measured from DS-REDFISH, DS-BMS. | IT Partner SLA, 9. Capacity and Downtime Accounting | IT Partner SLA, Scorecards |
 | KM-18 | **Ticket Reopen Rate (TR-1 early failures and TR-2 reopens).** Target at most 3%. Measured from DS-DCGM, DS-UFM, DS-SCHED, DS-ITSM. | IT Partner SLA, 9. Capacity and Downtime Accounting | IT Partner SLA, Scorecards |
 | KM-19 | **Manual Data Overrides (manually entered serials and audited timestamp edits).** Target at most 1%. Measured from DS-ITSM. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards |
+| OT-EN-01 | **Monthly Energy Report.** By the fifth business day of each month, the Landlord submits total facility energy, IT energy, PUE, and partial PUE for the prior period, with the meters used. The figures must reconcile with the meter data in the Customer's facility feed within rounding. | Landlord SLA, 22. Energy Reporting and PUE | Landlord SLA, Energy |
+| OT-EN-02 | **PUE Over 52 Weeks.** PUE over the most recent 52 weeks at most 1.35. Key Measurement; no service credits. A miss requires an energy improvement plan within 30 days. | Landlord SLA, 22. Energy Reporting and PUE | Landlord SLA, Energy |
+| OT-EN-03 | **Free-Cooling Availability.** Free cooling (economizer) on a chiller may be disabled for more than 24 hours only under an approved MOP or change record. A lockout left in place after maintenance is a records discrepancy and is reported with its estimated energy cost. | Landlord SLA, 22. Energy Reporting and PUE | Landlord SLA, Energy |
 | OT-KM-01 | **P2 Alarm Response (acknowledge 15 min, at equipment 30 min).** Target at least 95%. Measured from DS-BMS, DS-BADGE. | Landlord SLA, 9. Key Measurements | Landlord SLA, Scorecards |
 | OT-KM-02 | **Generator Monthly Tests Meeting NFPA 110 Load (30% for 30 min).** Target at least 100%. Measured from DS-EMCP. | Landlord SLA, 9. Key Measurements | Landlord SLA, Scorecards, Incident Portal, Weekly Review |
 | OT-KM-03 | **Coolant Samples Within Specification.** Target at least 100%. Measured from DS-CMMS, DS-CDU. | Landlord SLA, 9. Key Measurements | Landlord SLA, Scorecards |
@@ -366,6 +371,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | D# (weekly review) | **Weekly review decision.** A decision recorded in the weekly operations review's meeting notes. *(On: weekly.)* | - | Weekly Review |
 | D# or N# (shift crew) | **Shift crew.** A rostered shift crew (D for day, N for night); the staffing check compares each crew's roster with badge-ins. *(On: scorecards.)* | - | Scorecards |
 | E# (on-call role) | **On-call role.** An operations engineer's on-call role in the Customer's notification rota (E1 to E4). *(On: alarms.)* | - | Alarm Board |
+| EN-F# | **Energy finding.** A finding on the Energy tab: the Landlord's energy report or the chiller free-cooling log does not reconcile with the meters (Landlord SLA section 22). | - | Energy |
 | F# (post-incident review) | **Post-incident review contributing factor.** A contributing factor the post-incident review found, such as an inadequate procedure or a missing alert. *(On: pir, alarms.)* | - | Alarm Board, Post-Incident Review |
 | F-### | **IT Partner finding.** A place where the IT Partner's records do not reconcile with the telemetry, from the monthly scorecard. | - | Scorecards, Incident Portal, Post-Incident Review, Weekly Review |
 | FPR-YYYY-H# | **Failure pattern review.** The review of six months of failures for patterns, with owners and fixes. | - | Failure Patterns, Overview, Weekly Review |
@@ -379,7 +385,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | P# (failure pattern review) | **Failure pattern number.** On the Failure Pattern Review, P1, P2, and P3 also number the patterns found. In the action tables, the Priority column uses the SLA priorities. *(On: patterns.)* | - | Failure Patterns |
 | PA# | **Failure pattern action.** An owned, dated action from the failure pattern review. | - | Failure Patterns |
 | PIR-YYYY-### | **Post-incident review.** A completed post-incident review. | - | Alarm Board, Overview, Incident Portal, Post-Incident Review, Weekly Review |
-| PM-#### | **Preventive maintenance record.** A scheduled maintenance task on facility equipment, such as a generator's monthly loaded exercise. | - | Scorecards, Alarm Board, Incident Portal, Weekly Review |
+| PM-#### | **Preventive maintenance record.** A scheduled maintenance task on facility equipment, such as a generator's monthly loaded exercise. | - | Scorecards, Alarm Board, Energy, Incident Portal, Weekly Review |
 | PS or PU + 8 characters | **Power shelf or PSU serial number.** A power shelf's (PS) or power supply's (PU) serial number. | - | Incident Portal, Post-Incident Review |
 | Q# (weekly review) | **Weekly review ask.** An ask of one party from the weekly operations review, with a due date. *(On: weekly.)* | - | Weekly Review |
 | RSS-### | **IT Partner staff ID.** A person on the IT Partner's roster (Ridgeline Site Services). The staffing checks match rostered people to badge-ins. | - | Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
@@ -392,18 +398,18 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 
 | Code | Meaning | Defined in | Used on |
 |---|---|---|---|
-| AUS-1 | **Site AUS-1.** The fictional leased AI data center in Central Texas this project models. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| AUS-1 | **Site AUS-1.** The fictional leased AI data center in Central Texas this project models. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Energy, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | BW-[hall]-R#-PG-[hall]#-[side] | **Busway segment.** Overhead busway feeding a row of racks. BW-A-R1-PG-A2-A is Hall A, row 1, power group A2, A side. Each rack takes power from an A and a B busway through tap-offs. | - | Scorecards, Alarm Board, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | C# (leak circuit) | **Leak detection circuit.** A sensing cable circuit on a leak detection module: TTDM-A/C8 is circuit 8 on Hall A's module. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | CDU-[hall]# | **Coolant distribution unit.** A CDU, named by hall and number: CDU-A3 is CDU 3 in Hall A. Each serves up to 8 racks; the Landlord owns it. | - | Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
-| CH-## | **Chiller.** One of the 11 air-cooled chillers (N+1) in the central plant. | - | Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
+| CH-## | **Chiller.** One of the 11 air-cooled chillers (N+1) in the central plant. | - | Scorecards, Alarm Board, Energy, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | GEN-# | **Standby generator.** One of the 7 diesel standby generators (N+1) on the paralleling bus. | - | Landlord SLA, Scorecards, Incident Portal, Weekly Review |
 | HALL-A | **Data hall.** State: production; 32 racks. | IT Partner SLA, 2. Parties and Site Profile<br>Landlord SLA, 2. Parties and Leased Premises | IT Partner SLA, Landlord SLA, Scorecards, Failure Patterns, Incident Portal, Post-Incident Review, Weekly Review |
 | HALL-B | **Data hall.** State: deployment; 32 racks. | IT Partner SLA, 2. Parties and Site Profile<br>Landlord SLA, 2. Parties and Leased Premises | IT Partner SLA, Landlord SLA, Incident Portal |
 | leaf-[hall]##-r# port ## | **InfiniBand leaf switch.** A leaf switch of the rail-optimized InfiniBand fabric, and optionally one port: leaf-a07-r1 is leaf 7 of Hall A on rail 1. Leaf numbers count rack pairs (leaf 7 serves racks A13 and A14): ports 1 to 18 go to the first rack's trays, 19 to 36 to the second's. UFM writes a port as leaf-a07-r1:swp18. | - | Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | MUPS-[hall]# | **Mechanical UPS.** A UPS for a hall's mechanical loads (CDUs and pumps), named by hall and number. | - | Alarm Board |
-| MV-A | **Medium-voltage bus A.** One of the two 13.8 kV switchgear buses (main-tie-main). The A feeds of the halls trace back to it. | - | Alarm Board, Site model document |
-| MV-B | **Medium-voltage bus B.** The other 13.8 kV switchgear bus. The B feeds of the halls trace back to it. | - | Alarm Board, Site model document |
+| MV-A | **Medium-voltage bus A.** One of the two 13.8 kV switchgear buses (main-tie-main). The A feeds of the halls trace back to it. | - | Landlord SLA, Alarm Board, Energy, Site model document |
+| MV-B | **Medium-voltage bus B.** The other 13.8 kV switchgear bus. The B feeds of the halls trace back to it. | - | Landlord SLA, Alarm Board, Energy, Site model document |
 | OPS-MAIN | **Main operations entrance badge reader.** The door every shift badges through; the staffing check counts badge-ins here. | - | Scorecards |
 | Rack [hall]## | **Rack.** One NVL72 rack: 18 compute trays, 9 NVLink switch trays, and 8 power shelves, fed by an A and a B tap-off. Rack A07 is Hall A, rack 7 (row 1, position 7). | - | Scorecards, Alarm Board, Failure Patterns, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | TO-[rack]-[side] | **Busway tap-off.** The breaker box that takes power from the busway to one rack: TO-A07-B is rack A07's B-side tap-off. Its output terminals are the power demarcation (DM-PWR). | - | Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
@@ -427,7 +433,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | C175-16 | **Caterpillar C175-16 generator.** The 3,000 kW diesel standby generator model; the site has 7 (N+1). | - | Site model document |
 | CW | **Liebert CW CRAH.** The perimeter air handler model for the electrical rooms. | - | Site model document |
 | CWA | **Liebert CWA thermal wall.** The chilled-water fan wall that cools the halls' air. | - | Site model document |
-| EMCP | **EMCP 4.4 generator controller.** The generator's control panel, read over Modbus TCP for run, load, and alarm data. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Site model document, Incident Portal, Weekly Review |
+| EMCP | **EMCP 4.4 generator controller.** The generator's control panel, read over Modbus TCP for run, load, and alarm data. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Energy, Site model document, Incident Portal, Weekly Review |
 | GB200 | **GB200 NVL72 rack.** A rack-scale GPU system: 72 GPUs and 36 Grace CPUs joined by NVLink, direct-to-chip liquid cooled. Hall A runs 32 of them. | - | IT Partner SLA, Site model document |
 | GB300 | **GB300 NVL72 rack.** The next generation of the NVL72 rack. Hall B is deploying 32 of them. | - | Site model document |
 | MVSST | **Medium-voltage solid-state transformer.** Converts 13.8 kV directly to 800 VDC for the planned 800 VDC racks. | - | Site model document |

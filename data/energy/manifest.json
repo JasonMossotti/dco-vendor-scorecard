@@ -1,0 +1,11 @@
+{
+  "disclaimer": "Synthetic data for a portfolio demonstration. All sites, people, and events are fictional.",
+  "files": {
+    "answer_key.json": 1,
+    "chiller_events.jsonl": 6,
+    "history_daily.csv": 336,
+    "landlord_energy_report.json": 1,
+    "meters_hourly.csv": 672
+  },
+  "source": "data/sample"
+}

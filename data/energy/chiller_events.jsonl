@@ -1,0 +1,6 @@
+{"chiller": "CH-06", "event": "Free cooling disabled", "mode": "Local override", "note": "PM-0014 Preventive maintenance", "timestamp": "2026-09-08T11:40:28Z", "user": "CCF-E01"}
+{"chiller": "CH-06", "event": "Free cooling enabled", "mode": "BMS auto", "note": "PM-0014 complete", "timestamp": "2026-09-08T17:21:24Z", "user": "CCF-E01"}
+{"chiller": "CH-10", "event": "Free cooling disabled", "mode": "Local override", "note": "PM-0016 Preventive maintenance", "timestamp": "2026-09-11T15:45:03Z", "user": "CCF-E06"}
+{"chiller": "CH-10", "event": "Free cooling enabled", "mode": "BMS auto", "note": "PM-0016 complete", "timestamp": "2026-09-11T22:27:23Z", "user": "CCF-E06"}
+{"chiller": "CH-03", "event": "Free cooling disabled", "mode": "Local override", "note": "PM-0015 Preventive maintenance", "timestamp": "2026-09-13T12:24:49Z", "user": "CCF-E06"}
+{"chiller": "CH-03", "event": "Free cooling enabled", "mode": "BMS auto", "note": "Restored to BMS auto during a plant review", "timestamp": "2026-09-19T11:23:20Z", "user": "BMS"}

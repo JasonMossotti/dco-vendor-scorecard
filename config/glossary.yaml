@@ -38,6 +38,7 @@ contract_terms:
   - {path: ticket_handling.stability.rules, type: rule, title: "{name}", text: "{rule}"}
   - {path: fault_attribution.rules, type: rule, title: "Fault attribution rule", text: "{rule}"}
   - {path: handoffs, type: rule, title: "{name}", text: "{rule}"}
+  - {path: energy_reporting.terms, type: measure, title: "{name}", text: "{rule}"}
   - {path: demarcations, type: rule, title: "{system} demarcation", text: "Boundary: {boundary} Evidence: {evidence}"}
   - {path: chronic_failure.triggers, type: rule, title: "Chronic failure trigger", text: "{rule}"}
   - {path: alarm_notification.notifications, type: notification, title: "{trigger}",
@@ -94,6 +95,8 @@ terms:
   - {term: ANSI, type: acronym, expansion: American National Standards Institute, text: "Coordinates US voluntary standards, including ANSI/ASSP Z10.0."}
   - {term: ASSP, type: acronym, expansion: American Society of Safety Professionals, text: "Publisher of the ANSI/ASSP Z10.0 safety management standard."}
   - {term: EPA, type: acronym, expansion: Environmental Protection Agency, text: "The US environmental regulator. Refrigerant work requires an EPA Section 608 certified technician."}
+  - {term: IEC, type: acronym, expansion: International Electrotechnical Commission, text: "Publishes international standards with ISO, such as ISO/IEC 30134-2 (power usage effectiveness)."}
+  - {term: PUE, type: acronym, expansion: Power usage effectiveness, text: "Total facility energy divided by IT energy over a period (ISO/IEC 30134-2:2026). 1.0 would mean every kilowatt-hour reaches the IT equipment; the rest is cooling, power path losses, and house load. Partial PUE (pPUE) measures one part of that overhead. Reported on the Energy tab."}
   - {term: ISO, type: acronym, expansion: International Organization for Standardization, text: "Publisher of international standards, such as ISO 45001 (safety management) and ISO 8601 week numbering (an ISO week runs Monday to Sunday)."}
   - {term: ERCOT, type: acronym, expansion: Electric Reliability Council of Texas, text: "The grid operator for most of Texas, including the site's utility."}
   - {term: OSR, type: acronym, expansion: Outage severity rating, text: "A public five-level scale for how badly an outage affected services, from 1 (negligible) to 5 (severe). The post-incident review records it beside the internal severity."}
@@ -222,6 +225,8 @@ families:
      text: "A place where the Landlord's work orders or maintenance records do not reconcile with the telemetry, from the monthly scorecard.", see: "app/"}
   - {key: PIR-ID, label: "PIR-YYYY-###", pattern: 'PIR-\d{4}-\d{3}', type: record, title: Post-incident review, example: PIR-2026-001,
      text: "A completed post-incident review.", see: "pir/"}
+  - {key: EN-F, label: "EN-F#", pattern: 'EN-F\d', type: record, title: Energy finding, example: EN-F1, see: "energy/",
+     text: "A finding on the Energy tab: the Landlord's energy report or the chiller free-cooling log does not reconcile with the meters (Landlord SLA section 22)."}
   - {key: FPR, label: "FPR-YYYY-H#", pattern: 'FPR-\d{4}-H[12]', type: record, title: Failure pattern review, example: FPR-2026-H1,
      text: "The review of six months of failures for patterns, with owners and fixes.", see: "patterns/"}
   - {key: PA, label: "PA#", pattern: 'PA\d{1,2}', type: record, title: Failure pattern action, example: PA6,

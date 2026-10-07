@@ -37,7 +37,8 @@
 19. [Security and Chain of Custody](#19-security-and-chain-of-custody)
 20. [Environmental, Health, and Safety](#20-environmental-health-and-safety)
 21. [Spares](#21-spares)
-22. [SLA Change Control and Continuous Improvement](#22-sla-change-control-and-continuous-improvement)
+22. [Energy Reporting and PUE](#22-energy-reporting-and-pue)
+23. [SLA Change Control and Continuous Improvement](#23-sla-change-control-and-continuous-improvement)
 - [Appendix A: Internal Breach Severity Index](#appendix-a-internal-breach-severity-index)
 - [Appendix B: Worked Examples](#appendix-b-worked-examples)
 
@@ -331,6 +332,21 @@ On a Chronic Failure, the Customer may:
 
 - **Reorder:** {{ sla.spares.reorder_rule }}
 - **Cycle counts:** {{ sla.spares.cycle_count }}
+
+## 22. Energy Reporting and PUE
+
+{{ sla.energy_reporting.principle }}
+
+- **Standard:** {{ sla.energy_reporting.standard }}
+- **Total facility energy:** {{ sla.energy_reporting.total_facility }}
+- **IT energy:** {{ sla.energy_reporting.it_energy }}
+- **Partial PUE:** {{ sla.energy_reporting.partial }}
+
+| ID | Term | Requirement |
+|---|---|---|
+{% for t in sla.energy_reporting.terms -%}
+| {{ t.id }} | {{ t.name }} | {{ t.rule }} |
+{% endfor %}
 
 {% include "partials/change_control_severity.md.j2" %}
 ## Appendix B: Worked Examples

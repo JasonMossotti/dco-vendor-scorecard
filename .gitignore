@@ -10,6 +10,7 @@ data/*
 !data/sample/
 !data/history/
 !data/changes/
+!data/energy/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/

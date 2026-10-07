@@ -36,6 +36,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Post-Incident Review](#post-incident-review) | What happened at rack A07, why, and what are we doing about it? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) |
 | [Weekly Review](#weekly-operations-review) | What do we discuss with both partners this week? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) |
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
+| [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
 | [Devices](#devices-location-pins-and-detail-sheets) | What is this device, where is it, and what does it connect to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/devices/) |
@@ -60,7 +61,7 @@ flowchart LR
   SLA --> ENG
   SITE --> ENG
   ENG --> REP["Scorecards, findings,<br/>credits, CAPs<br/>reports/"]
-  DATA --> HIST["History and change layers<br/>data/history/ · data/changes/"]
+  DATA --> HIST["History, change, and energy layers<br/>data/history/ · data/changes/ · data/energy/"]
   REP --> PAGES
   HIST --> PAGES
   JUDG["Human judgment (YAML)<br/>pir/ · weekly/notes/ · patterns/"] --> PAGES
@@ -169,6 +170,19 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - The history (`data/history/`) is generated on its own random stream by `scripts/generate_history.py`. Root causes, lessons, and standard-work changes are written in `patterns/lessons.yaml` and tested against the facts.
 - Scored on 60 generated histories with the patterns moved each time: optic lot 60 of 60, CDU drift 60 of 60, reseat 41 of 60, decoys 0 of 60.
 
+## Energy and PUE
+
+![Energy and PUE: tiles and the 52-week chart](docs/images/energy.png)
+
+**What it shows.** Power usage effectiveness for the sample month from the site's meters (1.353), set beside the PUE in the Landlord's monthly energy report (1.313) and the 52-week PUE the Landlord SLA tracks (1.318 against a target of at most 1.35). A stacked bar per four-week period splits PUE into cooling, the power path, and house load, so the free-cooling winters and the hot summers are visible; a daily line shows the month. Two findings: the report does not reconcile with the meters (its PUE matches IT energy read at the UPS inputs instead of the outputs), and a chiller's free cooling was left off for six days after maintenance with no change record.
+
+**How it works.**
+- PUE follows ISO/IEC 30134-2:2026: total facility energy (utility revenue meters, plus generator energy only while the generators carried the site in an outage) divided by IT energy (UPS output meters), both as energy over the period. Partial PUE splits the overhead into cooling, power path, and house load.
+- `src/scorecard/synthetic/energy.py` generates hourly meters on its own random stream: IT energy follows the sample's UPS readings, and cooling follows a Central Texas weather model and a free-cooling chiller plant (`config/energy.yaml`, every assumption marked). The 12 four-week periods before the sample are synthetic history.
+- `src/scorecard/energy.py` recomputes the report's PUE the common wrong ways (UPS inputs as IT, house load left out, generator energy left out) and names the one that matches; it reads the chiller free-cooling log for lockouts over 24 hours and estimates their extra energy with the plant model.
+- The terms are Landlord SLA section 22 (OT-EN-01 monthly report, OT-EN-02 PUE over 52 weeks, OT-EN-03 free-cooling availability). PUE is a Key Measurement with no credits, so the Landlord's credits are unchanged. The weekly packs carry the week's and month-to-date PUE, tested to reconcile with this report.
+- Scored on 60 generated months with the report error and the lockout moved each time: every report error found (49 of 49, cause named each time), every lockout found, 109 of 109 in all, no report flagged when it was right (11 of 11), 0 false positives.
+
 ## Agreements: SLAs as code
 
 ![The Interface Agreement rendered with its contents](docs/images/agreements.png)
@@ -238,6 +252,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Facility evidence | | 60 of 60 |
 | Failure patterns | 3 found, 0 other flags | optic lot 60/60, CDU drift 60/60, reseat 41/60, decoys 0/60 |
 | Change-aware alarms | 120 alarms, 11 expected, 4 flags (all MOP-310) | every case 60/60, decoys 0/60 |
+| PUE report and free-cooling lockouts | 2 of 2 | 109 of 109 (report errors 49/49, cause named 49/49; lockouts 60/60), 0 false positives |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
 
 ```bash
@@ -245,6 +260,7 @@ python scripts/run_engine.py --robustness 60
 python scripts/run_landlord.py --robustness 60
 python scripts/render_patterns.py --robustness 60
 python scripts/render_alarms.py --robustness 60
+python scripts/render_energy.py --robustness 60
 ```
 
 ## Toward live data: the read-only collector
@@ -258,7 +274,7 @@ python scripts/render_alarms.py --robustness 60
 
 ## Tests and deployment
 
-- **447 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
+- **464 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -306,6 +322,7 @@ src/scorecard/pir.py             Post-incident review facts and timeline (also u
 src/scorecard/weekly.py          Weekly operations review facts, as of each week's end
 src/scorecard/patterns.py        Failure pattern statistics, evidence for a cause, owner from the RACI
 src/scorecard/alarms.py          Change-aware alarms: one feed, classified against declared changes
+src/scorecard/energy.py         PUE and partial PUE from the meters; report and free-cooling checks
 src/scorecard/tickets.py         Incident Portal records with timelines and measurements
 src/scorecard/glossary.py        Code meanings, lookup, and tokenizer used by render_glossary.py
 src/scorecard/sitenav.py         The tab bar on every page and ticket-number links
@@ -315,9 +332,10 @@ pir/reviews/*.yaml               Written part of each post-incident review
 weekly/notes/*.yaml              Written part of a weekly review (decisions, asks, commentary)
 patterns/lessons.yaml            Written part of the pattern review (root causes, lessons, actions)
 config/change_alarms.yaml        Alarm map, change-type catalog, robustness plants
+config/energy.yaml               Weather, chiller plant, and meter model for the energy layer; PUE check thresholds
 config/glossary.yaml             Code meanings: contract paths, acronyms, record families
-scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, tickets, glossary, agreements, devices)
-scripts/generate_*.py            Synthetic data: sample, history, change layer
+scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, energy, tickets, glossary, agreements, devices)
+scripts/generate_*.py            Synthetic data: sample, history, change layer, energy meters
 scripts/run_engine.py            IT Partner engine -> reports/
 scripts/run_landlord.py          Landlord engine -> Landlord and attribution reports
 scripts/build_scorecard.py       Scorecard -> reports/

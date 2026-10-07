@@ -32,6 +32,8 @@ jobs:
         run: python scripts/render_patterns.py --check
       - name: Change-aware alarm review is current
         run: python scripts/render_alarms.py --check
+      - name: PUE report is current
+        run: python scripts/render_energy.py --check
       - name: Glossary is current and explains every code
         run: python scripts/render_glossary.py --check
       - name: Install jsdom for the review page's browser test

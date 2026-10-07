@@ -33,6 +33,7 @@ TABS = [
     ("pir", "Post-Incident Review", "pir/"),
     ("weekly", "Weekly Review", "weekly/"),
     ("patterns", "Failure Patterns", "patterns/"),
+    ("energy", "Energy", "energy/"),
 ]
 REFERENCE_TABS = [
     ("agreements", "Agreements", "agreements/"),

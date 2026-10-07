@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Energy and PUE · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --it:#1f5fbf; --bad:#b42318; --good:#1d7a46;
+        --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --grid:#eef1f4; --band:#fdecea; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+main { max-width:1120px; margin:20px auto; background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:14px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:14px 0; }
+.tile { background:var(--panel); border-radius:8px; padding:12px 14px; }
+.tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.tile .v { font-size:28px; font-weight:700; line-height:1.2; } .tile .s { font-size:12px; color:var(--muted); }
+.flag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; margin-left:4px; vertical-align:2px; }
+.flag.bad { background:var(--band); color:var(--bad); } .flag.ok { background:#e7f4ec; color:var(--good); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+tr.this td { font-weight:600; } .wide { overflow-x:auto; }
+.finding { background:#fdf0ef; border-left:4px solid var(--bad); padding:10px 14px; border-radius:4px; margin:10px 0; font-size:14px; }
+.finding h3 { margin:0 0 4px; } .finding ul { margin:6px 0 0; padding-left:18px; font-size:13px; }
+.legend { display:flex; flex-wrap:wrap; gap:16px; font-size:12px; color:var(--muted); margin:4px 0; }
+.legend i { display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+.legend i.dash { height:0; border-top:2px dashed var(--ink); border-radius:0; vertical-align:3px; width:16px; }
+.legend i.band { background:var(--band); border:1px solid #f3b8b2; }
+.chart { position:relative; } svg text.halo { paint-order:stroke; stroke:#fff; stroke-width:4px; stroke-linejoin:round; } svg text { font:11px "Inter","Segoe UI",Helvetica,Arial,sans-serif; fill:var(--muted); }
+svg .lbl { fill:var(--ink); font-weight:600; }
+.tip { position:absolute; pointer-events:none; background:#fff; border:1px solid var(--line); border-radius:6px; padding:6px 9px; font-size:12px;
+       box-shadow:0 2px 8px rgba(0,0,0,.12); display:none; white-space:nowrap; z-index:5; }
+.tip b { display:block; margin-bottom:2px; } .tip .row { display:flex; gap:8px; justify-content:space-between; }
+.toggle { font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; padding:3px 10px; border-radius:6px; cursor:pointer; margin-left:8px; }
+@media print { header.top { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } .tip { display:none !important; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Energy and PUE</strong></div>
+  <div class="tools"><button id="print">Print / save PDF</button></div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const md = iso => { const [y, m, d] = iso.slice(0, 10).split("-"); return `${MON[+m - 1]} ${+d}`; };
+const mdy = iso => md(iso) + ", " + iso.slice(0, 4);
+const lastDay = iso => new Date(Date.parse(iso) - 3600e3).toISOString();
+const n3 = v => esc((+v).toFixed(3));
+const mwh = kwh => esc((kwh / 1000).toLocaleString("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1})) + " MWh";
+const SERIES = [["ppue_cooling", "Cooling", "var(--s1)"], ["ppue_power", "Power path", "var(--s2)"], ["other_per_it", "House load", "var(--s3)"]];
+const share = (p, k) => k === "other_per_it" ? p[k] : p[k] - 1;
+
+function tile(k, v, s, flag) { return `<div class="tile"><div class="k">${esc(k)}</div><div class="v">${v}${flag || ""}</div><div class="s">${s}</div></div>`; }
+
+// Tooltip shared by both charts.
+function tipFor(box) {
+  const t = document.createElement("div"); t.className = "tip"; box.appendChild(t);
+  return {
+    show(html, x, y) { t.innerHTML = html; t.style.display = "block";
+      const w = box.clientWidth, tw = t.offsetWidth; t.style.left = Math.min(Math.max(0, x + 12), w - tw) + "px"; t.style.top = Math.max(0, y - 10) + "px"; },
+    hide() { t.style.display = "none"; },
+  };
+}
+
+// 52 weeks: the overhead per IT kWh stacked above 1.0, one bar per four-week period.
+function periodChart() {
+  const P = D.periods, W = 1000, H = 260, l = 46, r = 12, t = 14, b = 34, n = P.length, gap = 10;
+  const bw = (W - l - r) / n - gap;
+  const lo = 1.0, hi = Math.max(D.kpi.target, ...P.map(p => p.pue)) + 0.03;
+  const y = v => t + (H - t - b) * (1 - (v - lo) / (hi - lo));
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="PUE by four-week period, split into cooling, power path, and house load">`;
+  for (let v = lo; v <= hi + 1e-9; v += 0.1) s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${l - 6}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`;
+  P.forEach((p, i) => {
+    const x = l + i * (bw + gap) + gap / 2;
+    let base = lo;
+    SERIES.forEach(([k, , c], j) => {
+      const v = share(p, k), y0 = y(base), y1 = y(base + v);
+      const top = j === SERIES.length - 1;
+      s += `<path d="${top ? `M${x},${y0} V${y1 + 4} Q${x},${y1} ${x + 4},${y1} H${x + bw - 4} Q${x + bw},${y1} ${x + bw},${y1 + 4} V${y0} Z` : `M${x},${y0} V${y1} H${x + bw} V${y0} Z`}" fill="${c}"/>`;
+      if (j) s += `<line x1="${x}" x2="${x + bw}" y1="${y0}" y2="${y0}" stroke="#fff" stroke-width="2"/>`;
+      base += v;
+    });
+    s += `<text x="${x + bw / 2}" y="${H - b + 16}" text-anchor="middle">${esc(md(p.start))}</text>`;
+    s += `<rect class="hit" data-i="${i}" x="${x - gap / 2}" y="${t}" width="${bw + gap}" height="${H - t - b}" fill="transparent"/>`;
+  });
+  s += `<line x1="${l}" x2="${W - r}" y1="${y(D.kpi.target)}" y2="${y(D.kpi.target)}" stroke="var(--ink)" stroke-dasharray="5 4" stroke-width="1.5"/>`;
+  P.forEach((p, i) => { if (p.month) s += `<text class="lbl halo" x="${l + i * (bw + gap) + gap / 2 + bw / 2}" y="${y(Math.max(p.pue, D.kpi.target)) - 7}" text-anchor="middle">${n3(p.pue)}</text>`; });
+  return s + `</svg>`;
+}
+
+// This month by day: daily PUE as a line, the free-cooling lockout as a shaded band.
+function dayChart() {
+  const X = D.days, W = 1000, H = 220, l = 46, r = 12, t = 14, b = 30, n = X.length;
+  const vals = X.map(d => d.pue), lo = Math.floor((Math.min(...vals) - 0.02) * 50) / 50, hi = Math.ceil((Math.max(...vals) + 0.02) * 50) / 50;
+  const x = i => l + (W - l - r) * (i + 0.5) / n, y = v => t + (H - t - b) * (1 - (v - lo) / (hi - lo));
+  const dayIdx = iso => (Date.parse(iso) - Date.parse(X[0].date + "T00:00:00Z")) / 864e5;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Daily PUE this month">`;
+  for (const f of D.findings.filter(f => f.type === "free_cooling_lockout")) {
+    const a = l + (W - l - r) * dayIdx(f.detail.start) / n, z = l + (W - l - r) * dayIdx(f.detail.end) / n;
+    s += `<rect x="${a}" y="${t}" width="${Math.max(2, z - a)}" height="${H - t - b}" fill="var(--band)"/>`;
+    s += `<text x="${a + 4}" y="${t + 12}">${esc(f.detail.chiller)} free cooling off</text>`;
+  }
+  const step = (hi - lo) > 0.1 ? 0.05 : 0.02;
+  for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9; v += step) s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${l - 6}" y="${y(v) + 4}" text-anchor="end">${v.toFixed(2)}</text>`;
+  s += `<path d="${X.map((d, i) => (i ? "L" : "M") + x(i) + "," + y(d.pue)).join(" ")}" fill="none" stroke="var(--s1)" stroke-width="2"/>`;
+  X.forEach((d, i) => {
+    if (i % 7 === 0) s += `<text x="${x(i)}" y="${H - b + 16}" text-anchor="middle">${esc(md(d.date))}</text>`;
+    s += `<rect class="hit" data-i="${i}" x="${x(i) - (W - l - r) / n / 2}" y="${t}" width="${(W - l - r) / n}" height="${H - t - b}" fill="transparent"/>`;
+  });
+  s += `<line class="cross" pointer-events="none" x1="0" x2="0" y1="${t}" y2="${H - b}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>`;
+  s += `<circle class="dot" pointer-events="none" r="5" fill="var(--s1)" stroke="#fff" stroke-width="2" visibility="hidden"/>`;
+  return {svg: s + `</svg>`, x, y};
+}
+
+function render() {
+  const m = D.month, k = D.kpi, rep = D.report, mis = D.findings.find(f => f.type === "report_mismatch");
+  let h = `<h1>Energy and PUE</h1>
+  <p class="sub">Power usage effectiveness for the sample month, ${esc(mdy(D.window.start))} to ${esc(mdy(lastDay(D.window.end)))}, from the meters,
+  checked against the Landlord's monthly report. Synthetic meter data; all names are fictional.</p>
+  <div class="tiles">
+    ${tile("PUE this month (meters)", n3(m.pue), `${mwh(m.facility_kwh)} facility / ${mwh(m.it_kwh)} IT`)}
+    ${tile("PUE in the Landlord's report", n3(rep.pue), mis ? "Does not reconcile with the meters (EN-F1)" : "Reconciles with the meters", mis ? `<span class="flag bad">differs</span>` : `<span class="flag ok">matches</span>`)}
+    ${tile("PUE over 52 weeks", n3(k.actual), `${esc(k.id)}: target at most ${esc(k.target.toFixed(2))}, a Key Measurement with no credits`, `<span class="flag ${k.met ? "ok" : "bad"}">${k.met ? "met" : "not met"}</span>`)}
+    ${tile("Partial PUE", `${n3(m.ppue_cooling)} <span style="font-size:15px;font-weight:600">cooling</span>`, `${n3(m.ppue_power)} power path; house load ${n3(m.other_per_it)} per IT kWh`)}
+  </div>`;
+
+  h += `<h2>52 weeks, by four-week period</h2>
+  <p class="note">Each bar is PUE for one period: 1.0 is the IT energy itself; above it, the energy each IT kWh needed for cooling, the power path (UPS and distribution losses), and house load.
+  Cooling follows the weather: the free-cooling chillers do most of the work in winter. The periods before the sample month are synthetic history, with Hall B ramping up as it deployed.</p>
+  <div class="legend">${SERIES.map(([, name, c]) => `<span><i style="background:${c}"></i>${esc(name)}</span>`).join("")}<span><i class="dash"></i>Target ${esc(D.kpi.target.toFixed(2))} (52 weeks)</span>
+  <button class="toggle" id="tbl1">Show table</button></div>
+  <div class="chart" id="c1">${periodChart()}</div>
+  <div class="wide" id="t1" hidden><table><tr><th>Period</th><th class="n">Mean outdoor</th><th class="n">PUE</th><th class="n">Cooling pPUE</th><th class="n">Power pPUE</th><th class="n">House per IT kWh</th><th class="n">IT</th></tr>
+  ${D.periods.map(p => `<tr class="${p.month ? "this" : ""}"><td>${esc(md(p.start))} to ${esc(md(p.end))}${p.month ? " (this month)" : ""}</td><td class="n">${esc(p.outdoor_c.toFixed(1))} C</td><td class="n">${n3(p.pue)}</td><td class="n">${n3(p.ppue_cooling)}</td><td class="n">${n3(p.ppue_power)}</td><td class="n">${n3(p.other_per_it)}</td><td class="n">${mwh(p.it_kwh)}</td></tr>`).join("")}</table></div>`;
+
+  const dc = dayChart();
+  h += `<h2>This month, by day</h2>
+  <div class="legend"><span><i style="background:var(--s1)"></i>Daily PUE</span>${D.findings.some(f => f.type === "free_cooling_lockout") ? `<span><i class="band"></i>Free cooling locked out on a chiller with no change record</span>` : ""}</div>
+  <div class="chart" id="c2">${dc.svg}</div>
+  <h3>By week (the weekly review's weeks)</h3>
+  <div class="wide"><table><tr><th>Week</th><th class="n">PUE</th><th class="n">Cooling pPUE</th><th class="n">Power pPUE</th><th class="n">Facility</th><th class="n">IT</th><th class="n">Mean outdoor</th></tr>
+  ${D.weeks.map((w, i) => `<tr><td>${i + 1}. ${esc(md(w.start))} to ${esc(md(lastDay(w.end)))}</td><td class="n">${n3(w.pue)}</td><td class="n">${n3(w.ppue_cooling)}</td><td class="n">${n3(w.ppue_power)}</td><td class="n">${mwh(w.facility_kwh)}</td><td class="n">${mwh(w.it_kwh)}</td><td class="n">${esc(w.outdoor_c.toFixed(1))} C</td></tr>`).join("")}
+  <tr class="this"><td>Month</td><td class="n">${n3(m.pue)}</td><td class="n">${n3(m.ppue_cooling)}</td><td class="n">${n3(m.ppue_power)}</td><td class="n">${mwh(m.facility_kwh)}</td><td class="n">${mwh(m.it_kwh)}</td><td class="n">${esc(m.outdoor_c.toFixed(1))} C</td></tr></table></div>`;
+
+  h += `<h2>Findings</h2>`;
+  if (!D.findings.length) h += `<p>None: the Landlord's report reconciles with the meters and no free-cooling lockout ran past 24 hours.</p>`;
+  for (const f of D.findings) {
+    h += `<div class="finding"><h3>${esc(f.id)}: ${esc(f.title)}</h3><div>${esc(f.summary)}</div><ul>
+      <li>Contract: ${f.refs.map(esc).join(", ")} (Landlord SLA section 22)</li><li>Evidence: ${f.evidence.map(esc).join("; ")}</li>
+      ${f.extra_kwh != null ? `<li>Estimated extra energy: ${mwh(f.extra_kwh)}, about $${esc(Math.round(f.extra_usd).toLocaleString("en-US"))} at $${esc(D.tariff.toFixed(3))} per kWh (a plant model estimate, not a meter reading)</li>` : ""}</ul></div>`;
+  }
+  if (D.check) h += `<p class="note">Engine self-check: ${esc(D.check.detected)} of ${esc(D.check.planted)} planted energy discrepancies found, ${esc(D.check.false_positives)} false positives. A finding means the records do not reconcile, not that anyone misled.</p>`;
+
+  const V = D.variants;
+  h += `<h2>The Landlord's report against the meters</h2>
+  <div class="wide"><table><tr><th>Figure</th><th class="n">Reported</th><th class="n">Meters</th><th class="n">Difference</th></tr>
+  <tr><td>Total facility energy</td><td class="n">${mwh(rep.total_facility_kwh)}</td><td class="n">${mwh(m.facility_kwh)}</td><td class="n">${mwh(rep.total_facility_kwh - m.facility_kwh)}</td></tr>
+  <tr><td>IT energy</td><td class="n">${mwh(rep.it_kwh)}</td><td class="n">${mwh(m.it_kwh)}</td><td class="n">${mwh(rep.it_kwh - m.it_kwh)}</td></tr>
+  <tr><td>PUE</td><td class="n">${n3(rep.pue)}</td><td class="n">${n3(m.pue)}</td><td class="n">${esc((rep.pue - m.pue).toFixed(3))}</td></tr></table></div>
+  <p class="note">How the check names a likely cause: it recomputes PUE the common ways a report goes wrong and looks for the one that matches.
+  IT energy at the UPS inputs gives ${n3(V.ups_input_as_it.pue)}; house load left out gives ${n3(V.house_omitted.pue)}; generator energy left out gives ${n3(V.generator_omitted.pue)}.</p>`;
+
+  h += `<h2>Free-cooling log</h2><div class="wide"><table><tr><th>Chiller</th><th>Disabled (UTC)</th><th>Enabled (UTC)</th><th class="n">Hours</th><th>Record</th></tr>
+  ${D.lockouts.map(s => `<tr><td>${esc(s.chiller)}</td><td>${esc(s.start.slice(0, 16).replace("T", " "))}</td><td>${esc(s.end.slice(0, 16).replace("T", " "))}</td><td class="n">${esc(s.hours.toFixed(1))}</td><td>${esc(s.note)}</td></tr>`).join("")}</table></div>
+  <p class="note">A chiller's free cooling is switched off while its maintenance is done and back on at the end. Over ${esc(D.checks.lockout_hours)} hours needs an approved MOP or change record (OT-EN-03).</p>`;
+
+  h += `<h2>How it is measured</h2><ul>
+  <li><b>Standard:</b> <a href="${esc(D.standard.url)}" target="_blank" rel="noopener">${esc(D.standard.name)}</a>, which supersedes the 2016 edition. PUE is total facility energy divided by IT energy, both as energy over the period. The standard reports PUE over a year; the 52-week figure is that, and the monthly figure tracks it.</li>
+  <li><b>Total facility energy:</b> the utility revenue meters on MV-A and MV-B, plus generator energy while the generators carried the site in a utility outage (from the EMCP readings, between the EPMS breaker events). Generator test runs into a portable load bank are not facility energy.</li>
+  <li><b>IT energy:</b> the UPS output meters in Hall A and Hall B. UPS losses are facility overhead.</li>
+  <li><b>Partial PUE:</b> cooling is the chiller yard, the facility water pumps, the mechanical UPS (CDU pumps and thermal-wall fans), and the electrical-room CRAHs. The power path is UPS losses plus the unmetered remainder (transformer and distribution losses). House load is offices, lighting, and security.</li>
+  <li><b>Contract:</b> Landlord SLA section 22, ${D.terms.map(t => esc(t.id) + " " + esc(t.name)).join("; ")}.</li></ul>`;
+
+  const doc = document.getElementById("doc");
+  doc.innerHTML = h;
+
+  // Hover: the period bars and the daily line.
+  const c1 = document.getElementById("c1"), tip1 = tipFor(c1);
+  c1.querySelectorAll(".hit").forEach(el => {
+    const p = D.periods[+el.dataset.i];
+    el.addEventListener("mousemove", e => { const b = c1.getBoundingClientRect();
+      tip1.show(`<b>${esc(md(p.start))} to ${esc(md(p.end))}${p.month ? " (this month)" : ""}</b><div class="row"><span>PUE</span><span>${n3(p.pue)}</span></div>` +
+        SERIES.map(([k, name]) => `<div class="row"><span>${esc(name)}</span><span>${n3(share(p, k))}</span></div>`).join("") +
+        `<div class="row"><span>Mean outdoor</span><span>${esc(p.outdoor_c.toFixed(1))} C</span></div>`, e.clientX - b.left, e.clientY - b.top); });
+    el.addEventListener("mouseleave", () => tip1.hide());
+  });
+  const c2 = document.getElementById("c2"), tip2 = tipFor(c2), svg2 = c2.querySelector("svg");
+  const cross = svg2.querySelector(".cross"), dot = svg2.querySelector(".dot");
+  c2.querySelectorAll(".hit").forEach(el => {
+    const i = +el.dataset.i, d = D.days[i];
+    el.addEventListener("mousemove", e => { const b = c2.getBoundingClientRect();
+      cross.setAttribute("x1", dc.x(i)); cross.setAttribute("x2", dc.x(i)); cross.setAttribute("visibility", "visible");
+      dot.setAttribute("cx", dc.x(i)); dot.setAttribute("cy", dc.y(d.pue)); dot.setAttribute("visibility", "visible");
+      tip2.show(`<b>${esc(mdy(d.date))}</b><div class="row"><span>PUE</span><span>${n3(d.pue)}</span></div><div class="row"><span>Cooling pPUE</span><span>${n3(d.ppue_cooling)}</span></div>` +
+        `<div class="row"><span>Mean outdoor</span><span>${esc(d.outdoor_c.toFixed(1))} C</span></div>` +
+        (d.generator_kwh > 0 ? `<div class="row"><span>Generators</span><span>${mwh(d.generator_kwh)}</span></div>` : ""), e.clientX - b.left, e.clientY - b.top); });
+    el.addEventListener("mouseleave", () => { tip2.hide(); cross.setAttribute("visibility", "hidden"); dot.setAttribute("visibility", "hidden"); });
+  });
+  document.getElementById("tbl1").addEventListener("click", e => {
+    const t = document.getElementById("t1"); t.hidden = !t.hidden; e.target.textContent = t.hidden ? "Show table" : "Hide table";
+  });
+}
+render();
+document.getElementById("print").addEventListener("click", () => window.print());
+</script>
+</body>
+</html>

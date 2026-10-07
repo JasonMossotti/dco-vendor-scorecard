@@ -161,6 +161,11 @@ def markdown(w: dict, n: dict | None) -> str:
                 + [[f"{k['id']} {k['name']}", k["actual_txt"], f"≥ {k['target']}%", k["detail"]] for k in rs["spares"]])
     L += ["", f"Failed parts awaiting shipment to the OEM at the end of the week: {rs['rma_open']}"
           + (f" (oldest removed {rs['rma_oldest_days']} days ago)." if rs["rma_open"] else ".")]
+    if w.get("energy"):
+        en = w["energy"]
+        L += ["", f"Energy: PUE this week {en['week']['pue']:.3f} (cooling pPUE {en['week']['ppue_cooling']:.3f}, power pPUE "
+                  f"{en['week']['ppue_power']:.3f}); month to date {en['mtd']['pue']:.3f} over {en['mtd']['facility_kwh'] / 1000:,.1f} MWh. "
+                  "Detail in the PUE report."]
     e = w["ehs"]
     L += ["", "## 8. Safety (EHS)", "", f"- **Injuries this week:** {e['injuries']}"]
     L += [f"- **Event:** {x['pir']}: {x['screening']}" for x in e["events"]]

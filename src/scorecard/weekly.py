@@ -88,6 +88,13 @@ class WeeklyData:
         self.it_target = {p["id"]: p["restore_min"] for p in self.it_sla["priorities"]}
         self.reviews = self._reviews()
         self.pattern_review = self._pattern_review()
+        self.energy = self._energy()
+
+    def _energy(self):
+        """The energy meters (data/energy/, beside the sample), if they have been generated."""
+        from scorecard import energy
+        p = self.data_dir.parent / "energy"
+        return energy.load(p) if (p / "meters_hourly.csv").exists() else None
 
     def _csv(self, rel: str) -> list[dict]:
         p = self.data_dir / rel
@@ -300,6 +307,20 @@ def _ehs(d: WeeklyData, ws: datetime, we: datetime, actions: list[dict]) -> dict
     return {"injuries": injuries, "events": events, "open_investigations": open_inv}
 
 
+def _energy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
+    """PUE for the week and the month to date, from the same meters as the PUE report."""
+    if d.energy is None:
+        return None
+    from scorecard import energy
+    from scorecard.synthetic.energy import parse
+    keep = ("pue", "ppue_cooling", "ppue_power", "facility_kwh", "it_kwh")
+
+    def span(a: datetime, b: datetime) -> dict:
+        t = energy.totals([r for r in d.energy.meters if a <= parse(r["hour"]) < b])
+        return {k: round(t[k], 4) if k.startswith("p") else round(t[k], 1) for k in keep}
+    return {"week": span(ws, we), "mtd": span(d.window_start, we)}
+
+
 # --------------------------------------------------------------------------- the pack
 def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
     we = next(e for s, e in d.weeks if s == ws)
@@ -338,6 +359,7 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
         "lookahead": _lookahead(d, we),
         "resources": _resources(d, ws, we, it_rows, ll_rows, it_known),
         "ehs": _ehs(d, ws, we, actions),
+        "energy": _energy_line(d, ws, we),
     }
 
 
