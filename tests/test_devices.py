@@ -143,11 +143,11 @@ def _node(script, *args):
 
 @pytest.mark.parametrize("path,device,conn,redraw", [
     ("weekly/", "leaf-a07-r1:swp18", "a13-ct18", '[data-week="2026-W36"]'),
-    ("alarms/", "BW-A-R1-PG-A2-A", "UPS-A3", None),
+    ("alarms/#a07", "BW-A-R1-PG-A2-A", "UPS-A3", None),
     ("pir/", "TO-A07-B", "A07", None),
 ])
 def test_device_cards_in_a_browser(site, path, device, conn, redraw):
-    _node("device_popups.cjs", site / path / "index.html", f"https://example.test/{path}", device, conn, *([redraw] if redraw else []))
+    _node("device_popups.cjs", site / path.split("#")[0] / "index.html", f"https://example.test/{path}", device, conn, *([redraw] if redraw else []))
 
 
 def test_devices_page_in_a_browser(site, data):
