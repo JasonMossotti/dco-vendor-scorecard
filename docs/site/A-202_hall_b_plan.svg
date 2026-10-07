@@ -218,7 +218,7 @@
 <rect x="8.0" y="8.0" width="1120.2" height="881.2" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="845.2" x2="1128.2" y2="845.2" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="864.2" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Hall B floor plan</text>
-<text x="20.0" y="882.2" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Scale: grid 1 m  |  Schematic, not for construction</text>
+<text x="20.0" y="882.2" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  Unified Site Management  |  Scale: grid 1 m  |  Schematic, not for construction</text>
 <line x1="1016.2" y1="845.2" x2="1016.2" y2="889.2" stroke="#1e2933" stroke-width="1.0"/>
 <text x="1072.2" y="866.2" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
 <text x="1072.2" y="885.2" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">A-202</text>

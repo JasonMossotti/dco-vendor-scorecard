@@ -64,7 +64,7 @@
 <rect x="8.0" y="8.0" width="1384.0" height="924.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="888.0" x2="1392.0" y2="888.0" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="907.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Track busway section and tap-off (representative)</text>
-<text x="20.0" y="925.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Not to scale  |  Schematic, not for construction</text>
+<text x="20.0" y="925.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  Unified Site Management  |  Not to scale  |  Schematic, not for construction</text>
 <line x1="1280.0" y1="888.0" x2="1280.0" y2="932.0" stroke="#1e2933" stroke-width="1.0"/>
 <text x="1336.0" y="909.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
 <text x="1336.0" y="928.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">D-303</text>

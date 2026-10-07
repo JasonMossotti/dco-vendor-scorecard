@@ -96,7 +96,7 @@
 <rect x="8.0" y="8.0" width="984.0" height="744.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="708.0" x2="992.0" y2="708.0" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="727.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Hall C (800 VDC pilot) floor plan</text>
-<text x="20.0" y="745.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Scale: grid 1 m  |  Schematic, not for construction</text>
+<text x="20.0" y="745.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  Unified Site Management  |  Scale: grid 1 m  |  Schematic, not for construction</text>
 <line x1="880.0" y1="708.0" x2="880.0" y2="752.0" stroke="#1e2933" stroke-width="1.0"/>
 <text x="936.0" y="729.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
 <text x="936.0" y="748.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">A-203</text>

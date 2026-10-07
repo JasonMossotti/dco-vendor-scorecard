@@ -44,7 +44,7 @@ Browse to `http://<instance-public-ip>:8501`.
 
 ```ini
 [Unit]
-Description=DCO Vendor Scorecard (Streamlit)
+Description=Unified Site Management scorecards (Streamlit)
 After=network.target
 
 [Service]
