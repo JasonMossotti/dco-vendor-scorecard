@@ -79,7 +79,7 @@ def test_every_page_has_the_tab_bar_with_its_own_tab_marked(site):
 
 
 def _links(html):
-    return re.findall(r'href="([^"]+)"', re.sub(r"<script\b.*?</script>", "", html, flags=re.S))
+    return re.findall(r'href="([^"]+)"', re.sub(r"<script\b.*?</script[^>]*>", "", html, flags=re.S | re.I))
 
 
 def test_every_internal_link_resolves(site):

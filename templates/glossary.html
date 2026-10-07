@@ -91,7 +91,7 @@ function draw() {
     const have = new Set(vis.map(e => e.dataset.letter));
     az.innerHTML = LETTERS.map(l => have.has(l) ? `<a href="#g-${l}">${l}</a>` : `<span>${l}</span>`).join("");
   } else {
-    az.innerHTML = DATA.types.filter(t => vis.some(e => e.dataset.type === t.key)).map(t => `<a href="#g-${t.key}">${esc(t.label)}</a>`).join(" ");
+    az.innerHTML = DATA.types.filter(t => vis.some(e => e.dataset.type === t.key)).map(t => `<a href="#g-${esc(t.key)}">${esc(t.label)}</a>`).join(" ");
   }
   document.getElementById("v-az").classList.toggle("on", S.view === "az");
   document.getElementById("v-type").classList.toggle("on", S.view === "type");
@@ -101,7 +101,7 @@ function draw() {
 function chips() {
   const count = t => ENTRIES.filter(e => !t || e.dataset.type === t).length;
   document.getElementById("chips").innerHTML = [{key: "", label: "All"}].concat(DATA.types.filter(t => count(t.key)))
-    .map(t => `<button type="button" data-type="${t.key}">${esc(t.label)}<span>${count(t.key)}</span></button>`).join("");
+    .map(t => `<button type="button" data-type="${esc(t.key)}">${esc(t.label)}<span>${count(t.key)}</span></button>`).join("");
   document.querySelectorAll("#chips button").forEach(b => b.onclick = () => { S.type = b.dataset.type; draw(); });
 }
 

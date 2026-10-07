@@ -87,7 +87,7 @@ def page_text(html: str) -> str:
     m = re.search(r'<script id="data" type="application/json">(.*?)</script>', html, re.S)
     if m:
         out += list(_strings(json.loads(m.group(1).replace("<\\/", "</"))))
-    for js in re.findall(r"<script>(.*?)</script>", html, re.S):
+    for js in re.findall(r"<script>(.*?)</script[^>]*>", html, re.S | re.I):
         for lit in re.findall(r'"((?:[^"\\\n]|\\.)*)"|`((?:[^`\\]|\\.)*)`', js):
             s = re.sub(r"<[^>]+>", " ", _no_interpolation(lit[0] or lit[1]))
             if " " in s.strip():   # prose, not an identifier, selector, or tag name

@@ -119,7 +119,7 @@ def test_agreement_pages_keep_every_line_and_anchor(site, gl):
         for code in G.anchors()[key]:
             assert code in ids, (slug, code)
         rows = len([ln for ln in md.split("\n") if ln.startswith("|") and not re.fullmatch(r"\|(\s*:?-+:?\s*\|)+", ln.strip())])
-        assert re.sub(r"<script\b.*?</script>", "", html, flags=re.S).count("<tr") == rows, slug
+        assert re.sub(r"<script\b.*?</script[^>]*>", "", html, flags=re.S | re.I).count("<tr") == rows, slug
         text = re.sub(r"<[^>]+>", "", re.sub(r"<(script|style)\b.*?</\1>", "", html, flags=re.S))
         for heading in re.findall(r"^#{1,4} (.+)$", md, re.M):
             assert AG._plain(heading).replace("&", "&amp;") in text, (slug, heading)

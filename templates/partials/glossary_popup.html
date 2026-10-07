@@ -38,7 +38,8 @@ a.tk-link:hover { background:#e8f0fc; }
    "Site model" opens the device on the Devices page in a new window. */
 (function () {
   const G = JSON.parse(document.getElementById("gl-data").textContent);
-  const ROOT = G.root, E = G.entries, DEV = G.dev || {};
+  // ROOT is rebuilt from its depth, so it can only ever be a relative prefix such as "../".
+  const ROOT = "../".repeat((G.root.match(/\.\.\//g) || []).length), E = G.entries, DEV = G.dev || {};
   const RE = new RegExp(G.re, "g"), RE_BOTH = G.re_code ? new RegExp(G.re_code + "|" + G.re, "g") : RE;
   const SKIP = "script,style,textarea,input,select,option,button,a,svg,h1,h2,h3,h4,h5,h6,summary,label,nav.usm,.gl,.gl-pop,[data-gl-skip],[contenteditable]";
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -133,7 +134,7 @@ a.tk-link:hover { background:#e8f0fc; }
   // A name in a card's connections: its own card when this page carries it, else plain text.
   function devLink(name) {
     if (!name || !DEV[name]) return esc(name);
-    return `<span class="gl" tabindex="0" role="button" data-gl="${lookup(name).join(",")}" data-dev="1">${esc(name)}</span>`;
+    return `<span class="gl" tabindex="0" role="button" data-gl="${esc(lookup(name).join(","))}" data-dev="1">${esc(name)}</span>`;
   }
   function devBlock(name) {
     const d = DEV[name];

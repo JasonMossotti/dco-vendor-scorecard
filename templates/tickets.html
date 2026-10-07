@@ -98,7 +98,7 @@ const ms = s => new Date(s).getTime(), HOUR = 3600e3, OFF = -5 * HOUR;   // site
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const loc = s => { if (!s) return ""; const d = new Date(ms(s) + OFF); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`; };
 const locDate = s => new Date(ms(s) + OFF).toISOString().slice(0, 10);
-const partyCls = p => p === "IT Partner" ? "IT" : p;
+const partyCls = p => p === "IT Partner" ? "IT" : esc(p);
 const badge = p => `<span class="badge ${partyCls(p)}">${esc(p)}</span>`;
 const PRI = {P1: 1, P2: 2, P3: 3, P4: 4};
 
@@ -133,7 +133,7 @@ options("f-state", uniq(r => r.state).map(s => [s, s]), "Any state");
 options("f-hall", [...uniq(r => r.hall).map(h => [h, h.replace("HALL-", "Hall ")]), ["-", "Outside the halls"]], "Every hall");
 options("f-category", uniq(r => r.category).map(c => [c, c]), "Any category");
 $("f-in").innerHTML = Object.entries(FIELDS).map(([k, [l]]) => `<option value="${k}">${esc(l)}</option>`).join("");
-$("feeds").innerHTML = D.feeds.map(f => `<span class="feed ${esc(f.partner)}" title="${esc(f.access)}">${esc(f.partner)}: ${esc(f.system)} · <b>${f.records}</b> records</span>`).join("");
+$("feeds").innerHTML = D.feeds.map(f => `<span class="feed ${esc(f.partner)}" title="${esc(f.access)}">${esc(f.partner)}: ${esc(f.system)} · <b>${esc(f.records)}</b> records</span>`).join("");
 $("period").textContent = `Sample month ${D.window.start.slice(0, 10)} to ${D.window.end.slice(0, 10)}. Records as the read-only feeds deliver them; times in CDT. Synthetic data; all names, devices, and events are fictional.`;
 
 const F = () => ({type: $("f-type").value, partner: $("f-partner").value, priority: $("f-priority").value, state: $("f-state").value,

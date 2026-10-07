@@ -41,7 +41,8 @@
    compute tray 18), the card opens that sheet first with the part outlined. */
 (function () {
   const D = JSON.parse(document.getElementById("loc-data").textContent);
-  const ROOT = D.root, E = D.entries, NS = "http://www.w3.org/2000/svg";
+  // ROOT is rebuilt from its depth, so it can only ever be a relative prefix such as "../".
+  const ROOT = "../".repeat((D.root.match(/\.\.\//g) || []).length), E = D.entries, NS = "http://www.w3.org/2000/svg";
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const names = Object.keys(E).concat(Object.keys(D.aliases)).sort((a, b) => b.length - a.length || (a < b ? -1 : 1));
@@ -220,7 +221,7 @@
       const v = views[cur].v, lbl = views[cur].label, s = D.sheets[v.s];
       pop.querySelectorAll(".loc-chips button").forEach(b => { const on = +b.dataset.i === cur; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
       pop.querySelector(".loc-full").textContent = full ? "Zoom to the item" : "Full sheet";
-      pop.querySelector(".loc-open").href = ROOT + "site/" + s.file;
+      pop.querySelector(".loc-open").href = ROOT + "site/" + encodeURIComponent(s.file);
       pop.querySelector(".loc-rel").hidden = !v.b.some(b => !b[4]);
       pop.querySelector(".loc-lbl").textContent = lbl;
       const fig = pop.querySelector(".loc-fig");
