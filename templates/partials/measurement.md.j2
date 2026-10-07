@@ -51,3 +51,13 @@ Precedence 1 is most authoritative. When sources disagree, the higher-precedence
 
 {{ m.audit.rule }}
 
+### {{ num.measurement }}.8 Records access
+
+{{ m.records_access.principle }}
+
+| ID | Term | Requirement |
+|---|---|---|
+{% for t in m.records_access.terms -%}
+| {{ t.id }} | {{ t.name }} | {{ t.text }} |
+{% endfor %}
+

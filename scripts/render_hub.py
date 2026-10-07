@@ -58,6 +58,8 @@ def facts() -> dict:
     pir = render_pir.reviews()[0]
     weeks = render_weekly.packs()
     pat = render_patterns.prepare()
+    from scorecard import tickets as T
+    tk = T.build()
     start, end = sc["window"]["start"], sc["window"]["end"]
     return {
         "window": f"{start:%b} {start.day} to {end:%b} {end.day}, {end:%Y}",
@@ -75,6 +77,9 @@ def facts() -> dict:
                 "actions": len(pir["actions"]), "open": sum(a["status"] != "Done" for a in pir["actions"])},
         "weeks": [(w["id"], w["title"]) for w in weeks],
         "week_status": [(p["role"], p["status"]) for p in weeks[-1]["partners"]],
+        "tickets": {"records": len(tk["records"]), "incidents": tk["counts"]["inc"] + tk["counts"]["wo"],
+                    "changes": tk["counts"]["chg"] + tk["counts"]["mop"], "pm": tk["counts"]["pm"],
+                    "findings": sum(1 for r in tk["records"] if r["findings"])},
         "patterns": {"id": pat["id"], "window": pat["window_txt"], "failures": pat["totals"]["failures"],
                      "found": len(pat["patterns"]), "watch": len(pat["watch"]),
                      "titles": [p["title"] for p in pat["patterns"]]},
@@ -100,7 +105,7 @@ def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: l
 
 
 def body(f: dict) -> str:
-    it, ll, al, pir, pat = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"]
+    it, ll, al, pir, pat, tk = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
         '<div class="partners">'
@@ -115,6 +120,8 @@ def body(f: dict) -> str:
         '<section class="follow"><h2>Follow one incident through every tool</h2>'
         f'{crossing}<ol>'
         '<li><a href="alarms/#changes">Alarm Board, Change work</a>: the alarms MOP-310 raised outside its declared scope and window.</li>'
+        f'<li><a href="tickets/#{pir["ref"]}">Incident Portal</a>: the IT Partner\'s ticket and the Landlord\'s work order as each partner recorded them, '
+        'beside the Customer\'s measurement.</li>'
         '<li><a href="pir/">Post-Incident Review</a>: the completed review, its causes and owned actions.</li>'
         '<li><a href="weekly/#2026-W38">Weekly Review, week 3</a>: the outage and its actions in the weekly pack.</li>'
         '<li><a href="app/">Scorecards</a>: how attribution keeps the Landlord\'s outage off the IT Partner\'s scorecard.</li>'
@@ -136,6 +143,13 @@ def body(f: dict) -> str:
              [("Board", "alarms/"), ("Live events", "alarms/#live"), ("Change work", "alarms/#changes"),
               ("Notifications", "alarms/#notify")],
              f"{flag_note}. Notifications on time under Interface Agreement section 10: {notify}." if flag_note else notify),
+        tile("tickets", "Incident Portal",
+             "Both partners' tickets, changes, and work orders as their own systems record them, each with a timeline and "
+             "what the Customer's data says.",
+             [(str(tk["records"]), "records"), (str(tk["incidents"]), "incidents and work orders"),
+              (str(tk["changes"]), "changes and MOPs"), (str(tk["findings"]), "do not reconcile")],
+             [("Open the portal", "tickets/"), ("The outage's ticket", f"tickets/#{pir['ref']}")],
+             "Read only, under the Records access term of each SLA (RA-1 to RA-6)."),
         tile("pir", "Post-Incident Review",
              f"{pir['id']}: {pir['title']}.",
              [(pir["ref"], "incident"), (str(pir["actions"]), "owned actions"), (str(pir["open"]), "still open")],

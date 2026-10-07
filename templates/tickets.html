@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incident Portal · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --panel:#f5f7f9; --bg:#eef1f4; --ll:#b45309; --it:#1f5fbf; --cu:#4b5563;
+  --ok:#1d7a46; --bad:#b42318; --warn:#e07b00; --hl:#fff3b0; }
+* { box-sizing:border-box; }
+body { margin:0; font:13px/1.45 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
+header.top { background:#fff; color:var(--ink); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; } header.top a { color:var(--it); }
+.feeds { display:flex; flex-wrap:wrap; gap:8px; }
+.feed { border:1px solid var(--line); border-left:4px solid var(--it); border-radius:6px; padding:3px 10px; font-size:12px; background:#fff; }
+.feed.Landlord { border-left-color:var(--ll); } .feed.Customer { border-left-color:var(--cu); } .feed b { font-variant-numeric:tabular-nums; }
+main { margin:12px auto; max-width:1700px; padding:0 12px; display:grid; grid-template-columns:minmax(0, 11fr) minmax(0, 9fr); gap:12px; align-items:start; }
+@media (max-width:1200px) { main { grid-template-columns:1fr; } }
+section.view { background:#fff; border-radius:8px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
+#detail { position:sticky; top:8px; max-height:calc(100vh - 16px); overflow:auto; }
+@media (max-width:1200px) { #detail { position:static; max-height:none; } }
+h1 { font-size:20px; margin:0 0 2px; } h2 { font-size:15px; margin:18px 0 8px; padding-bottom:3px; border-bottom:2px solid var(--ink); }
+.sub, .note { color:var(--muted); } .sub { margin:0 0 10px; } .note { font-size:12px; }
+.filters { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px 10px; background:var(--panel); padding:10px; border-radius:6px; margin:8px 0; }
+.filters label { display:block; color:var(--muted); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px; }
+.filters select, .filters input { width:100%; font:inherit; padding:4px 6px; border:1px solid var(--line); border-radius:4px; background:#fff; }
+.filters .q { grid-column:1 / -1; } .filters .q div { display:flex; gap:6px; } .filters .q select { width:auto; flex:none; max-width:45%; }
+.filters button { font:inherit; border:1px solid var(--line); background:#fff; padding:4px 10px; border-radius:4px; cursor:pointer; align-self:end; }
+.count { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; margin:4px 0; color:var(--muted); font-size:12px; }
+.wide { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; } th, td { text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; white-space:nowrap; } td.nw { white-space:nowrap; } td.sum { min-width:180px; }
+td.num { white-space:nowrap; border-left:4px solid var(--it); } td.num.Landlord { border-left-color:var(--ll); } td.dev { word-break:break-word; min-width:90px; }
+@media (max-width:1560px) and (min-width:1201px) { .c-type { display:none; } }
+.utc { display:block; color:var(--muted); font-size:11px; } .src { display:block; color:var(--muted); font-size:11px; font-family:ui-monospace,Consolas,monospace; }
+#list tr.row { cursor:pointer; } #list tr.row:hover td { background:#f2f6fc; } #list tr.row.sel td { background:var(--hl); }
+.badge { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; font-weight:600; color:#fff; white-space:nowrap; }
+.badge.Landlord { background:var(--ll); } .badge.IT { background:var(--it); } .badge.Customer { background:var(--cu); }
+.badge.S1 { background:var(--bad); } .badge.S2 { background:var(--warn); } .badge.S3, .badge.S4 { background:#8a96a3; }
+.pill { display:inline-block; padding:0 6px; border:1px solid var(--line); border-radius:9px; font-size:11px; white-space:nowrap; color:var(--muted); }
+.pill.P1 { border-color:var(--bad); color:var(--bad); font-weight:700; } .pill.P2 { border-color:var(--warn); color:#a35500; }
+.flag { color:var(--bad); font-weight:700; } .met { color:var(--ok); font-weight:600; } .missed { color:var(--bad); font-weight:600; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px 16px; }
+.kv { font-size:13px; } .kv b { display:block; color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+.card { background:var(--panel); border-radius:8px; padding:10px 12px; margin:8px 0; } .card h3 { margin:0 0 4px; font-size:14px; }
+.card.bad { background:#fdeceb; border-left:4px solid var(--bad); } .card.ok { border-left:4px solid var(--ok); }
+.strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin-top:6px; }
+.stat { border:1px solid var(--line); border-radius:8px; padding:8px 10px; background:#fff; } .stat .v { font-size:17px; font-weight:700; } .stat .l { font-size:11px; color:var(--muted); }
+details summary { cursor:pointer; color:var(--muted); font-size:12px; } code.rec { display:block; white-space:pre-wrap; word-break:break-all; font-size:11px; background:#f7f7f2; padding:6px; border-radius:4px; }
+table.native td:first-child { color:var(--muted); white-space:nowrap; width:1%; font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+.dhead { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:baseline; } .dhead h1 { margin-right:4px; }
+.empty { color:var(--muted); padding:30px 0; text-align:center; }
+.ro { font-size:12px; color:var(--muted); border:1px dashed var(--line); border-radius:6px; padding:6px 10px; margin-top:10px; }
+a.tk-link { color:var(--it); }
+@media print { header.top, .usm, #listview { display:none !important; } main { display:block; } #detail { position:static; max-height:none; box-shadow:none; } body { background:#fff; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Incident Portal</strong> <span class="note">read-only view of both partners' records</span></div>
+  <div class="feeds" id="feeds"></div>
+</header>
+<main>
+  <section class="view" id="listview">
+    <h1>Tickets and records</h1>
+    <p class="sub" id="period"></p>
+    <div class="filters" id="filters">
+      <div><label for="f-type">Ticket type</label><select id="f-type"></select></div>
+      <div><label for="f-partner">Partner</label><select id="f-partner"></select></div>
+      <div><label for="f-priority">Priority</label><select id="f-priority"></select></div>
+      <div><label for="f-state">State</label><select id="f-state"></select></div>
+      <div><label for="f-hall">Hall</label><select id="f-hall"></select></div>
+      <div><label for="f-category">Category or fault class</label><select id="f-category"></select></div>
+      <div><label for="f-finding">Findings</label><select id="f-finding">
+        <option value="">All records</option><option value="yes">Has a finding</option><option value="no">No finding</option></select></div>
+      <div><label for="f-from">Opened from (CDT)</label><input type="date" id="f-from"></div>
+      <div><label for="f-to">Opened to (CDT)</label><input type="date" id="f-to"></div>
+      <div><label for="f-sort">Sort</label><select id="f-sort"><option value="new">Newest first</option><option value="old">Oldest first</option>
+        <option value="pri">Priority, then newest</option><option value="num">Number</option></select></div>
+      <div class="q"><label for="f-q">Search</label><div><select id="f-in" aria-label="Search in"></select>
+        <input id="f-q" type="search" placeholder="number, device, serial, person ID, note text"></div></div>
+      <button type="button" id="f-reset">Clear filters</button>
+    </div>
+    <div class="count"><span id="count"></span><span>Number colour: <span class="badge IT">IT Partner</span> <span class="badge Landlord">Landlord</span>. Click a row to open it; every ticket has its own link.</span></div>
+    <div class="wide"><table id="list"></table></div>
+  </section>
+  <section class="view" id="detail"><div class="empty">Select a ticket to see its record, timeline, and what the Customer's data says.</div></section>
+</main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const R = D.records, BY = Object.fromEntries(R.map(r => [r.id, r]));
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $ = id => document.getElementById(id);
+const ms = s => new Date(s).getTime(), HOUR = 3600e3, OFF = -5 * HOUR;   // site time is CDT (UTC-5), as on every page
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const loc = s => { if (!s) return ""; const d = new Date(ms(s) + OFF); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`; };
+const locDate = s => new Date(ms(s) + OFF).toISOString().slice(0, 10);
+const partyCls = p => p === "IT Partner" ? "IT" : p;
+const badge = p => `<span class="badge ${partyCls(p)}">${esc(p)}</span>`;
+const PRI = {P1: 1, P2: 2, P3: 3, P4: 4};
+
+// ---- what search can look in: each option is a list of the record's fields
+const FIELDS = {
+  all: ["Every field", r => [r.id, r.type_label, r.partner, r.system, r.state, r.priority, r.summary, r.device, r.location, r.hall, r.rack,
+    r.assigned, r.category, r.close_code, r.work_type, ...r.related, ...r.notes.map(n => n.by + " " + n.text), ...r.parts.map(p => Object.values(p).join(" ")),
+    ...r.alarms.map(a => [a.id, a.device, a.summary, a.signal].join(" ")), ...r.findings.map(f => [f.id, f.title, f.summary, ...f.sla_refs].join(" ")),
+    JSON.stringify(r.native)]],
+  id: ["Number", r => [r.id]],
+  device: ["Device or item", r => [r.device]],
+  summary: ["Summary", r => [r.summary]],
+  location: ["Location or rack", r => [r.location, r.rack, r.hall]],
+  notes: ["Work notes", r => r.notes.map(n => n.text)],
+  parts: ["Part or serial", r => r.parts.map(p => Object.values(p).join(" "))],
+  person: ["Person ID", r => [r.assigned, ...r.notes.map(n => n.by)]],
+  category: ["Category or fault class", r => [r.category, r.close_code, r.work_type]],
+  alarm: ["Alarm", r => r.alarms.map(a => [a.id, a.signal, a.summary].join(" "))],
+  finding: ["Finding or SLA code", r => r.findings.map(f => [f.id, f.title, f.summary, ...f.sla_refs].join(" "))],
+  related: ["Related record", r => r.related],
+};
+const TEXT = {}; R.forEach(r => TEXT[r.id] = Object.fromEntries(Object.entries(FIELDS).map(([k, [, f]]) => [k, f(r).filter(Boolean).join("\n").toLowerCase()])));
+
+function options(id, list, all) {
+  $(id).innerHTML = `<option value="">${esc(all)}</option>` + list.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("");
+}
+const uniq = (f, sort) => [...new Set(R.map(f).filter(Boolean))].sort(sort);
+options("f-type", Object.entries(D.types).map(([k, t]) => [k, `${t.plural} · ${D.counts[k]}`]), `All ticket types · ${R.length}`);
+options("f-partner", [["IT Partner", "IT Partner"], ["Landlord", "Landlord"]], "Both partners");
+options("f-priority", [...uniq(r => r.priority).map(p => [p, p]), ["-", "None (planned work)"]], "Any priority");
+options("f-state", uniq(r => r.state).map(s => [s, s]), "Any state");
+options("f-hall", [...uniq(r => r.hall).map(h => [h, h.replace("HALL-", "Hall ")]), ["-", "Outside the halls"]], "Every hall");
+options("f-category", uniq(r => r.category).map(c => [c, c]), "Any category");
+$("f-in").innerHTML = Object.entries(FIELDS).map(([k, [l]]) => `<option value="${k}">${esc(l)}</option>`).join("");
+$("feeds").innerHTML = D.feeds.map(f => `<span class="feed ${esc(f.partner)}" title="${esc(f.access)}">${esc(f.partner)}: ${esc(f.system)} · <b>${f.records}</b> records</span>`).join("");
+$("period").textContent = `Sample month ${D.window.start.slice(0, 10)} to ${D.window.end.slice(0, 10)}. Records as the read-only feeds deliver them; times in CDT. Synthetic data; all names, devices, and events are fictional.`;
+
+const F = () => ({type: $("f-type").value, partner: $("f-partner").value, priority: $("f-priority").value, state: $("f-state").value,
+  hall: $("f-hall").value, category: $("f-category").value, finding: $("f-finding").value, from: $("f-from").value, to: $("f-to").value,
+  sort: $("f-sort").value, in: $("f-in").value, q: $("f-q").value.trim().toLowerCase()});
+function match(r, f) {
+  if (f.type && r.type !== f.type) return false;
+  if (f.partner && r.partner !== f.partner) return false;
+  if (f.priority && (f.priority === "-" ? r.priority : r.priority !== f.priority)) return false;
+  if (f.state && r.state !== f.state) return false;
+  if (f.hall && (f.hall === "-" ? r.hall : r.hall !== f.hall)) return false;
+  if (f.category && r.category !== f.category) return false;
+  if (f.finding && (f.finding === "yes") !== (r.findings.length > 0)) return false;
+  if (f.from && locDate(r.start) < f.from) return false;
+  if (f.to && locDate(r.start) > f.to) return false;
+  if (f.q && !f.q.split(/\s+/).every(w => TEXT[r.id][f.in].includes(w))) return false;
+  return true;
+}
+const SORT = {new: (a, b) => ms(b.start) - ms(a.start), old: (a, b) => ms(a.start) - ms(b.start),
+  pri: (a, b) => (PRI[a.priority] || 9) - (PRI[b.priority] || 9) || ms(b.start) - ms(a.start), num: (a, b) => a.id < b.id ? -1 : 1};
+
+let SEL = null;
+function measuredCell(r) {
+  const m = r.measured;
+  if (!m || m.measured_min == null) return "";
+  if (m.kind === "IT") return `<span title="${esc(m.merged.length ? "Ticket of Record " + m.ticket_of_record + " (merged tickets)" : m.reported + " reported in the ticket")}">${esc(m.measured)}</span>${m.within_target ? "" : ' <span class="flag" title="Past the restore target">late</span>'}`;
+  return esc(m.measured);
+}
+function list() {
+  const f = F(), rows = R.filter(r => match(r, f)).sort(SORT[f.sort]);
+  $("count").textContent = `${rows.length} of ${R.length} records`;
+  $("list").innerHTML = `<tr><th>Number</th><th class="c-type">Type</th><th>Priority</th><th>Opened (CDT)</th><th>Device or item</th><th>Summary</th><th>Measured restore</th><th>Findings</th></tr>` +
+    (rows.length ? rows.map(r => `<tr class="row${r.id === SEL ? " sel" : ""}" data-id="${esc(r.id)}"><td class="num ${partyCls(r.partner)}" title="${esc(r.partner)}"><a class="tk-link" href="#${esc(r.id)}">${esc(r.id)}</a></td>
+      <td class="nw c-type">${esc(r.type_label)}</td><td>${r.priority ? `<span class="pill ${esc(r.priority)}">${esc(r.priority)}</span>` : ""}</td>
+      <td class="nw">${esc(loc(r.start))}</td><td class="dev">${esc(r.device)}</td><td class="sum">${esc(r.summary)}</td>
+      <td class="nw">${measuredCell(r)}</td><td class="nw">${r.findings.map(x => `<span class="badge ${esc(x.severity)}" title="${esc(x.title)}">${esc(x.id)}</span>`).join(" ")}</td></tr>`).join("")
+      : `<tr><td colspan="8" class="empty">No records match these filters.</td></tr>`);
+}
+
+// ---- the timeline at a glance: one lane per party, as on the post-incident review
+function swimlane(r) {
+  // The view spans the record's own life with 12 hours either side; an approval days earlier stays in the table below.
+  const lo = ms(r.start) - 12 * HOUR, hi = ms(r.end || r.start) + 12 * HOUR;
+  const rows = r.timeline.filter(e => ms(e.t) >= lo && ms(e.t) <= hi);
+  if (!rows.length) return "";
+  const ts = rows.map(x => ms(x.t)).concat([ms(r.start)], r.end ? [ms(r.end)] : []);
+  let t0 = Math.min(...ts), t1 = Math.max(...ts);
+  if (t1 - t0 < 30 * 60e3) { t0 -= 15 * 60e3; t1 += 15 * 60e3; }
+  const W = 720, L = 74, x = v => L + (W - L - 30) * (ms(v) - t0) / (t1 - t0);
+  const lanes = ["Landlord", "IT Partner", "Customer"], y = p => 34 + lanes.indexOf(p) * 36;
+  const color = {Landlord: "#b45309", "IT Partner": "#1f5fbf", Customer: "#4b5563"};
+  let s = `<svg viewBox="0 0 ${W} 170" width="100%" role="img" aria-label="Timeline by party">`;
+  lanes.forEach(p => s += `<text x="4" y="${y(p) + 4}" font-size="11" fill="#5b6774">${p}</text><line x1="${L}" x2="${W - 30}" y1="${y(p)}" y2="${y(p)}" stroke="#d5dbe2"/>`);
+  if (r.end) {
+    const lane = r.partner, a = x(r.start), b = Math.max(a + 2, x(r.end));
+    s += `<rect x="${a}" y="${y(lane) - 9}" width="${b - a}" height="18" fill="${color[lane]}" opacity=".8"/>` +
+         `<text x="${(a + b) / 2}" y="${y(lane) - 13}" font-size="11" fill="${color[lane]}" text-anchor="middle">${esc(r.id)} ${r.type === "chg" || r.type === "mop" ? "window" : r.type === "pm" ? "due to done" : "open"}</text>`;
+  }
+  const m = r.measured;
+  if (m && (m.rts || m.restored)) {
+    const a = x(m.t0), b = Math.max(a + 2, x(m.rts || m.restored));
+    s += `<rect x="${a}" y="${y("Customer") - 9}" width="${b - a}" height="18" fill="#4b5563" opacity=".55"/>` +
+         `<text x="${(a + b) / 2}" y="${y("Customer") + 22}" font-size="11" fill="#4b5563" text-anchor="middle">Measured from telemetry</text>`;
+  }
+  rows.forEach(e => s += `<circle cx="${x(e.t)}" cy="${y(e.party)}" r="3" fill="#1e2933"><title>${esc(loc(e.t) + " CDT · " + e.event)}</title></circle>`);
+  (r.markers || []).forEach(([v, lbl], i) => {
+    s += `<line x1="${x(v)}" x2="${x(v)}" y1="16" y2="${136 + (i % 2) * 12}" stroke="#1e2933" stroke-dasharray="3 3"/>` +
+         `<text x="${x(v)}" y="${148 + (i % 2) * 12}" font-size="11" text-anchor="${x(v) > W - 120 ? "end" : x(v) < L + 60 ? "start" : "middle"}">${esc(lbl)} ${esc(loc(v))}</text>`;
+  });
+  return s + "</svg>";
+}
+
+function nativeTable(n) {
+  return `<table class="native">` + Object.entries(n).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${
+    v === null ? '<span class="note">null</span>' : typeof v === "object" ? `<code class="rec">${esc(JSON.stringify(v, null, 1))}</code>` : esc(v)}</td></tr>`).join("") + `</table>`;
+}
+function measurement(r) {
+  const m = r.measured;
+  if (!m) return "";
+  if (m.kind === "IT") {
+    const late = !m.within_target;
+    return `<h2>What the Customer's data says</h2><div class="card ${r.findings.length || late ? "bad" : "ok"}">` +
+      `<div class="strip">${[[m.measured, "Measured: T0 to validated RTS"], [m.merged.length ? "—" : m.reported, "Reported in the ticket"],
+        [Math.round(m.target_min / 60) + " h", `${esc(r.priority)} restore target`], [late ? "Missed" : "Met", "Against the target (measured)"],
+        [m.validated ? "Yes" : "No", "Return-to-service validated"]].map(([v, l]) => `<div class="stat"><div class="v${l.startsWith("Against") ? late ? " missed" : " met" : ""}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</div>` +
+      `<p class="note">Fault class ${esc(m.fault_class)}. Ticket of Record ${esc(m.ticket_of_record)}${m.merged.length ? ` merges ${m.merged.map(esc).join(", ")} into one restoration clock (TR-1, TR-2); the reported time of each ticket does not apply` : ""}. ` +
+      `${r.findings.length ? "This record does not reconcile with telemetry; see the findings below." : "This record reconciles with telemetry."}</p></div>`;
+  }
+  return `<h2>What the Customer's data says</h2><div class="card ${m.agrees ? "ok" : "bad"}"><div class="strip">${[[m.measured || "open", "Measured: event start to restore"],
+      [m.owner, "Owner by telemetry"], [m.claimed_owner || "—", "Work order says"], [m.agrees ? "Agrees" : "Differs", "Attribution"], [m.rule, "Interface Agreement rule"]]
+      .map(([v, l]) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</div>` +
+    `<p class="note">Facility event: ${esc(m.event)}. ${m.capacity_lost ? "Rack capacity was lost." : "No rack capacity was lost."}</p></div>`;
+}
+function detail(id) {
+  const r = BY[id], el = $("detail");
+  if (!r) { el.innerHTML = `<div class="empty">No record ${esc(id)} in this period.</div>`; return; }
+  const t = D.types[r.type];
+  let h = `<div class="dhead"><h1 data-tk-skip>${esc(r.id)}</h1>${badge(r.partner)}<span class="pill">${esc(t.label)}</span>${r.priority ? `<span class="pill ${esc(r.priority)}">${esc(r.priority)}</span>` : ""}<span class="pill">${esc(r.state)}</span></div>`;
+  h += `<p class="sub">${esc(r.summary)}</p>`;
+  const when = r.type === "chg" || r.type === "mop" ? ["Window opens", "Window closes"] : r.type === "pm" ? ["Due from", "Completed"] : ["Opened", r.type === "inc" ? "Resolved" : "Closed"];
+  h += `<div class="grid">` + [["System of record", r.system], [when[0] + " (CDT)", loc(r.start)], [when[1] + " (CDT)", loc(r.end)],
+    ["Device or item", r.device, "loc"], ["Location", r.location], ["Assigned (person ID)", r.assigned], ["Category or fault class", r.category],
+    ["Close code", r.close_code], ["Work type", r.work_type]].filter(([, v]) => v)
+    .map(([k, v, l]) => `<div class="kv"${l ? ` data-loc="${esc(v + (r.location && r.location !== v ? "|" + r.location : ""))}" data-part="${esc(r.summary)}"` : ""}><b>${esc(k)}</b>${esc(v)}</div>`).join("") + `</div>`;
+  if (r.id === D.pir_ref || r.related.includes(D.pir_ref) && r.type !== "mop") h += `<p class="note">This incident has a completed post-incident review: <a href="../pir/">PIR-2026-001</a>.</p>`;
+  h += measurement(r);
+  if (r.findings.length) h += `<h2>Findings that name this record</h2>` + r.findings.map(f => `<div class="card bad"><h3><span class="badge ${esc(f.severity)}">${esc(f.severity)}</span> ${esc(f.id)} · ${esc(f.title)}</h3><div>${esc(f.summary)}</div><div class="note">SLA references: ${f.sla_refs.map(esc).join(", ")} · ${esc(f.partner)} scorecard</div></div>`).join("");
+  h += `<h2>Timeline at a glance</h2>${swimlane(r)}`;
+  h += `<h2>Timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored; people are shown by person ID.</p>` +
+    `<div class="wide"><table><tr><th>Central (CDT)</th><th>Party</th><th>Event</th></tr>` +
+    r.timeline.map(e => `<tr><td class="nw">${esc(loc(e.t))}<span class="utc">${esc(e.t.slice(5, 10) + " " + e.t.slice(11, 19))} UTC</span></td><td>${badge(e.party)}</td><td>${esc(e.event)}<span class="src">${esc(e.source)}</span>${e.record ? `<details><summary>record</summary><code class="rec">${esc(e.record)}</code></details>` : ""}</td></tr>`).join("") + `</table></div>`;
+  if (r.parts.length) h += `<h2>Parts</h2><table><tr>${Object.keys(r.parts[0]).map(k => `<th>${esc(k.replace(/_/g, " "))}</th>`).join("")}</tr>` + r.parts.map(p => `<tr>${Object.values(p).map(v => `<td>${esc(v)}</td>`).join("")}</tr>`).join("") + `</table>`;
+  if (r.alarms.length) h += `<h2>Alarms on the alarm board</h2><div class="wide"><table><tr><th>Alarm</th><th>Raised (CDT)</th><th>Device</th><th>Summary</th><th>Severity</th><th>Change work</th></tr>` +
+    r.alarms.map(a => `<tr><td class="nw">${esc(a.id)}</td><td class="nw">${esc(loc(a.raised))}</td><td class="nw">${esc(a.device)}</td><td>${esc(a.summary)}</td><td>${esc(a.severity)}</td><td>${esc(D.class_text[a.cls])}${a.change ? " · " + esc(a.change) : ""}</td></tr>`).join("") + `</table></div>` +
+    `<p class="note"><a href="../alarms/">Open the alarm board</a></p>`;
+  if (r.related.length) h += `<h2>Related records</h2><table><tr><th>Number</th><th class="c-type">Type</th><th>Opened (CDT)</th><th>Summary</th></tr>` +
+    r.related.map(x => BY[x]).filter(Boolean).map(x => `<tr><td class="nw"><a class="tk-link" href="#${esc(x.id)}">${esc(x.id)}</a></td><td>${esc(x.type_label)}</td><td class="nw">${esc(loc(x.start))}</td><td>${esc(x.summary)}</td></tr>`).join("") + `</table>`;
+  h += `<h2>As recorded in the partner's system</h2><p class="note">${esc(r.system)}, file <code>${esc(r.source)}</code>. Field names are the system's own.</p>${nativeTable(r.native)}`;
+  h += `<div class="ro">Read only. The Customer reads these records under the Records access term of each agreement and never writes back; actions go through the bridge, the weekly review, and corrective action plans.</div>`;
+  el.innerHTML = h;
+  el.scrollTop = 0;
+}
+
+function select(id, scroll) {
+  SEL = id;
+  document.querySelectorAll("#list tr.row").forEach(tr => tr.classList.toggle("sel", tr.dataset.id === id));
+  detail(id);
+  if (scroll && window.matchMedia && window.matchMedia("(max-width:1200px)").matches) $("detail").scrollIntoView();
+}
+function fromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (id) select(id, true);
+}
+$("filters").addEventListener("input", list);
+$("filters").addEventListener("change", list);
+$("f-reset").addEventListener("click", () => { $("filters").querySelectorAll("select").forEach(s => s.selectedIndex = 0); $("filters").querySelectorAll("input").forEach(i => i.value = ""); list(); });
+$("list").addEventListener("click", ev => {
+  const tr = ev.target.closest("tr.row");
+  if (!tr || ev.target.closest("a")) return;   // a link changes the hash, which selects the row
+  history.replaceState(null, "", "#" + tr.dataset.id);
+  select(tr.dataset.id, true);
+});
+window.addEventListener("hashchange", fromHash);
+list();
+fromHash();
+</script>
+</body>
+</html>

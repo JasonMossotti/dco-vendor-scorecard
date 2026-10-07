@@ -93,7 +93,7 @@ def build_review(ds: Dataset, ref: str) -> dict[str, Any] | None:
     # Facility side
     bw_events = [e for e in ds.busway if within(e["timestamp"]) and (e.get("rack") == rack or e["busway"] == unit)]
     for e in bw_events:
-        what = (f"Tap-off {e['tapoff']} ({e['busway'][-1]}-side feed to rack {e['rack']}): {e['event'].lower()}" if "tapoff" in e
+        what = (f"Tap-off {e['tapoff']} ({e['busway'][-1]}-side feed" + (f" to rack {e['rack']}" if e.get("rack") else "") + f"): {e['event'].lower()}" if "tapoff" in e
                 else f"{e['busway']}: {e['point']} {e.get('value_v')} V, {e.get('state')}")
         tl.append(_row(e["timestamp"], "Landlord", "facility/busway_cpm_events.jsonl", what, e))
     for e in [x for x in ds.bms if within(x["timestamp"]) and x["device"] == unit]:

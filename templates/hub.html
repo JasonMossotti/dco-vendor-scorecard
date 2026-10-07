@@ -24,8 +24,7 @@ h3 { font-size:16px; margin:2px 0 6px; }
 .role { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
 .grid { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; }
 .grid .tile { grid-column:span 2; }
-.grid .tile:nth-child(n+4) { grid-column:span 3; }
-@media (max-width:1000px) { .grid .tile, .grid .tile:nth-child(n+4) { grid-column:span 3; } .grid .tile:nth-child(5) { grid-column:span 6; } }
+@media (max-width:1000px) { .grid .tile { grid-column:span 3; } }
 .tile { background:#fff; border:1px solid var(--line); border-radius:8px; padding:16px 18px; display:flex; flex-direction:column; gap:8px; }
 .tile h2 a { color:var(--ink); text-decoration:none; }
 .tile h2 a:hover { color:var(--it); }
@@ -45,7 +44,7 @@ h3 { font-size:16px; margin:2px 0 6px; }
 .follow ol { margin:0; padding-left:22px; }
 .docs ul { columns:2 260px; margin:0; padding-left:18px; }
 footer { color:var(--muted); font-size:12px; text-align:center; padding:0 20px 24px; }
-@media (max-width:700px) { main { padding:16px 12px 30px; } h1 { font-size:24px; } .grid { grid-template-columns:1fr; } .grid .tile, .grid .tile:nth-child(n+4), .grid .tile:nth-child(5) { grid-column:auto; } }
+@media (max-width:700px) { main { padding:16px 12px 30px; } h1 { font-size:24px; } .grid { grid-template-columns:1fr; } .grid .tile { grid-column:auto; } }
 </style>
 </head>
 <body>

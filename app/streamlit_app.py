@@ -65,6 +65,10 @@ with codes:
         if (loc is None and not dev) or not lines[0].startswith("No code"):
             for line in lines:
                 st.markdown(line)
+        ref = code_q.strip().upper()
+        if ref in A.portal_ids(A.ROOT / "data" / "sample"):
+            # A ticket, change, or work order of the sample month: its full record is on the Incident Portal tab.
+            st.markdown(f"[Open {ref} in the Incident Portal]({A.ticket_url(ref)})")
         if dev:
             # A device: what it is and what it connects to (the static pages show this in the code popup).
             st.markdown("\n\n".join(dev[:3]) + "\n\n" + "\n".join(dev[3:]))
@@ -167,7 +171,9 @@ def render_it(result, sc, ev) -> None:
         st.caption(f"{len(shown)} of {len(result.findings)} findings")
         for f in shown:
             with st.expander(f"{f.id} · {f.severity} {f.severity_name} · {f.title} · {', '.join(f.tickets) or f.unit}"):
-                st.markdown(f.summary)
+                st.markdown(A.link_tickets(f.summary, data_dir))
+                if A.portal_line(f.tickets, data_dir):
+                    st.markdown(A.portal_line(f.tickets, data_dir))
                 st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
                 st.markdown(f"**Why {f.severity}:** {'; '.join(f.severity_reasons)}.")
                 st.markdown(f"**Recommended action:** {f.recommended_action}")
@@ -178,23 +184,32 @@ def render_it(result, sc, ev) -> None:
         st.subheader("Corrective action plans")
         st.caption("Drafted automatically at this period review for every S1 and S2 item, grouped by affected tickets. "
                    "Due dates count from the review: S1 within 5 business days, S2 within 10.")
-        st.dataframe(pd.DataFrame(A.cap_rows(sc)), hide_index=True)
+        caps = A.cap_rows(sc)
+        st.dataframe(pd.DataFrame(caps), hide_index=True)
+        if A.portal_line([c["Tickets"] for c in caps], data_dir):
+            st.caption(A.portal_line([c["Tickets"] for c in caps], data_dir))
         st.subheader("Severity log")
         sev = pd.DataFrame(A.severity_rows(sc))
         st.dataframe(sev, hide_index=True)
+        if A.portal_line(sev["Tickets"], data_dir):
+            st.caption(A.portal_line(sev["Tickets"], data_dir))
 
     # ---- Incidents ---------------------------------------------------------------
     with tabs[4]:
         st.markdown("One row per **Ticket of Record**, rebuilt from telemetry. Split vendor tickets are merged "
                     "(TR-1, TR-2), and restoration runs from telemetry T0 to Validated RTS.")
         targets = {p["id"]: p["restore_min"] for p in sla["priorities"]}
-        inc = pd.DataFrame(A.incident_rows(sc, targets))
+        inc_rows = A.incident_rows(sc, targets)
+        linked = A.link_column(inc_rows, "Ticket of Record", data_dir)
+        inc = pd.DataFrame(inc_rows)
         p_pick = st.multiselect("Priority", ["P1", "P2", "P3"], default=["P1", "P2", "P3"])
         only_late = st.checkbox("Only incidents past their restore target")
         view = inc[inc["Priority"].isin(p_pick)]
         if only_late:
             view = view[~view["Within target"]]
-        st.dataframe(view, hide_index=True)
+        # The Ticket of Record opens the ticket in the Incident Portal (sample month only).
+        st.dataframe(view, hide_index=True, column_config={"Ticket of Record": st.column_config.LinkColumn(
+            "Ticket of Record", display_text=r"#(.+)$", help="Opens the ticket in the Incident Portal")} if linked else None)
 
     # ---- About -------------------------------------------------------------------
     with tabs[5]:
@@ -232,7 +247,7 @@ def render_site() -> None:
     st.subheader("Outages that crossed the demarcation")
     crossing = A.crossing_outages(ll_sc, result)
     for line in crossing or ["No outage crossed the demarcation in this window."]:
-        st.markdown(line)
+        st.markdown(A.link_tickets(line, data_dir))
     st.subheader("What attribution changed for the IT Partner")
     st.caption("The same telemetry, scored with the IT Partner's clock starting at the power loss instead of the Landlord's handoff.")
     st.dataframe(pd.DataFrame(A.attribution_change_rows(sc, it_plain)), hide_index=True)
@@ -271,14 +286,19 @@ def render_landlord() -> None:
                     "device telemetry. A finding starts a review; it is not by itself proof of intent.")
         for f in ll_result.findings:
             with st.expander(f"{f.id} · {f.severity} {f.severity_name} · {f.title} · {f.unit or ''}"):
-                st.markdown(f.summary)
+                st.markdown(A.link_tickets(f.summary, data_dir))
+                if A.portal_line(f.tickets, data_dir):
+                    st.markdown(A.portal_line(f.tickets, data_dir))
                 st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
                 st.markdown(f"**Recommended action:** {f.recommended_action}")
                 st.markdown(f"**SLA references:** {A.explain_refs(f.sla_refs)}")
     with tabs[3]:
         st.markdown("Every facility event in the window, rebuilt from device telemetry and attributed under the Interface "
                     "Agreement, beside the party the Landlord's work order named.")
-        st.dataframe(pd.DataFrame(A.attribution_display_rows(ll_sc)), hide_index=True)
+        att = A.attribution_display_rows(ll_sc)
+        linked = A.link_column(att, "Work order", data_dir)
+        st.dataframe(pd.DataFrame(att), hide_index=True, column_config={"Work order": st.column_config.LinkColumn(
+            "Work order", display_text=r"#(.+)$", help="Opens the work order in the Incident Portal")} if linked else None)
     with tabs[4]:
         st.markdown(f"""
 **What this is.** The Landlord's side of the same fictional site: a wholesale owner-operator that runs the building,

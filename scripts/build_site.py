@@ -7,6 +7,7 @@ Output (default _site/):
     app/streamlit_app.py    the app entrypoint
     app/app_bundle.zip      Python package, SLA, generator config, and datasets
     alarms/ pir/ weekly/ patterns/   the static pages, each with the same tab bar
+    tickets/                the Incident Portal: both partners' tickets, changes, and work orders (scripts/render_tickets.py)
     agreements/             the Interface Agreement and both SLAs, readable (scripts/render_agreements.py)
     glossary/               every code, acronym, and record ID (scripts/render_glossary.py)
     devices/                every named device and what it connects to (scripts/render_devices.py)
@@ -130,8 +131,10 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_alarms
     import render_patterns
     import render_pir
+    import render_tickets
     import render_weekly
-    for path, mod in (("pir", render_pir), ("weekly", render_weekly), ("patterns", render_patterns), ("alarms", render_alarms)):
+    for path, mod in (("pir", render_pir), ("weekly", render_weekly), ("patterns", render_patterns), ("alarms", render_alarms),
+                      ("tickets", render_tickets)):
         (out / path).mkdir(parents=True, exist_ok=True)
         (out / path / "index.html").write_text(mod.html_page(), encoding="utf-8", newline="\n")
     # The reference tabs: the contracts, the glossary, and the device directory.

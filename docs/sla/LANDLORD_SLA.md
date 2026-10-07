@@ -245,6 +245,19 @@ The Supplier may dispute a measurement within 5 business days of the weekly scor
 
 Each month the Customer audits a random 5% of closed tickets or work orders (minimum 10) end to end against raw telemetry, badge, and inventory records. Audit findings count toward CSL-11.
 
+### 5.8 Records access
+
+The Customer reads the Supplier's ticket and work order records directly, so no service level depends on a Supplier export or summary. This term sets out the raw data access above.
+
+| ID | Term | Requirement |
+|---|---|---|
+| RA-1 | Read-only account | The Supplier issues one read-only API service account for each system that holds Site records (ticketing or maintenance management, and spares and RMA), scoped to the Customer's records. No write credentials are issued, and the Customer never changes a Supplier record. |
+| RA-2 | Content | Every ticket, work order, and preventive maintenance record for the Site, with its full history: state and priority changes, all timestamps, work notes, assignee, parts with removed and installed serial numbers, and linked change or MOP references. |
+| RA-3 | Edit history | The field audit log (each change to a timestamp, priority, state, or fault class, with user, time, and reason) is readable through the same account. |
+| RA-4 | Freshness | A new record or a change to a record is readable within 15 minutes, the record integrity tolerance. |
+| RA-5 | Outages | The Customer logs any gap in access over 15 minutes and tells the Supplier. Data the Supplier cannot provide for a period is handled under Failure to report. |
+| RA-6 | Use and sharing | The Customer uses the records to measure the service levels, attribute outages, and audit. It shares a record with the other Site partner only as needed for attribution under the Interface Agreement. |
+
 ## 6. Work Order Handling Rules
 
 Ticket handling is standardized so that no individual's habits or preferences can change a measurement. These rules apply to every fault class; the Measurement Specification adds the class-specific details.
@@ -972,4 +985,4 @@ Total EHS Credits: **$29,500**, payable in addition to any Service Level Credits
 
 ---
 
-*Generated from `sla/ot_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.2.0). This is a fictional, illustrative landlord service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/ot_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.3.0). This is a fictional, illustrative landlord service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
