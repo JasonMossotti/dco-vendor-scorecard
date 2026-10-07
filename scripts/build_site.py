@@ -9,6 +9,7 @@ Output (default _site/):
     alarms/ pir/ weekly/ patterns/   the static pages, each with the same tab bar
     agreements/             the Interface Agreement and both SLAs, readable (scripts/render_agreements.py)
     glossary/               every code, acronym, and record ID (scripts/render_glossary.py)
+    devices/                every named device and what it connects to (scripts/render_devices.py)
     site/                   the site drawings (docs/site/*.svg), which the location popups open
 
 Usage:
@@ -93,7 +94,8 @@ INDEX_HTML = """<!doctype html>
 def bundle_members(root: Path) -> list[Path]:
     # The live collector is not part of the browser app.
     files = [p for p in (root / "src" / "scorecard").rglob("*.py") if "live" not in p.relative_to(root / "src" / "scorecard").parts]
-    files += sorted((root / "sla").glob("*.yaml")) + [root / "config" / "synthetic.yaml", root / "site" / "site.yaml"]
+    files += sorted((root / "sla").glob("*.yaml")) + [root / "config" / "synthetic.yaml", root / "site" / "site.yaml",
+                                                   root / "site" / "details.yaml"]   # the lookup panel draws the detail sheets
     # The code lookup: the glossary and the generated contracts it points into.
     files += [root / "config" / "glossary.yaml"] + sorted((root / "docs" / "sla").glob("*.md"))
     for ds in ("sample", "latest"):
@@ -132,12 +134,15 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     for path, mod in (("pir", render_pir), ("weekly", render_weekly), ("patterns", render_patterns), ("alarms", render_alarms)):
         (out / path).mkdir(parents=True, exist_ok=True)
         (out / path / "index.html").write_text(mod.html_page(), encoding="utf-8", newline="\n")
-    # The reference tabs: the contracts and the glossary.
+    # The reference tabs: the contracts, the glossary, and the device directory.
     import render_agreements
+    import render_devices
     import render_glossary
     render_agreements.write(out / "agreements")
     (out / "glossary").mkdir(parents=True, exist_ok=True)
     (out / "glossary" / "index.html").write_text(render_glossary.html_page(), encoding="utf-8", newline="\n")
+    (out / "devices").mkdir(parents=True, exist_ok=True)
+    (out / "devices" / "index.html").write_text(render_devices.html_page(), encoding="utf-8", newline="\n")
     # The site drawings, which the location popups open (highlighted) on every page.
     (out / "site").mkdir(parents=True, exist_ok=True)
     for svg in sorted((root / "docs" / "site").glob("*.svg")):

@@ -287,6 +287,19 @@ families:
      text: "The breaker box that takes power from the busway to one rack: TO-A07-B is rack A07's B-side tap-off. Its output terminals are the power demarcation (DM-PWR)."}
   - {key: EQ-LEAK, label: "C# (leak circuit)", pattern: 'C\d{1,2}', type: equipment, title: Leak detection circuit, example: C8,
      text: "A sensing cable circuit on a leak detection module: TTDM-A/C8 is circuit 8 on Hall A's module."}
+  # Devices written in lower case or with a word (src/scorecard/glossary.py DEVICE_NAME finds them). The popup adds
+  # the device's own description and connections from docs/site/devices.json.
+  - {key: EQ-RACK, label: "Rack [hall]##", pattern: '[Rr]ack [A-C]\d{2}', type: equipment, title: Rack, example: Rack A07,
+     text: "One NVL72 rack: 18 compute trays, 9 NVLink switch trays, and 8 power shelves, fed by an A and a B tap-off. Rack A07 is Hall A, rack 7 (row 1, position 7)."}
+  - {key: EQ-CT, label: "[rack]-ct##", pattern: '[a-c]\d{2}-ct\d{2}', type: equipment, title: Compute tray, example: a13-ct18,
+     text: "A compute tray by its host name: a13-ct18 is compute tray 18 in rack A13. Each tray has 4 GPUs and one InfiniBand NIC per rail (mlx5_0 to mlx5_3)."}
+  - {key: EQ-NVSW, label: "[rack]-nvsw#", pattern: '[a-c]\d{2}-nvsw\d', type: equipment, title: NVLink switch tray, example: a15-nvsw3,
+     text: "An NVLink switch tray by its name: a15-nvsw3 is switch tray 3 of 9 in rack A15. Together the 9 trays join the rack's 72 GPUs into one NVLink domain."}
+  - {key: EQ-PSHELF, label: "[rack]_PowerShelf_#", pattern: '[A-C]\d{2}_PowerShelf_\d', type: equipment, title: Power shelf, example: A06_PowerShelf_1,
+     text: "A rack power shelf by its Redfish name: A06_PowerShelf_1 is shelf 1 of 8 in rack A06. Shelves turn the rack's AC feeds into DC for the busbar."}
+  - {key: EQ-LEAF, label: "leaf-[hall]##-r# port ##", pattern: 'leaf-[a-c]\d{2}-r\d(?: port \d{1,3}|:swp\d{1,3})?', type: equipment,
+     title: InfiniBand leaf switch, example: leaf-a07-r1 port 18,
+     text: "A leaf switch of the rail-optimized InfiniBand fabric, and optionally one port: leaf-a07-r1 is leaf 7 of Hall A on rail 1. Leaf numbers count rack pairs (leaf 7 serves racks A13 and A14): ports 1 to 18 go to the first rack's trays, 19 to 36 to the second's. UFM writes a port as leaf-a07-r1:swp18."}
 
 plain:   # capitalised text that is not a code
   words:

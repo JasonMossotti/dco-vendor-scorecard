@@ -36,6 +36,7 @@ TABS = [
 REFERENCE_TABS = [
     ("agreements", "Agreements", "agreements/"),
     ("glossary", "Glossary", "glossary/"),
+    ("devices", "Devices", "devices/"),
 ]
 KEYS = [k for k, _, _ in TABS + REFERENCE_TABS]
 
@@ -53,6 +54,7 @@ CSS = """
 .usm-src { color:#aab6c3; font-size:12px; text-decoration:none; white-space:nowrap; }
 .usm-src:hover { color:#fff; }
 @media (max-width:1440px) { .usm-brand span { display:none; } }
+@media (max-width:1400px) { .usm-src { display:none; } .usm-tabs a { padding:12px 8px 10px; } .usm-in { gap:4px 10px; } }
 @media (max-width:700px) { .usm-in { padding:0 10px; gap:0 12px; } .usm-tabs a { padding:8px 8px 6px; font-size:13px; } .usm-src { display:none; } }
 @media print { .usm { display:none !important; } }
 """
@@ -75,6 +77,7 @@ def nav_html(active: str, prefix: str = "../") -> str:
 
 
 _POPUP_MARK = re.compile(r"<!--GLOSSARY_POPUPS (\{.*?\})-->")
+_SKIP_DATA = re.compile(r'<script type="application/json" data-gl-skip[^>]*>.*?</script>', re.S)
 
 
 def inject(template: str, active: str, prefix: str = "../", page: str | None = None, doc_title: str = "") -> str:
@@ -98,21 +101,22 @@ def finish(html: str) -> str:
     if not m:
         raise ValueError("page has no code popup mark; build it with sitenav.inject")
     opts = json.loads(m.group(1))
-    data = glossary.popup_data(opts["page"], text=html[:m.start()] + html[m.end():])
+    # A page's own copy of a whole data set (the Devices page's directory) is not text it shows.
+    page_text = _SKIP_DATA.sub(" ", html[:m.start()] + html[m.end():])
+    data = glossary.popup_data(opts["page"], text=page_text)
     data.update(root=opts["root"], doc_title=opts["doc_title"])
     tpl = (ROOT / "templates" / "partials" / "glossary_popup.html").read_text(encoding="utf-8")
     pop = tpl.replace("__GLOSSARY__", json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))
-    page_text = html[:m.start()] + html[m.end():]
     if "data-loc" in page_text:
-        pop += location_popups(page_text, opts["root"])
+        pop += location_popups(page_text, opts["root"], every="data-loc-all" in page_text)
     return html[:m.start()] + pop + html[m.end():]
 
 
-def location_popups(page_text: str, root: str) -> str:
+def location_popups(page_text: str, root: str, every: bool = False) -> str:
     """The location pins' style, script, and the locations this page's text names (see ``scorecard.locations``).
-    Pages opt in field by field with ``data-loc``; prose never gets a pin."""
+    Pages opt in field by field with ``data-loc``; prose never gets a pin. ``every``: all of them (the Devices page)."""
     from . import locations
-    data = locations.subset(locations.load(), page_text)
+    data = dict(locations.load()) if every else locations.subset(locations.load(), page_text)
     data.update(root=root, kinds=locations.KIND_LABEL)
     tpl = (ROOT / "templates" / "partials" / "location_popup.html").read_text(encoding="utf-8")
     return tpl.replace("__LOCATIONS__", json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))

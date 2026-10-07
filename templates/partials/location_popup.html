@@ -10,6 +10,8 @@
 .loc-pop { width:min(760px, 100%); min-width:0; max-height:calc(100vh - 16px); display:flex; flex-direction:column; background:#fff; color:#1e2933;
   border:1px solid #c3ccd6; border-radius:8px; box-shadow:0 10px 32px rgba(30,41,51,.25); font:13px/1.45 "Inter","Segoe UI",Helvetica,Arial,sans-serif;
   text-align:left; white-space:normal; font-weight:400; letter-spacing:normal; text-transform:none; overflow:hidden; }
+.loc-pop.loc-inline { width:100%; max-height:none; box-shadow:none; }
+.loc-pop.loc-inline .loc-fig svg { max-height:70vh; }
 .loc-pop .loc-h { display:flex; align-items:baseline; gap:8px; padding:10px 12px 4px; }
 .loc-pop .loc-h b { font-size:16px; }
 .loc-pop .loc-type { font-size:11px; color:#5b6774; text-transform:uppercase; letter-spacing:.04em; }
@@ -186,10 +188,17 @@
   function open(btn) {
     close(false);
     from = btn;
-    const name = btn.dataset.locName, note = btn.dataset.locNote, e = E[name];
+    bg = document.createElement("div");
+    bg.className = "loc-bg";
+    document.body.appendChild(bg);
+    build(bg, btn.dataset.locName, btn.dataset.locNote, btn.dataset.locPart, false);
+  }
+  // The card itself, in the modal (open) or inside a page section (mount, on the Devices page).
+  function build(host, name, note, partStr, inline) {
+    const e = E[name];
     const label = name.startsWith("HALL-") || name.startsWith("ER-") ? e.title : name;
     // A named part opens its product's detail sheet first, outlined and labeled with the instance.
-    const p = btn.dataset.locPart ? btn.dataset.locPart.split("|") : null;
+    const p = partStr ? partStr.split("|") : null;
     const views = e.views.map(v => ({v, label}));
     let title = e.title;
     if (p) {
@@ -198,17 +207,14 @@
                    ...views.filter(x => x.v.s !== det.sheet));
       title = p[0] === name ? `${e.title} · ${pl}` : `${e.title} · ${p[0]} ${pl[0].toLowerCase() + pl.slice(1)}`;
     }
-    bg = document.createElement("div");
-    bg.className = "loc-bg";
-    bg.innerHTML = `<div class="loc-pop" role="dialog" aria-modal="true" aria-label="${esc(title)} on the drawings">
-      <div class="loc-h"><b>${esc(title)}</b><span class="loc-type">${esc(D.kinds[e.kind])}</span><button class="loc-x" type="button" aria-label="Close">×</button></div>
+    host.innerHTML = `<div class="loc-pop${inline ? " loc-inline" : ""}" ${inline ? 'role="region"' : 'role="dialog" aria-modal="true"'} aria-label="${esc(title)} on the drawings">
+      <div class="loc-h"><b>${esc(title)}</b><span class="loc-type">${esc(D.kinds[e.kind])}</span>${inline ? "" : '<button class="loc-x" type="button" aria-label="Close">×</button>'}</div>
       <div class="loc-t">${note && !p ? `<span class="loc-note">${esc(note)}.</span> ` : ""}${esc(e.text)}</div>
       <div class="loc-chips" role="tablist">${views.map((x, i) => `<button type="button" role="tab" data-i="${i}">${esc(x.v.s)} ${esc(D.sheets[x.v.s].title)}</button>`).join("")}</div>
       <div class="loc-fig"></div>
       <div class="loc-f"><button type="button" class="loc-full">Full sheet</button><a class="loc-open" href="#">Open the drawing</a>
         <span class="loc-key" data-gl-skip><span><i></i><span class="loc-lbl"></span></span><span class="loc-rel"><i class="rel"></i>Connected</span></span></div></div>`;
-    document.body.appendChild(bg);
-    const pop = bg.querySelector(".loc-pop");
+    const pop = host.querySelector(".loc-pop");
     let cur = 0, full = false;
     function show() {
       const v = views[cur].v, lbl = views[cur].label, s = D.sheets[v.s];
@@ -221,7 +227,7 @@
       fig.innerHTML = `<div class="loc-msg">Loading ${esc(v.s)}…</div>`;
       const want = cur;
       sheet(v.s).then(text => {
-        if (!bg || want !== cur) return;
+        if (!pop.isConnected || want !== cur) return;
         const doc = new DOMParser().parseFromString(text, "image/svg+xml");
         const svg = document.importNode(doc.documentElement, true);
         const vb = focusBox(v, s, full);
@@ -234,15 +240,24 @@
         fig.innerHTML = "";
         fig.appendChild(svg);
       }).catch(() => {
-        if (!bg || want !== cur) return;
+        if (!pop.isConnected || want !== cur) return;
         fig.innerHTML = `<div class="loc-msg">The drawing could not be loaded here. <a href="${esc(ROOT + "site/" + s.file)}">Open ${esc(v.s)}</a>.</div>`;
       });
     }
     pop.querySelector(".loc-chips").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) { cur = +b.dataset.i; show(); } });
     pop.querySelector(".loc-full").addEventListener("click", () => { full = !full; show(); });
-    pop.querySelector(".loc-x").addEventListener("click", () => close(true));
     show();
+    if (inline) return;
+    pop.querySelector(".loc-x").addEventListener("click", () => close(true));
     pop.querySelector(".loc-x").focus({preventScroll: true});
+  }
+  // Show a field's drawings inside an element (the Devices page): the same card, without the modal.
+  function mount(hostEl, value, extra) {
+    const r = field(value);
+    if (!r) { hostEl.innerHTML = ""; return false; }
+    const p = fieldPart(value, extra);
+    build(hostEl, r[0], r[1], p ? p.join("|") : "", true);
+    return true;
   }
   document.addEventListener("click", ev => {
     const b = ev.target.closest && ev.target.closest(".loc-pin");
@@ -263,6 +278,6 @@
       pin(n);
     }
   }).observe(document.body, {childList: true, subtree: true});
-  window.LOCATIONS = {resolve, field, part, fieldPart, open, close};
+  window.LOCATIONS = {resolve, field, part, fieldPart, open, close, mount};
 })();
 </script>

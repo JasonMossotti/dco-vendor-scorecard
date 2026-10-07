@@ -214,6 +214,9 @@ def robustness(n: int) -> int:
     from scorecard import locations
     loc = locations.load()
     parts_checked, parts_missing = 0, []
+    from scorecard import devices
+    dev = devices.load()
+    names_checked, names_missing, cables_checked, cables_bad = 0, [], 0, []
     for k in range(n):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
@@ -241,6 +244,14 @@ def robustness(n: int) -> int:
             n_p, miss = locations.part_coverage(loc, [A.alarm_dict(a) for a in r["alarms"]])
             parts_checked += n_p
             parts_missing += [f"month {k}: {m}" for m in miss]
+            named = [a.device for a in r["alarms"]] + [t["device"] for t in A.trouble_tickets(FileConnector(d))]
+            n_n, miss = devices.name_coverage(dev, named)
+            names_checked += n_n
+            names_missing += [f"month {k}: {m}" for m in miss]
+            ufm = [json.loads(ln) for ln in (d / "telemetry" / "ufm_port_events.jsonl").read_text(encoding="utf-8").splitlines() if ln]
+            n_c, bad = devices.cabling_mismatches(dev, ufm)
+            cables_checked += n_c
+            cables_bad += [f"month {k}: {m}" for m in bad]
     print(f"Change-aware alarm check on {n} generated months (cases moved each month):")
     for t, (ok, tt) in sorted(by_type.items()):
         word = "not flagged" if t.startswith("decoy") else "found"
@@ -254,8 +265,12 @@ def robustness(n: int) -> int:
     print(f"  detail-sheet parts     {parts_checked - len(parts_missing)}/{parts_checked} alarms on detailed products name a part")
     for m in parts_missing:
         print("   ", m)
+    print(f"  device directory       {names_checked - len(names_missing)}/{names_checked} alarm and ticket device names found; "
+          f"{cables_checked - len(cables_bad)}/{cables_checked} leaf port events match the cabling")
+    for m in names_missing[:20] + cables_bad[:20]:
+        print("   ", m)
     bad = sum(tt - ok for t, (ok, tt) in by_type.items())
-    return 1 if bad or unexplained or parts_missing else 0
+    return 1 if bad or unexplained or parts_missing or names_missing or cables_bad else 0
 
 
 def main() -> int:

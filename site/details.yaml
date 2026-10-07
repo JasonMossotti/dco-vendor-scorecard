@@ -281,13 +281,13 @@ products:
     sheet: D-601
     title: "Quantum-2 QM9700 InfiniBand leaf switch, port side"
     unplaced: true
-    devices: '^leaf-[a-c]\d+-r\d+'
+    devices: '^leaf-a\d+-r\d+'
     sources:
       nvidia_um: {url: "https://docs.nvidia.com/networking/display/qm97x0um/introduction",
                   says: "64 NDR ports through 32 OSFP 400 Gb/s interfaces; one management port, console port, and USB; two replaceable power supplies and seven replaceable fans"}
     alarm_points:
       - ["Port n", "Fabric link down; symbol errors over threshold", "UFM"]
-    order_note: "Port n is the n-th of 64 NDR ports, two per OSFP cage, cages numbered left to right with odd cages on top (assumed). The site plans do not place the fabric switches; the card shows where the cable lands."
+    order_note: "Port n is the n-th of 64 NDR ports, two per OSFP cage, cages numbered left to right with odd cages on top (assumed). The site plans do not place the fabric switches; the card shows where the cable lands. Hall A only: Hall B's leaf switches are Quantum-X800 Q3400, which have no detail sheet."
     parts:
       - {id: "port{n}", n: [1, 64], tag: "{n}", label: "Port {n}", basis: [nvidia_um],
          position: "assumption: cage c holds ports 2c-1 and 2c"}
@@ -349,7 +349,7 @@ points:
   - ['filter', "i", vesda_e_vep, "filter"]
   - ['(TTDM-[A-C])\b.*?circuit (\d+)', "i", tracetek_ttdm128, "c{2}", "{1}"]
   - ['^(TTDM-[A-C])/C(\d+)', "", tracetek_ttdm128, "c{2}", "{1}"]
-  - ['(leaf-[a-c]\d+-r\d+)(?: port |:swp)(\d+)', "", quantum2_qm9700, "port{2}", "{1}"]
+  - ['(leaf-a\d+-r\d+)(?: port |:swp)(\d+)', "", quantum2_qm9700, "port{2}", "{1}"]
   - ['whip|cord', "i", starline_1200t5, "cord"]
   - ['undervoltage|voltage', "i", starline_1200t5, "feed-cpm"]
   - ['output feeder', "i", starline_1200t5, "end-feed"]

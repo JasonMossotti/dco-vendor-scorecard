@@ -1,7 +1,7 @@
 # CLAUDE.md: dco-vendor-scorecard
 
 Portfolio project for a Data Center Operations Lead (partner-operated sites) application. Owner: Jason Mossotti.
-Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (Unified Site Management overview), `/app/` (scorecard app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/alarms/` (Customer alarm board), `/agreements/` (the three contracts), `/glossary/` (every code; popups on every page).
+Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (Unified Site Management overview), `/app/` (scorecard app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/alarms/` (Customer alarm board), `/agreements/` (the three contracts), `/glossary/` (every code; popups on every page), `/devices/` (every named device and its connections).
 
 Fictional Site AUS-1 (Central Texas): the Customer leases halls from a Landlord (Caprock Critical Facilities: building, power, cooling, CDUs) and contracts an IT Partner (Ridgeline Site Services: data hall work). SLAs as code, synthetic telemetry with planted discrepancies, one engine per partner, cross-partner fault attribution, scorecards that compare self-reports with measurement. Everything synthetic; never imply knowledge of any real company's internal systems.
 
@@ -53,11 +53,11 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/render_pir.py && python scripts/render_weekly.py \
   && python scripts/generate_history.py && python scripts/render_patterns.py \
   && python scripts/generate_changes.py && python scripts/render_alarms.py && python scripts/render_glossary.py
-pytest -q                                      # 402 tests as of 2026-10-06
+pytest -q                                      # 417 tests as of 2026-10-07
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 
-Headline results that must not move unless a change intends it: IT 4 Minimum defaults, $188,700, engine 17/17 and 1,020/1,020; Landlord 4 defaults, $106,200, 8/8 and 480/480; facility evidence 60/60. Failure patterns: 3 found, 0 other flags; robustness lot 60/60, CDU drift 60/60, reseat 41/60, decoys 0/60. Change-aware alarms: sample 120 alarms, 11 expected, 4 flags (all MOP-310); robustness every case 60/60, decoys 0/60, 10 other flags (all real coincident faults), detail-sheet parts 7,926/7,926.
+Headline results that must not move unless a change intends it: IT 4 Minimum defaults, $188,700, engine 17/17 and 1,020/1,020; Landlord 4 defaults, $106,200, 8/8 and 480/480; facility evidence 60/60. Failure patterns: 3 found, 0 other flags; robustness lot 60/60, CDU drift 60/60, reseat 41/60, decoys 0/60. Change-aware alarms: sample 120 alarms, 11 expected, 4 flags (all MOP-310); robustness every case 60/60, decoys 0/60, 10 other flags (all real coincident faults), detail-sheet parts 7,926/7,926, device directory names 13,076/13,076 and leaf port cables 8,896/8,896.
 
 ## Saving tokens
 

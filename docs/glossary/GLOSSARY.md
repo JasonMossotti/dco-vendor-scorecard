@@ -6,7 +6,7 @@
 
 # Glossary: Site AUS-1
 
-Every acronym, contract code, and record ID the site's pages and documents use: 359 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
+Every acronym, contract code, and record ID the site's pages and documents use: 364 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
 
 ## Acronyms
 
@@ -393,10 +393,12 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | GEN-# | **Standby generator.** One of the 7 diesel standby generators (N+1) on the paralleling bus. | - | Landlord SLA, Scorecards, Weekly Review |
 | HALL-A | **Data hall.** State: production; 32 racks. | IT Partner SLA, 2. Parties and Site Profile<br>Landlord SLA, 2. Parties and Leased Premises | IT Partner SLA, Landlord SLA, Scorecards, Failure Patterns, Post-Incident Review, Weekly Review |
 | HALL-B | **Data hall.** State: deployment; 32 racks. | IT Partner SLA, 2. Parties and Site Profile<br>Landlord SLA, 2. Parties and Leased Premises | IT Partner SLA, Landlord SLA |
+| leaf-[hall]##-r# port ## | **InfiniBand leaf switch.** A leaf switch of the rail-optimized InfiniBand fabric, and optionally one port: leaf-a07-r1 is leaf 7 of Hall A on rail 1. Leaf numbers count rack pairs (leaf 7 serves racks A13 and A14): ports 1 to 18 go to the first rack's trays, 19 to 36 to the second's. UFM writes a port as leaf-a07-r1:swp18. | - | Scorecards, Alarm Board, Post-Incident Review, Weekly Review |
 | MUPS-[hall]# | **Mechanical UPS.** A UPS for a hall's mechanical loads (CDUs and pumps), named by hall and number. | - | Alarm Board |
 | MV-A | **Medium-voltage bus A.** One of the two 13.8 kV switchgear buses (main-tie-main). The A feeds of the halls trace back to it. | - | Alarm Board, Site model document |
 | MV-B | **Medium-voltage bus B.** The other 13.8 kV switchgear bus. The B feeds of the halls trace back to it. | - | Alarm Board, Site model document |
 | OPS-MAIN | **Main operations entrance badge reader.** The door every shift badges through; the staffing check counts badge-ins here. | - | Scorecards |
+| Rack [hall]## | **Rack.** One NVL72 rack: 18 compute trays, 9 NVLink switch trays, and 8 power shelves, fed by an A and a B tap-off. Rack A07 is Hall A, rack 7 (row 1, position 7). | - | Scorecards, Alarm Board, Failure Patterns, Site model document, Overview, Post-Incident Review, Weekly Review |
 | TO-[rack]-[side] | **Busway tap-off.** The breaker box that takes power from the busway to one rack: TO-A07-B is rack A07's B-side tap-off. Its output terminals are the power demarcation (DM-PWR). | - | Scorecards, Alarm Board, Post-Incident Review, Weekly Review |
 | TTDM-A | **Hall A leak detection module.** The leak alarm and locator module for Hall A's sensing cables. An alarm names the circuit (C1, C2, ...) and the distance along the cable. | - | Alarm Board, Post-Incident Review, Weekly Review |
 | TTDM-B | **Hall B leak detection module.** The leak alarm and locator module for Hall B's sensing cables. | - | Alarm Board |
@@ -405,6 +407,9 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | UPS-[hall]# | **UPS module.** A hall UPS, named by hall and number. Hall A's four UPSs run distributed redundant (4 make 3). | - | Landlord SLA, Scorecards, Alarm Board, Site model document, Post-Incident Review, Weekly Review |
 | USS-[hall]# | **Unit substation.** Steps 13.8 kV down to 480 V for a UPS, named by hall and number. | - | Site model document |
 | VESDA-[hall]# | **Smoke detector.** An aspirating smoke detector in a hall, named by hall and number. | - | Scorecards, Alarm Board, Post-Incident Review, Weekly Review |
+| [rack]-ct## | **Compute tray.** A compute tray by its host name: a13-ct18 is compute tray 18 in rack A13. Each tray has 4 GPUs and one InfiniBand NIC per rail (mlx5_0 to mlx5_3). | - | IT Partner SLA, Scorecards, Alarm Board, Failure Patterns, Post-Incident Review, Weekly Review |
+| [rack]-nvsw# | **NVLink switch tray.** An NVLink switch tray by its name: a15-nvsw3 is switch tray 3 of 9 in rack A15. Together the 9 trays join the rack's 72 GPUs into one NVLink domain. | - | Alarm Board, Post-Incident Review |
+| [rack]_PowerShelf_# | **Power shelf.** A rack power shelf by its Redfish name: A06_PowerShelf_1 is shelf 1 of 8 in rack A06. Shelves turn the rack's AC feeds into DC for the busbar. | - | Alarm Board |
 
 ## Products and models
 
