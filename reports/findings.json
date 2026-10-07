@@ -278,7 +278,7 @@
       "evidence": [
         {
           "at": "2026-09-06T08:52:39Z",
-          "detail": "Fault signal: XID 145 (NVLink error) on a09-ct10",
+          "detail": "Fault signal: XID 145 (NVLINK: RLW Error) on a09-ct10",
           "source": "telemetry/dcgm_xid_events.jsonl"
         },
         {
@@ -610,7 +610,7 @@
       "evidence": [
         {
           "at": "2026-09-04T07:21:29Z",
-          "detail": "Original fault: XID 94 (Contained ECC error)",
+          "detail": "Original fault: XID 94 (Contained memory error)",
           "source": "telemetry/dcgm_xid_events.jsonl"
         },
         {
@@ -700,7 +700,7 @@
       "evidence": [
         {
           "at": "2026-09-13T08:10:51Z",
-          "detail": "Original fault: XID 119 (Timeout waiting for GSP RPC response)",
+          "detail": "Original fault: XID 119 (GSP RPC Timeout)",
           "source": "telemetry/dcgm_xid_events.jsonl"
         },
         {
@@ -710,7 +710,7 @@
         },
         {
           "at": "2026-09-16T01:29:51Z",
-          "detail": "Recurrence: XID 119 (Timeout waiting for GSP RPC response)",
+          "detail": "Recurrence: XID 119 (GSP RPC Timeout)",
           "source": "telemetry/dcgm_xid_events.jsonl"
         }
       ],

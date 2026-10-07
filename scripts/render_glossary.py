@@ -155,8 +155,15 @@ def scan(gl: G.Glossary | None = None, texts: dict | None = None) -> dict:
 
 
 def published(gl: G.Glossary, used: dict) -> list[G.Entry]:
-    """The entries the Glossary tab lists: every one the site uses (contract codes no page shows are left out)."""
-    return [e for e in gl.entries() if e.key in used]
+    """The entries the Glossary tab lists: every one the site uses (contract codes no page shows are left out),
+    and every GPU XID code in the catalog addendum, used or not. XID codes sort by number (XID 8 before XID 13)."""
+    items = [e for e in gl.entries() if e.key in used or e.type == "xid"]
+    return sorted(items, key=lambda e: f"XID {int(e.term.split()[1]):03d}" if e.type == "xid" else e.term.upper().lstrip("-"))
+
+
+def xid_source_html() -> str:
+    src = G.xid_catalog()["source"]
+    return f'<a href="{escape(src["url"])}" target="_blank" rel="noopener">Xid catalog</a> (updated {escape(src["updated"])}, retrieved {escape(src["retrieved"])})'
 
 
 def _type_labels() -> dict[str, str]:
@@ -198,8 +205,10 @@ def entry_html(e: G.Entry, used: set[tuple[str, str]], labels: dict[str, str], p
         parts.append(f'<div class="scope">This meaning applies on: {escape(", ".join(pages))}</div>')
     if e.see:
         parts.append(f'<div class="meta">Records: <a href="{escape(prefix + e.see)}">open the page that holds them</a></div>')
+    if e.source:
+        parts.append(f'<div class="meta">Source: <a href="{escape(e.source["href"])}" target="_blank" rel="noopener">{escape(e.source["label"])}</a></div>')
     where = ", ".join(f'<a href="{escape(prefix + link)}">{escape(label)}</a>' if link else escape(label) for label, link in _places(used))
-    parts.append(f'<div class="meta">Used on: {where}</div>')
+    parts.append(f'<div class="meta">Used on: {where}</div>' if where else '<div class="meta">Not seen in this site\'s records.</div>')
     search = " ".join([e.term, e.expansion, e.example] + [s.title + " " + s.text for s in e.senses]).lower()
     return (f'<div class="entry" id="{escape(e.key)}" data-type="{escape(e.type)}" data-letter="{_letter(e)}" data-search="{escape(search)}">'
             f'<div data-gl-skip><span class="term">{escape(e.term)}</span><span class="kind">{escape(labels.get(e.type, e.type))}</span></div>'
@@ -214,7 +223,7 @@ def html_page(s: dict | None = None) -> str:
     body = "".join(entry_html(e, s["used"][e.key], labels) for e in items)
     data = {"types": [t for t in G.config()["types"] if any(e.type == t["key"] for e in items)]}
     tpl = sitenav.inject((ROOT / "templates" / "glossary.html").read_text(encoding="utf-8"), "glossary")
-    return sitenav.finish(tpl.replace("__ENTRIES__", body).replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/")))
+    return sitenav.finish(tpl.replace("__XID_SOURCE__", xid_source_html()).replace("__ENTRIES__", body).replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/")))
 
 
 def markdown(s: dict | None = None) -> str:
@@ -234,7 +243,15 @@ def markdown(s: dict | None = None) -> str:
         group = [e for e in items if e.type == t["key"]]
         if not group:
             continue
-        lines += [f"## {t['label']}", "", "| Code | Meaning | Defined in | Used on |", "|---|---|---|---|"]
+        lines += [f"## {t['label']}", ""]
+        if t["key"] == "xid":
+            cat = G.xid_catalog()
+            lines += [f"Every code NVIDIA's public [Xid catalog]({cat['source']['url']}) (updated {cat['source']['updated']}, "
+                      f"retrieved {cat['source']['retrieved']}) marks as applying to GB200 and not unused: {len(group)} codes. "
+                      "The name and the two recommended actions are NVIDIA's; the meaning is this project's plain reading, and the "
+                      "catalog is the authority. The catalog also lists " + ", ".join(f"XID {n}" for n in cat["not_gb200"])
+                      + ", which do not apply to GB200.", ""]
+        lines += ["| Code | Meaning | Defined in | Used on |", "|---|---|---|---|"]
         for e in group:
             d = G.entry_data(e)
             meaning = "<br>".join(
@@ -245,7 +262,7 @@ def markdown(s: dict | None = None) -> str:
             if e.on:
                 meaning += f" *(On: {', '.join(e.on)}.)*"
             defined = "<br>".join(f'{w["doc"]}, {cell(w["section"])}' for x in d["senses"] for w in x["where"]) or "-"
-            used = ", ".join(label for label, _ in _places(s["used"][e.key]))
+            used = ", ".join(label for label, _ in _places(s["used"][e.key])) or "-"
             lines.append(f"| {cell(e.term)} | {meaning} | {defined} | {used} |")
         lines.append("")
     plain = sorted(s["plain"])

@@ -98,7 +98,7 @@ def bundle_members(root: Path) -> list[Path]:
     files += sorted((root / "sla").glob("*.yaml")) + [root / "config" / "synthetic.yaml", root / "site" / "site.yaml",
                                                    root / "site" / "details.yaml"]   # the lookup panel draws the detail sheets
     # The code lookup: the glossary and the generated contracts it points into.
-    files += [root / "config" / "glossary.yaml"] + sorted((root / "docs" / "sla").glob("*.md"))
+    files += [root / "config" / "glossary.yaml", root / "config" / "xid_catalog.yaml"] + sorted((root / "docs" / "sla").glob("*.md"))
     for ds in ("sample", "latest"):
         d = root / "data" / ds
         if d.exists():

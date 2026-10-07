@@ -1,0 +1,157 @@
+# GPU XID codes: the Glossary addendum and the "XID nn" popups on every page.
+#
+# Source: NVIDIA, "Xid Errors" guide, Xid Catalog (public). Each code's number, NVIDIA's name, the
+# GB200 applicability flag, and the two resolution buckets (immediate and investigatory action) are
+# transcribed from the catalog as it stood on the retrieval date below. The "text" of each code and
+# the bucket meanings are this project's own plain-language reading for operators at the fictional
+# site AUS-1; NVIDIA's catalog is the authority, and every popup links to it.
+#
+# Scope: every code the catalog marks as applying to GB200 that is not "Unused". Codes the catalog
+# lists but marks as not applying to GB200 are named in "not_gb200" with no meaning.
+#
+# tests/test_xid.py checks: every XID the site shows has an entry here, the generator's XID messages
+# use NVIDIA's names, and the critical XIDs in the IT Partner SLA are all here.
+
+source:
+  title: "NVIDIA Xid Errors: Analyzing Xid Errors with the Xid Catalog"
+  url: "https://docs.nvidia.com/deploy/xid-errors/latest/analyzing-xid-catalog.html"
+  updated: "2026-09-09"
+  retrieved: "2026-10-07"
+
+# Resolution buckets: what each of NVIDIA's action names asks an operator to do (our reading of the
+# names; "none listed" where the catalog gives no bucket).
+buckets:
+  RESTART_APP: "Restart the application that hit the error; the GPU stays in service"
+  RESET_GPU: "Drain the GPU's jobs and reset the GPU"
+  RESTART_BM: "Drain the node and reboot the host"
+  RESTART_VM: "Restart the virtual machine that owns the GPU"
+  IGNORE: "No action on its own; act on any other XID logged with it"
+  "IGNORE (sympathetic)": "No action; it is a side effect of the error that caused it"
+  CONTACT_SUPPORT: "Open a hardware case with the vendor through the IT Partner"
+  CHECK_MECHANICALS: "Check physical connections, such as auxiliary power to the board"
+  UPDATE_SWFW: "Update the driver or firmware"
+  INVESTIGATE_SW: "Investigate the driver, firmware, and software stack"
+  INVESTIGATE_SW_USER: "Investigate the software stack and the user's workload"
+  INVESTIGATE_LINK_SI: "Investigate the link's signal integrity"
+  CHECK_APP/CUDA: "Check the application and its CUDA code"
+  CHECK_UVM: "Check the application's use of unified memory"
+  SYMPATHETIC_REPORT_SOLO: "Treat it as a side effect of another error; report it if it appears alone"
+  XID_154: "Read the recovery action the driver reports with it"
+  XID_137_FLOW: "Follow NVIDIA's documented flow for XID 137"
+  WORKFLOW_XID_13: "Follow NVIDIA's documented workflow for XID 13"
+  WORKFLOW_XID_31: "Follow NVIDIA's documented workflow for XID 31"
+  WORKFLOW_XID_45: "Follow NVIDIA's documented workflow for XID 45"
+  WORKFLOW_XID_48: "Follow NVIDIA's documented workflow for XID 48 (check the ECC summary; RMA if the threshold is exceeded)"
+  WORKFLOW_NVLINK_ERR: "Follow NVIDIA's documented NVLink error workflow"
+  WORKFLOW_NVLINK5_ERR: "Follow NVIDIA's documented fifth-generation NVLink error workflow"
+  "Solo: RESTART_FM Not Solo: IGNORE (follow other Xid)": "If it appears alone, restart the Fabric Manager; otherwise act on the other XID"
+
+# xid: number; name: NVIDIA's name; now / then: immediate and investigatory buckets ("" = none listed);
+# critical: starts the IT Partner's GPU restoration clock at AUS-1 (IT Partner SLA, GPU fault class).
+codes:
+  - {xid: 8, name: "GPU stopped processing", now: RESTART_APP, then: CONTACT_SUPPORT, text: "The GPU stopped making progress on work it was given, usually because of the application."}
+  - {xid: 11, name: "Invalid or corrupted push buffer stream", now: RESTART_APP, then: CHECK_APP/CUDA, text: "The GPU received a bad command stream from the driver or application."}
+  - {xid: 13, name: "Graphics Engine Exception", now: RESTART_APP, then: WORKFLOW_XID_13, text: "A fault in the application's GPU code, such as an out-of-range memory access. Almost always the user's code, not the hardware."}
+  - {xid: 25, name: "Invalid or illegal push buffer stream", now: RESTART_APP, then: CHECK_APP/CUDA, text: "The GPU received a command it could not accept from the driver or application."}
+  - {xid: 31, name: "GPU memory page fault", now: RESTART_APP, then: WORKFLOW_XID_31, text: "The application touched GPU memory it does not own. Usually the user's code; repeated faults on one GPU with different jobs point at hardware."}
+  - {xid: 32, name: "Invalid or corrupted push buffer stream", now: RESTART_APP, then: CHECK_APP/CUDA, text: "The GPU's command stream was corrupted on the way in, by software or, less often, the PCIe path."}
+  - {xid: 37, name: "Driver firmware error", now: IGNORE, then: CHECK_APP/CUDA, text: "The driver reported a firmware error; on its own it needs no action."}
+  - {xid: 38, name: "Driver firmware error", now: IGNORE, then: CONTACT_SUPPORT, text: "The driver reported a firmware error; escalate if it recurs."}
+  - {xid: 39, name: "Copy Engine Exception", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an error while moving data for the application."}
+  - {xid: 40, name: "Copy Engine Exception", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an error while moving data for the application."}
+  - {xid: 41, name: "Copy Engine Exception", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an error while moving data for the application."}
+  - {xid: 43, name: "GPU stopped processing", now: IGNORE, then: CONTACT_SUPPORT, text: "The GPU stopped the application's work, usually because of an application error; the GPU itself stays healthy."}
+  - {xid: 44, name: "Graphics Engine fault during context switch", now: IGNORE, then: CONTACT_SUPPORT, text: "The GPU faulted while switching between applications."}
+  - {xid: 45, name: "Preemptive cleanup, due to previous errors", now: WORKFLOW_XID_45, then: "Solo: RESTART_FM Not Solo: IGNORE (follow other Xid)", text: "The driver ended work after an earlier error, or because a user or the system stopped it. Look for the XID that came before it."}
+  - {xid: 46, name: "GPU stopped processing", now: RESET_GPU, then: CONTACT_SUPPORT, text: "The GPU stopped processing and needs a reset to recover."}
+  - {xid: 48, name: "Double Bit ECC Error", critical: true, text: "An uncorrectable memory error. The GPU needs a reset or the node a reboot to clear it, and repeated errors past NVIDIA's threshold mean a replacement.", now: WORKFLOW_XID_48, then: WORKFLOW_XID_48}
+  - {xid: 60, name: "Video processor exception", now: RESTART_APP, then: INVESTIGATE_SW, text: "The video processing unit reported an error. Rare in AI training work."}
+  - {xid: 62, name: "Internal micro-controller halt", now: RESET_GPU, then: CONTACT_SUPPORT, text: "One of the GPU's internal controllers stopped; the GPU needs a reset."}
+  - {xid: 63, name: "GPU memory remapping event", now: IGNORE, then: IGNORE, text: "The GPU retired a bad memory row and remapped it to a spare, as designed. A reset completes the remap; a rising count is an early warning worth tracking."}
+  - {xid: 64, name: "GPU memory remapping failure", now: RESET_GPU, then: CONTACT_SUPPORT, text: "The GPU could not remap a bad memory row, usually because the spares are used up. A replacement candidate."}
+  - {xid: 66, name: "Illegal access by driver", now: IGNORE, then: INVESTIGATE_SW, text: "The driver made an access the GPU refused; a software matter."}
+  - {xid: 67, name: "Illegal access by driver", now: IGNORE, then: CONTACT_SUPPORT, text: "The driver made an access the GPU refused; escalate if it recurs."}
+  - {xid: 68, name: "NVDEC0 Exception", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 69, name: "Graphics Engine class error", now: RESTART_APP, then: CHECK_APP/CUDA, text: "The application used the GPU in a way it does not support."}
+  - {xid: 70, name: "CE3: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 71, name: "CE4: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 72, name: "CE5: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 74, name: "NVLINK Error", now: WORKFLOW_NVLINK_ERR, then: CONTACT_SUPPORT, text: "An NVLink connection reported an error; a reset or reboot clears it, and recurrence means a hardware case."}
+  - {xid: 75, name: "CE6: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 76, name: "CE7: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 77, name: "CE8: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 78, name: "vGPU Start Error", now: UPDATE_SWFW, then: UPDATE_SWFW, text: "A virtual GPU failed to start, usually a driver or firmware version mismatch."}
+  - {xid: 79, name: "GPU has fallen off the bus", critical: true, now: RESTART_BM, then: CONTACT_SUPPORT, text: "The driver can no longer reach the GPU over PCIe. The node is drained and rebooted; a repeat on the same tray points at hardware. At AUS-1 a second XID 79 on a tray within 30 days means a tray replacement, not another reseat."}
+  - {xid: 82, name: "NVJPG0 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 83, name: "NVDEC1 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 84, name: "NVDEC2 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 85, name: "CE9: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 86, name: "OFA Exception", now: RESTART_APP, then: CONTACT_SUPPORT, text: "The optical flow engine reported an error. Rare in AI training work."}
+  - {xid: 88, name: "NVDEC3 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 89, name: "NVDEC4 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 92, name: "High single-bit ECC error rate", now: IGNORE, then: CONTACT_SUPPORT, text: "Correctable memory errors are arriving faster than normal. No outage yet, but an early warning of a failing GPU."}
+  - {xid: 94, name: "Contained memory error", critical: true, now: RESTART_APP, then: "IGNORE (sympathetic)", text: "An uncorrectable memory error that stayed contained to one application. That application restarts; reset the GPU when convenient."}
+  - {xid: 95, name: "Uncontained memory error", now: RESET_GPU, then: "IGNORE (sympathetic)", text: "An uncorrectable memory error that may have reached more than one application. The GPU must be reset before work restarts."}
+  - {xid: 96, name: "NVDEC5 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 97, name: "NVDEC6 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 98, name: "NVDEC7 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A video decoder engine reported an error. Rare in AI training work."}
+  - {xid: 99, name: "NVJPG1 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 100, name: "NVJPG2 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 101, name: "NVJPG3 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 102, name: "NVJPG4 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 103, name: "NVJPG5 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 104, name: "NVJPG6 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 105, name: "NVJPG7 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A JPEG decoder engine reported an error. Rare in AI training work."}
+  - {xid: 106, name: "SMBPBI Test Message", now: IGNORE, then: IGNORE, text: "A test message on the GPU's out-of-band management interface. No action."}
+  - {xid: 107, name: "SMBPBI Test Message Silent", now: IGNORE, then: IGNORE, text: "A silent test message on the GPU's out-of-band management interface. No action."}
+  - {xid: 109, name: "Context Switch Timeout Error", now: RESET_GPU, then: CONTACT_SUPPORT, text: "The GPU took too long to switch between applications and needs a reset."}
+  - {xid: 110, name: "Security Fault Error", now: RESET_GPU, then: INVESTIGATE_SW, text: "The GPU detected a security fault and needs a reset."}
+  - {xid: 119, name: "GSP RPC Timeout", critical: true, now: RESET_GPU, then: INVESTIGATE_SW, text: "The driver timed out waiting for the GPU System Processor (GSP), which runs the GPU's firmware. A reset usually clears it; if it persists, power cycle the node."}
+  - {xid: 120, name: "GSP Error", now: RESET_GPU, then: INVESTIGATE_SW, text: "The GPU System Processor (GSP), which runs the GPU's firmware, reported an error."}
+  - {xid: 121, name: "C2C Error", now: IGNORE, then: CONTACT_SUPPORT, text: "An error on the chip-to-chip link between the Grace CPU and the GPU. Escalate if it recurs."}
+  - {xid: 126, name: "CE10: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 127, name: "CE11: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 128, name: "CE12: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 129, name: "CE13: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 130, name: "CE14: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 131, name: "CE15: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 132, name: "CE16: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 133, name: "CE17: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 134, name: "CE18: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 135, name: "CE19: Unknown Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "A copy engine (the GPU's data mover) reported an unclassified error."}
+  - {xid: 137, name: "NVLink Privilege Error", now: IGNORE, then: XID_137_FLOW, text: "An NVLink access was refused for lack of privilege."}
+  - {xid: 139, name: "OFA1 Error", now: RESTART_APP, then: CONTACT_SUPPORT, text: "The second optical flow engine reported an error. Rare in AI training work."}
+  - {xid: 140, name: "ECC Unrecovered Error", now: RESET_GPU, then: CONTACT_SUPPORT, text: "A memory error the GPU could not recover. Reset the GPU; if it comes back, open a hardware case."}
+  - {xid: 141, name: "CUDA Fast Path Error", now: IGNORE, then: CONTACT_SUPPORT, text: "An error on CUDA's fast submission path; escalate if it recurs."}
+  - {xid: 142, name: "NVENC3 Error", now: CONTACT_SUPPORT, then: "", text: "A video encoder engine reported an error. Rare in AI training work."}
+  - {xid: 143, name: "GPU Initialization Error", now: RESET_GPU, then: CONTACT_SUPPORT, text: "The GPU failed to initialize at boot or after a reset."}
+  - {xid: 144, name: "NVLINK: SAW Error", now: WORKFLOW_NVLINK5_ERR, then: WORKFLOW_NVLINK5_ERR, text: "An NVLink error from the link's SAW block. The error status decides between no action and a GPU reset."}
+  - {xid: 145, name: "NVLINK: RLW Error", critical: true, now: WORKFLOW_NVLINK5_ERR, then: WORKFLOW_NVLINK5_ERR, text: "An NVLink error from the link's RLW block. Depending on the subcode it needs no action, a GPU reset, or a check of the recovery action (XID 154)."}
+  - {xid: 146, name: "NVLINK: TLW Error", now: WORKFLOW_NVLINK5_ERR, then: WORKFLOW_NVLINK5_ERR, text: "An NVLink error from the link's TLW block. The error status decides between no action and a GPU reset."}
+  - {xid: 147, name: "NVLINK: TREX Error", now: WORKFLOW_NVLINK5_ERR, then: WORKFLOW_NVLINK5_ERR, text: "An NVLink error from the link's TREX block."}
+  - {xid: 148, name: "NVLINK: NVLPW_CTRL Error", now: WORKFLOW_NVLINK5_ERR, then: WORKFLOW_NVLINK5_ERR, text: "An NVLink error from the link's power control block."}
+  - {xid: 149, name: "NVLINK: NETIR Error", critical: true, now: WORKFLOW_NVLINK5_ERR, then: WORKFLOW_NVLINK5_ERR, text: "An NVLink error from the link's NETIR block, fatal to the link. The GPU needs a reset; recurrence on the same link points at the cable cartridge, switch tray, or GPU."}
+  - {xid: 150, name: "NVLINK: MSE Error", now: WORKFLOW_NVLINK5_ERR, then: WORKFLOW_NVLINK5_ERR, text: "An NVLink error from the link's MSE block."}
+  - {xid: 151, name: "Key Rotation Error", now: RESTART_VM, then: CONTACT_SUPPORT, text: "Encryption key rotation failed in confidential computing mode."}
+  - {xid: 154, name: "GPU Recovery Action Changed", now: XID_154, then: "", text: "Informational: the driver says what recovery the GPU now needs (none, drain peer-to-peer, drain and reset, GPU reset, or node reboot)."}
+  - {xid: 155, name: "NVLINK: SW Defined Error", now: RESET_GPU, then: INVESTIGATE_SW_USER, text: "An NVLink error raised by software rather than the link hardware."}
+  - {xid: 156, name: "Resource Retirement Event", now: RESET_GPU, then: IGNORE, text: "The GPU retired a faulty internal resource; a reset completes it."}
+  - {xid: 157, name: "Resource Retirement Failure", now: IGNORE, then: CONTACT_SUPPORT, text: "The GPU could not retire a faulty internal resource; escalate if it recurs."}
+  - {xid: 158, name: "GPU Fatal Timeout", now: RESET_GPU, then: CONTACT_SUPPORT, text: "The GPU stopped responding within its deadline and needs a reset."}
+  - {xid: 159, name: "CHI Non-Data Error", now: CHECK_UVM, then: SYMPATHETIC_REPORT_SOLO, text: "A coherence error on the link between CPU and GPU memory."}
+  - {xid: 160, name: "Channel Retirement Event", now: IGNORE, then: INVESTIGATE_SW, text: "The GPU retired a work channel after an error."}
+  - {xid: 161, name: "Channel Retirement Failure", now: IGNORE, then: INVESTIGATE_SW, text: "The GPU could not retire a work channel after an error."}
+  - {xid: 162, name: "Power Smoothing (PSHC) re-engaged", now: "", then: "", text: "The GPU's power smoothing feature, which evens out load swings seen by the facility, switched back on."}
+  - {xid: 163, name: "PSHC disengaged", now: "", then: "", text: "The GPU's power smoothing feature switched off, so the facility sees sharper load swings."}
+  - {xid: 164, name: "PSHC low lifetime reached", now: "", then: "", text: "The power smoothing hardware is near the end of its rated life."}
+  - {xid: 165, name: "PSHC lifetime exhausted", now: "", then: "", text: "The power smoothing hardware has reached the end of its rated life."}
+  - {xid: 166, name: "CC traffic before link configured", now: "", then: "", text: "Confidential computing traffic arrived on NVLink before the link was set up for it."}
+  - {xid: 167, name: "PCIE_FATAL_TIMEOUT", now: "", then: "", text: "A fatal timeout on the GPU's PCIe connection."}
+  - {xid: 168, name: "Errors found in WPR", now: "", then: "", text: "Errors in the GPU's write-protected memory region."}
+  - {xid: 169, name: "Internal micro-controller halt", now: "", then: "", text: "One of the GPU's internal controllers (the security processor) stopped."}
+  - {xid: 170, name: "Interrupt seen in CC mode", now: "", then: "", text: "An unexpected interrupt while the GPU was in confidential computing mode."}
+  - {xid: 171, name: "Uncorrectable DRAM Error", now: "", then: "", text: "An uncorrectable error in the GPU's main memory."}
+  - {xid: 172, name: "Uncorrectable SRAM Error", now: "", then: "", text: "An uncorrectable error in the GPU's on-chip memory."}
+
+# Listed in the catalog, marked as not applying to GB200 (no meaning here; see the catalog).
+not_gb200: [54, 80, 93, 136, 152, 153]

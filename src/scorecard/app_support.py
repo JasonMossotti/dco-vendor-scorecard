@@ -388,6 +388,8 @@ def lookup_lines(query: str, page: str = "scorecards", limit: int = 12) -> list[
                 text = (f"**{_md(s['title'])}.** " if s["title"] and s["title"] != e.expansion else "") + _md(s["text"])
                 where = "; ".join(f"{w['doc']}, {w['section']}" for w in s["where"])
                 lines.append(text + (f" *Defined in {_md(where)} (Agreements tab).*" if where else ""))
+            if e.source:
+                lines.append(f"*Source: [{_md(e.source['label'])}]({e.source['href']}).*")
         return lines
     ql = q.lower()
     hits = [e for e in gl.entries() if ql in e.term.lower() or ql in e.title.lower()][:limit]

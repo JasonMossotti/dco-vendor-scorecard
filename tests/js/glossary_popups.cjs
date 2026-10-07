@@ -29,7 +29,10 @@ const tick = () => new Promise(r => w.setTimeout(r, 0));
   ok(!!pop, "a click opens the card");
   ok(pop && pop.querySelector(".gl-h b").textContent === code, "the card names the code");
   ok(pop && pop.querySelector(".gl-s p, .gl-title") !== null, "the card has a meaning");
-  ok(pop && [...pop.querySelectorAll("a:not(.gl-site)")].every(a => !a.target), "links stay in this window");
+  ok(pop && [...pop.querySelectorAll("a:not(.gl-site):not(.gl-src)")].every(a => !a.target), "links stay in this window");
+  ok(pop && [...pop.querySelectorAll("a.gl-src")].every(a => a.target === "_blank" && a.rel === "noopener" && /^https:\/\/docs\.nvidia\.com\//.test(a.href)),
+     "an outside source opens in a new window");
+  if (/^XID \d+$/.test(code)) ok(pop && pop.querySelector("a.gl-src") !== null, "an XID card links to NVIDIA's catalog");
   ok(pop && [...pop.querySelectorAll("a.gl-site")].every(a => a.target === "_blank" && /devices\/#/.test(a.href)), "only Site model opens a new window, on the Devices page");
   ok(pop && pop.querySelector('.gl-f a[href*="glossary/#"]') !== null, "the card links to the glossary entry");
   d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));

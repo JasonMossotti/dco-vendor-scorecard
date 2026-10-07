@@ -1,247 +1,247 @@
 {"gpu_index": 1, "host": "a11-ct15", "message": "GPU has fallen off the bus", "timestamp": "2026-03-03T21:00:01Z", "tray_serial": "CTXG0TDQ59", "xid": 79}
-{"gpu_index": 1, "host": "a21-ct11", "message": "NVLink error", "timestamp": "2026-03-04T08:10:22Z", "tray_serial": "CT6V8J3CPN", "xid": 145}
-{"gpu_index": 3, "host": "a07-ct04", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-03-05T01:55:19Z", "tray_serial": "CT91SKFOML", "xid": 119}
-{"gpu_index": 1, "host": "a32-ct15", "message": "NVLink error", "timestamp": "2026-03-05T03:44:22Z", "tray_serial": "CTI3EWH9D1", "xid": 145}
-{"gpu_index": 2, "host": "a24-ct01", "message": "NVLink error", "timestamp": "2026-03-05T11:22:11Z", "tray_serial": "CT39LW61HL", "xid": 145}
-{"gpu_index": 1, "host": "a17-ct09", "message": "NVLink error", "timestamp": "2026-03-06T02:14:31Z", "tray_serial": "CT0ZJLFEIH", "xid": 149}
+{"gpu_index": 1, "host": "a21-ct11", "message": "NVLINK: RLW Error", "timestamp": "2026-03-04T08:10:22Z", "tray_serial": "CT6V8J3CPN", "xid": 145}
+{"gpu_index": 3, "host": "a07-ct04", "message": "GSP RPC Timeout", "timestamp": "2026-03-05T01:55:19Z", "tray_serial": "CT91SKFOML", "xid": 119}
+{"gpu_index": 1, "host": "a32-ct15", "message": "NVLINK: RLW Error", "timestamp": "2026-03-05T03:44:22Z", "tray_serial": "CTI3EWH9D1", "xid": 145}
+{"gpu_index": 2, "host": "a24-ct01", "message": "NVLINK: RLW Error", "timestamp": "2026-03-05T11:22:11Z", "tray_serial": "CT39LW61HL", "xid": 145}
+{"gpu_index": 1, "host": "a17-ct09", "message": "NVLINK: NETIR Error", "timestamp": "2026-03-06T02:14:31Z", "tray_serial": "CT0ZJLFEIH", "xid": 149}
 {"gpu_index": 1, "host": "a11-ct15", "message": "GPU has fallen off the bus", "timestamp": "2026-03-06T10:43:11Z", "tray_serial": "CTXG0TDQ59", "xid": 79}
 {"gpu_index": 2, "host": "a31-ct18", "message": "Double Bit ECC Error", "timestamp": "2026-03-06T17:52:25Z", "tray_serial": "CTXVTHK06D", "xid": 48}
-{"gpu_index": 2, "host": "a11-ct16", "message": "Contained ECC error", "timestamp": "2026-03-06T20:42:55Z", "tray_serial": "CTU5W93OUV", "xid": 94}
-{"gpu_index": 2, "host": "a26-ct06", "message": "Contained ECC error", "timestamp": "2026-03-08T15:09:35Z", "tray_serial": "CTK1ZMHGJF", "xid": 94}
-{"gpu_index": 2, "host": "a32-ct15", "message": "NVLink error", "timestamp": "2026-03-09T03:26:25Z", "tray_serial": "CTM7EQSMS7", "xid": 145}
-{"gpu_index": 3, "host": "a17-ct14", "message": "NVLink error", "timestamp": "2026-03-09T11:54:08Z", "tray_serial": "CT6NKHBNR3", "xid": 145}
-{"gpu_index": 0, "host": "a13-ct18", "message": "Contained ECC error", "timestamp": "2026-03-09T16:27:45Z", "tray_serial": "CTT7INKPK9", "xid": 94}
-{"gpu_index": 1, "host": "a27-ct10", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-03-11T17:47:46Z", "tray_serial": "CT6OESWIDR", "xid": 119}
-{"gpu_index": 2, "host": "a21-ct18", "message": "Contained ECC error", "timestamp": "2026-03-11T22:01:36Z", "tray_serial": "CTQB29S4H6", "xid": 94}
-{"gpu_index": 0, "host": "a17-ct09", "message": "NVLink error", "timestamp": "2026-03-13T02:11:23Z", "tray_serial": "CT0ZJLFEIH", "xid": 149}
+{"gpu_index": 2, "host": "a11-ct16", "message": "Contained memory error", "timestamp": "2026-03-06T20:42:55Z", "tray_serial": "CTU5W93OUV", "xid": 94}
+{"gpu_index": 2, "host": "a26-ct06", "message": "Contained memory error", "timestamp": "2026-03-08T15:09:35Z", "tray_serial": "CTK1ZMHGJF", "xid": 94}
+{"gpu_index": 2, "host": "a32-ct15", "message": "NVLINK: RLW Error", "timestamp": "2026-03-09T03:26:25Z", "tray_serial": "CTM7EQSMS7", "xid": 145}
+{"gpu_index": 3, "host": "a17-ct14", "message": "NVLINK: RLW Error", "timestamp": "2026-03-09T11:54:08Z", "tray_serial": "CT6NKHBNR3", "xid": 145}
+{"gpu_index": 0, "host": "a13-ct18", "message": "Contained memory error", "timestamp": "2026-03-09T16:27:45Z", "tray_serial": "CTT7INKPK9", "xid": 94}
+{"gpu_index": 1, "host": "a27-ct10", "message": "GSP RPC Timeout", "timestamp": "2026-03-11T17:47:46Z", "tray_serial": "CT6OESWIDR", "xid": 119}
+{"gpu_index": 2, "host": "a21-ct18", "message": "Contained memory error", "timestamp": "2026-03-11T22:01:36Z", "tray_serial": "CTQB29S4H6", "xid": 94}
+{"gpu_index": 0, "host": "a17-ct09", "message": "NVLINK: NETIR Error", "timestamp": "2026-03-13T02:11:23Z", "tray_serial": "CT0ZJLFEIH", "xid": 149}
 {"gpu_index": 3, "host": "a11-ct16", "message": "GPU has fallen off the bus", "timestamp": "2026-03-13T15:14:51Z", "tray_serial": "CT7JNFCXES", "xid": 79}
 {"gpu_index": 3, "host": "a16-ct13", "message": "Double Bit ECC Error", "timestamp": "2026-03-14T00:51:11Z", "tray_serial": "CTNGAJBNC2", "xid": 48}
-{"gpu_index": 3, "host": "a04-ct15", "message": "NVLink error", "timestamp": "2026-03-14T16:00:30Z", "tray_serial": "CTW642UN55", "xid": 145}
-{"gpu_index": 1, "host": "a13-ct01", "message": "NVLink error", "timestamp": "2026-03-14T22:06:04Z", "tray_serial": "CTF9SSIE1Z", "xid": 145}
-{"gpu_index": 3, "host": "a03-ct10", "message": "Contained ECC error", "timestamp": "2026-03-15T02:04:27Z", "tray_serial": "CTLMPRZG4K", "xid": 94}
+{"gpu_index": 3, "host": "a04-ct15", "message": "NVLINK: RLW Error", "timestamp": "2026-03-14T16:00:30Z", "tray_serial": "CTW642UN55", "xid": 145}
+{"gpu_index": 1, "host": "a13-ct01", "message": "NVLINK: RLW Error", "timestamp": "2026-03-14T22:06:04Z", "tray_serial": "CTF9SSIE1Z", "xid": 145}
+{"gpu_index": 3, "host": "a03-ct10", "message": "Contained memory error", "timestamp": "2026-03-15T02:04:27Z", "tray_serial": "CTLMPRZG4K", "xid": 94}
 {"gpu_index": 1, "host": "a05-ct08", "message": "GPU has fallen off the bus", "timestamp": "2026-03-16T17:08:15Z", "tray_serial": "CTE48AYMTD", "xid": 79}
 {"gpu_index": 0, "host": "a12-ct01", "message": "GPU has fallen off the bus", "timestamp": "2026-03-19T08:24:47Z", "tray_serial": "CTIUJBD1T0", "xid": 79}
 {"gpu_index": 3, "host": "a07-ct05", "message": "GPU has fallen off the bus", "timestamp": "2026-03-20T01:28:02Z", "tray_serial": "CTWH4T6967", "xid": 79}
-{"gpu_index": 3, "host": "a13-ct05", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-03-20T05:46:26Z", "tray_serial": "CTGI2116UE", "xid": 119}
-{"gpu_index": 0, "host": "a10-ct06", "message": "NVLink error", "timestamp": "2026-03-20T10:14:32Z", "tray_serial": "CT2F4TRX2B", "xid": 145}
-{"gpu_index": 3, "host": "a14-ct05", "message": "NVLink error", "timestamp": "2026-03-22T10:34:22Z", "tray_serial": "CTJ572X48F", "xid": 145}
-{"gpu_index": 2, "host": "a10-ct07", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-03-22T11:32:13Z", "tray_serial": "CTMBUSIV6K", "xid": 119}
+{"gpu_index": 3, "host": "a13-ct05", "message": "GSP RPC Timeout", "timestamp": "2026-03-20T05:46:26Z", "tray_serial": "CTGI2116UE", "xid": 119}
+{"gpu_index": 0, "host": "a10-ct06", "message": "NVLINK: RLW Error", "timestamp": "2026-03-20T10:14:32Z", "tray_serial": "CT2F4TRX2B", "xid": 145}
+{"gpu_index": 3, "host": "a14-ct05", "message": "NVLINK: RLW Error", "timestamp": "2026-03-22T10:34:22Z", "tray_serial": "CTJ572X48F", "xid": 145}
+{"gpu_index": 2, "host": "a10-ct07", "message": "GSP RPC Timeout", "timestamp": "2026-03-22T11:32:13Z", "tray_serial": "CTMBUSIV6K", "xid": 119}
 {"gpu_index": 0, "host": "a05-ct17", "message": "GPU has fallen off the bus", "timestamp": "2026-03-23T19:39:01Z", "tray_serial": "CTFWF2J0KT", "xid": 79}
-{"gpu_index": 1, "host": "a09-ct02", "message": "Contained ECC error", "timestamp": "2026-03-23T20:09:38Z", "tray_serial": "CTT6BE3IX6", "xid": 94}
+{"gpu_index": 1, "host": "a09-ct02", "message": "Contained memory error", "timestamp": "2026-03-23T20:09:38Z", "tray_serial": "CTT6BE3IX6", "xid": 94}
 {"gpu_index": 0, "host": "a06-ct01", "message": "GPU has fallen off the bus", "timestamp": "2026-03-23T20:24:25Z", "tray_serial": "CTVDFHLFLP", "xid": 79}
 {"gpu_index": 0, "host": "a04-ct13", "message": "GPU has fallen off the bus", "timestamp": "2026-03-24T01:14:33Z", "tray_serial": "CTO9WT38KX", "xid": 79}
-{"gpu_index": 0, "host": "a09-ct12", "message": "Contained ECC error", "timestamp": "2026-03-24T06:14:18Z", "tray_serial": "CTZBPT7M0K", "xid": 94}
+{"gpu_index": 0, "host": "a09-ct12", "message": "Contained memory error", "timestamp": "2026-03-24T06:14:18Z", "tray_serial": "CTZBPT7M0K", "xid": 94}
 {"gpu_index": 1, "host": "a07-ct05", "message": "GPU has fallen off the bus", "timestamp": "2026-03-26T19:33:43Z", "tray_serial": "CTWH4T6967", "xid": 79}
-{"gpu_index": 1, "host": "a24-ct17", "message": "NVLink error", "timestamp": "2026-03-28T07:32:34Z", "tray_serial": "CTSCZ5C4BU", "xid": 145}
+{"gpu_index": 1, "host": "a24-ct17", "message": "NVLINK: RLW Error", "timestamp": "2026-03-28T07:32:34Z", "tray_serial": "CTSCZ5C4BU", "xid": 145}
 {"gpu_index": 1, "host": "a05-ct08", "message": "GPU has fallen off the bus", "timestamp": "2026-03-29T04:03:57Z", "tray_serial": "CTE48AYMTD", "xid": 79}
 {"gpu_index": 1, "host": "a30-ct13", "message": "GPU has fallen off the bus", "timestamp": "2026-03-29T19:08:35Z", "tray_serial": "CT7FYAL32H", "xid": 79}
 {"gpu_index": 2, "host": "a27-ct10", "message": "GPU has fallen off the bus", "timestamp": "2026-03-30T10:26:44Z", "tray_serial": "CT4P5HPW2G", "xid": 79}
-{"gpu_index": 1, "host": "a12-ct15", "message": "Contained ECC error", "timestamp": "2026-03-30T11:23:52Z", "tray_serial": "CTOVRUA6M7", "xid": 94}
+{"gpu_index": 1, "host": "a12-ct15", "message": "Contained memory error", "timestamp": "2026-03-30T11:23:52Z", "tray_serial": "CTOVRUA6M7", "xid": 94}
 {"gpu_index": 0, "host": "a19-ct08", "message": "Double Bit ECC Error", "timestamp": "2026-03-31T02:47:17Z", "tray_serial": "CT4OBRZNI4", "xid": 48}
-{"gpu_index": 0, "host": "a11-ct11", "message": "Contained ECC error", "timestamp": "2026-03-31T08:25:59Z", "tray_serial": "CTQUK2Y20Q", "xid": 94}
-{"gpu_index": 2, "host": "a08-ct16", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-03-31T08:59:03Z", "tray_serial": "CTN9766REG", "xid": 119}
+{"gpu_index": 0, "host": "a11-ct11", "message": "Contained memory error", "timestamp": "2026-03-31T08:25:59Z", "tray_serial": "CTQUK2Y20Q", "xid": 94}
+{"gpu_index": 2, "host": "a08-ct16", "message": "GSP RPC Timeout", "timestamp": "2026-03-31T08:59:03Z", "tray_serial": "CTN9766REG", "xid": 119}
 {"gpu_index": 0, "host": "a25-ct15", "message": "GPU has fallen off the bus", "timestamp": "2026-03-31T19:28:46Z", "tray_serial": "CTVLG7R01W", "xid": 79}
-{"gpu_index": 3, "host": "a16-ct15", "message": "NVLink error", "timestamp": "2026-04-01T08:35:54Z", "tray_serial": "CTR3TRVEDE", "xid": 145}
-{"gpu_index": 0, "host": "a28-ct06", "message": "NVLink error", "timestamp": "2026-04-03T08:55:57Z", "tray_serial": "CTVERV2I00", "xid": 145}
-{"gpu_index": 1, "host": "a24-ct09", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-04-04T22:36:25Z", "tray_serial": "CTGA72741F", "xid": 119}
-{"gpu_index": 2, "host": "a10-ct18", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-04-06T05:10:52Z", "tray_serial": "CTV5EWZGVM", "xid": 119}
-{"gpu_index": 2, "host": "a17-ct09", "message": "NVLink error", "timestamp": "2026-04-06T12:49:24Z", "tray_serial": "CT5TCU0LXO", "xid": 149}
-{"gpu_index": 3, "host": "a22-ct16", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-04-08T08:22:54Z", "tray_serial": "CTF6D2IKDX", "xid": 119}
-{"gpu_index": 1, "host": "a07-ct04", "message": "NVLink error", "timestamp": "2026-04-08T21:26:27Z", "tray_serial": "CTDW7MCWV8", "xid": 145}
+{"gpu_index": 3, "host": "a16-ct15", "message": "NVLINK: RLW Error", "timestamp": "2026-04-01T08:35:54Z", "tray_serial": "CTR3TRVEDE", "xid": 145}
+{"gpu_index": 0, "host": "a28-ct06", "message": "NVLINK: RLW Error", "timestamp": "2026-04-03T08:55:57Z", "tray_serial": "CTVERV2I00", "xid": 145}
+{"gpu_index": 1, "host": "a24-ct09", "message": "GSP RPC Timeout", "timestamp": "2026-04-04T22:36:25Z", "tray_serial": "CTGA72741F", "xid": 119}
+{"gpu_index": 2, "host": "a10-ct18", "message": "GSP RPC Timeout", "timestamp": "2026-04-06T05:10:52Z", "tray_serial": "CTV5EWZGVM", "xid": 119}
+{"gpu_index": 2, "host": "a17-ct09", "message": "NVLINK: NETIR Error", "timestamp": "2026-04-06T12:49:24Z", "tray_serial": "CT5TCU0LXO", "xid": 149}
+{"gpu_index": 3, "host": "a22-ct16", "message": "GSP RPC Timeout", "timestamp": "2026-04-08T08:22:54Z", "tray_serial": "CTF6D2IKDX", "xid": 119}
+{"gpu_index": 1, "host": "a07-ct04", "message": "NVLINK: RLW Error", "timestamp": "2026-04-08T21:26:27Z", "tray_serial": "CTDW7MCWV8", "xid": 145}
 {"gpu_index": 1, "host": "a05-ct17", "message": "GPU has fallen off the bus", "timestamp": "2026-04-09T23:53:44Z", "tray_serial": "CTTDIWSFTQ", "xid": 79}
-{"gpu_index": 2, "host": "a18-ct10", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-04-12T19:55:48Z", "tray_serial": "CTOOGA1EAW", "xid": 119}
+{"gpu_index": 2, "host": "a18-ct10", "message": "GSP RPC Timeout", "timestamp": "2026-04-12T19:55:48Z", "tray_serial": "CTOOGA1EAW", "xid": 119}
 {"gpu_index": 3, "host": "a20-ct02", "message": "GPU has fallen off the bus", "timestamp": "2026-04-14T00:23:43Z", "tray_serial": "CTSBCGNI2M", "xid": 79}
 {"gpu_index": 2, "host": "a15-ct02", "message": "GPU has fallen off the bus", "timestamp": "2026-04-14T15:28:32Z", "tray_serial": "CTJODBDHVT", "xid": 79}
-{"gpu_index": 3, "host": "a19-ct16", "message": "NVLink error", "timestamp": "2026-04-15T06:48:15Z", "tray_serial": "CTDSI2DPGP", "xid": 145}
+{"gpu_index": 3, "host": "a19-ct16", "message": "NVLINK: RLW Error", "timestamp": "2026-04-15T06:48:15Z", "tray_serial": "CTDSI2DPGP", "xid": 145}
 {"gpu_index": 2, "host": "a04-ct13", "message": "GPU has fallen off the bus", "timestamp": "2026-04-15T10:06:33Z", "tray_serial": "CTO9WT38KX", "xid": 79}
-{"gpu_index": 0, "host": "a02-ct12", "message": "Contained ECC error", "timestamp": "2026-04-15T11:16:13Z", "tray_serial": "CTSAZGFB05", "xid": 94}
-{"gpu_index": 2, "host": "a18-ct11", "message": "Contained ECC error", "timestamp": "2026-04-16T07:06:28Z", "tray_serial": "CTKK0KAFY2", "xid": 94}
+{"gpu_index": 0, "host": "a02-ct12", "message": "Contained memory error", "timestamp": "2026-04-15T11:16:13Z", "tray_serial": "CTSAZGFB05", "xid": 94}
+{"gpu_index": 2, "host": "a18-ct11", "message": "Contained memory error", "timestamp": "2026-04-16T07:06:28Z", "tray_serial": "CTKK0KAFY2", "xid": 94}
 {"gpu_index": 3, "host": "a15-ct05", "message": "GPU has fallen off the bus", "timestamp": "2026-04-16T08:58:58Z", "tray_serial": "CTSP95R9C7", "xid": 79}
-{"gpu_index": 2, "host": "a29-ct18", "message": "NVLink error", "timestamp": "2026-04-18T08:15:07Z", "tray_serial": "CT1OAA4JT2", "xid": 149}
-{"gpu_index": 0, "host": "a21-ct02", "message": "NVLink error", "timestamp": "2026-04-18T22:02:26Z", "tray_serial": "CTGACH8TZP", "xid": 149}
+{"gpu_index": 2, "host": "a29-ct18", "message": "NVLINK: NETIR Error", "timestamp": "2026-04-18T08:15:07Z", "tray_serial": "CT1OAA4JT2", "xid": 149}
+{"gpu_index": 0, "host": "a21-ct02", "message": "NVLINK: NETIR Error", "timestamp": "2026-04-18T22:02:26Z", "tray_serial": "CTGACH8TZP", "xid": 149}
 {"gpu_index": 0, "host": "a15-ct02", "message": "GPU has fallen off the bus", "timestamp": "2026-04-19T04:30:20Z", "tray_serial": "CTJODBDHVT", "xid": 79}
-{"gpu_index": 3, "host": "a08-ct15", "message": "NVLink error", "timestamp": "2026-04-19T05:35:07Z", "tray_serial": "CTV5ZZIU3Z", "xid": 145}
-{"gpu_index": 2, "host": "a11-ct05", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-04-19T10:17:29Z", "tray_serial": "CT2XDA7TF4", "xid": 119}
+{"gpu_index": 3, "host": "a08-ct15", "message": "NVLINK: RLW Error", "timestamp": "2026-04-19T05:35:07Z", "tray_serial": "CTV5ZZIU3Z", "xid": 145}
+{"gpu_index": 2, "host": "a11-ct05", "message": "GSP RPC Timeout", "timestamp": "2026-04-19T10:17:29Z", "tray_serial": "CT2XDA7TF4", "xid": 119}
 {"gpu_index": 1, "host": "a17-ct06", "message": "GPU has fallen off the bus", "timestamp": "2026-04-19T17:59:03Z", "tray_serial": "CTSOBM3G5V", "xid": 79}
 {"gpu_index": 2, "host": "a05-ct08", "message": "GPU has fallen off the bus", "timestamp": "2026-04-19T21:07:08Z", "tray_serial": "CTE48AYMTD", "xid": 79}
-{"gpu_index": 1, "host": "a17-ct06", "message": "NVLink error", "timestamp": "2026-04-20T09:33:37Z", "tray_serial": "CTSOBM3G5V", "xid": 145}
-{"gpu_index": 1, "host": "a26-ct01", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-04-20T10:45:25Z", "tray_serial": "CTBB96IHTW", "xid": 119}
+{"gpu_index": 1, "host": "a17-ct06", "message": "NVLINK: RLW Error", "timestamp": "2026-04-20T09:33:37Z", "tray_serial": "CTSOBM3G5V", "xid": 145}
+{"gpu_index": 1, "host": "a26-ct01", "message": "GSP RPC Timeout", "timestamp": "2026-04-20T10:45:25Z", "tray_serial": "CTBB96IHTW", "xid": 119}
 {"gpu_index": 3, "host": "a32-ct06", "message": "GPU has fallen off the bus", "timestamp": "2026-04-20T14:17:28Z", "tray_serial": "CTUYC19A1M", "xid": 79}
 {"gpu_index": 2, "host": "a22-ct17", "message": "GPU has fallen off the bus", "timestamp": "2026-04-20T19:51:04Z", "tray_serial": "CTHJ953CPG", "xid": 79}
-{"gpu_index": 3, "host": "a05-ct01", "message": "Contained ECC error", "timestamp": "2026-04-22T07:29:14Z", "tray_serial": "CTP34BH71G", "xid": 94}
+{"gpu_index": 3, "host": "a05-ct01", "message": "Contained memory error", "timestamp": "2026-04-22T07:29:14Z", "tray_serial": "CTP34BH71G", "xid": 94}
 {"gpu_index": 3, "host": "a27-ct12", "message": "GPU has fallen off the bus", "timestamp": "2026-04-23T02:01:03Z", "tray_serial": "CTBZKLR2G9", "xid": 79}
 {"gpu_index": 1, "host": "a30-ct13", "message": "GPU has fallen off the bus", "timestamp": "2026-04-23T04:18:18Z", "tray_serial": "CTSGMC3O5V", "xid": 79}
-{"gpu_index": 3, "host": "a05-ct09", "message": "Contained ECC error", "timestamp": "2026-04-24T19:48:57Z", "tray_serial": "CTTA99S33M", "xid": 94}
-{"gpu_index": 0, "host": "a11-ct18", "message": "Contained ECC error", "timestamp": "2026-04-25T17:52:13Z", "tray_serial": "CTQESJH7BX", "xid": 94}
+{"gpu_index": 3, "host": "a05-ct09", "message": "Contained memory error", "timestamp": "2026-04-24T19:48:57Z", "tray_serial": "CTTA99S33M", "xid": 94}
+{"gpu_index": 0, "host": "a11-ct18", "message": "Contained memory error", "timestamp": "2026-04-25T17:52:13Z", "tray_serial": "CTQESJH7BX", "xid": 94}
 {"gpu_index": 3, "host": "a25-ct16", "message": "GPU has fallen off the bus", "timestamp": "2026-04-26T00:17:39Z", "tray_serial": "CTAYATT337", "xid": 79}
 {"gpu_index": 3, "host": "a32-ct11", "message": "GPU has fallen off the bus", "timestamp": "2026-04-26T00:33:47Z", "tray_serial": "CTJJI0Q6LZ", "xid": 79}
-{"gpu_index": 0, "host": "a11-ct08", "message": "NVLink error", "timestamp": "2026-04-28T06:56:13Z", "tray_serial": "CTCX5QILEY", "xid": 145}
+{"gpu_index": 0, "host": "a11-ct08", "message": "NVLINK: RLW Error", "timestamp": "2026-04-28T06:56:13Z", "tray_serial": "CTCX5QILEY", "xid": 145}
 {"gpu_index": 1, "host": "a21-ct17", "message": "Double Bit ECC Error", "timestamp": "2026-04-28T11:02:36Z", "tray_serial": "CTNI479CJ9", "xid": 48}
-{"gpu_index": 1, "host": "a20-ct06", "message": "NVLink error", "timestamp": "2026-04-29T06:26:47Z", "tray_serial": "CTHWNC0KRZ", "xid": 149}
-{"gpu_index": 0, "host": "a30-ct12", "message": "NVLink error", "timestamp": "2026-04-29T07:07:36Z", "tray_serial": "CTR223QOFH", "xid": 145}
-{"gpu_index": 2, "host": "a19-ct10", "message": "NVLink error", "timestamp": "2026-04-29T13:50:24Z", "tray_serial": "CTO93XS2SU", "xid": 145}
-{"gpu_index": 3, "host": "a24-ct16", "message": "NVLink error", "timestamp": "2026-04-30T08:47:04Z", "tray_serial": "CTMEY8RRNT", "xid": 145}
+{"gpu_index": 1, "host": "a20-ct06", "message": "NVLINK: NETIR Error", "timestamp": "2026-04-29T06:26:47Z", "tray_serial": "CTHWNC0KRZ", "xid": 149}
+{"gpu_index": 0, "host": "a30-ct12", "message": "NVLINK: RLW Error", "timestamp": "2026-04-29T07:07:36Z", "tray_serial": "CTR223QOFH", "xid": 145}
+{"gpu_index": 2, "host": "a19-ct10", "message": "NVLINK: RLW Error", "timestamp": "2026-04-29T13:50:24Z", "tray_serial": "CTO93XS2SU", "xid": 145}
+{"gpu_index": 3, "host": "a24-ct16", "message": "NVLINK: RLW Error", "timestamp": "2026-04-30T08:47:04Z", "tray_serial": "CTMEY8RRNT", "xid": 145}
 {"gpu_index": 3, "host": "a32-ct11", "message": "GPU has fallen off the bus", "timestamp": "2026-04-30T08:57:55Z", "tray_serial": "CTJJI0Q6LZ", "xid": 79}
 {"gpu_index": 1, "host": "a09-ct04", "message": "GPU has fallen off the bus", "timestamp": "2026-04-30T18:58:26Z", "tray_serial": "CT2UGAMR81", "xid": 79}
 {"gpu_index": 2, "host": "a15-ct06", "message": "GPU has fallen off the bus", "timestamp": "2026-05-01T02:14:49Z", "tray_serial": "CT2WOW0GAD", "xid": 79}
 {"gpu_index": 3, "host": "a30-ct05", "message": "GPU has fallen off the bus", "timestamp": "2026-05-01T21:15:03Z", "tray_serial": "CTTQXBA526", "xid": 79}
-{"gpu_index": 0, "host": "a04-ct17", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-05-02T04:46:52Z", "tray_serial": "CTHT2JNA8K", "xid": 119}
+{"gpu_index": 0, "host": "a04-ct17", "message": "GSP RPC Timeout", "timestamp": "2026-05-02T04:46:52Z", "tray_serial": "CTHT2JNA8K", "xid": 119}
 {"gpu_index": 0, "host": "a32-ct06", "message": "GPU has fallen off the bus", "timestamp": "2026-05-04T09:42:02Z", "tray_serial": "CTUYC19A1M", "xid": 79}
 {"gpu_index": 0, "host": "a29-ct11", "message": "GPU has fallen off the bus", "timestamp": "2026-05-04T18:23:53Z", "tray_serial": "CTHF34E6GJ", "xid": 79}
 {"gpu_index": 0, "host": "a20-ct14", "message": "GPU has fallen off the bus", "timestamp": "2026-05-05T02:04:23Z", "tray_serial": "CT7D7B88SE", "xid": 79}
-{"gpu_index": 3, "host": "a11-ct02", "message": "NVLink error", "timestamp": "2026-05-06T06:02:27Z", "tray_serial": "CT1NYAAYC3", "xid": 149}
+{"gpu_index": 3, "host": "a11-ct02", "message": "NVLINK: NETIR Error", "timestamp": "2026-05-06T06:02:27Z", "tray_serial": "CT1NYAAYC3", "xid": 149}
 {"gpu_index": 2, "host": "a29-ct11", "message": "GPU has fallen off the bus", "timestamp": "2026-05-06T22:28:10Z", "tray_serial": "CTHF34E6GJ", "xid": 79}
-{"gpu_index": 0, "host": "a05-ct09", "message": "NVLink error", "timestamp": "2026-05-07T15:55:41Z", "tray_serial": "CTL3P21CHZ", "xid": 149}
+{"gpu_index": 0, "host": "a05-ct09", "message": "NVLINK: NETIR Error", "timestamp": "2026-05-07T15:55:41Z", "tray_serial": "CTL3P21CHZ", "xid": 149}
 {"gpu_index": 3, "host": "a13-ct06", "message": "GPU has fallen off the bus", "timestamp": "2026-05-08T15:20:10Z", "tray_serial": "CTT9GMOGO4", "xid": 79}
 {"gpu_index": 1, "host": "a27-ct12", "message": "GPU has fallen off the bus", "timestamp": "2026-05-09T21:53:29Z", "tray_serial": "CTBZKLR2G9", "xid": 79}
 {"gpu_index": 0, "host": "a15-ct05", "message": "GPU has fallen off the bus", "timestamp": "2026-05-10T07:21:06Z", "tray_serial": "CTCTSCH8DV", "xid": 79}
-{"gpu_index": 2, "host": "a05-ct17", "message": "Contained ECC error", "timestamp": "2026-05-10T10:12:41Z", "tray_serial": "CTFY4KL55T", "xid": 94}
-{"gpu_index": 2, "host": "a03-ct09", "message": "Contained ECC error", "timestamp": "2026-05-10T14:28:04Z", "tray_serial": "CTUBBOLNW1", "xid": 94}
+{"gpu_index": 2, "host": "a05-ct17", "message": "Contained memory error", "timestamp": "2026-05-10T10:12:41Z", "tray_serial": "CTFY4KL55T", "xid": 94}
+{"gpu_index": 2, "host": "a03-ct09", "message": "Contained memory error", "timestamp": "2026-05-10T14:28:04Z", "tray_serial": "CTUBBOLNW1", "xid": 94}
 {"gpu_index": 1, "host": "a32-ct07", "message": "GPU has fallen off the bus", "timestamp": "2026-05-11T03:25:24Z", "tray_serial": "CTDPDSF8OT", "xid": 79}
-{"gpu_index": 1, "host": "a08-ct02", "message": "Contained ECC error", "timestamp": "2026-05-11T10:13:17Z", "tray_serial": "CTSJ9D9SY9", "xid": 94}
-{"gpu_index": 1, "host": "a10-ct03", "message": "Contained ECC error", "timestamp": "2026-05-11T23:55:26Z", "tray_serial": "CT2R9QNEWD", "xid": 94}
-{"gpu_index": 1, "host": "a17-ct04", "message": "NVLink error", "timestamp": "2026-05-12T05:38:47Z", "tray_serial": "CTKV29NHUZ", "xid": 145}
+{"gpu_index": 1, "host": "a08-ct02", "message": "Contained memory error", "timestamp": "2026-05-11T10:13:17Z", "tray_serial": "CTSJ9D9SY9", "xid": 94}
+{"gpu_index": 1, "host": "a10-ct03", "message": "Contained memory error", "timestamp": "2026-05-11T23:55:26Z", "tray_serial": "CT2R9QNEWD", "xid": 94}
+{"gpu_index": 1, "host": "a17-ct04", "message": "NVLINK: RLW Error", "timestamp": "2026-05-12T05:38:47Z", "tray_serial": "CTKV29NHUZ", "xid": 145}
 {"gpu_index": 0, "host": "a05-ct08", "message": "GPU has fallen off the bus", "timestamp": "2026-05-12T08:31:13Z", "tray_serial": "CTE48AYMTD", "xid": 79}
-{"gpu_index": 1, "host": "a20-ct14", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-05-13T02:46:29Z", "tray_serial": "CTO6KRG6G0", "xid": 119}
-{"gpu_index": 2, "host": "a12-ct13", "message": "NVLink error", "timestamp": "2026-05-13T22:29:55Z", "tray_serial": "CTO58M9VK1", "xid": 145}
+{"gpu_index": 1, "host": "a20-ct14", "message": "GSP RPC Timeout", "timestamp": "2026-05-13T02:46:29Z", "tray_serial": "CTO6KRG6G0", "xid": 119}
+{"gpu_index": 2, "host": "a12-ct13", "message": "NVLINK: RLW Error", "timestamp": "2026-05-13T22:29:55Z", "tray_serial": "CTO58M9VK1", "xid": 145}
 {"gpu_index": 2, "host": "a04-ct12", "message": "Double Bit ECC Error", "timestamp": "2026-05-14T08:37:41Z", "tray_serial": "CTNRCLBVMK", "xid": 48}
 {"gpu_index": 3, "host": "a26-ct04", "message": "GPU has fallen off the bus", "timestamp": "2026-05-15T01:59:03Z", "tray_serial": "CTFRR4T4YH", "xid": 79}
 {"gpu_index": 1, "host": "a30-ct18", "message": "GPU has fallen off the bus", "timestamp": "2026-05-15T05:52:16Z", "tray_serial": "CTZPFXYVIO", "xid": 79}
-{"gpu_index": 3, "host": "a17-ct03", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-05-15T15:54:16Z", "tray_serial": "CTTN5PPO8W", "xid": 119}
+{"gpu_index": 3, "host": "a17-ct03", "message": "GSP RPC Timeout", "timestamp": "2026-05-15T15:54:16Z", "tray_serial": "CTTN5PPO8W", "xid": 119}
 {"gpu_index": 3, "host": "a14-ct01", "message": "GPU has fallen off the bus", "timestamp": "2026-05-16T00:52:45Z", "tray_serial": "CTO5C1SOEP", "xid": 79}
-{"gpu_index": 0, "host": "a23-ct10", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-05-16T12:32:25Z", "tray_serial": "CTZ151C42W", "xid": 119}
+{"gpu_index": 0, "host": "a23-ct10", "message": "GSP RPC Timeout", "timestamp": "2026-05-16T12:32:25Z", "tray_serial": "CTZ151C42W", "xid": 119}
 {"gpu_index": 0, "host": "a21-ct05", "message": "GPU has fallen off the bus", "timestamp": "2026-05-17T00:02:01Z", "tray_serial": "CT3GRVG5LH", "xid": 79}
-{"gpu_index": 2, "host": "a01-ct12", "message": "Contained ECC error", "timestamp": "2026-05-17T05:21:08Z", "tray_serial": "CTL21AIL1C", "xid": 94}
-{"gpu_index": 2, "host": "a04-ct16", "message": "NVLink error", "timestamp": "2026-05-18T06:21:36Z", "tray_serial": "CTLTFFF497", "xid": 145}
+{"gpu_index": 2, "host": "a01-ct12", "message": "Contained memory error", "timestamp": "2026-05-17T05:21:08Z", "tray_serial": "CTL21AIL1C", "xid": 94}
+{"gpu_index": 2, "host": "a04-ct16", "message": "NVLINK: RLW Error", "timestamp": "2026-05-18T06:21:36Z", "tray_serial": "CTLTFFF497", "xid": 145}
 {"gpu_index": 3, "host": "a17-ct09", "message": "GPU has fallen off the bus", "timestamp": "2026-05-18T13:30:59Z", "tray_serial": "CT0JJXJOEL", "xid": 79}
-{"gpu_index": 2, "host": "a24-ct07", "message": "Contained ECC error", "timestamp": "2026-05-20T12:35:04Z", "tray_serial": "CTNK00YUAB", "xid": 94}
-{"gpu_index": 2, "host": "a22-ct02", "message": "NVLink error", "timestamp": "2026-05-20T20:32:41Z", "tray_serial": "CT5K95M7HP", "xid": 145}
+{"gpu_index": 2, "host": "a24-ct07", "message": "Contained memory error", "timestamp": "2026-05-20T12:35:04Z", "tray_serial": "CTNK00YUAB", "xid": 94}
+{"gpu_index": 2, "host": "a22-ct02", "message": "NVLINK: RLW Error", "timestamp": "2026-05-20T20:32:41Z", "tray_serial": "CT5K95M7HP", "xid": 145}
 {"gpu_index": 1, "host": "a23-ct01", "message": "GPU has fallen off the bus", "timestamp": "2026-05-21T00:04:25Z", "tray_serial": "CTFUU9XOSN", "xid": 79}
-{"gpu_index": 3, "host": "a26-ct15", "message": "NVLink error", "timestamp": "2026-05-21T03:16:42Z", "tray_serial": "CTU4M0P49O", "xid": 145}
+{"gpu_index": 3, "host": "a26-ct15", "message": "NVLINK: RLW Error", "timestamp": "2026-05-21T03:16:42Z", "tray_serial": "CTU4M0P49O", "xid": 145}
 {"gpu_index": 0, "host": "a31-ct15", "message": "GPU has fallen off the bus", "timestamp": "2026-05-21T20:36:22Z", "tray_serial": "CT4TDXX1SR", "xid": 79}
-{"gpu_index": 1, "host": "a15-ct11", "message": "Contained ECC error", "timestamp": "2026-05-22T02:36:04Z", "tray_serial": "CT3Y6MZQPP", "xid": 94}
-{"gpu_index": 0, "host": "a30-ct01", "message": "Contained ECC error", "timestamp": "2026-05-23T01:11:12Z", "tray_serial": "CT83O3K08P", "xid": 94}
-{"gpu_index": 3, "host": "a29-ct06", "message": "Contained ECC error", "timestamp": "2026-05-23T03:06:51Z", "tray_serial": "CTJO58YWFU", "xid": 94}
-{"gpu_index": 1, "host": "a04-ct16", "message": "NVLink error", "timestamp": "2026-05-23T07:36:32Z", "tray_serial": "CT7X3QFI3F", "xid": 145}
+{"gpu_index": 1, "host": "a15-ct11", "message": "Contained memory error", "timestamp": "2026-05-22T02:36:04Z", "tray_serial": "CT3Y6MZQPP", "xid": 94}
+{"gpu_index": 0, "host": "a30-ct01", "message": "Contained memory error", "timestamp": "2026-05-23T01:11:12Z", "tray_serial": "CT83O3K08P", "xid": 94}
+{"gpu_index": 3, "host": "a29-ct06", "message": "Contained memory error", "timestamp": "2026-05-23T03:06:51Z", "tray_serial": "CTJO58YWFU", "xid": 94}
+{"gpu_index": 1, "host": "a04-ct16", "message": "NVLINK: RLW Error", "timestamp": "2026-05-23T07:36:32Z", "tray_serial": "CT7X3QFI3F", "xid": 145}
 {"gpu_index": 0, "host": "a05-ct08", "message": "GPU has fallen off the bus", "timestamp": "2026-05-24T02:12:54Z", "tray_serial": "CTE48AYMTD", "xid": 79}
-{"gpu_index": 0, "host": "a10-ct15", "message": "Contained ECC error", "timestamp": "2026-05-24T10:40:36Z", "tray_serial": "CTOEG40NSM", "xid": 94}
+{"gpu_index": 0, "host": "a10-ct15", "message": "Contained memory error", "timestamp": "2026-05-24T10:40:36Z", "tray_serial": "CTOEG40NSM", "xid": 94}
 {"gpu_index": 2, "host": "a23-ct01", "message": "GPU has fallen off the bus", "timestamp": "2026-05-24T21:20:03Z", "tray_serial": "CTFUU9XOSN", "xid": 79}
 {"gpu_index": 3, "host": "a14-ct07", "message": "GPU has fallen off the bus", "timestamp": "2026-05-25T20:44:24Z", "tray_serial": "CTA1QSVRVF", "xid": 79}
 {"gpu_index": 3, "host": "a06-ct04", "message": "Double Bit ECC Error", "timestamp": "2026-05-28T11:57:42Z", "tray_serial": "CT60WTR735", "xid": 48}
-{"gpu_index": 1, "host": "a08-ct18", "message": "Contained ECC error", "timestamp": "2026-05-28T15:20:39Z", "tray_serial": "CTSL73383H", "xid": 94}
-{"gpu_index": 0, "host": "a01-ct09", "message": "Contained ECC error", "timestamp": "2026-05-31T03:51:43Z", "tray_serial": "CTRI5WQQ79", "xid": 94}
-{"gpu_index": 3, "host": "a25-ct11", "message": "Contained ECC error", "timestamp": "2026-05-31T09:22:45Z", "tray_serial": "CT2IGNT30O", "xid": 94}
-{"gpu_index": 0, "host": "a29-ct18", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-01T07:16:44Z", "tray_serial": "CT50L6FNZ7", "xid": 119}
-{"gpu_index": 2, "host": "a10-ct05", "message": "NVLink error", "timestamp": "2026-06-02T19:48:51Z", "tray_serial": "CTW35VY3KW", "xid": 145}
-{"gpu_index": 0, "host": "a01-ct13", "message": "Contained ECC error", "timestamp": "2026-06-04T10:21:15Z", "tray_serial": "CT63L7DY2S", "xid": 94}
+{"gpu_index": 1, "host": "a08-ct18", "message": "Contained memory error", "timestamp": "2026-05-28T15:20:39Z", "tray_serial": "CTSL73383H", "xid": 94}
+{"gpu_index": 0, "host": "a01-ct09", "message": "Contained memory error", "timestamp": "2026-05-31T03:51:43Z", "tray_serial": "CTRI5WQQ79", "xid": 94}
+{"gpu_index": 3, "host": "a25-ct11", "message": "Contained memory error", "timestamp": "2026-05-31T09:22:45Z", "tray_serial": "CT2IGNT30O", "xid": 94}
+{"gpu_index": 0, "host": "a29-ct18", "message": "GSP RPC Timeout", "timestamp": "2026-06-01T07:16:44Z", "tray_serial": "CT50L6FNZ7", "xid": 119}
+{"gpu_index": 2, "host": "a10-ct05", "message": "NVLINK: RLW Error", "timestamp": "2026-06-02T19:48:51Z", "tray_serial": "CTW35VY3KW", "xid": 145}
+{"gpu_index": 0, "host": "a01-ct13", "message": "Contained memory error", "timestamp": "2026-06-04T10:21:15Z", "tray_serial": "CT63L7DY2S", "xid": 94}
 {"gpu_index": 3, "host": "a24-ct16", "message": "GPU has fallen off the bus", "timestamp": "2026-06-04T15:39:49Z", "tray_serial": "CT77KP7A0H", "xid": 79}
 {"gpu_index": 3, "host": "a11-ct06", "message": "Double Bit ECC Error", "timestamp": "2026-06-04T15:58:21Z", "tray_serial": "CTERT4FC93", "xid": 48}
-{"gpu_index": 2, "host": "a23-ct02", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-04T22:11:28Z", "tray_serial": "CT1ICLR8B6", "xid": 119}
-{"gpu_index": 1, "host": "a28-ct10", "message": "Contained ECC error", "timestamp": "2026-06-05T08:25:29Z", "tray_serial": "CTBP4SHZQ8", "xid": 94}
-{"gpu_index": 3, "host": "a10-ct05", "message": "NVLink error", "timestamp": "2026-06-07T23:01:58Z", "tray_serial": "CT80Q5FQTY", "xid": 145}
-{"gpu_index": 1, "host": "a16-ct04", "message": "NVLink error", "timestamp": "2026-06-08T12:58:16Z", "tray_serial": "CTPL7GWSQ0", "xid": 145}
-{"gpu_index": 3, "host": "a20-ct03", "message": "NVLink error", "timestamp": "2026-06-08T22:20:12Z", "tray_serial": "CT28I50ZV7", "xid": 145}
-{"gpu_index": 0, "host": "a30-ct07", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-09T01:18:45Z", "tray_serial": "CTFPAHD2DE", "xid": 119}
-{"gpu_index": 1, "host": "a03-ct06", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-09T05:17:57Z", "tray_serial": "CTGX2ZR6FL", "xid": 119}
-{"gpu_index": 3, "host": "a15-ct01", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-09T06:14:32Z", "tray_serial": "CTLWU6KGVI", "xid": 119}
+{"gpu_index": 2, "host": "a23-ct02", "message": "GSP RPC Timeout", "timestamp": "2026-06-04T22:11:28Z", "tray_serial": "CT1ICLR8B6", "xid": 119}
+{"gpu_index": 1, "host": "a28-ct10", "message": "Contained memory error", "timestamp": "2026-06-05T08:25:29Z", "tray_serial": "CTBP4SHZQ8", "xid": 94}
+{"gpu_index": 3, "host": "a10-ct05", "message": "NVLINK: RLW Error", "timestamp": "2026-06-07T23:01:58Z", "tray_serial": "CT80Q5FQTY", "xid": 145}
+{"gpu_index": 1, "host": "a16-ct04", "message": "NVLINK: RLW Error", "timestamp": "2026-06-08T12:58:16Z", "tray_serial": "CTPL7GWSQ0", "xid": 145}
+{"gpu_index": 3, "host": "a20-ct03", "message": "NVLINK: RLW Error", "timestamp": "2026-06-08T22:20:12Z", "tray_serial": "CT28I50ZV7", "xid": 145}
+{"gpu_index": 0, "host": "a30-ct07", "message": "GSP RPC Timeout", "timestamp": "2026-06-09T01:18:45Z", "tray_serial": "CTFPAHD2DE", "xid": 119}
+{"gpu_index": 1, "host": "a03-ct06", "message": "GSP RPC Timeout", "timestamp": "2026-06-09T05:17:57Z", "tray_serial": "CTGX2ZR6FL", "xid": 119}
+{"gpu_index": 3, "host": "a15-ct01", "message": "GSP RPC Timeout", "timestamp": "2026-06-09T06:14:32Z", "tray_serial": "CTLWU6KGVI", "xid": 119}
 {"gpu_index": 1, "host": "a11-ct06", "message": "GPU has fallen off the bus", "timestamp": "2026-06-10T05:12:37Z", "tray_serial": "CTF89LDYLB", "xid": 79}
 {"gpu_index": 2, "host": "a06-ct03", "message": "GPU has fallen off the bus", "timestamp": "2026-06-10T10:52:08Z", "tray_serial": "CTVWH4C5GR", "xid": 79}
 {"gpu_index": 0, "host": "a29-ct13", "message": "Double Bit ECC Error", "timestamp": "2026-06-10T17:49:41Z", "tray_serial": "CT44D82T1P", "xid": 48}
-{"gpu_index": 2, "host": "a11-ct02", "message": "NVLink error", "timestamp": "2026-06-11T12:30:47Z", "tray_serial": "CTW3K0P3WE", "xid": 145}
-{"gpu_index": 1, "host": "a17-ct07", "message": "Contained ECC error", "timestamp": "2026-06-12T20:21:05Z", "tray_serial": "CTI4UQMKFM", "xid": 94}
-{"gpu_index": 0, "host": "a16-ct11", "message": "NVLink error", "timestamp": "2026-06-13T16:53:53Z", "tray_serial": "CTUHJ0KMQ2", "xid": 145}
+{"gpu_index": 2, "host": "a11-ct02", "message": "NVLINK: RLW Error", "timestamp": "2026-06-11T12:30:47Z", "tray_serial": "CTW3K0P3WE", "xid": 145}
+{"gpu_index": 1, "host": "a17-ct07", "message": "Contained memory error", "timestamp": "2026-06-12T20:21:05Z", "tray_serial": "CTI4UQMKFM", "xid": 94}
+{"gpu_index": 0, "host": "a16-ct11", "message": "NVLINK: RLW Error", "timestamp": "2026-06-13T16:53:53Z", "tray_serial": "CTUHJ0KMQ2", "xid": 145}
 {"gpu_index": 0, "host": "a08-ct02", "message": "GPU has fallen off the bus", "timestamp": "2026-06-14T02:03:15Z", "tray_serial": "CTSJ9D9SY9", "xid": 79}
 {"gpu_index": 0, "host": "a22-ct13", "message": "Double Bit ECC Error", "timestamp": "2026-06-14T08:51:29Z", "tray_serial": "CTWZF86LU8", "xid": 48}
-{"gpu_index": 0, "host": "a29-ct12", "message": "NVLink error", "timestamp": "2026-06-14T23:59:17Z", "tray_serial": "CT2KTBMCLY", "xid": 145}
-{"gpu_index": 3, "host": "a20-ct01", "message": "NVLink error", "timestamp": "2026-06-16T04:00:57Z", "tray_serial": "CTTMX4VL3Q", "xid": 145}
-{"gpu_index": 0, "host": "a29-ct18", "message": "NVLink error", "timestamp": "2026-06-16T11:30:13Z", "tray_serial": "CT50L6FNZ7", "xid": 149}
-{"gpu_index": 3, "host": "a17-ct08", "message": "Contained ECC error", "timestamp": "2026-06-16T18:31:55Z", "tray_serial": "CTHVRRTLHH", "xid": 94}
-{"gpu_index": 2, "host": "a24-ct10", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-17T03:02:26Z", "tray_serial": "CT7YXWY2GJ", "xid": 119}
+{"gpu_index": 0, "host": "a29-ct12", "message": "NVLINK: RLW Error", "timestamp": "2026-06-14T23:59:17Z", "tray_serial": "CT2KTBMCLY", "xid": 145}
+{"gpu_index": 3, "host": "a20-ct01", "message": "NVLINK: RLW Error", "timestamp": "2026-06-16T04:00:57Z", "tray_serial": "CTTMX4VL3Q", "xid": 145}
+{"gpu_index": 0, "host": "a29-ct18", "message": "NVLINK: NETIR Error", "timestamp": "2026-06-16T11:30:13Z", "tray_serial": "CT50L6FNZ7", "xid": 149}
+{"gpu_index": 3, "host": "a17-ct08", "message": "Contained memory error", "timestamp": "2026-06-16T18:31:55Z", "tray_serial": "CTHVRRTLHH", "xid": 94}
+{"gpu_index": 2, "host": "a24-ct10", "message": "GSP RPC Timeout", "timestamp": "2026-06-17T03:02:26Z", "tray_serial": "CT7YXWY2GJ", "xid": 119}
 {"gpu_index": 3, "host": "a20-ct04", "message": "Double Bit ECC Error", "timestamp": "2026-06-17T09:31:08Z", "tray_serial": "CTRBQS1YFW", "xid": 48}
-{"gpu_index": 2, "host": "a26-ct10", "message": "NVLink error", "timestamp": "2026-06-19T09:51:45Z", "tray_serial": "CTX068A9N1", "xid": 145}
-{"gpu_index": 3, "host": "a07-ct08", "message": "NVLink error", "timestamp": "2026-06-20T04:19:21Z", "tray_serial": "CTGJ8XIRZ1", "xid": 145}
-{"gpu_index": 3, "host": "a25-ct15", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-20T20:17:38Z", "tray_serial": "CTQN3OW804", "xid": 119}
-{"gpu_index": 2, "host": "a19-ct03", "message": "Contained ECC error", "timestamp": "2026-06-21T02:28:22Z", "tray_serial": "CT0EK3NZTR", "xid": 94}
-{"gpu_index": 1, "host": "a28-ct03", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-21T09:08:27Z", "tray_serial": "CTRC3PKBQM", "xid": 119}
-{"gpu_index": 3, "host": "a23-ct14", "message": "Contained ECC error", "timestamp": "2026-06-21T12:16:01Z", "tray_serial": "CTOCJ1P7L6", "xid": 94}
-{"gpu_index": 0, "host": "a24-ct10", "message": "Contained ECC error", "timestamp": "2026-06-21T13:32:43Z", "tray_serial": "CT9PPYR8VJ", "xid": 94}
-{"gpu_index": 0, "host": "a17-ct10", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-21T20:55:10Z", "tray_serial": "CTGLJBXZML", "xid": 119}
+{"gpu_index": 2, "host": "a26-ct10", "message": "NVLINK: RLW Error", "timestamp": "2026-06-19T09:51:45Z", "tray_serial": "CTX068A9N1", "xid": 145}
+{"gpu_index": 3, "host": "a07-ct08", "message": "NVLINK: RLW Error", "timestamp": "2026-06-20T04:19:21Z", "tray_serial": "CTGJ8XIRZ1", "xid": 145}
+{"gpu_index": 3, "host": "a25-ct15", "message": "GSP RPC Timeout", "timestamp": "2026-06-20T20:17:38Z", "tray_serial": "CTQN3OW804", "xid": 119}
+{"gpu_index": 2, "host": "a19-ct03", "message": "Contained memory error", "timestamp": "2026-06-21T02:28:22Z", "tray_serial": "CT0EK3NZTR", "xid": 94}
+{"gpu_index": 1, "host": "a28-ct03", "message": "GSP RPC Timeout", "timestamp": "2026-06-21T09:08:27Z", "tray_serial": "CTRC3PKBQM", "xid": 119}
+{"gpu_index": 3, "host": "a23-ct14", "message": "Contained memory error", "timestamp": "2026-06-21T12:16:01Z", "tray_serial": "CTOCJ1P7L6", "xid": 94}
+{"gpu_index": 0, "host": "a24-ct10", "message": "Contained memory error", "timestamp": "2026-06-21T13:32:43Z", "tray_serial": "CT9PPYR8VJ", "xid": 94}
+{"gpu_index": 0, "host": "a17-ct10", "message": "GSP RPC Timeout", "timestamp": "2026-06-21T20:55:10Z", "tray_serial": "CTGLJBXZML", "xid": 119}
 {"gpu_index": 3, "host": "a17-ct06", "message": "GPU has fallen off the bus", "timestamp": "2026-06-22T11:55:19Z", "tray_serial": "CT12DTU81G", "xid": 79}
 {"gpu_index": 2, "host": "a11-ct10", "message": "GPU has fallen off the bus", "timestamp": "2026-06-22T18:56:23Z", "tray_serial": "CT7XSHFSB8", "xid": 79}
-{"gpu_index": 3, "host": "a01-ct07", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-23T01:44:00Z", "tray_serial": "CTR7JP7RSA", "xid": 119}
+{"gpu_index": 3, "host": "a01-ct07", "message": "GSP RPC Timeout", "timestamp": "2026-06-23T01:44:00Z", "tray_serial": "CTR7JP7RSA", "xid": 119}
 {"gpu_index": 1, "host": "a16-ct02", "message": "GPU has fallen off the bus", "timestamp": "2026-06-23T09:23:43Z", "tray_serial": "CTZTUYIV0A", "xid": 79}
-{"gpu_index": 3, "host": "a30-ct03", "message": "NVLink error", "timestamp": "2026-06-23T11:38:07Z", "tray_serial": "CTKKEEXPMU", "xid": 145}
-{"gpu_index": 1, "host": "a11-ct16", "message": "NVLink error", "timestamp": "2026-06-23T13:36:11Z", "tray_serial": "CTDICS5LLR", "xid": 145}
-{"gpu_index": 3, "host": "a09-ct17", "message": "NVLink error", "timestamp": "2026-06-25T05:23:03Z", "tray_serial": "CTZC3R6N4H", "xid": 145}
-{"gpu_index": 3, "host": "a03-ct05", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-28T07:24:57Z", "tray_serial": "CTDBXZQYAR", "xid": 119}
-{"gpu_index": 2, "host": "a10-ct05", "message": "NVLink error", "timestamp": "2026-06-28T13:09:18Z", "tray_serial": "CT80Q5FQTY", "xid": 145}
-{"gpu_index": 3, "host": "a24-ct13", "message": "Contained ECC error", "timestamp": "2026-06-28T16:21:29Z", "tray_serial": "CT4QTSIEFS", "xid": 94}
+{"gpu_index": 3, "host": "a30-ct03", "message": "NVLINK: RLW Error", "timestamp": "2026-06-23T11:38:07Z", "tray_serial": "CTKKEEXPMU", "xid": 145}
+{"gpu_index": 1, "host": "a11-ct16", "message": "NVLINK: RLW Error", "timestamp": "2026-06-23T13:36:11Z", "tray_serial": "CTDICS5LLR", "xid": 145}
+{"gpu_index": 3, "host": "a09-ct17", "message": "NVLINK: RLW Error", "timestamp": "2026-06-25T05:23:03Z", "tray_serial": "CTZC3R6N4H", "xid": 145}
+{"gpu_index": 3, "host": "a03-ct05", "message": "GSP RPC Timeout", "timestamp": "2026-06-28T07:24:57Z", "tray_serial": "CTDBXZQYAR", "xid": 119}
+{"gpu_index": 2, "host": "a10-ct05", "message": "NVLINK: RLW Error", "timestamp": "2026-06-28T13:09:18Z", "tray_serial": "CT80Q5FQTY", "xid": 145}
+{"gpu_index": 3, "host": "a24-ct13", "message": "Contained memory error", "timestamp": "2026-06-28T16:21:29Z", "tray_serial": "CT4QTSIEFS", "xid": 94}
 {"gpu_index": 0, "host": "a16-ct10", "message": "Double Bit ECC Error", "timestamp": "2026-06-30T09:10:46Z", "tray_serial": "CTCW8E0SRL", "xid": 48}
-{"gpu_index": 3, "host": "a12-ct02", "message": "Contained ECC error", "timestamp": "2026-06-30T19:51:32Z", "tray_serial": "CT8SD5VHNP", "xid": 94}
-{"gpu_index": 2, "host": "a24-ct09", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-06-30T23:31:56Z", "tray_serial": "CTGA72741F", "xid": 119}
-{"gpu_index": 2, "host": "a21-ct16", "message": "Contained ECC error", "timestamp": "2026-07-01T07:47:22Z", "tray_serial": "CTXI7YKPYW", "xid": 94}
-{"gpu_index": 1, "host": "a13-ct02", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-01T13:54:22Z", "tray_serial": "CTCJATY0KE", "xid": 119}
+{"gpu_index": 3, "host": "a12-ct02", "message": "Contained memory error", "timestamp": "2026-06-30T19:51:32Z", "tray_serial": "CT8SD5VHNP", "xid": 94}
+{"gpu_index": 2, "host": "a24-ct09", "message": "GSP RPC Timeout", "timestamp": "2026-06-30T23:31:56Z", "tray_serial": "CTGA72741F", "xid": 119}
+{"gpu_index": 2, "host": "a21-ct16", "message": "Contained memory error", "timestamp": "2026-07-01T07:47:22Z", "tray_serial": "CTXI7YKPYW", "xid": 94}
+{"gpu_index": 1, "host": "a13-ct02", "message": "GSP RPC Timeout", "timestamp": "2026-07-01T13:54:22Z", "tray_serial": "CTCJATY0KE", "xid": 119}
 {"gpu_index": 2, "host": "a11-ct12", "message": "Double Bit ECC Error", "timestamp": "2026-07-01T15:25:00Z", "tray_serial": "CT0MVT3TID", "xid": 48}
-{"gpu_index": 2, "host": "a09-ct07", "message": "NVLink error", "timestamp": "2026-07-06T13:22:53Z", "tray_serial": "CTOSUANCRI", "xid": 149}
-{"gpu_index": 3, "host": "a06-ct03", "message": "NVLink error", "timestamp": "2026-07-06T14:39:57Z", "tray_serial": "CTVWH4C5GR", "xid": 149}
-{"gpu_index": 3, "host": "a19-ct02", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-07T00:41:17Z", "tray_serial": "CTZQAVJSRQ", "xid": 119}
-{"gpu_index": 3, "host": "a26-ct03", "message": "NVLink error", "timestamp": "2026-07-07T04:14:44Z", "tray_serial": "CTQDS1TTWV", "xid": 149}
-{"gpu_index": 2, "host": "a11-ct12", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-11T00:16:30Z", "tray_serial": "CTKO5DVX4P", "xid": 119}
-{"gpu_index": 0, "host": "a04-ct06", "message": "Contained ECC error", "timestamp": "2026-07-11T18:40:47Z", "tray_serial": "CTOMXB8SRE", "xid": 94}
-{"gpu_index": 1, "host": "a31-ct18", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-12T00:37:59Z", "tray_serial": "CTXAYQ3JHN", "xid": 119}
-{"gpu_index": 2, "host": "a09-ct06", "message": "NVLink error", "timestamp": "2026-07-13T04:05:12Z", "tray_serial": "CTX28AU6D7", "xid": 149}
-{"gpu_index": 3, "host": "a21-ct04", "message": "Contained ECC error", "timestamp": "2026-07-13T11:19:28Z", "tray_serial": "CTL7AX8TGI", "xid": 94}
-{"gpu_index": 1, "host": "a14-ct17", "message": "NVLink error", "timestamp": "2026-07-13T21:50:04Z", "tray_serial": "CT9LT0YLNV", "xid": 145}
-{"gpu_index": 2, "host": "a25-ct07", "message": "Contained ECC error", "timestamp": "2026-07-13T22:40:08Z", "tray_serial": "CT8AKMTR6A", "xid": 94}
-{"gpu_index": 2, "host": "a11-ct16", "message": "NVLink error", "timestamp": "2026-07-15T02:16:28Z", "tray_serial": "CTAFT1YRWI", "xid": 145}
+{"gpu_index": 2, "host": "a09-ct07", "message": "NVLINK: NETIR Error", "timestamp": "2026-07-06T13:22:53Z", "tray_serial": "CTOSUANCRI", "xid": 149}
+{"gpu_index": 3, "host": "a06-ct03", "message": "NVLINK: NETIR Error", "timestamp": "2026-07-06T14:39:57Z", "tray_serial": "CTVWH4C5GR", "xid": 149}
+{"gpu_index": 3, "host": "a19-ct02", "message": "GSP RPC Timeout", "timestamp": "2026-07-07T00:41:17Z", "tray_serial": "CTZQAVJSRQ", "xid": 119}
+{"gpu_index": 3, "host": "a26-ct03", "message": "NVLINK: NETIR Error", "timestamp": "2026-07-07T04:14:44Z", "tray_serial": "CTQDS1TTWV", "xid": 149}
+{"gpu_index": 2, "host": "a11-ct12", "message": "GSP RPC Timeout", "timestamp": "2026-07-11T00:16:30Z", "tray_serial": "CTKO5DVX4P", "xid": 119}
+{"gpu_index": 0, "host": "a04-ct06", "message": "Contained memory error", "timestamp": "2026-07-11T18:40:47Z", "tray_serial": "CTOMXB8SRE", "xid": 94}
+{"gpu_index": 1, "host": "a31-ct18", "message": "GSP RPC Timeout", "timestamp": "2026-07-12T00:37:59Z", "tray_serial": "CTXAYQ3JHN", "xid": 119}
+{"gpu_index": 2, "host": "a09-ct06", "message": "NVLINK: NETIR Error", "timestamp": "2026-07-13T04:05:12Z", "tray_serial": "CTX28AU6D7", "xid": 149}
+{"gpu_index": 3, "host": "a21-ct04", "message": "Contained memory error", "timestamp": "2026-07-13T11:19:28Z", "tray_serial": "CTL7AX8TGI", "xid": 94}
+{"gpu_index": 1, "host": "a14-ct17", "message": "NVLINK: RLW Error", "timestamp": "2026-07-13T21:50:04Z", "tray_serial": "CT9LT0YLNV", "xid": 145}
+{"gpu_index": 2, "host": "a25-ct07", "message": "Contained memory error", "timestamp": "2026-07-13T22:40:08Z", "tray_serial": "CT8AKMTR6A", "xid": 94}
+{"gpu_index": 2, "host": "a11-ct16", "message": "NVLINK: RLW Error", "timestamp": "2026-07-15T02:16:28Z", "tray_serial": "CTAFT1YRWI", "xid": 145}
 {"gpu_index": 2, "host": "a25-ct04", "message": "GPU has fallen off the bus", "timestamp": "2026-07-15T14:08:22Z", "tray_serial": "CTKXRR47JT", "xid": 79}
-{"gpu_index": 2, "host": "a11-ct16", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-16T07:01:41Z", "tray_serial": "CTACVO3WGS", "xid": 119}
-{"gpu_index": 0, "host": "a11-ct11", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-17T02:56:40Z", "tray_serial": "CTQP4Y6UOV", "xid": 119}
+{"gpu_index": 2, "host": "a11-ct16", "message": "GSP RPC Timeout", "timestamp": "2026-07-16T07:01:41Z", "tray_serial": "CTACVO3WGS", "xid": 119}
+{"gpu_index": 0, "host": "a11-ct11", "message": "GSP RPC Timeout", "timestamp": "2026-07-17T02:56:40Z", "tray_serial": "CTQP4Y6UOV", "xid": 119}
 {"gpu_index": 2, "host": "a19-ct13", "message": "Double Bit ECC Error", "timestamp": "2026-07-18T16:15:31Z", "tray_serial": "CTWOFIUTI6", "xid": 48}
-{"gpu_index": 0, "host": "a23-ct02", "message": "NVLink error", "timestamp": "2026-07-20T01:27:43Z", "tray_serial": "CTL7UELCAY", "xid": 145}
-{"gpu_index": 3, "host": "a08-ct06", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-20T01:30:17Z", "tray_serial": "CTO5YFMPVV", "xid": 119}
-{"gpu_index": 1, "host": "a25-ct14", "message": "NVLink error", "timestamp": "2026-07-21T01:04:05Z", "tray_serial": "CTD046YI3K", "xid": 145}
-{"gpu_index": 2, "host": "a03-ct07", "message": "Contained ECC error", "timestamp": "2026-07-21T01:05:53Z", "tray_serial": "CT2IJ0WOYY", "xid": 94}
-{"gpu_index": 3, "host": "a25-ct17", "message": "Contained ECC error", "timestamp": "2026-07-21T22:43:40Z", "tray_serial": "CTGQE8OA41", "xid": 94}
+{"gpu_index": 0, "host": "a23-ct02", "message": "NVLINK: RLW Error", "timestamp": "2026-07-20T01:27:43Z", "tray_serial": "CTL7UELCAY", "xid": 145}
+{"gpu_index": 3, "host": "a08-ct06", "message": "GSP RPC Timeout", "timestamp": "2026-07-20T01:30:17Z", "tray_serial": "CTO5YFMPVV", "xid": 119}
+{"gpu_index": 1, "host": "a25-ct14", "message": "NVLINK: RLW Error", "timestamp": "2026-07-21T01:04:05Z", "tray_serial": "CTD046YI3K", "xid": 145}
+{"gpu_index": 2, "host": "a03-ct07", "message": "Contained memory error", "timestamp": "2026-07-21T01:05:53Z", "tray_serial": "CT2IJ0WOYY", "xid": 94}
+{"gpu_index": 3, "host": "a25-ct17", "message": "Contained memory error", "timestamp": "2026-07-21T22:43:40Z", "tray_serial": "CTGQE8OA41", "xid": 94}
 {"gpu_index": 0, "host": "a16-ct09", "message": "GPU has fallen off the bus", "timestamp": "2026-07-22T10:14:33Z", "tray_serial": "CTD1Z1ZPPK", "xid": 79}
 {"gpu_index": 0, "host": "a14-ct14", "message": "GPU has fallen off the bus", "timestamp": "2026-07-22T15:30:51Z", "tray_serial": "CTGF89P9MM", "xid": 79}
-{"gpu_index": 3, "host": "a21-ct08", "message": "NVLink error", "timestamp": "2026-07-22T19:05:05Z", "tray_serial": "CT80SH8KV0", "xid": 145}
+{"gpu_index": 3, "host": "a21-ct08", "message": "NVLINK: RLW Error", "timestamp": "2026-07-22T19:05:05Z", "tray_serial": "CT80SH8KV0", "xid": 145}
 {"gpu_index": 0, "host": "a07-ct17", "message": "GPU has fallen off the bus", "timestamp": "2026-07-23T07:16:11Z", "tray_serial": "CT205CCDRV", "xid": 79}
-{"gpu_index": 1, "host": "a04-ct01", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-23T13:52:32Z", "tray_serial": "CTN8RPUSM0", "xid": 119}
-{"gpu_index": 1, "host": "a06-ct11", "message": "NVLink error", "timestamp": "2026-07-24T17:13:34Z", "tray_serial": "CTQJJZS1AV", "xid": 145}
-{"gpu_index": 0, "host": "a31-ct03", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-27T01:34:06Z", "tray_serial": "CT0YLVZ1HZ", "xid": 119}
+{"gpu_index": 1, "host": "a04-ct01", "message": "GSP RPC Timeout", "timestamp": "2026-07-23T13:52:32Z", "tray_serial": "CTN8RPUSM0", "xid": 119}
+{"gpu_index": 1, "host": "a06-ct11", "message": "NVLINK: RLW Error", "timestamp": "2026-07-24T17:13:34Z", "tray_serial": "CTQJJZS1AV", "xid": 145}
+{"gpu_index": 0, "host": "a31-ct03", "message": "GSP RPC Timeout", "timestamp": "2026-07-27T01:34:06Z", "tray_serial": "CT0YLVZ1HZ", "xid": 119}
 {"gpu_index": 2, "host": "a26-ct07", "message": "GPU has fallen off the bus", "timestamp": "2026-07-27T22:12:42Z", "tray_serial": "CT90HDXTAH", "xid": 79}
-{"gpu_index": 0, "host": "a10-ct15", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-28T00:30:14Z", "tray_serial": "CTOEG40NSM", "xid": 119}
+{"gpu_index": 0, "host": "a10-ct15", "message": "GSP RPC Timeout", "timestamp": "2026-07-28T00:30:14Z", "tray_serial": "CTOEG40NSM", "xid": 119}
 {"gpu_index": 3, "host": "a27-ct08", "message": "GPU has fallen off the bus", "timestamp": "2026-07-28T14:33:56Z", "tray_serial": "CTCAJ60SNA", "xid": 79}
-{"gpu_index": 1, "host": "a23-ct15", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-29T00:03:04Z", "tray_serial": "CTJCYNLWPZ", "xid": 119}
-{"gpu_index": 0, "host": "a14-ct01", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-07-29T01:44:46Z", "tray_serial": "CTLW7BWIFM", "xid": 119}
+{"gpu_index": 1, "host": "a23-ct15", "message": "GSP RPC Timeout", "timestamp": "2026-07-29T00:03:04Z", "tray_serial": "CTJCYNLWPZ", "xid": 119}
+{"gpu_index": 0, "host": "a14-ct01", "message": "GSP RPC Timeout", "timestamp": "2026-07-29T01:44:46Z", "tray_serial": "CTLW7BWIFM", "xid": 119}
 {"gpu_index": 1, "host": "a19-ct01", "message": "GPU has fallen off the bus", "timestamp": "2026-07-30T02:31:42Z", "tray_serial": "CT7X3WPKJP", "xid": 79}
-{"gpu_index": 2, "host": "a24-ct04", "message": "Contained ECC error", "timestamp": "2026-07-30T11:47:57Z", "tray_serial": "CTUTYXJXPK", "xid": 94}
-{"gpu_index": 2, "host": "a14-ct05", "message": "Contained ECC error", "timestamp": "2026-07-31T11:11:22Z", "tray_serial": "CTGRBV9LSG", "xid": 94}
-{"gpu_index": 0, "host": "a18-ct01", "message": "Contained ECC error", "timestamp": "2026-07-31T12:11:47Z", "tray_serial": "CTGWHOVCEA", "xid": 94}
+{"gpu_index": 2, "host": "a24-ct04", "message": "Contained memory error", "timestamp": "2026-07-30T11:47:57Z", "tray_serial": "CTUTYXJXPK", "xid": 94}
+{"gpu_index": 2, "host": "a14-ct05", "message": "Contained memory error", "timestamp": "2026-07-31T11:11:22Z", "tray_serial": "CTGRBV9LSG", "xid": 94}
+{"gpu_index": 0, "host": "a18-ct01", "message": "Contained memory error", "timestamp": "2026-07-31T12:11:47Z", "tray_serial": "CTGWHOVCEA", "xid": 94}
 {"gpu_index": 0, "host": "a11-ct01", "message": "Double Bit ECC Error", "timestamp": "2026-07-31T17:56:09Z", "tray_serial": "CTO8H3V7NM", "xid": 48}
-{"gpu_index": 2, "host": "a13-ct06", "message": "NVLink error", "timestamp": "2026-08-02T01:56:24Z", "tray_serial": "CT1MXPG5HC", "xid": 149}
-{"gpu_index": 0, "host": "a07-ct08", "message": "Contained ECC error", "timestamp": "2026-08-02T06:13:49Z", "tray_serial": "CTHT27TMSB", "xid": 94}
+{"gpu_index": 2, "host": "a13-ct06", "message": "NVLINK: NETIR Error", "timestamp": "2026-08-02T01:56:24Z", "tray_serial": "CT1MXPG5HC", "xid": 149}
+{"gpu_index": 0, "host": "a07-ct08", "message": "Contained memory error", "timestamp": "2026-08-02T06:13:49Z", "tray_serial": "CTHT27TMSB", "xid": 94}
 {"gpu_index": 1, "host": "a02-ct02", "message": "GPU has fallen off the bus", "timestamp": "2026-08-03T04:59:53Z", "tray_serial": "CT6DICZKDV", "xid": 79}
-{"gpu_index": 3, "host": "a14-ct06", "message": "Contained ECC error", "timestamp": "2026-08-05T21:42:41Z", "tray_serial": "CTWUCKSBKD", "xid": 94}
+{"gpu_index": 3, "host": "a14-ct06", "message": "Contained memory error", "timestamp": "2026-08-05T21:42:41Z", "tray_serial": "CTWUCKSBKD", "xid": 94}
 {"gpu_index": 1, "host": "a07-ct17", "message": "GPU has fallen off the bus", "timestamp": "2026-08-07T12:58:12Z", "tray_serial": "CT205CCDRV", "xid": 79}
-{"gpu_index": 3, "host": "a25-ct11", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-08-08T00:04:41Z", "tray_serial": "CT2IGNT30O", "xid": 119}
-{"gpu_index": 0, "host": "a14-ct06", "message": "Contained ECC error", "timestamp": "2026-08-08T20:49:41Z", "tray_serial": "CTWUCKSBKD", "xid": 94}
-{"gpu_index": 0, "host": "a28-ct14", "message": "Contained ECC error", "timestamp": "2026-08-09T17:54:27Z", "tray_serial": "CTI80KEBBK", "xid": 94}
+{"gpu_index": 3, "host": "a25-ct11", "message": "GSP RPC Timeout", "timestamp": "2026-08-08T00:04:41Z", "tray_serial": "CT2IGNT30O", "xid": 119}
+{"gpu_index": 0, "host": "a14-ct06", "message": "Contained memory error", "timestamp": "2026-08-08T20:49:41Z", "tray_serial": "CTWUCKSBKD", "xid": 94}
+{"gpu_index": 0, "host": "a28-ct14", "message": "Contained memory error", "timestamp": "2026-08-09T17:54:27Z", "tray_serial": "CTI80KEBBK", "xid": 94}
 {"gpu_index": 1, "host": "a03-ct12", "message": "GPU has fallen off the bus", "timestamp": "2026-08-10T00:48:36Z", "tray_serial": "CTMQZVAETQ", "xid": 79}
 {"gpu_index": 3, "host": "a15-ct12", "message": "Double Bit ECC Error", "timestamp": "2026-08-10T02:57:29Z", "tray_serial": "CTFBEM9OOO", "xid": 48}
 {"gpu_index": 3, "host": "a25-ct07", "message": "GPU has fallen off the bus", "timestamp": "2026-08-10T10:18:34Z", "tray_serial": "CT8AKMTR6A", "xid": 79}
 {"gpu_index": 0, "host": "a03-ct12", "message": "GPU has fallen off the bus", "timestamp": "2026-08-13T09:38:44Z", "tray_serial": "CTMQZVAETQ", "xid": 79}
-{"gpu_index": 3, "host": "a26-ct08", "message": "NVLink error", "timestamp": "2026-08-15T13:30:10Z", "tray_serial": "CT46W6IH5A", "xid": 145}
+{"gpu_index": 3, "host": "a26-ct08", "message": "NVLINK: RLW Error", "timestamp": "2026-08-15T13:30:10Z", "tray_serial": "CT46W6IH5A", "xid": 145}
 {"gpu_index": 3, "host": "a13-ct01", "message": "GPU has fallen off the bus", "timestamp": "2026-08-16T00:16:40Z", "tray_serial": "CTW2NTYL6J", "xid": 79}
 {"gpu_index": 1, "host": "a26-ct07", "message": "GPU has fallen off the bus", "timestamp": "2026-08-16T01:06:34Z", "tray_serial": "CT90HDXTAH", "xid": 79}
-{"gpu_index": 3, "host": "a16-ct15", "message": "NVLink error", "timestamp": "2026-08-17T14:06:10Z", "tray_serial": "CTO9L7IO3Y", "xid": 149}
+{"gpu_index": 3, "host": "a16-ct15", "message": "NVLINK: NETIR Error", "timestamp": "2026-08-17T14:06:10Z", "tray_serial": "CTO9L7IO3Y", "xid": 149}
 {"gpu_index": 2, "host": "a25-ct03", "message": "GPU has fallen off the bus", "timestamp": "2026-08-18T00:18:58Z", "tray_serial": "CTBCMP8N46", "xid": 79}
-{"gpu_index": 3, "host": "a11-ct04", "message": "Contained ECC error", "timestamp": "2026-08-19T09:52:31Z", "tray_serial": "CT1PYI1A1A", "xid": 94}
-{"gpu_index": 0, "host": "a01-ct07", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-08-20T12:06:38Z", "tray_serial": "CTR7JP7RSA", "xid": 119}
+{"gpu_index": 3, "host": "a11-ct04", "message": "Contained memory error", "timestamp": "2026-08-19T09:52:31Z", "tray_serial": "CT1PYI1A1A", "xid": 94}
+{"gpu_index": 0, "host": "a01-ct07", "message": "GSP RPC Timeout", "timestamp": "2026-08-20T12:06:38Z", "tray_serial": "CTR7JP7RSA", "xid": 119}
 {"gpu_index": 2, "host": "a19-ct17", "message": "GPU has fallen off the bus", "timestamp": "2026-08-21T11:27:58Z", "tray_serial": "CTEUMTIVC6", "xid": 79}
-{"gpu_index": 0, "host": "a26-ct15", "message": "Timeout waiting for GSP RPC response", "timestamp": "2026-08-26T09:11:57Z", "tray_serial": "CTHALZ3WWW", "xid": 119}
+{"gpu_index": 0, "host": "a26-ct15", "message": "GSP RPC Timeout", "timestamp": "2026-08-26T09:11:57Z", "tray_serial": "CTHALZ3WWW", "xid": 119}
 {"gpu_index": 0, "host": "a32-ct15", "message": "Double Bit ECC Error", "timestamp": "2026-08-27T16:45:09Z", "tray_serial": "CTQ2P7UTON", "xid": 48}
 {"gpu_index": 3, "host": "a25-ct10", "message": "GPU has fallen off the bus", "timestamp": "2026-08-29T12:24:30Z", "tray_serial": "CTG10HLRPR", "xid": 79}
-{"gpu_index": 3, "host": "a01-ct18", "message": "Contained ECC error", "timestamp": "2026-08-30T07:49:19Z", "tray_serial": "CT862URF9S", "xid": 94}
-{"gpu_index": 0, "host": "a29-ct10", "message": "Contained ECC error", "timestamp": "2026-08-30T10:07:42Z", "tray_serial": "CTMECPCDPK", "xid": 94}
+{"gpu_index": 3, "host": "a01-ct18", "message": "Contained memory error", "timestamp": "2026-08-30T07:49:19Z", "tray_serial": "CT862URF9S", "xid": 94}
+{"gpu_index": 0, "host": "a29-ct10", "message": "Contained memory error", "timestamp": "2026-08-30T10:07:42Z", "tray_serial": "CTMECPCDPK", "xid": 94}

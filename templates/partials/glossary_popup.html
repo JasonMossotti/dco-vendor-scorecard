@@ -175,6 +175,8 @@ a.tk-link:hover { background:#e8f0fc; }
     const see = ids.map(i => E[i].see).find(Boolean);
     if (see) h += `<a href="${esc(ROOT + see)}">Open the records</a>`;
     if (first) h += `<a href="${esc(ROOT + "glossary/#" + encodeURIComponent(first.key))}">Glossary entry</a>`;
+    const src = first && first.source;   // an outside authority (NVIDIA's Xid catalog): https links only
+    if (src && /^https:\/\//.test(src.href)) h += `<a class="gl-src" href="${esc(src.href)}" target="_blank" rel="noopener">${esc(src.label)} ↗</a>`;
     if (DEV[code]) h += `<a class="gl-site" href="${esc(ROOT + "devices/#" + encodeURIComponent(DEV[code].title && DEV[code].kind === "leaf_port" ? DEV[code].title : code.replace(/^[Rr]ack /, "")))}" target="_blank" rel="noopener">Site model ↗</a>`;
     return h + `</div>`;
   }

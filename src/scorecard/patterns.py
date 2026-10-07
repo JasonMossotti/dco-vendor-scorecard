@@ -35,6 +35,8 @@ from typing import Any
 
 import yaml
 
+from . import xid
+
 UTC = timezone.utc
 ALPHA = 0.05
 MIN_EVENTS = 5
@@ -47,12 +49,7 @@ GAP_DAYS = 3
 CONDITION_SIGS = ["thermal"]   # the failure modes a coolant temperature rise physically explains
 
 SIGNATURES = {
-    "xid_79": "XID 79 (GPU has fallen off the bus)",
-    "xid_94": "XID 94 (contained ECC error)",
-    "xid_48": "XID 48 (double-bit ECC error)",
-    "xid_119": "XID 119 (GSP RPC timeout)",
-    "xid_145": "XID 145 (NVLink error)",
-    "xid_149": "XID 149 (NVLink error)",
+    **{f"xid_{x}": f"XID {x} ({xid.names()[x]})" for x in (79, 94, 48, 119, 145, 149)},   # NVIDIA's names
     "thermal": "GPU thermal slowdown",
     "optic_module": "Optic module failure (DOM alarm)",
     "optic_fiber": "Link fault with no module alarm (fiber or connector)",
