@@ -28,11 +28,52 @@ from scorecard.sla_model import load_sla
 from scorecard.synthetic import SiteGenerator, write_dataset
 
 ROOT = Path(__file__).resolve().parents[2]
+# The Incident Portal opens any ticket, change, or work order of the committed sample month.
+PORTAL = "https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/"
 
 
 # --------------------------------------------------------------------------- #
 # Datasets
 # --------------------------------------------------------------------------- #
+def portal_ids(data_dir: str | Path) -> frozenset[str]:
+    """The record numbers the Incident Portal holds, when the app shows the month the portal covers (else none:
+    a generated month reuses the same numbers for different records)."""
+    from scorecard import tickets
+    d = Path(data_dir)
+    if not (d / "manifest.json").exists() or d.resolve() != (ROOT / "data" / "sample").resolve():
+        return frozenset()
+    return frozenset(tickets.ids(d))
+
+
+def ticket_url(ref: str) -> str:
+    return PORTAL + "#" + ref
+
+
+def link_tickets(text: str, data_dir: str | Path) -> str:
+    """Markdown with each ticket, change, or work order number linked to the Incident Portal."""
+    from scorecard import tickets
+    ids = portal_ids(data_dir)
+    return tickets.ID_RE.sub(lambda m: f"[{m.group(0)}]({ticket_url(m.group(0))})" if m.group(0) in ids else m.group(0), text or "")
+
+
+def portal_line(refs, data_dir: str | Path) -> str:
+    """One line of links to the records a table names, or "" when there are none in the portal."""
+    from scorecard import tickets
+    ids = portal_ids(data_dir)
+    found = sorted({m for r in refs for m in tickets.ID_RE.findall(str(r))} & ids)
+    return ("Open in the Incident Portal: " + " · ".join(f"[{x}]({ticket_url(x)})" for x in found)) if found else ""
+
+
+def link_column(rows: list[dict[str, Any]], col: str, data_dir: str | Path) -> bool:
+    """Turn a one-number column into Incident Portal URLs (shown as the number by a link column). False: leave it."""
+    ids = portal_ids(data_dir)
+    if not ids or not rows or not all(not r[col] or r[col] in ids for r in rows):
+        return False
+    for r in rows:
+        r[col] = ticket_url(r[col]) if r[col] else None
+    return True
+
+
 def available_datasets(root: Path = ROOT) -> dict[str, Path]:
     """Label -> dataset folder for the datasets shipped with the app."""
     out = {}

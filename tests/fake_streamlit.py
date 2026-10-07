@@ -53,6 +53,7 @@ class FakeStreamlit:
         self.buttons = buttons or set()        # labels of buttons that are "pressed"
         self.drawn: list[tuple[str, object]] = []
         self.sidebar_used: list[str] = []      # names of st.sidebar calls; the app draws nothing there
+        self.link_columns: list[tuple[str, list]] = []   # (column, URLs) of each link column drawn
         self.sidebar = _Sidebar(self)
 
     # ---------------------------------------------------------------- record
@@ -101,8 +102,21 @@ class FakeStreamlit:
         self._rec("metric", (label, value))
 
     # ------------------------------------------------------- data and charts
-    def dataframe(self, data, **kw):
+    class column_config:   # noqa: N801  (st.column_config is a namespace)
+        @staticmethod
+        def LinkColumn(label=None, *, display_text=None, help=None, **kw):   # noqa: N802
+            assert display_text is None or re.compile(display_text).groups == 1, "display_text needs one capture group"
+            return {"type": "link", "label": label, "display_text": display_text}
+
+    def dataframe(self, data, column_config=None, **kw):
         assert isinstance(data, pd.DataFrame), "st.dataframe expects a DataFrame"
+        for col, cfg in (column_config or {}).items():
+            assert col in data.columns, f"column_config names a missing column {col!r}"
+            if cfg["type"] == "link":
+                vals = [v for v in data[col] if v is not None and v == v]
+                assert all(str(v).startswith("https://") for v in vals), f"a link column holds URLs ({col})"
+                assert all(re.search(cfg["display_text"], v) for v in vals), f"display_text must match every URL in {col}"
+                self.link_columns.append((col, vals))
         self._rec("dataframe", data)
 
     def image(self, image, caption=None, width=None, **kw):

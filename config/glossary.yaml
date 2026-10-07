@@ -53,6 +53,7 @@ contract_terms:
   - {path: site.service_units, type: scope, title: "Service unit: {name}", text: "{note}"}
   - {path: measurement_spec, type: scope, title: "Fault class: {name}", text: "Service unit key: {service_unit_key}. Default priority {default_priority}."}
   - {path: deployment.milestones, type: scope, title: "Deployment milestone: {name}", text: "Exit criteria: {exit_criteria}"}
+  - {path: measurement.records_access.terms, type: rule, title: "Records access: {name}", text: "{text}"}
   - {path: measurement.data_sources, type: data_source, title: "{name}", text: "Measures: {measures} Owner: {owner}."}
   - {path: ticket_handling.states, type: ticket_state, title: "Ticket state", text: "{description} Clock: {clock}.", code_only: true}
   - {path: ticket_handling.pause_codes, id_field: code, type: ticket_state, title: "Pause code", text: "{description}", code_only: true}
@@ -70,6 +71,7 @@ terms:
   - {term: CSL, type: acronym, expansion: Critical service level, text: "A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA and OT-CSL-01 and up in the Landlord SLA."}
   - {term: DCO, type: acronym, expansion: Data center operations, text: "The Customer's site operations team, which runs the Telemetry of Record and manages both partners."}
   - {term: EHS, type: acronym, expansion: Environment, health, and safety, text: "The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits."}
+  - {term: CAB, type: acronym, expansion: Change advisory board, text: "The Customer's board that reviews and approves the IT Partner's change records before work starts."}
   - {term: CHG, type: acronym, expansion: Change record, text: "The prefix of the IT Partner's change records (CHG + 7 digits)."}
   - {term: MOP, type: acronym, expansion: Method of procedure, text: "The step-by-step plan for planned work on live equipment: scope, window, isolation, back-out, and the alarms the work is expected to raise."}
   - {term: PIR, type: acronym, expansion: Post-incident review, text: "The written review after a major incident: timeline, causes, contributing factors, and owned, dated actions.", see: "pir/"}

@@ -131,6 +131,12 @@ Failures come from telemetry, not tickets, and are grouped by what they have in 
 
 Planned work causes alarms anyone can predict. Under the Interface Agreement's section 10, every change declares the assets it touches, the alarms it expects, the worst severity it may cause, and its window. The Customer's check classifies every alarm as expected, out of scope (undeclared, too severe, or on connected equipment from the site model), or out of window (started early or left in maintenance after the window), and the partners owe automatic notifications on two channels within 5 minutes for P1 alarms and anything outside a change (15 minutes for P2). On the sample month the check flags exactly the rack A07 outage: the B-side tap-off opening during A-side work at 15:42:11Z, and the A side still open after the window closed, which the post-incident review says nothing alerted on. The board has two modes: **Alarm History** replays the month, and **Live Events** runs the same synthetic feed on the viewer's clock (clearly labeled as simulated) with open trouble and change tickets and a 6-hour reap time. Both modes include severity and change-work filters, acknowledgment, tickets, and repeat counts, plus Customer notification routing (an on-call schedule and an event matrix that decide who is texted or emailed, with escalation and a replay of the month), upcoming change work flagged against conflicting changes and live trouble, a timeline for each change, an alert banner, flood grouping, and a one-click shift handoff. Cases are planted in 60 generated months to score the check; a flag means the records do not reconcile with the approved change, not that anyone did anything wrong.
 
+## Incident Portal
+
+**[Open the Incident Portal](https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/)**: both partners' tickets, changes, and work orders in one place, read the way the Customer's read-only records access would deliver them.
+
+The IT Partner keeps incidents in its ticketing system (ServiceNow-style INC records), its changes go through the Customer's change board (CHG), and the Landlord keeps work orders, preventive maintenance, and methods of procedure in its maintenance management system (Maximo-style WO, PM, and MOP records). The portal shows all 119 records of the sample month with drop-downs for ticket type, partner, priority, state, hall, category, findings, and dates, and a search that can look in every field or just one (number, device, summary, work notes, part or serial, person ID, location, category, alarm, finding, related record). Each record opens with the partner's own fields exactly as stored, a timeline built the way the post-incident review builds one, the alarms the alarm board ties to it, the Customer's own measurement beside what the ticket reported, and the findings that name it. Every INC, CHG, WO, MOP, and PM number anywhere on the site, and in the Scorecards app, links to its record. People are shown by person ID. The access itself is a contract term: Records access (RA-1 to RA-6) in the common measurement terms of both SLAs requires a read-only API account, the full record history and field edit log, and data no more than 15 minutes old.
+
 ## Agreements, Glossary, and code popups
 
 **[Read the agreements](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/)** (the Interface Agreement and both SLAs, with contents and print to PDF) and **[open the glossary](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/)** ([Markdown version](docs/glossary/GLOSSARY.md)): every acronym, contract code, and record ID the site uses, A to Z or by type, with search. On every page, each code has a dotted underline; clicking it opens a small card with what it means and a link to the clause that defines it, without leaving the page. Contract meanings are quoted from the same YAML the scorecards are scored against, and CI fails if any page shows a code the glossary does not explain.
@@ -168,7 +174,7 @@ python scripts/run_engine.py --robustness 20    # also test 20 freshly generated
 
 ## Interactive demo
 
-The site opens on **Unified Site Management**, an overview with each function's headline numbers. A tab bar on every page reaches the Scorecards, Alarm Board, Post-Incident Review, Weekly Review, and Failure Patterns.
+The site opens on **Unified Site Management**, an overview with each function's headline numbers. A tab bar on every page reaches the Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review, and Failure Patterns.
 
 The [Scorecards](https://jasonmossotti.github.io/dco-vendor-scorecard/app/) tab runs the whole pipeline in the browser (Python via WebAssembly, no server; the first load takes 20 to 40 seconds). You can:
 
@@ -219,6 +225,8 @@ src/scorecard/alarms.py          Change-aware alarms: one feed for both partners
 scripts/generate_changes.py      Change layer for the sample (data/changes/: declarations, delivery logs, own random stream)
 scripts/render_alarms.py         Change-aware alarm review: reports/change_alarms.md and the /alarms/ board
 config/change_alarms.yaml        Alarm map (severity, domain), change-type catalog, robustness plants
+src/scorecard/tickets.py         Incident Portal records: every ticket, change, work order, MOP, and PM task with its timeline
+scripts/render_tickets.py        The /tickets/ Incident Portal page
 config/glossary.yaml             Code meanings: contract paths, acronyms, record families, page-only meanings
 scripts/render_glossary.py       Glossary: docs/glossary/GLOSSARY.md and the /glossary/ page; --check fails on unexplained codes
 scripts/render_agreements.py     The /agreements/ pages, rendered from docs/sla/*.md

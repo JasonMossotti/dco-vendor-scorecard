@@ -29,6 +29,7 @@ TABS = [
     ("overview", "Overview", ""),
     ("scorecards", "Scorecards", "app/"),
     ("alarms", "Alarm Board", "alarms/"),
+    ("tickets", "Incident Portal", "tickets/"),
     ("pir", "Post-Incident Review", "pir/"),
     ("weekly", "Weekly Review", "weekly/"),
     ("patterns", "Failure Patterns", "patterns/"),
@@ -53,8 +54,9 @@ CSS = """
 .usm-tabs a.on { color:#fff; font-weight:600; border-bottom-color:#5b9cff; }
 .usm-src { color:#aab6c3; font-size:12px; text-decoration:none; white-space:nowrap; }
 .usm-src:hover { color:#fff; }
-@media (max-width:1440px) { .usm-brand span { display:none; } }
-@media (max-width:1400px) { .usm-src { display:none; } .usm-tabs a { padding:12px 8px 10px; } .usm-in { gap:4px 10px; } }
+@media (max-width:1700px) { .usm-brand span { display:none; } }
+@media (max-width:1560px) { .usm-src { display:none; } .usm-tabs a { padding:12px 8px 10px; } .usm-in { gap:4px 10px; } }
+@media (max-width:1360px) { .usm-tabs a { padding:12px 6px 10px; font-size:13px; } .usm-brand b { font-size:15px; } }
 @media (max-width:700px) { .usm-in { padding:0 10px; gap:0 12px; } .usm-tabs a { padding:8px 8px 6px; font-size:13px; } .usm-src { display:none; } }
 @media print { .usm { display:none !important; } }
 """
@@ -105,6 +107,9 @@ def finish(html: str) -> str:
     page_text = _SKIP_DATA.sub(" ", html[:m.start()] + html[m.end():])
     data = glossary.popup_data(opts["page"], text=page_text)
     data.update(root=opts["root"], doc_title=opts["doc_title"])
+    # Record numbers the Incident Portal holds link to it (tickets/#INC3100017); others stay plain.
+    from . import tickets
+    data.update(tk=sorted(set(tickets.ID_RE.findall(page_text)) & set(tickets.ids())), tk_re=tickets.ID_PATTERN)
     tpl = (ROOT / "templates" / "partials" / "glossary_popup.html").read_text(encoding="utf-8")
     pop = tpl.replace("__GLOSSARY__", json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))
     if "data-loc" in page_text:

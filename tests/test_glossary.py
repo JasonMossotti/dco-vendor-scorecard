@@ -221,12 +221,12 @@ def _node(script, *args):
 
 @pytest.mark.parametrize("path,code,redraw", [
     ("patterns/", "CDU-A3", '#tabs button:nth-child(2)'),
-    ("pir/", "MOP-310", None),
+    ("pir/", "FA-3", None),
     ("weekly/", "CSL-07", '[data-week="2026-W36"]'),
-    ("alarms/#a07", "MOP-310", None),
+    ("alarms/#a07", "TO-A07-B", None),
     ("agreements/it-partner-sla/", "TR-1", None),
     ("agreements/interface-agreement/", "NT-1", None),
-    ("", "MOP-310", None),
+    ("", "FA-3", None),
 ])
 def test_popups_in_a_browser(site, path, code, redraw):
     args = [site / path.split("#")[0] / "index.html", f"https://example.test/{path}", code] + ([redraw] if redraw else [])

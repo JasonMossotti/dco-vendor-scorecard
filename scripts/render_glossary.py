@@ -46,8 +46,8 @@ PLACES = {
     "reports/failure_patterns.md": ("Failure Patterns", "patterns/"),
     "docs/site/SITE.md": ("Site model document", ""),
 }
-PAGES = [("hub", "Overview", ""), ("alarms", "Alarm Board", "alarms/"), ("pir", "Post-Incident Review", "pir/"),
-         ("weekly", "Weekly Review", "weekly/"), ("patterns", "Failure Patterns", "patterns/")]
+PAGES = [("hub", "Overview", ""), ("alarms", "Alarm Board", "alarms/"), ("tickets", "Incident Portal", "tickets/"),
+         ("pir", "Post-Incident Review", "pir/"), ("weekly", "Weekly Review", "weekly/"), ("patterns", "Failure Patterns", "patterns/")]
 
 
 def _strings(o):
@@ -104,8 +104,10 @@ def corpus() -> dict[str, tuple[str, str, str]]:
     import render_hub
     import render_patterns
     import render_pir
+    import render_tickets
     import render_weekly
-    mods = {"hub": render_hub, "alarms": render_alarms, "pir": render_pir, "weekly": render_weekly, "patterns": render_patterns}
+    mods = {"hub": render_hub, "alarms": render_alarms, "tickets": render_tickets, "pir": render_pir, "weekly": render_weekly,
+            "patterns": render_patterns}
     out = {}
     for rel, (label, link) in PLACES.items():
         out[rel] = (label, link, (ROOT / rel).read_text(encoding="utf-8"))

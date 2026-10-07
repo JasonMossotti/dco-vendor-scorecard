@@ -25,6 +25,8 @@
 .gl-pop .gl-conn .gl-n { color:#5b6774; }
 .gl-pop .gl-back { border:0; background:none; color:#1f5fbf; padding:0; font:inherit; cursor:pointer; text-decoration:underline; }
 .gl-pop .gl-f { display:flex; gap:14px; padding:6px 12px 10px; font-size:12px; border-top:1px solid #e3e8ed; }
+a.tk-link { color:#1f5fbf; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px; white-space:nowrap; }
+a.tk-link:hover { background:#e8f0fc; }
 @media print { .gl { border-bottom:0; } .gl-pop { display:none !important; } }
 </style>
 <script id="gl-data" type="application/json">__GLOSSARY__</script>
@@ -72,8 +74,39 @@
     node.parentNode.replaceChild(frag, node);
   }
 
+  // Ticket, change, and work order numbers link to the Incident Portal, which opens that record.
+  const TK = new Set(G.tk || []), TK_RE = G.tk_re ? new RegExp("\\b(?:" + G.tk_re + ")\\b", "g") : null;
+  const TK_SKIP = "script,style,textarea,input,select,option,button,a,svg,summary,label,nav.usm,.gl-pop,[data-gl-skip],[data-tk-skip],[contenteditable]";
+  function linkTickets(root) {
+    if (!TK.size || root.nodeType === 1 && root.closest(TK_SKIP)) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => !/(?:INC|CHG|WO-|MOP-|PM-)\d/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(TK_SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const n of nodes) {
+      const text = n.nodeValue;
+      let m, last = 0, frag = null;
+      TK_RE.lastIndex = 0;
+      while ((m = TK_RE.exec(text))) {
+        if (!TK.has(m[0])) continue;
+        frag = frag || document.createDocumentFragment();
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        const a = document.createElement("a");
+        a.className = "tk-link"; a.href = ROOT + "tickets/#" + m[0]; a.textContent = m[0];
+        a.title = "Open " + m[0] + " in the Incident Portal";
+        frag.appendChild(a);
+        last = m.index + m[0].length;
+      }
+      if (!frag) continue;
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    }
+  }
+
   function scan(root) {
     if (!root || root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return;
+    linkTickets(root);
     if (root.nodeType === 1 && root.closest(SKIP)) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: n => !/[A-Z]|[a-c]\d\d-/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
@@ -199,12 +232,13 @@
   const flush = () => { const q = queue; queue = []; q.forEach(n => n.isConnected && scan(n.nodeType === 3 ? n.parentElement : n)); };
   new MutationObserver(muts => {
     for (const m of muts) for (const n of m.addedNodes) {
-      if (n.nodeType === 1 && (n.classList.contains("gl") || n.classList.contains("gl-pop"))) continue;
+      if (n.nodeType === 1 && (n.classList.contains("gl") || n.classList.contains("gl-pop") || n.classList.contains("tk-link"))) continue;
+      if (n.nodeType === 3 && n.parentElement && n.parentElement.classList.contains("tk-link")) continue;
       if (n.nodeType === 3 && n.parentElement && n.parentElement.classList.contains("gl")) continue;
       queue.push(n);
     }
     if (queue.length) flush();
   }).observe(document.body, {childList: true, subtree: true});
-  window.GLOSSARY = {lookup, scan, open, close};
+  window.GLOSSARY = {lookup, scan, open, close, linkTickets};
 })();
 </script>
