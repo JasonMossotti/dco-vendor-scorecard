@@ -164,7 +164,7 @@ def test_pages_with_fields_carry_only_the_locations_they_name(site):
 
 
 @pytest.mark.parametrize("page,expected,redraw", [
-    ("alarms/", "A07", None),
+    ("alarms/#a07", "A07", None),
     ("pir/", "A07", None),
     ("weekly/", "A07", '[data-week="2026-W36"]'),
     ("patterns/", "A11", '#tabs button:nth-child(2)'),

@@ -16,8 +16,16 @@ const fire = (el, type) => el.dispatchEvent(new w.Event(type, { bubbles: true })
 
 ok(errors.length === 0, "no script errors " + errors.join(";"));
 ok(tab("board").classList.contains("on") && t().includes("Alarm history board"), "opens on the history board");
+const val = id => d.getElementById(id).value;
+ok(val("from") === "2026-08-30" && val("fromtime") === "19:00" && val("to") === "2026-09-27" && val("totime") === "18:59",
+   `the time period defaults to the whole sample in CDT: ${val("from")} ${val("fromtime")} to ${val("to")} ${val("totime")}`);
+ok(d.getElementById("now").textContent.startsWith("Aug 30 19:00:00") && +d.getElementById("t").value === Date.parse(D.window.start) && rows().length === 0
+   && t().includes("Opened at the start of the selected period"), "opens at the start of the selected period, not at the rack A07 event: " + d.getElementById("now").textContent);
+const slider = d.getElementById("t");
+const at = iso => { slider.value = String(Date.parse(iso)); fire(slider, "input"); };
+at("2026-09-15T17:40:00Z");   // during the rack A07 outage, just after the overrun alert
 ok(d.getElementById("now").textContent.startsWith("Sep 15 12:40") && ["out_of_scope", "out_of_window"].some(c => rows()[0].classList.contains(c)) && d.querySelector('#active-changes .ch.flag[data-change="MOP-310"]'),
-   "opens during the rack A07 outage with the flagged rows pinned");
+   "during the rack A07 outage the flagged rows are pinned");
 ok(d.getElementById("utc").textContent.startsWith("Sep 15 17:40") && d.getElementById("utc").textContent.endsWith(" UTC"), "UTC clock under CDT in the same format: " + d.getElementById("utc").textContent);
 ok([...d.getElementById("speed").options].map(o => o.textContent).includes("Real time"), "replay speed offers real time");
 const modes = [...d.querySelectorAll("#modes button")].map(b => b.textContent);
@@ -48,8 +56,6 @@ ok(["Ack", "Source", "Ticket", "Device", "Location", "Summary", "Change work", "
 d.getElementById("a07").click();
 ok(d.getElementById("now").textContent.startsWith("Sep 15 09:47"), "replay starts at the MOP-310 window (CDT): " + d.getElementById("now").textContent);
 ok(d.querySelector('#active-changes .ch[data-change="MOP-310"]') && rows().length === 0, "MOP-310 is in progress and nothing has alarmed yet");
-const slider = d.getElementById("t");
-const at = iso => { slider.value = String(Date.parse(iso)); fire(slider, "input"); };
 at("2026-09-15T15:30:00Z");
 ok(rows().length === 1 && rows()[0].classList.contains("expected"), "the A-side tap-off opening is expected (dimmed)");
 at("2026-09-15T15:43:00Z");
@@ -107,12 +113,34 @@ d.getElementById("reset").click();
 const hl = d.getElementById("hl"); hl.value = "CDU-B3"; fire(hl, "input");
 ok(d.querySelectorAll("#alarms tr.hl").length >= 1 && rows().length === D.alarms.length, "highlight marks rows without filtering");
 
+// Time period to the minute (CDT): the clock moves to its start and only alarms raised inside it are listed.
+const setP = (f, ft, e, et) => {
+  const put = (id, v) => { const el = d.getElementById(id); if (el.value !== v) { el.value = v; fire(el, "change"); } };
+  put("from", f); put("fromtime", ft); put("to", e); put("totime", et);
+};
+d.getElementById("end").click();
+setP("2026-09-15", "10:30", "2026-09-15", "12:45");
+const p0 = Date.parse("2026-09-15T15:30:00Z"), p1 = Date.parse("2026-09-15T17:46:00Z");
+ok(d.getElementById("now").textContent.startsWith("Sep 15 10:30:00") && +d.getElementById("t").value === p0, "a new period moves the clock to its start: " + d.getElementById("now").textContent);
+ok(t().includes("Opened at the start of the selected period (Sep 15 10:30 CDT)"), "the board says it opened at the period start");
+d.getElementById("end").click();
+const inP = D.alarms.filter(a => Date.parse(a.raised) >= p0 && Date.parse(a.raised) < p1);
+ok(inP.length >= 3 && rows().length === inP.length && rows().every(r => inP.some(a => a.id === r.dataset.id)), `only the alarms raised between 10:30 and 12:45 CDT (${rows().length})`);
+setP("2026-09-15", "10:30", "2026-09-15", "10:44");
+const inQ = D.alarms.filter(a => Date.parse(a.raised) >= p0 && Date.parse(a.raised) < Date.parse("2026-09-15T15:45:00Z"));
+ok(inQ.length >= 1 && inQ.length < inP.length && rows().length === inQ.length, `narrowing the end time to 10:44 keeps only the alarms raised by then (${rows().length})`);
+ok(d.getElementById("now").textContent.startsWith("Sep 15 10:45:00"), "a new end keeps the clock inside the period: " + d.getElementById("now").textContent);
+const ft = d.getElementById("fromtime"); ft.value = "11:00"; fire(ft, "change");
+ok(val("totime") === "11:00" && val("to") === "2026-09-15", "a start after the end moves the end to the start");
+d.getElementById("reset").click();
+ok(val("fromtime") === "19:00" && val("totime") === "18:59" && d.getElementById("now").textContent.startsWith("Aug 30 19:00"), "reset restores the whole sample and its start");
+
 // Other views.
 tab("changes").click();
 ok(d.querySelectorAll("#changelist tr.row").length === D.declarations.length && t().includes("Change conflicts"), "every change with its declaration");
 ok(d.querySelectorAll("#changelist svg.tl").length === D.declarations.length, "every change with its timeline");
 ok(d.getElementById("changelist").textContent.includes("WO-41017") && d.getElementById("orphans").textContent.includes("WO-41014"), "work orders: under their MOP, and the one with no MOP on file");
-const setRange = (a, b) => { tab("board").click(); const f = d.getElementById("from"), e = d.getElementById("to"); f.value = a; fire(f, "change"); d.getElementById("to").value = b; fire(d.getElementById("to"), "change"); tab("changes").click(); };
+const setRange = (a, b) => { tab("board").click(); setP(a, "00:00", b, "23:59"); tab("changes").click(); };
 setRange("2026-09-13", "2026-09-14");
 const ids = [...d.querySelectorAll("#changelist tr.row")].map(r => r.dataset.change);
 ok(ids.join(",") === "MOP-309,MOP-305,CHG2040031" && t().includes("Showing 3 of 12") && !d.getElementById("orphans"), "the Change work tab follows the Board's date range: " + ids.join(","));
@@ -203,6 +231,9 @@ function live() {
     ok(rows().some(r => r.classList.contains("out_of_scope")) && d.getElementById("alert") && d.getElementById("tickets").textContent.includes("WO-41023"), "ten minutes in, the B side opens: flagged, alerted, and the work order is open");
     d.querySelector('#modes [data-mode="history"]').click();
     ok(d.querySelector("h1").textContent === "Alarm history board" && d.getElementById("t"), "back to Alarm History");
+    const dom5 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/alarms/#a07", virtualConsole: vc() });
+    ok(dom5.window.document.getElementById("now").textContent.startsWith("Sep 15 12:40") && dom5.window.document.querySelector("#alarms tr.row.out_of_scope"), "a link to #a07 opens the history board during the rack A07 outage");
+    dom5.window.close();
     const dom4 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/alarms/#live", virtualConsole: vc() });
     ok(dom4.window.document.querySelector("h1").textContent === "Live event board", "a link to #live opens the Live Events board");
     dom4.window.close();

@@ -88,13 +88,13 @@ const W0 = ms(D.window.start), W1 = ms(D.window.end);
 const A = D.alarms.map(a => ({...a, t:ms(a.raised), tc:ms(a.cleared), ta:ms(a.ack_at), keys:a.keys || []}));
 const TK = (D.tickets || []).map(k => ({...k, t:ms(k.opened), tc:ms(k.closed)}));
 const CT = D.class_text, FLAG = ["out_of_scope", "out_of_window"], RANK = {minor:1, major:2, critical:3};
-const START = ms(D.a07.overrun.raised) + 9 * MIN;   // opens during the rack A07 outage, just after the overrun alert
+const A07_AT = ms(D.a07.overrun.raised) + 9 * MIN;   // #a07: during the rack A07 outage, just after the overrun alert
 const SPEEDS = [[1, "Real time"], [60, "1 min per second"], [600, "10 min per second"], [3600, "1 h per second"]];
 const LEADS = Array.from({length:12}, (_, i) => 2 * (i + 1));   // upcoming change work lead time: 2 to 24 hours
 const REAP = 6 * HOUR;    // cleared alarms and closed tickets stay on the board this long
 const SHIFT = 12 * HOUR;  // the shift handoff looks back one 12-hour shift
 const SPAN = Math.floor((W1 - W0) / DAY) * DAY;   // whole days of sample the simulated live feed cycles through
-const S = { view:"board", mode:"history", T:START, shift:0, sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1, q:"", hl:"",
+const S = { view:"board", mode:"history", T:W0, shift:0, sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1 - MIN, q:"", hl:"",
   change:"", open:new Set(), xopen:new Set(), timer:null, live:null, speed:3600, lead:6, group:true, sound:false, seen:new Set(), heard:0, handoff:"" };
 
 // Board times. On the live board the sample is re-dated by S.shift so it runs on the viewer's own clock.
@@ -109,12 +109,17 @@ const meet = (x, y) => x.some(v => y.includes(v));
 const assetsText = d => d.assets.map(x => x.replace("rack:", "rack ")).join(", ");
 const assetsLoc = d => d.assets.map(x => x.replace("rack:", "")).join("|");   // data-loc: a pin opens the site drawing
 const liveShift = wall => wall - (W0 + ((wall - W0) % SPAN + SPAN) % SPAN);   // whole days, so the time of day is the sample's
+// The selected period, in site time (CDT) to the minute: S.from is its first minute and S.to its last.
+const END = () => S.to + MIN;
+const siteDate = t => new Date(t + OFF).toISOString().slice(0, 10), siteTime = t => new Date(t + OFF).toISOString().slice(11, 16);
+const fromSite = (dt, hm) => Date.parse(`${dt}T${hm || "00:00"}:00Z`) - OFF;
+const span = () => `${fmt(S.from, OFF, false)} to ${fmt(S.to, OFF, false)} CDT`;
 
 const stateAt = (a, T) => (a.tc != null && a.tc <= T) ? "cleared" : "active";
 const openAt = (k, T) => k.t <= T && (k.tc == null || k.tc > T);
 function base(T) {
   const q = S.q.toLowerCase(), live = S.mode === "live";
-  return A.filter(a => a.t <= T && (live ? (a.tc == null || a.tc > T - REAP) : (a.t >= S.from && a.t <= S.to + DAY - 1))
+  return A.filter(a => a.t <= T && (live ? (a.tc == null || a.tc > T - REAP) : (a.t >= S.from && a.t < END()))
     && (S.party === "all" || a.partner === S.party) && (S.hall === "all" || a.hall === S.hall)
     && (!S.change || a.change === S.change)
     && (!q || [a.id, a.device, a.summary, a.signal, a.location, a.change, a.ticket && a.ticket.id, a.source].join(" ").toLowerCase().includes(q)));
@@ -335,7 +340,6 @@ function alarmTable(T) {
 function board() {
   const T = S.T, live = S.mode === "live";
   const halls = [...new Set(A.map(a => a.hall))].sort();
-  const date = t => new Date(t).toISOString().slice(0, 10);
   const tools = `<label class="tog"><input type="checkbox" id="sound"${S.sound ? " checked" : ""}> Sound on new flags</label><button id="handoffbtn">Shift handoff</button>`;
   const bar = live
     ? `<div class="replay ctl live"><span class="clock"><span id="now">${esc(clock(T, OFF))} CDT</span><span id="utc">${esc(clock(T, 0))} UTC</span></span>
@@ -350,14 +354,15 @@ function board() {
     <h1>${live ? "Live event board" : "Alarm history board"}</h1>
     <p class="sub">${live
       ? "Simulated live feed: the synthetic sample month runs on your clock, re-dated to today, so trouble tickets, change work, and alarms arrive as they would live. Cleared alarms and closed tickets drop off after 6 hours. Nothing here comes from a real system."
-      : `Both partners' alarm feeds in one table, checked against declared change work. Replay of the synthetic sample month (${esc(local(W0))} to ${esc(local(W1 - 1))} CDT). Rows that do not reconcile with an approved change are pinned to the top. ${S.T === START ? "Opened during the rack A07 outage on Sep 15; press End of data for the whole month." : ""}`}</p>
+      : `Both partners' alarm feeds in one table, checked against declared change work. Replay of the synthetic sample month (${esc(local(W0))} to ${esc(local(W1 - 1))} CDT). Rows that do not reconcile with an approved change are pinned to the top. ${S.T === S.from ? `Opened at the start of the selected period (${esc(fmt(S.from, OFF, false))} CDT); press Play, End of data, or Replay Sep 15 for the rack A07 outage.` : ""}`}</p>
     ${bar}
     <div id="alertwrap">${banner(T)}</div>
     <div id="chipwrap">${chips(T)}</div>
     <div class="bar ctl">
       <span><label>Partner</label><select id="party"><option value="all">Both</option><option${S.party === "Landlord" ? " selected" : ""}>Landlord</option><option value="IT Partner"${S.party === "IT Partner" ? " selected" : ""}>IT Partner</option></select></span>
       <span><label>Hall</label><select id="hall"><option value="all">All</option>${halls.map(h => `<option${S.hall === h ? " selected" : ""}>${h}</option>`).join("")}</select></span>
-      ${live ? "" : `<span><label>From</label><input id="from" type="date" value="${date(S.from)}"> <label>to</label><input id="to" type="date" value="${date(S.to)}"></span>`}
+      ${live ? "" : `<span id="period"><label>From</label><input id="from" type="date" value="${siteDate(S.from)}"><input id="fromtime" type="time" step="60" value="${siteTime(S.from)}" title="Start time (CDT)">
+        <label>to</label><input id="to" type="date" value="${siteDate(S.to)}"><input id="totime" type="time" step="60" value="${siteTime(S.to)}" title="End time (CDT)"> <span class="note">CDT</span></span>`}
       <span><label>Search</label><input id="q" value="${esc(S.q)}" placeholder="device, ticket, change"></span>
       <span><label>Highlight</label><input id="hl" value="${esc(S.hl)}" placeholder="text to mark"></span>
       <label class="tog"><input type="checkbox" id="group"${S.group ? " checked" : ""}> Group related alarms</label>
@@ -374,8 +379,8 @@ function board() {
 }
 
 function changes() {
-  // Only the work that touches the date range chosen on the Board tab (windows that overlap it).
-  const r0 = S.from, r1 = S.to + DAY, inRange = (a, b) => a < r1 && b >= r0;
+  // Only the work that touches the time period chosen on the Board tab (windows that overlap it).
+  const r0 = S.from, r1 = END(), inRange = (a, b) => a < r1 && b >= r0;
   const ds = D.declarations.filter(d => inRange(ms(d.window_start), ms(d.window_end) + GRACE));
   const wos = id => (D.planned_work || []).filter(w => w.mop_ref === id);
   const orphan = (D.planned_work || []).filter(w => !w.mop_ref && inRange(ms(w.opened), ms(w.closed) ?? ms(w.opened)));
@@ -383,19 +388,19 @@ function changes() {
   const all = ds.length === D.declarations.length;
   return `<section class="view"><h1>Change work and declared impact</h1>
     <p class="sub">Approved changes from both partners (Landlord MOPs and IT Partner CHGs), with their work orders, impact declarations (Interface Agreement section 10), and timelines. Click a change to replay its window on the board.</p>
-    <p class="note" id="range">Showing <b>${ds.length} of ${D.declarations.length}</b> changes with a window in the Board's date range, ${esc(fmt(r0, 0, false).slice(0, -6))} to ${esc(fmt(S.to, 0, false).slice(0, -6))}${all ? "" : `. <button class="link" id="allrange">Show the whole month</button>`}. Change the range on the Board tab.</p>
+    <p class="note" id="range">Showing <b>${ds.length} of ${D.declarations.length}</b> changes with a window in the Board's time period, ${esc(span())}${all ? "" : `. <button class="link" id="allrange">Show the whole month</button>`}. Change the range on the Board tab.</p>
     ${TL_LEGEND}
     <div class="wide"><table id="changelist"><tr><th>Change</th><th>Owner</th><th>Work order</th><th>Title</th><th>Window (CDT)</th><th>Declared assets</th><th>Expected alarms</th><th>Worst</th><th>Expected</th><th>Out of scope</th><th>Out of window</th></tr>
     ${ds.map(d => `<tr class="row" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>${partyBadge(d.owner)}</td><td>${esc(wos(d.change_id).map(w => w.id).join(", "))}</td><td>${esc(d.title)}</td>
       <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td data-loc="${esc(assetsLoc(d))}">${esc(assetsText(d))}</td>
       <td>${esc(d.expected.map(e => e.alarms.join(", ")).join("; "))}</td><td>${esc(d.max_severity)}</td>
       <td>${d.counts.expected}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${d.counts.out_of_scope}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${d.counts.out_of_window}</b>` : 0}</td></tr>
-      <tr class="tlrow"><td colspan="11">${timeline(d, null)}</td></tr>`).join("") || `<tr><td colspan="11" class="empty">No change work in this date range.</td></tr>`}</table></div>
+      <tr class="tlrow"><td colspan="11">${timeline(d, null)}</td></tr>`).join("") || `<tr><td colspan="11" class="empty">No change work in this time period.</td></tr>`}</table></div>
     <h2>Planned work orders with no approved change</h2>${orphan.length ? `<div class="wide"><table id="orphans"><tr><th>Work order</th><th>Partner</th><th>Unit</th><th>Work</th><th>Opened (CDT)</th><th>Closed</th></tr>
       ${orphan.map(w => `<tr><td>${esc(w.id)}</td><td>${partyBadge("Landlord")}</td><td data-loc="${esc(w.unit)}">${esc(w.unit)}</td><td>${esc(w.notes)}</td><td>${esc(local(ms(w.opened)))}</td><td>${esc(hhmm(ms(w.closed)))}</td></tr>`).join("")}</table></div>
       <p class="note">Planned work with no MOP on file has no impact declaration, so every alarm it causes reaches the Customer as not change work. The records do not reconcile; that is not by itself a finding against anyone.</p>`
-      : `<p class="empty">None in this date range.</p>`}
-    <h2>Change conflicts</h2>${cf.length ? `<ul>${cf.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None in this date range: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
+      : `<p class="empty">None in this time period.</p>`}
+    <h2>Change conflicts</h2>${cf.length ? `<ul>${cf.map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>` : `<p class="empty">None in this time period: no two redundancy-reducing changes on connected equipment overlapped.</p>`}</section>`;
 }
 
 // Customer notification routing: the Customer's own backstop on this aggregate (config/customer_notifications.yaml).
@@ -481,7 +486,7 @@ function routingYaml() {
 }
 function routingSection() {
   const msgs = sendAll(), evs = routeEvents();
-  const r0 = S.from, r1 = S.to + DAY, inR = m => m.at >= r0 && m.at < r1, shown = msgs.filter(inR);
+  const r0 = S.from, r1 = END(), inR = m => m.at >= r0 && m.at < r1, shown = msgs.filter(inR);
   const count = (type, c) => msgs.filter(m => m.e.type === type && (!c || m.ch === c)).length;
   const SHORT = {primary:"Primary", secondary:"Secondary", domain:"By domain", facilities:"Facilities", it_ops:"IT ops", leadership:"Leadership", email:"Email", sms:"Text"};
   const box = (i, k, c, on) => `<label class="ck" title="${esc(k === "to" ? groupText(c) : SHORT[c])}"><input type="checkbox" data-rc="${i}" data-k="${k}" data-v="${c}"${on ? " checked" : ""}>${SHORT[c]}</label>`;
@@ -512,10 +517,10 @@ function routingSection() {
       <span><label>Event</label><select id="lkevent">${S.rc.rules.map(r => `<option value="${esc(r.event)}"${S.look.event === r.event ? " selected" : ""}>${esc(r.label)}</option>`).join("")}</select></span>
       <span><label>Domain</label><select id="lkdomain">${["power", "cooling", "fire", "compute", "network"].map(d => `<option${S.look.domain === d ? " selected" : ""}>${d}</option>`).join("")}</select></span></div>
     <div id="lookup" class="panel">${lookupText()}</div>
-    <h2>Messages the Customer's layer would have sent <span class="note">${shown.length} in the Board's date range, ${esc(fmt(r0, 0, false).slice(0, -6))} to ${esc(fmt(S.to, 0, false).slice(0, -6))}</span></h2>
+    <h2>Messages the Customer's layer would have sent <span class="note">${shown.length} in the Board's time period, ${esc(span())}</span></h2>
     <div class="wide"><table id="dispatch"><tr><th>Sent (CDT)</th><th>Event</th><th>Source</th><th>What</th><th>To</th><th>Channel</th><th>Address</th><th>Note</th></tr>
       ${shown.map(m => `<tr class="${m.why.startsWith("escalation") ? "escal" : ""}"><td>${esc(local(m.at))}</td><td>${esc(S.rc.rules.find(r => r.event === m.e.type).label)}</td><td>${esc(m.e.ref)}</td><td class="sum">${esc(m.e.what)}</td>
-        <td>${esc(m.to)}</td><td>${m.ch === "sms" ? "Text" : "Email"}</td><td>${esc(m.addr)}</td><td class="note">${esc(m.why)}</td></tr>`).join("") || `<tr><td colspan="8" class="empty">Nothing in this date range.</td></tr>`}</table></div>
+        <td>${esc(m.to)}</td><td>${m.ch === "sms" ? "Text" : "Email"}</td><td>${esc(m.addr)}</td><td class="note">${esc(m.why)}</td></tr>`).join("") || `<tr><td colspan="8" class="empty">Nothing in this time period.</td></tr>`}</table></div>
     <p class="note">Escalations are shown when the event was still open at the escalation time; in production they also stop when someone acknowledges, which the sample does not record.</p>
     <h2>What production needs</h2><ol class="rules">
       <li><b>A server that runs around the clock.</b> This page is static and sends nothing. The aggregate needs a service that ingests both partners' feeds (BMS, SNMP traps, Redfish, ticket webhooks; the read-only collector already reads the devices), classifies each alarm against declared change work as this board does, and routes the result. Run it on at least two hosts.</li>
@@ -577,6 +582,15 @@ function refresh() {
   alertSound();
 }
 function setT(t) { S.T = Math.max(W0, Math.min(W1, t)); render(); }
+// A new start moves the history clock to it; a new end only keeps the clock inside the period.
+// An end before the start becomes the start (and the reverse).
+function setPeriod(f, t, edited) {
+  if (t < f) { if (edited === "from" || edited === "fromtime") t = f; else f = t; }
+  const start = f !== S.from;
+  S.from = f; S.to = t;
+  if (S.mode === "history") { stop(); S.T = Math.max(W0, Math.min(W1, start ? f : Math.min(S.T, END()))); }
+  render();
+}
 function stop() { if (S.timer) { clearInterval(S.timer); S.timer = null; } }
 function play() {
   if (S.T >= W1) S.T = W0;
@@ -601,7 +615,7 @@ function setMode(m) {
   if (m === S.mode) return;
   stop(); stopLive(); S.mode = m; S.change = ""; S.handoff = ""; S.view = "board";
   if (m === "live") startLive(liveShift(Date.now()));
-  else { S.shift = 0; S.T = START; S.seen = new Set(); S.heard = 0; }
+  else { S.shift = 0; S.T = S.from; S.seen = new Set(); S.heard = 0; }
   const hash = m === "live" ? "#live" : "#board";
   if (location.hash !== hash) history.replaceState(null, "", hash);
   render();
@@ -627,7 +641,7 @@ function wire() {
     const lk = (id, k) => { $(id).onchange = e => { S.look[k] = e.target.value; $("lookup").innerHTML = lookupText(); }; };
     lk("lkday", "day"); lk("lktime", "time"); lk("lkevent", "event"); lk("lkdomain", "domain");
   }
-  if ($("allrange")) $("allrange").onclick = () => { S.from = W0; S.to = W1; render(); };
+  if ($("allrange")) $("allrange").onclick = () => setPeriod(W0, W1 - MIN);
   if (S.view !== "board") return;
   if (S.mode === "history") {
     $("t").oninput = e => { stop(); setT(+e.target.value); };
@@ -636,8 +650,12 @@ function wire() {
     $("play").onclick = () => { if (S.timer) stop(); else play(); refresh(); };
     $("speed").onchange = e => { S.speed = +e.target.value; if (S.timer) { stop(); play(); } };
     $("a07").onclick = () => { stop(); S.change = D.a07.change; S.seen = new Set(); S.heard = 0; setT(ms(D.a07.window_start) + MIN); };
-    $("from").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.from = v; render(); };
-    $("to").onchange = e => { const v = Date.parse(e.target.value + "T00:00:00Z"); if (!isNaN(v)) S.to = v; render(); };
+    const period = e => {
+      const f = fromSite($("from").value, $("fromtime").value), t = fromSite($("to").value, $("totime").value);
+      if (isNaN(f) || isNaN(t)) return render();
+      setPeriod(f, t, e.target.id);
+    };
+    ["from", "fromtime", "to", "totime"].forEach(id => $(id).onchange = period);
   } else {
     $("liveA07").onclick = () => { S.change = ""; startLive(Date.now() - (ms(D.a07.first_flag.raised) - 10 * MIN)); render(); };
     $("livenow").onclick = () => { S.change = ""; startLive(liveShift(Date.now())); render(); };
@@ -665,7 +683,7 @@ function wire() {
   const typed = (id, k) => { $(id).oninput = e => { S[k] = e.target.value; render(); const el = $(id); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }; };
   typed("q", "q"); typed("hl", "hl");
   if ($("clearchange")) $("clearchange").onclick = () => { S.change = ""; render(); };
-  $("reset").onclick = () => { Object.assign(S, {sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1, q:"", hl:"", change:""}); render(); };
+  $("reset").onclick = () => { Object.assign(S, {sev:new Set(), cls:new Set(), party:"all", hall:"all", q:"", hl:"", change:""}); setPeriod(W0, W1 - MIN); };
 }
 // One click handler for everything that is redrawn while the clock runs (chips, cards, rows, groups, the banner).
 document.getElementById("doc").addEventListener("click", e => {
@@ -681,6 +699,7 @@ document.getElementById("doc").addEventListener("click", e => {
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => { stop(); go(b.dataset.view); });
 const h = location.hash.slice(1);
 S.view = ["board", "changes", "notify", "about"].includes(h) ? h : "board";
+if (h === "a07") S.T = A07_AT;   // a link straight to the rack A07 outage on the history board
 if (h === "live") setMode("live"); else render();
 </script>
 </body>
