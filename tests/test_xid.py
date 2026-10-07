@@ -87,4 +87,5 @@ def test_app_lookup_explains_an_xid():
     from scorecard import app_support
     lines = app_support.lookup_lines("xid 79")
     assert lines[0] == "**XID 79** · GPU XID codes"
-    assert "GPU has fallen off the bus" in lines[1] and "docs.nvidia.com" in lines[-1]
+    assert "GPU has fallen off the bus" in lines[1]
+    assert lines[-1] == f"*Source: [NVIDIA Xid catalog]({xid.catalog()['source']['url']}).*"
