@@ -35,7 +35,7 @@ VESDA = "#7a4fd0"
 EQUIP = "#e3efe8"
 FONT = "Helvetica, Arial, sans-serif"
 
-PROJECT = "Site AUS-1 (fictional)  |  DCO Vendor Scorecard"
+PROJECT = "Site AUS-1 (fictional)  |  Unified Site Management"
 
 
 @dataclass

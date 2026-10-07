@@ -1,4 +1,4 @@
-"""DCO Vendor Scorecard: interactive demo.
+"""Scorecards (Unified Site Management): interactive demo.
 
 Runs locally (``streamlit run app/streamlit_app.py``) or entirely in the browser
 on GitHub Pages via stlite. All logic lives in ``scorecard.app_support``; this
@@ -31,7 +31,7 @@ from scorecard.sla_model import load_sla  # noqa: E402
 REPO = "https://github.com/JasonMossotti/dco-vendor-scorecard"
 SEV_ORDER = ["S1", "S2", "S3", "S4"]
 
-st.set_page_config(page_title="DCO Vendor Scorecard", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Scorecards · Unified Site Management", page_icon="📊", layout="wide")
 CONTRACT = load_sla(ROOT / "sla" / "it_partner.yaml")
 # --------------------------------------------------------------------------- #
 # Controls: which partner, and which dataset (the site's tab bar sits above the app)

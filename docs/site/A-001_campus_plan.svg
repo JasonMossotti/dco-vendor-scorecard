@@ -108,7 +108,7 @@
 <rect x="8.0" y="8.0" width="1164.0" height="748.0" rx="0" fill="none" stroke="#1e2933" stroke-width="1.4"/>
 <line x1="8.0" y1="712.0" x2="1172.0" y2="712.0" stroke="#1e2933" stroke-width="1.4"/>
 <text x="20.0" y="731.0" font-family="Helvetica, Arial, sans-serif" font-size="15" text-anchor="start" fill="#1e2933" font-weight="bold">Campus plan</text>
-<text x="20.0" y="749.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  DCO Vendor Scorecard  |  Scale: as shown  |  Schematic, not for construction</text>
+<text x="20.0" y="749.0" font-family="Helvetica, Arial, sans-serif" font-size="10" text-anchor="start" fill="#6b7785" font-weight="normal">Site AUS-1 (fictional)  |  Unified Site Management  |  Scale: as shown  |  Schematic, not for construction</text>
 <line x1="1060.0" y1="712.0" x2="1060.0" y2="756.0" stroke="#1e2933" stroke-width="1.0"/>
 <text x="1116.0" y="733.0" font-family="Helvetica, Arial, sans-serif" font-size="9" text-anchor="middle" fill="#6b7785" font-weight="normal">Sheet</text>
 <text x="1116.0" y="752.0" font-family="Helvetica, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#1e2933" font-weight="bold">A-001</text>
