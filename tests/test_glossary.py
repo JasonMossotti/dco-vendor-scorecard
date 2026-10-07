@@ -227,6 +227,8 @@ def _node(script, *args):
     ("agreements/it-partner-sla/", "TR-1", None),
     ("agreements/interface-agreement/", "NT-1", None),
     ("", "FA-3", None),
+    ("patterns/", "XID 79", None),
+    ("tickets/", "XID 119", None),
 ])
 def test_popups_in_a_browser(site, path, code, redraw):
     args = [site / path.split("#")[0] / "index.html", f"https://example.test/{path}", code] + ([redraw] if redraw else [])

@@ -134,7 +134,7 @@ Ticket opened 109 minutes after the telemetry fault. Vendor-reported restoration
 
 | Source | Time | Evidence |
 |---|---|---|
-| `telemetry/dcgm_xid_events.jsonl` | 2026-09-06 08:52 UTC | Fault signal: XID 145 (NVLink error) on a09-ct10 |
+| `telemetry/dcgm_xid_events.jsonl` | 2026-09-06 08:52 UTC | Fault signal: XID 145 (NVLINK: RLW Error) on a09-ct10 |
 | `vendor/tickets.json` | 2026-09-06 10:41 UTC | INC3100357 opened; reported outage start 2026-09-06 10:41 UTC |
 | `vendor/tickets.json` | 2026-09-06 17:54 UTC | INC3100357 resolved |
 
@@ -264,7 +264,7 @@ INC3100204 closed a22-ct07 as 'Cleaned/reseated' with no part replaced; the same
 
 | Source | Time | Evidence |
 |---|---|---|
-| `telemetry/dcgm_xid_events.jsonl` | 2026-09-04 07:21 UTC | Original fault: XID 94 (Contained ECC error) |
+| `telemetry/dcgm_xid_events.jsonl` | 2026-09-04 07:21 UTC | Original fault: XID 94 (Contained memory error) |
 | `vendor/tickets.json` | 2026-09-04 10:32 UTC | INC3100204 closed as 'Cleaned/reseated', no part used |
 | `telemetry/dcgm_xid_events.jsonl` | 2026-09-07 02:24 UTC | Recurrence: XID 48 (Double Bit ECC Error) |
 
@@ -302,9 +302,9 @@ INC3100663 closed a23-ct04 as 'Cleaned/reseated' with no part replaced; the same
 
 | Source | Time | Evidence |
 |---|---|---|
-| `telemetry/dcgm_xid_events.jsonl` | 2026-09-13 08:10 UTC | Original fault: XID 119 (Timeout waiting for GSP RPC response) |
+| `telemetry/dcgm_xid_events.jsonl` | 2026-09-13 08:10 UTC | Original fault: XID 119 (GSP RPC Timeout) |
 | `vendor/tickets.json` | 2026-09-13 11:27 UTC | INC3100663 closed as 'Cleaned/reseated', no part used |
-| `telemetry/dcgm_xid_events.jsonl` | 2026-09-16 01:29 UTC | Recurrence: XID 119 (Timeout waiting for GSP RPC response) |
+| `telemetry/dcgm_xid_events.jsonl` | 2026-09-16 01:29 UTC | Recurrence: XID 119 (GSP RPC Timeout) |
 
 **Severity:** Base level for same fault recurred after a reseat: S3; AGG-REPEAT: +1 level (Same CSL or same Service Unit breached within the previous 30 days).  
 **Escalation:** Formal CAP within 10 business days; reviewed jointly by Customer site lead and Supplier account manager; tracked to verified closure.  

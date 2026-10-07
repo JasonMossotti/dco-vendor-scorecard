@@ -24,6 +24,7 @@ types:   # filter chips on the Glossary tab, in this order
   - {key: record, label: Records and documents}
   - {key: equipment, label: Site and equipment}
   - {key: product, label: Products and models}
+  - {key: xid, label: GPU XID codes}
 
 # Where the contracts define codes. "path" is a dotted path in the loaded contract (partner SLAs are
 # merged onto sla/common.yaml); "title" and "text" quote fields of each item. A sentence whose field is
@@ -145,7 +146,7 @@ terms:
   - {term: CPU, type: acronym, expansion: Central processing unit, link: false, text: "The general-purpose processor; each compute tray has two Grace CPUs."}
   - {term: PSU, type: acronym, expansion: Power supply unit, text: "Converts power for equipment; in a rack's power shelves, each PSU is a field-replaceable unit."}
   - {term: BMC, type: acronym, expansion: Baseboard management controller, text: "A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system."}
-  - {term: XID, type: acronym, expansion: "Xid error (GPU driver error code)", text: "A numbered error the GPU driver reports, such as XID 79 (GPU fallen off the bus). Critical XIDs start the restoration clock for a GPU fault."}
+  - {term: XID, type: acronym, expansion: "Xid error (GPU driver error code)", text: "A numbered error the GPU driver reports, such as XID 79 (GPU has fallen off the bus). Critical XIDs start the restoration clock for a GPU fault. Every XID that applies to GB200 is listed under GPU XID codes, from NVIDIA's public Xid catalog."}
   - {term: DCGM, type: acronym, expansion: Data Center GPU Manager, text: "The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM."}
   - {term: ECC, type: acronym, expansion: Error-correcting code, text: "Memory that detects and corrects bit errors; rising corrected errors can warn of a failing part."}
   - {term: GSP, type: acronym, expansion: GPU System Processor, text: "A processor on the GPU that runs its firmware; XID 119 is a timeout waiting for it."}
@@ -309,6 +310,7 @@ plain:   # capitalised text that is not a code
     - {terms: [MOCK, ILLUSTRATIVE], why: "The contracts' status banner: fictional and illustrative."}
     - {terms: [ONLY, OK, LIVE], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
+    - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}
   patterns:
     - {pattern: '[A-C]-?\d{2}', why: "A rack position (A07 is Hall A, rack 7); the site drawings show where each is."}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}

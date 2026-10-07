@@ -6,6 +6,8 @@ Two sources, never retyped:
   Interface Agreement YAML, so a popup quotes the contract. ``config/glossary.yaml`` only says
   which YAML lists hold codes and which fields to quote. A code two contracts define differently
   (TR-1 in each partner SLA) keeps one sense per contract; identical senses are merged.
+* **GPU XID codes** (XID 79, XID 145, ...) come from ``config/xid_catalog.yaml``, transcribed from
+  NVIDIA's public Xid Catalog; each popup links to it.
 * **Everything else** (acronyms, record and equipment ID formats, product names) is written by
   hand in ``config/glossary.yaml``. A family such as ``INC\\d{7}`` explains a format once instead
   of listing every ticket.
@@ -32,6 +34,7 @@ from .sla_model import load_interface_agreement, load_sla
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config" / "glossary.yaml"
+XID_CATALOG = ROOT / "config" / "xid_catalog.yaml"
 CONTRACT_FILES = {"interface": None, "it": "sla/it_partner.yaml", "landlord": "sla/ot_partner.yaml"}
 DIRECTION = {"higher_is_better": "at least", "lower_is_better": "at most"}
 
@@ -44,6 +47,8 @@ TOKEN = re.compile(_EDGE_L + r"(?:[A-Z][A-Z0-9_]*(?:-[A-Z0-9_]+)+|[A-Z]+[0-9][A-
 # Redfish names (A06_PowerShelf_1), and a rack written with its word (Rack A07; a bare A07 stays plain).
 DEVICE_NAME = re.compile(r"(?<![A-Za-z0-9_-])(?:leaf-[a-c]\d{2}-r\d(?: port \d{1,3}|:swp\d{1,3})?|[a-c]\d{2}-(?:ct\d{2}|nvsw\d)"
                          r"|[A-C]\d{2}_PowerShelf_\d|[Rr]ack [A-C]\d{2})(?![A-Za-z0-9_-])")
+# A GPU XID code written with its number (XID 79): one code, not the acronym and a number.
+XID_CODE = re.compile(r"(?<![A-Za-z0-9_-])XID \d{1,3}(?![A-Za-z0-9_-])")
 
 
 @dataclass
@@ -69,6 +74,7 @@ class Entry:
     link: bool = True         # underline it on the pages (everyday acronyms are listed but not underlined)
     code_only: bool = False   # underline only inside code formatting (ticket states such as NEW)
     see: str = ""             # a page that holds these records
+    source: dict[str, str] = field(default_factory=dict)   # an outside authority: {"label", "href"}
 
     @property
     def title(self) -> str:
@@ -77,7 +83,7 @@ class Entry:
     def as_dict(self) -> dict[str, Any]:
         d = {"key": self.key, "term": self.term, "type": self.type, "title": self.title,
              "senses": [s.as_dict() for s in self.senses]}
-        for k in ("expansion", "pattern", "example", "see", "on"):
+        for k in ("expansion", "pattern", "example", "see", "on", "source"):
             if getattr(self, k):
                 d[k] = getattr(self, k)
         if not self.link:
@@ -180,6 +186,30 @@ def hand_entries(cfg: dict[str, Any] | None = None) -> tuple[dict[str, Entry], l
     return exact, fams
 
 
+def xid_catalog(path: Path = XID_CATALOG) -> dict[str, Any]:
+    from . import xid
+    return xid.catalog(path)
+
+
+def xid_text(c: dict[str, Any], buckets: dict[str, str]) -> str:
+    """A code's meaning, then NVIDIA's two recommended actions in words with the bucket names."""
+    acts = [f"{when} {buckets.get(b, b)[0].lower()}{buckets.get(b, b)[1:]} ({b})"
+            for when, b in (("first", c.get("now")), ("then", c.get("then"))) if b]
+    text = c["text"].rstrip(".") + "."
+    if c.get("critical"):
+        text += " At AUS-1 it is a critical XID: it starts the IT Partner's GPU restoration clock."
+    return text + (" NVIDIA's recommended action: " + "; ".join(acts) + "." if acts else " The catalog lists no action.")
+
+
+def xid_entries(path: Path = XID_CATALOG) -> dict[str, Entry]:
+    """One entry per XID in config/xid_catalog.yaml: NVIDIA's name as the title, a link to the catalog."""
+    cat = xid_catalog(path)
+    src = {"label": "NVIDIA Xid catalog", "href": cat["source"]["url"]}
+    return {f"XID {c['xid']}": Entry(f"XID {c['xid']}", "xid", [Sense(c["name"], xid_text(c, cat["buckets"]))],
+                                     key=f"XID-{c['xid']}", source=src)
+            for c in cat["codes"]}
+
+
 @dataclass
 class Glossary:
     exact: dict[str, Entry]
@@ -217,7 +247,7 @@ class Glossary:
         same way). ``keys`` limits it to those entries."""
         terms = sorted((t for t, e in self.exact.items() if e.link and e.code_only == code_only and (keys is None or e.key in keys)),
                        key=lambda t: (-len(t), t))
-        alts = [re.escape(t).replace("\\-", "-") for t in terms]
+        alts = [re.escape(t).replace("\\-", "-").replace("\\ ", " ") for t in terms]
         if not code_only:
             alts += [f"(?:{f.pattern})" for f in self.families
                      if f.link and (not f.on or page in f.on) and (keys is None or f.key in keys)]
@@ -235,6 +265,7 @@ def load(root: Path = ROOT) -> Glossary:
     if clash:
         raise ValueError(f"config/glossary.yaml repeats terms the contracts define: {clash}")
     exact.update(hand)
+    exact.update(xid_entries(root / "config" / "xid_catalog.yaml"))
     for t, e in exact.items():
         e.key = e.key or t
     ign = cfg.get("plain", {})
@@ -244,7 +275,7 @@ def load(root: Path = ROOT) -> Glossary:
 
 
 def tokens(text: str) -> Counter:
-    return Counter(m.group() for rx in (TOKEN, DEVICE_NAME) for m in rx.finditer(text))
+    return Counter(m.group() for rx in (TOKEN, DEVICE_NAME, XID_CODE) for m in rx.finditer(text))
 
 
 # --------------------------------------------------------------------------- #

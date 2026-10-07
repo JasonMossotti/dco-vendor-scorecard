@@ -31,20 +31,16 @@ from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from .. import xid as xid_catalog
+
 UTC = timezone.utc
 
 # --------------------------------------------------------------------------- #
 # Static reference data
 # --------------------------------------------------------------------------- #
-XID_MESSAGES = {
-    79: "GPU has fallen off the bus",
-    94: "Contained ECC error",
-    48: "Double Bit ECC Error",
-    119: "Timeout waiting for GSP RPC response",
-    145: "NVLink error",
-    149: "NVLink error",
-}
 XID_FAMILY = {79: "bus", 94: "ecc", 48: "ecc", 119: "gsp", 145: "nvlink", 149: "nvlink"}
+# The driver's message for each XID the generator emits: NVIDIA's name from the public Xid catalog.
+XID_MESSAGES = {x: n for x, n in xid_catalog.names().items() if x in XID_FAMILY}
 
 # Post-repair validation plans: (check name, minutes). Run sequentially.
 VALIDATION_PLANS = {
