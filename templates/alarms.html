@@ -394,7 +394,7 @@ function changes() {
     ${ds.map(d => `<tr class="row" data-change="${esc(d.change_id)}"><td>${esc(d.change_id)}</td><td>${partyBadge(d.owner)}</td><td>${esc(wos(d.change_id).map(w => w.id).join(", "))}</td><td>${esc(d.title)}</td>
       <td>${esc(local(ms(d.window_start)))} to ${esc(local(ms(d.window_end)).slice(-5))}</td><td data-loc="${esc(assetsLoc(d))}">${esc(assetsText(d))}</td>
       <td>${esc(d.expected.map(e => e.alarms.join(", ")).join("; "))}</td><td>${esc(d.max_severity)}</td>
-      <td>${d.counts.expected}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${d.counts.out_of_scope}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${d.counts.out_of_window}</b>` : 0}</td></tr>
+      <td>${esc(d.counts.expected)}</td><td>${d.counts.out_of_scope ? `<b style="color:var(--oos)">${esc(d.counts.out_of_scope)}</b>` : 0}</td><td>${d.counts.out_of_window ? `<b style="color:var(--oow)">${esc(d.counts.out_of_window)}</b>` : 0}</td></tr>
       <tr class="tlrow"><td colspan="11">${timeline(d, null)}</td></tr>`).join("") || `<tr><td colspan="11" class="empty">No change work in this time period.</td></tr>`}</table></div>
     <h2>Planned work orders with no approved change</h2>${orphan.length ? `<div class="wide"><table id="orphans"><tr><th>Work order</th><th>Partner</th><th>Unit</th><th>Work</th><th>Opened (CDT)</th><th>Closed</th></tr>
       ${orphan.map(w => `<tr><td>${esc(w.id)}</td><td>${partyBadge("Landlord")}</td><td data-loc="${esc(w.unit)}">${esc(w.unit)}</td><td>${esc(w.notes)}</td><td>${esc(local(ms(w.opened)))}</td><td>${esc(hhmm(ms(w.closed)))}</td></tr>`).join("")}</table></div>
@@ -537,8 +537,8 @@ function notify() {
   return `<section class="view"><h1>Notifications owed to the Customer</h1>
     <p class="sub">What each partner owed under Interface Agreement section 10 (NT-1 critical within 5 minutes with a page; NT-2 major within 15 minutes on two automatic channels; NT-3 change work within 5 minutes, naming the change), compared with its delivery log. The sample month predates the clause, so this is the baseline it starts from.</p>
     <div class="wide"><table id="km"><tr><th>Measure</th><th>Party</th><th>Owed</th><th>On time</th><th>Late</th><th>Single channel or no change named</th><th>Missing</th><th>Actual</th><th>Target</th><th>NT-1</th><th>NT-2</th><th>NT-3</th></tr>
-    ${D.key_measures.map(k => `<tr><td>${esc(k.id)}</td><td>${partyBadge(k.party)}</td><td>${k.owed}</td><td>${k.on_time}</td><td>${k.late}</td><td>${k.incomplete}</td><td>${k.missing}</td><td><b>${k.actual}%</b></td><td>${k.target}%</td>
-      ${["NT-1","NT-2","NT-3"].map(r => `<td>${k.by_rule[r].on_time} of ${k.by_rule[r].owed}</td>`).join("")}</tr>`).join("")}</table></div>
+    ${D.key_measures.map(k => `<tr><td>${esc(k.id)}</td><td>${partyBadge(k.party)}</td><td>${esc(k.owed)}</td><td>${esc(k.on_time)}</td><td>${esc(k.late)}</td><td>${esc(k.incomplete)}</td><td>${esc(k.missing)}</td><td><b>${esc(k.actual)}%</b></td><td>${esc(k.target)}%</td>
+      ${["NT-1","NT-2","NT-3"].map(r => `<td>${esc(k.by_rule[r].on_time)} of ${esc(k.by_rule[r].owed)}</td>`).join("")}</tr>`).join("")}</table></div>
     <p class="note">Key measures carry no service credit; they drive corrective action.</p>
     <h2>Critical and change-work notifications</h2>
     <div class="wide"><table id="owed"><tr><th>Alarm</th><th>Raised (CDT)</th><th>Device</th><th>Alarm</th><th>Owed by</th><th>Rule</th><th>First sent</th><th>Channels</th><th>Result</th></tr>
@@ -556,7 +556,7 @@ function about() {
       <li><span class="badge out_of_window">Out of window</span> ${esc(r.out_of_scope[1].replace(/^Out of window: /, ""))}</li>
       <li>Anything else is not change work, including alarms during a window on equipment that is not connected.</li></ul>
     <p>${esc(r.out_of_scope[2])}</p>
-    <h2>Notifications</h2><ul class="rules">${r.notifications.map(n => `<li><b>${esc(n.id)}</b> ${esc(n.trigger)}: within ${n.within_min} minutes, ${esc(n.channels.toLowerCase())}. Owed by ${esc(n.owed_by.toLowerCase())}.</li>`).join("")}</ul>
+    <h2>Notifications</h2><ul class="rules">${r.notifications.map(n => `<li><b>${esc(n.id)}</b> ${esc(n.trigger)}: within ${esc(n.within_min)} minutes, ${esc(n.channels.toLowerCase())}. Owed by ${esc(n.owed_by.toLowerCase())}.</li>`).join("")}</ul>
     <p>${esc(r.customer_backstop)}</p>
     <h2>Sources</h2><p>Landlord: BMS alarms (the alarm of record), UPS cards, busway monitors, power monitoring, CDU controllers, leak and VESDA panels. IT Partner: rack leak ropes, Redfish, NVLink manager, fabric manager, GPU telemetry, scheduler. Severity follows each partner SLA's P1 and P2 criteria. Every name, device, and event is synthetic.</p>
     <p class="note">Report: <code>reports/change_alarms.md</code>. Rules: Interface Agreement section 10. Code: <code>src/scorecard/alarms.py</code>.</p></section>`;

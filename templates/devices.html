@@ -103,7 +103,7 @@ __SITENAV__
     let h = "";
     if (q) {
       const names = Object.keys(DEV).filter(n => n.toLowerCase().includes(q) || (DEV[n].title || "").toLowerCase().includes(q));
-      const p = lookup(q.replace(/^leaf/, "leaf"));
+      const p = lookup(q);
       if (p && !DEV[p[0]]) names.unshift(p[0]);
       h += `<div id="count">${names.length} match${names.length === 1 ? "" : "es"}${names.length > 300 ? ", first 300 shown" : ""}</div>`;
       h += names.slice(0, 300).map(n => `<a href="${href(n)}">${esc(n)}<small>${esc(KIND[(DEV[n] || {kind: "leaf_port"}).kind])}</small></a>`).join("");

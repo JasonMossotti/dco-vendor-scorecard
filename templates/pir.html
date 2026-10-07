@@ -55,7 +55,7 @@ __SITENAV__
 <script>
 const DATA = JSON.parse(document.getElementById("data").textContent);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const partyCls = p => p === "IT Partner" ? "IT" : p;
+const partyCls = p => p === "IT Partner" ? "IT" : esc(p);
 let mode = "example";
 
 function swimlane(f) {
@@ -98,7 +98,7 @@ function render(f, a, edit) {
     ["Unit", f && f.unit], ["Uptime severity (OSR)", osr ? `${osr} · ${DATA.osr[osr][0]}` : ""], ["Internal severity", sev.internal || (f && f.findings.length ? f.findings[0].severity : "")],
     ["Priority", sev.priority || ""], ["Incident Commander", a.incident_commander || ""], ["Review meeting", a.review_meeting || ""]
   ].map(([k, v]) => `<div class="kv"${k === "Unit" && v ? ` data-loc="${esc(v)}"` : ""}><b>${k}</b>${edit && ["Priority", "Incident Commander", "Review meeting"].includes(k) ? `<input type="text" data-f="${k}" value="${esc(v)}">` : esc(v || "—")}</div>`).join("") + `</div>`;
-  if (osr) h += `<p class="note">OSR ${osr} (${DATA.osr[osr][0]}): ${esc(DATA.osr[osr][1])} ${esc(sev.osr_rationale || "")}</p>`;
+  if (osr) h += `<p class="note">OSR ${esc(osr)} (${esc(DATA.osr[osr][0])}): ${esc(DATA.osr[osr][1])} ${esc(sev.osr_rationale || "")}</p>`;
 
   h += `<h2>In plain language</h2><div class="plain">` + [["What happened?", "what_happened"], ["Who was affected?", "who_was_affected"], ["Why did it happen?", "why"], ["What are we doing about it?", "what_we_are_doing"]]
     .map(([q, k]) => `<div class="card"><h3>${q}</h3>${field("pl." + k, pl[k], edit, 5)}</div>`).join("") + `</div>`;
@@ -115,14 +115,14 @@ function render(f, a, edit) {
   h += `<div class="grid" style="margin-top:10px">` + [["Trigger", "trigger"], ["Detection", "detection"], ["Resolution", "resolution"]].map(([k, n]) => `<div class="kv"><b>${k}</b>${field(n, a[n], edit)}</div>`).join("") + `</div>`;
   if (f) {
     h += `<h2>Response against targets</h2><table><tr><th>Measure</th><th>From (UTC)</th><th>To (UTC)</th><th>Elapsed</th><th>Target</th><th>Result</th></tr>` +
-      f.metrics.map(m => `<tr><td>${esc(m.measure)}</td><td class="num">${m.from.slice(11, 19)}</td><td class="num">${m.to.slice(11, 19)}</td><td class="num">${m.elapsed}</td><td>${m.target ? m.target + " min" : "—"}</td><td>${m.met === null ? "—" : m.met ? "<span class='met'>Met</span>" : "<span class='missed'>Missed</span>"}</td></tr>`).join("") + `</table>`;
+      f.metrics.map(m => `<tr><td>${esc(m.measure)}</td><td class="num">${esc(m.from.slice(11, 19))}</td><td class="num">${esc(m.to.slice(11, 19))}</td><td class="num">${esc(m.elapsed)}</td><td>${m.target ? esc(m.target) + " min" : "—"}</td><td>${m.met === null ? "—" : m.met ? "<span class='met'>Met</span>" : "<span class='missed'>Missed</span>"}</td></tr>`).join("") + `</table>`;
     h += `<h2>Alarm and event timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored. ${esc(DATA.badge_note)}</p><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Event</th><th>Source</th></tr>` +
-      f.timeline.map(r => `<tr><td class="num">${r.t.slice(11, 19)}</td><td class="num">${r.local}</td><td><span class="tag ${partyCls(r.party)}">${r.party}</span></td><td>${esc(r.event)}${r.record ? `<details><summary>record</summary><code class="rec">${esc(r.record)}</code></details>` : ""}</td><td><code>${esc(r.source)}</code></td></tr>`).join("") + `</table>`;
-    h += `<h2>Attribution (Interface Agreement)</h2><div class="box"><b>Owner: ${esc(f.attribution.owner)}</b> · rules ${f.attribution.rules.join(", ")}<br>${esc(f.attribution.evidence)}${f.handoff ? `<br>Under FA-3 the IT Partner's clock started at the Landlord's handoff, ${f.handoff.slice(11, 19)}Z.` : ""}</div>`;
+      f.timeline.map(r => `<tr><td class="num">${esc(r.t.slice(11, 19))}</td><td class="num">${esc(r.local)}</td><td><span class="tag ${partyCls(r.party)}">${esc(r.party)}</span></td><td>${esc(r.event)}${r.record ? `<details><summary>record</summary><code class="rec">${esc(r.record)}</code></details>` : ""}</td><td><code>${esc(r.source)}</code></td></tr>`).join("") + `</table>`;
+    h += `<h2>Attribution (Interface Agreement)</h2><div class="box"><b>Owner: ${esc(f.attribution.owner)}</b> · rules ${esc(f.attribution.rules.join(", "))}<br>${esc(f.attribution.evidence)}${f.handoff ? `<br>Under FA-3 the IT Partner's clock started at the Landlord's handoff, ${esc(f.handoff.slice(11, 19))}Z.` : ""}</div>`;
     h += `<h2>Contract and compliance consequences</h2><ul>` +
       f.findings.map(x => `<li>Finding ${esc(x.id)} (${esc(x.severity)}): ${esc(x.summary)}</li>`).join("") +
-      (f.csl["OT-CSL-01"] ? `<li>OT-CSL-01 Rack Power Availability measured ${f.csl["OT-CSL-01"].actual.toFixed(4)}% against a Minimum of ${f.csl["OT-CSL-01"].minimum}%: ${esc(f.csl["OT-CSL-01"].status.replace(/_/g, " "))}${f.csl["OT-CSL-01"].credit ? `, credit $${Math.round(f.csl["OT-CSL-01"].credit).toLocaleString()}` : ""}.</li>` : "") +
-      (f.mop_overrun ? `<li>${esc(f.mop_overrun.mop)} window ended ${f.mop_overrun.window_end.slice(11, 19)}Z; its equipment was closed at ${f.mop_overrun.closed.slice(11, 19)}Z, ${esc(f.mop_overrun.overrun)} past the approved window.</li>` : "") + `</ul>`;
+      (f.csl["OT-CSL-01"] ? `<li>OT-CSL-01 Rack Power Availability measured ${esc(f.csl["OT-CSL-01"].actual.toFixed(4))}% against a Minimum of ${esc(f.csl["OT-CSL-01"].minimum)}%: ${esc(f.csl["OT-CSL-01"].status.replace(/_/g, " "))}${f.csl["OT-CSL-01"].credit ? `, credit $${esc(Math.round(f.csl["OT-CSL-01"].credit).toLocaleString())}` : ""}.</li>` : "") +
+      (f.mop_overrun ? `<li>${esc(f.mop_overrun.mop)} window ended ${esc(f.mop_overrun.window_end.slice(11, 19))}Z; its equipment was closed at ${esc(f.mop_overrun.closed.slice(11, 19))}Z, ${esc(f.mop_overrun.overrun)} past the approved window.</li>` : "") + `</ul>`;
   }
   const ehs = a.ehs || {};
   h += `<h2>EHS screening</h2><div class="grid"><div class="kv"><b>Injuries</b>${edit ? `<input type="text" data-f="ehs.injuries" value="${esc(ehs.injuries ?? 0)}">` : esc(ehs.injuries ?? 0)}</div><div class="kv"><b>Screening</b>${field("ehs.screening", ehs.screening, edit)}</div><div class="kv"><b>Referral</b>${field("ehs.referral", ehs.referral, edit)}</div></div>`;
@@ -144,7 +144,7 @@ function render(f, a, edit) {
         const ruling = edit
           ? `<br><select data-f="repeat.${esc(r.ref)}.related">${["", "Related", "Not related"].map(o => `<option${o === (rl.related === undefined ? "" : rl.related ? "Related" : "Not related") ? " selected" : ""}>${o}</option>`).join("")}</select> <input type="text" data-f="repeat.${esc(r.ref)}.reason" value="${esc(rl.reason || "")}" placeholder="Why it is or is not related">`
           : rl.related === undefined ? ` <b>Not yet ruled.</b>` : ` <b>${rl.related ? "Related" : "Not related"}:</b> ${esc(rl.reason)}`;
-        return `<li>${esc(r.ref)} (${r.opened.slice(0, 16).replace("T", " ")}Z): ${esc(r.what)}.${ruling}</li>`;
+        return `<li>${esc(r.ref)} (${esc(r.opened.slice(0, 16).replace("T", " "))}Z): ${esc(r.what)}.${ruling}</li>`;
       }).join("") + `</ul>`;
   }
   h += `</div>`;
