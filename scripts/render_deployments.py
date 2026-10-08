@@ -47,7 +47,7 @@ def markdown(b: dict) -> str:
          "## Contents", "", "1. [Gates](#gates)", "2. [Authority and permits](#authority-and-permits)",
          "3. [Statewide determinations](#statewide-determinations)", "4. [Calculation sheet](#calculation-sheet)",
          "5. [Cabling and connections](#cabling-and-connections)", "6. [Rack status](#rack-status)",
-         "7. [Steps](#steps)", "8. [Sign-off roles](#sign-off-roles)", "9. [Sources](#sources)", "",
+         "7. [Steps](#steps)", "8. [Record](#record)", "9. [Sign-off roles](#sign-off-roles)", "10. [Sources](#sources)", "",
          "## Gates", "", "| Gate | Name | Owner | Steps | Exit criteria |", "|---|---|---|---|---|"]
     for g in b["gates"]:
         n = sum(1 for s in b["steps"] if s["gate"] == g["id"])
@@ -115,7 +115,29 @@ def markdown(b: dict) -> str:
             if s["inspections"]:
                 L += ["", "Inspections:", ""] + [f"- {KIND[i['kind']]}: {role(i['by'])}, {i['what']}" for i in s["inspections"]]
             L.append("")
-    L += ["## Sign-off roles", "", "| Role | Organization | Duty |", "|---|---|---|"]
+    rec, gs = b["record"], {g["gate"]: g for g in b["gate_status"]}
+    L += ["## Record", "",
+          "The partners' Jira projects (read through `src/scorecard/jira_import.py` with `config/jira_fields.yaml`), the Customer's "
+          "step records, sign-offs, inspections, and permits (`data/deployments/`), joined into one deployment work order per unit "
+          "of work. A work order is complete when it is done, every sign-off role has signed, and every required inspection passed.", "",
+          "| Gate | Work orders complete | State |", "|---|---|---|"]
+    L += [f"| {g['id']} {g['name']} | {gs[g['id']]['complete']} of {gs[g['id']]['total']} | {'closed' if gs[g['id']]['closed'] else 'open'} |"
+          for g in b["gates"]]
+    L += ["", "| Jira project | Partner | Issues | Done | In progress | Open |", "|---|---|---|---|---|---|"]
+    L += [f"| {k} {v['name']} | {v['partner']} | {v['issues']} | {v['by_state']['done']} | {v['by_state']['in progress']} | {v['by_state']['open']} |"
+          for k, v in rec["projects"].items()]
+    L += ["", "Program work orders (rack work orders are listed on the tab):", "",
+          "| Work order | Step | Source | Done | Signed | Complete |", "|---|---|---|---|---|---|"]
+    L += [f"| {w['id']} | {w['step']} | {w['source']} | {stamp(w['done'])} | {w['signed']} of {len(w['signoffs'])} | {'yes' if w['complete'] else 'no'} |"
+          for w in rec["work_orders"] if not w["rack"]]
+    L += ["", "Permit register (fictional numbers):", "", "| Permit | Number | Issued | Finaled | Status |", "|---|---|---|---|---|"]
+    L += [f"| {p['permit']} {p['name']} | {p['number'] or '-'} | {stamp(p.get('issued'))} | {stamp(p.get('finaled'))} | {p['status']}"
+          f"{': ' + p['reason'] if p.get('reason') else ''} |" for p in rec["permits"]]
+    L += ["", "Inspection records:", "", "| Record | Step | By | When | Result | Note |", "|---|---|---|---|---|---|"]
+    L += [f"| {i['id']} | {i['step']} | {role(i['by'])} | {stamp(i['at'])} | {i['result']} | {i['note'] or '-'} |" for i in rec["inspections"]]
+    L += ["", "Determinations recorded:", ""]
+    L += [f"- {d['id']} ({stamp(d['recorded'])}, {d['step']}): {d['result']}" for d in rec["determinations"]]
+    L += ["", "## Sign-off roles", "", "| Role | Organization | Duty |", "|---|---|---|"]
     L += [f"| {v['name']} | {v['org']} | {v['duty']} |" for v in roles.values()]
     L += ["", "## Sources", ""]
     L += [f"- {k}: {v}" for k, v in b["sources"].items()]
@@ -153,9 +175,10 @@ def main() -> int:
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(html_page(), encoding="utf-8", newline="\n")
     controls = sum(1 for r in b["calc"] if r["control"])
+    wos = b["record"]["work_orders"]
     print(f"Wrote {OUT.relative_to(ROOT)}: {len(b['steps'])} steps in {len(b['gates'])} gates, "
           f"{sum(1 for r in b['calc'] if r['passed'] is not None)} checks ({controls} need the power-limit control), "
-          f"racks {b['racks']['counts']}")
+          f"racks {b['racks']['counts']}, {sum(w['complete'] for w in wos)} of {len(wos)} work orders complete")
     return 0
 
 

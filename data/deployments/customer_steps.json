@@ -1,0 +1,29 @@
+[
+ {
+  "done": "2026-05-16T20:02:44Z",
+  "due": "2026-05-16T20:02:44Z",
+  "id": "CUST-G0-01",
+  "planned_start": "2026-05-04T14:16:47Z",
+  "rack": null,
+  "state": "done",
+  "step": "G0-01"
+ },
+ {
+  "done": "2026-06-18T14:54:30Z",
+  "due": "2026-06-18T14:54:30Z",
+  "id": "CUST-G0-05",
+  "planned_start": "2026-06-13T14:45:58Z",
+  "rack": null,
+  "state": "done",
+  "step": "G0-05"
+ },
+ {
+  "done": null,
+  "due": "2026-11-05T19:47:04Z",
+  "id": "CUST-G3-04",
+  "planned_start": "2026-11-03T13:09:46Z",
+  "rack": null,
+  "state": "todo",
+  "step": "G3-04"
+ }
+]

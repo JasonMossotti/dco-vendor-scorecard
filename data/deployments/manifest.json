@@ -1,0 +1,19 @@
+{
+  "disclaimer": "Synthetic deployment program records for a portfolio demonstration: the partners' Jira projects (Jira Cloud search export shape), the Customer's step records, sign-offs by role, inspections, and permits. Fictional parties and numbers; no person is named.",
+  "files": {
+    "customer_steps.json": 3,
+    "determinations.json": 2,
+    "inspections.jsonl": 8,
+    "jira/CCF-DEP.json": 50,
+    "jira/RSS-DEP.json": 260,
+    "permits.json": 4,
+    "signoffs.jsonl": 324
+  },
+  "source": "data/sample",
+  "window": {
+    "end": "2026-09-28T00:00:00Z",
+    "seed": 2026,
+    "start": "2026-08-31T00:00:00Z",
+    "weeks": 4
+  }
+}

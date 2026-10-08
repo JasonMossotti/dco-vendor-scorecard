@@ -1,0 +1,1577 @@
+{
+ "isLast": true,
+ "issues": [
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-04T13:00:00.000+0000",
+    "customfield_10101": "G0",
+    "issuetype": {
+     "name": "Epic"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "G0 Design and approvals",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41001",
+   "key": "CCF-DEP-1"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-14T13:06:45.000+0000",
+    "customfield_10015": "2026-05-17",
+    "customfield_10101": "G0-02",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CALC-01",
+    "duedate": "2026-05-25",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-1"
+    },
+    "resolutiondate": "2026-05-25T18:26:15.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G0-02 Load calculations: power, cooling, floor, cabling",
+    "updated": "2026-05-25T18:26:15.000+0000"
+   },
+   "id": "41002",
+   "key": "CCF-DEP-2"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-23T13:32:50.000+0000",
+    "customfield_10015": "2026-05-26",
+    "customfield_10101": "G0-03",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CD-01",
+    "duedate": "2026-06-12",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-1"
+    },
+    "resolutiondate": "2026-06-12T17:30:38.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G0-03 Construction documents sealed",
+    "updated": "2026-06-12T17:30:38.000+0000"
+   },
+   "id": "41003",
+   "key": "CCF-DEP-3"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-06-10T14:59:18.000+0000",
+    "customfield_10015": "2026-06-13",
+    "customfield_10101": "G0-04",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-PRM-01",
+    "duedate": "2026-07-08",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-1"
+    },
+    "resolutiondate": "2026-07-08T14:56:47.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G0-04 Permits and determinations",
+    "updated": "2026-07-08T14:56:47.000+0000"
+   },
+   "id": "41004",
+   "key": "CCF-DEP-4"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-04T13:00:00.000+0000",
+    "customfield_10101": "G1",
+    "issuetype": {
+     "name": "Epic"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "G1 Hall readiness",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41005",
+   "key": "CCF-DEP-5"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-07-06T13:46:17.000+0000",
+    "customfield_10015": "2026-07-09",
+    "customfield_10101": "G1-01",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CX-L2-01",
+    "duedate": "2026-07-14",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-07-14T14:03:56.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-01 Receipt inspection: busway, tap-offs, CDUs (L2)",
+    "updated": "2026-07-14T14:03:56.000+0000"
+   },
+   "id": "41006",
+   "key": "CCF-DEP-6"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-07-12T14:10:00.000+0000",
+    "customfield_10015": "2026-07-15",
+    "customfield_10101": "G1-02",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CX-L3-01",
+    "duedate": "2026-07-29",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-07-29T18:48:17.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-02 Busway and tap-off installation and testing (L3)",
+    "updated": "2026-07-29T18:48:17.000+0000"
+   },
+   "id": "41007",
+   "key": "CCF-DEP-7"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-07-12T14:15:11.000+0000",
+    "customfield_10015": "2026-07-15",
+    "customfield_10101": "G1-03",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CX-L3-02",
+    "duedate": "2026-07-25",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-07-25T18:40:33.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-03 Secondary loop pressure test, flush, and fill (L3)",
+    "updated": "2026-07-25T18:40:33.000+0000"
+   },
+   "id": "41008",
+   "key": "CCF-DEP-8"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-07-27T14:00:32.000+0000",
+    "customfield_10015": "2026-07-30",
+    "customfield_10101": "G1-05",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CX-L4-02",
+    "duedate": "2026-08-06",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-08-06T20:03:48.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-05 Fire and life safety changes (L4)",
+    "updated": "2026-08-06T20:03:48.000+0000"
+   },
+   "id": "41009",
+   "key": "CCF-DEP-9"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-07-27T14:54:51.000+0000",
+    "customfield_10015": "2026-07-30",
+    "customfield_10101": "G1-04",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CX-L4-01",
+    "duedate": "2026-08-06",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-08-06T16:15:18.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-04 CDU start-up (L3) and functional test (L4)",
+    "updated": "2026-08-06T16:15:18.000+0000"
+   },
+   "id": "41010",
+   "key": "CCF-DEP-10"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-04T14:34:20.000+0000",
+    "customfield_10015": "2026-08-07",
+    "customfield_10101": "G1-06",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CX-L4-03",
+    "duedate": "2026-08-11",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-08-11T14:25:15.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-06 Monitoring point-to-point (L4)",
+    "updated": "2026-08-11T14:25:15.000+0000"
+   },
+   "id": "41011",
+   "key": "CCF-DEP-11"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-09T13:47:14.000+0000",
+    "customfield_10015": "2026-08-12",
+    "customfield_10101": "G1-07",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-CX-L5-01",
+    "duedate": "2026-08-14",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-08-14T20:45:51.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-07 Integrated systems test (L5)",
+    "updated": "2026-08-14T20:45:51.000+0000"
+   },
+   "id": "41012",
+   "key": "CCF-DEP-12"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-12T13:56:13.000+0000",
+    "customfield_10015": "2026-08-15",
+    "customfield_10101": "G1-08",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-RFR-01",
+    "duedate": "2026-08-17",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-5"
+    },
+    "resolutiondate": "2026-08-17T16:48:53.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G1-08 Ready for racks",
+    "updated": "2026-08-17T16:48:53.000+0000"
+   },
+   "id": "41013",
+   "key": "CCF-DEP-13"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-04T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "issuetype": {
+     "name": "Epic"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "G2 Rack waves",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41014",
+   "key": "CCF-DEP-14"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-03",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-04T10:08:32.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B01: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-04T10:08:32.000+0000"
+   },
+   "id": "41015",
+   "key": "CCF-DEP-15"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-04",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-05T07:11:26.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B02: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-05T07:11:26.000+0000"
+   },
+   "id": "41016",
+   "key": "CCF-DEP-16"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-05",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-06T13:33:02.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B03: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-06T13:33:02.000+0000"
+   },
+   "id": "41017",
+   "key": "CCF-DEP-17"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-07",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-08T08:19:15.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B04: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-08T08:19:15.000+0000"
+   },
+   "id": "41018",
+   "key": "CCF-DEP-18"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-08",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-09T12:16:49.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B05: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-09T12:16:49.000+0000"
+   },
+   "id": "41019",
+   "key": "CCF-DEP-19"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-10",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-11T03:56:18.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B06: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-11T03:56:18.000+0000"
+   },
+   "id": "41020",
+   "key": "CCF-DEP-20"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-11",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-12T14:43:52.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B07: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-12T14:43:52.000+0000"
+   },
+   "id": "41021",
+   "key": "CCF-DEP-21"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-12",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-13T09:15:41.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B08: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-13T09:15:41.000+0000"
+   },
+   "id": "41022",
+   "key": "CCF-DEP-22"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-14",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-15T05:00:49.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B09: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-15T05:00:49.000+0000"
+   },
+   "id": "41023",
+   "key": "CCF-DEP-23"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-15",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-16T10:35:18.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B10: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-16T10:35:18.000+0000"
+   },
+   "id": "41024",
+   "key": "CCF-DEP-24"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-17",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-18T13:50:43.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B11: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-18T13:50:43.000+0000"
+   },
+   "id": "41025",
+   "key": "CCF-DEP-25"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-18",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-19T15:12:10.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B12: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-19T15:12:10.000+0000"
+   },
+   "id": "41026",
+   "key": "CCF-DEP-26"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-19",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-20T17:52:49.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B13: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-20T17:52:49.000+0000"
+   },
+   "id": "41027",
+   "key": "CCF-DEP-27"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-21",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": "2026-09-22T09:49:19.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-HO4 B14: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-22T09:49:19.000+0000"
+   },
+   "id": "41028",
+   "key": "CCF-DEP-28"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-22",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B15: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41029",
+   "key": "CCF-DEP-29"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-24",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B16: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41030",
+   "key": "CCF-DEP-30"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-25",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B17: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41031",
+   "key": "CCF-DEP-31"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-26",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B18: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41032",
+   "key": "CCF-DEP-32"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-28",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B19: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41033",
+   "key": "CCF-DEP-33"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-09-29",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B20: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41034",
+   "key": "CCF-DEP-34"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-01",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B21: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41035",
+   "key": "CCF-DEP-35"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-02",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B22: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41036",
+   "key": "CCF-DEP-36"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-03",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B23: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41037",
+   "key": "CCF-DEP-37"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-05",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B24: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41038",
+   "key": "CCF-DEP-38"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-06",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B25: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41039",
+   "key": "CCF-DEP-39"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-08",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B26: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41040",
+   "key": "CCF-DEP-40"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-09",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B27: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41041",
+   "key": "CCF-DEP-41"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-10",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B28: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41042",
+   "key": "CCF-DEP-42"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-12",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B29: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41043",
+   "key": "CCF-DEP-43"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-13",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B30: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41044",
+   "key": "CCF-DEP-44"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-15",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B31: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41045",
+   "key": "CCF-DEP-45"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-HO4",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-HO4",
+    "duedate": "2026-10-16",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-14"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-HO4 B32: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41046",
+   "key": "CCF-DEP-46"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-04T13:00:00.000+0000",
+    "customfield_10101": "G3",
+    "issuetype": {
+     "name": "Epic"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "G3 Closeout",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "41047",
+   "key": "CCF-DEP-47"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-21T13:57:36.000+0000",
+    "customfield_10015": "2026-10-24",
+    "customfield_10101": "G3-03",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-PRM-02",
+    "duedate": "2026-11-01",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-47"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "G3-03 Authority close-out",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41048",
+   "key": "CCF-DEP-48"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-21T14:15:02.000+0000",
+    "customfield_10015": "2026-10-24",
+    "customfield_10101": "G3-02",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-TO-01",
+    "duedate": "2026-11-02",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-47"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "G3-02 Turnover package",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41049",
+   "key": "CCF-DEP-49"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-21T14:43:50.000+0000",
+    "customfield_10015": "2026-10-24",
+    "customfield_10101": "G3-01",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-AB-01",
+    "duedate": "2026-11-02",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "CCF-DEP-47"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "G3-01 As-built drawings and site model updated",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "41050",
+   "key": "CCF-DEP-50"
+  }
+ ]
+}

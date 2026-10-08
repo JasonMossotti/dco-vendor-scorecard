@@ -15,8 +15,9 @@ Hall B: 32 GB300 NVL72 racks in 4 waves (one per row), rack cycle target 10 days
 5. [Cabling and connections](#cabling-and-connections)
 6. [Rack status](#rack-status)
 7. [Steps](#steps)
-8. [Sign-off roles](#sign-off-roles)
-9. [Sources](#sources)
+8. [Record](#record)
+9. [Sign-off roles](#sign-off-roles)
+10. [Sources](#sources)
 
 ## Gates
 
@@ -395,7 +396,7 @@ Sign-off, in order: OEM field service -> Landlord facility operations -> Commiss
 - **Document:** DEP-B-CX-L4-02 (Test script)
 - **Performed by:** Landlord facility operations
 - **Commissioning level:** L4
-- **After:** G1-01
+- **After:** G1-02, G1-03
 - **When:** When the rack layout changes detection, sprinklers, or notification.
 - **Standards:** 2018 International Fire Code with Williamson County amendments
 
@@ -718,6 +719,73 @@ Acceptance:
 Records: Lessons learned.
 
 Sign-off, in order: Customer Deployment Lead -> Landlord facility operations -> IT Partner deployment lead.
+
+## Record
+
+The partners' Jira projects (read through `src/scorecard/jira_import.py` with `config/jira_fields.yaml`), the Customer's step records, sign-offs, inspections, and permits (`data/deployments/`), joined into one deployment work order per unit of work. A work order is complete when it is done, every sign-off role has signed, and every required inspection passed.
+
+| Gate | Work orders complete | State |
+|---|---|---|
+| G0 Design and approvals | 7 of 7 | closed |
+| G1 Hall readiness | 8 of 8 | closed |
+| G2 Rack waves | 110 of 256 | open |
+| G3 Closeout | 0 of 4 | open |
+
+| Jira project | Partner | Issues | Done | In progress | Open |
+|---|---|---|---|---|---|
+| CCF-DEP Caprock: Hall B GB300 fit-out | Landlord | 50 | 25 | 4 | 21 |
+| RSS-DEP Ridgeline: Hall B GB300 rack deployment | IT Partner | 260 | 112 | 4 | 144 |
+
+Program work orders (rack work orders are listed on the tab):
+
+| Work order | Step | Source | Done | Signed | Complete |
+|---|---|---|---|---|---|
+| DWO-B-0001 | G0-01 | Customer record CUST-G0-01 | 2026-05-16 20:02 UTC | 3 of 3 | yes |
+| DWO-B-0002 | G0-02 | Jira CCF-DEP-2 | 2026-05-25 18:26 UTC | 3 of 3 | yes |
+| DWO-B-0003 | G0-06 | Jira RSS-DEP-3 | 2026-05-22 15:55 UTC | 3 of 3 | yes |
+| DWO-B-0004 | G0-07 | Jira RSS-DEP-2 | 2026-05-24 16:21 UTC | 3 of 3 | yes |
+| DWO-B-0005 | G0-03 | Jira CCF-DEP-3 | 2026-06-12 17:30 UTC | 3 of 3 | yes |
+| DWO-B-0006 | G0-04 | Jira CCF-DEP-4 | 2026-07-08 14:56 UTC | 2 of 2 | yes |
+| DWO-B-0007 | G0-05 | Customer record CUST-G0-05 | 2026-06-18 14:54 UTC | 3 of 3 | yes |
+| DWO-B-0008 | G1-01 | Jira CCF-DEP-6 | 2026-07-14 14:03 UTC | 2 of 2 | yes |
+| DWO-B-0009 | G1-02 | Jira CCF-DEP-7 | 2026-07-29 18:48 UTC | 4 of 4 | yes |
+| DWO-B-0010 | G1-03 | Jira CCF-DEP-8 | 2026-07-25 18:40 UTC | 4 of 4 | yes |
+| DWO-B-0011 | G1-04 | Jira CCF-DEP-10 | 2026-08-06 16:15 UTC | 4 of 4 | yes |
+| DWO-B-0012 | G1-05 | Jira CCF-DEP-9 | 2026-08-06 20:03 UTC | 3 of 3 | yes |
+| DWO-B-0013 | G1-06 | Jira CCF-DEP-11 | 2026-08-11 14:25 UTC | 3 of 3 | yes |
+| DWO-B-0014 | G1-07 | Jira CCF-DEP-12 | 2026-08-14 20:45 UTC | 5 of 5 | yes |
+| DWO-B-0015 | G1-08 | Jira CCF-DEP-13 | 2026-08-17 16:48 UTC | 4 of 4 | yes |
+| DWO-B-0272 | G3-01 | Jira CCF-DEP-50 | - | 0 of 3 | no |
+| DWO-B-0273 | G3-02 | Jira CCF-DEP-49 | - | 0 of 4 | no |
+| DWO-B-0274 | G3-03 | Jira CCF-DEP-48 | - | 0 of 2 | no |
+| DWO-B-0275 | G3-04 | Customer record CUST-G3-04 | - | 0 of 3 | no |
+
+Permit register (fictional numbers):
+
+| Permit | Number | Issued | Finaled | Status |
+|---|---|---|---|---|
+| AHJ-FM-CON Fire Marshal construction permit | AHJ-FM-CON-26-6930 | 2026-07-08 12:30 UTC | 2026-08-06 18:09 UTC | finaled |
+| AHJ-FM-FA Fire alarm permit | AHJ-FM-FA-26-2465 | 2026-07-08 12:05 UTC | 2026-08-06 18:09 UTC | finaled |
+| AHJ-FM-SPK Fire sprinkler permit | - | - | - | not required: No sprinkler change: the rack layout keeps every head and branch line as designed (engineer of record). |
+| AHJ-FM-COC Certificate of Compliance | AHJ-FM-COC-26-4284 | 2026-08-09 18:09 UTC | - | issued |
+
+Inspection records:
+
+| Record | Step | By | When | Result | Note |
+|---|---|---|---|---|---|
+| INSP-B-001 | G0-04 | Williamson County Fire Marshal | 2026-07-08 10:16 UTC | pass | - |
+| INSP-B-002 | G1-03 | Coolant test laboratory | 2026-07-25 16:25 UTC | pass | - |
+| INSP-B-003 | G1-03 | Customer witness | 2026-07-25 16:33 UTC | pass | - |
+| INSP-B-004 | G1-02 | Electrical testing firm (NETA-accredited) | 2026-07-27 12:49 UTC | fail | Joint resistance above the manufacturer's limit on one A-side busway joint (row 3); re-torqued and retested. |
+| INSP-B-005 | G1-02 | Electrical testing firm (NETA-accredited) | 2026-07-29 12:49 UTC | pass | Retest passed. |
+| INSP-B-006 | G1-05 | Williamson County Fire Marshal | 2026-07-31 18:09 UTC | fail | Fire alarm final: one VESDA trouble signal did not report to the fire alarm panel; programming corrected and re-inspected. |
+| INSP-B-007 | G1-05 | Williamson County Fire Marshal | 2026-08-06 18:09 UTC | pass | Retest passed. |
+| INSP-B-008 | G1-07 | Customer witness | 2026-08-14 17:50 UTC | pass | - |
+
+Determinations recorded:
+
+- TX-NEC (2026-06-12 17:30 UTC, G0-03): 2023 NEC: construction documents sealed before the 2026 NEC took effect in Texas on 2026-09-01.
+- TX-TABA (2026-07-08 14:56 UTC, G0-04): Registered with TDLR; Registered Accessibility Specialist plan review complete. Inspection after completion (G3-03).
 
 ## Sign-off roles
 

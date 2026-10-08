@@ -4,6 +4,7 @@ reconciles with CSL-09, the authority profile switch, the generated plan, and th
 from __future__ import annotations
 
 import copy
+import json
 import math
 import re
 import shutil
@@ -181,3 +182,150 @@ def test_interactive_page_builds_and_works(tmp_path):
         pytest.skip("node and jsdom not installed (CI runs this check)")
     proc = subprocess.run([node, "deployments_page.cjs", str(out)], capture_output=True, text=True, cwd=ROOT / "tests" / "js")
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+# ------------------------------------------------------------------------------------------ the record
+from scorecard import jira_import as J  # noqa: E402
+from scorecard.synthetic import deployments as SD  # noqa: E402
+
+REC = ROOT / "data" / "deployments"
+
+
+@pytest.fixture(scope="module")
+def issues():
+    return J.load_dir(REC / "jira")
+
+
+def test_committed_record_is_current(tmp_path):
+    import hashlib
+    sample = sorted((ROOT / "data" / "sample").rglob("*"))
+    before = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in sample if p.is_file()}
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import generate_deployments
+    generate_deployments.generate(tmp_path)
+    for p in sorted(tmp_path.rglob("*")):
+        if p.is_file():
+            rel = p.relative_to(tmp_path)
+            assert p.read_bytes() == (REC / rel).read_bytes(), f"{rel} is stale: run python scripts/generate_deployments.py"
+    assert before == {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in sample if p.is_file()}, "data/sample was written"
+
+
+def test_jira_rack_milestones_are_the_it_partners_report(issues):
+    import csv
+    with (ROOT / "data" / "sample" / "vendor" / "deployment_milestones.csv").open(encoding="utf-8") as f:
+        reported = {(r["rack"], "R-" + r["milestone"]): r["reported_complete_at"] for r in csv.DictReader(f)}
+    jira = {(i["rack"], i["step"]): i["resolved"] for i in issues
+            if i["project"] == "RSS-DEP" and i["type"] == "Sub-task" and i["resolved"]}
+    assert jira == reported and len(jira) == 97
+
+
+def test_landlord_energizes_between_leak_test_and_power_on(issues):
+    done = {(i["rack"], i["step"]): i["resolved"] for i in issues if i["rack"] and i["resolved"]}
+    ho4 = [(r, t) for (r, s), t in done.items() if s == "R-HO4"]
+    assert len(ho4) == 14
+    for rack, t in ho4:
+        assert done[(rack, "R-M3")] < t < done[(rack, "R-M4")]
+    assert all(i["project"] == "CCF-DEP" for i in issues if i["step"] == "R-HO4")
+
+
+def test_nobody_is_named_in_the_record():
+    for p in (REC / "jira").glob("*.json"):
+        for i in json.loads(p.read_text(encoding="utf-8"))["issues"]:
+            assert i["fields"]["assignee"] is None
+    roles = D.load_config()["roles"]
+    for line in (REC / "signoffs.jsonl").read_text(encoding="utf-8").splitlines():
+        x = json.loads(line)
+        assert set(x) == {"step", "rack", "role", "org", "signed_at", "decision"} and x["role"] in roles
+
+
+def test_csv_export_reads_the_same(issues):
+    again = J.from_csv(J.to_csv(issues))
+    assert again == issues
+
+
+def test_importer_refuses_what_it_cannot_map(issues):
+    fmap = J.load_field_map()
+    bad = [dict(issues[0], status="Parked")]
+    with pytest.raises(J.JiraImportError, match="no status category"):
+        J.from_csv(J.to_csv(bad))
+    with pytest.raises(J.JiraImportError, match="not in the field map"):
+        J.from_json({"issues": [{"key": "XYZ-1", "fields": {}}]}, fmap)
+    with pytest.raises(J.JiraImportError, match="not a Jira search response"):
+        J.from_json({"values": []}, fmap)
+
+
+def test_importer_reads_pages_and_rejects_duplicates(tmp_path):
+    export = json.loads((REC / "jira" / "CCF-DEP.json").read_text(encoding="utf-8"))
+    half = len(export["issues"]) // 2
+    pages = [{"issues": export["issues"][:half], "isLast": False, "nextPageToken": "x"}, {"issues": export["issues"][half:], "isLast": True}]
+    assert J.from_json(pages) == J.from_json(export)
+    (tmp_path / "a.json").write_text(json.dumps(export), encoding="utf-8")
+    (tmp_path / "b.json").write_text(json.dumps(export), encoding="utf-8")
+    with pytest.raises(J.JiraImportError, match="exported twice"):
+        J.load_dir(tmp_path)
+
+
+def test_one_work_order_per_unit_of_work(built):
+    wos = built["record"]["work_orders"]
+    program = [s for s in built["steps"] if not s["per_rack"]]
+    rack_steps = [s for s in built["steps"] if s["per_rack"]]
+    assert len(wos) == len(program) + 32 * len(rack_steps) == 275
+    assert len({w["id"] for w in wos}) == len(wos) and len({(w["step"], w["rack"]) for w in wos}) == len(wos)
+    assert {w["source"].split()[0] for w in wos} == {"Jira", "Customer"}
+    assert {w["step"] for w in wos if w["partner"] == "Customer"} == {"G0-01", "G0-05", "G3-04"}
+
+
+def test_complete_needs_done_signed_and_inspected(built):
+    for w in built["record"]["work_orders"]:
+        signed = all(x["signed_at"] for x in w["signoffs"])
+        inspected = all(i["result"] == "pass" for i in w["inspections_required"])
+        assert w["complete"] == (w["state"] == "done" and signed and inspected)
+    pending = [w for w in built["record"]["work_orders"] if w["state"] == "done" and not w["complete"]]
+    assert [(w["step"], w["rack"]) for w in pending] == [("R-M6", "B14")]
+
+
+def test_gate_status(built):
+    gs = {g["gate"]: g for g in built["gate_status"]}
+    assert gs["G0"]["closed"] and gs["G1"]["closed"]
+    assert (gs["G2"]["complete"], gs["G2"]["total"], gs["G2"]["closed"]) == (110, 256, False)
+    assert (gs["G3"]["complete"], gs["G3"]["total"]) == (0, 4)
+
+
+def test_hall_ready_before_the_first_rack(built):
+    wos = {(w["step"], w["rack"]): w for w in built["record"]["work_orders"]}
+    first = min(r["planned_receipt"] for r in built["racks"]["racks"])
+    assert wos[("G1-08", None)]["done"] < first
+    for w in built["record"]["work_orders"]:
+        for a in next(s for s in built["steps"] if s["id"] == w["step"])["after"]:
+            pred = wos.get((a, w["rack"])) or wos.get((a, None))
+            if w["done"] and pred:
+                assert pred["done"] and pred["done"] <= w["done"], (w["id"], a)
+
+
+def test_signoffs_in_order_after_the_work(built):
+    for w in built["record"]["work_orders"]:
+        times = [x["signed_at"] for x in w["signoffs"] if x["signed_at"]]
+        assert times == sorted(times) and all(w["done"] and t >= w["done"] for t in times)
+        assert [x["signed_at"] is not None for x in w["signoffs"]] == sorted((x["signed_at"] is not None for x in w["signoffs"]), reverse=True)
+
+
+def test_permits_and_inspections_agree(built):
+    rec = built["record"]
+    ins = {i["id"]: i for i in rec["inspections"]}
+    finals = [p for p in rec["permits"] if p["status"] == "finaled"]
+    assert {p["permit"] for p in finals} == {"AHJ-FM-CON", "AHJ-FM-FA"}
+    for p in finals:
+        i = ins[p["inspection"]]
+        assert i["result"] == "pass" and i["by"] == p["by"] and i["at"] == p["finaled"] and p["applied"] < p["issued"] < p["finaled"]
+    coc = next(p for p in rec["permits"] if p["permit"] == "AHJ-FM-COC")
+    assert coc["issued"] > max(p["finaled"] for p in finals)
+    fails = [i for i in rec["inspections"] if i["result"] == "fail"]
+    assert {(i["step"], i["by"]) for i in fails} == {("G1-02", "neta"), ("G1-05", "ahj-fm")}
+    for f in fails:
+        assert any(i["step"] == f["step"] and i["by"] == f["by"] and i["result"] == "pass" and i["at"] > f["at"] for i in rec["inspections"])
+
+
+def test_nec_edition_by_design_date(built):
+    nec = next(d for d in built["record"]["determinations"] if d["id"] == "TX-NEC")
+    sealed = next(w for w in built["record"]["work_orders"] if w["step"] == "G0-03")["done"]
+    assert sealed < "2026-09-01" and nec["result"].startswith("2023 NEC")

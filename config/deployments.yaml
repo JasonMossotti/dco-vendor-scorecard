@@ -335,7 +335,7 @@ gates:
       - id: "G1-05"
         name: "Fire and life safety changes (L4)"
         owner: ll-ops
-        after: ["G1-01"]
+        after: ["G1-02", "G1-03"]
         level: "L4"
         doc: {id: "DEP-B-CX-L4-02", kind: "Test script"}
         standards: [ifc-2018]
