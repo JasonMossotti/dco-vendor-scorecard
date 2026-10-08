@@ -74,6 +74,7 @@ def prepare() -> dict:
     ia = load_interface_agreement()
     return {"window": r["window"], "alarms": rows, "declarations": decls, "owed": r["owed"], "key_measures": r["key_measures"],
             "conflicts": r["conflicts"], "tickets": A.trouble_tickets(src), "planned_work": A.planned_work(src),
+            "pending": json.loads((CHANGES / "pending_approvals.json").read_text(encoding="utf-8")),
             "routing": yaml.safe_load((ROOT / "config" / "customer_notifications.yaml").read_text(encoding="utf-8")), "score": s, "rules": ia["alarm_notification"],
             "class_text": A.CLASS_TEXT, "offset_h": OFFSET.total_seconds() / 3600, "pir": PIR,
             "a07": a07_facts(alarms, r["declarations"], r["owed"])}

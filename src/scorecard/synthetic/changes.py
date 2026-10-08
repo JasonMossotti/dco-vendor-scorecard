@@ -7,6 +7,11 @@ sample or a generated month) with its own random stream, and writes beside it:
   derived from the change-type catalog in ``config/change_alarms.yaml``.
 * ``notification_log.json``: what each partner sent the Customer under today's
   SLAs (P1 paged; P2 by one call or email; nothing on change scope).
+* ``pending_approvals.json``: change requests scheduled in the month that went
+  through review but never received final approval from the Customer's Change
+  Coordinator by their window. Some are approved late, some deferred, and some
+  show work starting anyway in the partner's own work record. Own random stream
+  (``{seed}:changes:approvals``); no telemetry or alarm is added for them.
 * ``ground_truth/change_alarm_key.json``: the answer key. On the sample it holds
   only the natural case (the rack outage during tap-off work); robustness months
   also get planted cases and decoys, appended to that month's own files.
@@ -27,6 +32,11 @@ from scorecard import site_model as S
 from scorecard.connectors import FileConnector
 
 DECL, LOG, KEY = "impact_declarations.json", "notification_log.json", "ground_truth/change_alarm_key.json"
+PENDING = "pending_approvals.json"
+# How each request scheduled without final approval ends: approved shortly before its window, deferred by the
+# requester, or started anyway (the partner's work record shows work during the window).
+APPROVAL_OUTCOMES = ["started_unapproved", "approved_late", "deferred", "started_unapproved", "approved_late",
+                     "started_unapproved", "deferred", "approved_late", "started_unapproved", "deferred"]
 RECIPIENT = {"page": "Customer Incident Commander", "email": "Customer site lead", "phone": "Customer site lead"}
 
 
@@ -270,12 +280,83 @@ class ChangeLayer:
         key = sorted(self.key, key=lambda k: (k["at"], k["type"]))
         for n, k in enumerate(key, 1):
             k["case_id"] = f"CK-{n:03d}"
-        return {"declarations": decls, "log": log, "key": key}
+        return {"declarations": decls, "log": log, "key": key, "pending": self.pending_approvals()}
+
+    # ------------------------------------------------------------------ change requests without final approval
+    def pending_approvals(self) -> list[dict]:
+        """Scheduled change requests that passed peer and CAB review but had no final approval by their window.
+
+        Its own random stream, so nothing else in the layer moves. Facts only: when each step happened, and what
+        the partner's own work record shows. Roles, never people.
+        """
+        rng = random.Random(f"{self.seed}:changes:approvals")
+        cdus = sorted({r["cdu"] for r in self.topology["racks"]})
+        ups = [f"UPS-{h}{n}" for h in "AB" for n in range(1, 5)]
+        taken = A.change_records(FileConnector(self.dir))
+        prod = sorted(r["rack"] for r in self.topology["racks"] if r["state"] == "production"
+                      and not any(f"rack:{r['rack']}" in c["assets"] for c in taken))
+        out: list[dict] = []
+        hours = (self.end - self.start).total_seconds() / 3600
+        for n, outcome in enumerate(APPROVAL_OUTCOMES):
+            landlord = n % 3 != 2
+            if landlord:
+                if rng.random() < 0.6:
+                    asset = rng.choice(cdus)
+                    title = f"Filter change and coolant sample: {asset}"
+                else:
+                    asset = rng.choice(ups)
+                    title = f"Preventive maintenance and battery health check: {asset}"
+                local_h, dur_h = (8, 16), rng.choice([2, 3])
+            else:
+                rack = rng.choice(prod)
+                asset, title = f"rack:{rack}", f"Compute tray firmware 1.3.6 -> 1.3.7 on rack {rack}"
+                local_h, dur_h = (0, 4), 4
+            for _ in range(500):
+                t = self.start + timedelta(hours=rng.uniform(60, hours - 30))
+                if not local_h[0] <= (t + self.offset).hour < local_h[1]:
+                    continue
+                ws = t.replace(minute=rng.choice([0, 30]), second=0, microsecond=0)
+                we = ws + timedelta(hours=dur_h)
+                pad = timedelta(hours=12)
+                clash = any(A.parse(c["window_start"]) < we + pad and ws - pad < A.parse(c["window_end"]) and asset in c["assets"] for c in taken)
+                near = any(abs((A.parse(p["window_start"]) - ws).total_seconds()) < 8 * 3600 for p in out)
+                if not clash and not near:
+                    break
+            else:
+                raise RuntimeError("no slot for a change request")
+            submitted = ws - timedelta(days=rng.uniform(5, 10))
+            peer = submitted + timedelta(hours=rng.uniform(2, 20))
+            cab = peer + timedelta(days=rng.uniform(1, 3))
+            owner = "Landlord" if landlord else "IT Partner"
+            rec = {"owner": owner, "title": title, "assets": [asset], "window_start": _iso(ws), "window_end": _iso(we),
+                   "steps": [{"step": "Submitted", "role": f"{owner} change owner", "at": _iso(submitted.replace(microsecond=0))},
+                             {"step": "Peer review", "role": "Landlord duty manager" if landlord else "IT Partner shift lead",
+                              "at": _iso(peer.replace(microsecond=0))},
+                             {"step": "CAB technical review", "role": "Customer CAB", "at": _iso(cab.replace(microsecond=0))},
+                             {"step": "Final approval", "role": "Change Coordinator", "at": None}],
+                   "outcome": outcome, "final_approved_at": None, "deferred_at": None, "work_started": None, "work_ended": None}
+            if outcome == "approved_late":
+                at = (ws - timedelta(hours=rng.uniform(0.5, 5))).replace(second=0, microsecond=0)
+                rec["final_approved_at"] = rec["steps"][-1]["at"] = _iso(at)
+            elif outcome == "deferred":
+                rec["deferred_at"] = _iso((ws - timedelta(hours=rng.uniform(0.5, 3))).replace(second=0, microsecond=0))
+            else:
+                st = (ws + timedelta(minutes=rng.uniform(2, 25))).replace(second=0, microsecond=0)
+                rec["work_started"] = _iso(st)
+                rec["work_ended"] = _iso((we + timedelta(minutes=rng.uniform(-30, 20))).replace(second=0, microsecond=0))
+            out.append(rec)
+        out.sort(key=lambda r: r["window_start"])
+        seq = {"Landlord": 0, "IT Partner": 0}
+        for i, r in enumerate(out):      # numbered in window order, clear of every real and planted record number
+            k = seq[r["owner"]] = seq[r["owner"]] + 1
+            rid = f"MOP-{400 + k}" if r["owner"] == "Landlord" else f"CHG{2_047_000 + 17 * k:07d}"
+            out[i] = {"id": rid, "work_order": f"WO-{48_000 + 11 * k:05d}" if r["owner"] == "Landlord" else rid, **r}
+        return out
 
 
 def write_changes(out: dict, changes_dir: str | Path, window: dict, seed: int, source: str) -> dict[str, int]:
     d = Path(changes_dir)
-    files = {DECL: out["declarations"], LOG: out["log"], KEY: out["key"]}
+    files = {DECL: out["declarations"], LOG: out["log"], KEY: out["key"], PENDING: out["pending"]}
     for rel, rows in files.items():
         _write(d / rel, rows)
     counts = {rel: len(rows) for rel, rows in files.items()}
