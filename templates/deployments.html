@@ -271,11 +271,14 @@ __SITENAV__
   }
 
   // ----------------------------------------------------------------- router
-  const VIEWS = {overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards};
+  // A Map, not an object: a name from the link can only reach these views, never a prototype method.
+  const VIEWS = new Map(Object.entries({overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards}));
   function show() {
-    const raw = decodeURIComponent(location.hash.slice(1)) || "overview";
+    let raw;
+    try { raw = decodeURIComponent(location.hash.slice(1)) || "overview"; } catch (e) { raw = "overview"; }
     const [view, arg] = raw.split("/");
-    const html = VIEWS[view] ? VIEWS[view](arg) : null;
+    const fn = VIEWS.get(view);
+    const html = typeof fn === "function" ? fn(arg) : null;
     const key = html ? raw : "overview";
     document.getElementById("main").innerHTML = html || overview();
     document.querySelectorAll("#tree a").forEach(a => {
