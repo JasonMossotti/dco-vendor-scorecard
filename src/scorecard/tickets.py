@@ -105,6 +105,9 @@ def _ids(data_dir: str) -> frozenset[str]:
 
 
 def _measures(reports: Path) -> tuple[dict, dict, list, dict]:
+    if not (reports / "scorecard.json").exists():
+        # A generated month has no engine reports, so the records carry only what the partners wrote.
+        return {}, {}, [], {}
     sc = json.loads((reports / "scorecard.json").read_text(encoding="utf-8"))
     ll = json.loads((reports / "landlord_scorecard.json").read_text(encoding="utf-8"))
     it_find = json.loads((reports / "findings.json").read_text(encoding="utf-8"))["findings"]

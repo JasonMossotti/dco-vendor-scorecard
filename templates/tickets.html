@@ -51,6 +51,14 @@ details summary { cursor:pointer; color:var(--muted); font-size:12px; } code.rec
 table.native td:first-child { color:var(--muted); white-space:nowrap; width:1%; font-family:ui-monospace,Consolas,monospace; font-size:12px; }
 .dhead { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:baseline; } .dhead h1 { margin-right:4px; }
 .empty { color:var(--muted); padding:30px 0; text-align:center; }
+.rel { border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin:6px 0; }
+.rel .why { font-size:12px; color:var(--muted); margin:2px 0 6px; }
+.rel .bar { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.rel select { font:inherit; font-size:13px; padding:3px 6px; border:1px solid var(--line); border-radius:4px; background:#fff; }
+.score { display:inline-block; min-width:34px; text-align:center; font-weight:700; font-size:12px; padding:1px 6px; border-radius:9px; background:var(--panel); border:1px solid var(--line); }
+.addrel { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:8px 0; }
+.addrel input { font:inherit; padding:4px 6px; border:1px solid var(--line); border-radius:4px; width:190px; }
+.mine { font-size:11px; color:var(--ok); }
 .btn { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--it); padding:4px 10px; border-radius:6px; cursor:pointer; text-decoration:none; display:inline-block; }
 .ro { font-size:12px; color:var(--muted); border:1px dashed var(--line); border-radius:6px; padding:6px 10px; margin-top:10px; }
 a.tk-link { color:var(--it); }
@@ -90,9 +98,17 @@ __SITENAV__
   <section class="view" id="detail"><div class="empty">Select a ticket to see its record, timeline, and what the Customer's data says.</div></section>
 </main>
 <script id="data" type="application/json">__DATA__</script>
+<script id="rel-data" type="application/json">__RELATIONS__</script>
 <script>
 const D = JSON.parse(document.getElementById("data").textContent);
 const R = D.records, BY = Object.fromEntries(R.map(r => [r.id, r]));
+const REL = JSON.parse(document.getElementById("rel-data").textContent);   // suggestions and curated relations
+// A visitor's own calls live in this browser: the site is static, so nothing can be written back to the
+// repository from here. Export gives the YAML that tickets/relations.yaml is committed in.
+const RKEY = "usm.tickets.relations";
+function mine() { try { return JSON.parse(localStorage.getItem(RKEY) || "{}") || {}; } catch (e) { return {}; } }
+function saveMine(m) { try { localStorage.setItem(RKEY, JSON.stringify(m)); return true; } catch (e) { return false; } }
+const pairKey = (a, b) => [a, b].sort().join("|");
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const $ = id => document.getElementById(id);
 const ms = s => new Date(s).getTime(), HOUR = 3600e3, OFF = -5 * HOUR;   // site time is CDT (UTC-5), as on every page
@@ -239,6 +255,91 @@ function pirLine(r) {
     `${draft ? "A draft for this record is saved in this browser." : "Opens a review form filled from this record's facts: times, alarms, measurement, findings, and related records."}</p>`;
 }
 
+// ---- related records: linked in the records, confirmed by a person, and suggested by the data
+function relRow(x, label, body) {
+  return `<div class="rel"><div><a class="tk-link" href="#${esc(x.id)}">${esc(x.id)}</a> <span class="pill">${esc(x.type_label)}</span> ` +
+    `<span class="nw">${esc(loc(x.start))}</span>${label} <div>${esc(x.summary)}</div></div>${body}</div>`;
+}
+
+function relatedSection(r) {
+  const m = mine(), types = REL.types;
+  const curated = (REL.curated[r.id] || []).map(c => ({...c, source: "repo"}));
+  Object.entries(m).forEach(([k, v]) => {       // this browser's confirmations, both ways
+    const [a, b] = k.split("|");
+    if ((a === r.id || b === r.id) && v.type !== "denied") curated.push({id: a === r.id ? b : a, type: v.type, reason: v.reason || "", confirmed_by: "You", confirmed_on: String(v.at).slice(0, 10), source: "browser"});
+  });
+  const denied = new Set(Object.entries(m).filter(([, v]) => v.type === "denied").map(([k]) => k));
+  const settled = new Set(curated.map(c => pairKey(r.id, c.id)));
+  const sugg = (REL.suggestions[r.id] || []).filter(s => !denied.has(pairKey(r.id, s.id)) && !settled.has(pairKey(r.id, s.id)));
+  let h = `<h2>Related records</h2>`;
+  if (r.related.length) h += `<h3>Linked in the records</h3>` + r.related.map(x => BY[x]).filter(Boolean)
+    .map(x => relRow(x, "", `<div class="why">${esc(linkWhy(r, x))}</div>`)).join("");
+  if (curated.length) h += `<h3>Confirmed by a person</h3>` + curated.map(c => {
+    const x = BY[c.id]; if (!x) return "";
+    const t = (types.find(t => t.id === c.type) || {}).label || c.type;
+    return relRow(x, ` <span class="pill">${esc(t)}</span>${c.source === "browser" ? ` <span class="mine">saved in this browser</span>` : ""}`,
+      `<div class="why">${esc(c.reason || "No reason given.")} <i>${esc(c.confirmed_by)}, ${esc(c.confirmed_on)}</i></div>` +
+      (c.source === "browser" ? `<div class="bar"><button class="btn" data-undo="${esc(pairKey(r.id, c.id))}">Remove</button></div>` : ""));
+  }).join("");
+  if (sugg.length) h += `<h3>Suggested by the data</h3><p class="note">Scored from the records themselves: the devices they name and the device directory's connections, how the two windows sit in time, and the evidence the Customer already holds. A suggestion is a lead, not a finding: nothing reads it until a person confirms it.</p>` +
+    sugg.map(s => {
+      const x = BY[s.id]; if (!x) return "";
+      return relRow(x, ` <span class="score" title="Score out of 100; shown at ${esc(REL.threshold)} or more">${esc(s.score)}</span>`,
+        `<div class="why">${s.reasons.map(z => esc(z.text) + ` (+${esc(z.points)})`).join(" · ")}</div>` +
+        `<div class="bar"><select data-type="${esc(pairKey(r.id, s.id))}">${types.map(t => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join("")}</select>` +
+        `<button class="btn" data-confirm="${esc(pairKey(r.id, s.id))}">Confirm</button>` +
+        `<button class="btn" data-deny="${esc(pairKey(r.id, s.id))}">Deny</button></div>`);
+    }).join("");
+  if (denied.size) h += `<p class="note">${denied.size} suggestion${denied.size === 1 ? "" : "s"} denied in this browser. <button class="btn" data-clear="1">Show them again</button></p>`;
+  h += `<div class="addrel"><b>Relate to</b><input type="text" id="rel-add" list="rel-ids" placeholder="Any record number"><datalist id="rel-ids">` +
+    R.map(x => `<option value="${esc(x.id)}">`).join("") + `</datalist>` +
+    `<select id="rel-add-type">${types.map(t => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join("")}</select>` +
+    `<input type="text" id="rel-add-why" placeholder="Why they are related" style="width:260px">` +
+    `<button class="btn" id="rel-add-go">Add</button><button class="btn" id="rel-export">Export YAML</button></div>` +
+    `<p class="note">Your confirmations are saved in this browser; the site is static, so nothing is written back. Export YAML gives the shape <code>tickets/relations.yaml</code> is committed in.</p>`;
+  return h;
+}
+
+// Why two records are linked in the records themselves, read back from what they hold.
+function linkWhy(r, x) {
+  const shared = r.findings.filter(f => f.refs.includes(x.id));
+  if (shared.length) return `Finding ${shared.map(f => f.id).join(", ")} names both records.`;
+  if (r.measured && r.measured.merged && r.measured.merged.includes(x.id)) return `One Ticket of Record with ${r.id} in the Customer's measurement.`;
+  if (x.measured && x.measured.merged && x.measured.merged.includes(r.id)) return `One Ticket of Record with ${x.id} in the Customer's measurement.`;
+  if (x.type === "mop" || r.type === "mop") return `The work order or task names the MOP it was done under.`;
+  if (x.type === "chg" || r.type === "chg") return `Opened on the same rack inside the change window.`;
+  return `Named in the records of ${r.id}.`;
+}
+
+function wireRelations(r) {
+  const el = $("detail");
+  const set = (key, type, reason) => { const m = mine(); m[key] = {type, reason: reason || "", at: new Date().toISOString()}; saveMine(m); detail(r.id); };
+  el.querySelectorAll("[data-confirm]").forEach(b => b.onclick = () => {
+    const key = b.dataset.confirm;
+    set(key, el.querySelector(`[data-type="${key}"]`).value, "Confirmed from the suggestion in the Incident Portal.");
+  });
+  el.querySelectorAll("[data-deny]").forEach(b => b.onclick = () => set(b.dataset.deny, "denied", ""));
+  el.querySelectorAll("[data-undo]").forEach(b => b.onclick = () => { const m = mine(); delete m[b.dataset.undo]; saveMine(m); detail(r.id); });
+  const clear = el.querySelector("[data-clear]");
+  if (clear) clear.onclick = () => { const m = mine(); Object.keys(m).forEach(k => { if (m[k].type === "denied") delete m[k]; }); saveMine(m); detail(r.id); };
+  $("rel-add-go").onclick = () => {
+    const other = $("rel-add").value.trim().toUpperCase();
+    if (!BY[other] || other === r.id) { $("rel-add").value = ""; $("rel-add").placeholder = "No such record number"; return; }
+    set(pairKey(r.id, other), $("rel-add-type").value, $("rel-add-why").value.trim());
+  };
+  $("rel-export").onclick = () => {
+    const m = mine(), lines = ["# Relations confirmed in a browser, exported from the Incident Portal. Add them to tickets/relations.yaml;",
+      "# a reason that names a time, a number, or a device is checked against the data by the tests.", "relations:"];
+    Object.entries(m).filter(([, v]) => v.type !== "denied").forEach(([k, v]) => {
+      const [a, b] = k.split("|");
+      lines.push(`  - records: [${a}, ${b}]`, `    type: ${v.type}`, `    confirmed_by: ""   # the role that made the call`,
+        `    confirmed_on: "${String(v.at).slice(0, 10)}"`, `    reason: ${JSON.stringify(v.reason || "")}`);
+    });
+    const blob = new Blob([lines.join("\n") + "\n"], {type: "text/yaml"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "relations.yaml"; a.click();
+  };
+}
+
 function detail(id) {
   const r = BY[id], el = $("detail");
   if (!r) { el.innerHTML = `<div class="empty">No record ${esc(id)} in this period.</div>`; return; }
@@ -261,11 +362,11 @@ function detail(id) {
   if (r.alarms.length) h += `<h2>Alarms on the alarm board</h2><div class="wide"><table><tr><th>Alarm</th><th>Raised (CDT)</th><th>Device</th><th>Summary</th><th>Severity</th><th>Change work</th></tr>` +
     r.alarms.map(a => `<tr><td class="nw">${esc(a.id)}</td><td class="nw">${esc(loc(a.raised))}</td><td class="nw">${esc(a.device)}</td><td>${esc(a.summary)}</td><td>${esc(a.severity)}</td><td>${esc(D.class_text[a.cls])}${a.change ? " · " + esc(a.change) : ""}</td></tr>`).join("") + `</table></div>` +
     `<p class="note"><a href="../alarms/">Open the alarm board</a></p>`;
-  if (r.related.length) h += `<h2>Related records</h2><table><tr><th>Number</th><th class="c-type">Type</th><th>Opened (CDT)</th><th>Summary</th></tr>` +
-    r.related.map(x => BY[x]).filter(Boolean).map(x => `<tr><td class="nw"><a class="tk-link" href="#${esc(x.id)}">${esc(x.id)}</a></td><td>${esc(x.type_label)}</td><td class="nw">${esc(loc(x.start))}</td><td>${esc(x.summary)}</td></tr>`).join("") + `</table>`;
+  h += relatedSection(r);
   h += `<h2>As recorded in the partner's system</h2><p class="note">${esc(r.system)}, file <code>${esc(r.source)}</code>. Field names are the system's own.</p>${nativeTable(r.native)}`;
   h += `<div class="ro">Read only. The Customer reads these records under the Records access term of each agreement and never writes back; actions go through the bridge, the weekly review, and corrective action plans.</div>`;
   el.innerHTML = h;
+  wireRelations(r);
   el.scrollTop = 0;
 }
 

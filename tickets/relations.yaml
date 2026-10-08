@@ -1,0 +1,50 @@
+# Related records: the calls people have made, kept in the repository.
+#
+# The Incident Portal already shows the links the records themselves make (a MOP written on a work order,
+# a finding that names both, tickets merged into one Ticket of Record, a ticket opened on a rack under
+# change), and it suggests leads scored from the data (src/scorecard/relations.py, weights in
+# config/relations.yaml). This file holds the relations a person has confirmed: the type, who confirmed it
+# by role, the date, and why. Tests check every number and reference against the data, and no individual is
+# named. Confirmations made in a browser are exported in this shape and committed here.
+#
+# The types are in config/relations.yaml: related, duplicate (the same event recorded twice), and follow-up
+# (the work that followed). Nothing in the sample month needed the last two: where one ticket really is a
+# repeat of another, the IT Partner engine already treats them as one Ticket of Record under TR-1 or TR-2
+# and the records link themselves.
+
+relations:
+  - records: [MOP-310, WO-41023]
+    type: related
+    confirmed_by: "Customer Site Lead"
+    confirmed_on: "2026-09-18"
+    reason: >-
+      WO-41023 is the Landlord's work order for the rack A07 outage, which happened during the MOP-310
+      window on the A-side tap-off of the same busway pair. The work order carries no MOP reference because
+      the B-side tap-off it opened, on BW-A-R1-PG-A2-B, was outside any approved MOP, which is finding
+      L-004; the records are
+      related through the work, not through a reference either system wrote. Reviewed in PIR-2026-001.
+  - records: [INC3900001, MOP-310]
+    type: related
+    confirmed_by: "Customer Site Lead"
+    confirmed_on: "2026-09-18"
+    reason: >-
+      The IT Partner's ticket for rack A07 was opened during the MOP-310 window and the Customer's alarm
+      board ties the same alarm to both. The IT Partner had no view of the MOP, so its ticket never names
+      it. Reviewed in PIR-2026-001.
+  - records: [INC3100153, INC3100170]
+    type: related
+    confirmed_by: "IT Partner Site Manager"
+    confirmed_on: "2026-09-30"
+    reason: >-
+      Two optic replacements on rack A13 within hours of each other, on different trays and different rails
+      (a13-ct16 on leaf-a07-r2, a13-ct18 on leaf-a07-r1). Both were 800G OSFP optics from the same batch,
+      so the IT Partner is checking the batch rather than the links; INC3100170 is also the follow-up to
+      INC3100136 under TR-2 (findings F-002 and F-011).
+  - records: [INC3100595, INC3100663]
+    type: related
+    confirmed_by: "IT Partner Site Manager"
+    confirmed_on: "2026-09-30"
+    reason: >-
+      Two compute trays in rack A23, a day apart, both reseated on the same XID 119 with no part replaced
+      either time. Different trays (a23-ct18 and a23-ct04), so this is not one event recorded twice: the IT
+      Partner is looking at the rack rather than the trays. Finding F-013 covers the a23-ct18 tickets only.

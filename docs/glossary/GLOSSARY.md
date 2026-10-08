@@ -111,7 +111,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | VFD | **Variable frequency drive.** Controls a pump or fan motor's speed. | - | Landlord SLA, Site model document |
 | XDR | **Extended data rate (InfiniBand, 800 Gb/s).** An InfiniBand speed generation. | - | Site model document |
 | XID | **Xid error (GPU driver error code).** A numbered error the GPU driver reports, such as XID 79 (GPU has fallen off the bus). Critical XIDs start the restoration clock for a GPU fault. Every XID that applies to GB200 is listed under GPU XID codes, from NVIDIA's public Xid catalog. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, GPU Health, Overview, Incident Portal, Post-Incident Review, Weekly Review |
-| YAML | **YAML (a data file format).** The plain-text format the contracts and reviews are written in, so they can be tested against the data. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Post-Incident Review |
+| YAML | **YAML (a data file format).** The plain-text format the contracts and reviews are written in, so they can be tested against the data. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Incident Portal, Post-Incident Review |
 
 ## Service levels
 
