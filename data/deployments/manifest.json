@@ -1,13 +1,14 @@
 {
-  "disclaimer": "Synthetic deployment program records for a portfolio demonstration: the partners' Jira projects (Jira Cloud search export shape), the Customer's step records, sign-offs by role, inspections, and permits. Fictional parties and numbers; no person is named.",
+  "disclaimer": "Synthetic deployment program records for a portfolio demonstration: the partners' Jira projects (Jira Cloud search export shape), the Customer's step records, sign-offs by role, inspections, and permits. Fictional parties and numbers; no person is named. answer_key.json lists the planted records that do not reconcile, for the checks' self-test only; the checks never read it.",
   "files": {
+    "answer_key.json": 4,
     "customer_steps.json": 3,
     "determinations.json": 2,
-    "inspections.jsonl": 8,
+    "inspections.jsonl": 7,
     "jira/CCF-DEP.json": 50,
     "jira/RSS-DEP.json": 260,
     "permits.json": 4,
-    "signoffs.jsonl": 324
+    "signoffs.jsonl": 323
   },
   "source": "data/sample",
   "window": {

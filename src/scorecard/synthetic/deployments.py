@@ -53,12 +53,14 @@ def from_jira(s: str) -> datetime:
 
 class DeploymentRecordLayer:
     def __init__(self, data_dir: str | Path, seed: int, cfg: dict[str, Any] | None = None,
-                 program: dict[str, Any] | None = None):
+                 program: dict[str, Any] | None = None, plant: bool = True):
         self.data_dir = Path(data_dir)
         self.cfg = cfg or load_config()
         self.program = program or D.load_config()
         self.sla = load_sla()
         self.rng = random.Random(f"{seed}:deployments")       # independent of every other stream
+        self.prng = random.Random(f"{seed}:deployments:planted")  # what is planted never moves the rest
+        self.plant = plant
         manifest = json.loads((self.data_dir / "manifest.json").read_text(encoding="utf-8"))
         self.window = manifest["window"]
         self.as_of = _ts(self.window["end"])
@@ -68,6 +70,9 @@ class DeploymentRecordLayer:
         self.steps = D.steps(self.program, self.sla)
         for s in self.steps:
             s["inspections"] = [i for i in s["inspections"] if D.applies(i, self.profile)]
+        hall = self.program["program"]["hall"]
+        first = min(_ts(r["planned_receipt"]) for r in self._csv("customer/deployment_plan.csv") if r["hall"] == hall)
+        self.program_day = self._local_day(first) - timedelta(days=self.cfg["program_lead_days"])
 
     # ---------------------------------------------------------------- time helpers
     def _work(self, day: date, hour: float) -> datetime:
@@ -81,7 +86,7 @@ class DeploymentRecordLayer:
     def schedule(self) -> dict[str, dict[str, Any]]:
         """Start and end of every program step (not per rack). Done when it ended before the window end."""
         c, out = self.cfg, {}
-        start0 = self._work(date.fromisoformat(c["program_start"]), c["workday_start_hour"])
+        start0 = self._work(self.program_day, c["workday_start_hour"])
         rack_plan = self._csv("customer/deployment_plan.csv")
         hall_racks = [r for r in rack_plan if r["hall"] == self.program["program"]["hall"]]
         last_handoff = max(_ts(r["committed_handoff"]) for r in hall_racks)
@@ -150,6 +155,10 @@ class DeploymentRecordLayer:
                     state = "todo"
                 units.append({"step": s, "rack": rack, "start": receipt, "due": due, "done": done, "state": state})
 
+        key: dict[str, Any] = {"planted": [], "decoys": {}}
+        if self.plant:
+            self._plant_order(units, key)
+
         issues: dict[str, list[dict[str, Any]]] = {"landlord": [], "it_partner": []}
         epics: dict[tuple[str, str], str] = {}
         stories: dict[tuple[str, str], str] = {}
@@ -176,7 +185,7 @@ class DeploymentRecordLayer:
             fields["resolutiondate"] = jira_time(done) if done else None
             fields["updated"] = jira_time(done if done else min(self.as_of, max(created, self.as_of - timedelta(hours=6))))
 
-        program_start = self._work(date.fromisoformat(c["program_start"]), c["workday_start_hour"])
+        program_start = self._work(self.program_day, c["workday_start_hour"])
         gates = {g["id"]: g for g in self.program["gates"]}
         units.sort(key=lambda u: (u["start"], u["rack"] or "", [s["id"] for s in self.steps].index(u["step"]["id"])))
         for u in units:
@@ -214,10 +223,83 @@ class DeploymentRecordLayer:
             status(st["fields"], state, last if state == "done" else None, from_jira(st["fields"]["created"]))
 
         signoffs, inspections = self._signoffs(units), self._inspections(units)
+        if self.plant:
+            signoffs, inspections = self._plant_records(units, signoffs, inspections, key)
         permits, determinations = self._permits(sched, inspections), self._determinations(sched)
         return {"window": self.window, "jira": {k: self._export(v) for k, v in issues.items()},
                 "customer": customer, "signoffs": signoffs, "inspections": inspections,
-                "permits": permits, "determinations": determinations}
+                "permits": permits, "determinations": determinations, "answer_key": key}
+
+    # ---------------------------------------------------------------- planted cases (own stream)
+    def _plant_order(self, units: list[dict[str, Any]], key: dict[str, Any]) -> None:
+        """The Landlord energizes one rack's tap-off (HO-4) before the rack's leak test (M3) is done; a second rack's
+        HO-4 comes only minutes after M3 (a decoy: tight, but in order)."""
+        r, c = self.prng, self.cfg
+        by = {(u["step"]["id"], u["rack"]): u for u in units if u["rack"]}
+        racks = sorted({rk for (sid, rk), u in by.items() if sid == "R-HO4" and u["done"]
+                        and by[("R-M2", rk)]["done"] and (by[("R-M3", rk)]["done"] - by[("R-M2", rk)]["done"]) > timedelta(hours=12)})
+        if len(racks) < 2:
+            return
+        for _ in range(c["planted"].get("out_of_order", 0)):
+            rk = racks.pop(r.randrange(len(racks)))
+            by[("R-HO4", rk)]["done"] = by[("R-M3", rk)]["done"] - timedelta(hours=r.uniform(2, 8))
+            key["planted"].append({"kind": "out_of_order", "step": "R-HO4", "rack": rk})
+        if racks:
+            rk = racks.pop(r.randrange(len(racks)))
+            lo, hi = c["decoys"]["handoff_after_leak_test_minutes"]
+            by[("R-HO4", rk)]["done"] = by[("R-M3", rk)]["done"] + timedelta(minutes=r.uniform(lo, hi))
+            key["decoys"]["handoff_minutes_after_leak_test"] = 1
+
+    def _plant_records(self, units: list[dict[str, Any]], signoffs: list[dict[str, Any]], inspections: list[dict[str, Any]],
+                       key: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+        """Remove one sign-off, remove one required inspection's passing record, and date one sign-off before the
+        work it accepts. Each on a different unit of work that is Done."""
+        r, c = self.prng, self.cfg
+        window = timedelta(days=c["signoff_window_days"])
+        used = {(k["step"], k["rack"]) for k in key["planted"]}
+        done = [u for u in units if u["done"] and (u["step"]["id"], u["rack"]) not in used]
+
+        def pick(pool: list[dict[str, Any]]) -> dict[str, Any] | None:
+            pool = [u for u in pool if (u["step"]["id"], u["rack"]) not in used]
+            if not pool:
+                return None
+            u = pool[r.randrange(len(pool))]
+            used.add((u["step"]["id"], u["rack"]))
+            return u
+
+        def mine(rows: list[dict[str, Any]], u: dict[str, Any]) -> list[dict[str, Any]]:
+            return [x for x in rows if x["step"] == u["step"]["id"] and x["rack"] == u["rack"]]
+
+        for _ in range(c["planted"].get("unsigned", 0)):
+            u = pick([u for u in done if self.as_of - u["done"] > window + timedelta(days=1)
+                      and len(mine(signoffs, u)) == len(u["step"]["signoff"]) > 1])
+            if u:
+                drop = r.choice(mine(signoffs, u)[1:])
+                signoffs = [x for x in signoffs if x is not drop]
+                key["planted"].append({"kind": "unsigned", "step": u["step"]["id"], "rack": u["rack"], "role": drop["role"]})
+        for _ in range(c["planted"].get("uninspected", 0)):
+            u = pick([u for u in done if u["step"]["inspections"]])
+            if u:
+                by = r.choice(sorted({i["by"] for i in u["step"]["inspections"]}))
+                gone = [x for x in mine(inspections, u) if x["by"] == by and x["result"] == "pass"]
+                inspections = [x for x in inspections if not any(x is g for g in gone)]
+                key["planted"].append({"kind": "uninspected", "step": u["step"]["id"], "rack": u["rack"], "by": by})
+        for _ in range(c["planted"].get("signed_early", 0)):
+            u = pick([u for u in done if len(mine(signoffs, u)) == len(u["step"]["signoff"]) > 1])
+            if u:
+                x = r.choice(mine(signoffs, u)[1:])
+                x["signed_at"] = iso(u["done"] - timedelta(hours=r.uniform(6, 72)))
+                key["planted"].append({"kind": "signed_early", "step": u["step"]["id"], "rack": u["rack"], "role": x["role"]})
+        signoffs.sort(key=lambda x: (x["signed_at"], x["step"], x["rack"] or ""))
+        for n, x in enumerate(inspections, 1):
+            x["id"] = f"INSP-B-{n:03d}"
+
+        # Decoys the checks must leave alone: signatures still inside the window, and failures that were retested.
+        pending = sum(1 for u in units if u["done"] and self.as_of - u["done"] <= window
+                      and len(mine(signoffs, u)) < len(u["step"]["signoff"]))
+        retests = sum(1 for u in units if u["done"] and {"fail", "pass"} <= {x["result"] for x in mine(inspections, u)})
+        key["decoys"].update(signatures_pending_in_window=pending, inspections_failed_then_passed=retests)
+        return signoffs, inspections
 
     def _export(self, issues: list[dict[str, Any]]) -> dict[str, Any]:
         """The shape of a Jira Cloud search response (/rest/api/3/search/jql), last page."""
@@ -301,16 +383,17 @@ def write_deployments(out: dict[str, Any], dest: str | Path, source: str = "") -
         files[name] = json.dumps(export, indent=1, sort_keys=True) + "\n"
         counts[name] = len(export["issues"])
     for name, rows in (("customer_steps.json", out["customer"]), ("permits.json", out["permits"]),
-                       ("determinations.json", out["determinations"])):
+                       ("determinations.json", out["determinations"]), ("answer_key.json", out["answer_key"])):
         files[name] = json.dumps(rows, indent=1, sort_keys=True) + "\n"
-        counts[name] = len(rows)
+        counts[name] = len(rows["planted"]) if isinstance(rows, dict) else len(rows)
     for name, rows in (("signoffs.jsonl", out["signoffs"]), ("inspections.jsonl", out["inspections"])):
         files[name] = "".join(json.dumps(r, sort_keys=True) + "\n" for r in rows)
         counts[name] = len(rows)
     files["manifest.json"] = json.dumps({
         "disclaimer": "Synthetic deployment program records for a portfolio demonstration: the partners' Jira projects "
                       "(Jira Cloud search export shape), the Customer's step records, sign-offs by role, inspections, and "
-                      "permits. Fictional parties and numbers; no person is named.",
+                      "permits. Fictional parties and numbers; no person is named. answer_key.json lists the planted "
+                      "records that do not reconcile, for the checks' self-test only; the checks never read it.",
         "source": source, "window": out["window"], "files": counts}, indent=2, sort_keys=True) + "\n"
     for name, text in files.items():
         (dest / name).write_text(text, encoding="utf-8", newline="\n")

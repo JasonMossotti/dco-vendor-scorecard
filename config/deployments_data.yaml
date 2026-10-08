@@ -6,7 +6,8 @@
 # Rack milestones in the IT Partner's Jira project are the same self-report as
 # data/sample/vendor/deployment_milestones.csv, to the second.
 
-program_start: "2026-05-04"        # local date the program was chartered
+program_lead_days: 119             # the program is chartered this many days before the first rack arrives
+                                   # (2026-05-04 in the sample; generated months move with their racks)
 jitter: 0.2                        # each step's duration varies by up to this fraction
 workday_start_hour: 8              # local; steps start and sign-offs happen in working hours
 signoff_lag_hours: [0.5, 26]       # each signature follows the previous one by this much
@@ -70,3 +71,17 @@ permits:
 # Determinations recorded by the program (people's decisions, kept as records).
 determinations:
   TX-TABA: {step: "G0-04", result: "Registered with TDLR; Registered Accessibility Specialist plan review complete. Inspection after completion (G3-03)."}
+
+# Checks (src/scorecard/deployments.py): a missing signature counts only once the step has been Done this long,
+# because signatures follow the work by up to a few days (signoff_lag_hours above).
+signoff_window_days: 7
+
+# Records that do not reconcile, planted on their own random stream ("{seed}:deployments:planted") so the
+# checks can be measured. The checks never read the answer key. Decoys look similar and must not be flagged.
+planted:
+  unsigned: 1            # a step Done in Jira, one role's sign-off never recorded
+  uninspected: 1         # a step Done in Jira, its required inspection record missing (or only the failed attempt)
+  signed_early: 1        # a sign-off dated before the work it accepts was done
+  out_of_order: 1        # the Landlord energized a tap-off (HO-4) before the rack's leak test (M3) was done
+decoys:
+  handoff_after_leak_test_minutes: [5, 30]   # one rack's HO-4 only minutes after M3: tight but in order

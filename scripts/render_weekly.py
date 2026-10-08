@@ -166,6 +166,11 @@ def markdown(w: dict, n: dict | None) -> str:
         L += ["", f"Energy: PUE this week {en['week']['pue']:.3f} (cooling pPUE {en['week']['ppue_cooling']:.3f}, power pPUE "
                   f"{en['week']['ppue_power']:.3f}); month to date {en['mtd']['pue']:.3f} over {en['mtd']['facility_kwh'] / 1000:,.1f} MWh. "
                   "Detail in the PUE report."]
+    if w.get("deploy"):
+        dp = w["deploy"]
+        L += ["", f"Deployment ({dp['hall']}): {dp['week']} work orders completed this week, {dp['to_date']} of {dp['total']} to date; "
+                  f"gates closed: {', '.join(dp['gates_closed']) or 'none'}; {dp['findings']} record{'' if dp['findings'] == 1 else 's'} "
+                  f"that do not reconcile" + (f" ({'; '.join(dp['checks'])})" if dp["checks"] else "") + ". Detail on the Deployments tab."]
     e = w["ehs"]
     L += ["", "## 8. Safety (EHS)", "", f"- **Injuries this week:** {e['injuries']}"]
     L += [f"- **Event:** {x['pir']}: {x['screening']}" for x in e["events"]]

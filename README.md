@@ -38,6 +38,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
 | [GPU Health](#gpu-health) | Which GPUs are failing, or about to, and whose side is it on? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/gpu/) |
+| [Deployments](#deployments) | Where is the Hall B rollout, and do the partners' records of it hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
 | [Devices](#devices-location-pins-and-detail-sheets) | What is this device, where is it, and what does it connect to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/devices/) |
@@ -200,6 +201,24 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - The month's two CDU pump trips dipped flow inside the band and throttled no GPU, which matches the attribution report and OT-CSL-03 at 100%.
 - Scored on 60 generated months with the cases moved each time: every planted case found, 548 of 548 (early warning 360/360, remap pending at return 97/97, hot trays 60/60, CDU excursions 31/31), 0 false positives against 1,942 stable remaps, 120 error bursts, and 1,159 brief slowdowns.
 
+## Deployments
+
+![Deployments: the Hall B GB300 rollout with gate status and record checks](docs/images/deployments.png)
+
+**What it shows.** The Hall B rollout of 32 GB300 NVL72 racks as a tree of gates and steps: G0 design and approvals, G1 hall readiness (commissioning levels L2 to L5), G2 the rack waves (milestones M1 to M7 per rack, plus the Landlord's tap-off energization under Interface Agreement HO-4), and G3 closeout. Each step has its procedure, acceptance criteria, records, sign-off chain by role, and inspections, including the Williamson County Fire Marshal's permits and finals. The calculation sheet checks power, cooling, floor loading, and cabling against the site model, and shows why the 132 kW rack power limit is a required setting at the reported 155 kW peak. Both partners' Jira projects become 275 deployment work orders. A work order is complete only when it is done, every role has signed, and every required inspection has passed. Four records in the sample do not reconcile. One is the Landlord energizing rack B02's tap-off 2.5 hours before the IT Partner's leak test.
+
+**How it works.**
+- Standard work is configuration (`config/deployments.yaml`): gates, steps, sign-off roles, and the authority profile. The county is the default and a city is one line away. To use the tab on a real deployment, replace the YAML and point the importer at a real Jira export. The engine and the page do not change.
+- `src/scorecard/jira_import.py` reads a Jira Cloud search export (JSON pages from `/rest/api/3/search/jql`) or a CSV export. It uses a field map (`config/jira_fields.yaml`) because custom field ids differ from site to site. It never writes to Jira and never reads assignees.
+- The synthetic record (`src/scorecard/synthetic/deployments.py`) uses its own random stream. The IT Partner's rack milestones in Jira are the same self-report the scorecard measures (CSL-09), to the second.
+- Four record checks (`deployments.checks`) read only the work orders:
+  - done without every sign-off after 7 days;
+  - done without a passed inspection;
+  - signed before the work was done;
+  - done before the step it depends on.
+- Each weekly pack carries a deployment line that reconciles with the tab.
+- Scored on 60 generated programs with the planted records moved each time: 240 of 240 found (60 per check). There were 0 false positives against pending signatures, failed-then-passed inspections, and tap-offs energized minutes after their leak test.
+
 ## Agreements: SLAs as code
 
 ![The Interface Agreement rendered with its contents](docs/images/agreements.png)
@@ -271,6 +290,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Change-aware alarms | 120 alarms, 11 expected, 4 flags (all MOP-310) | every case 60/60, decoys 0/60 |
 | PUE report and free-cooling lockouts | 2 of 2 | 109 of 109 (report errors 49/49, cause named 49/49; lockouts 60/60), 0 false positives |
 | GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
+| Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
 
@@ -282,6 +302,7 @@ python scripts/render_alarms.py --robustness 60
 python scripts/render_energy.py --robustness 60
 python scripts/render_gpu_health.py --robustness 60
 python scripts/render_tickets.py --robustness 60
+python scripts/render_deployments.py --robustness 60
 ```
 
 ## Toward live data: the read-only collector
@@ -295,7 +316,7 @@ python scripts/render_tickets.py --robustness 60
 
 ## Tests and deployment
 
-- **532 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
+- **540 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -345,6 +366,8 @@ src/scorecard/patterns.py        Failure pattern statistics, evidence for a caus
 src/scorecard/alarms.py          Change-aware alarms: one feed, classified against declared changes
 src/scorecard/energy.py         PUE and partial PUE from the meters; report and free-cooling checks
 src/scorecard/gpu_health.py     GPU health checks: early warning, remap pending at return to service, thermal walk
+src/scorecard/deployments.py     Deployment program: steps, calculation sheet, work orders, gate status, record checks
+src/scorecard/jira_import.py     Read-only importer for the partners' Jira exports (JSON or CSV, through a field map)
 src/scorecard/tickets.py         Incident Portal records with timelines and measurements
 src/scorecard/glossary.py        Code meanings, lookup, and tokenizer used by render_glossary.py
 src/scorecard/sitenav.py         The tab bar on every page and ticket-number links
@@ -357,8 +380,11 @@ config/change_alarms.yaml        Alarm map, change-type catalog, robustness plan
 config/energy.yaml               Weather, chiller plant, and meter model for the energy layer; PUE check thresholds
 config/gpu_health.yaml           GPU health layer: watches per XID, thresholds, plants
 config/glossary.yaml             Code meanings: contract paths, acronyms, record families
-scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, energy, gpu_health, tickets, glossary, agreements, devices)
-scripts/generate_*.py            Synthetic data: sample, history, change layer, energy meters, GPU health
+config/deployments.yaml          Deployment standard work: gates, steps, sign-off roles, inspections, authority profiles
+config/deployments_data.yaml     Synthetic deployment record settings and planted records
+config/jira_fields.yaml          Jira field map: project keys, custom field ids, CSV headers, status categories
+scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, energy, gpu_health, deployments, tickets, glossary, agreements, devices)
+scripts/generate_*.py            Synthetic data: sample, history, change layer, energy meters, GPU health, deployment record
 scripts/run_engine.py            IT Partner engine -> reports/
 scripts/run_landlord.py          Landlord engine -> Landlord and attribution reports
 scripts/build_scorecard.py       Scorecard -> reports/

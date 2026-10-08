@@ -89,12 +89,19 @@ class WeeklyData:
         self.reviews = self._reviews()
         self.pattern_review = self._pattern_review()
         self.energy = self._energy()
+        self.deploy = self._deploy()
 
     def _energy(self):
         """The energy meters (data/energy/, beside the sample), if they have been generated."""
         from scorecard import energy
         p = self.data_dir.parent / "energy"
         return energy.load(p) if (p / "meters_hourly.csv").exists() else None
+
+    def _deploy(self):
+        """The deployment program record (data/deployments/, beside the sample), if it has been generated."""
+        from scorecard import deployments
+        p = self.data_dir.parent / "deployments"
+        return deployments.build(self.data_dir, rec_dir=p) if (p / "manifest.json").exists() else None
 
     def _csv(self, rel: str) -> list[dict]:
         p = self.data_dir / rel
@@ -321,6 +328,22 @@ def _energy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
     return {"week": span(ws, we), "mtd": span(d.window_start, we)}
 
 
+def _deploy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
+    """Deployment work orders completed this week and to date, gates closed, and record checks known by the week's end,
+    from the same work orders as the Deployments tab."""
+    if d.deploy is None:
+        return None
+    a, b = _iso(ws), _iso(we)
+    wos = [w for w in d.deploy["record"]["work_orders"]]
+    done_by = {w["id"]: bool(w["completed_at"] and w["completed_at"] < b) for w in wos}
+    gates = [g["gate"] for g in d.deploy["gate_status"]
+             if g["total"] and all(done_by[w["id"]] for w in wos if w["gate"] == g["gate"])]
+    known = [f for f in d.deploy["findings"] if f["known_at"] < b]
+    return {"hall": d.deploy["program"]["hall_name"], "total": len(wos), "to_date": sum(done_by.values()),
+            "week": sum(1 for w in wos if w["completed_at"] and a <= w["completed_at"] < b),
+            "gates_closed": gates, "findings": len(known), "checks": sorted({f["check"] for f in known})}
+
+
 # --------------------------------------------------------------------------- the pack
 def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
     we = next(e for s, e in d.weeks if s == ws)
@@ -360,6 +383,7 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
         "resources": _resources(d, ws, we, it_rows, ll_rows, it_known),
         "ehs": _ehs(d, ws, we, actions),
         "energy": _energy_line(d, ws, we),
+        "deploy": _deploy_line(d, ws, we),
     }
 
 
