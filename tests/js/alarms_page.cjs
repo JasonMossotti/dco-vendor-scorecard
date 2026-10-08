@@ -126,11 +126,19 @@ ok(ua("CHG2047034") && ua("CHG2047034").textContent.includes("CHG2047034 work no
 at("2026-09-07T16:00:00Z");
 ok(ua("MOP-402"), "MOP-402 is waiting on final approval two hours before its window");
 at("2026-09-07T16:46:00Z");
-ok(!ua("MOP-402"), "approved late: it leaves the list when the Change Coordinator approves it");
+ok(ua("MOP-402") && ua("MOP-402").classList.contains("approved") && ua("MOP-402").textContent.includes("final approval: received Sep 7 11:46 CDT"),
+   "approved late: it stays listed, marked approved");
+at("2026-09-07T20:00:00Z");
+ok(ua("MOP-402"), "it is still listed at the end of its window");
+at("2026-09-07T20:01:00Z");
+ok(!ua("MOP-402"), "and leaves the list after its window ends");
 at("2026-09-19T14:00:00Z");
-ok(ua("MOP-405"), "MOP-405 is waiting on final approval");
-at("2026-09-19T15:00:00Z");
-ok(!ua("MOP-405"), "deferred: it leaves the list when the request is deferred");
+ok(ua("MOP-405") && !ua("MOP-405").classList.contains("deferred"), "MOP-405 is waiting on final approval");
+at("2026-09-19T17:00:00Z");
+ok(ua("MOP-405") && ua("MOP-405").classList.contains("deferred") && ua("MOP-405").textContent.includes("Deferred 10:00 CDT") && ua("MOP-405").textContent.includes("not change work"),
+   "deferred: it stays listed through its window, marked deferred");
+at("2026-09-19T19:31:00Z");
+ok(!ua("MOP-405"), "and leaves the list after its window ends");
 
 // Tickets panel: open, and closed in the last N hours (0 to 24 in 2-hour steps).
 const tkwin = d.getElementById("tkwin");

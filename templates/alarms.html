@@ -67,6 +67,7 @@ svg.tl { width:100%; height:auto; display:block; min-width:640px; } tr.tlrow td 
 .split > aside { border-left:1px solid var(--line); padding-left:16px; }
 .ua { border:1px solid var(--line); border-left:4px solid var(--maj); border-radius:6px; padding:6px 10px; margin:8px 0; background:#fff; }
 .ua.open { border-left-color:var(--oos); background:#fdf6f5; } .ua h3 { margin:0; font-size:13px; } .ua .n { color:var(--muted); font-size:12px; }
+.ua.approved { border-left-color:var(--clr); } .ua.deferred { border-left-color:var(--exp); } .ua .got { color:var(--clr); font-weight:600; }
 .ua .warn { color:var(--oos); font-size:12px; font-weight:600; margin-top:2px; } .ua .pend { color:var(--maj); font-weight:600; }
 h2 .ctl select { font-size:12px; font-weight:400; padding:1px 4px; vertical-align:baseline; }
 .replay button#play { min-width:64px; font-weight:600; background:rgba(61,139,90,.22); border-color:rgba(61,139,90,.65); color:#1d4a2c; }
@@ -213,19 +214,24 @@ function upcomingPanel(T) {
 
 // Scheduled change work without final approval from the Change Coordinator: due to start within the lead time,
 // or already under way, and not yet approved or deferred. Facts from the change record and the partner's own work record.
-const unapproved = T => PA.filter(p => p.sub <= T && p.ws <= T + S.lead * HOUR && T <= Math.max(p.we, p.en ?? 0)
-  && !(p.fa != null && p.fa <= T) && !(p.df != null && p.df <= T)).sort((x, y) => x.ws - y.ws);
+// A request stays listed until its window ends, even once approved or deferred, so alarms on its equipment
+// during the window can be read against it.
+const unapproved = T => PA.filter(p => p.sub <= T && p.ws <= T + S.lead * HOUR && T <= p.we).sort((x, y) => x.ws - y.ws);
+const approvedBy = (p, T) => p.fa != null && p.fa <= T, deferredBy = (p, T) => p.df != null && p.df <= T;
 const dayOf = t => local(t).slice(0, -6);
 const workRecord = p => p.owner === "Landlord" ? `Work order ${p.work_order} shows` : `${p.id} work notes show`;
 function unapprovedPanel(T) {
   const ua = unapproved(T);
   if (!ua.length) return `<div class="empty" id="unapproved">Nothing scheduled in the next ${S.lead} hours is waiting on final approval.</div>`;
-  return `<div id="unapproved">${ua.map(p => { const open = p.ws <= T, went = p.st != null && p.st <= T;
+  return `<div id="unapproved">${ua.map(p => { const open = p.ws <= T, went = p.st != null && p.st <= T, ok = approvedBy(p, T), off = deferredBy(p, T);
     const steps = p.steps.slice(1, -1).map(s => `${esc(s.step)} ✓ ${esc(dayOf(ms(s.at)))}`).join(" · ");
-    return `<div class="ua${open ? " open" : ""}" data-pending="${esc(p.id)}"><h3>${esc(p.id)} · ${partyBadge(p.owner)} ${esc(p.title)}</h3>
+    return `<div class="ua${ok ? " approved" : off ? " deferred" : open ? " open" : ""}" data-pending="${esc(p.id)}"><h3>${esc(p.id)} · ${partyBadge(p.owner)} ${esc(p.title)}</h3>
       <div class="n">${open ? "Window" : `Starts in <b>${dur(Math.ceil((p.ws - T) / MIN))}</b> · window`} ${esc(local(p.ws))} to ${esc(hhmm(p.we))} CDT · <span data-loc="${esc(assetsLoc(p))}">${esc(assetsText(p))}</span></div>
-      <div class="n">${steps} · <span class="pend">Change Coordinator final approval: not received</span></div>
-      ${went ? `<div class="warn">⚠ ${esc(workRecord(p))} work started ${esc(hhmm(p.st))} CDT without final approval. The records do not reconcile.</div>`
+      <div class="n">${steps} · ${ok ? `<span class="got">Change Coordinator final approval: received ${esc(local(p.fa))} CDT</span>`
+        : `<span class="pend">Change Coordinator final approval: not received</span>`}</div>
+      ${ok ? `<div class="n">Approved late. Listed until its window ends at ${esc(hhmm(p.we))} CDT.</div>`
+        : off ? `<div class="n"><b>Deferred ${esc(hhmm(p.df))} CDT</b>: final approval not received. No work should happen on ${esc(assetsText(p))} in this window, so any alarm on it is not change work.</div>`
+        : went ? `<div class="warn">⚠ ${esc(workRecord(p))} work started ${esc(hhmm(p.st))} CDT without final approval. The records do not reconcile.</div>`
         : open ? `<div class="warn">⚠ Window open since ${esc(hhmm(p.ws))} CDT without final approval. Work should not proceed.</div>` : ""}</div>`; }).join("")}</div>`;
 }
 
@@ -323,7 +329,7 @@ function handoffText(T) {
   list(`Upcoming change work, next ${S.lead} hours`, upcoming(T).map(d =>
     [`- ${d.change_id} ${d.owner}: ${d.title}, starts ${local(ms(d.window_start))} CDT`, ...warnings(d, T).map(w => `  ! ${w}`)]));
   list(`Scheduled without the Change Coordinator's final approval, next ${S.lead} hours or under way`, unapproved(T).map(p =>
-    [`- ${p.id} ${p.owner}: ${p.title}, window ${local(p.ws)} to ${hhmm(p.we)} CDT`,
+    [`- ${p.id} ${p.owner}: ${p.title}, window ${local(p.ws)} to ${hhmm(p.we)} CDT${approvedBy(p, T) ? `, approved late ${hhmm(p.fa)} CDT` : deferredBy(p, T) ? `, deferred ${hhmm(p.df)} CDT` : ""}`,
      ...(p.st != null && p.st <= T ? [`  ! ${workRecord(p)} work started ${hhmm(p.st)} CDT without final approval`] : p.ws <= T ? [`  ! Window open without final approval`] : [])]));
   const since = T - SHIFT, cleared = A.filter(a => a.tc != null && a.tc > since && a.tc <= T), closed = TK.filter(k => k.tc != null && k.tc > since && k.tc <= T);
   L.push("", `Closed in the last 12 hours: ${cleared.length} alarms cleared; tickets closed: ${closed.map(k => k.id).join(", ") || "none"}`);
@@ -596,7 +602,7 @@ function about() {
     <p>${esc(r.out_of_scope[2])}</p>
     <h2>Notifications</h2><ul class="rules">${r.notifications.map(n => `<li><b>${esc(n.id)}</b> ${esc(n.trigger)}: within ${esc(n.within_min)} minutes, ${esc(n.channels.toLowerCase())}. Owed by ${esc(n.owed_by.toLowerCase())}.</li>`).join("")}</ul>
     <p>${esc(r.customer_backstop)}</p>
-    <h2>Scheduled, not approved</h2><p>A change request goes through peer review and CAB technical review, then needs final approval from the Customer's Change Coordinator before work may start. The list beside the upcoming change work shows requests due to start in the chosen period, or already under way, that have no final approval yet. A request leaves the list when it is approved or deferred. When the partner's own work record shows work started anyway, the card says so: the change record and the work record do not reconcile. That is a fact to raise with the partner, not a finding that anyone acted in bad faith. These requests declare no impact, so any alarm they cause reaches the Customer as not change work.</p>
+    <h2>Scheduled, not approved</h2><p>A change request goes through peer review and CAB technical review, then needs final approval from the Customer's Change Coordinator before work may start. The list beside the upcoming change work shows requests due to start in the chosen period, or already under way, that have no final approval yet. A request stays on the list until its window ends, even after a late approval or a deferral, so any alarm on its equipment during the window can be read against it. When the partner's own work record shows work started anyway, the card says so: the change record and the work record do not reconcile. That is a fact to raise with the partner, not a finding that anyone acted in bad faith. These requests declare no impact, so any alarm they cause reaches the Customer as not change work.</p>
     <h2>Sources</h2><p>Landlord: BMS alarms (the alarm of record), UPS cards, busway monitors, power monitoring, CDU controllers, leak and VESDA panels. IT Partner: rack leak ropes, Redfish, NVLink manager, fabric manager, GPU telemetry, scheduler. Severity follows each partner SLA's P1 and P2 criteria. Every name, device, and event is synthetic.</p>
     <p class="note">Report: <code>reports/change_alarms.md</code>. Rules: Interface Agreement section 10. Code: <code>src/scorecard/alarms.py</code>.</p></section>`;
 }
