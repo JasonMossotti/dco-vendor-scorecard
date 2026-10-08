@@ -3,7 +3,8 @@
   "files": {
     "ground_truth/change_alarm_key.json": 4,
     "impact_declarations.json": 12,
-    "notification_log.json": 96
+    "notification_log.json": 96,
+    "pending_approvals.json": 10
   },
   "generator": "scorecard.synthetic.changes",
   "note": "Derived from the dataset beside it with its own random stream; ground_truth/ is the answer key and the check never reads it.",

@@ -96,6 +96,57 @@ at("2026-09-13T09:00:00Z");
 ok(!d.querySelector('#upcoming-changes .ch.flag[data-change="CHG2040031"]'), "the flag clears when the ticket closes");
 lead.value = "6"; fire(lead, "change");
 
+// Scheduled, not approved: change requests with no final approval from the Change Coordinator, same period as upcoming work.
+const ua = id => d.querySelector(`#unapproved .ua[data-pending="${id}"]`);
+ok(d.querySelector(".split > aside#uaside #uawrap") && d.querySelector(".split > div #up"), "the unapproved list sits on the right of the upcoming change work");
+ok(D.pending.length === 10 && D.pending.every(p => p.steps.at(-1).role === "Change Coordinator"), "ten change requests, each waiting on the Change Coordinator");
+at("2026-09-11T10:00:00Z");
+ok(!ua("MOP-403") && t().includes("Nothing scheduled in the next 6 hours is waiting on final approval"), "eight hours out, beyond the 6-hour period, MOP-403 is not listed");
+lead.value = "8"; fire(lead, "change");
+ok(ua("MOP-403"), "an 8-hour period lists it, like the upcoming change work");
+lead.value = "6"; fire(lead, "change");
+at("2026-09-11T14:00:00Z");
+ok(ua("MOP-403") && !ua("MOP-403").classList.contains("open") && ua("MOP-403").textContent.includes("Starts in 4 h 00 min")
+   && ua("MOP-403").textContent.includes("CAB technical review ✓") && ua("MOP-403").textContent.includes("Change Coordinator final approval: not received"),
+   "four hours out: listed with its review steps and the missing final approval");
+ok(!d.querySelector('#upcoming-changes .ch[data-change="MOP-403"]'), "an unapproved request is not upcoming approved change work");
+at("2026-09-11T18:01:00Z");
+ok(ua("MOP-403").classList.contains("open") && ua("MOP-403").textContent.includes("Window open since 13:00 CDT without final approval"), "the window opens with no approval");
+at("2026-09-11T18:10:00Z");
+ok(ua("MOP-403").textContent.includes("Work order WO-48033 shows work started 13:03 CDT without final approval") && ua("MOP-403").textContent.includes("do not reconcile"),
+   "the partner's work order shows work started anyway: the records do not reconcile");
+d.getElementById("handoffbtn").click();
+ok(d.getElementById("hotext").value.includes("Scheduled without the Change Coordinator's final approval, next 6 hours or under way (1):")
+   && d.getElementById("hotext").value.includes("! Work order WO-48033 shows work started 13:03 CDT"), "the shift handoff carries the unapproved work");
+d.getElementById("hoclose").click();
+at("2026-09-11T21:01:00Z");
+ok(!ua("MOP-403"), "it leaves the list after its window");
+at("2026-09-15T06:20:00Z");
+ok(ua("CHG2047034") && ua("CHG2047034").textContent.includes("CHG2047034 work notes show work started 01:15 CDT"), "IT Partner firmware started without final approval");
+at("2026-09-07T16:00:00Z");
+ok(ua("MOP-402"), "MOP-402 is waiting on final approval two hours before its window");
+at("2026-09-07T16:46:00Z");
+ok(!ua("MOP-402"), "approved late: it leaves the list when the Change Coordinator approves it");
+at("2026-09-19T14:00:00Z");
+ok(ua("MOP-405"), "MOP-405 is waiting on final approval");
+at("2026-09-19T15:00:00Z");
+ok(!ua("MOP-405"), "deferred: it leaves the list when the request is deferred");
+
+// Tickets panel: open, and closed in the last N hours (0 to 24 in 2-hour steps).
+const tkwin = d.getElementById("tkwin");
+ok([...tkwin.options].map(o => +o.value).join(",") === "0,2,4,6,8,10,12,14,16,18,20,22,24" && tkwin.value === "6", "tickets window from 0 to 24 hours, default 6");
+const done = D.tickets.find(k => k.closed && Date.parse(k.closed) > Date.parse(k.opened) + 3600e3);
+at(new Date(Date.parse(done.closed) + 3 * 3600e3).toISOString());
+const tkText = () => (d.getElementById("tickets") || {}).textContent || "";
+ok(tkText().includes(done.id), `${done.id} closed three hours ago shows with 6 hours`);
+tkwin.value = "2"; fire(tkwin, "change");
+ok(!tkText().includes(done.id), "and drops off with 2 hours");
+tkwin.value = "0"; fire(tkwin, "change");
+ok(![...d.querySelectorAll("#tickets tr.tk")].some(r => r.classList.contains("closed")), "0 hours shows open tickets only");
+tkwin.value = "6"; fire(tkwin, "change");
+const css = d.querySelector("style").textContent;
+ok(/h2 \.ctl select \{ font-size:12px/.test(css) && /\.ctl label \{[^}]*font-size:12px/.test(css), "the heading selectors use the same 12px as the words beside them");
+
 // Filters.
 d.getElementById("clearchange").click();
 d.getElementById("end").click();
@@ -186,10 +237,11 @@ playBtn.click();
 const t0 = d.getElementById("now").textContent;
 setTimeout(() => {
   ok(d.getElementById("play") === playBtn && playBtn.textContent === "Pause", "the Pause button survives replay ticks");
+  ok(playBtn.classList.contains("running"), "Pause is shown in light red while the replay runs");
   ok(d.getElementById("now").textContent !== t0, "the replay advanced: " + d.getElementById("now").textContent);
   playBtn.click();
   const t1 = d.getElementById("now").textContent;
-  ok(playBtn.textContent === "Play", "Pause stops the replay");
+  ok(playBtn.textContent === "Play" && !playBtn.classList.contains("running"), "Pause stops the replay; Play is light green again");
   setTimeout(() => {
     ok(d.getElementById("now").textContent === t1, "the clock stays put after Pause");
     const sp = d.getElementById("speed"); sp.value = "1"; fire(sp, "change");

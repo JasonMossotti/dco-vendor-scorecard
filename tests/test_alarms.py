@@ -61,6 +61,29 @@ def test_change_layer_has_its_own_random_stream():
     assert 'random.Random(f"{seed}:changes")' in src
 
 
+def test_pending_approvals_are_consistent_and_apart_from_approved_changes():
+    src = (ROOT / "src" / "scorecard" / "synthetic" / "changes.py").read_text(encoding="utf-8")
+    assert 'random.Random(f"{self.seed}:changes:approvals")' in src
+    rows = json.loads((CHANGES / "pending_approvals.json").read_text(encoding="utf-8"))
+    approved = {c["change_id"] for c in A.change_records(FileConnector(SAMPLE))}
+    tickets = {w["wo"] for w in json.loads((SAMPLE / "landlord" / "work_orders.json").read_text(encoding="utf-8"))}
+    assert len(rows) == 10 and {r["owner"] for r in rows} == {"Landlord", "IT Partner"}
+    assert {r["outcome"] for r in rows} == {"approved_late", "deferred", "started_unapproved"}
+    for r in rows:
+        assert r["id"] not in approved and r["work_order"] not in tickets, r["id"]
+        assert [s["step"] for s in r["steps"]] == ["Submitted", "Peer review", "CAB technical review", "Final approval"]
+        assert r["steps"][-1]["role"] == "Change Coordinator" and r["steps"][-1]["at"] == r["final_approved_at"]
+        times = [s["at"] for s in r["steps"][:3]]
+        assert times == sorted(times) and times[-1] < r["window_start"] < r["window_end"]
+        ws, we = r["window_start"], r["window_end"]
+        if r["outcome"] == "approved_late":
+            assert r["final_approved_at"] < ws and not (r["deferred_at"] or r["work_started"])
+        elif r["outcome"] == "deferred":
+            assert r["deferred_at"] < ws and not (r["final_approved_at"] or r["work_started"])
+        else:
+            assert not r["final_approved_at"] and ws <= r["work_started"] < r["work_ended"] and r["work_started"] < we
+
+
 def test_check_never_reads_the_answer_key(tmp_path):
     shutil.copytree(CHANGES, tmp_path / "changes")
     shutil.rmtree(tmp_path / "changes" / "ground_truth")

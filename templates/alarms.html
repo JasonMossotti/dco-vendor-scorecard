@@ -63,6 +63,15 @@ svg.tl { width:100%; height:auto; display:block; min-width:640px; } tr.tlrow td 
 .modal { position:fixed; inset:0; background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; z-index:10; padding:16px; }
 .modal .box { background:#fff; border-radius:8px; padding:14px 16px; width:min(780px,100%); max-height:92vh; overflow:auto; }
 .modal textarea { width:100%; font:12px/1.45 ui-monospace,Consolas,monospace; border:1px solid var(--line); border-radius:4px; padding:8px; }
+.split { display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,360px); gap:0 18px; align-items:start; }
+.split > aside { border-left:1px solid var(--line); padding-left:16px; }
+.ua { border:1px solid var(--line); border-left:4px solid var(--maj); border-radius:6px; padding:6px 10px; margin:8px 0; background:#fff; }
+.ua.open { border-left-color:var(--oos); background:#fdf6f5; } .ua h3 { margin:0; font-size:13px; } .ua .n { color:var(--muted); font-size:12px; }
+.ua .warn { color:var(--oos); font-size:12px; font-weight:600; margin-top:2px; } .ua .pend { color:var(--maj); font-weight:600; }
+h2 .ctl select { font-size:12px; font-weight:400; padding:1px 4px; vertical-align:baseline; }
+.replay button#play { min-width:64px; font-weight:600; background:rgba(61,139,90,.22); border-color:rgba(61,139,90,.65); color:#1d4a2c; }
+.replay button#play.running { background:rgba(230,40,25,.6); border-color:#b42318; color:#4a0905; }
+@media (max-width:900px) { .split { grid-template-columns:1fr; } .split > aside { border-left:0; padding-left:0; } }
 @media (max-width:700px) { header.top { padding:8px 12px; } main { padding:0 8px; } section.view { padding:10px; } }
 </style>
 </head>
@@ -86,16 +95,19 @@ const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","
 const p2 = n => String(n).padStart(2, "0");
 const W0 = ms(D.window.start), W1 = ms(D.window.end);
 const A = D.alarms.map(a => ({...a, t:ms(a.raised), tc:ms(a.cleared), ta:ms(a.ack_at), keys:a.keys || []}));
+const PA = (D.pending || []).map(p => ({...p, ws:ms(p.window_start), we:ms(p.window_end), sub:ms(p.steps[0].at),
+  fa:ms(p.final_approved_at), df:ms(p.deferred_at), st:ms(p.work_started), en:ms(p.work_ended)}));
 const TK = (D.tickets || []).map(k => ({...k, t:ms(k.opened), tc:ms(k.closed)}));
 const CT = D.class_text, FLAG = ["out_of_scope", "out_of_window"], RANK = {minor:1, major:2, critical:3};
 const A07_AT = ms(D.a07.overrun.raised) + 9 * MIN;   // #a07: during the rack A07 outage, just after the overrun alert
 const SPEEDS = [[1, "Real time"], [60, "1 min per second"], [600, "10 min per second"], [3600, "1 h per second"]];
 const LEADS = Array.from({length:12}, (_, i) => 2 * (i + 1));   // upcoming change work lead time: 2 to 24 hours
-const REAP = 6 * HOUR;    // cleared alarms and closed tickets stay on the board this long
+const TKWINS = Array.from({length:13}, (_, i) => 2 * i);         // closed tickets stay on the Tickets panel: 0 to 24 hours
+const REAP = 6 * HOUR;    // cleared alarms stay on the live board this long
 const SHIFT = 12 * HOUR;  // the shift handoff looks back one 12-hour shift
 const SPAN = Math.floor((W1 - W0) / DAY) * DAY;   // whole days of sample the simulated live feed cycles through
 const S = { view:"board", mode:"history", T:W0, shift:0, sev:new Set(), cls:new Set(), party:"all", hall:"all", from:W0, to:W1 - MIN, q:"", hl:"",
-  change:"", open:new Set(), xopen:new Set(), timer:null, live:null, speed:3600, lead:6, group:true, sound:false, seen:new Set(), heard:0, handoff:"" };
+  change:"", open:new Set(), xopen:new Set(), timer:null, live:null, speed:3600, lead:6, tkwin:6, group:true, sound:false, seen:new Set(), heard:0, handoff:"" };
 
 // Board times. On the live board the sample is re-dated by S.shift so it runs on the viewer's own clock.
 const sh = () => (S.mode === "live" && S.view === "board") ? S.shift : 0;
@@ -199,13 +211,32 @@ function upcomingPanel(T) {
       ${w.map(x => `<div class="warn">⚠ ${esc(x)}. Confirm before starting.</div>`).join("")}</div>`; }).join("")}</div>`;
 }
 
-// Tickets: open trouble tickets and change tickets, plus anything closed within the reap time.
+// Scheduled change work without final approval from the Change Coordinator: due to start within the lead time,
+// or already under way, and not yet approved or deferred. Facts from the change record and the partner's own work record.
+const unapproved = T => PA.filter(p => p.sub <= T && p.ws <= T + S.lead * HOUR && T <= Math.max(p.we, p.en ?? 0)
+  && !(p.fa != null && p.fa <= T) && !(p.df != null && p.df <= T)).sort((x, y) => x.ws - y.ws);
+const dayOf = t => local(t).slice(0, -6);
+const workRecord = p => p.owner === "Landlord" ? `Work order ${p.work_order} shows` : `${p.id} work notes show`;
+function unapprovedPanel(T) {
+  const ua = unapproved(T);
+  if (!ua.length) return `<div class="empty" id="unapproved">Nothing scheduled in the next ${S.lead} hours is waiting on final approval.</div>`;
+  return `<div id="unapproved">${ua.map(p => { const open = p.ws <= T, went = p.st != null && p.st <= T;
+    const steps = p.steps.slice(1, -1).map(s => `${esc(s.step)} ✓ ${esc(dayOf(ms(s.at)))}`).join(" · ");
+    return `<div class="ua${open ? " open" : ""}" data-pending="${esc(p.id)}"><h3>${esc(p.id)} · ${partyBadge(p.owner)} ${esc(p.title)}</h3>
+      <div class="n">${open ? "Window" : `Starts in <b>${dur(Math.ceil((p.ws - T) / MIN))}</b> · window`} ${esc(local(p.ws))} to ${esc(hhmm(p.we))} CDT · <span data-loc="${esc(assetsLoc(p))}">${esc(assetsText(p))}</span></div>
+      <div class="n">${steps} · <span class="pend">Change Coordinator final approval: not received</span></div>
+      ${went ? `<div class="warn">⚠ ${esc(workRecord(p))} work started ${esc(hhmm(p.st))} CDT without final approval. The records do not reconcile.</div>`
+        : open ? `<div class="warn">⚠ Window open since ${esc(hhmm(p.ws))} CDT without final approval. Work should not proceed.</div>` : ""}</div>`; }).join("")}</div>`;
+}
+
+// Tickets: open trouble tickets and change tickets, plus anything closed within the chosen time.
 function ticketPanel(T) {
   const pr = p => +String(p).replace(/\D/g, "") || 9;
-  const tr = TK.filter(k => k.t <= T && (k.tc == null || k.tc > T - REAP) && (S.party === "all" || k.partner === S.party))
+  const win = S.tkwin * HOUR;
+  const tr = TK.filter(k => k.t <= T && (k.tc == null || k.tc > T - win) && (S.party === "all" || k.partner === S.party))
     .sort((x, y) => openAt(y, T) - openAt(x, T) || pr(x.priority) - pr(y.priority) || y.t - x.t);
-  const ch = D.declarations.filter(d => ms(d.window_start) - GRACE <= T && ms(d.window_end) + GRACE > T - REAP && (S.party === "all" || d.owner === S.party));
-  if (!tr.length && !ch.length) return `<div class="empty" id="tickets">No open tickets and nothing closed in the last 6 hours.</div>`;
+  const ch = D.declarations.filter(d => ms(d.window_start) - GRACE <= T && ms(d.window_end) + GRACE > T - win && (S.party === "all" || d.owner === S.party));
+  if (!tr.length && !ch.length) return `<div class="empty" id="tickets">No open tickets${S.tkwin ? ` and nothing closed in the last ${S.tkwin} hours` : ""}.</div>`;
   const trRow = k => { const o = openAt(k, T);
     return `<tr class="tk ${o ? "open" : "closed"}"><td>${esc(k.id)}</td><td>Trouble</td><td>${partyBadge(k.partner)}</td><td>${esc(k.priority)}</td><td data-loc="${esc(k.device + "|" + k.location)}" data-part="${esc(k.summary)}">${esc(k.device)}</td><td class="sum">${esc(k.summary)}</td><td>${esc(local(k.t))}</td>
       <td>${o ? `<b>Open</b> ${dur(Math.floor((T - k.t) / MIN))}` : `Closed ${esc(hhmm(k.tc))}`}</td></tr>`; };
@@ -291,6 +322,9 @@ function handoffText(T) {
     return `- ${d.change_id} ${d.owner}: ${d.title}, window ${local(ms(d.window_start))} to ${hhmm(ms(d.window_end))} CDT, ${mine.filter(a => a.cls === "expected").length} expected, ${mine.filter(a => FLAG.includes(a.cls)).length} not reconciled`; }));
   list(`Upcoming change work, next ${S.lead} hours`, upcoming(T).map(d =>
     [`- ${d.change_id} ${d.owner}: ${d.title}, starts ${local(ms(d.window_start))} CDT`, ...warnings(d, T).map(w => `  ! ${w}`)]));
+  list(`Scheduled without the Change Coordinator's final approval, next ${S.lead} hours or under way`, unapproved(T).map(p =>
+    [`- ${p.id} ${p.owner}: ${p.title}, window ${local(p.ws)} to ${hhmm(p.we)} CDT`,
+     ...(p.st != null && p.st <= T ? [`  ! ${workRecord(p)} work started ${hhmm(p.st)} CDT without final approval`] : p.ws <= T ? [`  ! Window open without final approval`] : [])]));
   const since = T - SHIFT, cleared = A.filter(a => a.tc != null && a.tc > since && a.tc <= T), closed = TK.filter(k => k.tc != null && k.tc > since && k.tc <= T);
   L.push("", `Closed in the last 12 hours: ${cleared.length} alarms cleared; tickets closed: ${closed.map(k => k.id).join(", ") || "none"}`);
   L.push("", "Facts come from the partners' records. A flag means the records do not reconcile with an approved change, not that anyone did anything wrong.");
@@ -346,14 +380,14 @@ function board() {
       <span class="livebadge">● LIVE · simulated feed</span><button id="liveA07">Start at the rack A07 incident</button><button id="livenow">Today's feed</button>${tools}</div>`
     : `<div class="replay ctl"><span class="clock"><span id="now">${esc(clock(T, OFF))} CDT</span><span id="utc">${esc(clock(T, 0))} UTC</span></span>
       <button data-step="-60">−1 h</button><input id="t" type="range" min="${W0}" max="${W1}" step="1000" value="${T}"><button data-step="60">+1 h</button>
-      <button id="play">${S.timer ? "Pause" : "Play"}</button>
+      <button id="play"${S.timer ? ` class="running"` : ""}>${S.timer ? "Pause" : "Play"}</button>
       <select id="speed" title="Replay speed">${SPEEDS.map(([v, l]) => `<option value="${v}"${S.speed === v ? " selected" : ""}>${l}</option>`).join("")}</select>
       <button id="end">End of data</button><button id="a07">Replay Sep 15 (rack A07)</button>${tools}</div>`;
   return `<section class="view">
     <div class="modes" id="modes"><button data-mode="history"${live ? "" : ` class="on"`}>Alarm History</button><button data-mode="live"${live ? ` class="on"` : ""}>Live Events</button></div>
     <h1>${live ? "Live event board" : "Alarm history board"}</h1>
     <p class="sub">${live
-      ? "Simulated live feed: the synthetic sample month runs on your clock, re-dated to today, so trouble tickets, change work, and alarms arrive as they would live. Cleared alarms and closed tickets drop off after 6 hours. Nothing here comes from a real system."
+      ? "Simulated live feed: the synthetic sample month runs on your clock, re-dated to today, so trouble tickets, change work, and alarms arrive as they would live. Cleared alarms drop off after 6 hours; closed tickets after the time chosen on the Tickets panel. Nothing here comes from a real system."
       : `Both partners' alarm feeds in one table, checked against declared change work. Replay of the synthetic sample month (${esc(local(W0))} to ${esc(local(W1 - 1))} CDT). Rows that do not reconcile with an approved change are pinned to the top. ${S.T === S.from ? `Opened at the start of the selected period (${esc(fmt(S.from, OFF, false))} CDT); press Play, End of data, or Replay Sep 15 for the rack A07 outage.` : ""}`}</p>
     ${bar}
     <div id="alertwrap">${banner(T)}</div>
@@ -368,11 +402,15 @@ function board() {
       <label class="tog"><input type="checkbox" id="group"${S.group ? " checked" : ""}> Group related alarms</label>
       ${S.change ? `<span class="chip on" id="clearchange">Change ${esc(S.change)} ✕</span>` : ""}
       <button id="reset">Reset filters</button></div>
+    <div class="split"><div>
     <h2>Upcoming planned change work <span class="ctl"><label for="lead">starting in the next</label><select id="lead">${LEADS.map(h => `<option value="${h}"${S.lead === h ? " selected" : ""}>${h} hours</option>`).join("")}</select></span></h2>
     <div id="up">${upcomingPanel(T)}</div>
     <h2>Change work in progress</h2><div id="act">${changePanel(T)}</div>
+    </div><aside id="uaside"><h2>Scheduled, not approved <span class="note">same period, or under way</span></h2>
+    <p class="note">Change requests that passed peer and CAB review but have no final approval from the Change Coordinator, so the work should not proceed.</p>
+    <div id="uawrap">${unapprovedPanel(T)}</div></aside></div>
     <div id="tlwrap">${focusTimeline(T)}</div>
-    <h2>Tickets <span class="note">open, and closed in the last 6 hours</span></h2><div id="tkwrap">${ticketPanel(T)}</div>
+    <h2>Tickets <span class="ctl"><label for="tkwin">open, and closed in the last</label><select id="tkwin">${TKWINS.map(h => `<option value="${h}"${S.tkwin === h ? " selected" : ""}>${h} hours</option>`).join("")}</select></span></h2><div id="tkwrap">${ticketPanel(T)}</div>
     <div id="tablewrap">${alarmTable(T)}</div>
     <p class="note">Synthetic data; all names, devices, and events are fictional. Acknowledgment comes from the BMS or the partner's ticket. Acknowledging the banner only marks it seen on this board for this visit: it never writes back to a partner's system.</p>
     ${S.handoff ? handoffModal() : ""}</section>`;
@@ -558,6 +596,7 @@ function about() {
     <p>${esc(r.out_of_scope[2])}</p>
     <h2>Notifications</h2><ul class="rules">${r.notifications.map(n => `<li><b>${esc(n.id)}</b> ${esc(n.trigger)}: within ${esc(n.within_min)} minutes, ${esc(n.channels.toLowerCase())}. Owed by ${esc(n.owed_by.toLowerCase())}.</li>`).join("")}</ul>
     <p>${esc(r.customer_backstop)}</p>
+    <h2>Scheduled, not approved</h2><p>A change request goes through peer review and CAB technical review, then needs final approval from the Customer's Change Coordinator before work may start. The list beside the upcoming change work shows requests due to start in the chosen period, or already under way, that have no final approval yet. A request leaves the list when it is approved or deferred. When the partner's own work record shows work started anyway, the card says so: the change record and the work record do not reconcile. That is a fact to raise with the partner, not a finding that anyone acted in bad faith. These requests declare no impact, so any alarm they cause reaches the Customer as not change work.</p>
     <h2>Sources</h2><p>Landlord: BMS alarms (the alarm of record), UPS cards, busway monitors, power monitoring, CDU controllers, leak and VESDA panels. IT Partner: rack leak ropes, Redfish, NVLink manager, fabric manager, GPU telemetry, scheduler. Severity follows each partner SLA's P1 and P2 criteria. Every name, device, and event is synthetic.</p>
     <p class="note">Report: <code>reports/change_alarms.md</code>. Rules: Interface Agreement section 10. Code: <code>src/scorecard/alarms.py</code>.</p></section>`;
 }
@@ -576,8 +615,8 @@ function refresh() {
   if (S.view !== "board" || !$("tablewrap")) return render();
   $("now").textContent = clock(S.T, OFF) + " CDT"; $("utc").textContent = clock(S.T, 0) + " UTC";
   if ($("t")) $("t").value = String(S.T);
-  if ($("play")) $("play").textContent = S.timer ? "Pause" : "Play";
-  put("alertwrap", banner(S.T)); put("chipwrap", chips(S.T)); put("up", upcomingPanel(S.T)); put("act", changePanel(S.T));
+  if ($("play")) { $("play").textContent = S.timer ? "Pause" : "Play"; $("play").classList.toggle("running", !!S.timer); }
+  put("alertwrap", banner(S.T)); put("chipwrap", chips(S.T)); put("up", upcomingPanel(S.T)); put("act", changePanel(S.T)); put("uawrap", unapprovedPanel(S.T));
   put("tlwrap", focusTimeline(S.T)); put("tkwrap", ticketPanel(S.T)); put("tablewrap", alarmTable(S.T));
   alertSound();
 }
@@ -677,6 +716,7 @@ function wire() {
     };
   }
   $("lead").onchange = e => { S.lead = +e.target.value; refresh(); };
+  $("tkwin").onchange = e => { S.tkwin = +e.target.value; refresh(); };
   $("group").onchange = e => { S.group = e.target.checked; refresh(); };
   $("party").onchange = e => { S.party = e.target.value; render(); };
   $("hall").onchange = e => { S.hall = e.target.value; render(); };
