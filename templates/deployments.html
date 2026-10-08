@@ -75,6 +75,12 @@ __SITENAV__
   const pct = x => esc(Math.round(x * 100) + "%");
   const STEP = Object.fromEntries(B.steps.map(s => [s.id, s]));
   const RACKS = B.racks.racks;
+  const R = B.record, WO = R.work_orders;
+  const WO_ID = Object.fromEntries(WO.map(w => [w.id, w]));
+  const WO_AT = Object.fromEntries(WO.map(w => [w.step + "|" + (w.rack || ""), w]));
+  const GS = Object.fromEntries(B.gate_status.map(g => [g.gate, g]));
+  const WO_TAG = w => w.complete ? tag("complete", "ok") : w.state === "done" ? tag("done, not signed off", "warn") : tag(w.state, w.state === "in progress" ? "warn" : "");
+  const PERMIT_TAG = {"finaled": "ok", "issued": "ok", "not required": ""};
   const WAVES = [...new Set(RACKS.map(r => r.wave))].sort((a, b) => a - b);
   const STATE_TAG = {"handed off": "ok", "handed off late": "bad", "late": "bad", "in progress": "warn", "not received": ""};
   const KIND = {internal: "Internal", third_party: "Third party", ahj: "Authority"};
@@ -102,6 +108,8 @@ __SITENAV__
     h += `</ul><div class="sec">Engineering</div><ul><li>${link("calc", "Calculation sheet")}</li><li>${link("cabling", "Cabling and connections")}</li></ul>`;
     h += `<div class="sec">Compliance</div><ul><li>${link("permits", "Authority and permits")}</li><li>${link("statewide", "Statewide determinations")}</li>`
        + `<li>${link("inspections", "Inspections")}</li><li>${link("signoff", "Sign-off matrix")}</li></ul>`;
+    h += `<div class="sec">Records</div><ul><li>${link("workorders", "Deployment work orders")} <small>${esc(WO.length)}</small></li>`
+       + Object.keys(R.projects).map(k => `<li>${link("jira/" + k, "Jira " + k)} <small>${esc(R.projects[k].issues)}</small></li>`).join("") + `</ul>`;
     h += `<div class="sec">Library</div><ul><li>${link("docs", "Documents")}</li><li>${link("standards", "Standards and sources")}</li></ul>`;
     document.getElementById("tree").innerHTML = h;
   }
@@ -118,12 +126,13 @@ __SITENAV__
       + `<div class="card"><b>${esc((c["handed off late"] || 0) + (c.late || 0))}</b>late against the committed date</div>`
       + `<div class="card"><b>${esc(c["in progress"] || 0)}</b>in progress · ${esc(c["not received"] || 0)} not received</div>`
       + `<div class="card"><a href="#calc"><b>${esc(ctl)}</b></a>peak checks that need the rack power limit</div></div>`;
-    h += `<h2 class="sec">Gates</h2><table><thead><tr><th>Gate</th><th>Owner</th><th>Steps</th><th>Exit criteria</th></tr></thead><tbody>`;
+    h += `<h2 class="sec">Gates</h2><table><thead><tr><th>Gate</th><th>Owner</th><th>Steps</th><th>Work orders complete</th><th>State</th><th>Exit criteria</th></tr></thead><tbody>`;
     for (const g of B.gates) {
-      const n = B.steps.filter(s => s.gate === g.id).length;
-      h += `<tr><td>${link("gate/" + g.id, g.id + " " + g.name)}</td><td>${role(g.owner)}</td><td class="n">${esc(n)}${g.per_rack ? " per rack" : ""}</td><td>${esc(g.exit)}</td></tr>`;
+      const n = B.steps.filter(s => s.gate === g.id).length, st = GS[g.id];
+      h += `<tr><td>${link("gate/" + g.id, g.id + " " + g.name)}</td><td>${role(g.owner)}</td><td class="n">${esc(n)}${g.per_rack ? " per rack" : ""}</td>`
+         + `<td class="n">${esc(st.complete)} of ${esc(st.total)}</td><td>${st.closed ? tag("closed", "ok") : tag("open", st.complete ? "warn" : "")}</td><td>${esc(g.exit)}</td></tr>`;
     }
-    h += `</tbody></table><p class="note">The gates, steps, sign-offs and inspections are the program's standard work (config/deployments.yaml). Rack progress is from the record: the IT Partner's reported milestones and the Customer's own measurements. Records for the other gates (permits, test reports, sign-offs) come from the partners' Jira projects in the next update.</p>`;
+    h += `</tbody></table><p class="note">The gates, steps, sign-offs and inspections are the program's standard work (config/deployments.yaml). The record is the partners' Jira projects (read through the importer, config/jira_fields.yaml), the Customer's own step records, the sign-offs, the inspections, and the permits (data/deployments/), joined into one deployment work order per unit of work. A work order is complete only when it is done, every role has signed, and every required inspection passed: a Jira "Done" alone is a claim.</p>`;
     return h;
   }
 
@@ -131,10 +140,13 @@ __SITENAV__
     const g = B.gates.find(x => x.id === id);
     if (!g) return null;
     let h = `<div class="kind">Gate</div><h1>${esc(g.id + " " + g.name)}</h1><p class="sub">Owner: ${role(g.owner)}. Exit: ${esc(g.exit)}</p>`;
-    h += `<table><thead><tr><th>Step</th><th>Performed by</th><th>Level</th><th>After</th><th>Sign-offs</th><th>Inspections</th></tr></thead><tbody>`;
+    const st = Object.fromEntries(GS[id].steps.map(x => [x.step, x]));
+    h += `<p>${GS[id].closed ? tag("closed", "ok") : tag("open")} ${esc(GS[id].complete)} of ${esc(GS[id].total)} work orders complete.</p>`;
+    h += `<table><thead><tr><th>Step</th><th>Performed by</th><th>Level</th><th>After</th><th>Sign-offs</th><th>Inspections</th><th>Complete</th></tr></thead><tbody>`;
     for (const s of B.steps.filter(s => s.gate === id)) {
       h += `<tr><td>${link("step/" + s.id, s.id + " " + s.name)}</td><td>${role(s.owner)}</td><td>${esc(s.level || s.milestone || "")}</td>`
-         + `<td>${s.after.map(a => link("step/" + a, a)).join(", ")}</td><td class="n">${esc(s.signoff.length)}</td><td class="n">${esc(s.inspections.length)}</td></tr>`;
+         + `<td>${s.after.map(a => link("step/" + a, a)).join(", ")}</td><td class="n">${esc(s.signoff.length)}</td><td class="n">${esc(s.inspections.length)}</td>`
+         + `<td class="n">${esc(st[s.id].complete)} of ${esc(st[s.id].total)}</td></tr>`;
     }
     h += `</tbody></table>`;
     if (g.per_rack) h += `<p class="note">These steps repeat for every rack. Open a wave or a rack on the left for its record.</p>`;
@@ -161,7 +173,69 @@ __SITENAV__
       h += `<h2 class="sec">Inspections</h2><table><thead><tr><th>Kind</th><th>By</th><th>What</th></tr></thead><tbody>`
         + s.inspections.map(i => `<tr><td>${esc(KIND[i.kind])}</td><td>${role(i.by)}</td><td>${esc(i.what)}</td></tr>`).join("") + `</tbody></table>`;
     }
-    if (s.per_rack) h += `<p class="note">Repeats for every rack: see the waves on the left.</p>`;
+    if (s.per_rack) {
+      const mine = WO.filter(w => w.step === s.id);
+      h += `<h2 class="sec">Record, by rack</h2><p>${esc(mine.filter(w => w.complete).length)} of ${esc(mine.length)} complete · ${esc(mine.filter(w => w.state === "done").length)} done.</p>`
+        + `<div class="scroll"><table><thead><tr><th>Rack</th><th>Work order</th><th>Source</th><th>Done</th><th>Signed</th><th>State</th></tr></thead><tbody>`
+        + mine.map(w => `<tr><td>${link("rack/" + w.rack, w.rack)}</td><td>${link("dwo/" + w.id, w.id)}</td><td>${esc(w.source)}</td><td>${stamp(w.done)}</td>`
+          + `<td class="n">${esc(w.signed)} of ${esc(w.signoffs.length)}</td><td>${WO_TAG(w)}</td></tr>`).join("") + `</tbody></table></div>`;
+    } else {
+      const w = WO_AT[s.id + "|"];
+      if (w) h += `<h2 class="sec">Record</h2>` + woBody(w);
+    }
+    return h;
+  }
+
+  function woBody(w) {
+    let h = `<table class="meta"><tbody><tr><th>Work order</th><td>${link("dwo/" + w.id, w.id)} ${WO_TAG(w)}</td></tr>`
+      + `<tr><th>Source</th><td>${w.project ? link("jira/" + w.project, w.source) : esc(w.source)} <span class="note">(${esc(w.partner)}; status "${esc(w.status)}")</span></td></tr>`
+      + `<tr><th>Planned start</th><td>${esc(w.planned_start || "-")}</td></tr><tr><th>Due</th><td>${esc(w.due || "-")}</td></tr><tr><th>Done</th><td>${stamp(w.done)}</td></tr>`
+      + `<tr><th>Document</th><td>${esc(w.doc)}</td></tr></tbody></table>`;
+    h += `<h3>Sign-offs (${esc(w.signed)} of ${esc(w.signoffs.length)})</h3><table><thead><tr><th>#</th><th>Role</th><th>Organization</th><th>Signed</th></tr></thead><tbody>`
+      + w.signoffs.map((x, i) => `<tr><td class="n">${esc(i + 1)}</td><td>${role(x.role)}</td><td>${org(x.role)}</td><td>${x.signed_at ? stamp(x.signed_at) : tag("pending")}</td></tr>`).join("") + `</tbody></table>`;
+    if (w.inspections_required.length || w.inspections.length) {
+      h += `<h3>Inspections</h3><table><thead><tr><th>Record</th><th>Kind</th><th>By</th><th>What</th><th>When</th><th>Result</th></tr></thead><tbody>`;
+      h += w.inspections.map(i => `<tr><td>${esc(i.id)}</td><td>${esc(KIND[i.kind])}</td><td>${role(i.by)}</td><td>${esc(i.what)}${i.note ? `<br><span class="note">${esc(i.note)}</span>` : ""}</td><td>${stamp(i.at)}</td><td>${tag(i.result, i.result === "pass" ? "ok" : "bad")}</td></tr>`).join("");
+      h += w.inspections_required.filter(i => !i.result).map(i => `<tr><td>-</td><td>${esc(KIND[i.kind])}</td><td>${role(i.by)}</td><td>${esc(i.what)}</td><td>-</td><td>${tag("not yet")}</td></tr>`).join("");
+      h += `</tbody></table>`;
+    }
+    return h;
+  }
+
+  function dwo(id) {
+    const w = WO_ID[id];
+    if (!w) return null;
+    const s = STEP[w.step];
+    return `<div class="kind">Deployment work order · ${esc(w.gate)}</div><h1>${esc(w.id)}</h1><p class="sub">${link("step/" + s.id, s.id + " " + s.name)}${w.rack ? " · rack " + link("rack/" + w.rack, w.rack) : ""}</p>` + woBody(w);
+  }
+
+  function workorders(arg) {
+    const [gsel, ssel] = (arg || "all,all").split(",");
+    const rows = WO.filter(w => (gsel === "all" || w.gate === gsel) && (ssel === "all" || (ssel === "complete" ? w.complete : ssel === "unsigned" ? (w.state === "done" && !w.complete) : w.state === ssel)));
+    const opt = (v, cur, label) => `<option value="${esc(v)}"${v === cur ? " selected" : ""}>${esc(label)}</option>`;
+    let h = `<div class="kind">Records</div><h1>Deployment work orders</h1><p class="sub">One per unit of work: each program step, and each rack step for each rack. Built from the partners' Jira issues and the Customer's records; complete when done, signed by every role, and every required inspection passed.</p>`
+      + `<p><label>Gate <select id="wo-g">${opt("all", gsel, "All")}${B.gates.map(g => opt(g.id, gsel, g.id + " " + g.name)).join("")}</select></label> `
+      + `<label>State <select id="wo-s">${[["all", "All"], ["complete", "Complete"], ["unsigned", "Done, not signed off"], ["in progress", "In progress"], ["open", "Open"]].map(([v, l]) => opt(v, ssel, l)).join("")}</select></label> `
+      + `<span class="note" id="wo-n">${esc(rows.length)} work orders</span></p>`;
+    h += `<div class="scroll"><table><thead><tr><th>Work order</th><th>Step</th><th>Rack</th><th>Source</th><th>Due</th><th>Done</th><th>Signed</th><th>State</th></tr></thead><tbody>`
+      + rows.map(w => `<tr><td>${link("dwo/" + w.id, w.id)}</td><td>${link("step/" + w.step, w.step)}</td><td>${w.rack ? link("rack/" + w.rack, w.rack) : ""}</td><td>${esc(w.source)}</td>`
+        + `<td>${esc(w.due || "")}</td><td>${stamp(w.done)}</td><td class="n">${esc(w.signed)} of ${esc(w.signoffs.length)}</td><td>${WO_TAG(w)}</td></tr>`).join("")
+      + `</tbody></table></div>`;
+    return h;
+  }
+
+  function jira(key) {
+    const p = R.projects[key];
+    if (!p) return null;
+    const mine = WO.filter(w => w.project === key);
+    let h = `<div class="kind">Records · Jira import</div><h1>${esc(key)}</h1><p class="sub">${esc(p.name)} (${esc(p.partner)}). ${esc(p.issues)} issues; last updated ${stamp(p.last_updated)}. Read-only: the importer never writes to Jira.</p>`;
+    h += `<table><tbody>${Object.entries(p.by_type).map(([k, v]) => `<tr><th>${esc(k)}</th><td class="n">${esc(v)}</td></tr>`).join("")}</tbody></table>`;
+    h += `<p>${Object.entries(p.by_state).map(([k, v]) => tag(k + " " + v, k === "done" ? "ok" : k === "in progress" ? "warn" : "")).join(" ")}</p>`;
+    h += `<h2 class="sec">Field map</h2><p class="note">Custom field ids differ between Jira sites, so they live in config/jira_fields.yaml. Assignees are never read.</p><table><tbody>`
+      + Object.entries(R.field_map).map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("") + `</tbody></table>`;
+    h += `<h2 class="sec">Work orders from this project (${esc(mine.length)})</h2><div class="scroll"><table><thead><tr><th>Issue</th><th>Work order</th><th>Step</th><th>Rack</th><th>Status</th><th>Done</th></tr></thead><tbody>`
+      + mine.map(w => `<tr><td>${esc(w.key)}</td><td>${link("dwo/" + w.id, w.id)}</td><td>${link("step/" + w.step, w.step)}</td><td>${esc(w.rack || "")}</td><td>${esc(w.status)}</td><td>${stamp(w.done)}</td></tr>`).join("")
+      + `</tbody></table></div>`;
     return h;
   }
 
@@ -184,14 +258,16 @@ __SITENAV__
     const receipt = r.planned_receipt ? new Date(r.planned_receipt) : null;
     let h = `<div class="kind">G2 Rack waves · Wave ${esc(r.wave)}</div><h1>Rack ${esc(r.rack)} ${tag(r.state, STATE_TAG[r.state])}</h1>`
       + `<p class="sub">Power group ${esc(r.group)}, primary ${esc(r.cdu)}. Planned receipt ${stamp(r.planned_receipt)}; committed handoff ${stamp(r.committed_handoff)}. <a href="../devices/#${esc(encodeURIComponent(r.rack))}" target="_blank" rel="noopener">Device card ↗</a></p>`;
-    h += `<table><thead><tr><th>Step</th><th>Target</th><th>Reported by the IT Partner</th><th>Measured by the Customer</th></tr></thead><tbody>`;
+    h += `<div class="scroll"><table><thead><tr><th>Step</th><th>Target</th><th>Reported</th><th>Measured by the Customer</th><th>Work order</th></tr></thead><tbody>`;
     for (const s of B.steps.filter(s => s.per_rack)) {
       const target = receipt && s.target_days != null ? stamp(new Date(receipt.getTime() + s.target_days * 86400000).toISOString()) : "-";
       const meas = s.milestone === "M6" ? stamp(r.measured_burn_in) + (r.measured_burn_in ? " (24-hour burn-in passed)" : "")
                  : s.milestone === "M7" ? stamp(r.measured_handoff) + (r.measured_handoff ? " (scheduler)" : "") : "";
-      h += `<tr><td>${link("step/" + s.id, (s.milestone || s.id) + " " + s.name)}</td><td>${target}</td><td>${stamp(r.reported[s.milestone])}</td><td>${meas}</td></tr>`;
+      const w = WO_AT[s.id + "|" + r.rack];
+      h += `<tr><td>${link("step/" + s.id, (s.milestone || s.id) + " " + s.name)}</td><td>${target}</td><td>${s.milestone ? stamp(r.reported[s.milestone]) : stamp(w && w.done) + " <span class=\"note\">(Landlord)</span>"}</td><td>${meas}</td>`
+         + `<td>${w ? link("dwo/" + w.id, w.id) + " " + WO_TAG(w) : ""}</td></tr>`;
     }
-    h += `</tbody></table><p class="note">A reported milestone is the IT Partner's claim. The burn-in and the handoff are measured independently; CSL-09 is scored on the measured handoff.</p>`;
+    h += `</tbody></table></div><p class="note">A reported milestone is the IT Partner's claim. The burn-in and the handoff are measured independently; CSL-09 is scored on the measured handoff.</p>`;
     return h;
   }
 
@@ -224,12 +300,20 @@ __SITENAV__
     let h = `<div class="kind">Compliance</div><h1>Authority and permits</h1><p class="sub">Profile in use: <b>${esc(a.name)}</b>. Other profiles: ${Object.entries(B.profiles).filter(([k]) => k !== a.id).map(([, v]) => esc(v)).join(", ")} (one line in config/deployments.yaml).</p><p>${esc(a.summary)}</p>`;
     h += `<table><thead><tr><th>Permit</th><th>Issued by</th><th>When</th><th>Inspections</th></tr></thead><tbody>`
       + a.permits.map(p => `<tr><td><b>${esc(p.id)}</b><br>${esc(p.name)}</td><td>${role(p.by)}</td><td>${esc(p.when)}</td><td>${esc(p.inspections.join("; ") || "-")}</td></tr>`).join("") + `</tbody></table>`;
+    h += `<h2 class="sec">Permit register</h2><table><thead><tr><th>Permit</th><th>Number</th><th>Applied</th><th>Issued</th><th>Finaled</th><th>Status</th></tr></thead><tbody>`
+      + R.permits.map(p => `<tr><td>${esc(p.permit)} ${esc(p.name)}${p.reason ? `<br><span class="note">${esc(p.reason)}</span>` : ""}</td><td>${esc(p.number || "-")}</td><td>${stamp(p.applied)}</td><td>${stamp(p.issued)}</td>`
+        + `<td>${stamp(p.finaled)}${p.inspection ? " · " + esc(p.inspection) : ""}</td><td>${tag(p.status, PERMIT_TAG[p.status])}</td></tr>`).join("") + `</tbody></table>`
+      + `<p class="note">Permit numbers are fictional and follow this project's own format, not the county's.</p>`;
     return h;
   }
 
   function statewide() {
     return `<div class="kind">Compliance</div><h1>Statewide determinations</h1><p class="sub">Texas requirements that apply under any authority profile.</p>`
-      + B.statewide.map(d => `<h2 class="sec">${esc(d.id)} ${esc(d.name)}</h2><p>${esc(d.detail)}</p><p><b>${esc(d.result)}</b></p><p class="note">Source: ${esc(d.source)}</p>`).join("");
+      + B.statewide.map(d => {
+        const rec = R.determinations.find(x => x.id === d.id);
+        return `<h2 class="sec">${esc(d.id)} ${esc(d.name)}</h2><p>${esc(d.detail)}</p><p><b>${esc(d.result)}</b></p>`
+          + (rec ? `<p>Recorded ${stamp(rec.recorded)} at ${link("step/" + rec.step, rec.step)}: <b>${esc(rec.result)}</b></p>` : "")
+          + `<p class="note">Source: ${esc(d.source)}</p>`; }).join("");
   }
 
   function inspections() {
@@ -240,6 +324,9 @@ __SITENAV__
       h += `<h2 class="sec">${esc(KIND[k])}</h2><table><thead><tr><th>Step</th><th>By</th><th>What</th></tr></thead><tbody>`
         + rows.map(([s, i]) => `<tr><td>${link("step/" + s.id, s.id + " " + s.name)}</td><td>${role(i.by)}</td><td>${esc(i.what)}</td></tr>`).join("") + `</tbody></table>`;
     }
+    h += `<h2 class="sec">Inspection records</h2><table><thead><tr><th>Record</th><th>Step</th><th>By</th><th>When</th><th>Result</th><th>Note</th></tr></thead><tbody>`
+      + R.inspections.map(i => `<tr><td>${esc(i.id)}</td><td>${link("step/" + i.step, i.step)}</td><td>${role(i.by)}</td><td>${stamp(i.at)}</td><td>${tag(i.result, i.result === "pass" ? "ok" : "bad")}</td><td>${esc(i.note)}</td></tr>`).join("")
+      + `</tbody></table>`;
     return h;
   }
 
@@ -272,7 +359,7 @@ __SITENAV__
 
   // ----------------------------------------------------------------- router
   // A Map, not an object: a name from the link can only reach these views, never a prototype method.
-  const VIEWS = new Map(Object.entries({overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards}));
+  const VIEWS = new Map(Object.entries({overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards, dwo, workorders, jira}));
   function show() {
     let raw;
     try { raw = decodeURIComponent(location.hash.slice(1)) || "overview"; } catch (e) { raw = "overview"; }
@@ -288,6 +375,10 @@ __SITENAV__
     });
   }
   tree();
+  document.getElementById("main").addEventListener("change", e => {
+    if (e.target.id === "wo-g" || e.target.id === "wo-s")
+      location.hash = "workorders/" + document.getElementById("wo-g").value + "," + document.getElementById("wo-s").value;
+  });
   window.addEventListener("hashchange", show);
   show();
 })();

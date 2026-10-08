@@ -1,0 +1,72 @@
+# Synthetic program record for the Hall B GB300 rollout (fictional; portfolio demo).
+#
+# Settings for src/scorecard/synthetic/deployments.py, which writes data/deployments/: the two partners'
+# Jira projects as Jira Cloud search exports, the Customer's own step records, sign-offs, inspections,
+# permits, and determinations. Own random stream ("{seed}:deployments"); data/sample is read, never written.
+# Rack milestones in the IT Partner's Jira project are the same self-report as
+# data/sample/vendor/deployment_milestones.csv, to the second.
+
+program_start: "2026-05-04"        # local date the program was chartered
+jitter: 0.2                        # each step's duration varies by up to this fraction
+workday_start_hour: 8              # local; steps start and sign-offs happen in working hours
+signoff_lag_hours: [0.5, 26]       # each signature follows the previous one by this much
+created_before_days: 3             # an issue is raised this long before its planned start
+
+# Planned working days per program step (calendar days, before jitter). Rack steps follow the
+# IT Partner SLA's targets and the IT Partner's reported times.
+days:
+  G0-01: 10
+  G0-02: 8
+  G0-03: 15
+  G0-04: 24
+  G0-05: 5
+  G0-06: 5
+  G0-07: 7
+  G1-01: 5
+  G1-02: 12
+  G1-03: 9
+  G1-04: 6
+  G1-05: 7
+  G1-06: 4
+  G1-07: 3
+  G1-08: 2
+  G3-01: 10
+  G3-02: 10
+  G3-03: 7
+  G3-04: 2
+
+# Where each step is tracked. Partners track their own work in their own Jira project; the Landlord's
+# project also carries the commissioning agent's and the OEM's hall-readiness work, which it coordinates.
+# The Customer's own decisions are Customer records, not Jira issues.
+tracking:
+  Landlord: landlord
+  IT Partner: it_partner
+  Third party: landlord
+  Customer: customer
+
+jira:
+  landlord:   {key: "CCF-DEP", name: "Caprock: Hall B GB300 fit-out", id_base: 41000}
+  it_partner: {key: "RSS-DEP", name: "Ridgeline: Hall B GB300 rack deployment", id_base: 52000}
+
+# Inspections that failed the first time and passed on a retest. These are ordinary construction history,
+# not findings: the record shows the failure, the correction, and the retest.
+first_time_failures:
+  - step: "G1-02"
+    by: neta
+    note: "Joint resistance above the manufacturer's limit on one A-side busway joint (row 3); re-torqued and retested."
+    retest_days: 2
+  - step: "G1-05"
+    by: ahj-fm
+    note: "Fire alarm final: one VESDA trouble signal did not report to the fire alarm panel; programming corrected and re-inspected."
+    retest_days: 6
+
+# Permits under the county profile. A permit the scope does not need is recorded with the reason.
+permits:
+  AHJ-FM-CON: {applied_step: "G0-04", final_step: "G1-05"}
+  AHJ-FM-FA:  {applied_step: "G0-04", final_step: "G1-05"}
+  AHJ-FM-SPK: {not_required: "No sprinkler change: the rack layout keeps every head and branch line as designed (engineer of record)."}
+  AHJ-FM-COC: {after_final_days: 3}
+
+# Determinations recorded by the program (people's decisions, kept as records).
+determinations:
+  TX-TABA: {step: "G0-04", result: "Registered with TDLR; Registered Accessibility Specialist plan review complete. Inspection after completion (G3-03)."}

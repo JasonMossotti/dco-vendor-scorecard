@@ -33,6 +33,8 @@ from . import site_model as S
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config" / "deployments.yaml"
 SAMPLE = ROOT / "data" / "sample"
+RECORDS = ROOT / "data" / "deployments"
+STATE = {"done": "done", "indeterminate": "in progress", "new": "open"}
 STEP_KEYS = {"id", "name", "milestone", "owner", "after", "level", "doc", "standards", "procedure", "acceptance",
              "records", "signoff", "inspections", "when"}
 INSPECTION_KINDS = {"internal", "third_party", "ahj"}
@@ -307,8 +309,78 @@ def rack_status(site: dict[str, Any], cfg: dict[str, Any], sla: dict[str, Any], 
             "counts": dict(Counter(x["state"] for x in out))}
 
 
+# ----------------------------------------------------------------------------------------- records
+def records(cfg: dict[str, Any], st: list[dict[str, Any]], rec_dir: Path = RECORDS) -> dict[str, Any]:
+    """The program's record: the partners' Jira issues (through the importer), the Customer's step records,
+    sign-offs, inspections, permits, and determinations, joined into one deployment work order (DWO) per unit
+    of work: a program step, or a rack step for one rack.
+
+    A work order is **complete** when its record is done, every sign-off role on the step has signed, and every
+    inspection the step requires has passed (the latest result counts). Jira's "Done" alone is a claim."""
+    from . import jira_import as J
+    fmap = J.load_field_map()
+    issues = J.load_dir(rec_dir / "jira", fmap)
+    read = lambda n: json.loads((rec_dir / n).read_text(encoding="utf-8"))  # noqa: E731
+    customer, permits, determinations = read("customer_steps.json"), read("permits.json"), read("determinations.json")
+    signoffs, inspections = _jsonl(rec_dir / "signoffs.jsonl"), _jsonl(rec_dir / "inspections.jsonl")
+    by_id = {s["id"]: s for s in st}
+    order = [s["id"] for s in st]
+    units = [{"source": f"Jira {i['key']}", "key": i["key"], "project": i["project"], "partner": i["partner"],
+              "step": i["step"], "rack": i["rack"], "state": STATE[i["category"]], "status": i["status"],
+              "planned_start": i["start"], "due": i["due"], "done": i["resolved"], "summary": i["summary"]}
+             for i in issues if i["type"] not in ("Epic", "Story") and i["step"] in by_id]
+    units += [{"source": f"Customer record {c['id']}", "key": c["id"], "project": None, "partner": "Customer",
+               "step": c["step"], "rack": c["rack"], "state": "in progress" if c["state"] == "doing" else
+               "open" if c["state"] == "todo" else "done", "status": c["state"], "planned_start": c["planned_start"][:10],
+               "due": c["due"][:10], "done": c["done"], "summary": f"{c['step']} {by_id[c['step']]['name']}"}
+              for c in customer]
+    units.sort(key=lambda u: (u["planned_start"] or "", order.index(u["step"]), u["rack"] or ""))
+    signed: dict[tuple, list] = {}
+    for x in signoffs:
+        signed.setdefault((x["step"], x["rack"]), []).append(x)
+    inspected: dict[tuple, list] = {}
+    for x in inspections:
+        inspected.setdefault((x["step"], x["rack"]), []).append(x)
+    for n, u in enumerate(units, 1):
+        s = by_id[u["step"]]
+        u["id"] = f"DWO-B-{n:04d}"
+        u["gate"], u["doc"] = s["gate"], s["doc"]["id"]
+        have = {x["role"]: x for x in signed.get((u["step"], u["rack"]), [])}
+        u["signoffs"] = [{"role": r, "signed_at": have[r]["signed_at"] if r in have else None} for r in s["signoff"]]
+        recs = sorted(inspected.get((u["step"], u["rack"]), []), key=lambda x: x["at"])
+        u["inspections"] = recs
+        latest = {i["by"]: i["result"] for i in recs}
+        u["inspections_required"] = [{"by": i["by"], "kind": i["kind"], "what": i["what"], "result": latest.get(i["by"])}
+                                     for i in s["inspections"]]
+        u["signed"] = sum(1 for x in u["signoffs"] if x["signed_at"])
+        u["complete"] = (u["state"] == "done" and u["signed"] == len(s["signoff"])
+                         and all(i["result"] == "pass" for i in u["inspections_required"]))
+    projects = {}
+    for k, v in fmap["projects"].items():
+        mine = [i for i in issues if i["project"] == k]
+        projects[k] = dict(v, issues=len(mine), last_updated=max((i["updated"] for i in mine if i["updated"]), default=None),
+                           by_type={t: sum(1 for i in mine if i["type"] == t) for t in sorted({i["type"] for i in mine})},
+                           by_state={STATE[c]: sum(1 for i in mine if i["category"] == c) for c in STATE})
+    return {"work_orders": units, "issues": issues, "projects": projects, "permits": permits,
+            "determinations": determinations, "inspections": inspections, "field_map": fmap["fields"]}
+
+
+def gate_status(gates: list[dict[str, Any]], st: list[dict[str, Any]], wos: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Per gate and per step: work orders complete out of all. A gate is closed when every one is complete."""
+    out = []
+    for g in gates:
+        steps_out = []
+        for s in [s for s in st if s["gate"] == g["id"]]:
+            mine = [w for w in wos if w["step"] == s["id"]]
+            steps_out.append({"step": s["id"], "total": len(mine), "complete": sum(w["complete"] for w in mine),
+                              "done": sum(w["state"] == "done" for w in mine)})
+        tot, comp = sum(x["total"] for x in steps_out), sum(x["complete"] for x in steps_out)
+        out.append({"gate": g["id"], "total": tot, "complete": comp, "closed": tot > 0 and comp == tot, "steps": steps_out})
+    return out
+
+
 # ------------------------------------------------------------------------------------------- build
-def build(data_dir: Path = SAMPLE, cfg: dict[str, Any] | None = None) -> dict[str, Any]:
+def build(data_dir: Path = SAMPLE, cfg: dict[str, Any] | None = None, rec_dir: Path = RECORDS) -> dict[str, Any]:
     """Everything the page and the plan document show, from the three sources."""
     from .sla_model import load_sla
     cfg = cfg or load_config()
@@ -321,7 +393,9 @@ def build(data_dir: Path = SAMPLE, cfg: dict[str, Any] | None = None) -> dict[st
     for s in st:
         s["inspections"] = [i for i in s["inspections"] if applies(i, profile)]
     hall = S.hall_by_id(site, cfg["program"]["hall"])
-    return {"meta": cfg["meta"], "program": dict(cfg["program"], hall_name=hall["name"],
+    rec = records(cfg, st, rec_dir)
+    return {"record": {k: v for k, v in rec.items() if k != "issues"}, "gate_status": gate_status(cfg["gates"], st, rec["work_orders"]),
+            "meta": cfg["meta"], "program": dict(cfg["program"], hall_name=hall["name"],
                                                  rack_model=S.product(site, hall["rack_product"])["model"],
                                                  cycle_days=sla["deployment"]["rack_cycle_target_days"]),
             "roles": cfg["roles"], "standards": cfg["standards"], "sources": cfg["sources"],

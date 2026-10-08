@@ -1,0 +1,8215 @@
+{
+ "isLast": true,
+ "issues": [
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-04T13:00:00.000+0000",
+    "customfield_10101": "G0",
+    "issuetype": {
+     "name": "Epic"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "G0 Design and approvals",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52001",
+   "key": "RSS-DEP-1"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-14T13:38:26.000+0000",
+    "customfield_10015": "2026-05-17",
+    "customfield_10101": "G0-07",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-EHS-01",
+    "duedate": "2026-05-24",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-1"
+    },
+    "resolutiondate": "2026-05-24T16:21:44.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G0-07 Site safety plan",
+    "updated": "2026-05-24T16:21:44.000+0000"
+   },
+   "id": "52002",
+   "key": "RSS-DEP-2"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-14T14:19:54.000+0000",
+    "customfield_10015": "2026-05-17",
+    "customfield_10101": "G0-06",
+    "customfield_10102": null,
+    "customfield_10103": "DEP-B-SCH-01",
+    "duedate": "2026-05-22",
+    "issuetype": {
+     "name": "Task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-1"
+    },
+    "resolutiondate": "2026-05-22T15:55:40.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "G0-06 Delivery schedule and receiving plan",
+    "updated": "2026-05-22T15:55:40.000+0000"
+   },
+   "id": "52003",
+   "key": "RSS-DEP-3"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-05-04T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "issuetype": {
+     "name": "Epic"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "G2 Rack waves",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52004",
+   "key": "RSS-DEP-4"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B01",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-10T02:32:24.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B01: receive, integrate, and hand off",
+    "updated": "2026-09-10T02:32:24.000+0000"
+   },
+   "id": "52005",
+   "key": "RSS-DEP-5"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-01",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-5"
+    },
+    "resolutiondate": "2026-08-31T18:09:34.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B01: Received and inspected",
+    "updated": "2026-08-31T18:09:34.000+0000"
+   },
+   "id": "52006",
+   "key": "RSS-DEP-6"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-5"
+    },
+    "resolutiondate": "2026-09-03T07:41:39.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B01: Positioned and connected",
+    "updated": "2026-09-03T07:41:39.000+0000"
+   },
+   "id": "52007",
+   "key": "RSS-DEP-7"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-04",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-5"
+    },
+    "resolutiondate": "2026-09-04T02:41:40.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B01: Leak test passed",
+    "updated": "2026-09-04T02:41:40.000+0000"
+   },
+   "id": "52008",
+   "key": "RSS-DEP-8"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-5"
+    },
+    "resolutiondate": "2026-09-05T01:27:46.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B01: Power-on and firmware baseline",
+    "updated": "2026-09-05T01:27:46.000+0000"
+   },
+   "id": "52009",
+   "key": "RSS-DEP-9"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-5"
+    },
+    "resolutiondate": "2026-09-06T22:48:17.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B01: Network cabled and verified",
+    "updated": "2026-09-06T22:48:17.000+0000"
+   },
+   "id": "52010",
+   "key": "RSS-DEP-10"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-5"
+    },
+    "resolutiondate": "2026-09-09T01:28:52.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B01: Burn-in accepted",
+    "updated": "2026-09-09T01:28:52.000+0000"
+   },
+   "id": "52011",
+   "key": "RSS-DEP-11"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-28T13:00:00.000+0000",
+    "customfield_10015": "2026-08-31",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B01",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-5"
+    },
+    "resolutiondate": "2026-09-10T02:32:24.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B01: Validated Handoff",
+    "updated": "2026-09-10T02:32:24.000+0000"
+   },
+   "id": "52012",
+   "key": "RSS-DEP-12"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B02",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-14T04:52:49.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B02: receive, integrate, and hand off",
+    "updated": "2026-09-14T04:52:49.000+0000"
+   },
+   "id": "52013",
+   "key": "RSS-DEP-13"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-02",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-13"
+    },
+    "resolutiondate": "2026-09-01T15:49:51.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B02: Received and inspected",
+    "updated": "2026-09-01T15:49:51.000+0000"
+   },
+   "id": "52014",
+   "key": "RSS-DEP-14"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-04",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-13"
+    },
+    "resolutiondate": "2026-09-04T08:20:31.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B02: Positioned and connected",
+    "updated": "2026-09-04T08:20:31.000+0000"
+   },
+   "id": "52015",
+   "key": "RSS-DEP-15"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-13"
+    },
+    "resolutiondate": "2026-09-04T22:23:44.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B02: Leak test passed",
+    "updated": "2026-09-04T22:23:44.000+0000"
+   },
+   "id": "52016",
+   "key": "RSS-DEP-16"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-13"
+    },
+    "resolutiondate": "2026-09-05T20:47:05.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B02: Power-on and firmware baseline",
+    "updated": "2026-09-05T20:47:05.000+0000"
+   },
+   "id": "52017",
+   "key": "RSS-DEP-17"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-13"
+    },
+    "resolutiondate": "2026-09-11T13:11:43.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B02: Network cabled and verified",
+    "updated": "2026-09-11T13:11:43.000+0000"
+   },
+   "id": "52018",
+   "key": "RSS-DEP-18"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-13"
+    },
+    "resolutiondate": "2026-09-13T15:47:23.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B02: Burn-in accepted",
+    "updated": "2026-09-13T15:47:23.000+0000"
+   },
+   "id": "52019",
+   "key": "RSS-DEP-19"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-29T13:00:00.000+0000",
+    "customfield_10015": "2026-09-01",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B02",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-13"
+    },
+    "resolutiondate": "2026-09-14T04:52:49.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B02: Validated Handoff",
+    "updated": "2026-09-14T04:52:49.000+0000"
+   },
+   "id": "52020",
+   "key": "RSS-DEP-20"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B03",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-11T17:56:44.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B03: receive, integrate, and hand off",
+    "updated": "2026-09-11T17:56:44.000+0000"
+   },
+   "id": "52021",
+   "key": "RSS-DEP-21"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-21"
+    },
+    "resolutiondate": "2026-09-02T15:45:56.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B03: Received and inspected",
+    "updated": "2026-09-02T15:45:56.000+0000"
+   },
+   "id": "52022",
+   "key": "RSS-DEP-22"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-21"
+    },
+    "resolutiondate": "2026-09-04T21:37:57.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B03: Positioned and connected",
+    "updated": "2026-09-04T21:37:57.000+0000"
+   },
+   "id": "52023",
+   "key": "RSS-DEP-23"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-21"
+    },
+    "resolutiondate": "2026-09-06T09:06:05.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B03: Leak test passed",
+    "updated": "2026-09-06T09:06:05.000+0000"
+   },
+   "id": "52024",
+   "key": "RSS-DEP-24"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-21"
+    },
+    "resolutiondate": "2026-09-06T21:23:12.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B03: Power-on and firmware baseline",
+    "updated": "2026-09-06T21:23:12.000+0000"
+   },
+   "id": "52025",
+   "key": "RSS-DEP-25"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-21"
+    },
+    "resolutiondate": "2026-09-08T20:38:14.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B03: Network cabled and verified",
+    "updated": "2026-09-08T20:38:14.000+0000"
+   },
+   "id": "52026",
+   "key": "RSS-DEP-26"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-21"
+    },
+    "resolutiondate": "2026-09-11T02:01:12.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B03: Burn-in accepted",
+    "updated": "2026-09-11T02:01:12.000+0000"
+   },
+   "id": "52027",
+   "key": "RSS-DEP-27"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-08-30T13:00:00.000+0000",
+    "customfield_10015": "2026-09-02",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B03",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-21"
+    },
+    "resolutiondate": "2026-09-11T17:56:44.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B03: Validated Handoff",
+    "updated": "2026-09-11T17:56:44.000+0000"
+   },
+   "id": "52028",
+   "key": "RSS-DEP-28"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B04",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-14T07:01:00.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B04: receive, integrate, and hand off",
+    "updated": "2026-09-14T07:01:00.000+0000"
+   },
+   "id": "52029",
+   "key": "RSS-DEP-29"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-29"
+    },
+    "resolutiondate": "2026-09-04T15:34:57.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B04: Received and inspected",
+    "updated": "2026-09-04T15:34:57.000+0000"
+   },
+   "id": "52030",
+   "key": "RSS-DEP-30"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-29"
+    },
+    "resolutiondate": "2026-09-06T21:36:50.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B04: Positioned and connected",
+    "updated": "2026-09-06T21:36:50.000+0000"
+   },
+   "id": "52031",
+   "key": "RSS-DEP-31"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-29"
+    },
+    "resolutiondate": "2026-09-07T22:37:36.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B04: Leak test passed",
+    "updated": "2026-09-07T22:37:36.000+0000"
+   },
+   "id": "52032",
+   "key": "RSS-DEP-32"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-29"
+    },
+    "resolutiondate": "2026-09-09T03:36:41.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B04: Power-on and firmware baseline",
+    "updated": "2026-09-09T03:36:41.000+0000"
+   },
+   "id": "52033",
+   "key": "RSS-DEP-33"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-29"
+    },
+    "resolutiondate": "2026-09-11T01:12:10.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B04: Network cabled and verified",
+    "updated": "2026-09-11T01:12:10.000+0000"
+   },
+   "id": "52034",
+   "key": "RSS-DEP-34"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-29"
+    },
+    "resolutiondate": "2026-09-13T07:45:32.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B04: Burn-in accepted",
+    "updated": "2026-09-13T07:45:32.000+0000"
+   },
+   "id": "52035",
+   "key": "RSS-DEP-35"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-01T13:00:00.000+0000",
+    "customfield_10015": "2026-09-04",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B04",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-29"
+    },
+    "resolutiondate": "2026-09-14T07:01:00.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B04: Validated Handoff",
+    "updated": "2026-09-14T07:01:00.000+0000"
+   },
+   "id": "52036",
+   "key": "RSS-DEP-36"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B05",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-14T22:40:29.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B05: receive, integrate, and hand off",
+    "updated": "2026-09-14T22:40:29.000+0000"
+   },
+   "id": "52037",
+   "key": "RSS-DEP-37"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-37"
+    },
+    "resolutiondate": "2026-09-05T19:55:10.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B05: Received and inspected",
+    "updated": "2026-09-05T19:55:10.000+0000"
+   },
+   "id": "52038",
+   "key": "RSS-DEP-38"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-37"
+    },
+    "resolutiondate": "2026-09-07T17:31:08.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B05: Positioned and connected",
+    "updated": "2026-09-07T17:31:08.000+0000"
+   },
+   "id": "52039",
+   "key": "RSS-DEP-39"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-37"
+    },
+    "resolutiondate": "2026-09-09T09:26:23.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B05: Leak test passed",
+    "updated": "2026-09-09T09:26:23.000+0000"
+   },
+   "id": "52040",
+   "key": "RSS-DEP-40"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-37"
+    },
+    "resolutiondate": "2026-09-09T21:02:38.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B05: Power-on and firmware baseline",
+    "updated": "2026-09-09T21:02:38.000+0000"
+   },
+   "id": "52041",
+   "key": "RSS-DEP-41"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-37"
+    },
+    "resolutiondate": "2026-09-12T08:34:02.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B05: Network cabled and verified",
+    "updated": "2026-09-12T08:34:02.000+0000"
+   },
+   "id": "52042",
+   "key": "RSS-DEP-42"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-37"
+    },
+    "resolutiondate": "2026-09-14T06:32:37.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B05: Burn-in accepted",
+    "updated": "2026-09-14T06:32:37.000+0000"
+   },
+   "id": "52043",
+   "key": "RSS-DEP-43"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-02T13:00:00.000+0000",
+    "customfield_10015": "2026-09-05",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B05",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-37"
+    },
+    "resolutiondate": "2026-09-14T22:40:29.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B05: Validated Handoff",
+    "updated": "2026-09-14T22:40:29.000+0000"
+   },
+   "id": "52044",
+   "key": "RSS-DEP-44"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B06",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-18T17:01:41.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B06: receive, integrate, and hand off",
+    "updated": "2026-09-18T17:01:41.000+0000"
+   },
+   "id": "52045",
+   "key": "RSS-DEP-45"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-45"
+    },
+    "resolutiondate": "2026-09-07T17:15:18.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B06: Received and inspected",
+    "updated": "2026-09-07T17:15:18.000+0000"
+   },
+   "id": "52046",
+   "key": "RSS-DEP-46"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-45"
+    },
+    "resolutiondate": "2026-09-09T18:52:39.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B06: Positioned and connected",
+    "updated": "2026-09-09T18:52:39.000+0000"
+   },
+   "id": "52047",
+   "key": "RSS-DEP-47"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-45"
+    },
+    "resolutiondate": "2026-09-10T22:27:14.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B06: Leak test passed",
+    "updated": "2026-09-10T22:27:14.000+0000"
+   },
+   "id": "52048",
+   "key": "RSS-DEP-48"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-45"
+    },
+    "resolutiondate": "2026-09-12T00:11:04.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B06: Power-on and firmware baseline",
+    "updated": "2026-09-12T00:11:04.000+0000"
+   },
+   "id": "52049",
+   "key": "RSS-DEP-49"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-45"
+    },
+    "resolutiondate": "2026-09-16T09:06:30.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B06: Network cabled and verified",
+    "updated": "2026-09-16T09:06:30.000+0000"
+   },
+   "id": "52050",
+   "key": "RSS-DEP-50"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-45"
+    },
+    "resolutiondate": "2026-09-17T15:45:23.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B06: Burn-in accepted",
+    "updated": "2026-09-17T15:45:23.000+0000"
+   },
+   "id": "52051",
+   "key": "RSS-DEP-51"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-04T13:00:00.000+0000",
+    "customfield_10015": "2026-09-07",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B06",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-45"
+    },
+    "resolutiondate": "2026-09-18T17:01:41.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B06: Validated Handoff",
+    "updated": "2026-09-18T17:01:41.000+0000"
+   },
+   "id": "52052",
+   "key": "RSS-DEP-52"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B07",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-17T20:30:59.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B07: receive, integrate, and hand off",
+    "updated": "2026-09-17T20:30:59.000+0000"
+   },
+   "id": "52053",
+   "key": "RSS-DEP-53"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-53"
+    },
+    "resolutiondate": "2026-09-08T17:33:13.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B07: Received and inspected",
+    "updated": "2026-09-08T17:33:13.000+0000"
+   },
+   "id": "52054",
+   "key": "RSS-DEP-54"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-53"
+    },
+    "resolutiondate": "2026-09-10T18:24:19.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B07: Positioned and connected",
+    "updated": "2026-09-10T18:24:19.000+0000"
+   },
+   "id": "52055",
+   "key": "RSS-DEP-55"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-53"
+    },
+    "resolutiondate": "2026-09-12T03:51:44.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B07: Leak test passed",
+    "updated": "2026-09-12T03:51:44.000+0000"
+   },
+   "id": "52056",
+   "key": "RSS-DEP-56"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-53"
+    },
+    "resolutiondate": "2026-09-13T09:48:26.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B07: Power-on and firmware baseline",
+    "updated": "2026-09-13T09:48:26.000+0000"
+   },
+   "id": "52057",
+   "key": "RSS-DEP-57"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-53"
+    },
+    "resolutiondate": "2026-09-14T20:39:47.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B07: Network cabled and verified",
+    "updated": "2026-09-14T20:39:47.000+0000"
+   },
+   "id": "52058",
+   "key": "RSS-DEP-58"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-53"
+    },
+    "resolutiondate": "2026-09-16T20:52:23.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B07: Burn-in accepted",
+    "updated": "2026-09-16T20:52:23.000+0000"
+   },
+   "id": "52059",
+   "key": "RSS-DEP-59"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-05T13:00:00.000+0000",
+    "customfield_10015": "2026-09-08",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B07",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-18",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-53"
+    },
+    "resolutiondate": "2026-09-17T20:30:59.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B07: Validated Handoff",
+    "updated": "2026-09-17T20:30:59.000+0000"
+   },
+   "id": "52060",
+   "key": "RSS-DEP-60"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B08",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-19T00:44:06.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B08: receive, integrate, and hand off",
+    "updated": "2026-09-19T00:44:06.000+0000"
+   },
+   "id": "52061",
+   "key": "RSS-DEP-61"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-61"
+    },
+    "resolutiondate": "2026-09-09T15:26:12.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B08: Received and inspected",
+    "updated": "2026-09-09T15:26:12.000+0000"
+   },
+   "id": "52062",
+   "key": "RSS-DEP-62"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-61"
+    },
+    "resolutiondate": "2026-09-12T03:37:42.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B08: Positioned and connected",
+    "updated": "2026-09-12T03:37:42.000+0000"
+   },
+   "id": "52063",
+   "key": "RSS-DEP-63"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-61"
+    },
+    "resolutiondate": "2026-09-13T01:17:48.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B08: Leak test passed",
+    "updated": "2026-09-13T01:17:48.000+0000"
+   },
+   "id": "52064",
+   "key": "RSS-DEP-64"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-61"
+    },
+    "resolutiondate": "2026-09-13T22:22:08.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B08: Power-on and firmware baseline",
+    "updated": "2026-09-13T22:22:08.000+0000"
+   },
+   "id": "52065",
+   "key": "RSS-DEP-65"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-61"
+    },
+    "resolutiondate": "2026-09-16T05:48:56.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B08: Network cabled and verified",
+    "updated": "2026-09-16T05:48:56.000+0000"
+   },
+   "id": "52066",
+   "key": "RSS-DEP-66"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-18",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-61"
+    },
+    "resolutiondate": "2026-09-18T10:32:46.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B08: Burn-in accepted",
+    "updated": "2026-09-18T10:32:46.000+0000"
+   },
+   "id": "52067",
+   "key": "RSS-DEP-67"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-06T13:00:00.000+0000",
+    "customfield_10015": "2026-09-09",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B08",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-61"
+    },
+    "resolutiondate": "2026-09-19T00:44:06.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B08: Validated Handoff",
+    "updated": "2026-09-19T00:44:06.000+0000"
+   },
+   "id": "52068",
+   "key": "RSS-DEP-68"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B09",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-20T17:56:26.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B09: receive, integrate, and hand off",
+    "updated": "2026-09-20T17:56:26.000+0000"
+   },
+   "id": "52069",
+   "key": "RSS-DEP-69"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-69"
+    },
+    "resolutiondate": "2026-09-11T17:09:41.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B09: Received and inspected",
+    "updated": "2026-09-11T17:09:41.000+0000"
+   },
+   "id": "52070",
+   "key": "RSS-DEP-70"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-69"
+    },
+    "resolutiondate": "2026-09-13T23:10:05.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B09: Positioned and connected",
+    "updated": "2026-09-13T23:10:05.000+0000"
+   },
+   "id": "52071",
+   "key": "RSS-DEP-71"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-69"
+    },
+    "resolutiondate": "2026-09-14T17:27:28.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B09: Leak test passed",
+    "updated": "2026-09-14T17:27:28.000+0000"
+   },
+   "id": "52072",
+   "key": "RSS-DEP-72"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-69"
+    },
+    "resolutiondate": "2026-09-15T18:51:03.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B09: Power-on and firmware baseline",
+    "updated": "2026-09-15T18:51:03.000+0000"
+   },
+   "id": "52073",
+   "key": "RSS-DEP-73"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-18",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-69"
+    },
+    "resolutiondate": "2026-09-18T02:12:31.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B09: Network cabled and verified",
+    "updated": "2026-09-18T02:12:31.000+0000"
+   },
+   "id": "52074",
+   "key": "RSS-DEP-74"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-20",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-69"
+    },
+    "resolutiondate": "2026-09-19T20:53:15.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B09: Burn-in accepted",
+    "updated": "2026-09-19T20:53:15.000+0000"
+   },
+   "id": "52075",
+   "key": "RSS-DEP-75"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-08T13:00:00.000+0000",
+    "customfield_10015": "2026-09-11",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B09",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-21",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-69"
+    },
+    "resolutiondate": "2026-09-20T17:56:26.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B09: Validated Handoff",
+    "updated": "2026-09-20T17:56:26.000+0000"
+   },
+   "id": "52076",
+   "key": "RSS-DEP-76"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B10",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-23T13:22:31.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B10: receive, integrate, and hand off",
+    "updated": "2026-09-23T13:22:31.000+0000"
+   },
+   "id": "52077",
+   "key": "RSS-DEP-77"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-77"
+    },
+    "resolutiondate": "2026-09-12T17:03:58.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B10: Received and inspected",
+    "updated": "2026-09-12T17:03:58.000+0000"
+   },
+   "id": "52078",
+   "key": "RSS-DEP-78"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-77"
+    },
+    "resolutiondate": "2026-09-15T10:47:36.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B10: Positioned and connected",
+    "updated": "2026-09-15T10:47:36.000+0000"
+   },
+   "id": "52079",
+   "key": "RSS-DEP-79"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-77"
+    },
+    "resolutiondate": "2026-09-16T04:23:03.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B10: Leak test passed",
+    "updated": "2026-09-16T04:23:03.000+0000"
+   },
+   "id": "52080",
+   "key": "RSS-DEP-80"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-77"
+    },
+    "resolutiondate": "2026-09-16T22:46:02.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B10: Power-on and firmware baseline",
+    "updated": "2026-09-16T22:46:02.000+0000"
+   },
+   "id": "52081",
+   "key": "RSS-DEP-81"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-77"
+    },
+    "resolutiondate": "2026-09-20T12:43:04.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B10: Network cabled and verified",
+    "updated": "2026-09-20T12:43:04.000+0000"
+   },
+   "id": "52082",
+   "key": "RSS-DEP-82"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-21",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-77"
+    },
+    "resolutiondate": "2026-09-22T05:58:03.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B10: Burn-in accepted",
+    "updated": "2026-09-22T05:58:03.000+0000"
+   },
+   "id": "52083",
+   "key": "RSS-DEP-83"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-09T13:00:00.000+0000",
+    "customfield_10015": "2026-09-12",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B10",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-22",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-77"
+    },
+    "resolutiondate": "2026-09-23T13:22:31.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B10: Validated Handoff",
+    "updated": "2026-09-23T13:22:31.000+0000"
+   },
+   "id": "52084",
+   "key": "RSS-DEP-84"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B11",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-24T10:44:54.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B11: receive, integrate, and hand off",
+    "updated": "2026-09-24T10:44:54.000+0000"
+   },
+   "id": "52085",
+   "key": "RSS-DEP-85"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-85"
+    },
+    "resolutiondate": "2026-09-14T20:13:54.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B11: Received and inspected",
+    "updated": "2026-09-14T20:13:54.000+0000"
+   },
+   "id": "52086",
+   "key": "RSS-DEP-86"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-85"
+    },
+    "resolutiondate": "2026-09-17T05:12:51.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B11: Positioned and connected",
+    "updated": "2026-09-17T05:12:51.000+0000"
+   },
+   "id": "52087",
+   "key": "RSS-DEP-87"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-18",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-85"
+    },
+    "resolutiondate": "2026-09-17T19:48:57.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B11: Leak test passed",
+    "updated": "2026-09-17T19:48:57.000+0000"
+   },
+   "id": "52088",
+   "key": "RSS-DEP-88"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-85"
+    },
+    "resolutiondate": "2026-09-19T08:57:31.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B11: Power-on and firmware baseline",
+    "updated": "2026-09-19T08:57:31.000+0000"
+   },
+   "id": "52089",
+   "key": "RSS-DEP-89"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-21",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-85"
+    },
+    "resolutiondate": "2026-09-20T19:18:42.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B11: Network cabled and verified",
+    "updated": "2026-09-20T19:18:42.000+0000"
+   },
+   "id": "52090",
+   "key": "RSS-DEP-90"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-23",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-85"
+    },
+    "resolutiondate": "2026-09-22T22:31:35.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B11: Burn-in accepted",
+    "updated": "2026-09-22T22:31:35.000+0000"
+   },
+   "id": "52091",
+   "key": "RSS-DEP-91"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-11T13:00:00.000+0000",
+    "customfield_10015": "2026-09-14",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B11",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-24",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-85"
+    },
+    "resolutiondate": "2026-09-24T10:44:54.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B11: Validated Handoff",
+    "updated": "2026-09-24T10:44:54.000+0000"
+   },
+   "id": "52092",
+   "key": "RSS-DEP-92"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B12",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-25T07:32:11.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B12: receive, integrate, and hand off",
+    "updated": "2026-09-25T07:32:11.000+0000"
+   },
+   "id": "52093",
+   "key": "RSS-DEP-93"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-93"
+    },
+    "resolutiondate": "2026-09-15T18:09:19.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B12: Received and inspected",
+    "updated": "2026-09-15T18:09:19.000+0000"
+   },
+   "id": "52094",
+   "key": "RSS-DEP-94"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-18",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-93"
+    },
+    "resolutiondate": "2026-09-18T01:44:35.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B12: Positioned and connected",
+    "updated": "2026-09-18T01:44:35.000+0000"
+   },
+   "id": "52095",
+   "key": "RSS-DEP-95"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-93"
+    },
+    "resolutiondate": "2026-09-19T10:19:50.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B12: Leak test passed",
+    "updated": "2026-09-19T10:19:50.000+0000"
+   },
+   "id": "52096",
+   "key": "RSS-DEP-96"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-20",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-93"
+    },
+    "resolutiondate": "2026-09-20T00:52:22.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B12: Power-on and firmware baseline",
+    "updated": "2026-09-20T00:52:22.000+0000"
+   },
+   "id": "52097",
+   "key": "RSS-DEP-97"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-22",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-93"
+    },
+    "resolutiondate": "2026-09-22T06:41:09.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B12: Network cabled and verified",
+    "updated": "2026-09-22T06:41:09.000+0000"
+   },
+   "id": "52098",
+   "key": "RSS-DEP-98"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-24",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-93"
+    },
+    "resolutiondate": "2026-09-24T09:25:16.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B12: Burn-in accepted",
+    "updated": "2026-09-24T09:25:16.000+0000"
+   },
+   "id": "52099",
+   "key": "RSS-DEP-99"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-12T13:00:00.000+0000",
+    "customfield_10015": "2026-09-15",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B12",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-25",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-93"
+    },
+    "resolutiondate": "2026-09-25T07:32:11.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B12: Validated Handoff",
+    "updated": "2026-09-25T07:32:11.000+0000"
+   },
+   "id": "52100",
+   "key": "RSS-DEP-100"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B13",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": "2026-09-26T04:44:07.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "Rack B13: receive, integrate, and hand off",
+    "updated": "2026-09-26T04:44:07.000+0000"
+   },
+   "id": "52101",
+   "key": "RSS-DEP-101"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-101"
+    },
+    "resolutiondate": "2026-09-16T18:54:33.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B13: Received and inspected",
+    "updated": "2026-09-16T18:54:33.000+0000"
+   },
+   "id": "52102",
+   "key": "RSS-DEP-102"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-101"
+    },
+    "resolutiondate": "2026-09-18T19:14:13.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B13: Positioned and connected",
+    "updated": "2026-09-18T19:14:13.000+0000"
+   },
+   "id": "52103",
+   "key": "RSS-DEP-103"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-20",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-101"
+    },
+    "resolutiondate": "2026-09-20T03:10:52.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B13: Leak test passed",
+    "updated": "2026-09-20T03:10:52.000+0000"
+   },
+   "id": "52104",
+   "key": "RSS-DEP-104"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-21",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-101"
+    },
+    "resolutiondate": "2026-09-21T09:30:54.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B13: Power-on and firmware baseline",
+    "updated": "2026-09-21T09:30:54.000+0000"
+   },
+   "id": "52105",
+   "key": "RSS-DEP-105"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-23",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-101"
+    },
+    "resolutiondate": "2026-09-22T23:23:19.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B13: Network cabled and verified",
+    "updated": "2026-09-22T23:23:19.000+0000"
+   },
+   "id": "52106",
+   "key": "RSS-DEP-106"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-25",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-101"
+    },
+    "resolutiondate": "2026-09-25T10:34:21.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B13: Burn-in accepted",
+    "updated": "2026-09-25T10:34:21.000+0000"
+   },
+   "id": "52107",
+   "key": "RSS-DEP-107"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-13T13:00:00.000+0000",
+    "customfield_10015": "2026-09-16",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B13",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-26",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-101"
+    },
+    "resolutiondate": "2026-09-26T04:44:07.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M7 B13: Validated Handoff",
+    "updated": "2026-09-26T04:44:07.000+0000"
+   },
+   "id": "52108",
+   "key": "RSS-DEP-108"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B14",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "Rack B14: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52109",
+   "key": "RSS-DEP-109"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-109"
+    },
+    "resolutiondate": "2026-09-18T15:27:07.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M1 B14: Received and inspected",
+    "updated": "2026-09-18T15:27:07.000+0000"
+   },
+   "id": "52110",
+   "key": "RSS-DEP-110"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-21",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-109"
+    },
+    "resolutiondate": "2026-09-21T01:26:03.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M2 B14: Positioned and connected",
+    "updated": "2026-09-21T01:26:03.000+0000"
+   },
+   "id": "52111",
+   "key": "RSS-DEP-111"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-22",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-109"
+    },
+    "resolutiondate": "2026-09-22T05:18:23.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M3 B14: Leak test passed",
+    "updated": "2026-09-22T05:18:23.000+0000"
+   },
+   "id": "52112",
+   "key": "RSS-DEP-112"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-23",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-109"
+    },
+    "resolutiondate": "2026-09-22T17:05:12.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M4 B14: Power-on and firmware baseline",
+    "updated": "2026-09-22T17:05:12.000+0000"
+   },
+   "id": "52113",
+   "key": "RSS-DEP-113"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-25",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-109"
+    },
+    "resolutiondate": "2026-09-25T03:27:26.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M5 B14: Network cabled and verified",
+    "updated": "2026-09-25T03:27:26.000+0000"
+   },
+   "id": "52114",
+   "key": "RSS-DEP-114"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-27",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-109"
+    },
+    "resolutiondate": "2026-09-27T04:34:25.000+0000",
+    "status": {
+     "name": "Done",
+     "statusCategory": {
+      "key": "done"
+     }
+    },
+    "summary": "R-M6 B14: Burn-in accepted",
+    "updated": "2026-09-27T04:34:25.000+0000"
+   },
+   "id": "52115",
+   "key": "RSS-DEP-115"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-15T13:00:00.000+0000",
+    "customfield_10015": "2026-09-18",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B14",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-28",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-109"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "In Progress",
+     "statusCategory": {
+      "key": "indeterminate"
+     }
+    },
+    "summary": "R-M7 B14: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52116",
+   "key": "RSS-DEP-116"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B15",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B15: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52117",
+   "key": "RSS-DEP-117"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-20",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-117"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B15: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52118",
+   "key": "RSS-DEP-118"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-22",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-117"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B15: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52119",
+   "key": "RSS-DEP-119"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-23",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-117"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B15: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52120",
+   "key": "RSS-DEP-120"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-24",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-117"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B15: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52121",
+   "key": "RSS-DEP-121"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-26",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-117"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B15: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52122",
+   "key": "RSS-DEP-122"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-28",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-117"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B15: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52123",
+   "key": "RSS-DEP-123"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-16T13:00:00.000+0000",
+    "customfield_10015": "2026-09-19",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B15",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-09-29",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-117"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B15: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52124",
+   "key": "RSS-DEP-124"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B16",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B16: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52125",
+   "key": "RSS-DEP-125"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-22",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-125"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B16: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52126",
+   "key": "RSS-DEP-126"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-24",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-125"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B16: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52127",
+   "key": "RSS-DEP-127"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-25",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-125"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B16: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52128",
+   "key": "RSS-DEP-128"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-26",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-125"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B16: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52129",
+   "key": "RSS-DEP-129"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-28",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-125"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B16: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52130",
+   "key": "RSS-DEP-130"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-09-30",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-125"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B16: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52131",
+   "key": "RSS-DEP-131"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-18T13:00:00.000+0000",
+    "customfield_10015": "2026-09-21",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B16",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-01",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-125"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B16: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52132",
+   "key": "RSS-DEP-132"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B17",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B17: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52133",
+   "key": "RSS-DEP-133"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-23",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-133"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B17: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52134",
+   "key": "RSS-DEP-134"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-25",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-133"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B17: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52135",
+   "key": "RSS-DEP-135"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-26",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-133"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B17: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52136",
+   "key": "RSS-DEP-136"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-27",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-133"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B17: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52137",
+   "key": "RSS-DEP-137"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-29",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-133"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B17: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52138",
+   "key": "RSS-DEP-138"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-01",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-133"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B17: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52139",
+   "key": "RSS-DEP-139"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-19T13:00:00.000+0000",
+    "customfield_10015": "2026-09-22",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B17",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-02",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-133"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B17: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52140",
+   "key": "RSS-DEP-140"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B18",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B18: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52141",
+   "key": "RSS-DEP-141"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-24",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-141"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B18: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52142",
+   "key": "RSS-DEP-142"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-26",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-141"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B18: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52143",
+   "key": "RSS-DEP-143"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-27",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-141"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B18: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52144",
+   "key": "RSS-DEP-144"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-28",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-141"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B18: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52145",
+   "key": "RSS-DEP-145"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-09-30",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-141"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B18: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52146",
+   "key": "RSS-DEP-146"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-02",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-141"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B18: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52147",
+   "key": "RSS-DEP-147"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-20T13:00:00.000+0000",
+    "customfield_10015": "2026-09-23",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B18",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-141"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B18: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52148",
+   "key": "RSS-DEP-148"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B19",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B19: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52149",
+   "key": "RSS-DEP-149"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-26",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-149"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B19: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52150",
+   "key": "RSS-DEP-150"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-28",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-149"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B19: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52151",
+   "key": "RSS-DEP-151"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-29",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-149"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B19: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52152",
+   "key": "RSS-DEP-152"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-09-30",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-149"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B19: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52153",
+   "key": "RSS-DEP-153"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-02",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-149"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B19: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52154",
+   "key": "RSS-DEP-154"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-04",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-149"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B19: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52155",
+   "key": "RSS-DEP-155"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-22T13:00:00.000+0000",
+    "customfield_10015": "2026-09-25",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B19",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-149"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B19: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52156",
+   "key": "RSS-DEP-156"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B20",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B20: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52157",
+   "key": "RSS-DEP-157"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-27",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-157"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B20: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52158",
+   "key": "RSS-DEP-158"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-09-29",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-157"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B20: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52159",
+   "key": "RSS-DEP-159"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-09-30",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-157"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B20: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52160",
+   "key": "RSS-DEP-160"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-01",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-157"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B20: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52161",
+   "key": "RSS-DEP-161"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-157"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B20: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52162",
+   "key": "RSS-DEP-162"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-157"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B20: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52163",
+   "key": "RSS-DEP-163"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-23T13:00:00.000+0000",
+    "customfield_10015": "2026-09-26",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B20",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-157"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B20: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52164",
+   "key": "RSS-DEP-164"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B21",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B21: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52165",
+   "key": "RSS-DEP-165"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-29",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-165"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B21: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52166",
+   "key": "RSS-DEP-166"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-01",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-165"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B21: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52167",
+   "key": "RSS-DEP-167"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-02",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-165"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B21: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52168",
+   "key": "RSS-DEP-168"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-165"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B21: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52169",
+   "key": "RSS-DEP-169"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-165"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B21: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52170",
+   "key": "RSS-DEP-170"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-165"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B21: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52171",
+   "key": "RSS-DEP-171"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-25T13:00:00.000+0000",
+    "customfield_10015": "2026-09-28",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B21",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-165"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B21: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52172",
+   "key": "RSS-DEP-172"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B22",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B22: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52173",
+   "key": "RSS-DEP-173"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-09-30",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-173"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B22: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52174",
+   "key": "RSS-DEP-174"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-02",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-173"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B22: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52175",
+   "key": "RSS-DEP-175"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-173"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B22: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52176",
+   "key": "RSS-DEP-176"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-04",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-173"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B22: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52177",
+   "key": "RSS-DEP-177"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-173"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B22: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52178",
+   "key": "RSS-DEP-178"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-173"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B22: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52179",
+   "key": "RSS-DEP-179"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-26T13:00:00.000+0000",
+    "customfield_10015": "2026-09-29",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B22",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-173"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B22: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52180",
+   "key": "RSS-DEP-180"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B23",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B23: receive, integrate, and hand off",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52181",
+   "key": "RSS-DEP-181"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-01",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-181"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B23: Received and inspected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52182",
+   "key": "RSS-DEP-182"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-181"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B23: Positioned and connected",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52183",
+   "key": "RSS-DEP-183"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-04",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-181"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B23: Leak test passed",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52184",
+   "key": "RSS-DEP-184"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-181"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B23: Power-on and firmware baseline",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52185",
+   "key": "RSS-DEP-185"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-181"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B23: Network cabled and verified",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52186",
+   "key": "RSS-DEP-186"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-181"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B23: Burn-in accepted",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52187",
+   "key": "RSS-DEP-187"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-27T13:00:00.000+0000",
+    "customfield_10015": "2026-09-30",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B23",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-181"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B23: Validated Handoff",
+    "updated": "2026-09-27T18:00:00.000+0000"
+   },
+   "id": "52188",
+   "key": "RSS-DEP-188"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B24",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B24: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52189",
+   "key": "RSS-DEP-189"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-03",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-189"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B24: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52190",
+   "key": "RSS-DEP-190"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-05",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-189"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B24: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52191",
+   "key": "RSS-DEP-191"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-189"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B24: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52192",
+   "key": "RSS-DEP-192"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-189"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B24: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52193",
+   "key": "RSS-DEP-193"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-189"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B24: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52194",
+   "key": "RSS-DEP-194"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-189"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B24: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52195",
+   "key": "RSS-DEP-195"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-29T13:00:00.000+0000",
+    "customfield_10015": "2026-10-02",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B24",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-189"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B24: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52196",
+   "key": "RSS-DEP-196"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B25",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B25: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52197",
+   "key": "RSS-DEP-197"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-04",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-197"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B25: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52198",
+   "key": "RSS-DEP-198"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-197"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B25: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52199",
+   "key": "RSS-DEP-199"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-197"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B25: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52200",
+   "key": "RSS-DEP-200"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-197"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B25: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52201",
+   "key": "RSS-DEP-201"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-197"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B25: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52202",
+   "key": "RSS-DEP-202"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-197"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B25: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52203",
+   "key": "RSS-DEP-203"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-09-30T13:00:00.000+0000",
+    "customfield_10015": "2026-10-03",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B25",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-197"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B25: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52204",
+   "key": "RSS-DEP-204"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B26",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B26: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52205",
+   "key": "RSS-DEP-205"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-06",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-205"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B26: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52206",
+   "key": "RSS-DEP-206"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-205"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B26: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52207",
+   "key": "RSS-DEP-207"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-205"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B26: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52208",
+   "key": "RSS-DEP-208"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-205"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B26: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52209",
+   "key": "RSS-DEP-209"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-205"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B26: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52210",
+   "key": "RSS-DEP-210"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-205"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B26: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52211",
+   "key": "RSS-DEP-211"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-02T13:00:00.000+0000",
+    "customfield_10015": "2026-10-05",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B26",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-205"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B26: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52212",
+   "key": "RSS-DEP-212"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B27",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B27: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52213",
+   "key": "RSS-DEP-213"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-07",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-213"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B27: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52214",
+   "key": "RSS-DEP-214"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-09",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-213"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B27: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52215",
+   "key": "RSS-DEP-215"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-213"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B27: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52216",
+   "key": "RSS-DEP-216"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-213"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B27: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52217",
+   "key": "RSS-DEP-217"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-213"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B27: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52218",
+   "key": "RSS-DEP-218"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-213"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B27: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52219",
+   "key": "RSS-DEP-219"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-03T13:00:00.000+0000",
+    "customfield_10015": "2026-10-06",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B27",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-213"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B27: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52220",
+   "key": "RSS-DEP-220"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B28",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B28: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52221",
+   "key": "RSS-DEP-221"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-08",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-221"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B28: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52222",
+   "key": "RSS-DEP-222"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-221"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B28: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52223",
+   "key": "RSS-DEP-223"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-221"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B28: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52224",
+   "key": "RSS-DEP-224"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-221"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B28: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52225",
+   "key": "RSS-DEP-225"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-221"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B28: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52226",
+   "key": "RSS-DEP-226"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-221"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B28: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52227",
+   "key": "RSS-DEP-227"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-04T13:00:00.000+0000",
+    "customfield_10015": "2026-10-07",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B28",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-221"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B28: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52228",
+   "key": "RSS-DEP-228"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B29",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B29: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52229",
+   "key": "RSS-DEP-229"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-10",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-229"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B29: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52230",
+   "key": "RSS-DEP-230"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-12",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-229"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B29: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52231",
+   "key": "RSS-DEP-231"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-229"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B29: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52232",
+   "key": "RSS-DEP-232"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-229"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B29: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52233",
+   "key": "RSS-DEP-233"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-229"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B29: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52234",
+   "key": "RSS-DEP-234"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-18",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-229"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B29: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52235",
+   "key": "RSS-DEP-235"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-06T13:00:00.000+0000",
+    "customfield_10015": "2026-10-09",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B29",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-229"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B29: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52236",
+   "key": "RSS-DEP-236"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B30",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B30: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52237",
+   "key": "RSS-DEP-237"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-11",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-237"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B30: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52238",
+   "key": "RSS-DEP-238"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-237"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B30: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52239",
+   "key": "RSS-DEP-239"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-237"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B30: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52240",
+   "key": "RSS-DEP-240"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-237"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B30: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52241",
+   "key": "RSS-DEP-241"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-237"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B30: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52242",
+   "key": "RSS-DEP-242"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-237"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B30: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52243",
+   "key": "RSS-DEP-243"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-07T13:00:00.000+0000",
+    "customfield_10015": "2026-10-10",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B30",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-20",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-237"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B30: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52244",
+   "key": "RSS-DEP-244"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B31",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B31: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52245",
+   "key": "RSS-DEP-245"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-13",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-245"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B31: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52246",
+   "key": "RSS-DEP-246"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-15",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-245"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B31: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52247",
+   "key": "RSS-DEP-247"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-245"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B31: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52248",
+   "key": "RSS-DEP-248"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-245"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B31: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52249",
+   "key": "RSS-DEP-249"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-19",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-245"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B31: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52250",
+   "key": "RSS-DEP-250"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-21",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-245"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B31: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52251",
+   "key": "RSS-DEP-251"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-09T13:00:00.000+0000",
+    "customfield_10015": "2026-10-12",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B31",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-22",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-245"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B31: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52252",
+   "key": "RSS-DEP-252"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10101": "G2",
+    "customfield_10102": "B32",
+    "issuetype": {
+     "name": "Story"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-4"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "Rack B32: receive, integrate, and hand off",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52253",
+   "key": "RSS-DEP-253"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-M1",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-01",
+    "duedate": "2026-10-14",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-253"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M1 B32: Received and inspected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52254",
+   "key": "RSS-DEP-254"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-M2",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-02",
+    "duedate": "2026-10-16",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-253"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M2 B32: Positioned and connected",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52255",
+   "key": "RSS-DEP-255"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-M3",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-03",
+    "duedate": "2026-10-17",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-253"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M3 B32: Leak test passed",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52256",
+   "key": "RSS-DEP-256"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-M4",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-04",
+    "duedate": "2026-10-18",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-253"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M4 B32: Power-on and firmware baseline",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52257",
+   "key": "RSS-DEP-257"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-M5",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-05",
+    "duedate": "2026-10-20",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-253"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M5 B32: Network cabled and verified",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52258",
+   "key": "RSS-DEP-258"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-M6",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-06",
+    "duedate": "2026-10-22",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-253"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M6 B32: Burn-in accepted",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52259",
+   "key": "RSS-DEP-259"
+  },
+  {
+   "fields": {
+    "assignee": null,
+    "created": "2026-10-10T13:00:00.000+0000",
+    "customfield_10015": "2026-10-13",
+    "customfield_10101": "R-M7",
+    "customfield_10102": "B32",
+    "customfield_10103": "DEP-B-RK-07",
+    "duedate": "2026-10-23",
+    "issuetype": {
+     "name": "Sub-task"
+    },
+    "labels": [
+     "hall-b",
+     "gb300"
+    ],
+    "parent": {
+     "key": "RSS-DEP-253"
+    },
+    "resolutiondate": null,
+    "status": {
+     "name": "To Do",
+     "statusCategory": {
+      "key": "new"
+     }
+    },
+    "summary": "R-M7 B32: Validated Handoff",
+    "updated": "2026-09-28T00:00:00.000+0000"
+   },
+   "id": "52260",
+   "key": "RSS-DEP-260"
+  }
+ ]
+}

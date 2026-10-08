@@ -1,0 +1,40 @@
+[
+ {
+  "applied": "2026-06-14T16:32:43Z",
+  "by": "ahj-fm",
+  "finaled": "2026-08-06T18:09:10Z",
+  "inspection": "INSP-B-007",
+  "issued": "2026-07-08T12:30:36Z",
+  "name": "Fire Marshal construction permit",
+  "number": "AHJ-FM-CON-26-6930",
+  "permit": "AHJ-FM-CON",
+  "status": "finaled"
+ },
+ {
+  "applied": "2026-06-14T22:22:21Z",
+  "by": "ahj-fm",
+  "finaled": "2026-08-06T18:09:10Z",
+  "inspection": "INSP-B-007",
+  "issued": "2026-07-08T12:05:27Z",
+  "name": "Fire alarm permit",
+  "number": "AHJ-FM-FA-26-2465",
+  "permit": "AHJ-FM-FA",
+  "status": "finaled"
+ },
+ {
+  "by": "ahj-fm",
+  "name": "Fire sprinkler permit",
+  "number": null,
+  "permit": "AHJ-FM-SPK",
+  "reason": "No sprinkler change: the rack layout keeps every head and branch line as designed (engineer of record).",
+  "status": "not required"
+ },
+ {
+  "by": "ahj-fm",
+  "issued": "2026-08-09T18:09:10Z",
+  "name": "Certificate of Compliance",
+  "number": "AHJ-FM-COC-26-4284",
+  "permit": "AHJ-FM-COC",
+  "status": "issued"
+ }
+]

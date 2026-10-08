@@ -1,0 +1,43 @@
+# How the partners' Jira projects map onto the deployment program (read by src/scorecard/jira_import.py).
+#
+# Jira Cloud custom field ids differ from site to site, so they live here, not in code. To import a real
+# project: export it (the JSON a /rest/api/3/search/jql call returns, every page, or a CSV export), put the
+# file in data/deployments/jira/, add the project key below, and set the field ids or CSV column names
+# your site uses. Assignees are never read: sign-offs come from the sign-off record, by role.
+
+projects:
+  CCF-DEP: {partner: "Landlord", name: "Caprock: Hall B GB300 fit-out"}
+  RSS-DEP: {partner: "IT Partner", name: "Ridgeline: Hall B GB300 rack deployment"}
+
+# JSON exports: our name -> the Jira field id (standard fields are read by their Jira names).
+fields:
+  step: customfield_10101     # the program step id (G1-04, R-M3, ...)
+  rack: customfield_10102     # rack, for per-rack work
+  doc: customfield_10103      # controlled document number
+  start: customfield_10015    # "Start date" (a common Jira Cloud field id; check yours)
+
+# CSV exports: our name -> the column header in the export.
+csv_columns:
+  key: "Issue key"
+  id: "Issue id"
+  type: "Issue Type"
+  status: "Status"
+  summary: "Summary"
+  parent: "Parent key"
+  created: "Created"
+  updated: "Updated"
+  resolved: "Resolved"
+  due: "Due date"
+  step: "Custom field (Deployment step)"
+  rack: "Custom field (Rack)"
+  doc: "Custom field (Document)"
+  start: "Custom field (Start date)"
+
+# CSV exports carry the status name only; this maps names to Jira's three status categories.
+status_categories:
+  done: ["Done", "Closed", "Resolved", "Complete"]
+  indeterminate: ["In Progress", "In Review", "Blocked", "Waiting for inspection"]
+  new: ["To Do", "Open", "Backlog", "Selected for Development"]
+
+# Date formats tried in order for CSV exports (Jira's export format depends on the site's settings).
+csv_date_formats: ["%Y-%m-%dT%H:%M:%S.%f%z", "%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%d %H:%M", "%d/%b/%y %I:%M %p", "%Y-%m-%d"]
