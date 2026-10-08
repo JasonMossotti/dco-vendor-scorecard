@@ -22,7 +22,7 @@ import csv
 import json
 import math
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -355,6 +355,8 @@ def records(cfg: dict[str, Any], st: list[dict[str, Any]], rec_dir: Path = RECOR
         u["signed"] = sum(1 for x in u["signoffs"] if x["signed_at"])
         u["complete"] = (u["state"] == "done" and u["signed"] == len(s["signoff"])
                          and all(i["result"] == "pass" for i in u["inspections_required"]))
+        u["completed_at"] = (max([u["done"]] + [x["signed_at"] for x in u["signoffs"]] + [i["at"] for i in recs])
+                             if u["complete"] else None)
     projects = {}
     for k, v in fmap["projects"].items():
         mine = [i for i in issues if i["project"] == k]
@@ -379,6 +381,99 @@ def gate_status(gates: list[dict[str, Any]], st: list[dict[str, Any]], wos: list
     return out
 
 
+# ------------------------------------------------------------------------------------------- checks
+CHECKS = {
+    "unsigned": "Done without every sign-off",
+    "uninspected": "Done without a passed inspection",
+    "signed_early": "Signed before the work was done",
+    "out_of_order": "Done before the step it depends on",
+}
+CHECK_HELP = {
+    "unsigned": "The partner's record says Done, and a role on the step's sign-off chain has still not signed after the window.",
+    "uninspected": "The partner's record says Done, and an inspection the step requires has no record, or only a failed one.",
+    "signed_early": "A sign-off is dated before the time the partner's record gives for the work it accepts.",
+    "out_of_order": "The work is recorded done before a step it depends on (for a rack, the same rack's step). For the Landlord's "
+                    "tap-off energization (HO-4) this is the Interface Agreement's handoff rule.",
+}
+
+
+def _hours(a: str, b: str) -> float:
+    return (_ts(b) - _ts(a)).total_seconds() / 3600
+
+
+def checks(st: list[dict[str, Any]], wos: list[dict[str, Any]], roles: dict[str, Any], as_of: str,
+           window_days: float) -> list[dict[str, Any]]:
+    """Records that do not reconcile, from the work orders alone (never the answer key).
+
+    * ``unsigned``: Done, and a sign-off role is still missing ``window_days`` after the work was done.
+    * ``uninspected``: Done, and a required inspection has no record, or its latest record is a failure.
+    * ``signed_early``: a sign-off is dated before the work it accepts was done.
+    * ``out_of_order``: Done before a step it depends on was done (for a rack step, the same rack's step).
+      When the step is the Landlord's tap-off energization (HO-4) this is the Interface Agreement handoff rule.
+
+    A finding means the records do not reconcile; the work order says which records to compare."""
+    by_id = {s["id"]: s for s in st}
+    wo_of: dict[tuple, dict[str, Any]] = {(w["step"], w["rack"]): w for w in wos}
+    out: list[dict[str, Any]] = []
+
+    def add(kind: str, w: dict[str, Any], text: str, refs: list[str]) -> None:
+        known = w["done"] if kind != "unsigned" else (_ts(w["done"]) + timedelta(days=window_days)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        out.append({"kind": kind, "check": CHECKS[kind], "wo": w["id"], "step": w["step"], "rack": w["rack"], "known_at": known,
+                    "partner": w["partner"], "source": w["source"], "text": text, "refs": refs})
+
+    def name(r: str) -> str:
+        return roles[r]["name"]
+
+    for w in wos:
+        if w["state"] != "done" or not w["done"]:
+            continue
+        s, what = by_id[w["step"]], f"{w['step']}" + (f" for rack {w['rack']}" if w["rack"] else "")
+        missing = [x["role"] for x in w["signoffs"] if not x["signed_at"]]
+        age = _hours(w["done"], as_of) / 24
+        if missing and age > window_days:
+            add("unsigned", w, f"{w['source']} shows {what} Done on {w['done'][:10]}, but {age:.0f} days later the record has no "
+                f"sign-off from {', '.join(name(r) for r in missing)}. The work order stays open until it is signed.",
+                [w["key"], s["doc"]["id"]])
+        for i in w["inspections_required"]:
+            if i["result"] != "pass":
+                got = "only a failed result" if i["result"] == "fail" else "no inspection record"
+                add("uninspected", w, f"{w['source']} shows {what} Done, but the required inspection ({i['what']}, "
+                    f"{name(i['by']) if i['by'] in roles else i['by']}) has {got}.", [w["key"]])
+        for x in w["signoffs"]:
+            if x["signed_at"] and x["signed_at"] < w["done"]:
+                add("signed_early", w, f"{name(x['role'])} signed {what} at {x['signed_at'][:16].replace('T', ' ')} UTC, "
+                    f"{_hours(x['signed_at'], w['done']):.0f} hours before {w['source']} records the work as done.",
+                    [w["key"]])
+        for a in s["after"]:
+            preds = ([wo_of.get((a, w["rack"]))] if by_id[a]["per_rack"] and w["rack"]
+                     else [v for (k, _), v in wo_of.items() if k == a])
+            preds = [p for p in preds if p]
+            late = [p for p in preds if not p["done"] or p["done"] > w["done"]]
+            if not late:
+                continue
+            p = max(late, key=lambda p: p["done"] or "~")
+            when = f"was done {_hours(w['done'], p['done']):.1f} hours later" if p["done"] else "is not done"
+            rule = (" The Interface Agreement lets the Landlord energize the tap-off only after the IT Partner confirms "
+                    "the rack is set and leak-tested." if w["step"] == "R-HO4" and a == "R-M3" else "")
+            add("out_of_order", w, f"{w['source']} records {what} done at {w['done'][:16].replace('T', ' ')} UTC, but the step "
+                f"it depends on, {a} ({p['source']}), {when}.{rule}", [w["key"], p["key"]])
+    order = {k: n for n, k in enumerate(CHECKS)}
+    return sorted(out, key=lambda f: (order[f["kind"]], f["wo"]))
+
+
+def evaluate(findings: list[dict[str, Any]], key: dict[str, Any]) -> dict[str, Any]:
+    """Self-check: every planted record found, nothing else flagged."""
+    planted = {(k["kind"], k["step"], k["rack"]) for k in key.get("planted", [])}
+    found = {(f["kind"], f["step"], f["rack"]) for f in findings}
+    by_kind: dict[str, list[int]] = {}
+    for k in planted:
+        t = by_kind.setdefault(k[0], [0, 0])
+        t[0] += k in found
+        t[1] += 1
+    return {"planted": len(planted), "detected": len(planted & found), "missed": sorted(planted - found, key=str),
+            "false_positives": sorted(found - planted, key=str), "by_kind": by_kind, "decoys": key.get("decoys", {})}
+
+
 # ------------------------------------------------------------------------------------------- build
 def build(data_dir: Path = SAMPLE, cfg: dict[str, Any] | None = None, rec_dir: Path = RECORDS) -> dict[str, Any]:
     """Everything the page and the plan document show, from the three sources."""
@@ -394,7 +489,14 @@ def build(data_dir: Path = SAMPLE, cfg: dict[str, Any] | None = None, rec_dir: P
         s["inspections"] = [i for i in s["inspections"] if applies(i, profile)]
     hall = S.hall_by_id(site, cfg["program"]["hall"])
     rec = records(cfg, st, rec_dir)
+    racks = rack_status(site, cfg, sla, data_dir)
+    data_cfg = yaml.safe_load((ROOT / "config" / "deployments_data.yaml").read_text(encoding="utf-8"))
+    found = checks(st, rec["work_orders"], cfg["roles"], racks["as_of"], data_cfg["signoff_window_days"])
+    key_path = rec_dir / "answer_key.json"
+    self_check = evaluate(found, json.loads(key_path.read_text(encoding="utf-8"))) if key_path.exists() else None
     return {"record": {k: v for k, v in rec.items() if k != "issues"}, "gate_status": gate_status(cfg["gates"], st, rec["work_orders"]),
+            "findings": found, "check_names": CHECKS, "check_help": CHECK_HELP, "self_check": self_check,
+            "signoff_window_days": data_cfg["signoff_window_days"],
             "meta": cfg["meta"], "program": dict(cfg["program"], hall_name=hall["name"],
                                                  rack_model=S.product(site, hall["rack_product"])["model"],
                                                  cycle_days=sla["deployment"]["rack_cycle_target_days"]),
@@ -406,4 +508,4 @@ def build(data_dir: Path = SAMPLE, cfg: dict[str, Any] | None = None, rec_dir: P
             "gates": [{k: g[k] for k in ("id", "name", "owner", "exit")} | {"per_rack": bool(g.get("per_rack"))}
                       for g in cfg["gates"]],
             "steps": st, "calc": calculations(site, cfg),
-            "calc_inputs": cfg["calc"], "cabling": cabling(cfg), "racks": rack_status(site, cfg, sla, data_dir)}
+            "calc_inputs": cfg["calc"], "cabling": cabling(cfg), "racks": racks}

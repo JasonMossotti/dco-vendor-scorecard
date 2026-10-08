@@ -8,6 +8,7 @@ site model, the authority and statewide determinations, and each rack's reported
 Usage:
     python scripts/render_deployments.py            # write docs/deployments/DEPLOYMENT_PLAN.md
     python scripts/render_deployments.py --check    # fail if it is stale (CI)
+    python scripts/render_deployments.py --robustness 60   # plant and find the record checks in 60 generated months
 """
 
 from __future__ import annotations
@@ -15,7 +16,11 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tempfile
+from datetime import date, timedelta
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -47,7 +52,8 @@ def markdown(b: dict) -> str:
          "## Contents", "", "1. [Gates](#gates)", "2. [Authority and permits](#authority-and-permits)",
          "3. [Statewide determinations](#statewide-determinations)", "4. [Calculation sheet](#calculation-sheet)",
          "5. [Cabling and connections](#cabling-and-connections)", "6. [Rack status](#rack-status)",
-         "7. [Steps](#steps)", "8. [Record](#record)", "9. [Sign-off roles](#sign-off-roles)", "10. [Sources](#sources)", "",
+         "7. [Steps](#steps)", "8. [Record](#record)", "9. [Record checks](#record-checks)", "10. [Sign-off roles](#sign-off-roles)",
+         "11. [Sources](#sources)", "",
          "## Gates", "", "| Gate | Name | Owner | Steps | Exit criteria |", "|---|---|---|---|---|"]
     for g in b["gates"]:
         n = sum(1 for s in b["steps"] if s["gate"] == g["id"])
@@ -137,6 +143,21 @@ def markdown(b: dict) -> str:
     L += [f"| {i['id']} | {i['step']} | {role(i['by'])} | {stamp(i['at'])} | {i['result']} | {i['note'] or '-'} |" for i in rec["inspections"]]
     L += ["", "Determinations recorded:", ""]
     L += [f"- {d['id']} ({stamp(d['recorded'])}, {d['step']}): {d['result']}" for d in rec["determinations"]]
+    L += ["", "## Record checks", "",
+          f"Records that do not reconcile, found from the work orders alone. A missing signature counts once the step has been Done "
+          f"for {b['signoff_window_days']} days. A finding means the records disagree, not that the work was not done; the work order "
+          "names the records to compare.", ""]
+    L += [f"- **{v}.** {b['check_help'][k]}" for k, v in b["check_names"].items()]
+    L += ["", "| Check | Work order | Partner | Finding |", "|---|---|---|---|"]
+    L += [f"| {f['check']} | {f['wo']} | {f['partner']} | {f['text']} |" for f in b["findings"]] or ["| - | - | - | No findings |"]
+    if c := b["self_check"]:
+        dc = c["decoys"]
+        n = lambda x, one, many: f"{x} {one if x == 1 else many}"  # noqa: E731
+        L += ["", f"Self-check: found **{c['detected']} of {c['planted']}** planted records, **{len(c['false_positives'])} false positives**. "
+              f"Decoys not flagged: {n(dc.get('signatures_pending_in_window', 0), 'work order with signatures still inside the window', 'work orders with signatures still inside the window')}, "
+              f"{n(dc.get('inspections_failed_then_passed', 0), 'inspection that failed and then passed on a retest', 'inspections that failed and then passed on a retest')}, "
+              f"{n(dc.get('handoff_minutes_after_leak_test', 0), 'tap-off energized minutes after its leak test', 'tap-offs energized minutes after their leak tests')}. "
+              "The checks cannot read the answer key."]
     L += ["", "## Sign-off roles", "", "| Role | Organization | Duty |", "|---|---|---|"]
     L += [f"| {v['name']} | {v['org']} | {v['duty']} |" for v in roles.values()]
     L += ["", "## Sources", ""]
@@ -156,11 +177,47 @@ def html_page() -> str:
     return sitenav.finish(tpl.replace("__DATA__", json.dumps(prepare(), sort_keys=True).replace("</", "<\\/")))
 
 
+def robustness(n: int) -> int:
+    from scorecard.sla_model import load_sla
+    from scorecard.synthetic import SiteGenerator, write_dataset
+    from scorecard.synthetic import deployments as G
+    syn = yaml.safe_load((ROOT / "config" / "synthetic.yaml").read_text(encoding="utf-8"))
+    tot: dict[str, list[int]] = {}
+    fps, decoys = [], {}
+    for k in range(n):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
+            G.write_deployments(G.DeploymentRecordLayer(d, 2000 + k).run(), d / "deployments", "robustness")
+            b = D.build(d, rec_dir=d / "deployments")
+        c = b["self_check"]
+        for kind, (a, t) in c["by_kind"].items():
+            x = tot.setdefault(kind, [0, 0])
+            x[0], x[1] = x[0] + a, x[1] + t
+        for kind, v in c["decoys"].items():
+            decoys[kind] = decoys.get(kind, 0) + v
+        fps += [(k, x) for x in c["false_positives"]]
+        for m in c["missed"]:
+            print(f"  month {k}: missed {m}")
+    print(f"Deployment record checks on {n} generated programs (planted records moved each month):")
+    for kind, (a, t) in sorted(tot.items()):
+        print(f"  {kind:<14} found {a}/{t}")
+    print(f"  decoys         {decoys.get('signatures_pending_in_window', 0)} signatures inside the window, "
+          f"{decoys.get('inspections_failed_then_passed', 0)} failed-then-passed inspections, "
+          f"{decoys.get('handoff_minutes_after_leak_test', 0)} tap-offs energized minutes after the leak test; {len(fps)} false positives")
+    for k, x in fps:
+        print(f"  month {k}: false positive: {x}")
+    return 0 if tot and all(a == t for a, t in tot.values()) and not fps else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--html", metavar="OUT", help="also write the page")
+    ap.add_argument("--robustness", type=int, metavar="N")
     args = ap.parse_args()
+    if args.robustness:
+        return robustness(args.robustness)
     b = prepare()
     text = markdown(b)
     if args.check:
@@ -178,7 +235,10 @@ def main() -> int:
     wos = b["record"]["work_orders"]
     print(f"Wrote {OUT.relative_to(ROOT)}: {len(b['steps'])} steps in {len(b['gates'])} gates, "
           f"{sum(1 for r in b['calc'] if r['passed'] is not None)} checks ({controls} need the power-limit control), "
-          f"racks {b['racks']['counts']}, {sum(w['complete'] for w in wos)} of {len(wos)} work orders complete")
+          f"racks {b['racks']['counts']}, {sum(w['complete'] for w in wos)} of {len(wos)} work orders complete, "
+          f"{len(b['findings'])} record findings")
+    if c := b["self_check"]:
+        print(f"Detected {c['detected']} of {c['planted']} planted, {len(c['false_positives'])} false positives")
     return 0
 
 

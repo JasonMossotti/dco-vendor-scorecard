@@ -16,8 +16,9 @@ Hall B: 32 GB300 NVL72 racks in 4 waves (one per row), rack cycle target 10 days
 6. [Rack status](#rack-status)
 7. [Steps](#steps)
 8. [Record](#record)
-9. [Sign-off roles](#sign-off-roles)
-10. [Sources](#sources)
+9. [Record checks](#record-checks)
+10. [Sign-off roles](#sign-off-roles)
+11. [Sources](#sources)
 
 ## Gates
 
@@ -726,9 +727,9 @@ The partners' Jira projects (read through `src/scorecard/jira_import.py` with `c
 
 | Gate | Work orders complete | State |
 |---|---|---|
-| G0 Design and approvals | 7 of 7 | closed |
+| G0 Design and approvals | 6 of 7 | open |
 | G1 Hall readiness | 8 of 8 | closed |
-| G2 Rack waves | 110 of 256 | open |
+| G2 Rack waves | 109 of 256 | open |
 | G3 Closeout | 0 of 4 | open |
 
 | Jira project | Partner | Issues | Done | In progress | Open |
@@ -745,7 +746,7 @@ Program work orders (rack work orders are listed on the tab):
 | DWO-B-0003 | G0-06 | Jira RSS-DEP-3 | 2026-05-22 15:55 UTC | 3 of 3 | yes |
 | DWO-B-0004 | G0-07 | Jira RSS-DEP-2 | 2026-05-24 16:21 UTC | 3 of 3 | yes |
 | DWO-B-0005 | G0-03 | Jira CCF-DEP-3 | 2026-06-12 17:30 UTC | 3 of 3 | yes |
-| DWO-B-0006 | G0-04 | Jira CCF-DEP-4 | 2026-07-08 14:56 UTC | 2 of 2 | yes |
+| DWO-B-0006 | G0-04 | Jira CCF-DEP-4 | 2026-07-08 14:56 UTC | 2 of 2 | no |
 | DWO-B-0007 | G0-05 | Customer record CUST-G0-05 | 2026-06-18 14:54 UTC | 3 of 3 | yes |
 | DWO-B-0008 | G1-01 | Jira CCF-DEP-6 | 2026-07-14 14:03 UTC | 2 of 2 | yes |
 | DWO-B-0009 | G1-02 | Jira CCF-DEP-7 | 2026-07-29 18:48 UTC | 4 of 4 | yes |
@@ -773,19 +774,36 @@ Inspection records:
 
 | Record | Step | By | When | Result | Note |
 |---|---|---|---|---|---|
-| INSP-B-001 | G0-04 | Williamson County Fire Marshal | 2026-07-08 10:16 UTC | pass | - |
-| INSP-B-002 | G1-03 | Coolant test laboratory | 2026-07-25 16:25 UTC | pass | - |
-| INSP-B-003 | G1-03 | Customer witness | 2026-07-25 16:33 UTC | pass | - |
-| INSP-B-004 | G1-02 | Electrical testing firm (NETA-accredited) | 2026-07-27 12:49 UTC | fail | Joint resistance above the manufacturer's limit on one A-side busway joint (row 3); re-torqued and retested. |
-| INSP-B-005 | G1-02 | Electrical testing firm (NETA-accredited) | 2026-07-29 12:49 UTC | pass | Retest passed. |
-| INSP-B-006 | G1-05 | Williamson County Fire Marshal | 2026-07-31 18:09 UTC | fail | Fire alarm final: one VESDA trouble signal did not report to the fire alarm panel; programming corrected and re-inspected. |
-| INSP-B-007 | G1-05 | Williamson County Fire Marshal | 2026-08-06 18:09 UTC | pass | Retest passed. |
-| INSP-B-008 | G1-07 | Customer witness | 2026-08-14 17:50 UTC | pass | - |
+| INSP-B-001 | G1-03 | Coolant test laboratory | 2026-07-25 16:25 UTC | pass | - |
+| INSP-B-002 | G1-03 | Customer witness | 2026-07-25 16:33 UTC | pass | - |
+| INSP-B-003 | G1-02 | Electrical testing firm (NETA-accredited) | 2026-07-27 12:49 UTC | fail | Joint resistance above the manufacturer's limit on one A-side busway joint (row 3); re-torqued and retested. |
+| INSP-B-004 | G1-02 | Electrical testing firm (NETA-accredited) | 2026-07-29 12:49 UTC | pass | Retest passed. |
+| INSP-B-005 | G1-05 | Williamson County Fire Marshal | 2026-07-31 18:09 UTC | fail | Fire alarm final: one VESDA trouble signal did not report to the fire alarm panel; programming corrected and re-inspected. |
+| INSP-B-006 | G1-05 | Williamson County Fire Marshal | 2026-08-06 18:09 UTC | pass | Retest passed. |
+| INSP-B-007 | G1-07 | Customer witness | 2026-08-14 17:50 UTC | pass | - |
 
 Determinations recorded:
 
 - TX-NEC (2026-06-12 17:30 UTC, G0-03): 2023 NEC: construction documents sealed before the 2026 NEC took effect in Texas on 2026-09-01.
 - TX-TABA (2026-07-08 14:56 UTC, G0-04): Registered with TDLR; Registered Accessibility Specialist plan review complete. Inspection after completion (G3-03).
+
+## Record checks
+
+Records that do not reconcile, found from the work orders alone. A missing signature counts once the step has been Done for 7 days. A finding means the records disagree, not that the work was not done; the work order names the records to compare.
+
+- **Done without every sign-off.** The partner's record says Done, and a role on the step's sign-off chain has still not signed after the window.
+- **Done without a passed inspection.** The partner's record says Done, and an inspection the step requires has no record, or only a failed one.
+- **Signed before the work was done.** A sign-off is dated before the time the partner's record gives for the work it accepts.
+- **Done before the step it depends on.** The work is recorded done before a step it depends on (for a rack, the same rack's step). For the Landlord's tap-off energization (HO-4) this is the Interface Agreement's handoff rule.
+
+| Check | Work order | Partner | Finding |
+|---|---|---|---|
+| Done without every sign-off | DWO-B-0042 | IT Partner | Jira RSS-DEP-32 shows R-M3 for rack B04 Done on 2026-09-07, but 20 days later the record has no sign-off from IT Partner quality control. The work order stays open until it is signed. |
+| Done without a passed inspection | DWO-B-0006 | Landlord | Jira CCF-DEP-4 shows G0-04 Done, but the required inspection (Plan review (construction, fire alarm, sprinkler as applicable), Williamson County Fire Marshal) has no inspection record. |
+| Signed before the work was done | DWO-B-0053 | IT Partner | IT Partner quality control signed R-M5 for rack B05 at 2026-09-10 20:56 UTC, 36 hours before Jira RSS-DEP-42 records the work as done. |
+| Done before the step it depends on | DWO-B-0027 | Landlord | Jira CCF-DEP-16 records R-HO4 for rack B02 done at 2026-09-04 19:51 UTC, but the step it depends on, R-M3 (Jira RSS-DEP-16), was done 2.5 hours later. The Interface Agreement lets the Landlord energize the tap-off only after the IT Partner confirms the rack is set and leak-tested. |
+
+Self-check: found **4 of 4** planted records, **0 false positives**. Decoys not flagged: 1 work order with signatures still inside the window, 2 inspections that failed and then passed on a retest, 1 tap-off energized minutes after its leak test. The checks cannot read the answer key.
 
 ## Sign-off roles
 

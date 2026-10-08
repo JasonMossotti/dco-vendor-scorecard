@@ -40,6 +40,7 @@ DOCS = [
     ("Failure pattern review", "reports/failure_patterns.md"),
     ("PUE report", "reports/pue_report.md"),
     ("GPU health review", "reports/gpu_health.md"),
+    ("Hall B deployment plan", "docs/deployments/DEPLOYMENT_PLAN.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
 ]
 
@@ -47,6 +48,7 @@ DOCS = [
 def facts() -> dict:
     """The overview's numbers, each from the module that renders the page it summarizes."""
     import render_alarms
+    import render_deployments
     import render_energy
     import render_gpu_health
     import render_patterns
@@ -65,6 +67,7 @@ def facts() -> dict:
     pat = render_patterns.prepare()
     en = render_energy.prepare()
     gh = render_gpu_health.prepare()
+    dp = render_deployments.prepare()
     from scorecard import tickets as T
     tk = T.build()
     start, end = sc["window"]["start"], sc["window"]["end"]
@@ -97,6 +100,11 @@ def facts() -> dict:
                    "findings": [x["title"] for x in en["findings"]]},
         "gpu": {"gpus": gh["gpus"], "fail": gh["watches"]["fail"], "warned": gh["warned"], "memory": len(gh["memory"]),
                 "findings": [x["title"] for x in gh["findings"]]},
+        "deploy": {"hall": dp["program"]["hall_name"], "racks": len(dp["racks"]["racks"]),
+                   "handed": dp["racks"]["counts"].get("handed off", 0) + dp["racks"]["counts"].get("handed off late", 0),
+                   "complete": sum(w["complete"] for w in dp["record"]["work_orders"]), "wos": len(dp["record"]["work_orders"]),
+                   "gates": [(g["gate"], g["closed"]) for g in dp["gate_status"]], "findings": len(dp["findings"]),
+                   "checks": sorted({x["check"] for x in dp["findings"]})},
     }
 
 
@@ -120,6 +128,7 @@ def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: l
 
 def body(f: dict) -> str:
     it, ll, al, pir, pat, tk, en, gh = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"], f["energy"], f["gpu"]
+    dp = f["deploy"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
         '<div class="partners">'
@@ -191,6 +200,13 @@ def body(f: dict) -> str:
              [(f"{gh['gpus']:,}", "GPUs reporting"), (str(gh["fail"]), "Fail watches"), (f"{gh['warned']} of {gh['memory']}", "memory errors warned ahead")],
              [("Open GPU health", "gpu/")],
              ("; ".join(gh["findings"]) + ".") if gh["findings"] else "Every GPU passed every check."),
+        tile("deployments", "Deployments",
+             f"The {dp['hall']} GB300 rollout: gates, steps, calculations, permits, and one work order per task from both "
+             "partners' Jira projects, complete only when signed and inspected.",
+             [(f"{dp['handed']} of {dp['racks']}", "racks handed off (measured)"), (f"{dp['complete']} of {dp['wos']}", "work orders complete"),
+              (str(dp["findings"]), "records do not reconcile")],
+             [("Open the program", "deployments/"), ("Record checks", "deployments/#checks")],
+             "Gates: " + ", ".join(f"{g} {'closed' if c else 'open'}" for g, c in dp["gates"]) + "."),
     ]
     docs = "".join(f'<li><a href="{p if p.endswith("/") else BLOB + p}">{escape(t)}</a></li>' for t, p in DOCS)
     return (

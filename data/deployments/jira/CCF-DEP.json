@@ -479,7 +479,7 @@
     "parent": {
      "key": "CCF-DEP-14"
     },
-    "resolutiondate": "2026-09-05T07:11:26.000+0000",
+    "resolutiondate": "2026-09-04T19:51:48.000+0000",
     "status": {
      "name": "Done",
      "statusCategory": {
@@ -487,7 +487,7 @@
      }
     },
     "summary": "R-HO4 B02: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
-    "updated": "2026-09-05T07:11:26.000+0000"
+    "updated": "2026-09-04T19:51:48.000+0000"
    },
    "id": "41016",
    "key": "CCF-DEP-16"
@@ -735,7 +735,7 @@
     "parent": {
      "key": "CCF-DEP-14"
     },
-    "resolutiondate": "2026-09-16T10:35:18.000+0000",
+    "resolutiondate": "2026-09-16T04:32:20.000+0000",
     "status": {
      "name": "Done",
      "statusCategory": {
@@ -743,7 +743,7 @@
      }
     },
     "summary": "R-HO4 B10: Energize tap-offs and open isolation valves (Interface Agreement HO-4)",
-    "updated": "2026-09-16T10:35:18.000+0000"
+    "updated": "2026-09-16T04:32:20.000+0000"
    },
    "id": "41024",
    "key": "CCF-DEP-24"

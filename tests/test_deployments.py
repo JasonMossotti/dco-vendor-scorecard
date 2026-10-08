@@ -191,9 +191,22 @@ from scorecard.synthetic import deployments as SD  # noqa: E402
 REC = ROOT / "data" / "deployments"
 
 
+KEY = json.loads((REC / "answer_key.json").read_text(encoding="utf-8"))
+PLANTED = {(k["step"], k["rack"]): k["kind"] for k in KEY["planted"]}
+
+
 @pytest.fixture(scope="module")
 def issues():
     return J.load_dir(REC / "jira")
+
+
+@pytest.fixture(scope="module")
+def clean(tmp_path_factory):
+    """The same program with nothing planted: every natural record must pass every check."""
+    d = tmp_path_factory.mktemp("clean")
+    window = json.loads((ROOT / "data" / "sample" / "manifest.json").read_text(encoding="utf-8"))["window"]
+    SD.write_deployments(SD.DeploymentRecordLayer(ROOT / "data" / "sample", window["seed"], plant=False).run(), d)
+    return D.build(rec_dir=d)
 
 
 def test_committed_record_is_current(tmp_path):
@@ -224,7 +237,10 @@ def test_landlord_energizes_between_leak_test_and_power_on(issues):
     ho4 = [(r, t) for (r, s), t in done.items() if s == "R-HO4"]
     assert len(ho4) == 14
     for rack, t in ho4:
-        assert done[(rack, "R-M3")] < t < done[(rack, "R-M4")]
+        if PLANTED.get(("R-HO4", rack)) == "out_of_order":
+            assert t < done[(rack, "R-M3")], "the planted case energizes before the leak test"
+        else:
+            assert done[(rack, "R-M3")] < t < done[(rack, "R-M4")]
     assert all(i["project"] == "CCF-DEP" for i in issues if i["step"] == "R-HO4")
 
 
@@ -280,15 +296,19 @@ def test_complete_needs_done_signed_and_inspected(built):
         signed = all(x["signed_at"] for x in w["signoffs"])
         inspected = all(i["result"] == "pass" for i in w["inspections_required"])
         assert w["complete"] == (w["state"] == "done" and signed and inspected)
-    pending = [w for w in built["record"]["work_orders"] if w["state"] == "done" and not w["complete"]]
-    assert [(w["step"], w["rack"]) for w in pending] == [("R-M6", "B14")]
+    pending = {(w["step"], w["rack"]) for w in built["record"]["work_orders"] if w["state"] == "done" and not w["complete"]}
+    planted = {k for k, kind in PLANTED.items() if kind in ("unsigned", "uninspected")}
+    assert pending == {("R-M6", "B14")} | planted, "B14's burn-in awaits sign-off inside the window; the rest are planted"
 
 
-def test_gate_status(built):
+def test_gate_status(built, clean):
     gs = {g["gate"]: g for g in built["gate_status"]}
-    assert gs["G0"]["closed"] and gs["G1"]["closed"]
-    assert (gs["G2"]["complete"], gs["G2"]["total"], gs["G2"]["closed"]) == (110, 256, False)
+    assert not gs["G0"]["closed"] and gs["G1"]["closed"], "G0-04's plan review record is the planted gap"
+    assert (gs["G0"]["complete"], gs["G0"]["total"]) == (6, 7)
+    assert (gs["G2"]["complete"], gs["G2"]["total"], gs["G2"]["closed"]) == (109, 256, False)
     assert (gs["G3"]["complete"], gs["G3"]["total"]) == (0, 4)
+    cg = {g["gate"]: g for g in clean["gate_status"]}
+    assert cg["G0"]["closed"] and cg["G1"]["closed"] and cg["G2"]["complete"] == 110
 
 
 def test_hall_ready_before_the_first_rack(built):
@@ -298,12 +318,14 @@ def test_hall_ready_before_the_first_rack(built):
     for w in built["record"]["work_orders"]:
         for a in next(s for s in built["steps"] if s["id"] == w["step"])["after"]:
             pred = wos.get((a, w["rack"])) or wos.get((a, None))
-            if w["done"] and pred:
+            if w["done"] and pred and PLANTED.get((w["step"], w["rack"])) != "out_of_order":
                 assert pred["done"] and pred["done"] <= w["done"], (w["id"], a)
 
 
 def test_signoffs_in_order_after_the_work(built):
     for w in built["record"]["work_orders"]:
+        if (w["step"], w["rack"]) in PLANTED:
+            continue
         times = [x["signed_at"] for x in w["signoffs"] if x["signed_at"]]
         assert times == sorted(times) and all(w["done"] and t >= w["done"] for t in times)
         assert [x["signed_at"] is not None for x in w["signoffs"]] == sorted((x["signed_at"] is not None for x in w["signoffs"]), reverse=True)
@@ -329,3 +351,59 @@ def test_nec_edition_by_design_date(built):
     nec = next(d for d in built["record"]["determinations"] if d["id"] == "TX-NEC")
     sealed = next(w for w in built["record"]["work_orders"] if w["step"] == "G0-03")["done"]
     assert sealed < "2026-09-01" and nec["result"].startswith("2023 NEC")
+
+
+# ------------------------------------------------------------------------------------------ record checks
+def test_checks_find_every_planted_record_and_nothing_else(built):
+    c = built["self_check"]
+    assert (c["detected"], c["planted"], c["false_positives"]) == (4, 4, [])
+    assert {f["kind"] for f in built["findings"]} == set(D.CHECKS) and len(built["findings"]) == 4
+    assert c["decoys"] == {"signatures_pending_in_window": 1, "inspections_failed_then_passed": 2, "handoff_minutes_after_leak_test": 1}
+
+
+def test_a_clean_program_has_no_findings(clean):
+    """Signatures inside the window, failed-then-passed inspections, and a tap-off energized minutes after the leak
+    test are all in the natural record; none is a finding."""
+    assert clean["findings"] == [] and clean["self_check"]["planted"] == 0
+
+
+def test_findings_name_the_records_to_compare(built):
+    by = {f["kind"]: f for f in built["findings"]}
+    ho4 = by["out_of_order"]
+    assert ho4["step"] == "R-HO4" and ho4["partner"] == "Landlord" and "Interface Agreement" in ho4["text"]
+    assert len(ho4["refs"]) == 2 and ho4["refs"][0].startswith("CCF-DEP-") and ho4["refs"][1].startswith("RSS-DEP-")
+    assert "Fire Marshal" in by["uninspected"]["text"] and "no inspection record" in by["uninspected"]["text"]
+    assert "days later" in by["unsigned"]["text"] and "hours before" in by["signed_early"]["text"]
+    assert all(f["known_at"] for f in built["findings"])
+
+
+def test_checks_never_read_the_answer_key():
+    import inspect
+    for fn in (D.checks, D.records, D.gate_status):
+        assert "answer_key" not in inspect.getsource(fn)
+
+
+def test_planting_has_its_own_stream():
+    import inspect
+    src = inspect.getsource(SD.DeploymentRecordLayer)
+    assert ':deployments:planted"' in src and "self.prng" in inspect.getsource(SD.DeploymentRecordLayer._plant_records)
+
+
+def test_robustness_small(capsys):
+    assert render_deployments.robustness(3) == 0, capsys.readouterr().out
+
+
+def test_weekly_pack_reconciles_with_the_tab(built):
+    import render_weekly
+    weeks = render_weekly.packs()
+    last = weeks[-1]["deploy"]
+    assert last["to_date"] == sum(w["complete"] for w in built["record"]["work_orders"])
+    assert last["findings"] == len(built["findings"])
+    assert sum(w["deploy"]["week"] for w in weeks) == last["to_date"] - weeks[0]["deploy"]["to_date"] + weeks[0]["deploy"]["week"]
+
+
+def test_overview_tile():
+    import render_hub
+    f = render_hub.facts()["deploy"]
+    assert (f["handed"], f["racks"], f["findings"]) == (13, 32, 4)
+    assert 'data-tile="deployments"' in render_hub.body(render_hub.facts())

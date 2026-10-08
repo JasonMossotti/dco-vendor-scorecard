@@ -19,6 +19,9 @@ nav.tree a { display:block; padding:3px 12px; color:var(--ink); text-decoration:
 nav.tree a:hover { background:var(--panel); }
 nav.tree a.on { background:#e8f0fc; color:var(--it); font-weight:600; border-left-color:var(--it); }
 nav.tree a small { color:var(--muted); margin-left:4px; }
+nav.tree li:has(> small) { display:flex; align-items:baseline; }
+nav.tree li:has(> small) > a { flex:1; }
+nav.tree li > small { color:var(--muted); padding-right:12px; }
 nav.tree details > summary { cursor:pointer; padding:3px 12px; list-style:none; }
 nav.tree details > summary::-webkit-details-marker { display:none; }
 nav.tree details > summary::before { content:"▸"; display:inline-block; width:14px; color:var(--muted); }
@@ -39,7 +42,7 @@ main a { color:var(--it); }
 .tag.ok { color:var(--ok); border-color:#b7dfc4; background:#eef8f1; }
 .tag.bad { color:var(--bad); border-color:#f3c1bc; background:#fdf1f0; }
 .tag.warn { color:var(--warn); border-color:#ecd59a; background:#fdf8e8; }
-.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:12px 0; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin:12px 0; }
 .card { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--panel); }
 .card b { display:block; font-size:22px; }
 .card a { text-decoration:none; }
@@ -48,6 +51,7 @@ ol.proc li, ul.acc li { margin:3px 0; }
 .chain span.arrow { color:var(--muted); }
 .disclaimer { font-size:13px; color:var(--muted); border-left:3px solid var(--line); padding-left:10px; margin:10px 0; }
 .scroll { overflow-x:auto; }
+p.finding { border-left:3px solid var(--bad); padding:4px 10px; background:#fdf1f0; border-radius:4px; }
 @media (max-width:860px) { .wrap { grid-template-columns:1fr; } nav.tree { position:static; max-height:45vh; } main { padding:16px 14px; } }
 @media print { nav.tree, header.top { display:none; } .wrap { display:block; } }
 </style>
@@ -62,10 +66,10 @@ __SITENAV__
   <nav class="tree" id="tree" aria-label="Deployment documents and workflows"></nav>
   <main id="main" aria-live="polite"></main>
 </div>
-<script type="application/json" id="dep-data">__DATA__</script>
+<script id="data" type="application/json">__DATA__</script>
 <script>
 (function () {
-  const B = JSON.parse(document.getElementById("dep-data").textContent);
+  const B = JSON.parse(document.getElementById("data").textContent);
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   const role = r => esc((B.roles[r] || {name: r}).name);
   const org = r => esc((B.roles[r] || {org: ""}).org);
@@ -79,7 +83,10 @@ __SITENAV__
   const WO_ID = Object.fromEntries(WO.map(w => [w.id, w]));
   const WO_AT = Object.fromEntries(WO.map(w => [w.step + "|" + (w.rack || ""), w]));
   const GS = Object.fromEntries(B.gate_status.map(g => [g.gate, g]));
-  const WO_TAG = w => w.complete ? tag("complete", "ok") : w.state === "done" ? tag("done, not signed off", "warn") : tag(w.state, w.state === "in progress" ? "warn" : "");
+  const FIND = B.findings, FIND_WO = {};
+  FIND.forEach(f => (FIND_WO[f.wo] = FIND_WO[f.wo] || []).push(f));
+  const WO_TAG = w => (w.complete ? tag("complete", "ok") : w.state === "done" ? tag("done, not signed off", "warn") : tag(w.state, w.state === "in progress" ? "warn" : ""))
+    + (FIND_WO[w.id] ? " " + tag("does not reconcile", "bad") : "");
   const PERMIT_TAG = {"finaled": "ok", "issued": "ok", "not required": ""};
   const WAVES = [...new Set(RACKS.map(r => r.wave))].sort((a, b) => a - b);
   const STATE_TAG = {"handed off": "ok", "handed off late": "bad", "late": "bad", "in progress": "warn", "not received": ""};
@@ -109,6 +116,7 @@ __SITENAV__
     h += `<div class="sec">Compliance</div><ul><li>${link("permits", "Authority and permits")}</li><li>${link("statewide", "Statewide determinations")}</li>`
        + `<li>${link("inspections", "Inspections")}</li><li>${link("signoff", "Sign-off matrix")}</li></ul>`;
     h += `<div class="sec">Records</div><ul><li>${link("workorders", "Deployment work orders")} <small>${esc(WO.length)}</small></li>`
+       + `<li>${link("checks", "Record checks")} <small>${esc(FIND.length)}</small></li>`
        + Object.keys(R.projects).map(k => `<li>${link("jira/" + k, "Jira " + k)} <small>${esc(R.projects[k].issues)}</small></li>`).join("") + `</ul>`;
     h += `<div class="sec">Library</div><ul><li>${link("docs", "Documents")}</li><li>${link("standards", "Standards and sources")}</li></ul>`;
     document.getElementById("tree").innerHTML = h;
@@ -125,7 +133,8 @@ __SITENAV__
       + `<div class="card"><a href="#wave/1"><b>${esc((c["handed off"] || 0) + (c["handed off late"] || 0))} of ${esc(total)}</b></a>racks at Validated Handoff (measured)</div>`
       + `<div class="card"><b>${esc((c["handed off late"] || 0) + (c.late || 0))}</b>late against the committed date</div>`
       + `<div class="card"><b>${esc(c["in progress"] || 0)}</b>in progress · ${esc(c["not received"] || 0)} not received</div>`
-      + `<div class="card"><a href="#calc"><b>${esc(ctl)}</b></a>peak checks that need the rack power limit</div></div>`;
+      + `<div class="card"><a href="#calc"><b>${esc(ctl)}</b></a>peak checks that need the rack power limit</div>`
+      + `<div class="card"><a href="#checks"><b>${esc(FIND.length)}</b></a>records that do not reconcile</div></div>`;
     h += `<h2 class="sec">Gates</h2><table><thead><tr><th>Gate</th><th>Owner</th><th>Steps</th><th>Work orders complete</th><th>State</th><th>Exit criteria</th></tr></thead><tbody>`;
     for (const g of B.gates) {
       const n = B.steps.filter(s => s.gate === g.id).length, st = GS[g.id];
@@ -206,7 +215,23 @@ __SITENAV__
     const w = WO_ID[id];
     if (!w) return null;
     const s = STEP[w.step];
-    return `<div class="kind">Deployment work order · ${esc(w.gate)}</div><h1>${esc(w.id)}</h1><p class="sub">${link("step/" + s.id, s.id + " " + s.name)}${w.rack ? " · rack " + link("rack/" + w.rack, w.rack) : ""}</p>` + woBody(w);
+    const fs = FIND_WO[w.id] || [];
+    return `<div class="kind">Deployment work order · ${esc(w.gate)}</div><h1>${esc(w.id)}</h1><p class="sub">${link("step/" + s.id, s.id + " " + s.name)}${w.rack ? " · rack " + link("rack/" + w.rack, w.rack) : ""}</p>`
+      + fs.map(f => `<p class="finding">${tag(f.check, "bad")} ${esc(f.text)}</p>`).join("") + woBody(w);
+  }
+
+  function checks() {
+    const c = B.self_check;
+    let h = `<div class="kind">Records</div><h1>Record checks</h1><p class="sub">Records that do not reconcile, found from the work orders alone. A missing signature counts once the step has been Done for ${esc(B.signoff_window_days)} days. A finding means the records disagree, not that the work was not done; open the work order to compare them.</p>`;
+    h += `<table><thead><tr><th>Check</th><th>Work order</th><th>Partner</th><th>Finding</th></tr></thead><tbody>`
+      + (FIND.length ? FIND.map(f => `<tr><td>${tag(f.check, "bad")}</td><td>${link("dwo/" + f.wo, f.wo)}</td><td>${esc(f.partner)}</td><td>${esc(f.text)}</td></tr>`).join("")
+        : `<tr><td colspan="4">No findings.</td></tr>`) + `</tbody></table>`;
+    h += `<h2 class="sec">What each check compares</h2><ul>` + Object.entries(B.check_names).map(([k, v]) => `<li><b>${esc(v)}.</b> ${esc(B.check_help[k])}</li>`).join("") + `</ul>`;
+    if (c) {
+      const d = c.decoys, n = (x, one, many) => `${esc(x || 0)} ${(x || 0) === 1 ? one : many}`;
+      h += `<p class="note">Self-check: found ${esc(c.detected)} of ${esc(c.planted)} planted records, ${esc(c.false_positives.length)} false positives. Decoys not flagged: ${n(d.signatures_pending_in_window, "work order with signatures still inside the window", "work orders with signatures still inside the window")}, ${n(d.inspections_failed_then_passed, "inspection that failed and then passed on a retest", "inspections that failed and then passed on a retest")}, ${n(d.handoff_minutes_after_leak_test, "tap-off energized minutes after its leak test", "tap-offs energized minutes after their leak tests")}. The checks cannot read the answer key.</p>`;
+    }
+    return h;
   }
 
   function workorders(arg) {
@@ -359,7 +384,7 @@ __SITENAV__
 
   // ----------------------------------------------------------------- router
   // A Map, not an object: a name from the link can only reach these views, never a prototype method.
-  const VIEWS = new Map(Object.entries({overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards, dwo, workorders, jira}));
+  const VIEWS = new Map(Object.entries({overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards, dwo, workorders, jira, checks}));
   function show() {
     let raw;
     try { raw = decodeURIComponent(location.hash.slice(1)) || "overview"; } catch (e) { raw = "overview"; }

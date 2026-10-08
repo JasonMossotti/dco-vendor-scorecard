@@ -182,6 +182,25 @@ terms:
   - {term: MV-B, type: equipment, title: "Medium-voltage bus B", text: "The other 13.8 kV switchgear bus. The B feeds of the halls trace back to it."}
   - {term: Z10, type: safety, title: "ANSI/ASSP Z10.0", text: "The US standard for occupational health and safety management systems, accepted in place of ISO 45001."}
   - {term: RS-485, type: acronym, expansion: "RS-485 (serial line standard)", text: "A two-wire serial link used by Modbus RTU devices such as the leak detection modules."}
+  # --- Deployments: codes, standards, and Texas authorities (Deployments tab)
+  - {term: NEC, type: safety, title: "National Electrical Code (NFPA 70)", text: "The US electrical installation code. Texas adopted the 2026 edition effective 2026-09-01; work designed or permitted before that is under the 2023 edition (TX-NEC)."}
+  - {term: NETA, type: acronym, expansion: InterNational Electrical Testing Association, text: "Publishes the acceptance testing specifications (ANSI/NETA ATS) that third-party testers follow for breakers, busway, and tap-offs before energization."}
+  - {term: ATS, type: safety, title: "ANSI/NETA Acceptance Testing Specifications", pages: [deployments], text: "The electrical acceptance test standard (current edition ATS-2025): insulation resistance, torque, contact resistance, and an infrared scan under load, recorded on a NETA test report."}
+  - {term: ATS-2025, type: safety, title: "ANSI/NETA ATS-2025", text: "The current edition of the NETA Acceptance Testing Specifications, used for the Hall B power commissioning (G1-02)."}
+  - {term: ASHRAE, type: acronym, expansion: "American Society of Heating, Refrigerating and Air-Conditioning Engineers", text: "Publisher of Guideline 0 (the commissioning process behind levels L1 to L5) and the thermal guidelines for data centers."}
+  - {term: TIA-942-C, type: safety, title: "ANSI/TIA-942-C (2024)", text: "The data center telecommunications infrastructure standard, used for the cabling plan, labeling, and pathways."}
+  - {term: TDLR, type: acronym, expansion: Texas Department of Licensing and Regulation, text: "The state agency that adopts the Texas electrical code, licenses electricians, and runs the Architectural Barriers program (TX-TABA)."}
+  - {term: TAC, type: acronym, expansion: Texas Administrative Code, text: "The state's compiled agency rules; 16 TAC chapter 73 holds the electrical rules that adopt the NEC."}
+  - {term: PUCT, type: acronym, expansion: Public Utility Commission of Texas, text: "The state utility regulator, which sets the large-load interconnection rules under SB 6 (TX-SB6)."}
+  - {term: SB, type: acronym, expansion: "Senate Bill", pages: [deployments], text: "A Texas Senate bill. SB 6 (2025) sets rules for large loads of 75 MW or more (TX-SB6)."}
+  - {term: APS, type: acronym, expansion: Alarm planning superintendent, text: "A Texas State Fire Marshal's Office license: fire alarm plans are signed by a licensed APS or sealed by a fire protection engineer."}
+  - {term: PE, type: acronym, expansion: Professional engineer, text: "A licensed engineer; in Texas a PE seals the construction documents and load calculations (the Landlord's engineer of record)."}
+  - {term: PF, type: acronym, expansion: Power factor, text: "The ratio of real to apparent power; the calculation sheet converts rack kW to amps at 480 V with PF 0.99."}
+  - {term: NIC, type: acronym, expansion: Network interface card, text: "A server's network adapter; each GB300 tray has one per fabric rail."}
+  - {term: CCF-DEP, type: record, title: "Landlord's Jira project for the Hall B fit-out", text: "Caprock's own Jira project for the hall readiness work it runs or coordinates and each rack's tap-off energization (HO-4). Read through the importer, never written.", see: "deployments/#jira/CCF-DEP"}
+  - {term: RSS-DEP, type: record, title: "IT Partner's Jira project for the Hall B rack deployment", text: "Ridgeline's own Jira project: one story per rack with a sub-task per milestone M1 to M7. Read through the importer, never written.", see: "deployments/#jira/RSS-DEP"}
+  - {term: DEP-B-GB300, type: record, title: "Hall B GB300 rollout program", text: "The deployment program for Hall B's 32 GB300 NVL72 racks: gates G0 to G3, their steps, calculations, permits, and records.", see: "deployments/"}
+  - {term: R-HO4, type: rule, title: "Tap-off energization (Interface Agreement HO-4)", text: "The Landlord energizes the rack's tap-off and opens its isolation valves only after the IT Partner confirms the rack is set and leak-tested (M3). A rack step between M3 and M4.", see: "deployments/#step/R-HO4"}
   # --- Products and models named in the site model
   - {term: NVIDIA, type: product, link: false, title: "GPU and network vendor", text: "Makes the GB200 and GB300 NVL72 racks, the NVLink switches, and the InfiniBand fabric."}
   - {term: GB200, type: product, title: "GB200 NVL72 rack", text: "A rack-scale GPU system: 72 GPUs and 36 Grace CPUs joined by NVLink, direct-to-chip liquid cooled. Hall A runs 32 of them."}
@@ -259,6 +278,31 @@ families:
      text: "A numbered example event in an SLA's worked safety credit example (Appendix B)."}
   - {key: SHEET, label: "A-###, E-###, M-###, D-###", pattern: '[AEMD]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site],
      text: "A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical, D for equipment details (one representative sheet per product, typical of every unit of it)."}
+  # --- Deployments (Deployments tab)
+  - {key: DEP-GATE, label: "G#", pattern: 'G[0-3]', type: record, title: Deployment gate, example: G1, pages: [deployments, overview, weekly], see: "deployments/",
+     text: "A gate in the Hall B rollout: G0 design and approvals, G1 hall readiness, G2 rack deployment, G3 closeout. A gate closes when every work order in it is complete."}
+  - {key: DEP-STEP, label: "G#-##", pattern: 'G[0-3]-\d{2}', type: record, title: Deployment program step, example: G1-02, see: "deployments/",
+     text: "A step of a gate, with its procedure, acceptance criteria, records, sign-off roles, and inspections (config/deployments.yaml)."}
+  - {key: DEP-RSTEP, label: "R-M#", pattern: 'R-M[1-7]', type: record, title: Rack deployment step, example: R-M3, see: "deployments/#gate/G2",
+     text: "A step done once per rack, following the IT Partner SLA's milestones M1 (received) to M7 (Validated Handoff)."}
+  - {key: CX-L, label: "L1 to L5", pattern: 'L[1-5]', type: safety, title: Commissioning level, example: L4, pages: [deployments],
+     text: "The commissioning levels: L1 factory witness test, L2 receipt inspection, L3 installation and start-up checks, L4 functional test of each system, L5 integrated systems test."}
+  - {key: DWO, label: "DWO-B-####", pattern: 'DWO-B-\d{4}', type: record, title: Deployment work order, example: DWO-B-0001, see: "deployments/#workorders",
+     text: "One unit of deployment work (a program step, or a rack step for one rack) built from the partner's Jira issue or the Customer's record. Complete only when done, signed by every role, and every required inspection passed."}
+  - {key: JIRA-DEP, label: "CCF-DEP-#, RSS-DEP-#", pattern: '(?:CCF|RSS)-DEP-\d+', type: record, title: Partner Jira issue, example: CCF-DEP-4,
+     text: "An issue in a partner's own Jira project (CCF-DEP: Landlord; RSS-DEP: IT Partner), as its export shows it. A Jira Done is the partner's claim."}
+  - {key: CUST-STEP, label: "CUST-G#-##", pattern: 'CUST-G[0-3]-\d{2}', type: record, title: Customer step record, example: CUST-G0-01,
+     text: "The Customer's own record of a program step it performs (a decision or approval), kept outside the partners' Jira projects."}
+  - {key: INSP-B, label: "INSP-B-###", pattern: 'INSP-B-\d{3}', type: record, title: Inspection record, example: INSP-B-001, see: "deployments/#inspections",
+     text: "One inspection result (pass or fail) by an internal, third-party, or authority inspector, on a deployment step."}
+  - {key: DEP-DOC, label: "DEP-B-XX-##", pattern: 'DEP-B-[A-Z]{2,4}(?:-[A-Z]{0,2}\d+)+', type: record, title: Deployment document, example: DEP-B-RK-01, see: "deployments/#docs",
+     text: "A controlled document of the Hall B rollout (procedure, test script, or report template), one per step, with its revision."}
+  - {key: AHJ-PERMIT, label: "AHJ-FM-XX", pattern: 'AHJ-FM-[A-Z]+(?:-\d{2}-\d{4})?', type: safety, title: Fire Marshal permit, example: AHJ-FM-CON, see: "deployments/#permits",
+     text: "A permit from the authority having jurisdiction (AHJ), here the Williamson County Fire Marshal: construction (CON), fire alarm (FA), sprinkler (SPK), and the Certificate of Compliance (COC). With a number (AHJ-FM-CON-26-6930), the fictional permit issued."}
+  - {key: TX-ITEM, label: "TX-XX", pattern: 'TX-(?:NEC|TABA|SB6)', type: safety, title: Texas statewide requirement, example: TX-NEC, see: "deployments/#statewide",
+     text: "A statewide item the program records a determination for: the Texas electrical code edition (TX-NEC), the Architectural Barriers Act (TX-TABA), and large-load interconnection under SB 6 (TX-SB6)."}
+  - {key: EQ-PG, label: "PG-[hall]#", pattern: 'PG-[A-C]\d', type: equipment, title: Power group, example: PG-B1,
+     text: "A group of racks fed by one pair of A and B busways; the calculation sheet checks each group's load against its busway and UPS."}
   # --- Records that only mean something on one page
   - {key: PIR-A, label: "A# (post-incident review)", pattern: 'A\d', type: record, title: Post-incident review action, example: A3,
      pages: [pir, weekly], text: "An owned, dated action from the post-incident review, carried into the weekly pack until done."}
@@ -319,8 +363,10 @@ plain:   # capitalised text that is not a code
     - {terms: [MOCK, ILLUSTRATIVE], why: "The contracts' status banner: fictional and illustrative."}
     - {terms: [ONLY, OK, LIVE], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
+    - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
     - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}
   patterns:
     - {pattern: '[A-C]-?\d{2}', why: "A rack position (A07 is Hall A, rack 7); the site drawings show where each is."}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}
     - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}
+    - {pattern: 'B[1-4]', why: "Shorthand for CDU-B1 to CDU-B4 in a deployment step.", pages: [deployments]}

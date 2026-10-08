@@ -1,0 +1,32 @@
+{
+ "decoys": {
+  "handoff_minutes_after_leak_test": 1,
+  "inspections_failed_then_passed": 2,
+  "signatures_pending_in_window": 1
+ },
+ "planted": [
+  {
+   "kind": "out_of_order",
+   "rack": "B02",
+   "step": "R-HO4"
+  },
+  {
+   "kind": "unsigned",
+   "rack": "B04",
+   "role": "it-qa",
+   "step": "R-M3"
+  },
+  {
+   "by": "ahj-fm",
+   "kind": "uninspected",
+   "rack": null,
+   "step": "G0-04"
+  },
+  {
+   "kind": "signed_early",
+   "rack": "B05",
+   "role": "it-qa",
+   "step": "R-M5"
+  }
+ ]
+}
