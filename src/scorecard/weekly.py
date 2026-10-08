@@ -296,7 +296,7 @@ def _ehs(d: WeeklyData, ws: datetime, we: datetime, actions: list[dict]) -> dict
     injuries, events, open_inv = 0, [], []
     for rv in d.reviews:
         f, r = rv["facts"], rv["review"]
-        if ws <= _t(f["power_lost"]) < we:
+        if ws <= _t(f["start"]) < we:
             injuries += r["ehs"]["injuries"]
             events.append({"pir": r["id"], "screening": r["ehs"]["screening"]})
         if r.get("review_meeting") and r["review_meeting"] < _iso(we)[:10]:

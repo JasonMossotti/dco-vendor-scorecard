@@ -159,6 +159,7 @@ terms:
   - {term: NCCL, type: acronym, expansion: Collective communications library, text: "The GPU vendor's library for multi-GPU communication; an NCCL all-reduce test checks a rack's bandwidth."}
   - {term: NMX, type: acronym, expansion: NVLink management software, text: "Manages and reports on the NVLink switches inside the racks; the source for DS-NMX."}
   - {term: UFM, type: acronym, expansion: Unified Fabric Manager, text: "Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM."}
+  - {term: IB, type: acronym, expansion: InfiniBand, text: "The back-end network between compute trays and the leaf switches. The scheduler writes a lost link as 'IB link down'."}
   - {term: HCA, type: acronym, expansion: Host channel adapter, text: "The InfiniBand network card in a compute tray."}
   - {term: NDR, type: acronym, expansion: "Next data rate (InfiniBand, 400 Gb/s)", text: "An InfiniBand speed generation."}
   - {term: XDR, type: acronym, expansion: "Extended data rate (InfiniBand, 800 Gb/s)", text: "An InfiniBand speed generation."}

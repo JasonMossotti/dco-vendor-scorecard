@@ -33,7 +33,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Scorecards](#scorecards) | What did each partner report, and what does the telemetry say? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/app/) |
 | [Alarm Board](#alarm-board) | Which alarms are expected from approved change work, and which are not? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/) |
 | [Incident Portal](#incident-portal) | What do the partners' own tickets and work orders say, record by record? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/) |
-| [Post-Incident Review](#post-incident-review) | What happened at rack A07, why, and what are we doing about it? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) |
+| [Post-Incident Review](#post-incident-review) | What happened in an event, why, and what are we doing about it? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) |
 | [Weekly Review](#weekly-operations-review) | What do we discuss with both partners this week? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) |
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
@@ -126,22 +126,24 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 - `src/scorecard/tickets.py` assembles each record from the dataset. Tickets and work orders reuse the post-incident review's timeline builder (`pir.build_review`); changes add the rack's Redfish inventory changes; MOPs add their work orders and PM tasks; PM tasks add the engineer's badge entries.
 - The measurement comes from the same scorecard JSON the app shows, so the portal and the scorecards cannot disagree.
 - Every INC, CHG, WO, MOP, and PM number anywhere on the site links here (`#INC3900001`), including inside the Scorecards app.
+- Every record carries **Start post-incident review**, which opens the review form filled from that record's own facts, or a link to the completed review when there is one.
 - The access itself is a contract term: Records access (RA-1 to RA-6) in both SLAs requires a read-only API account, the full record history and field edit log, and data no more than 15 minutes old. The portal only reads, and shows people by person ID.
 
 ## Post-Incident Review
 
 ![Post-incident review of the rack A07 outage](docs/images/pir.png)
 
-**What it shows.** A standardized, blameless review form built on Google SRE practice and the Uptime Institute's Outage Severity Rating, with two tabs:
+**What it shows.** A standardized, blameless review form built on Google SRE practice and the Uptime Institute's Outage Severity Rating, with three tabs:
 
-- **Example: Rack A07**, the completed review of the cross-partner outage. Page one answers four questions in plain language for any reader (what happened, who was affected, why, what we are doing), then an impact strip and a swimlane timeline that shows the Landlord's time and the IT Partner's time in different colors.
-- **Blank form**: enter any P1 or P2 ticket or work order number and every factual field fills from the data; narratives, factors, and actions stay editable.
+- **Reviews**: every completed review and every draft, searchable by event date range, record number, and device name. A record number matches the review's own record and everything related to it, so searching a work order number finds the review of its incident; a device name matches the devices the record names, and optionally anything one connection away in the device directory, so a rack's compute tray finds the review of its rack.
+- **Review**: a completed review, four of them so far: the cross-partner rack A07 outage, a CDU that lost pump redundancy and was closed three hours early in the records, an NVLink switch tray failure that drained a rack, and a utility outage the generators carried. Page one answers four questions in plain language for any reader (what happened, who was affected, why, what we are doing), then an impact strip and a swimlane timeline that shows each party's time in its own color.
+- **Blank form**: enter any record number, or press **Start post-incident review** on any record in the Incident Portal, and every factual field fills from the data: times, response against the right partner's targets for that priority, the timeline with each source record, attribution, measurement, findings, and related records. Narratives, factors, and actions stay editable, drafts save as you type in your own browser, and **Export YAML** gives the file a signed-off review is committed as.
 
 ![Impact strip and timeline at a glance](docs/images/pir-timeline.png)
 
 The technical sections follow: response against targets, every alarm and event reproduced exactly from its source record, the attribution decision, contract and EHS consequences, contributing factors (classified the way Uptime classifies human-error outages), lessons including where we got lucky, owned and dated action items, the communications log, a repeat-event check, and sign-off. A plain-language toggle hides the technical sections for leadership; the review prints to PDF or exports to Markdown.
 
-**How it works.** Facts come from the data, judgment comes from people. `src/scorecard/pir.py` builds every time, duration, and source record from the dataset; the written part lives in `pir/reviews/PIR-2026-001.yaml`. Tests hold the prose to the facts: every time, duration, and count must match the telemetry, every source record must be reproduced exactly, and the review may not name an individual. `scripts/render_pir.py` writes the page and [`docs/pir/PIR-2026-001.md`](docs/pir/PIR-2026-001.md); a jsdom browser test exercises the page in CI.
+**How it works.** Facts come from the data, judgment comes from people. `src/scorecard/pir.py` builds every time, duration, and source record from the dataset, for any of the 119 records the Incident Portal holds: a rack losing power is measured from the power loss through the handoff (FA-3) to the return to service, any other incident or work order from the Customer's measured start of the event against that partner's target for its priority, and a change, MOP, or maintenance task against its approved or due window and the work its records show. The written part of each review lives in `pir/reviews/*.yaml`. Tests hold the prose to the facts: every clock time and every duration a review quotes must exist in its facts, every source record must be reproduced exactly, each repeat event must be ruled in or out, no action may be shown open past its due date as of the review's own snapshot, and no review may name an individual. `scripts/render_pir.py` writes the page and one Markdown review per YAML file (for example [`docs/pir/PIR-2026-001.md`](docs/pir/PIR-2026-001.md)); a jsdom browser test exercises the page, its search, and its drafts in CI.
 
 ## Weekly Operations Review
 

@@ -1,6 +1,8 @@
 """Post-incident review: facts match the dataset exactly, and the written review agrees with the facts."""
 
+import csv
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -9,10 +11,11 @@ from pathlib import Path
 import pytest
 import yaml
 
-from scorecard.pir import Dataset, build_index, build_review
+from scorecard.pir import OSR, Dataset, build_index, build_review
 
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLE = ROOT / "data" / "sample"
+sys.path.insert(0, str(ROOT / "scripts"))
 
 
 @pytest.fixture(scope="module")
@@ -89,10 +92,55 @@ def test_review_is_blameless(review, facts):
         assert a["factor"] in {f["id"] for f in review["factors"]}
 
 
-def test_index_covers_every_p1_and_p2(ds):
+def test_index_covers_every_record_in_the_portal(ds):
+    """A review can be started from any record, so the index holds every one the Incident Portal holds."""
+    from scorecard.tickets import ids
     idx = build_index(ds)
-    want = {t["number"] for t in ds.tickets if t["priority"] in ("P1", "P2")} | {w["wo"] for w in ds.work_orders if w["priority"] in ("P1", "P2")}
-    assert set(idx) == want
+    assert set(idx) == set(ids())
+    for ref, f in idx.items():
+        assert f["title"] and f["date"] and f["metrics"], ref
+        assert f["kind"] in ("rack_power", "event", "chg", "mop", "pm")
+        assert f["impact"]["gpus"] >= 0 and f["osr_suggested"]["level"] in OSR
+
+
+def test_facts_for_every_record_type(ds):
+    """Each type is measured on what its own records say: windows for changes and MOPs, response for incidents."""
+    idx = build_index(ds)
+    cdu = idx["WO-41024"]            # a CDU work order: no rack lost power, so no handoff
+    m = {x["measure"].split(" (")[0]: x for x in cdu["metrics"]}
+    assert cdu["kind"] == "event" and cdu["handoff"] is None and cdu["attribution"]["rules"] == ["FA-5"]
+    assert m["Restored, as recorded in the work order"]["elapsed"] == "44 min"
+    assert m["Restored, as measured from telemetry"]["elapsed"] == "3 h 44 min"   # finding L-006: 180 min apart
+    assert "3 h 00 min earlier than the telemetry" in m["Restored, as measured from telemetry"]["note"]
+    assert [f["id"] for f in cdu["findings"]] == ["L-006"]
+    mop = idx["MOP-310"]             # the MOP behind the A07 outage: its window was overrun
+    assert mop["kind"] == "mop" and mop["mop_overrun"]["overrun"] == "2 h 06 min"
+    chg = idx["CHG2040031"]          # a firmware change: the work recorded sits inside its window
+    assert chg["kind"] == "chg" and "Inside the approved window." in [x["note"] for x in chg["metrics"]]
+    pm = idx["PM-0018"]              # the thermography task with a records finding
+    assert pm["kind"] == "pm" and [f["id"] for f in pm["findings"]] == ["L-001"]
+    util = idx["WO-41009"]           # the utility outage: attributed to the utility, FA-6
+    assert util["attribution"]["owner"] == "Utility" and util["attribution"]["rules"] == ["FA-6"]
+
+
+def test_the_a07_review_is_unchanged_by_the_index(ds, facts):
+    """Starting a review from any record must not change the facts of the review we already publish."""
+    entry = build_index(ds)["INC3900001"]
+    for k, v in facts.items():
+        assert entry[k] == v, k
+
+
+def test_every_record_names_devices_the_directory_knows(ds):
+    """PIR search matches on device names, so each record's devices must be real entries in the directory."""
+    from scorecard import devices as D
+    data = D.load()
+    idx = build_index(ds)
+    named = [ref for ref, f in idx.items() if f["devices"]]
+    assert len(named) >= len(idx) - 6        # the utility service and the leak-detection module are not devices
+    for ref, f in idx.items():
+        for n in f["devices"]:
+            assert D.lookup(data, n), f"{ref} names {n}, which is not in the device directory"
+        assert not (set(f["devices"]) & set(f["near"])), ref
 
 
 def test_markdown_review_is_current():
@@ -163,3 +211,73 @@ def test_repeat_rulings_name_findings_on_the_same_ticket(review):
         for f in findings:
             if ref in f.tickets:
                 assert f.id in rl["reason"], f"{ref} has {f.id}, which the ruling does not mention"
+
+# --------------------------------------------------------------------------- every completed review
+@pytest.fixture(scope="module")
+def reviews():
+    return [yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted((ROOT / "pir" / "reviews").glob("*.yaml"))]
+
+
+def _ids(reviews):
+    return [r["id"] for r in reviews]
+
+
+def test_every_review_is_of_a_record_in_the_dataset(ds, reviews):
+    idx = build_index(ds)
+    assert len(reviews) >= 2, "the PIR search needs more than one review to be worth searching"
+    assert _ids(reviews) == sorted(_ids(reviews)) and len(set(_ids(reviews))) == len(reviews)
+    for r in reviews:
+        assert r["ref"] in idx, r["id"]
+        assert r["id"] == f"PIR-{r['review_meeting'][:4]}-{r['id'][-3:]}"
+
+
+def test_every_number_in_the_prose_comes_from_the_facts(ds, reviews):
+    """A reader acts on these numbers: every clock time and every duration in a review must be in its facts."""
+    idx = build_index(ds)
+    for r in reviews:
+        f = idx[r["ref"]]
+        text = json.dumps(r)
+        pool = " ".join([json.dumps(f["metrics"]), json.dumps(f["timeline"]), json.dumps(f["impact"]),
+                         f["start"], str(f["end"]), json.dumps(f["mop_overrun"])])
+        for t in set(re.findall(r"\d{2}:\d{2}:\d{2}Z", text)):
+            assert t in pool, f"{r['id']} quotes {t}, which is not in the facts"
+        for d in set(re.findall(r"\b\d+ h \d{2} min\b|\b\d+ min\b", text)):
+            assert d in pool, f"{r['id']} quotes {d}, which is not in the facts"
+
+
+def test_every_review_is_complete_and_blameless(ds, reviews):
+    idx = build_index(ds)
+    people = {r["person_id"] for r in csv.DictReader((SAMPLE / "vendor" / "personnel.csv").open(encoding="utf-8"))}
+    names = {r["name"] for r in csv.DictReader((SAMPLE / "vendor" / "personnel.csv").open(encoding="utf-8"))}
+    for r in reviews:
+        f, text = idx[r["ref"]], json.dumps(r)
+        assert r["severity"]["osr_level"] == f["osr_suggested"]["level"], r["id"]
+        assert r["status_as_of"] >= r["review_meeting"] and r["signoff"], r["id"]
+        for k in ("plain_language", "summary_technical", "trigger", "detection", "resolution", "factors", "lessons", "ehs", "actions"):
+            assert r[k], f"{r['id']} has no {k}"
+        for q in ("what_happened", "who_was_affected", "why", "what_we_are_doing"):
+            assert r["plain_language"][q].strip(), f"{r['id']} {q}"
+        for k in ("went_well", "went_poorly", "lucky"):
+            assert r["lessons"][k], f"{r['id']} {k}"
+        factors = {x["id"] for x in r["factors"]}
+        for a in r["actions"]:
+            assert all(a.get(k) for k in ("action", "owner", "due", "priority", "success", "factor")), f"{r['id']} {a['id']}"
+            assert a["factor"] in factors and a["status"] in ("Not started", "In progress", "Complete"), f"{r['id']} {a['id']}"
+            assert a["status"] == "Complete" or a["due"] > r["status_as_of"], f"{r['id']} {a['id']} is overdue as of {r['status_as_of']}"
+        assert set(r.get("repeat_rulings", {})) == {x["ref"] for x in f["repeats"]}, r["id"]
+        for ref, rl in r.get("repeat_rulings", {}).items():
+            assert isinstance(rl["related"], bool) and rl["reason"].strip(), f"{r['id']} {ref}"
+        for person in people | names:
+            assert person not in text, f"{r['id']} names {person}"
+        for x in f["findings"]:
+            assert x["id"] in text, f"{r['id']} does not mention finding {x['id']} on its own record"
+
+
+def test_the_portal_marks_a_record_reviewed_only_through_its_own_incident(reviews):
+    """A MOP or PM task is not reviewed because an incident that names it was; the review covers the incident."""
+    import render_tickets
+    from scorecard import tickets as T
+    reviewed = render_tickets.reviewed(T.build()["records"])
+    assert set(reviewed.values()) == set(_ids(reviews))
+    assert reviewed["INC3900001"] == reviewed["WO-41023"] == "PIR-2026-001"
+    assert not [k for k in reviewed if k.startswith(("MOP-", "PM-"))]
