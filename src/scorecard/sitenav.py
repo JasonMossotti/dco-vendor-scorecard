@@ -35,6 +35,7 @@ TABS = [
     ("patterns", "Failure Patterns", "patterns/"),
     ("energy", "Energy", "energy/"),
     ("gpu", "GPU Health", "gpu/"),
+    ("deployments", "Deployments", "deployments/"),
 ]
 REFERENCE_TABS = [
     ("agreements", "Agreements", "agreements/"),

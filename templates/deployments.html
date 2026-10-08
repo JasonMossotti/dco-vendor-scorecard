@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deployments · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --it:#1f5fbf; --ok:#1b7a3d; --bad:#b42318; --warn:#9a6700; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:12px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.wrap { display:grid; grid-template-columns:310px minmax(0,1fr); gap:16px; max-width:1400px; margin:16px auto; padding:0 16px; align-items:start; }
+nav.tree { background:#fff; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); padding:8px 0; position:sticky; top:8px; max-height:calc(100vh - 16px); overflow:auto; font-size:14px; }
+nav.tree ul { list-style:none; margin:0; padding:0; }
+nav.tree li ul { padding-left:14px; }
+nav.tree a { display:block; padding:3px 12px; color:var(--ink); text-decoration:none; border-left:3px solid transparent; }
+nav.tree a:hover { background:var(--panel); }
+nav.tree a.on { background:#e8f0fc; color:var(--it); font-weight:600; border-left-color:var(--it); }
+nav.tree a small { color:var(--muted); margin-left:4px; }
+nav.tree details > summary { cursor:pointer; padding:3px 12px; list-style:none; }
+nav.tree details > summary::-webkit-details-marker { display:none; }
+nav.tree details > summary::before { content:"▸"; display:inline-block; width:14px; color:var(--muted); }
+nav.tree details[open] > summary::before { content:"▾"; }
+nav.tree details > summary a { display:inline; padding:0; border:0; }
+nav.tree .sec { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:12px 12px 2px; font-weight:600; }
+main { background:var(--bg); padding:22px 28px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
+h1 { font-size:24px; margin:0 0 2px; }
+.kind { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+.sub, .note { color:var(--muted); }
+h2.sec { font-size:16px; margin:22px 0 6px; padding-bottom:3px; border-bottom:2px solid var(--ink); }
+table { border-collapse:collapse; width:100%; font-size:14px; }
+th { text-align:left; color:var(--muted); font-weight:600; padding:4px 10px 4px 0; vertical-align:top; border-bottom:1px solid var(--line); white-space:nowrap; }
+td { padding:4px 10px 4px 0; vertical-align:top; border-top:1px solid #edf0f3; }
+td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+main a { color:var(--it); }
+.tag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; background:var(--panel); border:1px solid var(--line); white-space:nowrap; }
+.tag.ok { color:var(--ok); border-color:#b7dfc4; background:#eef8f1; }
+.tag.bad { color:var(--bad); border-color:#f3c1bc; background:#fdf1f0; }
+.tag.warn { color:var(--warn); border-color:#ecd59a; background:#fdf8e8; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:12px 0; }
+.card { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:var(--panel); }
+.card b { display:block; font-size:22px; }
+.card a { text-decoration:none; }
+ol.proc li, ul.acc li { margin:3px 0; }
+.chain { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.chain span.arrow { color:var(--muted); }
+.disclaimer { font-size:13px; color:var(--muted); border-left:3px solid var(--line); padding-left:10px; margin:10px 0; }
+.scroll { overflow-x:auto; }
+@media (max-width:860px) { .wrap { grid-template-columns:1fr; } nav.tree { position:static; max-height:45vh; } main { padding:16px 14px; } }
+@media print { nav.tree, header.top { display:none; } .wrap { display:block; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Deployments</strong> <span class="note" id="hdr"></span></div>
+  <span class="note">Standard work, calculations, and the record for each deployment</span>
+</header>
+<div class="wrap">
+  <nav class="tree" id="tree" aria-label="Deployment documents and workflows"></nav>
+  <main id="main" aria-live="polite"></main>
+</div>
+<script type="application/json" id="dep-data">__DATA__</script>
+<script>
+(function () {
+  const B = JSON.parse(document.getElementById("dep-data").textContent);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const role = r => esc((B.roles[r] || {name: r}).name);
+  const org = r => esc((B.roles[r] || {org: ""}).org);
+  const stamp = s => s ? esc(s.slice(0, 16).replace("T", " ")) + " UTC" : "-";
+  const num = (x, u) => { const d = ["kPa", "K", "LPM"].includes(u) ? 1 : 0;
+    return esc(x.toLocaleString("en-US", {minimumFractionDigits: d, maximumFractionDigits: d}) + " " + u); };
+  const pct = x => esc(Math.round(x * 100) + "%");
+  const STEP = Object.fromEntries(B.steps.map(s => [s.id, s]));
+  const RACKS = B.racks.racks;
+  const WAVES = [...new Set(RACKS.map(r => r.wave))].sort((a, b) => a - b);
+  const STATE_TAG = {"handed off": "ok", "handed off late": "bad", "late": "bad", "in progress": "warn", "not received": ""};
+  const KIND = {internal: "Internal", third_party: "Third party", ahj: "Authority"};
+  const tag = (txt, cls) => `<span class="tag ${esc(cls || "")}">${esc(txt)}</span>`;
+  const link = (h, txt) => `<a href="#${esc(h)}">${esc(txt)}</a>`;
+  document.getElementById("hdr").textContent = `${B.program.name} · ${B.program.hall_name}`;
+
+  // ------------------------------------------------------------------ tree
+  function tree() {
+    let h = `<div class="sec">Program</div><ul><li>${link("overview", B.program.name)}</li></ul><div class="sec">Workflow</div><ul>`;
+    for (const g of B.gates) {
+      const st = B.steps.filter(s => s.gate === g.id);
+      h += `<li><details${g.id === "G0" ? " open" : ""}><summary>${link("gate/" + g.id, g.id + " " + g.name)}</summary><ul>`;
+      for (const s of st) h += `<li>${link("step/" + s.id, s.id + " " + s.name)}</li>`;
+      if (g.per_rack) {
+        for (const w of WAVES) {
+          const rs = RACKS.filter(r => r.wave === w);
+          h += `<li><details><summary>${link("wave/" + w, "Wave " + w)} <small>${esc(rs[0].rack)} to ${esc(rs[rs.length - 1].rack)}</small></summary><ul>`;
+          for (const r of rs) h += `<li>${link("rack/" + r.rack, r.rack)}</li>`;
+          h += `</ul></details></li>`;
+        }
+      }
+      h += `</ul></details></li>`;
+    }
+    h += `</ul><div class="sec">Engineering</div><ul><li>${link("calc", "Calculation sheet")}</li><li>${link("cabling", "Cabling and connections")}</li></ul>`;
+    h += `<div class="sec">Compliance</div><ul><li>${link("permits", "Authority and permits")}</li><li>${link("statewide", "Statewide determinations")}</li>`
+       + `<li>${link("inspections", "Inspections")}</li><li>${link("signoff", "Sign-off matrix")}</li></ul>`;
+    h += `<div class="sec">Library</div><ul><li>${link("docs", "Documents")}</li><li>${link("standards", "Standards and sources")}</li></ul>`;
+    document.getElementById("tree").innerHTML = h;
+  }
+
+  // ----------------------------------------------------------------- views
+  function overview() {
+    const c = B.racks.counts, total = RACKS.length;
+    const ctl = B.calc.filter(r => r.control).length;
+    let h = `<div class="kind">Program ${esc(B.program.id)}</div><h1>${esc(B.program.name)}</h1>`
+      + `<p class="sub">${esc(B.program.hall_name)}: ${esc(total)} ${esc(B.program.rack_model)} racks in ${esc(WAVES.length)} waves, one per row; rack cycle target ${esc(B.program.cycle_days)} days. Authority profile: ${esc(B.authority.name)}.</p>`
+      + `<p class="disclaimer">${esc(B.meta.disclaimer)} Checked ${esc(B.meta.checked)}.</p>`;
+    h += `<div class="cards">`
+      + `<div class="card"><a href="#wave/1"><b>${esc((c["handed off"] || 0) + (c["handed off late"] || 0))} of ${esc(total)}</b></a>racks at Validated Handoff (measured)</div>`
+      + `<div class="card"><b>${esc((c["handed off late"] || 0) + (c.late || 0))}</b>late against the committed date</div>`
+      + `<div class="card"><b>${esc(c["in progress"] || 0)}</b>in progress · ${esc(c["not received"] || 0)} not received</div>`
+      + `<div class="card"><a href="#calc"><b>${esc(ctl)}</b></a>peak checks that need the rack power limit</div></div>`;
+    h += `<h2 class="sec">Gates</h2><table><thead><tr><th>Gate</th><th>Owner</th><th>Steps</th><th>Exit criteria</th></tr></thead><tbody>`;
+    for (const g of B.gates) {
+      const n = B.steps.filter(s => s.gate === g.id).length;
+      h += `<tr><td>${link("gate/" + g.id, g.id + " " + g.name)}</td><td>${role(g.owner)}</td><td class="n">${esc(n)}${g.per_rack ? " per rack" : ""}</td><td>${esc(g.exit)}</td></tr>`;
+    }
+    h += `</tbody></table><p class="note">The gates, steps, sign-offs and inspections are the program's standard work (config/deployments.yaml). Rack progress is from the record: the IT Partner's reported milestones and the Customer's own measurements. Records for the other gates (permits, test reports, sign-offs) come from the partners' Jira projects in the next update.</p>`;
+    return h;
+  }
+
+  function gate(id) {
+    const g = B.gates.find(x => x.id === id);
+    if (!g) return null;
+    let h = `<div class="kind">Gate</div><h1>${esc(g.id + " " + g.name)}</h1><p class="sub">Owner: ${role(g.owner)}. Exit: ${esc(g.exit)}</p>`;
+    h += `<table><thead><tr><th>Step</th><th>Performed by</th><th>Level</th><th>After</th><th>Sign-offs</th><th>Inspections</th></tr></thead><tbody>`;
+    for (const s of B.steps.filter(s => s.gate === id)) {
+      h += `<tr><td>${link("step/" + s.id, s.id + " " + s.name)}</td><td>${role(s.owner)}</td><td>${esc(s.level || s.milestone || "")}</td>`
+         + `<td>${s.after.map(a => link("step/" + a, a)).join(", ")}</td><td class="n">${esc(s.signoff.length)}</td><td class="n">${esc(s.inspections.length)}</td></tr>`;
+    }
+    h += `</tbody></table>`;
+    if (g.per_rack) h += `<p class="note">These steps repeat for every rack. Open a wave or a rack on the left for its record.</p>`;
+    return h;
+  }
+
+  function step(id) {
+    const s = STEP[id];
+    if (!s) return null;
+    const g = B.gates.find(x => x.id === s.gate);
+    let h = `<div class="kind">${esc(g.id + " " + g.name)} · ${esc(s.doc.kind)} ${esc(s.doc.id)}</div><h1>${esc(s.id + " " + s.name)}</h1>`;
+    h += `<table class="meta"><tbody><tr><th>Performed by</th><td>${role(s.owner)} <span class="note">(${org(s.owner)})</span></td></tr>`;
+    if (s.milestone) h += `<tr><th>Rack milestone</th><td>${esc(s.milestone)}, target day ${esc(s.target_days)} from receipt (IT Partner SLA)</td></tr>`;
+    if (s.level) h += `<tr><th>Commissioning level</th><td>${esc(s.level)}</td></tr>`;
+    if (s.after.length) h += `<tr><th>After</th><td>${s.after.map(a => link("step/" + a, a + " " + STEP[a].name)).join("<br>")}</td></tr>`;
+    if (s.when) h += `<tr><th>When</th><td>${esc(s.when)}</td></tr>`;
+    if (s.standards.length) h += `<tr><th>Standards</th><td>${s.standards.map(x => esc(B.standards[x].name)).join("<br>")}</td></tr>`;
+    h += `</tbody></table>`;
+    h += `<h2 class="sec">Procedure</h2><ol class="proc">${s.procedure.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
+    h += `<h2 class="sec">Acceptance</h2><ul class="acc">${s.acceptance.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+    h += `<h2 class="sec">Records</h2><ul>${s.records.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+    h += `<h2 class="sec">Sign-off, in order</h2><div class="chain">${s.signoff.map(r => tag(B.roles[r].name)).join('<span class="arrow">→</span>')}</div>`;
+    if (s.inspections.length) {
+      h += `<h2 class="sec">Inspections</h2><table><thead><tr><th>Kind</th><th>By</th><th>What</th></tr></thead><tbody>`
+        + s.inspections.map(i => `<tr><td>${esc(KIND[i.kind])}</td><td>${role(i.by)}</td><td>${esc(i.what)}</td></tr>`).join("") + `</tbody></table>`;
+    }
+    if (s.per_rack) h += `<p class="note">Repeats for every rack: see the waves on the left.</p>`;
+    return h;
+  }
+
+  function rackRow(r) {
+    return `<tr><td>${link("rack/" + r.rack, r.rack)}</td><td>${esc(r.group)}</td><td>${stamp(r.planned_receipt)}</td><td>${stamp(r.committed_handoff)}</td>`
+      + `<td>${esc(r.last_reported || "-")}</td><td>${stamp(r.measured_handoff)}</td><td>${tag(r.state, STATE_TAG[r.state])}</td></tr>`;
+  }
+  const RACK_HEAD = `<table><thead><tr><th>Rack</th><th>Power group</th><th>Planned receipt</th><th>Committed handoff</th><th>Last reported</th><th>Measured handoff</th><th>State</th></tr></thead><tbody>`;
+
+  function wave(w) {
+    const rs = RACKS.filter(r => String(r.wave) === String(w));
+    if (!rs.length) return null;
+    return `<div class="kind">G2 Rack waves</div><h1>Wave ${esc(w)}</h1><p class="sub">Row ${esc(w)} of ${esc(B.program.hall_name)}, racks ${esc(rs[0].rack)} to ${esc(rs[rs.length - 1].rack)}. As of ${stamp(B.racks.as_of)}, the end of the sample window.</p>`
+      + `<div class="scroll">${RACK_HEAD}${rs.map(rackRow).join("")}</tbody></table></div>`;
+  }
+
+  function rack(id) {
+    const r = RACKS.find(x => x.rack === id);
+    if (!r) return null;
+    const receipt = r.planned_receipt ? new Date(r.planned_receipt) : null;
+    let h = `<div class="kind">G2 Rack waves · Wave ${esc(r.wave)}</div><h1>Rack ${esc(r.rack)} ${tag(r.state, STATE_TAG[r.state])}</h1>`
+      + `<p class="sub">Power group ${esc(r.group)}, primary ${esc(r.cdu)}. Planned receipt ${stamp(r.planned_receipt)}; committed handoff ${stamp(r.committed_handoff)}. <a href="../devices/#${esc(encodeURIComponent(r.rack))}" target="_blank" rel="noopener">Device card ↗</a></p>`;
+    h += `<table><thead><tr><th>Step</th><th>Target</th><th>Reported by the IT Partner</th><th>Measured by the Customer</th></tr></thead><tbody>`;
+    for (const s of B.steps.filter(s => s.per_rack)) {
+      const target = receipt && s.target_days != null ? stamp(new Date(receipt.getTime() + s.target_days * 86400000).toISOString()) : "-";
+      const meas = s.milestone === "M6" ? stamp(r.measured_burn_in) + (r.measured_burn_in ? " (24-hour burn-in passed)" : "")
+                 : s.milestone === "M7" ? stamp(r.measured_handoff) + (r.measured_handoff ? " (scheduler)" : "") : "";
+      h += `<tr><td>${link("step/" + s.id, (s.milestone || s.id) + " " + s.name)}</td><td>${target}</td><td>${stamp(r.reported[s.milestone])}</td><td>${meas}</td></tr>`;
+    }
+    h += `</tbody></table><p class="note">A reported milestone is the IT Partner's claim. The burn-in and the handoff are measured independently; CSL-09 is scored on the measured handoff.</p>`;
+    return h;
+  }
+
+  function calc() {
+    let h = `<div class="kind">Engineering</div><h1>Calculation sheet</h1><p class="sub">Every figure reads the site model (site/site.yaml). A check at the reported peak that fails is not a design error: it names the control that keeps the design figure true.</p>`;
+    let grp = "";
+    h += `<div class="scroll"><table><thead><tr><th>Check</th><th>Load</th><th>Capacity</th><th>Use</th><th>Limit</th><th>Result</th><th>Basis</th></tr></thead><tbody>`;
+    for (const r of B.calc) {
+      if (r.group !== grp) { grp = r.group; h += `<tr><th colspan="7">${esc(grp)}</th></tr>`; }
+      const res = r.passed === null ? tag("Figure") : r.passed ? tag("Pass", "ok") : r.control ? tag("Control", "warn") + " " + esc(r.control) : tag("Fail", "bad");
+      h += `<tr><td>${esc(r.check)}</td><td class="n">${num(r.load, r.unit)}</td><td class="n">${r.capacity === null ? "" : num(r.capacity, r.unit)}</td>`
+         + `<td class="n">${r.utilization === null ? "" : pct(r.utilization)}</td><td class="n">${r.passed === null ? "" : pct(r.limit)}</td><td>${res}</td><td>${esc(r.basis)}</td></tr>`;
+    }
+    h += `</tbody></table></div><h2 class="sec">Inputs the site model does not hold</h2><ul>`
+      + Object.entries(B.calc_inputs).map(([k, v]) => `<li><b>${esc(k)}</b> = ${esc(Array.isArray(v.value) ? v.value.join(", ") : v.value)}: ${esc(v.basis)}</li>`).join("") + `</ul>`;
+    return h;
+  }
+
+  function cabling() {
+    const c = B.cabling;
+    const rows = [["Racks", c.racks], ["Compute trays", c.compute_trays], ["InfiniBand rails per tray", c.rails], ["Leaf switches", c.leaf_switches],
+                  ["Back-end links, tray to leaf", `${c.backend_links.toLocaleString("en-US")} (${c.links_per_rack} per rack)`],
+                  ["Power cords, A and B (one per tap-off)", c.power_cords], ["Coolant hoses, supply and return", c.coolant_hoses]];
+    return `<div class="kind">Engineering</div><h1>Cabling and connections</h1><p class="sub">Counted from the device directory, which is built from the site model. Every link's ports are on the rack's device card (Devices tab).</p>`
+      + `<table><tbody>${rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td class="n">${esc(v)}</td></tr>`).join("")}</tbody></table>`;
+  }
+
+  function permits() {
+    const a = B.authority;
+    let h = `<div class="kind">Compliance</div><h1>Authority and permits</h1><p class="sub">Profile in use: <b>${esc(a.name)}</b>. Other profiles: ${Object.entries(B.profiles).filter(([k]) => k !== a.id).map(([, v]) => esc(v)).join(", ")} (one line in config/deployments.yaml).</p><p>${esc(a.summary)}</p>`;
+    h += `<table><thead><tr><th>Permit</th><th>Issued by</th><th>When</th><th>Inspections</th></tr></thead><tbody>`
+      + a.permits.map(p => `<tr><td><b>${esc(p.id)}</b><br>${esc(p.name)}</td><td>${role(p.by)}</td><td>${esc(p.when)}</td><td>${esc(p.inspections.join("; ") || "-")}</td></tr>`).join("") + `</tbody></table>`;
+    return h;
+  }
+
+  function statewide() {
+    return `<div class="kind">Compliance</div><h1>Statewide determinations</h1><p class="sub">Texas requirements that apply under any authority profile.</p>`
+      + B.statewide.map(d => `<h2 class="sec">${esc(d.id)} ${esc(d.name)}</h2><p>${esc(d.detail)}</p><p><b>${esc(d.result)}</b></p><p class="note">Source: ${esc(d.source)}</p>`).join("");
+  }
+
+  function inspections() {
+    let h = `<div class="kind">Compliance</div><h1>Inspections</h1><p class="sub">Every inspection the program requires under the ${esc(B.authority.name)} profile, by who inspects.</p>`;
+    for (const k of ["ahj", "third_party", "internal"]) {
+      const rows = B.steps.flatMap(s => s.inspections.filter(i => i.kind === k).map(i => [s, i]));
+      if (!rows.length) continue;
+      h += `<h2 class="sec">${esc(KIND[k])}</h2><table><thead><tr><th>Step</th><th>By</th><th>What</th></tr></thead><tbody>`
+        + rows.map(([s, i]) => `<tr><td>${link("step/" + s.id, s.id + " " + s.name)}</td><td>${role(i.by)}</td><td>${esc(i.what)}</td></tr>`).join("") + `</tbody></table>`;
+    }
+    return h;
+  }
+
+  function signoff() {
+    const used = Object.keys(B.roles).filter(r => B.steps.some(s => s.signoff.includes(r)));
+    let h = `<div class="kind">Compliance</div><h1>Sign-off matrix</h1><p class="sub">Who signs each step, in order (1 signs first). Sign-offs are by role and organization, never by name.</p>`;
+    h += `<div class="scroll"><table><thead><tr><th>Step</th>${used.map(r => `<th title="${role(r)}">${esc(B.roles[r].name.replace(/^(Customer|Landlord|IT Partner) /, ""))}<br><span class="note">${org(r)}</span></th>`).join("")}</tr></thead><tbody>`;
+    for (const s of B.steps) {
+      h += `<tr><td>${link("step/" + s.id, s.id)}</td>${used.map(r => `<td class="n">${s.signoff.includes(r) ? esc(s.signoff.indexOf(r) + 1) : ""}</td>`).join("")}</tr>`;
+    }
+    h += `</tbody></table></div><h2 class="sec">Roles</h2><table><tbody>`
+      + Object.values(B.roles).map(v => `<tr><th>${esc(v.name)}</th><td>${esc(v.org)}</td><td>${esc(v.duty)}</td></tr>`).join("") + `</tbody></table>`;
+    return h;
+  }
+
+  function docs() {
+    let h = `<div class="kind">Library</div><h1>Documents</h1><p class="sub">One controlled document per step. Each opens to its procedure, acceptance criteria, records, and sign-off block.</p>`;
+    for (const g of B.gates) {
+      h += `<h2 class="sec">${esc(g.id + " " + g.name)}</h2><table><tbody>`
+        + B.steps.filter(s => s.gate === g.id).map(s => `<tr><td>${link("step/" + s.id, s.doc.id)}</td><td>${esc(s.doc.kind)}</td><td>${esc(s.name)}</td></tr>`).join("") + `</tbody></table>`;
+    }
+    return h;
+  }
+
+  function standards() {
+    return `<div class="kind">Library</div><h1>Standards and sources</h1><table><tbody>`
+      + Object.values(B.standards).map(s => `<tr><th>${esc(s.name)}</th><td>${esc(s.note)}<br><span class="note">${esc(B.sources[s.source])}</span></td></tr>`).join("")
+      + `</tbody></table><p class="note">Checked ${esc(B.meta.checked)}. Editions are named only where one was checked against the publisher.</p>`;
+  }
+
+  // ----------------------------------------------------------------- router
+  const VIEWS = {overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards};
+  function show() {
+    const raw = decodeURIComponent(location.hash.slice(1)) || "overview";
+    const [view, arg] = raw.split("/");
+    const html = VIEWS[view] ? VIEWS[view](arg) : null;
+    const key = html ? raw : "overview";
+    document.getElementById("main").innerHTML = html || overview();
+    document.querySelectorAll("#tree a").forEach(a => {
+      const on = a.getAttribute("href") === "#" + key;
+      a.classList.toggle("on", on);
+      if (on) { let d = a.closest("details"); while (d) { d.open = true; d = d.parentElement.closest("details"); } }
+    });
+  }
+  tree();
+  window.addEventListener("hashchange", show);
+  show();
+})();
+</script>
+</body>
+</html>
