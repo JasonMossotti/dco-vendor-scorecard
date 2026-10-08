@@ -51,6 +51,7 @@ details summary { cursor:pointer; color:var(--muted); font-size:12px; } code.rec
 table.native td:first-child { color:var(--muted); white-space:nowrap; width:1%; font-family:ui-monospace,Consolas,monospace; font-size:12px; }
 .dhead { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:baseline; } .dhead h1 { margin-right:4px; }
 .empty { color:var(--muted); padding:30px 0; text-align:center; }
+.btn { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--it); padding:4px 10px; border-radius:6px; cursor:pointer; text-decoration:none; display:inline-block; }
 .ro { font-size:12px; color:var(--muted); border:1px dashed var(--line); border-radius:6px; padding:6px 10px; margin-top:10px; }
 a.tk-link { color:var(--it); }
 @media print { header.top, .usm, #listview { display:none !important; } main { display:block; } #detail { position:static; max-height:none; box-shadow:none; } body { background:#fff; } }
@@ -227,6 +228,17 @@ function measurement(r) {
       .map(([v, l]) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</div>` +
     `<p class="note">Facility event: ${esc(m.event)}. ${m.capacity_lost ? "Rack capacity was lost." : "No rack capacity was lost."}</p></div>`;
 }
+// Post-incident review: the completed one if there is one, else start or continue a draft (drafts are saved in
+// this browser by the Post-Incident Review page, under the same key).
+function pirLine(r) {
+  const done = D.reviewed[r.id];
+  if (done) return `<p class="note">This ${esc(r.type_label.toLowerCase())} has a completed post-incident review: <a href="../pir/#${esc(done)}">${esc(done)}</a>.</p>`;
+  let draft = false;
+  try { draft = !!(JSON.parse(localStorage.getItem("usm.pir.drafts") || "{}") || {})[r.id]; } catch (e) { draft = false; }
+  return `<p class="note"><a class="btn" href="../pir/#new=${encodeURIComponent(r.id)}">${draft ? "Continue post-incident review draft" : "Start post-incident review"}</a> ` +
+    `${draft ? "A draft for this record is saved in this browser." : "Opens a review form filled from this record's facts: times, alarms, measurement, findings, and related records."}</p>`;
+}
+
 function detail(id) {
   const r = BY[id], el = $("detail");
   if (!r) { el.innerHTML = `<div class="empty">No record ${esc(id)} in this period.</div>`; return; }
@@ -238,7 +250,7 @@ function detail(id) {
     ["Device or item", r.device, "loc"], ["Location", r.location], ["Assigned (person ID)", r.assigned], ["Category or fault class", r.category],
     ["Close code", r.close_code], ["Work type", r.work_type]].filter(([, v]) => v)
     .map(([k, v, l]) => `<div class="kv"${l ? ` data-loc="${esc(v + (r.location && r.location !== v ? "|" + r.location : ""))}" data-part="${esc(r.summary)}"` : ""}><b>${esc(k)}</b>${esc(v)}</div>`).join("") + `</div>`;
-  if (r.id === D.pir_ref || r.related.includes(D.pir_ref) && r.type !== "mop") h += `<p class="note">This incident has a completed post-incident review: <a href="../pir/">PIR-2026-001</a>.</p>`;
+  h += pirLine(r);
   h += measurement(r);
   if (r.findings.length) h += `<h2>Findings that name this record</h2>` + r.findings.map(f => `<div class="card bad"><h3><span class="badge ${esc(f.severity)}">${esc(f.severity)}</span> ${esc(f.id)} · ${esc(f.title)}</h3><div>${esc(f.summary)}</div><div class="note">SLA references: ${f.sla_refs.map(esc).join(", ")} · ${esc(f.partner)} scorecard</div></div>`).join("");
   h += `<h2>Timeline at a glance</h2>${swimlane(r)}`;

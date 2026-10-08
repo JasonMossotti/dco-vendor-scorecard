@@ -1,0 +1,87 @@
+# Post-incident review: judgment written by people. Every fact (times, metrics, alarms, impact)
+# comes from the dataset via src/scorecard/pir.py and is checked by tests/test_pir.py.
+id: PIR-2026-003
+ref: INC3101173
+status: "Approved; action items in progress"
+title: "An NVLink switch tray failure took rack A15 out of service for 3 hours 16 minutes"
+incident_commander: "Customer Site Lead"
+authors: ["Customer Site Lead", "IT Partner Site Manager"]
+review_meeting: "2026-09-29"
+status_as_of: "2026-09-29"
+severity:
+  osr_level: 2
+  osr_rationale: "One of 32 production racks was out of service; its jobs were rescheduled onto other racks. No customer-facing service, safety, or financial loss beyond the contract measurement."
+  internal: "S3 (no contract breach: every response target was met)"
+  priority: "P1 (IT Partner)"
+plain_language:
+  what_happened: >-
+    Early on September 25, one of the nine switch trays that join rack A15's 72 GPUs into a single unit
+    failed. The rack cannot run as one machine with a switch tray missing, so the scheduler stopped
+    sending work to all 18 of its nodes. The IT Partner replaced the tray and the rack was back in
+    production 3 hours 16 minutes later.
+  who_was_affected: >-
+    The 72 GPUs in rack A15 stopped taking new work, 234.7 GPU-hours in all. Jobs were rescheduled onto
+    other racks by the cluster's scheduler. No other rack and no customer-facing service was affected, and
+    nobody was hurt.
+  why: >-
+    The switch tray failed in service; the replacement tray is a stocked spare and the repair itself went
+    as it should. What the review looked at is why nothing warned us first: the rack's own health data
+    showed no sign on this tray before it failed, and the fabric manager reports a switch tray only once
+    it is already degraded.
+  what_we_are_doing: >-
+    The IT Partner is sending the failed tray back to the manufacturer and will tell us whether an early
+    indicator exists. The Customer is checking whether the rack's health checks can watch switch trays
+    the way they already watch GPUs, and is adding the spare count for switch trays to the weekly review
+    so the next failure does not wait on a delivery.
+summary_technical: >-
+  At 2026-09-25T08:10:50Z the scheduler drained all 18 nodes of rack A15 with reason 'NVLink domain
+  degraded', 29 seconds before INC3101173 was opened as a P1 at 08:11:19Z. The IT Partner acknowledged in
+  4 minutes (P1 target 5) and a technician was at the rack in 4 minutes from the measured start (P1 target
+  15). NVLink switch tray a15-nvsw3 was replaced at 10:10:26Z (one tray out, one tray in; the failed part
+  was tagged for return). The four return-to-service checks (leak_hold_30m, nmx_tray_health,
+  rack_nvlink_acceptance, nccl_allreduce_rack) all passed, the last at 11:25:26Z, and the nodes were back
+  in service at 11:26:26Z. Measured out of service is 3 h 16 min from first fault evidence, against the
+  P1 restore target of 4 h; the ticket's own clock reports 3 h 18 min. Under FA-2 the Landlord side was
+  healthy at T0, so the event is IT Partner-attributed. No finding was raised.
+trigger: "NVLink switch tray a15-nvsw3 failed in service, degrading the rack's NVLink domain."
+detection: "Immediate and automatic: the scheduler drained the rack 29 seconds before the ticket was opened, with the reason 'NVLink domain degraded'."
+resolution: "The switch tray was replaced from stock and the rack passed all four return-to-service checks before taking work again."
+factors:
+  - id: F1
+    type: "Equipment"
+    text: "The switch tray failed in service. The review found no alarm, no health-check failure, and no trend on this tray in the days before the failure; the failed tray was tagged for return to the manufacturer."
+  - id: F2
+    type: "Design and identification"
+    text: "One switch tray out of nine takes the whole rack out of service: the 72 GPUs are one NVLink domain and cannot be split. The design is the vendor's and is not ours to change, but it means every switch tray is a rack-wide single point of failure."
+  - id: F3
+    type: "Procedure inadequate"
+    text: "The rack's health checks watch GPUs and their XID codes closely, but the switch trays are reported only by the fabric manager and only once a domain is already degraded. Nothing looks at a switch tray's own counters between incidents."
+lessons:
+  went_well:
+    - "Detection, acknowledgement, and the technician on site all happened inside the P1 targets, and the scheduler drained the rack before anyone had to decide."
+    - "A spare switch tray was on site, so the repair did not wait for a delivery."
+    - "All four return-to-service checks ran and passed before the rack took work again, and the validation was attached to the ticket."
+  went_poorly:
+    - "Nothing warned us: the first sign of the failure was the rack being drained."
+    - "The spare switch tray count on site is not tracked anywhere the Customer reviews week by week."
+  lucky:
+    - "The failure was on one rack's switch tray. The same failure in the leaf switches would have touched the trays of two racks."
+    - "The rack was drained rather than killed, so running jobs finished or checkpointed instead of being lost."
+ehs:
+  injuries: 0
+  screening: "Hot-swap of a tray in a live rack with no exposure to hazardous energy and no coolant work beyond the quick-disconnects. No injury, nothing to refer under EHS-R2."
+  referral: "None. Screened and closed by the Customer Site Lead."
+actions:
+  - {id: A1, factor: F1, owner: "IT Partner Site Manager", priority: P2, due: "2026-10-31", status: "In progress", action: "Return the failed switch tray to the manufacturer and report back whether its counters carried any early sign of the failure.", success: "A written answer from the manufacturer, and a threshold proposal if an early indicator exists."}
+  - {id: A2, factor: F3, owner: "Customer Site Lead", priority: P2, due: "2026-11-14", status: "Not started", action: "Add NVLink switch tray counters to the GPU health checks, so a degrading tray is seen before it takes a rack out.", success: "The GPU Health view carries a switch tray check, and it fires on a replayed version of this event."}
+  - {id: A3, factor: F2, owner: "Customer Site Lead", priority: P3, due: "2026-10-31", status: "In progress", action: "Add the on-site spare count for NVLink switch trays to the weekly operations review, next to the other spares.", success: "The weekly pack shows the switch tray spare count every week."}
+  - {id: A4, factor: F2, owner: "IT Partner Site Manager", priority: P3, due: "2026-12-15", status: "Not started", action: "Confirm with the manufacturer whether a rack can run on eight switch trays in a reduced mode, and write the answer into the runbook either way.", success: "The runbook says what to do with a rack that has lost one switch tray."}
+communications:
+  - {local: "03:20 CDT", to: "Customer infrastructure leadership", message: "P1: rack A15 (72 GPUs) drained after an NVLink switch tray failure. Jobs rescheduled to other racks; IT Partner replacing the tray from site spares."}
+  - {local: "05:20 CDT", to: "Customer infrastructure leadership", message: "Tray replaced at 5:10 a.m. Validation running; return to service expected within the hour."}
+  - {local: "06:35 CDT", to: "Customer infrastructure leadership", message: "Rack A15 back in production at 6:26 a.m. after all four return-to-service checks passed. Measured 3 h 16 min against a 4 h target. Post-incident review scheduled September 29."}
+repeat_rulings:
+  INC3100527: {related: false, reason: "A single compute tray on the same rack (a15-ct07, XID 94) was reseated and closed on September 10, fifteen days earlier and on different hardware; no finding names it. Same rack is not a common cause."}
+signoff:
+  - {role: "Customer Site Lead (Incident Commander)", date: "2026-09-29"}
+  - {role: "IT Partner Site Manager (Ridgeline Site Services)", date: "2026-09-29"}

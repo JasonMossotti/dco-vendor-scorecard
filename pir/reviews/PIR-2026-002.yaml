@@ -1,0 +1,83 @@
+# Post-incident review: judgment written by people. Every fact (times, metrics, alarms, impact)
+# comes from the dataset via src/scorecard/pir.py and is checked by tests/test_pir.py.
+id: PIR-2026-002
+ref: WO-41024
+status: "Approved; action items in progress"
+title: "CDU-A2 lost pump redundancy, and the work order closed it three hours early"
+incident_commander: "Customer Site Lead"
+authors: ["Customer Site Lead", "Landlord Chief Engineer"]
+review_meeting: "2026-09-30"
+status_as_of: "2026-09-30"
+severity:
+  osr_level: 1
+  osr_rationale: "No rack lost cooling: CDU-A2 kept serving its racks on its remaining pumps throughout, and the Hall A header has four CDUs. Redundancy, not capacity, was lost."
+  internal: "S1 (records do not reconcile, finding L-006)"
+  priority: "P2 (Landlord)"
+plain_language:
+  what_happened: >-
+    Just before midnight on September 22, pump 2 in cooling unit CDU-A2 failed. The unit kept cooling its
+    racks on its other pumps, but it had no spare pump until the failed one was replaced. The Landlord
+    replaced the pump and the unit was back to full redundancy at 3:18 a.m. Central.
+  who_was_affected: >-
+    No rack and no GPU was affected, and nobody was hurt. For 3 hours 44 minutes the unit was running
+    without a spare pump, so a second pump failure in that window would have cut cooling to the racks it
+    serves.
+  why: >-
+    The pump itself failed and was replaced from site spares, which is the expected response. The problem
+    this review is about is the record: the work order says the unit was restored at 12:18 a.m., when the
+    pump was swapped, but the unit's own data shows redundancy came back three hours later, at 3:18 a.m.,
+    after the new pump finished its test run. The work order was closed against the repair, not against
+    the unit reporting itself healthy.
+  what_we_are_doing: >-
+    The Landlord is changing when a redundancy work order may be closed: restoration is the moment the
+    unit reports redundancy restored, not the moment the part is changed. The Customer measures from the
+    unit's own data either way, so the two records will agree from now on.
+summary_technical: >-
+  At 2026-09-23T04:34:15Z CDU-A2 raised PumpRedundancy.Status.Health = Warning and pump 2 reported
+  Status.Health = Critical; the BMS raised a P2 'Pump 2 fault' at the same second and WO-41024 was opened
+  30 seconds later. The Landlord acknowledged in 9 minutes (P2 target 15) and an engineer was at the unit
+  in 24 minutes (P2 target 30). The work order records restoration at 05:18:19Z, when the pump assembly
+  was replaced. The CDU's Redfish data shows pump 2 Status.State = InTest at 08:06:06Z and
+  PumpRedundancy.Status.Health = OK at 08:18:06Z. Measured restoration is therefore 3 h 44 min from the
+  event start, not the 44 min the work order implies; under FA-5 this is a Landlord redundancy event
+  (OT-CSL-05) with no capacity lost and no IT Partner clock. Finding L-006 was raised.
+trigger: "Pump 2 in CDU-A2 failed in service, leaving the unit with no spare pump."
+detection: "Immediate and automatic: the CDU reported PumpRedundancy Warning and the BMS raised a P2 alarm in the same second, 30 seconds before the work order was opened."
+resolution: "The pump assembly was replaced from site spares; the new pump ran its test and the unit reported redundancy restored at 08:18:06Z."
+factors:
+  - id: F1
+    type: "Procedure inadequate"
+    text: "The Landlord's work order procedure treats restoration as the completion of the repair. For a redundancy event the equipment itself declares when redundancy is back, and nothing in the procedure requires the engineer to wait for that declaration before recording restoration and closing the work order."
+  - id: F2
+    type: "Equipment"
+    text: "Pump 2 failed in service with no prior warning in the unit's data; the review found no earlier alarm or trend on this pump. A replacement was in site spares as the Landlord SLA requires."
+  - id: F3
+    type: "Change control"
+    text: "The replacement pump's test run (Status.State = InTest from 08:06:06Z) is part of returning the unit to redundancy, but it happens after the work order is closed, so no record ties the test result to the event."
+lessons:
+  went_well:
+    - "Detection was automatic and instant: the unit's own data and the BMS agreed to the second."
+    - "A pump assembly was in site spares, so the repair did not wait for a delivery."
+    - "Cooling to the racks never stopped; the loss was redundancy only, which is what FA-5 is for."
+  went_poorly:
+    - "The work order recorded restoration 3 h 00 min before the unit reported redundancy restored, so the Landlord's own record understates the exposure."
+    - "The unit ran without a spare pump for 3 h 44 min while the records showed the event closed."
+  lucky:
+    - "No second pump failed on CDU-A2 during the window, and the Hall A header's other three units were healthy throughout."
+ehs:
+  injuries: 0
+  screening: "Work on a pressurised coolant loop; no leak, no fluid release, and no injury. Nothing to refer under EHS-R2."
+  referral: "None. Screened and closed by the Customer Site Lead."
+actions:
+  - {id: A1, factor: F1, owner: "Landlord Chief Engineer", priority: P1, due: "2026-10-15", status: "In progress", action: "Change the work order procedure for redundancy events: restoration is recorded at the time the equipment reports redundancy restored, and the work order may not be closed before that.", success: "Every redundancy work order closed after this date records a restoration time at or after the equipment's own declaration."}
+  - {id: A2, factor: F3, owner: "Landlord Chief Engineer", priority: P2, due: "2026-10-31", status: "Not started", action: "Attach the replacement pump's test result to the work order before closing it.", success: "The work order holds the test result for every pump replacement."}
+  - {id: A3, factor: F1, owner: "Customer Site Lead", priority: P2, due: "2026-10-31", status: "In progress", action: "Add a monthly reconciliation of recorded against measured restoration for Landlord redundancy events to the service review pack, so a gap like this is seen the same month.", success: "The service review pack shows the recorded and measured restoration side by side for every redundancy event."}
+  - {id: A4, factor: F2, owner: "Landlord Chief Engineer", priority: P3, due: "2026-11-30", status: "Not started", action: "Review the failed pump with the manufacturer and check whether the unit's data carried any early sign that a trend alarm could catch.", success: "A written answer on whether an early indicator exists, and a threshold proposal if it does."}
+communications:
+  - {local: "00:05 CDT", to: "Customer infrastructure leadership", message: "P2: CDU-A2 lost pump redundancy. Cooling to the racks is unaffected; Landlord replacing the pump from site spares."}
+  - {local: "03:30 CDT", to: "Customer infrastructure leadership", message: "CDU-A2 back to full pump redundancy at 3:18 a.m. No rack was affected."}
+  - {local: "09:00 CDT", to: "Customer infrastructure leadership", message: "Records finding raised: the work order closed the event three hours before the unit reported redundancy restored. Post-incident review scheduled September 30."}
+repeat_rulings: {}
+signoff:
+  - {role: "Customer Site Lead (Incident Commander)", date: "2026-09-30"}
+  - {role: "Landlord Chief Engineer (Caprock Critical Facilities)", date: "2026-09-30"}

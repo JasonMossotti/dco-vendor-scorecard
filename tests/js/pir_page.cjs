@@ -26,7 +26,7 @@ d.getElementById("ref").value = "INC3100748"; d.getElementById("go").click();
 ok(d.querySelector('[data-f="pl.why"]').value === "Test reason", "typed text survives a re-fill");
 ok(d.querySelector('[data-f="status_as_of"]').value === "2026-10-01", "status date survives a re-fill");
 d.getElementById("ref").value = "NOPE"; d.getElementById("go").click();
-ok(d.getElementById("refnote").textContent.includes("No P1 or P2"), "unknown reference explained");
+ok(d.getElementById("refnote").textContent.includes("No record"), "unknown reference explained");
 d.getElementById("plainonly").checked = true; d.getElementById("plainonly").dispatchEvent(new dom.window.Event("change"));
 ok(d.body.classList.contains("plainonly"), "plain-language toggle");
 ok(errors.length === 0, "still no script errors " + errors.join(";"));
@@ -40,3 +40,48 @@ ok(d2.querySelectorAll("textarea").length >= 8, "#blank shows the editable form"
 d2.getElementById("t-example").click();
 ok(dom2.window.location.hash === "#example" && d2.getElementById("doc").textContent.includes("Rack A07 lost both power feeds"), "switching tabs updates the link");
 ok(d.querySelector("nav.usm a.on").dataset.tab === "pir", "site tab bar marks Post-Incident Review");
+
+// Facts for every record type: a change, a MOP, a PM task, and a work order with no rack power loss.
+const dom3 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/pir/#new=MOP-310", virtualConsole: new (require("jsdom").VirtualConsole)().on("jsdomError", e => errors.push(String(e))) });
+const d3 = dom3.window.document, t3 = () => d3.getElementById("doc").textContent;
+ok(d3.getElementById("t-blank").classList.contains("on"), "#new= opens the form filled from that record");
+ok(t3().includes("MOP-310") && t3().includes("Approved window") && t3().includes("2 h 06 min past the approved window"), "a MOP gets its window and its overrun");
+ok(t3().includes("PIR-DRAFT-MOP-310"), "the draft is named after the record");
+d3.getElementById("ref").value = "WO-41024"; d3.getElementById("go").click();
+ok(t3().includes("Restored, as recorded in the work order") && t3().includes("Restored, as measured from telemetry"), "a CDU work order is measured against the telemetry");
+ok(t3().includes("L-006"), "its finding is shown");
+ok(d3.querySelector("svg") !== null, "the timeline is drawn for a work order with no rack power loss");
+d3.getElementById("ref").value = "CHG2040031"; d3.getElementById("go").click();
+ok(t3().includes("Work recorded: first to last") && t3().includes("Inside the approved window"), "a change is measured against its window");
+d3.getElementById("ref").value = "PM-0018"; d3.getElementById("go").click();
+ok(t3().includes("Due window") && t3().includes("L-001"), "a PM task gets its due window and its finding");
+// Drafts are kept in this browser, and the typed text comes back.
+d3.querySelector('[data-f="pl.why"]').value = "Draft text";
+d3.querySelector('[data-f="pl.why"]').dispatchEvent(new dom3.window.Event("input"));
+ok(d3.getElementById("savednote").textContent.includes("Saved"), "the draft saves as you type");
+d3.getElementById("ref").value = "MOP-310"; d3.getElementById("go").click();
+d3.getElementById("ref").value = "PM-0018"; d3.getElementById("go").click();
+ok(d3.querySelector('[data-f="pl.why"]').value === "Draft text", "the draft comes back when the record is opened again");
+d3.getElementById("t-list").click();
+ok(d3.getElementById("results").textContent.includes("PM-0018") && d3.getElementById("results").textContent.includes("saved in this browser"), "the draft is listed as a draft");
+d3.getElementById("deldraft") === null || 0;
+// Search: date range, ticket number (including related records), device name, connected devices.
+const search = (id, v) => { const el = d3.getElementById(id); if (el.type === "checkbox") el.checked = v; else el.value = v; el.dispatchEvent(new dom3.window.Event(el.type === "checkbox" ? "change" : "input")); };
+const rows = () => [...d3.querySelectorAll("#results tr")].slice(1).map(r => r.textContent);
+search("f-ticket", "WO-41023");
+ok(rows().length === 1 && rows()[0].includes("PIR-2026-001"), "searching the work order finds the review of its incident");
+search("f-ticket", "MOP-310");
+ok(rows().some(r => r.includes("PIR-2026-001")), "a related MOP number finds the review");
+search("f-ticket", ""); search("f-device", "a07-ct04");
+ok(rows().length === 0, "a tray that the review does not name is not a match on its own");
+search("f-near", true);
+ok(rows().some(r => r.includes("PIR-2026-001") && r.includes("connected to")), "with connected devices, the rack's tray finds the review");
+search("f-near", false); search("f-device", "A07");
+ok(rows().some(r => r.includes("PIR-2026-001")), "the rack name finds the review");
+search("f-device", ""); search("f-from", "2026-09-26");
+ok(rows().length === 0, "a date range after every event excludes them all");
+search("f-from", "2026-09-24");
+ok(rows().length > 0 && rows().every(r => !r.includes("PIR-2026-001")), "a date range narrows the list to later reviews");
+search("f-from", ""); search("f-all", true);
+ok(rows().length > 100 && d3.getElementById("count").textContent.includes("with no review"), "records with no review can be listed too");
+ok(errors.length === 0, "no script errors in the record-type checks " + errors.join(";"));

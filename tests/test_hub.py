@@ -45,6 +45,7 @@ def test_overview_matches_the_headline_results(facts):
     al = facts["alarms"]
     assert (al["total"], al["expected"], al["flagged"], al["flag_changes"]) == (120, 11, 4, ["MOP-310"])
     assert facts["patterns"]["found"] == 3 and facts["pir"]["id"] == "PIR-2026-001"
+    assert facts["pir"]["reviews"] >= 2 and facts["pir"]["open"] < facts["pir"]["actions"]
     assert [w for w, _ in facts["weeks"]] == ["2026-W36", "2026-W37", "2026-W38", "2026-W39"]
 
 
@@ -103,10 +104,13 @@ def test_overview_deep_links_name_real_sub_views(site):
     """#live, #changes, #notify (alarm board), #blank (PIR), and week ids (weekly) are views those pages open."""
     html = (site / "index.html").read_text(encoding="utf-8")
     hashes = {h for h in re.findall(r'href="(\w+/)#([\w-]+)"', html)}
-    assert {("alarms/", "live"), ("alarms/", "changes"), ("alarms/", "notify"), ("pir/", "blank"), ("weekly/", "2026-W38")} <= hashes
+    assert {("alarms/", "live"), ("alarms/", "changes"), ("alarms/", "notify"), ("pir/", "blank"), ("pir/", "reviews"),
+            ("weekly/", "2026-W38")} <= hashes
     alarms = (ROOT / "templates" / "alarms.html").read_text(encoding="utf-8")
     assert '["board", "changes", "notify", "about"].includes(h)' in alarms and 'h === "live"' in alarms
-    assert 'location.hash === "#blank"' in (ROOT / "templates" / "pir.html").read_text(encoding="utf-8")
+    pir = (ROOT / "templates" / "pir.html").read_text(encoding="utf-8")
+    assert 'if (h === "reviews") setMode("list")' in pir and 'else if (h === "blank") setMode("blank")' in pir
+    assert 'h.startsWith("new=")' in pir, "a record's Start review link opens the form filled from it"
 
 
 def test_app_page_keeps_one_scroll_bar_and_the_light_theme(site):

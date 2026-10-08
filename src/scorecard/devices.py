@@ -381,3 +381,87 @@ def cabling_mismatches(data: dict[str, Any], port_events: list[dict[str, Any]]) 
         if to != [ev["peer_host"], ev["peer_hca"]]:
             bad.append(f"{key}: data says {ev['peer_host']} {ev['peer_hca']}, directory says {to}")
     return len(port_events), bad
+
+
+# --------------------------------------------------------------------------- #
+# Device names in a record, and what they connect to (PIR search, related-record suggestions)
+# --------------------------------------------------------------------------- #
+
+_RANGE = re.compile(r"^(?:racks )?(?:to )?([A-Za-z0-9_-]*?)(\d+)$")
+_SHELF = re.compile(r"\b([A-C]\d{2}) power shelf (\d)\b")
+_TRAYWORD = re.compile(r"\b([a-c]\d{2}-(?:ct|nvsw)\d{1,2})\b")
+_RACKS = re.compile(r"racks ([A-C])(\d{2}) to [A-C](\d{2})")
+_ADJ: dict[int, dict[str, set[str]]] = {}
+BROAD = {"Shared header"}   # "every rack in Hall A draws from the header": true, but it would make every rack a neighbor
+
+
+def _span_names(first: str, note: str, devs: dict[str, Any]) -> list[str]:
+    """"A09" with note "to A16 (row 2)" -> A09..A16; "a07-ct01" with "to a07-ct18: ..." -> every tray."""
+    m = re.match(r"to (\S+?)[:,( ]|to (\S+)$", note)
+    last = (m.group(1) or m.group(2)) if m else None
+    a, b = re.fullmatch(r"(.*?)(\d+)", first), re.fullmatch(r"(.*?)(\d+)", last or "")
+    if not (a and b and a.group(1) == b.group(1)):
+        return [first]
+    w = len(a.group(2))
+    out = [f"{a.group(1)}{i:0{w}d}" for i in range(int(a.group(2)), int(b.group(2)) + 1)]
+    return [n for n in out if n in devs] or [first]
+
+
+def adjacency(data: dict[str, Any]) -> dict[str, set[str]]:
+    """Every device and the devices it connects to, both ways, read from the directory's "Connected to" rows. Ranges
+    ("A09 to A16", "a07-ct01 to a07-ct18") are expanded; a leaf port counts as its switch. The shared Hall A header
+    is left out (see ``BROAD``)."""
+    key = id(data["devices"])
+    if key in _ADJ:
+        return _ADJ[key]
+    devs = data["devices"]
+    adj: dict[str, set[str]] = {n: set() for n in devs}
+    for name, e in devs.items():
+        for rel, other, note in e.get("conn", []):
+            if rel in BROAD:
+                continue
+            m = PORT_RE.fullmatch(other or "")
+            targets = [m.group(1)] if m else _span_names(other, note or "", devs) if other else []
+            m2 = _RACKS.search(note or "")
+            if m2:
+                targets += [f"{m2.group(1)}{i:02d}" for i in range(int(m2.group(2)), int(m2.group(3)) + 1)]
+            for t in targets:
+                if t in devs and t != name:
+                    adj[name].add(t)
+                    adj[t].add(name)
+    _ADJ[key] = adj
+    return adj
+
+
+def names_in(data: dict[str, Any], *texts: str) -> list[str]:
+    """The directory names a record's free text points at: "PSU 5 in A17 power shelf 4" -> A17, A17_PowerShelf_4;
+    "Rack A07" -> A07; "NVLink switch tray a15-nvsw3" -> a15-nvsw3, A15; a leaf port -> its switch."""
+    from . import glossary
+    devs = data["devices"]
+    out: list[str] = []
+    for text in texts:
+        if not text:
+            continue
+        found = [f"{m.group(1)}_PowerShelf_{m.group(2)}" for m in _SHELF.finditer(text)]
+        found += _TRAYWORD.findall(text)
+        found += [t for t in glossary.tokens(text)]
+        found += re.findall(r"\b[A-C]\d{2}\b", text)
+        for n in found:
+            m = PORT_RE.fullmatch(n)
+            n = m.group(1) if m else n
+            if n in devs and n not in NOT_DEVICES and n not in out:
+                out.append(n)
+    for n in list(out):   # a tray, shelf, or switch tray belongs to its rack
+        e = devs[n]
+        if e["kind"] in ("compute_tray", "switch_tray", "power_shelf"):
+            r = next((o for rel, o, _ in e["conn"] if rel == "In rack" or o[:3].upper() == o[:3] and re.fullmatch(r"[A-C]\d{2}", o)), None)
+            if r and r not in out:
+                out.append(r)
+    return out
+
+
+def neighbors(data: dict[str, Any], names: list[str]) -> list[str]:
+    """Devices one connection away from any of ``names``, not counting the names themselves."""
+    adj = adjacency(data)
+    near = set().union(*(adj.get(n, set()) for n in names)) if names else set()
+    return sorted(near - set(names))

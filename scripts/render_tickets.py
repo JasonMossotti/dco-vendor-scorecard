@@ -22,13 +22,23 @@ from scorecard import sitenav  # noqa: E402
 from scorecard import tickets as T  # noqa: E402
 from scorecard.alarms import CLASS_TEXT  # noqa: E402
 
-# The incident with a completed post-incident review (the rack A07 outage, PIR-2026-001).
-PIR_REF = yaml.safe_load((ROOT / "pir" / "reviews" / "PIR-2026-001.yaml").read_text(encoding="utf-8"))["ref"]
+def reviewed(records: list[dict]) -> dict[str, str]:
+    """Record number -> the completed review of it, for every record a review's incident covers (its ticket, its
+    work order, and the records they are linked to in the records, so the outage's MOP is not called reviewed)."""
+    import render_pir
+    out = {}
+    for r in render_pir.reviews():
+        rec = next((x for x in records if x["id"] == r["ref"]), None)
+        if not rec:
+            continue
+        for ref in [r["ref"]] + [x for x in rec["related"] if not x.startswith(("MOP-", "PM-"))]:
+            out.setdefault(ref, r["id"])
+    return out
 
 
 def data() -> dict:
     d = T.build()
-    d.update(class_text=CLASS_TEXT, pir_ref=PIR_REF)
+    d.update(class_text=CLASS_TEXT, reviewed=reviewed(d["records"]))
     return d
 
 

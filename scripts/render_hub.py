@@ -59,7 +59,8 @@ def facts() -> dict:
     al = render_alarms.prepare()
     cls = Counter(a["cls"] for a in al["alarms"])
     flagged = [a for a in al["alarms"] if a["cls"] in ("out_of_scope", "out_of_window")]
-    pir = render_pir.reviews()[0]
+    pirs = render_pir.reviews()
+    pir = pirs[0]
     weeks = render_weekly.packs()
     pat = render_patterns.prepare()
     en = render_energy.prepare()
@@ -80,7 +81,9 @@ def facts() -> dict:
                    "changes": len(al["declarations"]), "tickets": len(al["tickets"]),
                    "notify": [(k["id"], k["party"], k["actual"], k["target"]) for k in al["key_measures"]]},
         "pir": {"id": pir["id"], "title": pir["title"], "status": pir["status"], "ref": pir["ref"],
-                "actions": len(pir["actions"]), "open": sum(a["status"] != "Done" for a in pir["actions"])},
+                "reviews": len(pirs), "latest": {"id": pirs[-1]["id"], "title": pirs[-1]["title"], "status": pirs[-1]["status"]},
+                "actions": sum(len(r["actions"]) for r in pirs),
+                "open": sum(a["status"] != "Complete" for r in pirs for a in r["actions"])},
         "weeks": [(w["id"], w["title"]) for w in weeks],
         "week_status": [(p["role"], p["status"]) for p in weeks[-1]["partners"]],
         "tickets": {"records": len(tk["records"]), "incidents": tk["counts"]["inc"] + tk["counts"]["wo"],
@@ -162,10 +165,11 @@ def body(f: dict) -> str:
              [("Open the portal", "tickets/"), ("The outage's ticket", f"tickets/#{pir['ref']}")],
              "Read only, under the Records access term of each SLA (RA-1 to RA-6)."),
         tile("pir", "Post-Incident Review",
-             f"{pir['id']}: {pir['title']}.",
-             [(pir["ref"], "incident"), (str(pir["actions"]), "owned actions"), (str(pir["open"]), "still open")],
-             [("Completed example", "pir/"), ("Blank form", "pir/#blank")],
-             f"Status: {pir['status']}."),
+             f"Completed reviews with their causes and owned actions, and a review that can be started from any record. "
+             f"Latest: {pir['latest']['id']}, \u201c{pir['latest']['title']}\u201d.",
+             [(str(pir["reviews"]), "completed reviews"), (str(pir["actions"]), "owned actions"), (str(pir["open"]), "still open")],
+             [("Reviews", "pir/#reviews"), ("The rack A07 outage", "pir/"), ("Blank form", "pir/#blank")],
+             f"Search by date, record number, or device name. Every review's facts come from the data; its judgment is written by people."),
         tile("weekly", "Weekly Review",
              "One pack per week for both partners: month-to-date service levels, incidents, actions, next week's priorities.",
              [(str(len(f["weeks"])), "weekly packs"), (f["weeks"][-1][0], "latest")],

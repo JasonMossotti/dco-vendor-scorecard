@@ -1,0 +1,75 @@
+# Post-incident review: judgment written by people. Every fact (times, metrics, alarms, impact)
+# comes from the dataset via src/scorecard/pir.py and is checked by tests/test_pir.py.
+id: PIR-2026-004
+ref: WO-41009
+status: "Action items closed"
+title: "A 42-minute utility outage: generators carried the site with no IT impact"
+incident_commander: "Customer Site Lead"
+authors: ["Customer Site Lead", "Landlord Chief Engineer"]
+review_meeting: "2026-09-29"
+status_as_of: "2026-09-29"
+severity:
+  osr_level: 1
+  osr_rationale: "No IT service was disrupted: the UPS systems carried the load through the transfer and the generators carried the site until the utility came back. Reviewed because losing the utility is the event the site's whole power design exists for."
+  internal: "S4 (no breach: the Landlord is measured on carrying the load, and it did)"
+  priority: "P1 (Landlord)"
+plain_language:
+  what_happened: >-
+    On the afternoon of September 24 the utility feeding the site failed. Both of the site's incoming
+    medium-voltage breakers tripped, the standby generators took the site over within seconds, and the
+    utility came back 42 minutes later. No rack lost power at any point.
+  who_was_affected: >-
+    Nobody. No rack, no GPU, and no customer-facing service was affected, and nobody was hurt. The site
+    ran on generators for 42 minutes.
+  why: >-
+    The cause was outside the site: the utility lost voltage on its own network. Under the Interface
+    Agreement a utility outage is attributed to the utility, and the Landlord is measured on carrying the
+    load, which it did.
+  what_we_are_doing: >-
+    Nothing about the response needs to change. The review confirmed the two things worth confirming:
+    that all seven generators started and carried the site, and that the return to the utility was made
+    without a second interruption. The Landlord's own records of the transfer agreed with the site data.
+summary_technical: >-
+  At 2026-09-24T21:14:20Z both the MV-A and MV-B main breakers tripped on utility undervoltage. The
+  generator paralleling bus was live with 7 of 7 generators at 21:14:30Z, 10 seconds later, and the
+  generator tie breakers closed to MV-A and MV-B at 21:14:32Z; the UPS systems carried the IT load across
+  the gap. WO-41009 was opened at 21:15:29Z and acknowledged in 2 minutes (P1 target 5); an engineer was
+  at the MV switchgear in 8 minutes (P1 target 15). The utility returned at 21:56:06Z and both mains
+  closed in a closed-transition retransfer, with the generator tie breakers opening 5 seconds later, so
+  the site returned to the utility without a second interruption. Measured restoration is 42 min from the
+  trip, which matches the work order; the Landlord recorded 10.5 MW carried on generators. Under FA-6 the
+  event is Utility-attributed, with no capacity lost and no IT Partner clock. No finding was raised.
+trigger: "Loss of voltage on the 138 kV utility service feeding the site."
+detection: "Immediate and automatic: both MV main breakers tripped on undervoltage and the generators started without a human decision; the work order was opened 69 seconds later."
+resolution: "The generators carried the site for 42 minutes; when the utility returned, both mains closed in a closed-transition retransfer and the generator ties opened 5 seconds later."
+factors:
+  - id: F1
+    type: "External"
+    text: "The utility lost voltage on its own network. The site has no control over this and the design assumes it: this is what the generators and the UPS systems are for."
+  - id: F2
+    type: "Equipment"
+    text: "All seven generators started and paralleled within 10 seconds, and the UPS systems carried the IT load across the gap. The monthly generator tests are what makes that reliable, which is why finding L-003 on a test record matters even when no outage follows it."
+lessons:
+  went_well:
+    - "The transfer was automatic and complete in 12 seconds: bus live at 10 seconds, ties closed at 12."
+    - "All 7 of 7 generators ran, and the Landlord recorded 10.5 MW carried."
+    - "The return to the utility was a closed transition, so there was no second interruption when the utility came back."
+    - "The work order's own times and the site's electrical data agreed on the trip and the restoration to the second."
+  went_poorly:
+    - "Nothing in the response. The review notes only that the site's confidence in this transfer rests on the monthly generator tests, and that one test record in the same month did not reconcile (finding L-003, GEN-4)."
+  lucky:
+    - "Nothing turned on luck: the event ran the way the design intends. The utility outage was also short enough that fuel was never a question."
+ehs:
+  injuries: 0
+  screening: "Automatic transfer with no manual switching on energised equipment; the engineer attended to observe. No injury, no arc flash, nothing to refer under EHS-R2."
+  referral: "None. Screened and closed by the Customer Site Lead."
+actions:
+  - {id: A1, factor: F2, owner: "Customer Site Lead", priority: P2, due: "2026-09-28", status: "Complete", action: "Confirm from the site's electrical data that all seven generators carried load for the whole outage and that the retransfer was a closed transition.", success: "Confirmed in this review from the site's own electrical records."}
+  - {id: A2, factor: F2, owner: "Landlord Chief Engineer", priority: P2, due: "2026-09-28", status: "Complete", action: "Report the fuel remaining after the event and the time the site could have continued on generators.", success: "Reported to the Customer and recorded in the service review pack."}
+communications:
+  - {local: "16:20 CDT", to: "Customer infrastructure leadership", message: "Utility outage at the site. Generators carried the load within seconds; no rack lost power and no IT service is affected."}
+  - {local: "17:00 CDT", to: "Customer infrastructure leadership", message: "Utility restored at 4:56 p.m. after 42 minutes. Site back on utility power with no second interruption; no IT impact at any point."}
+repeat_rulings: {}
+signoff:
+  - {role: "Customer Site Lead (Incident Commander)", date: "2026-09-29"}
+  - {role: "Landlord Chief Engineer (Caprock Critical Facilities)", date: "2026-09-29"}

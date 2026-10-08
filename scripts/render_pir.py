@@ -42,28 +42,31 @@ def markdown(f: dict, a: dict) -> str:
          f"Interactive version: [Post-Incident Review page](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/).", "",
          "| Incident date | Ticket | Work order | MOP | Unit | Uptime severity (OSR) | Internal severity | Priority | Incident Commander | Review meeting |",
          "|---|---|---|---|---|---|---|---|---|---|",
-         f"| {f['date']} | {f['ticket']} | {f['work_order']} | {', '.join(f['mops'])} | {f['unit']} | {sev['osr_level']} {OSR[sev['osr_level']][0]} | "
+         f"| {f['date']} | {f['ticket'] or '—'} | {f['work_order'] or '—'} | {', '.join(f['mops']) or '—'} | {f['unit']} | {sev['osr_level']} {OSR[sev['osr_level']][0]} | "
          f"{sev['internal']} | {sev['priority']} | {a['incident_commander']} | {a['review_meeting']} |", "",
          f"*OSR {sev['osr_level']} ({OSR[sev['osr_level']][0]}): {OSR[sev['osr_level']][1]} {sev['osr_rationale']}*", "",
          "## In plain language", ""]
     for q, k in (("What happened?", "what_happened"), ("Who was affected?", "who_was_affected"), ("Why did it happen?", "why"),
                  ("What are we doing about it?", "what_we_are_doing")):
         L += [f"**{q}** {pl[k]}", ""]
-    L += ["| Power loss to back in service | GPUs offline | GPU-hours lost | GPU-hours: Landlord / IT validation | Injuries |",
+    lb = f["labels"]
+    L += [f"| {lb['duration']} | {lb['offline']} | GPU-hours lost | {lb['split']} | Injuries |",
           "|:-:|:-:|:-:|:-:|:-:|", f"| {im['duration']} | {im['gpus']} | {im['gpu_hours_total']} | {im['gpu_hours_landlord']} / {im['gpu_hours_it']} | {im['injuries']} |", "",
           "## Summary (technical)", "", a["summary_technical"], "",
           f"- **Trigger:** {a['trigger']}", f"- **Detection:** {a['detection']}", f"- **Resolution:** {a['resolution']}", "",
           "## Response against targets", "", "| Measure | From (UTC) | To (UTC) | Elapsed | Target | Result |", "|---|---|---|---|---|---|"]
     for m in f["metrics"]:
-        L.append(f"| {m['measure']} | {m['from'][11:19]} | {m['to'][11:19]} | {m['elapsed']} | {str(m['target']) + ' min' if m['target'] else '—'} | "
+        L.append(f"| {m['measure']}{' (' + m['note'] + ')' if m['note'] else ''} | {m['from'][11:19]} | {m['to'][11:19]} | {m['elapsed']} | {str(m['target']) + ' min' if m['target'] else '—'} | "
                  f"{'—' if m['met'] is None else 'Met' if m['met'] else '**Missed**'} |")
     L += ["", "## Alarm and event timeline (exact source records)", "", BADGE_NOTE, "", "| UTC | Central | Party | Event | Source | Record |", "|---|---|---|---|---|---|"]
     for r in f["timeline"]:
         L.append(f"| {r['t'][11:19]} | {r['local']} | {r['party']} | {r['event'].replace('|', '/')} | `{r['source']}` | "
                  f"{('`' + r['record'].replace('|', '/') + '`') if r['record'] else ''} |")
     at = f["attribution"]
-    L += ["", "## Attribution (Interface Agreement)", "", f"**Owner: {at['owner']}** (rules {', '.join(at['rules'])}). {at['evidence']}. "
-          f"Under FA-3 the IT Partner's clock started at the Landlord's handoff, {f['handoff'][11:19]}Z.", "",
+    rules = f" (rules {', '.join(at['rules'])})" if at["rules"] else ""
+    evidence = f" {at['evidence'].rstrip('.')}." if at["evidence"] else ""
+    fa3 = f" Under FA-3 the IT Partner's clock started at the Landlord's handoff, {f['handoff'][11:19]}Z." if f["handoff"] else ""
+    L += ["", "## Attribution (Interface Agreement)", "", f"**Owner: {at['owner']}**{rules}.{evidence}{fa3}", "",
           "## Contract and compliance consequences", ""]
     L += [f"- Finding {x['id']} ({x['severity']}): {x['summary']}" for x in f["findings"]]
     c = f["csl"].get("OT-CSL-01")
@@ -105,8 +108,12 @@ def outputs() -> dict[Path, str]:
 def html_page() -> str:
     ds = Dataset(SAMPLE)
     rv = reviews()
-    data = {"index": build_index(ds), "example": rv[0], "osr": {k: list(v) for k, v in OSR.items()}, "badge_note": BADGE_NOTE}
+    index = build_index(ds)
+    # The devices one connection away are for search only, not text the page shows, so the popups skip them.
+    near = {ref: f.pop("near") for ref, f in index.items()}
+    data = {"index": index, "reviews": rv, "osr": {k: list(v) for k, v in OSR.items()}, "badge_note": BADGE_NOTE}
     tpl = sitenav.inject((ROOT / "templates" / "pir.html").read_text(encoding="utf-8"), "pir")
+    tpl = tpl.replace("__NEAR__", json.dumps(near, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))
     return sitenav.finish(tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/")))
 
 

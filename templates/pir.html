@@ -36,6 +36,13 @@ textarea { min-height:70px; resize:vertical; }
 .autofill { display:flex; gap:8px; align-items:center; background:var(--panel); padding:12px; border-radius:8px; margin-bottom:12px; }
 .autofill input { max-width:240px; } .note { font-size:12px; color:var(--muted); }
 .plainonly .tech { display:none; }
+.filters { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px 12px; align-items:end; background:var(--panel); padding:12px; border-radius:8px; margin:8px 0 12px; }
+.filters label { font-size:12px; color:var(--muted); } .filters label.ck { display:flex; gap:6px; align-items:center; color:var(--ink); }
+.filters input[type=date] { width:100%; font:inherit; border:1px solid var(--line); border-radius:6px; padding:5px 8px; }
+.btn { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--it); padding:4px 10px; border-radius:6px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-block; }
+.pill { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px; background:var(--panel); border:1px solid var(--line); margin:1px 2px 1px 0; white-space:nowrap; }
+.pill.near { border-style:dashed; }
+.saved { font-size:12px; color:var(--ok); }
 .sign { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; } .sign div { border-top:1px solid var(--ink); padding-top:6px; font-size:13px; min-height:60px; }
 @media print { header.top, .autofill, .addrow { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } h2 { break-after:avoid; } tr { break-inside:avoid; } }
 </style>
@@ -44,7 +51,7 @@ textarea { min-height:70px; resize:vertical; }
 __SITENAV__
 <header class="top">
   <div><strong>Post-Incident Review</strong></div>
-  <div class="tabs"><button id="t-example" class="on">Example: Rack A07</button> <button id="t-blank">Blank form</button></div>
+  <div class="tabs"><button id="t-list">Reviews</button> <button id="t-example" class="on">Review</button> <button id="t-blank">Blank form</button></div>
   <div class="tools">
     <label style="font-size:13px;"><input type="checkbox" id="plainonly"> Plain-language view</label>
     <button id="print">Print / save PDF</button><button id="md">Export Markdown</button>
@@ -52,30 +59,42 @@ __SITENAV__
 </header>
 <main id="doc"></main>
 <script id="data" type="application/json">__DATA__</script>
+<script type="application/json" data-gl-skip id="near">__NEAR__</script>
 <script>
 const DATA = JSON.parse(document.getElementById("data").textContent);
+const NEAR = JSON.parse(document.getElementById("near").textContent);   // record -> devices one connection away
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const partyCls = p => p === "IT Partner" ? "IT" : esc(p);
 let mode = "example";
+let current = DATA.reviews[0].id;     // the completed review on the Review tab
+let draftRef = "";                    // the record the blank form is filled from
+const BY_ID = Object.fromEntries(DATA.reviews.map(r => [r.id, r]));
+const REVIEWED = {};                  // record number -> completed review id
+DATA.reviews.forEach(r => { const f = DATA.index[r.ref]; [r.ref, f.ticket, f.work_order].filter(Boolean).forEach(x => REVIEWED[x] = REVIEWED[x] || r.id); });
+const KEY = "usm.pir.drafts";         // drafts live in this browser only
+function drafts() { try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; } }
+function saveDrafts(d) { try { localStorage.setItem(KEY, JSON.stringify(d)); return true; } catch (e) { return false; } }
 
 function swimlane(f) {
-  if (!f.power_lost || !f.rts) return "";
+  if (!f.phases || !f.phases.length) return "";
   const t = s => new Date(s).getTime();
   const rows = f.timeline.filter(r => r.t >= f.timeline[0].t);
-  const t0 = Math.min(...rows.map(r => t(r.t))), t1 = Math.max(...rows.map(r => t(r.t)));
+  const times = rows.map(r => t(r.t)).concat(f.phases.flatMap(p => [t(p[1]), t(p[2])]), f.marks.map(m => t(m[0])));
+  const t0 = Math.min(...times), t1 = Math.max(...times);
   const W = 960, L = 120, x = v => L + (W - L - 20) * (t(v) - t0) / (t1 - t0 || 1);
   const lanes = ["Landlord", "IT Partner", "Customer"], y = p => 30 + lanes.indexOf(p) * 34;
+  const color = p => p === "Landlord" ? "#b45309" : p === "IT Partner" ? "#1f5fbf" : "#4b5563";
   let s = `<svg viewBox="0 0 ${W} 150" width="100%" role="img" aria-label="Timeline by party">`;
   lanes.forEach(p => s += `<text x="8" y="${y(p) + 4}" font-size="12" fill="#5b6774">${p}</text><line x1="${L}" x2="${W - 20}" y1="${y(p)}" y2="${y(p)}" stroke="#d5dbe2"/>`);
-  s += `<rect x="${x(f.power_lost)}" y="${y("Landlord") - 9}" width="${x(f.handoff) - x(f.power_lost)}" height="18" fill="#b45309" opacity=".85"/>`;
-  const barLabels = `<text x="${(x(f.power_lost) + x(f.handoff)) / 2}" y="${y("Landlord") - 13}" font-size="11" fill="#b45309" text-anchor="middle">Landlord-attributed (FA-1)</text>`;
-  s += `<rect x="${x(f.handoff)}" y="${y("IT Partner") - 9}" width="${Math.max(2, x(f.rts) - x(f.handoff))}" height="18" fill="#1f5fbf" opacity=".85"/>`;
-  const itLabel = `<text x="${(x(f.handoff) + x(f.rts)) / 2}" y="${y("IT Partner") + 22}" font-size="11" fill="#1f5fbf" text-anchor="middle">IT validation (FA-3)</text>`;
+  let labels = "";
+  f.phases.forEach(([p, a, b, lbl], i) => {
+    s += `<rect x="${x(a)}" y="${y(p) - 9}" width="${Math.max(2, x(b) - x(a))}" height="18" fill="${color(p)}" opacity=".85"/>`;
+    labels += `<text x="${(x(a) + x(b)) / 2}" y="${i === 0 ? y(p) - 13 : y(p) + 22}" font-size="11" fill="${color(p)}" text-anchor="middle">${esc(lbl)}</text>`;
+  });
   rows.forEach(r => s += `<circle cx="${x(r.t)}" cy="${y(r.party)}" r="3" fill="#1e2933"><title>${esc(r.local + " " + r.event)}</title></circle>`);
-  s += barLabels + itLabel;   // labels sit outside the bars, so event dots never cover them
-  [f.power_lost, f.handoff, f.rts].forEach((v, i) => {
-    const lbl = ["Power lost", "Handoff", "Back in service"][i];
-    s += `<line x1="${x(v)}" x2="${x(v)}" y1="14" y2="128" stroke="#1e2933" stroke-dasharray="3 3"/><text x="${x(v)}" y="142" font-size="11" text-anchor="middle">${lbl} ${new Date(v).toLocaleTimeString("en-US", {timeZone: "America/Chicago", hour: "numeric", minute: "2-digit"})}</text>`;
+  s += labels;   // labels sit outside the bars, so event dots never cover them
+  f.marks.forEach(([v, lbl]) => {
+    s += `<line x1="${x(v)}" x2="${x(v)}" y1="14" y2="128" stroke="#1e2933" stroke-dasharray="3 3"/><text x="${x(v)}" y="142" font-size="11" text-anchor="middle">${esc(lbl)} ${new Date(v).toLocaleTimeString("en-US", {timeZone: "America/Chicago", hour: "numeric", minute: "2-digit"})}</text>`;
   });
   return s + "</svg>";
 }
@@ -90,22 +109,25 @@ function render(f, a, edit) {
   const sev = a.severity || {};
   const osr = sev.osr_level || (f && f.osr_suggested.level);
   let h = "";
-  if (edit) h += `<div class="autofill"><b>Auto-fill from</b><input type="text" id="ref" placeholder="Ticket or work order, e.g. INC3900001" value="${esc(f ? f.ref : "")}"><button id="go">Fill facts</button><span class="note" id="refnote">${Object.keys(DATA.index).length} incidents indexed: every P1 and P2 ticket and work order in the sample month.</span></div>`;
+  if (edit) h += `<div class="autofill"><b>Auto-fill from</b><input type="text" id="ref" placeholder="Any record, e.g. INC3900001, WO-41024, MOP-310" value="${esc(f ? f.ref : "")}"><button id="go">Fill facts</button>` +
+    (f ? `<button id="yaml" class="btn">Export YAML</button><button id="deldraft" class="btn">Delete draft</button>` : "") +
+    `<span class="note" id="refnote">${f ? `Draft ${esc("PIR-DRAFT-" + f.ref)} is saved in this browser as you type.` : `${Object.keys(DATA.index).length} records indexed: every incident, change, work order, method of procedure, and preventive maintenance task in the sample month.`}</span><span class="saved" id="savednote"></span></div>`;
   h += `<h1>${edit ? `<input type="text" data-f="title" value="${esc(a.title || (f ? f.title : ""))}" placeholder="Incident title">` : esc(a.title)}</h1>`;
-  h += `<p class="sub">${esc(a.id || "PIR-draft")} · Status: ${edit ? `<select data-f="status">${["Draft", "In review", "Approved; action items in progress", "Action items closed"].map(o => `<option${o === a.status ? " selected" : ""}>${o}</option>`).join("")}</select>` : esc(a.status)} · Blameless review: findings describe systems and procedures, not individuals.</p>`;
+  h += `<p class="sub">${esc(a.id || (f ? "PIR-DRAFT-" + f.ref : "PIR-draft"))} · Status: ${edit ? `<select data-f="status">${["Draft", "In review", "Approved; action items in progress", "Action items closed"].map(o => `<option${o === a.status ? " selected" : ""}>${o}</option>`).join("")}</select>` : esc(a.status)} · Blameless review: findings describe systems and procedures, not individuals.</p>`;
   h += `<div class="grid">` + [
     ["Incident date", f && f.date], ["Ticket", f && f.ticket], ["Work order", f && f.work_order], ["MOP", f && f.mops.join(", ")],
-    ["Unit", f && f.unit], ["Uptime severity (OSR)", osr ? `${osr} · ${DATA.osr[osr][0]}` : ""], ["Internal severity", sev.internal || (f && f.findings.length ? f.findings[0].severity : "")],
+    ["Unit", f && f.unit], ["Record", f && `${f.ref} (${f.type_label})`], ["Related records", f && f.related.join(", ")], ["Uptime severity (OSR)", osr ? `${osr} · ${DATA.osr[osr][0]}` : ""], ["Internal severity", sev.internal || (f && f.findings.length ? f.findings[0].severity : "")],
     ["Priority", sev.priority || ""], ["Incident Commander", a.incident_commander || ""], ["Review meeting", a.review_meeting || ""]
   ].map(([k, v]) => `<div class="kv"${k === "Unit" && v ? ` data-loc="${esc(v)}"` : ""}><b>${k}</b>${edit && ["Priority", "Incident Commander", "Review meeting"].includes(k) ? `<input type="text" data-f="${k}" value="${esc(v)}">` : esc(v || "—")}</div>`).join("") + `</div>`;
+  if (f && ["chg", "mop", "pm"].includes(f.kind)) h += `<p class="note">This record is a ${esc(f.type_label.toLowerCase())}: its facts are the ${f.kind === "pm" ? "due" : "approved"} window, the work recorded, its alarms, and its findings. Response targets apply to incidents and work orders.</p>`;
   if (osr) h += `<p class="note">OSR ${esc(osr)} (${esc(DATA.osr[osr][0])}): ${esc(DATA.osr[osr][1])} ${esc(sev.osr_rationale || "")}</p>`;
 
   h += `<h2>In plain language</h2><div class="plain">` + [["What happened?", "what_happened"], ["Who was affected?", "who_was_affected"], ["Why did it happen?", "why"], ["What are we doing about it?", "what_we_are_doing"]]
     .map(([q, k]) => `<div class="card"><h3>${q}</h3>${field("pl." + k, pl[k], edit, 5)}</div>`).join("") + `</div>`;
   if (f) {
     const im = f.impact;
-    h += `<div class="strip">` + [[im.duration, "Power loss to back in service"], [im.gpus + " GPUs", "One rack offline"], [im.gpu_hours_total, "GPU-hours lost"],
-      [im.gpu_hours_landlord + " / " + im.gpu_hours_it, "GPU-hours: Landlord / IT validation"], [im.injuries, "Injuries"],
+    h += `<div class="strip">` + [[im.duration, f.labels.duration], [im.gpus + " GPUs", f.labels.gpus], [im.gpu_hours_total, "GPU-hours lost"],
+      [im.gpu_hours_landlord + " / " + im.gpu_hours_it, f.labels.split], [im.injuries, "Injuries"],
       [f.credits_landlord != null ? "$" + Math.round(f.credits_landlord).toLocaleString() : "—", "Landlord credits this month (all causes)"]]
       .map(([v, l]) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${l}</div></div>`).join("") + `</div>`;
     h += `<h2>Timeline at a glance</h2>${swimlane(f)}`;
@@ -115,10 +137,10 @@ function render(f, a, edit) {
   h += `<div class="grid" style="margin-top:10px">` + [["Trigger", "trigger"], ["Detection", "detection"], ["Resolution", "resolution"]].map(([k, n]) => `<div class="kv"><b>${k}</b>${field(n, a[n], edit)}</div>`).join("") + `</div>`;
   if (f) {
     h += `<h2>Response against targets</h2><table><tr><th>Measure</th><th>From (UTC)</th><th>To (UTC)</th><th>Elapsed</th><th>Target</th><th>Result</th></tr>` +
-      f.metrics.map(m => `<tr><td>${esc(m.measure)}</td><td class="num">${esc(m.from.slice(11, 19))}</td><td class="num">${esc(m.to.slice(11, 19))}</td><td class="num">${esc(m.elapsed)}</td><td>${m.target ? esc(m.target) + " min" : "—"}</td><td>${m.met === null ? "—" : m.met ? "<span class='met'>Met</span>" : "<span class='missed'>Missed</span>"}</td></tr>`).join("") + `</table>`;
+      f.metrics.map(m => `<tr><td>${esc(m.measure)}${m.note ? `<br><span class="note">${esc(m.note)}</span>` : ""}</td><td class="num">${esc(m.from.slice(11, 19))}</td><td class="num">${esc(m.to.slice(11, 19))}</td><td class="num">${esc(m.elapsed)}</td><td>${m.target ? esc(m.target) + " min" : "—"}</td><td>${m.met === null ? "—" : m.met ? "<span class='met'>Met</span>" : "<span class='missed'>Missed</span>"}</td></tr>`).join("") + `</table>`;
     h += `<h2>Alarm and event timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored. ${esc(DATA.badge_note)}</p><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Event</th><th>Source</th></tr>` +
       f.timeline.map(r => `<tr><td class="num">${esc(r.t.slice(11, 19))}</td><td class="num">${esc(r.local)}</td><td><span class="tag ${partyCls(r.party)}">${esc(r.party)}</span></td><td>${esc(r.event)}${r.record ? `<details><summary>record</summary><code class="rec">${esc(r.record)}</code></details>` : ""}</td><td><code>${esc(r.source)}</code></td></tr>`).join("") + `</table>`;
-    h += `<h2>Attribution (Interface Agreement)</h2><div class="box"><b>Owner: ${esc(f.attribution.owner)}</b> · rules ${esc(f.attribution.rules.join(", "))}<br>${esc(f.attribution.evidence)}${f.handoff ? `<br>Under FA-3 the IT Partner's clock started at the Landlord's handoff, ${esc(f.handoff.slice(11, 19))}Z.` : ""}</div>`;
+    h += `<h2>Attribution (Interface Agreement)</h2><div class="box"><b>Owner: ${esc(f.attribution.owner)}</b>${f.attribution.rules.length ? " · rules " + esc(f.attribution.rules.join(", ")) : ""}<br>${esc(f.attribution.evidence)}${f.handoff ? `<br>Under FA-3 the IT Partner's clock started at the Landlord's handoff, ${esc(f.handoff.slice(11, 19))}Z.` : ""}</div>`;
     h += `<h2>Contract and compliance consequences</h2><ul>` +
       f.findings.map(x => `<li>Finding ${esc(x.id)} (${esc(x.severity)}): ${esc(x.summary)}</li>`).join("") +
       (f.csl["OT-CSL-01"] ? `<li>OT-CSL-01 Rack Power Availability measured ${esc(f.csl["OT-CSL-01"].actual.toFixed(4))}% against a Minimum of ${esc(f.csl["OT-CSL-01"].minimum)}%: ${esc(f.csl["OT-CSL-01"].status.replace(/_/g, " "))}${f.csl["OT-CSL-01"].credit ? `, credit $${esc(Math.round(f.csl["OT-CSL-01"].credit).toLocaleString())}` : ""}.</li>` : "") +
@@ -149,7 +171,7 @@ function render(f, a, edit) {
   }
   h += `</div>`;
   h += `<h2>Sign-off</h2><div class="sign">${(a.signoff || [{role: "Customer Site Lead (Incident Commander)"}, {role: "Landlord"}, {role: "IT Partner"}]).map(s => `<div>${esc(s.role)}<br><span class="note">${s.date ? "Signed " + esc(s.date) : "Signature and date"}</span></div>`).join("")}</div>`;
-  h += `<p class="note" style="margin-top:24px">Synthetic data for a portfolio demonstration; all names and events are fictional. Facts are generated from the dataset by src/scorecard/pir.py; this review's judgment fields are in pir/reviews/${esc(a.id || "")}.yaml.</p>`;
+  h += `<p class="note" style="margin-top:24px">Synthetic data for a portfolio demonstration; all names and events are fictional. Facts are generated from the dataset by src/scorecard/pir.py; ${edit ? "this draft's judgment fields are saved in this browser; Export YAML gives the file for pir/reviews/." : `this review's judgment fields are in pir/reviews/${esc(a.id || "")}.yaml.`}</p>`;
   return h;
 }
 
@@ -177,49 +199,179 @@ function toMarkdown() {
   return md.replace(/\n{3,}/g, "\n\n");
 }
 
+// The flat form fields (data-f) back into the shape of pir/reviews/*.yaml.
+function toReview(flat, f) {
+  const a = {id: f ? "PIR-DRAFT-" + f.ref : "PIR-draft", ref: f ? f.ref : "", title: flat.title || "", status: flat.status || "Draft",
+    incident_commander: flat["Incident Commander"] || "", review_meeting: flat["Review meeting"] || "", status_as_of: flat.status_as_of || "",
+    severity: {osr_level: f ? f.osr_suggested.level : null, priority: flat.Priority || ""}, plain_language: {}, ehs: {},
+    summary_technical: flat.summary_technical || "", trigger: flat.trigger || "", detection: flat.detection || "", resolution: flat.resolution || "",
+    factors: [], lessons: {}, actions: [], communications: [], repeat_rulings: {}};
+  Object.entries(flat).forEach(([k, v]) => {
+    const p = k.split(".");
+    if (p[0] === "pl") a.plain_language[p[1]] = v;
+    else if (p[0] === "ehs") a.ehs[p[1]] = p[1] === "injuries" ? (Number(v) || 0) : v;
+    else if (p[0] === "lessons") a.lessons[p[1]] = v.split("\n").map(x => x.trim()).filter(Boolean);
+    else if (["factors", "actions", "communications"].includes(p[0])) {
+      const i = Number(p[1]), list = a[p[0]];
+      list[i] = list[i] || (p[0] === "communications" ? {} : {id: (p[0] === "factors" ? "F" : "A") + (i + 1)});
+      list[i][p[2]] = v;
+    } else if (p[0] === "repeat") {
+      const ref = p.slice(1, -1).join("."), r = a.repeat_rulings[ref] = a.repeat_rulings[ref] || {};
+      if (p[p.length - 1] === "related") { if (v) r.related = v === "Related"; } else r.reason = v;
+    }
+  });
+  ["factors", "actions", "communications"].forEach(k => a[k] = a[k].filter(Boolean));
+  return a;
+}
+
+// A review's facts pre-fill the judgment fields that have an obvious first draft; everything else is left for people.
+function prefill(f, a) {
+  const pl = a.plain_language;
+  a.title = a.title || f.title;
+  a.severity.priority = a.severity.priority || f.priority || "";
+  pl.what_happened = pl.what_happened || `On ${f.date}, ${f.unit} was affected for ${f.impact.duration || "an unknown time"}. [Describe in everyday words what happened.]`;
+  pl.who_was_affected = pl.who_was_affected || (f.impact.gpus ? `${f.impact.gpus} GPUs (${f.impact.gpu_hours_total} GPU-hours) were unavailable. Injuries: ${f.impact.injuries}.` : "No compute capacity was lost.");
+  const det = f.metrics.find(m => m.measure.startsWith("Detect"));
+  a.detection = a.detection || (det ? `${det.measure}: ${det.elapsed}.` : "");
+  return a;
+}
+
+// YAML for pir/reviews/: JSON strings are valid YAML scalars, so values are written JSON-quoted.
+function toYaml(v, ind = "") {
+  if (Array.isArray(v)) return v.length ? v.map(x => `\n${ind}- ` + (x && typeof x === "object" ? toYaml(x, ind + "  ").replace(/^\n\s*/, "") : JSON.stringify(x))).join("") : " []";
+  if (v && typeof v === "object") return Object.entries(v).map(([k, x]) => `\n${ind}${/^[A-Za-z0-9_-]+$/.test(k) ? k : JSON.stringify(k)}:` +
+    (x && typeof x === "object" ? (Object.keys(x).length ? toYaml(x, ind + "  ") : Array.isArray(x) ? " []" : " {}") : " " + JSON.stringify(x))).join("");
+  return JSON.stringify(v);
+}
+function reviewYaml(a) {
+  return "# Post-incident review draft exported from the Post-Incident Review page. Facts come from the data;\n# give it the next review number as its file name and id, then add it to pir/reviews/ once it is signed off.\n" + toYaml(a).replace(/^\n/, "") + "\n";
+}
+
+// ----------------------------------------------------------------------------- the review list and search
+function entries(all) {
+  const out = DATA.reviews.map(r => ({id: r.id, ref: r.ref, title: r.title, status: r.status, href: "#" + r.id, label: r.id}));
+  const ds = drafts();
+  Object.keys(ds).sort().forEach(ref => { if (DATA.index[ref]) out.push({id: "PIR-DRAFT-" + ref, ref, title: ds[ref].a.title || DATA.index[ref].title,
+    status: "Draft, saved in this browser " + String(ds[ref].saved || "").slice(0, 10), href: "#new=" + ref, label: "Continue draft"}); });
+  if (all) Object.keys(DATA.index).filter(ref => !REVIEWED[ref] && !ds[ref]).forEach(ref => out.push({id: "", ref, title: DATA.index[ref].title,
+    status: "No review", href: "#new=" + ref, label: "Start review"}));
+  return out;
+}
+
+function search() {
+  const v = id => (document.getElementById(id).value || "").trim();
+  const from = v("f-from"), to = v("f-to"), num = v("f-ticket").toUpperCase(), dev = v("f-device").toLowerCase().replace(/(?: port \d+|:swp\d+)$/, "");
+  const near = document.getElementById("f-near").checked;
+  const rows = [];
+  entries(document.getElementById("f-all").checked).forEach(e => {
+    const f = DATA.index[e.ref];
+    if (from && f.date < from || to && f.date > to) return;
+    const nums = [e.id, e.ref, f.ticket, f.work_order, ...f.mops, ...f.related].filter(Boolean);
+    if (num && !nums.some(x => x.toUpperCase().includes(num))) return;
+    let via = "";
+    if (dev) {
+      const own = f.devices.find(d => d.toLowerCase().includes(dev)) || ((f.unit || "").toLowerCase().includes(dev) ? f.unit : "");
+      const conn = !own && near ? (NEAR[e.ref] || []).find(d => d.toLowerCase() === dev) : "";
+      if (!own && !conn) return;
+      via = conn ? `connected to ${conn}` : "";
+    }
+    rows.push([e, f, via]);
+  });
+  rows.sort((a, b) => b[1].date.localeCompare(a[1].date) || a[0].ref.localeCompare(b[0].ref));
+  const done = rows.filter(r => r[0].status !== "No review").length;
+  document.getElementById("count").textContent = `${done} review${done === 1 ? "" : "s"}` + (document.getElementById("f-all").checked ? ` and ${rows.length - done} records with no review` : "") + " match.";
+  document.getElementById("results").innerHTML = `<table><tr><th>Review</th><th>Event date</th><th>Title</th><th>Status</th><th>Records</th><th>Devices</th></tr>` +
+    rows.map(([e, f, via]) => `<tr><td class="num"><a class="btn" href="${esc(e.href)}">${esc(e.label)}</a></td><td class="num">${esc(f.date)}</td><td>${esc(e.title)}</td><td>${esc(e.status)}</td>` +
+      `<td>${[e.ref, f.ticket, f.work_order, ...f.mops].filter((x, i, l) => x && l.indexOf(x) === i).map(x => `<span class="pill">${esc(x)}</span>`).join("")}</td>` +
+      `<td>${f.devices.map(d => `<span class="pill">${esc(d)}</span>`).join("")}${via ? `<span class="pill near">${esc(via)}</span>` : ""}</td></tr>`).join("") + `</table>`;
+}
+
+function renderList() {
+  return `<h1>Post-incident reviews</h1><p class="sub">Completed reviews live in the repository (pir/reviews/) and are checked against the data. Drafts are saved in this browser only. Start a review from any record here or from the Incident Portal.</p>` +
+    `<div class="filters"><label>Event from<input type="date" id="f-from"></label><label>to<input type="date" id="f-to"></label>` +
+    `<label>Ticket number<input type="text" id="f-ticket" placeholder="INC, CHG, WO, MOP or PM"></label><label>Device name<input type="text" id="f-device" placeholder="e.g. CDU-A2, a07-ct04, leaf-a04-r1"></label>` +
+    `<label class="ck"><input type="checkbox" id="f-near"> Include connected devices</label><label class="ck"><input type="checkbox" id="f-all"> Also records with no review</label>` +
+    `<div><button id="f-clear" class="btn">Clear</button></div></div><p class="note" id="count"></p><div id="results"></div>` +
+    `<p class="note">A ticket number matches the review's own record and every record related to it. A device name matches the devices the record names; with connected devices, also anything one connection away in the device directory (a tray's leaf switch, a rack's tap-offs and CDU).</p>`;
+}
+
 function show() {
   const doc = document.getElementById("doc");
-  if (mode === "example") doc.innerHTML = render(DATA.index[DATA.example.ref], DATA.example, false);
+  if (mode === "list") {
+    doc.innerHTML = renderList();
+    doc.querySelectorAll(".filters input").forEach(el => el.addEventListener("input", search));
+    doc.querySelectorAll(".filters input[type=checkbox]").forEach(el => el.addEventListener("change", search));
+    document.getElementById("f-clear").onclick = () => { doc.querySelectorAll(".filters input").forEach(el => el.type === "checkbox" ? el.checked = false : el.value = ""); search(); };
+    search();
+  } else if (mode === "example") doc.innerHTML = render(DATA.index[BY_ID[current].ref], BY_ID[current], false);
   else {
-    const ref = (document.getElementById("ref") || {}).value || "";
-    doc.innerHTML = render(null, {}, true);
+    const f = DATA.index[draftRef];
+    const d = f && drafts()[draftRef];
+    doc.innerHTML = render(f || null, f ? (d ? d.a : prefill(f, toReview({}, f))) : {}, true);
     wireBlank();
   }
+  document.getElementById("t-example").textContent = "Review: " + current;
 }
 
 function wireBlank() {
+  const doc = document.getElementById("doc");
   document.getElementById("go").onclick = () => {
     const ref = document.getElementById("ref").value.trim().toUpperCase();
     const f = DATA.index[ref];
-    const keep = collect();
-    if (!f) { document.getElementById("refnote").textContent = `No P1 or P2 ticket or work order "${ref}" in this dataset. Try INC3900001 or WO-41023.`; return; }
-    const a = {title: keep.title || f.title, status: keep.status || "Draft", id: "PIR-draft", status_as_of: keep.status_as_of || "",
-      plain_language: {what_happened: keep["pl.what_happened"] || `On ${f.date}, ${f.unit} was affected for ${f.impact.duration}. [Describe in everyday words what happened.]`,
-        who_was_affected: keep["pl.who_was_affected"] || (f.impact.gpus ? `${f.impact.gpus} GPUs (${f.impact.gpu_hours_total} GPU-hours) were unavailable. Injuries: ${f.impact.injuries}.` : "No compute capacity was lost."),
-        why: keep["pl.why"] || "", what_we_are_doing: keep["pl.what_we_are_doing"] || ""},
-      severity: {osr_level: f.osr_suggested.level, priority: keep.Priority || ""}};
-    document.getElementById("doc").innerHTML = render(f, a, true);
+    if (!f) { document.getElementById("refnote").textContent = `No record "${ref}" in this dataset (no incident, change, work order, method of procedure, or preventive maintenance task by that number). Try INC3900001, WO-41024, or MOP-310.`; return; }
+    const saved = drafts()[ref];
+    const a = saved ? saved.a : prefill(f, toReview(collect(), f));
+    draftRef = ref;
+    history.replaceState(null, "", "#new=" + ref);
+    doc.innerHTML = render(f, a, true);
     wireBlank();
+  };
+  if (!draftRef || !DATA.index[draftRef]) return;
+  const save = () => {
+    const d = drafts();
+    d[draftRef] = {saved: new Date().toISOString(), a: toReview(collect(), DATA.index[draftRef])};
+    if (saveDrafts(d)) document.getElementById("savednote").textContent = " Saved.";
+  };
+  doc.querySelectorAll("[data-f]").forEach(el => { el.addEventListener("input", save); el.addEventListener("change", save); });
+  document.getElementById("yaml").onclick = () => download(reviewYaml(toReview(collect(), DATA.index[draftRef])), "PIR-DRAFT-" + draftRef + ".yaml", "text/yaml");
+  document.getElementById("deldraft").onclick = () => {
+    const d = drafts(); delete d[draftRef]; saveDrafts(d);
+    doc.innerHTML = render(DATA.index[draftRef], prefill(DATA.index[draftRef], toReview({}, DATA.index[draftRef])), true);
+    wireBlank();
+    document.getElementById("savednote").textContent = " Draft deleted.";
   };
 }
 
-function setMode(m) {   // #blank deep-links to the blank form
+function download(text, name, type) {
+  const blob = new Blob([text], {type});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+}
+
+function setMode(m, opt) {   // #reviews, #PIR-2026-001 (or #example), #blank, #new=<record>
   mode = m;
-  document.getElementById("t-example").classList.toggle("on", m === "example");
-  document.getElementById("t-blank").classList.toggle("on", m === "blank");
-  const hash = m === "blank" ? "#blank" : "#example";
+  if (m === "example" && opt) current = opt;
+  if (m === "blank") draftRef = opt || "";
+  ["list", "example", "blank"].forEach(k => document.getElementById("t-" + k).classList.toggle("on", k === m));
+  const hash = m === "list" ? "#reviews" : m === "example" ? (current === DATA.reviews[0].id ? "#example" : "#" + current) : draftRef ? "#new=" + draftRef : "#blank";
   if (location.hash !== hash) history.replaceState(null, "", hash);
   show();
 }
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h === "reviews") setMode("list");
+  else if (h === "blank") setMode("blank");
+  else if (h.startsWith("new=")) setMode("blank", h.slice(4).toUpperCase());
+  else if (BY_ID[h]) setMode("example", h);
+  else setMode("example", DATA.reviews[0].id);
+}
+document.getElementById("t-list").onclick = () => setMode("list");
 document.getElementById("t-example").onclick = () => setMode("example");
-document.getElementById("t-blank").onclick = () => setMode("blank");
+document.getElementById("t-blank").onclick = () => setMode("blank", draftRef);
 document.getElementById("plainonly").onchange = e => document.body.classList.toggle("plainonly", e.target.checked);
 document.getElementById("print").onclick = () => window.print();
-document.getElementById("md").onclick = () => {
-  const blob = new Blob([toMarkdown()], {type: "text/markdown"});
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = (mode === "example" ? DATA.example.id : "PIR-draft") + ".md"; a.click();
-};
-if (location.hash === "#blank") setMode("blank"); else show();
+document.getElementById("md").onclick = () => download(toMarkdown(), (mode === "example" ? current : draftRef ? "PIR-DRAFT-" + draftRef : "PIR-draft") + ".md", "text/markdown");
+window.addEventListener("hashchange", route);
+route();
 </script>
 </body>
 </html>
