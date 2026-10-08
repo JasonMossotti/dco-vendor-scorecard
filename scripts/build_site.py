@@ -6,7 +6,7 @@ Output (default _site/):
     app/index.html          the site tab bar above the scorecard app, run in the browser by stlite
     app/streamlit_app.py    the app entrypoint
     app/app_bundle.zip      Python package, SLA, generator config, and datasets
-    alarms/ pir/ weekly/ patterns/ energy/ gpu/   the static pages, each with the same tab bar
+    alarms/ pir/ weekly/ patterns/ energy/ gpu/ deployments/  the static pages, each with the same tab bar
     tickets/                the Incident Portal: both partners' tickets, changes, and work orders (scripts/render_tickets.py)
     agreements/             the Interface Agreement and both SLAs, readable (scripts/render_agreements.py)
     glossary/               every code, acronym, and record ID (scripts/render_glossary.py)
@@ -129,6 +129,7 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     (out / "index.html").write_text(render_hub.html_page(), encoding="utf-8", newline="\n")
     # The static pages beside the app: post-incident review, weekly review, failure patterns, alarm board.
     import render_alarms
+    import render_deployments
     import render_energy
     import render_gpu_health
     import render_patterns
@@ -136,7 +137,8 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_tickets
     import render_weekly
     for path, mod in (("pir", render_pir), ("weekly", render_weekly), ("patterns", render_patterns), ("alarms", render_alarms),
-                      ("tickets", render_tickets), ("energy", render_energy), ("gpu", render_gpu_health)):
+                      ("tickets", render_tickets), ("energy", render_energy), ("gpu", render_gpu_health),
+                      ("deployments", render_deployments)):
         (out / path).mkdir(parents=True, exist_ok=True)
         (out / path / "index.html").write_text(mod.html_page(), encoding="utf-8", newline="\n")
     # The reference tabs: the contracts, the glossary, and the device directory.

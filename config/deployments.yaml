@@ -1,0 +1,519 @@
+# Deployment program for Site AUS-1 (fictional; portfolio demo): the Hall B GB300 NVL72 rollout.
+#
+# This file is the program's standard work: gates, the steps inside them, the procedure and
+# acceptance criteria of every step, who signs it, and who inspects it. It is judgment, written by
+# people; the facts (dates, records, measurements) come from the data. The site itself (racks, power
+# groups, CDUs, cabling) comes from site/site.yaml, and the rack milestones M1 to M7 from the IT
+# Partner SLA (sla/it_partner.yaml, `deployment`), so nothing here repeats them.
+#
+# To run a real deployment with this, replace this file and site/site.yaml; the code does not change.
+# Read by src/scorecard/deployments.py. Values marked "basis: assumption" are engineering assumptions
+# for this model, not manufacturer or code requirements; review them before designing anything real.
+
+meta:
+  title: "Hall B GB300 NVL72 rollout"
+  checked: "2026-10-08"          # codes, permits, and standards below were checked on this date
+  disclaimer: >-
+    Fictional program at a fictional site. Codes, permits, and standards are real and were checked
+    against public sources on the date above; the parties, records, and numbers are invented.
+    Not legal or engineering advice: confirm every requirement with the authority having
+    jurisdiction and the engineer of record.
+
+program:
+  id: "DEP-B-GB300"
+  name: "Hall B GB300 NVL72 rollout"
+  hall: "HALL-B"
+  waves: "row"                   # one wave per hall row (Wave 1 = row 1); racks inside a wave follow the plan
+  jurisdiction: "unincorporated_wilco"   # which authority profile applies (see `authorities`)
+
+# Who signs. Sign-offs are by role and organization, never by a person's name.
+roles:
+  cust-dep:  {org: "Customer", name: "Customer Deployment Lead", duty: "Owns the program; signs every gate."}
+  cust-fac:  {org: "Customer", name: "Customer Facilities Engineer", duty: "Reviews the Landlord's design and test results for the Customer."}
+  cust-wit:  {org: "Customer", name: "Customer witness", duty: "Witnesses tests in person and signs what was observed."}
+  cust-cab:  {org: "Customer", name: "Customer change board", duty: "Approves changes and Landlord MOPs that touch the hall."}
+  cust-sec:  {org: "Customer", name: "Customer security and asset management", duty: "Access lists, asset records, and chain of custody."}
+  ll-eor:    {org: "Landlord", name: "Landlord engineer of record (Texas PE)", duty: "Seals the construction documents and the load calculations."}
+  ll-ops:    {org: "Landlord", name: "Landlord facility operations", duty: "Operates power and cooling; performs switching and valve operations."}
+  ll-qa:     {org: "Landlord", name: "Landlord quality control", duty: "Checks the Landlord's and its contractors' work before it is offered for test."}
+  ll-elec:   {org: "Landlord", name: "Landlord electrical contractor (TDLR-licensed)", duty: "Installs and terminates electrical work under a licensed master electrician."}
+  it-dep:    {org: "IT Partner", name: "IT Partner deployment lead", duty: "Runs the rack waves; owns milestones M1 to M7."}
+  it-qa:     {org: "IT Partner", name: "IT Partner quality control", duty: "Checks every rack milestone against its exit criteria before it is reported."}
+  cxa:       {org: "Third party", name: "Commissioning agent (Customer-engaged)", duty: "Independent: writes and runs the L3 to L5 scripts, keeps the issues log, signs the commissioning report."}
+  neta:      {org: "Third party", name: "Electrical testing firm (NETA-accredited)", duty: "Acceptance tests electrical equipment to ANSI/NETA ATS."}
+  oem:       {org: "Third party", name: "OEM field service", duty: "Factory start-up of CDUs and rack integration support."}
+  lab:       {org: "Third party", name: "Coolant test laboratory", duty: "Analyses coolant samples against the CDU vendor's fluid specification."}
+  ahj-fm:    {org: "Authority", name: "Williamson County Fire Marshal", duty: "Fire code permits, plan review, and final inspections in unincorporated Williamson County."}
+  ahj-city:  {org: "Authority", name: "City building inspections", duty: "Building, electrical, and mechanical permits and inspections inside city limits."}
+  ras:       {org: "Authority", name: "Registered Accessibility Specialist (TDLR)", duty: "Texas Accessibility Standards review and inspection where the project is covered."}
+  tsp:       {org: "Authority", name: "Serving utility (transmission service provider)", duty: "Large-load interconnection under PUCT rules."}
+
+# Who has jurisdiction. `program.jurisdiction` picks one profile; switching it is a one-line change.
+authorities:
+  unincorporated_wilco:
+    name: "Unincorporated Williamson County, Texas"
+    summary: >-
+      Outside city limits the Williamson County Fire Marshal is the fire code official: 2018
+      International Fire Code with county amendments (the Williamson County Fire Code, effective
+      November 2020). Permits and inspections are requested through wilcopermits.com. The county's
+      published permit list has no building or electrical permit, so building and electrical work
+      rely on the engineer of record, TDLR-licensed electricians, and third-party testing (inferred
+      from the published list; confirm with the county).
+    permits:
+      - id: "AHJ-FM-CON"
+        name: "Fire Marshal construction permit"
+        by: ahj-fm
+        when: "Before construction that changes the building or its fire protection; plans for projects of 5,000 sq ft or more are signed and sealed by a Texas architect or engineer."
+        inspections: ["Non-structural architectural and fire protection plan review", "Final inspection"]
+        source: wilco_permits
+      - id: "AHJ-FM-FA"
+        name: "Fire alarm permit"
+        by: ahj-fm
+        when: "When detection or notification is added or changed (for example VESDA sampling or new detectors). Plans sealed by a fire protection engineer or signed by a licensed APS, with battery and voltage calculations."
+        inspections: ["Fire alarm acceptance test on normal and battery power"]
+        source: wilco_permits
+      - id: "AHJ-FM-SPK"
+        name: "Fire sprinkler permit"
+        by: ahj-fm
+        when: "When sprinkler piping or heads change (for example relocating heads around new rack rows). Hydraulic calculations and a product submittal."
+        inspections: ["Hydrostatic test and flush", "Flow and tamper switch test", "Final inspection"]
+        source: wilco_permits
+      - id: "AHJ-FM-COC"
+        name: "Certificate of Compliance"
+        by: ahj-fm
+        when: "Issued by the Fire Marshal after the final inspections pass."
+        inspections: []
+        source: wilco_faq
+  city:
+    name: "Inside a Williamson County city"
+    summary: >-
+      Inside city limits the city's building department issues building, electrical, and mechanical
+      permits and inspects (rough-in, above-ceiling, final) before a certificate of occupancy; the
+      city fire marshal handles fire alarm and sprinkler permits. Each city adopts its own code
+      editions and amendments: check the city's adoption ordinance.
+    permits:
+      - {id: "AHJ-CITY-BLD", name: "Building permit", by: ahj-city, when: "Before construction.", inspections: ["Rough-in", "Final"], source: city_adoption}
+      - {id: "AHJ-CITY-ELE", name: "Electrical permit", by: ahj-city, when: "Before electrical work (busway, tap-offs, panels).", inspections: ["Rough-in", "Final"], source: city_adoption}
+      - {id: "AHJ-CITY-MEC", name: "Mechanical permit", by: ahj-city, when: "Before cooling piping changes.", inspections: ["Pressure test witnessed", "Final"], source: city_adoption}
+      - {id: "AHJ-CITY-FA", name: "Fire alarm and sprinkler permits", by: ahj-city, when: "When fire protection changes.", inspections: ["Acceptance test", "Final"], source: city_adoption}
+      - {id: "AHJ-CITY-CO", name: "Certificate of occupancy", by: ahj-city, when: "After every final passes.", inspections: [], source: city_adoption}
+
+# Statewide requirements that apply under either profile. `test` names how a determination is made.
+statewide:
+  - id: "TX-NEC"
+    name: "Texas electrical code: 2026 NEC"
+    detail: >-
+      TDLR adopted the 2026 National Electrical Code as the state electrical code effective
+      2026-09-01 (16 TAC 73.100; 51 TexReg 5776). Work permitted or designed before that date is under
+      the 2023 NEC. Electrical work is done by TDLR-licensed electricians.
+    source: tdlr_nec
+  - id: "TX-TABA"
+    name: "Texas Architectural Barriers Act"
+    detail: >-
+      Projects with an estimated cost of $50,000 or more register with TDLR and get a Registered
+      Accessibility Specialist review and inspection. Whether a fit-out with no public areas is
+      covered is a determination the project records, not an assumption.
+    test: "Recorded determination by the Customer and the engineer of record."
+    source: tdlr_taba
+  - id: "TX-SB6"
+    name: "Large-load interconnection (SB 6, 2025)"
+    detail: >-
+      A large load is 75 MW or more at one site (the PUCT can adjust it): interconnection standards,
+      disclosure of on-site backup generation, study fees, and curtailment protocols. Compared with
+      the site's design-day peak from the site model.
+    threshold_mw: 75
+    source: sb6
+
+# Standards the steps cite. Editions only where one was checked; otherwise "current edition".
+standards:
+  cx-levels:  {name: "Commissioning levels L1 to L5", note: "Industry practice: L1 factory test, L2 receipt inspection, L3 installation and start-up, L4 functional test, L5 integrated systems test.", source: cx_levels}
+  ashrae-g0:  {name: "ASHRAE Guideline 0, The Commissioning Process", note: "Owner's project requirements, basis of design, issues log, commissioning report.", source: ashrae_g0}
+  neta-ats:   {name: "ANSI/NETA ATS-2025", note: "Acceptance testing specifications for electrical power equipment.", source: neta_ats}
+  nec:        {name: "NFPA 70, National Electrical Code (2026 in Texas from 2026-09-01)", note: "Overcurrent protection sized at 125% of continuous load; standard ampere ratings.", source: tdlr_nec}
+  nfpa-70e:   {name: "NFPA 70E, Electrical Safety in the Workplace (current edition)", note: "Energized work permits, establishing an electrically safe work condition, arc flash labels.", source: nfpa_70e}
+  osha-147:   {name: "OSHA 29 CFR 1910.147", note: "Control of hazardous energy (lockout/tagout).", source: osha_147}
+  osha-1926:  {name: "OSHA 29 CFR 1926", note: "Construction, including Subpart K (electrical).", source: osha_1926}
+  ifc-2018:   {name: "2018 International Fire Code with Williamson County amendments", note: "Fire code in unincorporated Williamson County.", source: wilco_permits}
+  tia-942:    {name: "ANSI/TIA-942-C (2024)", note: "Telecommunications infrastructure standard for data centers: cabling pathways and labeling.", source: tia_942}
+
+sources:
+  wilco_permits: "https://www.wilcotx.gov/392/Construction-Permits"
+  wilco_faq: "https://www.wilco.org/Departments/Fire-Marshal/FAQs"
+  city_adoption: "The city's own building code adoption ordinance (for example Round Rock, Georgetown, Taylor, Hutto)"
+  tdlr_nec: "https://www.tdlr.texas.gov/news/rulemaking/2026/09/01/commission-adopts-rules-12/"
+  tdlr_taba: "https://www.tdlr.texas.gov/media/pdf/EAB%20at%20a%20Glance.pdf"
+  sb6: "https://www.mayerbrown.com/en/insights/publications/2025/07/important-texas-regulatory-updates-for-data-centers"
+  cx_levels: "https://cxplanner.com/commissioning-101/data-centers-level-testing"
+  ashrae_g0: "https://www.ashrae.org/technical-resources/standards-and-guidelines/titles-purposes-and-scopes"
+  neta_ats: "https://webstore.ansi.org/standards/neta/ansinetaats2025"
+  nfpa_70e: "https://www.nfpa.org/codes-and-standards/nfpa-70e-standard-development/70e"
+  osha_147: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.147"
+  osha_1926: "https://www.osha.gov/laws-regs/regulations/standardnumber/1926"
+  tia_942: "https://structuredcablingnews.com/2024/05/09/tia-942-c-data-center-standard-published/"
+  gb300_reported: "https://gpusmith.com/hardware/systems/nvidia-gb300-nvl72"
+
+# Numbers the calculation sheet needs that the site model does not hold.
+calc:
+  rack_peak_kw: {value: 155, basis: "reported peak (EDPp class) for GB300 NVL72; published range 132 to 140 kW operating", source: gb300_reported}
+  rack_weight_kg: {value: 1360, basis: "reported, about 1.36 t loaded; varies by OEM chassis", source: gb300_reported}
+  floor_rating_kpa: {value: 24.0, basis: "assumption: slab-on-grade data hall floor rated 24 kPa (about 500 psf) uniform load"}
+  tap_off_breaker_a: {value: 225, basis: "assumption: 225 A, 3-pole tap-off breaker per rack feed"}
+  continuous_factor: {value: 1.25, basis: "NEC: overcurrent device at 125% of continuous load"}
+  standard_breaker_a: {value: [100, 110, 125, 150, 175, 200, 225, 250, 300, 350, 400], basis: "NEC 240.6(A) standard ampere ratings (excerpt)"}
+  coolant_density_kg_per_l: {value: 1.02, basis: "assumption: 25% propylene glycol secondary coolant"}
+  coolant_cp_kj_per_kg_k: {value: 3.85, basis: "assumption: 25% propylene glycol secondary coolant"}
+
+# --------------------------------------------------------------------------------------------- gates
+# Each step: owner (the role that performs it), after (steps that must be signed first), level (a
+# commissioning level, or a rack milestone from the IT Partner SLA), doc (the procedure's document
+# number), procedure, acceptance, records, signoff (roles, in signing order), inspections, and
+# optionally `when` (a condition shown with the step) or `profile` (only under that authority profile).
+gates:
+  - id: "G0"
+    name: "Design and approvals"
+    owner: cust-dep
+    exit: "Design sealed, calculations pass, permits issued or determined not required, changes approved, schedule and safety plan accepted."
+    steps:
+      - id: "G0-01"
+        name: "Owner's project requirements and basis of design"
+        owner: cust-dep
+        doc: {id: "DEP-B-OPR-01", kind: "Requirements"}
+        standards: [ashrae-g0]
+        procedure:
+          - "Customer writes the owner's project requirements: rack product (GB300 NVL72), count (32), power cap per rack, redundancy (2N power to the rack, N+1 CDUs), schedule, and acceptance tests."
+          - "Landlord's engineer of record answers with the basis of design for power, cooling, and fire protection."
+          - "The commissioning agent reviews both and opens the issues log."
+        acceptance:
+          - "Every requirement has a design answer or an open issue with an owner."
+        records: ["Owner's project requirements (signed)", "Basis of design (signed)", "Commissioning issues log"]
+        signoff: [cust-dep, ll-eor, cxa]
+      - id: "G0-02"
+        name: "Load calculations: power, cooling, floor, cabling"
+        owner: ll-eor
+        after: ["G0-01"]
+        doc: {id: "DEP-B-CALC-01", kind: "Calculation sheet"}
+        standards: [nec]
+        procedure:
+          - "Run the calculation sheet on this tab against the site model: UPS, unit substation, busway, tap-off, CDU heat and flow, thermal walls, floor load, cable counts."
+          - "Repeat the power checks at the rack's reported peak, not only at the design figure."
+          - "Every check that fails at peak becomes a required control (for example the rack power cap) carried into the rack milestones."
+        acceptance:
+          - "Every design check passes, and every peak check passes or has a named control."
+        records: ["Calculation sheet (sealed)", "Controls list"]
+        signoff: [ll-eor, cust-fac, it-dep]
+      - id: "G0-03"
+        name: "Construction documents sealed"
+        owner: ll-eor
+        after: ["G0-02"]
+        doc: {id: "DEP-B-CD-01", kind: "Drawing set"}
+        standards: [nec, ifc-2018, tia-942]
+        procedure:
+          - "Issue the drawing set: one-lines, busway and tap-off schedule, piping and valve schedule, fire protection changes, cable pathways and labeling."
+          - "Seal the set (Texas PE); the Customer and the IT Partner review the rack interface sheets."
+        acceptance: ["Set sealed; review comments closed."]
+        records: ["Sealed drawing set", "Review comment log"]
+        signoff: [ll-eor, cust-fac, it-dep]
+      - id: "G0-04"
+        name: "Permits and determinations"
+        owner: ll-eor
+        after: ["G0-03"]
+        doc: {id: "DEP-B-PRM-01", kind: "Permit register"}
+        standards: [ifc-2018, nec]
+        procedure:
+          - "List every permit the authority profile requires for this scope and apply for each."
+          - "Record the statewide determinations: accessibility (TDLR registration or not covered), large-load interconnection (site peak against the threshold), and which NEC edition applies by permit date."
+          - "Post permits on site; schedule required inspections into the step that triggers them."
+        acceptance: ["Every required permit issued; every determination recorded with its reason."]
+        records: ["Permit register", "Determinations"]
+        signoff: [ll-eor, cust-dep]
+        inspections:
+          - {by: ahj-fm, kind: "ahj", what: "Plan review (construction, fire alarm, sprinkler as applicable)", profile: unincorporated_wilco}
+          - {by: ahj-city, kind: "ahj", what: "Plan review (building, electrical, mechanical)", profile: city}
+      - id: "G0-05"
+        name: "Change approval and Landlord MOPs"
+        owner: cust-cab
+        after: ["G0-03"]
+        doc: {id: "DEP-B-CHG-01", kind: "Change record"}
+        procedure:
+          - "Customer change board approves the program change and the method statements of each partner."
+          - "The Landlord submits a MOP for each energization (Interface Agreement HO-4) for Customer approval before its window."
+        acceptance: ["Program change approved; MOP template for tap-off energization approved."]
+        records: ["Change record", "Approved MOP template"]
+        signoff: [cust-cab, ll-ops, it-dep]
+      - id: "G0-06"
+        name: "Delivery schedule and receiving plan"
+        owner: it-dep
+        after: ["G0-01"]
+        doc: {id: "DEP-B-SCH-01", kind: "Schedule"}
+        procedure:
+          - "Commit a planned receipt date and a handoff date for every rack (the rack cycle target is in the IT Partner SLA)."
+          - "Plan the receiving route: dock, route survey, floor-load check, rated powered equipment, spotter."
+        acceptance: ["Every rack has a committed handoff date; route survey signed."]
+        records: ["Deployment plan", "Route survey"]
+        signoff: [it-dep, cust-dep, ll-ops]
+      - id: "G0-07"
+        name: "Site safety plan"
+        owner: it-dep
+        after: ["G0-01"]
+        doc: {id: "DEP-B-EHS-01", kind: "Safety plan"}
+        standards: [nfpa-70e, osha-147, osha-1926]
+        procedure:
+          - "Each partner submits its site-specific safety plan: energized work policy, lockout/tagout, rigging and rack moves, coolant spill response, hot work."
+          - "Agree whose lock goes on which device at the interface (Landlord on the tap-off, IT Partner on the rack)."
+        acceptance: ["Both plans accepted by the Customer; interface lockout points agreed."]
+        records: ["Safety plans", "Lockout point list"]
+        signoff: [it-dep, ll-ops, cust-dep]
+
+  - id: "G1"
+    name: "Hall readiness"
+    owner: ll-ops
+    exit: "Every power, cooling, fire, and monitoring system in Hall B passed L2 to L4, the L5 integrated test passed, inspections passed, and the Landlord declared the hall ready for racks."
+    steps:
+      - id: "G1-01"
+        name: "Receipt inspection: busway, tap-offs, CDUs (L2)"
+        owner: ll-qa
+        after: ["G0-04"]
+        level: "L2"
+        doc: {id: "DEP-B-CX-L2-01", kind: "Checklist"}
+        standards: [cx-levels]
+        procedure:
+          - "Inspect each delivery against the submittal: model, rating, quantity, damage, factory test reports (L1) on file."
+          - "Tag the equipment yellow when accepted."
+        acceptance: ["Every item matches its submittal with its factory test report."]
+        records: ["Receipt checklists", "Factory test reports"]
+        signoff: [ll-qa, cxa]
+      - id: "G1-02"
+        name: "Busway and tap-off installation and testing (L3)"
+        owner: ll-elec
+        after: ["G1-01"]
+        level: "L3"
+        doc: {id: "DEP-B-CX-L3-01", kind: "Test script"}
+        standards: [neta-ats, nec, nfpa-70e]
+        procedure:
+          - "Install the A and B busway runs and the tap-offs to the sealed schedule; torque every joint to the manufacturer's value and mark it."
+          - "Acceptance-test to ANSI/NETA ATS: visual and mechanical inspection, insulation resistance, joint resistance, breaker tests."
+          - "Apply arc flash labels from the study; verify each tap-off's label and rack position."
+        acceptance:
+          - "Every test result within ATS limits; every torque mark present; labels match the schedule."
+        records: ["NETA test reports", "Torque log", "Arc flash labels"]
+        signoff: [ll-elec, ll-qa, neta, cxa]
+        inspections:
+          - {by: neta, kind: "third_party", what: "Acceptance test of busway and tap-offs"}
+          - {by: ahj-city, kind: "ahj", what: "Electrical rough-in and final", profile: city}
+      - id: "G1-03"
+        name: "Secondary loop pressure test, flush, and fill (L3)"
+        owner: ll-ops
+        after: ["G1-01"]
+        level: "L3"
+        doc: {id: "DEP-B-CX-L3-02", kind: "Test script"}
+        procedure:
+          - "Hydrostatically test the Hall B secondary header and row manifolds at the specified test pressure; hold and record."
+          - "Flush through temporary strainers until clean to the CDU vendor's cleanliness specification; remove strainers."
+          - "Fill with the specified coolant, vent, and sample it for the laboratory."
+        acceptance:
+          - "Pressure held with no decay over the hold period; flush samples clean; laboratory results within the fluid specification."
+        records: ["Pressure test chart", "Flush log", "Coolant laboratory report"]
+        signoff: [ll-ops, ll-qa, lab, cxa]
+        inspections:
+          - {by: cust-wit, kind: "internal", what: "Witness the pressure test"}
+          - {by: lab, kind: "third_party", what: "Coolant analysis"}
+          - {by: ahj-city, kind: "ahj", what: "Mechanical pressure test", profile: city}
+      - id: "G1-04"
+        name: "CDU start-up (L3) and functional test (L4)"
+        owner: oem
+        after: ["G1-03", "G1-02"]
+        level: "L4"
+        doc: {id: "DEP-B-CX-L4-01", kind: "Test script"}
+        standards: [cx-levels]
+        procedure:
+          - "OEM starts each CDU-B1 to B4: pump rotation, sensors, controls, alarms to the BMS."
+          - "Functional test: lead pump fail to lag; one CDU off with the other three carrying design flow (N+1); loss of facility water alarm; leak and low-level alarms."
+        acceptance:
+          - "Every sequence behaves as written; supply temperature and flow hold during each failover."
+        records: ["Start-up reports", "L4 functional test results"]
+        signoff: [oem, ll-ops, cxa, cust-wit]
+      - id: "G1-05"
+        name: "Fire and life safety changes (L4)"
+        owner: ll-ops
+        after: ["G1-01"]
+        level: "L4"
+        doc: {id: "DEP-B-CX-L4-02", kind: "Test script"}
+        standards: [ifc-2018]
+        when: "When the rack layout changes detection, sprinklers, or notification."
+        procedure:
+          - "Test the VESDA sampling network (transport time to each end hole) and the leak detection circuits under the new rows."
+          - "Run the fire alarm acceptance test on normal and battery power; schedule the authority's finals."
+        acceptance: ["Transport times within the design; every leak circuit alarms at the BMS and the Customer's collector; finals passed."]
+        records: ["VESDA commissioning report", "Fire alarm test report", "Final inspection results"]
+        signoff: [ll-ops, cxa, cust-wit]
+        inspections:
+          - {by: ahj-fm, kind: "ahj", what: "Fire alarm and sprinkler finals", profile: unincorporated_wilco}
+          - {by: ahj-city, kind: "ahj", what: "Fire alarm and sprinkler finals", profile: city}
+      - id: "G1-06"
+        name: "Monitoring point-to-point (L4)"
+        owner: ll-ops
+        after: ["G1-02", "G1-04"]
+        level: "L4"
+        doc: {id: "DEP-B-CX-L4-03", kind: "Points list"}
+        procedure:
+          - "Prove every Hall B point end to end: busway and tap-off meters, CDU, leak, VESDA, to the BMS and to the Customer's Telemetry of Record collector."
+          - "Force each alarm at the device and record the time it appears in both systems."
+        acceptance: ["Every point reads the same value in both systems; every alarm arrives at both."]
+        records: ["Points list with results"]
+        signoff: [ll-ops, cxa, cust-fac]
+      - id: "G1-07"
+        name: "Integrated systems test (L5)"
+        owner: cxa
+        after: ["G1-04", "G1-05", "G1-06"]
+        level: "L5"
+        doc: {id: "DEP-B-CX-L5-01", kind: "Test script"}
+        standards: [cx-levels, nfpa-70e]
+        procedure:
+          - "Load Hall B with load banks at the design kW per rack position (liquid load banks on the manifolds, air load banks for the air share)."
+          - "Open the utility feed: UPSs carry the load on battery, generators start and take the load, CDU pumps stay on the mechanical UPS, flow never stops."
+          - "Fail one UPS module (4 make 3) and one CDU (N+1) under load; restore utility and return to normal."
+        acceptance:
+          - "No loss of power at any rack position; coolant flow and supply temperature within limits through every transfer; every alarm as expected."
+        records: ["L5 test report with trend data", "Issues log closed or accepted"]
+        signoff: [cxa, ll-ops, ll-eor, cust-wit, cust-dep]
+        inspections:
+          - {by: cust-wit, kind: "internal", what: "Witness the full test"}
+      - id: "G1-08"
+        name: "Ready for racks"
+        owner: ll-ops
+        after: ["G1-07"]
+        doc: {id: "DEP-B-RFR-01", kind: "Certificate"}
+        procedure:
+          - "Landlord declares Hall B ready for racks: open issues listed with dates, access control and CCTV working, spares stocked, hall clean."
+        acceptance: ["Customer accepts the certificate and its open-issues list."]
+        records: ["Ready-for-racks certificate"]
+        signoff: [ll-ops, cxa, cust-sec, cust-dep]
+
+  - id: "G2"
+    name: "Rack waves"
+    owner: it-dep
+    exit: "Every rack reached Validated Handoff with its full acceptance record."
+    per_rack: true
+    steps:
+      - id: "R-M1"
+        milestone: "M1"
+        owner: it-dep
+        after: ["G1-08"]
+        doc: {id: "DEP-B-RK-01", kind: "Checklist"}
+        procedure:
+          - "Receive the rack at the dock; check shock and tilt indicators before unwrapping; photograph."
+          - "Reconcile serials and asset tags to the advance shipping notice; record any damage with the carrier."
+          - "Move to position on rated powered equipment along the surveyed route, with a spotter."
+        records: ["Receiving checklist", "Photos", "Serial reconciliation"]
+        signoff: [it-dep, it-qa, cust-sec]
+      - id: "R-M2"
+        milestone: "M2"
+        owner: it-dep
+        after: ["R-M1"]
+        doc: {id: "DEP-B-RK-02", kind: "Checklist"}
+        procedure:
+          - "Set and secure the rack; level it; fit seismic or anti-tip bracing if specified."
+          - "Connect the supply and return hoses at the rack isolation valves (valves stay closed); connect the A and B power cords to the de-energized tap-offs."
+          - "Confirm the tap-off labels match the rack and the schedule."
+        records: ["Set and connect checklist"]
+        signoff: [it-dep, it-qa]
+      - id: "R-M3"
+        milestone: "M3"
+        owner: it-dep
+        after: ["R-M2"]
+        doc: {id: "DEP-B-RK-03", kind: "Test record"}
+        procedure:
+          - "Pressure-test the rack's liquid path at the OEM test pressure with the isolation valves closed; hold and record."
+          - "Confirm zero leak alarms at the row's leak circuit."
+        records: ["Pressure test record"]
+        signoff: [it-dep, it-qa, cust-wit]
+      - id: "R-HO4"
+        name: "Energize tap-offs and open isolation valves (Interface Agreement HO-4)"
+        owner: ll-ops
+        after: ["R-M3"]
+        doc: {id: "DEP-B-RK-HO4", kind: "MOP"}
+        standards: [nfpa-70e, osha-147]
+        procedure:
+          - "IT Partner confirms in writing that the rack is set, leak-tested, and ready (M3 signed)."
+          - "Landlord runs its approved MOP: remove its locks, close the A and B tap-off breakers, open the supply and return isolation valves slowly, watch for leaks."
+          - "Record the handoff time; it is the deployment milestone handoff in the Interface Agreement."
+        acceptance: ["Both feeds live at the rack; flow established; no leak alarm."]
+        records: ["Approved MOP", "Energization record"]
+        signoff: [ll-ops, it-dep]
+      - id: "R-M4"
+        milestone: "M4"
+        owner: it-dep
+        after: ["R-HO4"]
+        doc: {id: "DEP-B-RK-04", kind: "Checklist"}
+        procedure:
+          - "Power on; confirm POST on every tray and BMC reachable on the out-of-band network."
+          - "Load the Customer's firmware baseline; set and verify the rack power limit (the control from the calculation sheet) before any load."
+        records: ["Firmware report", "Power limit setting"]
+        signoff: [it-dep, it-qa]
+      - id: "R-M5"
+        milestone: "M5"
+        owner: it-dep
+        after: ["R-M4"]
+        doc: {id: "DEP-B-RK-05", kind: "Test record"}
+        standards: [tia-942]
+        procedure:
+          - "Cable every back-end link to its leaf port per the cabling plan (one NIC per rail per tray); label both ends."
+          - "Verify each link is up at full speed, error-free over the soak, and lands on the planned port."
+        records: ["Cable test results", "Port map check"]
+        signoff: [it-dep, it-qa]
+      - id: "R-M6"
+        milestone: "M6"
+        owner: it-dep
+        after: ["R-M5"]
+        doc: {id: "DEP-B-RK-06", kind: "Test record"}
+        procedure:
+          - "Run GPU diagnostics, NVLink domain acceptance, NCCL benchmarks, and the 24-hour burn-in."
+          - "The Customer's health checks record the burn-in result independently."
+        records: ["Diagnostics", "Benchmark results", "Burn-in result"]
+        signoff: [it-dep, it-qa, cust-wit]
+      - id: "R-M7"
+        milestone: "M7"
+        owner: it-dep
+        after: ["R-M6"]
+        doc: {id: "DEP-B-RK-07", kind: "Acceptance record"}
+        procedure:
+          - "Assemble the acceptance record (every record above) and release the rack to the Customer scheduler."
+        records: ["Acceptance record"]
+        signoff: [it-dep, it-qa, cust-dep]
+
+  - id: "G3"
+    name: "Closeout"
+    owner: cust-dep
+    exit: "Turnover package complete and accepted; the authority's certificate on file; lessons recorded."
+    steps:
+      - id: "G3-01"
+        name: "As-built drawings and site model updated"
+        owner: ll-eor
+        doc: {id: "DEP-B-AB-01", kind: "Drawing set"}
+        procedure: ["Fold every field change into the drawings and site/site.yaml; regenerate the drawings and the device directory."]
+        records: ["As-built set"]
+        signoff: [ll-eor, it-dep, cust-fac]
+      - id: "G3-02"
+        name: "Turnover package"
+        owner: ll-ops
+        doc: {id: "DEP-B-TO-01", kind: "Package"}
+        procedure: ["Deliver O&M manuals, warranties, spare parts lists, training records, and the final commissioning report."]
+        records: ["Turnover package", "Final commissioning report"]
+        signoff: [ll-ops, it-dep, cxa, cust-dep]
+      - id: "G3-03"
+        name: "Authority close-out"
+        owner: ll-eor
+        doc: {id: "DEP-B-PRM-02", kind: "Permit register"}
+        procedure: ["File the certificate (Certificate of Compliance or certificate of occupancy) and close every permit; complete the accessibility inspection if the project was determined covered."]
+        records: ["Certificate", "Closed permit register"]
+        signoff: [ll-eor, cust-dep]
+        inspections:
+          - {by: ras, kind: "ahj", what: "Accessibility inspection, if determined covered"}
+      - id: "G3-04"
+        name: "Lessons learned"
+        owner: cust-dep
+        after: ["G3-01", "G3-02", "G3-03"]
+        doc: {id: "DEP-B-LL-01", kind: "Review"}
+        procedure: ["Review the program with both partners: what slipped, why, and which standard work changes; raise a post-incident review for any event."]
+        records: ["Lessons learned"]
+        signoff: [cust-dep, ll-ops, it-dep]
