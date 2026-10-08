@@ -101,7 +101,10 @@ def build_review(ds: Dataset, ref: str) -> dict[str, Any] | None:
                 else f"{e['busway']}: {e['point']} {e.get('value_v')} V, {e.get('state')}")
         tl.append(_row(e["timestamp"], "Landlord", "facility/busway_cpm_events.jsonl", what, e))
     for e in [x for x in ds.bms if within(x["timestamp"]) and x["device"] == unit]:
-        what = f"BMS alarm '{e['alarm']}' {e['state']}" + (f" by {e['user']}" if e.get("user") else "") + (f" ({e['priority']})" if e.get("priority") else "")
+        if e["kind"] == "alarm":
+            what = f"BMS alarm '{e['alarm']}' {e['state']}" + (f" by {e['user']}" if e.get("user") else "") + (f" ({e['priority']})" if e.get("priority") else "")
+        else:                                 # an override or an inhibit the BMS recorded, which carries no alarm state
+            what = f"BMS {e['kind']}: {e['point']} {e['action']} {e.get('value', '')}".strip() + (f" by {e['user']}" if e.get("user") else "")
         tl.append(_row(e["timestamp"], "Landlord", "facility/bms_events.jsonl", what, e))
     if wo:
         for k, label in (("opened", "opened"), ("acknowledged_at", "acknowledged"), ("engaged_at", "engineer engaged (as recorded)"),
@@ -159,8 +162,8 @@ def build_review(ds: Dataset, ref: str) -> dict[str, Any] | None:
     power_lost = opens[1] if len(opens) >= 2 else (_t(wo["opened"]) if wo else _t(ticket["opened_at"]))
     handoff = closes[0] if closes else (_t(wo["restored_at"]) if wo and wo.get("restored_at") else None)
     rts = _t(ticket["resolved_at"]) if ticket else handoff
-    alarm = next((e for e in ds.bms if e["device"] == unit and e["state"] == "active" and within(e["timestamp"])), None)
-    ack = next((e for e in ds.bms if e["device"] == unit and e["state"] == "acknowledged" and within(e["timestamp"])), None)
+    alarm = next((e for e in ds.bms if e["device"] == unit and e.get("state") == "active" and within(e["timestamp"])), None)
+    ack = next((e for e in ds.bms if e["device"] == unit and e.get("state") == "acknowledged" and within(e["timestamp"])), None)
     ll_on_site = next((b for b in ds.ll_badges if wo and b["person_id"] == wo["engineer"] and b["reader"] == wo["room"]
                        and _t(b["timestamp"]) >= power_lost), None)
     it_on_site = next((b for b in ds.it_badges if ticket and b["person_id"] == ticket["assigned_to"] and b["door"] == ticket["hall"]
@@ -273,8 +276,8 @@ def _event_review(ds: Dataset, ref: str, ticket: dict | None, wo: dict | None, r
     partner = "Landlord" if wo else "IT Partner"
     prio = (wo or ticket)["priority"]
     tg = _targets(partner, prio)
-    alarm = next((e for e in ds.bms if e["device"] == unit and e["state"] == "active" and within(e["timestamp"])), None)
-    ack = next((e for e in ds.bms if e["device"] == unit and e["state"] == "acknowledged" and within(e["timestamp"])), None)
+    alarm = next((e for e in ds.bms if e["device"] == unit and e.get("state") == "active" and within(e["timestamp"])), None)
+    ack = next((e for e in ds.bms if e["device"] == unit and e.get("state") == "acknowledged" and within(e["timestamp"])), None)
     opened = _t(wo["opened"]) if wo else _t(ticket["opened_at"])
     start = min(_t(x) for x in ((ml or {}).get("t0"), (mi or {}).get("t0"), (alarm or {}).get("timestamp"), _iso(opened)) if x)
     ack_min, site_min, rest_min = tg.get("acknowledge_min"), tg.get("engaged_on_site_min"), tg.get("restore_min")

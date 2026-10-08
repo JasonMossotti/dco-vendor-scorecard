@@ -1,0 +1,53 @@
+# Related records: how the Incident Portal suggests that one record may be related to another.
+#
+# A suggestion is a lead for a person to confirm or deny, never a fact. Nothing in the scorecards, the
+# engines, or the reports reads an unconfirmed suggestion. The weights below are set by hand and shown to
+# the reader with every suggestion; with one month of records a learned model would only memorize the
+# sample, so the check is 60 generated months (scripts/render_tickets.py --robustness 60).
+#
+# Read by src/scorecard/relations.py. Every number here is an assumption for the demo.
+
+framing: "Scored from the records themselves: the devices they name, the device directory's interconnects, time, and the evidence the Customer already holds."
+
+# A suggestion is shown at or above this score, and at most this many per record.
+threshold: 50
+per_record: 5
+
+# A place alone or a time alone is never enough: a suggestion needs a place and a time, or shared
+# evidence the Customer measured (the same alarm, the same finding, or a MOP covering the device and the
+# time). These two groups are what "place" and "time" mean below.
+require: "place_and_time_or_evidence"
+
+signals:
+  # Place: the devices the two records name, and the device directory's interconnects.
+  same_device:      {points: 40, group: place, why: "Both records name the same device."}
+  connected_device: {points: 30, group: place, why: "A device one record names is cabled or fed directly to a device the other names (the device directory's \"Connected to\")."}
+  same_rack:        {points: 25, group: place, why: "Both records are on the same rack."}
+  shared_upstream:  {points: 15, group: place, why: "The devices share the power or cooling directly above them: the same power group, busway or tap-off, or the CDU of their row. A hall's UPS line-ups and its shared cooling header serve too much to count."}
+
+  # Time: how the two records' own windows sit against each other.
+  overlapping:      {points: 30, group: time, why: "The two records' windows overlap."}
+  within_2h:        {points: 20, group: time, why: "The records are less than 2 hours apart."}
+  within_24h:       {points: 8,  group: time, why: "The records are less than 24 hours apart."}
+
+  # Evidence the Customer already holds, independent of the partners' own text.
+  same_alarm:       {points: 25, group: evidence, why: "The same alarm on the Customer's board is tied to both records."}
+  same_finding:     {points: 25, group: evidence, why: "The same finding names both records."}
+  covering_mop:     {points: 25, group: evidence, why: "An approved MOP covers one record's device, and its window covers the other record."}
+
+  # Weaker ties, which can lift a suggestion over the line but never carry it alone.
+  same_fault:       {points: 10, group: weak, why: "The same fault family: the same part number, the same XID code, or the same category or fault class."}
+  shared_words:     {points: 10, group: weak, why: "Uncommon words shared by the two summaries.", max: 10}
+
+# The person's call, in their own words. "Related" is the default; the others say how.
+types:
+  - {id: related,    label: "Related",   text: "The two records belong to the same piece of work or the same story."}
+  - {id: duplicate,  label: "Duplicate", text: "The two records are the same event, recorded twice."}
+  - {id: follow_up,  label: "Follow-up", text: "One record is the work that followed the other."}
+
+# Words too common in this site's records to mean anything on their own.
+stop_words: [the, a, an, and, or, of, in, on, at, to, for, with, by, from, is, was, were, has, had, not, no,
+  rack, hall, tray, compute, switch, unit, fault, failed, failure, alarm, lost, loss, open, opened, closed,
+  closure, replaced, replacement, work, order, ticket, incident, change, task, site, power, side, pump, fan,
+  module, psu, cdu, ups, busway, tap, off, retorque, energization, preventive, maintenance, test, inspection,
+  xid, gpu, nvlink, landlord, partner, customer, mop, pm, inc, chg, wo]

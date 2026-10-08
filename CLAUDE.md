@@ -55,7 +55,7 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/generate_changes.py && python scripts/render_alarms.py \
   && python scripts/generate_energy.py && python scripts/render_energy.py \
   && python scripts/generate_gpu_health.py && python scripts/render_gpu_health.py && python scripts/render_glossary.py
-pytest -q                                      # 479 tests as of 2026-10-08
+pytest -q                                      # 496 tests as of 2026-10-08
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 
