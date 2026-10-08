@@ -45,11 +45,12 @@ PLACES = {
     "reports/change_alarms.md": ("Alarm Board", "alarms/"),
     "reports/failure_patterns.md": ("Failure Patterns", "patterns/"),
     "reports/pue_report.md": ("Energy", "energy/"),
+    "reports/gpu_health.md": ("GPU Health", "gpu/"),
     "docs/site/SITE.md": ("Site model document", ""),
 }
 PAGES = [("hub", "Overview", ""), ("alarms", "Alarm Board", "alarms/"), ("tickets", "Incident Portal", "tickets/"),
          ("pir", "Post-Incident Review", "pir/"), ("weekly", "Weekly Review", "weekly/"), ("patterns", "Failure Patterns", "patterns/"),
-         ("energy", "Energy", "energy/")]
+         ("energy", "Energy", "energy/"), ("gpu", "GPU Health", "gpu/")]
 
 
 def _strings(o):
@@ -104,13 +105,14 @@ def corpus() -> dict[str, tuple[str, str, str]]:
     """source -> (label, link, text) for every page and document the site shows."""
     import render_alarms
     import render_energy
+    import render_gpu_health
     import render_hub
     import render_patterns
     import render_pir
     import render_tickets
     import render_weekly
     mods = {"hub": render_hub, "alarms": render_alarms, "tickets": render_tickets, "pir": render_pir, "weekly": render_weekly,
-            "patterns": render_patterns, "energy": render_energy}
+            "patterns": render_patterns, "energy": render_energy, "gpu": render_gpu_health}
     out = {}
     for rel, (label, link) in PLACES.items():
         out[rel] = (label, link, (ROOT / rel).read_text(encoding="utf-8"))
@@ -131,7 +133,7 @@ def page_key(src: str) -> str:
     if src.startswith("docs/site/"):
         return "site"
     return {"Alarm Board": "alarms", "Failure Patterns": "patterns", "Post-Incident Review": "pir",
-            "Weekly Review": "weekly", "Scorecards": "scorecards", "Energy": "energy"}[PLACES[src][0] if src in PLACES else
+            "Weekly Review": "weekly", "Scorecards": "scorecards", "Energy": "energy", "GPU Health": "gpu"}[PLACES[src][0] if src in PLACES else
                                                                   ("Post-Incident Review" if "/pir/" in src else "Weekly Review")]
 
 

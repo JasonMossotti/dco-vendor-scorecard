@@ -1,0 +1,68 @@
+# GPU health layer for Site AUS-1 (synthetic; portfolio demo).
+#
+# Modeled on public DCGM-style health checks (the health watches cover PCIe, memory, InfoROM, thermal
+# and power, NVLink, and the driver, each with a Pass, Warn, or Fail result) and on NVIDIA's public XID
+# catalog (config/xid_catalog.yaml). No vendor's internal tooling, names, or thresholds are implied:
+# every number below is an assumption for the demo ("basis: assumption").
+# Read by src/scorecard/synthetic/gpu_health.py (the data) and src/scorecard/gpu_health.py (the checks).
+
+framing: "Synthetic health data modeled on public DCGM-style health checks and NVIDIA's public XID catalog."
+sources:
+  - {name: "NVIDIA DCGM user guide: health monitoring (public)", url: "https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html", checked: "2026-10-07"}
+  - {name: "NVIDIA Xid catalog (public)", url: "https://docs.nvidia.com/deploy/xid-errors/latest/analyzing-xid-catalog.html", checked: "2026-10-07"}
+
+gpus_per_tray: 4
+
+# Health watch for each XID the sample's DCGM feed carries: the subsystem and the result.
+xid_watch:
+  48: [Memory, Fail]
+  63: [Memory, Warn]
+  64: [Memory, Fail]
+  79: [PCIe, Fail]
+  94: [Memory, Warn]
+  95: [Memory, Fail]
+  119: [Driver, Fail]
+  145: [NVLink, Fail]
+  149: [NVLink, Fail]
+memory_xids: [48, 94, 95]           # uncorrectable memory errors: a row remap is pending until the GPU is reset
+
+# Normal operation (basis: assumption).
+thermal:
+  gpu_over_supply_c: {gb200_nvl72: 37.0, gb300_nvl72: 40.0}   # daily peak GPU temperature above the CDU supply
+  daily_sd_c: 1.6
+  hbm_over_gpu_c: 6.0
+  slowdown_c: 87.0                  # hardware thermal slowdown engages at this GPU temperature
+  blip_probability: 0.001           # per tray-day: one GPU touches slowdown for under 2 minutes (a workload spike)
+
+cdu:
+  setpoint_c: 25.0                  # as config/history.yaml
+  alarm_high_c: 28.0                # the edge of the rack band (config/history.yaml)
+  flow_lpm: 1800                    # site/site.yaml secondary_flow_lpm
+  flow_band_min_lpm: 1500           # single-pump flow per the CDU datasheet: the low edge of the rack band
+  noise_c: 0.2
+  failover_dip_lpm: [180, 260]      # a pump trip: the standby pump ramps in about a minute; flow dips, stays in band
+
+background:
+  stable_remap_fraction: 0.01       # GPUs that carry one or two remapped rows from earlier months, unchanged
+  sbe_burst_decoys: 2               # GPUs with a one-day burst of corrected errors that does not recur
+
+# What the checks call a finding.
+checks:
+  remap_rise_rows: 2                # remapped rows rising by this many within the window ...
+  rise_window_days: 7
+  sbe_rising_days: 3                # ... or corrected errors above the floor and rising this many days in a row
+  sbe_floor: 100
+  lead_hours: 24                    # an early warning counts only if it came this long before the XID
+  thermal_days: 3                   # a tray throttling on this many days, or ...
+  thermal_minutes: 30               # ... this many minutes in the month, with the CDU in band
+
+# Planted cases (the committed sample holds one of each IT-side kind; the robustness run moves them).
+plants:
+  precursor_probability: 0.5        # an uncorrectable memory XID preceded by rising corrected errors and remaps
+  precursor_days: [4, 10]       # long enough for a warning a day ahead
+  watch_list: [1, 3]                # GPUs with rising remaps and no XID yet at the end of the month
+  rts_pending: 1                    # a GPU returned to service with a row remap still pending (no reset)
+  hot_tray: 1                       # a tray throttling with the CDU in band (restricted flow inside the rack)
+  hot_tray_rise_c: [23.0, 28.0]   # restricted flow: the tray runs this much hotter, into slowdown at its daily peaks
+  cdu_excursion_probability: 0.5    # generated months only: a CDU supply excursion that throttles its racks
+  sample_cdu_excursion: false       # the sample has none: OT-CSL-03 is 100% on the sample month

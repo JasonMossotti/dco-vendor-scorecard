@@ -39,6 +39,7 @@ DOCS = [
     ("Change-aware alarm review", "reports/change_alarms.md"),
     ("Failure pattern review", "reports/failure_patterns.md"),
     ("PUE report", "reports/pue_report.md"),
+    ("GPU health review", "reports/gpu_health.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
 ]
 
@@ -47,6 +48,7 @@ def facts() -> dict:
     """The overview's numbers, each from the module that renders the page it summarizes."""
     import render_alarms
     import render_energy
+    import render_gpu_health
     import render_patterns
     import render_pir
     import render_weekly
@@ -61,6 +63,7 @@ def facts() -> dict:
     weeks = render_weekly.packs()
     pat = render_patterns.prepare()
     en = render_energy.prepare()
+    gh = render_gpu_health.prepare()
     from scorecard import tickets as T
     tk = T.build()
     start, end = sc["window"]["start"], sc["window"]["end"]
@@ -89,6 +92,8 @@ def facts() -> dict:
         "energy": {"pue": en["month"]["pue"], "reported": en["report"]["pue"], "year": en["kpi"]["actual"],
                    "target": en["kpi"]["target"], "met": en["kpi"]["met"], "cooling": en["month"]["ppue_cooling"],
                    "findings": [x["title"] for x in en["findings"]]},
+        "gpu": {"gpus": gh["gpus"], "fail": gh["watches"]["fail"], "warned": gh["warned"], "memory": len(gh["memory"]),
+                "findings": [x["title"] for x in gh["findings"]]},
     }
 
 
@@ -111,7 +116,7 @@ def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: l
 
 
 def body(f: dict) -> str:
-    it, ll, al, pir, pat, tk, en = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"], f["energy"]
+    it, ll, al, pir, pat, tk, en, gh = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"], f["energy"], f["gpu"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
         '<div class="partners">'
@@ -177,6 +182,11 @@ def body(f: dict) -> str:
               (f"{en['year']:.3f}", f"52 weeks (target {en['target']:.2f})")],
              [("Open the energy report", "energy/")],
              ("; ".join(en["findings"]) + ".") if en["findings"] else "The Landlord's report reconciles with the meters."),
+        tile("gpu", "GPU Health",
+             "Health watches, memory counters, and thermals for every GPU, modeled on public DCGM-style checks.",
+             [(f"{gh['gpus']:,}", "GPUs reporting"), (str(gh["fail"]), "Fail watches"), (f"{gh['warned']} of {gh['memory']}", "memory errors warned ahead")],
+             [("Open GPU health", "gpu/")],
+             ("; ".join(gh["findings"]) + ".") if gh["findings"] else "Every GPU passed every check."),
     ]
     docs = "".join(f'<li><a href="{p if p.endswith("/") else BLOB + p}">{escape(t)}</a></li>' for t, p in DOCS)
     return (

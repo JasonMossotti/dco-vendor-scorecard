@@ -11,6 +11,7 @@ data/*
 !data/history/
 !data/changes/
 !data/energy/
+!data/gpu_health/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/

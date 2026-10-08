@@ -1,0 +1,68 @@
+{
+  "decoys": {
+    "brief_slowdowns": 19,
+    "error_bursts": 2,
+    "stable_remaps": 36
+  },
+  "early_warning": [
+    {
+      "gpu": 0,
+      "host": "a30-ct06",
+      "kind": "precursor",
+      "ramp_from": "2026-09-16",
+      "tray_serial": "CTKX3ZU5J9",
+      "xid_at": "2026-09-20T16:29:42Z"
+    },
+    {
+      "gpu": 3,
+      "host": "a13-ct10",
+      "kind": "precursor",
+      "ramp_from": "2026-09-13",
+      "tray_serial": "CTA5F79H0D",
+      "xid_at": "2026-09-21T00:54:07Z"
+    },
+    {
+      "gpu": 3,
+      "host": "a30-ct08",
+      "kind": "precursor",
+      "ramp_from": "2026-09-20",
+      "tray_serial": "CTW4PJ9FZ0",
+      "xid_at": "2026-09-25T00:43:32Z"
+    },
+    {
+      "gpu": 2,
+      "host": "a16-ct18",
+      "kind": "watch_list",
+      "ramp_from": "2026-09-21",
+      "tray_serial": "CTM89BG0WX",
+      "xid_at": null
+    }
+  ],
+  "excursions": [],
+  "hot_trays": [
+    {
+      "from": "2026-09-03",
+      "host": "a09-ct04",
+      "rack": "A09",
+      "tray_serial": "CTKYROJYG8"
+    }
+  ],
+  "rts_pending": [
+    {
+      "gpu": 0,
+      "host": "a31-ct11",
+      "kind": "planted",
+      "rts": "2026-09-01T16:11:56Z",
+      "ticket": "INC3100085",
+      "tray_serial": "CTCSZAT677"
+    },
+    {
+      "gpu": 0,
+      "host": "a22-ct07",
+      "kind": "phantom_fix",
+      "rts": "2026-09-04T10:29:06Z",
+      "ticket": "INC3100204",
+      "tray_serial": "CTR9IUS5X3"
+    }
+  ]
+}
