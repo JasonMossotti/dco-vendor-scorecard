@@ -1,0 +1,16 @@
+{
+  "disclaimer": "Synthetic GPU health data for a portfolio demonstration, modeled on public DCGM-style health checks and NVIDIA's public XID catalog. All names, serials, and events are fictional.",
+  "files": {
+    "answer_key.json": 1,
+    "cdu_hourly.csv": 5376,
+    "gpu_counters.csv": 900,
+    "rack_daily.csv": 1103,
+    "thermal_episodes.jsonl": 59,
+    "watches.jsonl": 51
+  },
+  "source": "data/sample",
+  "window": {
+    "end": "2026-09-28T00:00:00Z",
+    "start": "2026-08-31T00:00:00Z"
+  }
+}

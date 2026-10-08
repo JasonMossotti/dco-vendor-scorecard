@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPU Health · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --it:#1f5fbf; --bad:#b42318; --good:#1d7a46;
+        --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --grid:#eef1f4; --band:#fdecea; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+main { max-width:1120px; margin:20px auto; background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:14px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:14px 0; }
+.tile { background:var(--panel); border-radius:8px; padding:12px 14px; }
+.tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.tile .v { font-size:28px; font-weight:700; line-height:1.2; } .tile .s { font-size:12px; color:var(--muted); }
+.flag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; margin-left:4px; vertical-align:2px; }
+.flag.bad { background:var(--band); color:var(--bad); } .flag.ok { background:#e7f4ec; color:var(--good); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+tr.this td { font-weight:600; } .wide { overflow-x:auto; }
+.finding { background:#fdf0ef; border-left:4px solid var(--bad); padding:10px 14px; border-radius:4px; margin:10px 0; font-size:14px; }
+.finding h3 { margin:0 0 4px; } .finding ul { margin:6px 0 0; padding-left:18px; font-size:13px; }
+.legend { display:flex; flex-wrap:wrap; gap:16px; font-size:12px; color:var(--muted); margin:4px 0; }
+.legend i { display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+.legend i.dash { height:0; border-top:2px dashed var(--ink); border-radius:0; vertical-align:3px; width:16px; }
+.legend i.band { background:var(--band); border:1px solid #f3b8b2; }
+.chart { position:relative; } svg text.halo { paint-order:stroke; stroke:#fff; stroke-width:4px; stroke-linejoin:round; } svg text { font:11px "Inter","Segoe UI",Helvetica,Arial,sans-serif; fill:var(--muted); }
+svg .lbl { fill:var(--ink); font-weight:600; }
+.tip { position:absolute; pointer-events:none; background:#fff; border:1px solid var(--line); border-radius:6px; padding:6px 9px; font-size:12px;
+       box-shadow:0 2px 8px rgba(0,0,0,.12); display:none; white-space:nowrap; z-index:5; }
+.tip b { display:block; margin-bottom:2px; } .tip .row { display:flex; gap:8px; justify-content:space-between; }
+.toggle { font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; padding:3px 10px; border-radius:6px; cursor:pointer; margin-left:8px; }
+.st-p { background:#cfe9d9; } .st-w { background:#f2b84b; } .st-f { background:#c8382c; } .st-- { background:#fff; outline:1px solid var(--line); outline-offset:-1px; }
+.grid { display:grid; gap:2px; font-size:11px; align-items:center; }
+.grid .rk { font-size:11px; color:var(--ink); background:none; border:0; padding:0 6px 0 0; text-align:right; cursor:pointer; font:inherit; }
+.grid .rk.on { font-weight:700; color:var(--it); }
+.grid .c { height:14px; border-radius:2px; cursor:pointer; }
+.grid .c.on { box-shadow:0 0 0 2px var(--ink); }
+.grid .dh { font-size:10px; color:var(--muted); text-align:center; }
+.hall { font-size:12px; font-weight:600; margin:10px 0 4px; color:var(--muted); }
+.chip { display:inline-block; font-size:11px; font-weight:600; padding:0 7px; border-radius:9px; margin-right:4px; white-space:nowrap; }
+.chip.Fail { background:#fbe3e1; color:var(--bad); } .chip.Warn { background:#fdf1d6; color:#8a5a00; } .chip.Pass { background:#e7f4ec; color:var(--good); }
+.chip.Landlord { background:#efe7f8; color:#5b3a8c; } .chip.IT { background:#e6effb; color:var(--it); }
+.panel { background:var(--panel); border-radius:8px; padding:12px 16px; margin:12px 0; }
+.panel h3 { margin-top:0; } .panel ul { margin:4px 0 8px; padding-left:18px; font-size:13px; }
+.finding.ll { background:#f5f0fb; border-left-color:#5b3a8c; }
+.spark { vertical-align:middle; }
+@media print { header.top { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } .tip { display:none !important; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>GPU Health</strong></div>
+  <div class="tools"><button id="print">Print / save PDF</button></div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const md = iso => { const [y, m, d] = iso.slice(0, 10).split("-"); return `${MON[+m - 1]} ${+d}`; };
+const mdy = iso => md(iso) + ", " + iso.slice(0, 4);
+const at = iso => `${md(iso)} ${iso.slice(11, 16)}`;
+const NAME = {p: "Pass", w: "Warn", f: "Fail", "-": "Not reporting"};
+const LEVEL = s => `<span class="chip ${esc(s)}">${esc(s)}</span>`;
+const PARTY = p => `<span class="chip ${p === "Landlord" ? "Landlord" : "IT"}">${esc(p)}</span>`;
+let sel = null;
+
+function tile(k, v, s) { return `<div class="tile"><div class="k">${esc(k)}</div><div class="v">${v}</div><div class="s">${s}</div></div>`; }
+
+function gridHtml(hall, label) {
+  const rows = D.grid.filter(r => r.hall === hall), n = D.days.length;
+  let h = `<div class="hall">${esc(label)}</div><div class="grid" style="grid-template-columns:44px repeat(${n}, minmax(8px, 1fr))"><span></span>`;
+  D.days.forEach((d, i) => { h += `<span class="dh">${i % 7 === 0 ? esc(md(d)) : ""}</span>`; });
+  for (const r of rows) {
+    h += `<button class="rk${sel === r.rack ? " on" : ""}" data-rack="${esc(r.rack)}" data-gl-skip>${esc(r.rack)}</button>`;
+    [...r.status].forEach((s, i) => {
+      h += `<span class="c st-${esc(s)}" data-rack="${esc(r.rack)}" data-i="${i}" title="${esc(r.rack)} ${esc(md(D.days[i]))}: ${esc(NAME[s])}"></span>`;
+    });
+  }
+  return h + `</div>`;
+}
+
+function rackPanel(rack) {
+  const r = D.grid.find(x => x.rack === rack);
+  if (!r) return "";
+  const trays = D.issues[rack] || [];
+  const counts = {p: 0, w: 0, f: 0, "-": 0};
+  for (const s of r.status) counts[s]++;
+  let h = `<div class="panel" id="rack-panel"><h3>Rack ${esc(rack)} · ${esc(r.hall === "HALL-A" ? "Hall A, GB200 NVL72" : "Hall B, GB300 NVL72")} · cooled by ${esc(r.cdu)}</h3>
+  <p class="note">${esc(r.trays)} compute trays reporting at the end of the month. Days: ${esc(counts.p)} Pass, ${esc(counts.w)} Warn, ${esc(counts.f)} Fail${counts["-"] ? `, ${esc(counts["-"])} not yet reporting` : ""}.
+  Peak GPU ${esc(r.gpu_max.toFixed(1))} C, HBM ${esc(r.hbm_max.toFixed(1))} C.</p>`;
+  if (!trays.length) h += `<p style="font-size:13px;margin:0">Every tray passed every health watch all month.</p>`;
+  for (const t of trays) {
+    h += `<div style="font-size:13px;font-weight:600;margin-top:6px">${esc(t.host)}</div><ul>` +
+      t.items.map(x => `<li>${LEVEL(x.level)} ${esc(at(x.when))} UTC${x.gpu != null ? ` · GPU ${esc(x.gpu)}` : ""}: ${esc(x.text)}</li>`).join("") + `</ul>`;
+  }
+  return h + `<p class="note" style="margin:0">Trays not listed passed every health watch all month.</p></div>`;
+}
+
+function spark(series) {
+  const W = 140, H = 26, n = D.days.length, mx = Math.max(1, ...series.map(s => s.sbe));
+  const idx = d => D.days.indexOf(d);
+  let s = `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Corrected errors per day">`;
+  s += `<line x1="0" x2="${W}" y1="${H - 0.5}" y2="${H - 0.5}" stroke="var(--line)"/>`;
+  for (const p of series) {
+    const i = idx(p.date); if (i < 0) continue;
+    const h = Math.max(p.sbe ? 2 : 0, (H - 2) * p.sbe / mx), x = i * W / n;
+    s += `<rect x="${x + 0.5}" y="${H - 1 - h}" width="${Math.max(1, W / n - 1)}" height="${h}" fill="var(--s1)"><title>${esc(md(p.date))}: ${esc(p.sbe.toLocaleString("en-US"))} corrected, ${esc(p.remapped)} remapped rows</title></rect>`;
+    if (p.uce) s += `<rect x="${x + 0.5}" y="0" width="${Math.max(1, W / n - 1)}" height="${H - 1}" fill="var(--bad)" opacity="0.8"><title>${esc(md(p.date))}: uncorrectable error</title></rect>`;
+  }
+  return s + `</svg>`;
+}
+
+function render() {
+  const T = D.thermal, ll = D.findings.filter(f => f.party === "Landlord").length;
+  let h = `<h1>GPU Health</h1>
+  <p class="sub">GB200 racks in Hall A and GB300 racks in Hall B, ${esc(mdy(D.window.start))} to ${esc(md(D.days[D.days.length - 1]))}.
+  ${esc(D.framing)} All names and serials are fictional.</p>
+  <div class="tiles">
+    ${tile("GPUs reporting", esc(D.gpus.toLocaleString("en-US")), "at the end of the month; Hall B racks report from power-on")}
+    ${tile("Health watches", `${esc(D.watches.fail)} <span style="font-size:15px;font-weight:600">Fail</span> · ${esc(D.watches.warn)} <span style="font-size:15px;font-weight:600">Warn</span>`, "every XID in the month appears here on the same GPU at the same time")}
+    ${tile("Memory errors warned ahead", `${esc(D.warned)} of ${esc(D.memory.length)}`, `uncorrectable memory XIDs with an early warning at least ${esc(D.checks.lead_hours)} hours before`)}
+    ${tile("Findings", esc(D.findings.length), `${esc(D.findings.length - ll)} IT Partner, ${esc(ll)} Landlord`)}
+  </div>`;
+
+  h += `<h2>Rack status by day</h2>
+  <p class="note">Each cell is one rack on one day, colored by its worst health result: Fail from any watch that was active (an XID until the node returned to service), Warn from a pending remap, a thermal slowdown, or a GPU on the early-warning list. Select a rack to see its trays.</p>
+  <div class="legend"><span><i class="st-p"></i>Pass</span><span><i class="st-w"></i>Warn</span><span><i class="st-f"></i>Fail</span><span><i class="st--"></i>Not reporting (before power-on)</span></div>
+  <div id="grids">${gridHtml("HALL-A", "Hall A · GB200 NVL72")}${gridHtml("HALL-B", "Hall B · GB300 NVL72 (deploying)")}</div>
+  <div id="detail">${sel ? rackPanel(sel) : `<p class="note">No rack selected.</p>`}</div>`;
+
+  h += `<h2>Findings</h2>`;
+  if (!D.findings.length) h += `<p>None.</p>`;
+  for (const f of D.findings) {
+    h += `<div class="finding${f.party === "Landlord" ? " ll" : ""}"><h3>${esc(f.id)}: ${esc(f.title)} ${PARTY(f.party)}</h3><div>${esc(f.summary)}</div><ul>
+      <li>Contract: ${f.refs.map(esc).join(", ")}</li>${f.evidence.map(e => `<li>${esc(e)}</li>`).join("")}</ul></div>`;
+  }
+  if (D.check) h += `<p class="note">Engine self-check: ${esc(D.check.detected)} of ${esc(D.check.planted)} planted cases found, ${esc(D.check.false_positives)} false positives; decoys left alone: ${esc(D.check.decoys.stable_remaps)} GPUs with old, unchanging remapped rows, ${esc(D.check.decoys.error_bursts)} one-day error bursts, ${esc(D.check.decoys.brief_slowdowns)} brief slowdowns. A finding means the records do not reconcile with the telemetry, not that anyone misled.</p>`;
+
+  h += `<h2>Early warning</h2>
+  <p class="note">Flagged at the end of the first day a GPU's remapped rows rose by ${esc(D.checks.remap_rise_rows)} within ${esc(D.checks.rise_window_days)} days, or its corrected memory errors stayed above ${esc(D.checks.sbe_floor)} a day and rose ${esc(D.checks.sbe_rising_days)} days running. Bars are corrected errors per day; red marks an uncorrectable error.</p>
+  <div class="wide"><table><tr><th>GPU</th><th>Corrected errors by day</th><th>Flagged</th><th>Why</th><th class="n">Remapped rows</th><th>Then</th></tr>
+  ${D.flags.map(f => `<tr><td>${esc(f.host)} GPU ${esc(f.gpu)}</td><td>${spark(f.series)}</td><td>${esc(md(f.flagged))}</td><td>${esc(f.why)}</td><td class="n">${esc(f.remapped_rows)}</td>
+    <td>${f.xid_after ? `XID ${esc(f.xid_after.xid)} on ${esc(at(f.xid_after.at))}, ${esc(f.xid_after.lead_h.toFixed(0))} h later` : f.xid_before ? `After XID ${esc(f.xid_before)}` : "No uncorrectable error yet: drain and replace"}</td></tr>`).join("")}</table></div>
+  <h3>Every uncorrectable memory XID this month</h3>
+  <div class="wide"><table><tr><th>XID</th><th>GPU</th><th>When (UTC)</th><th>Warned ahead</th></tr>
+  ${D.memory.map(m => `<tr><td>XID ${esc(m.xid)}</td><td>${esc(m.host)} GPU ${esc(m.gpu)}</td><td>${esc(at(m.at))}</td><td>${m.warned ? `Yes, ${esc(m.lead_h.toFixed(0))} h` : "No"}</td></tr>`).join("")}</table></div>
+  <p class="note">Not every memory failure gives warning; the ones that do are the reason to watch the counters.</p>`;
+
+  h += `<h2>Returned to service with a row remap pending</h2>
+  <p class="note">An uncorrectable memory error leaves a row remap pending until the GPU is reset. A node returned to service before the reset runs on the bad row.</p>`;
+  h += D.pending.length ? `<div class="wide"><table><tr><th>Node</th><th>GPU</th><th>Pending since</th><th>Returned to service</th><th>Ticket</th><th>Cleared</th></tr>
+  ${D.pending.map(p => `<tr><td>${esc(p.host)}</td><td>${esc(p.gpu)}</td><td>${esc(at(p.pending_since))}</td><td>${esc(at(p.rts))}${p.again.length ? ` (again ${p.again.map(a => esc(at(a))).join(", ")})` : ""}</td><td>${esc(p.ticket || "none")}${p.close_code ? ` <span class="note">${esc(p.close_code)}</span>` : ""}</td><td>${p.cleared ? esc(at(p.cleared)) : "Still pending"}</td></tr>`).join("")}</table></div>` : `<p>None.</p>`;
+
+  h += `<h2>Thermal slowdown and the cooling demarcation</h2>
+  <p class="note">The demarcation is the rack manifold isolation valves (DM-COOL). If the CDU secondary left the rack band (supply above ${esc(D.cdu_band.supply_max_c)} C or flow below ${esc(D.cdu_band.flow_min_lpm.toLocaleString("en-US"))} L/min) when GPUs throttled, the cause is upstream, on the Landlord's side. If the CDU held the band, it is inside the rack, on the IT Partner's side.</p>
+  <h3>The Landlord's CDU events this month</h3>
+  <div class="wide"><table><tr><th>CDU</th><th>Pump redundancy lost (UTC)</th><th class="n">Racks reporting</th><th class="n">Lowest flow</th><th class="n">Highest supply</th><th>In band</th><th class="n">GPUs throttled</th></tr>
+  ${T.cooling_events.map(c => `<tr><td>${esc(c.cdu)}</td><td>${esc(at(c.start))} to ${esc(at(c.end))}</td><td class="n">${esc(c.racks_reporting.length)}</td><td class="n">${esc((c.flow_min_lpm ?? 0).toLocaleString("en-US"))} L/min</td><td class="n">${esc((c.supply_max_c ?? 0).toFixed(1))} C</td><td>${c.in_band ? "Yes" : "No"}</td><td class="n">${esc(c.slowdown_gpus)}</td></tr>`).join("")}</table></div>
+  <p class="note">A pump trip dips flow while the standby pump ramps in; it stayed in band, and no GPU throttled. That matches the attribution report (FA-5: redundancy lost, no capacity lost) and OT-CSL-03 at 100%.
+  Brief one-off slowdowns (a GPU touching ${esc(D.slowdown_c)} C for under two minutes) on ${esc(T.brief_trays)} trays are workload peaks, not findings.</p>`;
+
+  h += `<h2>How it is measured</h2><ul>
+  <li><b>Health watches:</b> PCIe, Memory, InfoROM, Thermal and power, NVLink, and Driver, each Pass, Warn, or Fail, as the public DCGM health checks describe. Each XID maps to one: 79 to PCIe, 48, 94, and 95 to Memory, 119 to Driver, 145 and 149 to NVLink. XID codes open their catalog entry.</li>
+  <li><b>Counters:</b> a daily snapshot per GPU with any non-zero counter: corrected and uncorrected memory errors that day, remapped rows, and whether a remap is pending.</li>
+  <li><b>Thermal:</b> hardware thermal slowdown episodes per GPU, and the CDU secondary supply temperature and flow by hour (the mean, and the worst reading in the hour).</li>
+  <li><b>Data:</b> synthetic, on its own random stream, consistent with the month's XIDs, scheduler states, tray swaps, and tickets. Thresholds are assumptions in <code>config/gpu_health.yaml</code>, not any vendor's.</li>
+  <li><b>Sources:</b> ${D.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join("; ")}.</li></ul>`;
+
+  document.getElementById("doc").innerHTML = h;
+}
+
+function select(rack) {
+  sel = rack;
+  document.getElementById("detail").innerHTML = rack ? rackPanel(rack) : `<p class="note">No rack selected.</p>`;
+  document.querySelectorAll("#grids .rk").forEach(b => b.classList.toggle("on", b.dataset.rack === rack));
+  if (rack && location.hash !== "#" + rack) history.replaceState(null, "", "#" + rack);
+}
+
+const h0 = location.hash.slice(1).toUpperCase();
+if (D.grid.some(r => r.rack === h0)) sel = h0;
+render();
+document.getElementById("doc").addEventListener("click", e => {
+  const el = e.target.closest("#grids [data-rack]");
+  if (el) select(el.dataset.rack);
+});
+document.getElementById("print").addEventListener("click", () => window.print());
+</script>
+</body>
+</html>

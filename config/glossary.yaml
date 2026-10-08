@@ -151,6 +151,7 @@ terms:
   - {term: BMC, type: acronym, expansion: Baseboard management controller, text: "A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system."}
   - {term: XID, type: acronym, expansion: "Xid error (GPU driver error code)", text: "A numbered error the GPU driver reports, such as XID 79 (GPU has fallen off the bus). Critical XIDs start the restoration clock for a GPU fault. Every XID that applies to GB200 is listed under GPU XID codes, from NVIDIA's public Xid catalog."}
   - {term: DCGM, type: acronym, expansion: Data Center GPU Manager, text: "The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM."}
+  - {term: HBM, type: acronym, expansion: High-bandwidth memory, text: "The stacked memory beside each GPU. Its temperature is watched with the GPU's, and its bad rows are what row remapping replaces."}
   - {term: ECC, type: acronym, expansion: Error-correcting code, text: "Memory that detects and corrects bit errors; rising corrected errors can warn of a failing part."}
   - {term: GSP, type: acronym, expansion: GPU System Processor, text: "A processor on the GPU that runs its firmware; XID 119 is a timeout waiting for it."}
   - {term: RPC, type: acronym, expansion: Remote procedure call, text: "A request one program sends another, here the GPU driver to the GSP."}
@@ -227,6 +228,8 @@ families:
      text: "A completed post-incident review.", see: "pir/"}
   - {key: EN-F, label: "EN-F#", pattern: 'EN-F\d', type: record, title: Energy finding, example: EN-F1, see: "energy/",
      text: "A finding on the Energy tab: the Landlord's energy report or the chiller free-cooling log does not reconcile with the meters (Landlord SLA section 22)."}
+  - {key: GH-F, label: "GH-F#", pattern: 'GH-F\d', type: record, title: GPU health finding, example: GH-F1, see: "gpu/",
+     text: "A finding on the GPU Health tab: a GPU to replace before it fails, a node returned to service with a row remap pending, or thermal slowdown walked to the party whose side of the cooling demarcation caused it."}
   - {key: FPR, label: "FPR-YYYY-H#", pattern: 'FPR-\d{4}-H[12]', type: record, title: Failure pattern review, example: FPR-2026-H1,
      text: "The review of six months of failures for patterns, with owners and fixes.", see: "patterns/"}
   - {key: PA, label: "PA#", pattern: 'PA\d{1,2}', type: record, title: Failure pattern action, example: PA6,

@@ -1,0 +1,35 @@
+const { JSDOM, VirtualConsole } = require("jsdom");
+const fs = require("fs");
+const html = fs.readFileSync(process.argv[2], "utf8");
+const errors = [];
+const opts = { runScripts: "dangerously", virtualConsole: new VirtualConsole().on("jsdomError", e => errors.push(String(e))) };
+const dom = new JSDOM(html, { ...opts, url: "https://example.test/gpu/" });
+const w = dom.window, d = w.document;
+const t = () => d.getElementById("doc").textContent;
+const ok = (c, m) => { if (!c) { console.log("FAIL:", m); process.exitCode = 1; } else console.log("ok:", m); };
+const D = JSON.parse(d.getElementById("data").textContent);
+
+ok(errors.length === 0, "no script errors " + errors.join(";"));
+ok(t().includes("GPU Health") && d.querySelectorAll(".tile").length === 4, "title and four tiles");
+ok(t().includes(D.gpus.toLocaleString("en-US")) && t().includes(`${D.warned} of ${D.memory.length}`), "GPUs reporting and memory errors warned ahead");
+ok(d.querySelectorAll("#grids .rk").length === D.grid.length, "a row per reporting rack");
+ok(d.querySelectorAll("#grids .c").length === D.grid.length * D.days.length, "a cell per rack per day");
+ok(d.querySelectorAll("#grids .c.st-f").length > 0 && d.querySelectorAll("#grids .c.st-w").length > 0 && d.querySelectorAll("#grids .c.st--").length > 0,
+   "Fail, Warn, and not-yet-reporting cells");
+ok(d.querySelector('#grids .c[data-rack="B14"][data-i="0"]').classList.contains("st--"), "Hall B racks are blank before power-on");
+ok(t().includes("No rack selected"), "no rack selected at first");
+d.querySelector('#grids .rk[data-rack="A31"]').click();
+ok(t().includes("Rack A31") && t().includes("a31-ct11") && t().includes("still active"), "selecting a rack lists its trays and their watches");
+ok(w.location.hash === "#A31" && d.querySelector('#grids .rk[data-rack="A31"]').classList.contains("on"), "the address follows the selection");
+d.querySelector('#grids .c[data-rack="A02"][data-i="3"]').click();
+ok(t().includes("Rack A02"), "clicking a cell selects its rack");
+ok(t().includes("GH-F1") && t().includes("GH-F4") && d.querySelectorAll(".finding").length === D.findings.length, "every finding");
+ok(t().includes("INC3100085") && t().includes("Still pending"), "the remap still pending after return to service");
+ok(d.querySelectorAll("svg.spark").length === D.flags.length, "a sparkline per early-warning GPU");
+ok(t().includes("No uncorrectable error yet: drain and replace"), "the watch list says what to do");
+ok(t().includes("CDU-A2") && t().includes("FA-5"), "the Landlord's pump trip, with no GPU throttled");
+ok(t().includes("not that anyone misled"), "a finding is framed as records that do not reconcile");
+ok(d.querySelector('a[href^="https://docs.nvidia.com/datacenter/dcgm"]'), "cites the public DCGM guide");
+const dom2 = new JSDOM(html, { ...opts, url: "https://example.test/gpu/#a13" });
+ok(dom2.window.document.getElementById("doc").textContent.includes("Rack A13"), "a link to a rack opens it");
+ok(errors.length === 0, "still no script errors " + errors.join(";"));

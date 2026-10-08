@@ -37,6 +37,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Weekly Review](#weekly-operations-review) | What do we discuss with both partners this week? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) |
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
+| [GPU Health](#gpu-health) | Which GPUs are failing, or about to, and whose side is it on? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/gpu/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
 | [Devices](#devices-location-pins-and-detail-sheets) | What is this device, where is it, and what does it connect to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/devices/) |
@@ -61,7 +62,7 @@ flowchart LR
   SLA --> ENG
   SITE --> ENG
   ENG --> REP["Scorecards, findings,<br/>credits, CAPs<br/>reports/"]
-  DATA --> HIST["History, change, and energy layers<br/>data/history/ · data/changes/ · data/energy/"]
+  DATA --> HIST["History, change, energy, GPU health<br/>data/history/ · data/changes/ · data/energy/ · data/gpu_health/"]
   REP --> PAGES
   HIST --> PAGES
   JUDG["Human judgment (YAML)<br/>pir/ · weekly/notes/ · patterns/"] --> PAGES
@@ -183,6 +184,18 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - The terms are Landlord SLA section 22 (OT-EN-01 monthly report, OT-EN-02 PUE over 52 weeks, OT-EN-03 free-cooling availability). PUE is a Key Measurement with no credits, so the Landlord's credits are unchanged. The weekly packs carry the week's and month-to-date PUE, tested to reconcile with this report.
 - Scored on 60 generated months with the report error and the lockout moved each time: every report error found (49 of 49, cause named each time), every lockout found, 109 of 109 in all, no report flagged when it was right (11 of 11), 0 false positives.
 
+## GPU Health
+
+![GPU Health: tiles and the rack status grid](docs/images/gpu-health.png)
+
+**What it shows.** Every GB200 rack in Hall A and every powered-on GB300 rack in Hall B, one cell per rack per day, colored by its worst health result; selecting a rack lists its trays and what each one raised. Four findings, all on the IT Partner's side: a GPU whose corrected memory errors are rising with no failure yet (drain and replace it now), two nodes returned to service while a GPU still had a row remap pending (one is the existing phantom fix, seen from the health data), and a tray throttling while its CDU held the rack band (the cause is inside the rack). Three of the month's ten uncorrectable memory errors were flagged at least a day ahead.
+
+**How it works.**
+- The data is synthetic, modeled on public DCGM-style health checks and NVIDIA's public XID catalog, on its own random stream (`src/scorecard/synthetic/gpu_health.py`, `config/gpu_health.yaml`, every threshold an assumption). Every XID already in the month appears as a health watch on the same GPU at the same time and clears when the scheduler returns the node to service or the tray is replaced, so nothing contradicts the records shown elsewhere.
+- `src/scorecard/gpu_health.py` flags GPUs whose remapped rows or corrected errors are rising, checks every return to service for a remap still pending, and walks thermal slowdown across the cooling demarcation (DM-COOL): a CDU out of band puts it on the Landlord's side, a CDU in band puts it inside the rack.
+- The month's two CDU pump trips dipped flow inside the band and throttled no GPU, which matches the attribution report and OT-CSL-03 at 100%.
+- Scored on 60 generated months with the cases moved each time: every planted case found, 548 of 548 (early warning 360/360, remap pending at return 97/97, hot trays 60/60, CDU excursions 31/31), 0 false positives against 1,942 stable remaps, 120 error bursts, and 1,159 brief slowdowns.
+
 ## Agreements: SLAs as code
 
 ![The Interface Agreement rendered with its contents](docs/images/agreements.png)
@@ -253,6 +266,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Failure patterns | 3 found, 0 other flags | optic lot 60/60, CDU drift 60/60, reseat 41/60, decoys 0/60 |
 | Change-aware alarms | 120 alarms, 11 expected, 4 flags (all MOP-310) | every case 60/60, decoys 0/60 |
 | PUE report and free-cooling lockouts | 2 of 2 | 109 of 109 (report errors 49/49, cause named 49/49; lockouts 60/60), 0 false positives |
+| GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
 
 ```bash
@@ -261,6 +275,7 @@ python scripts/run_landlord.py --robustness 60
 python scripts/render_patterns.py --robustness 60
 python scripts/render_alarms.py --robustness 60
 python scripts/render_energy.py --robustness 60
+python scripts/render_gpu_health.py --robustness 60
 ```
 
 ## Toward live data: the read-only collector
@@ -274,7 +289,7 @@ python scripts/render_energy.py --robustness 60
 
 ## Tests and deployment
 
-- **464 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
+- **479 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -323,6 +338,7 @@ src/scorecard/weekly.py          Weekly operations review facts, as of each week
 src/scorecard/patterns.py        Failure pattern statistics, evidence for a cause, owner from the RACI
 src/scorecard/alarms.py          Change-aware alarms: one feed, classified against declared changes
 src/scorecard/energy.py         PUE and partial PUE from the meters; report and free-cooling checks
+src/scorecard/gpu_health.py     GPU health checks: early warning, remap pending at return to service, thermal walk
 src/scorecard/tickets.py         Incident Portal records with timelines and measurements
 src/scorecard/glossary.py        Code meanings, lookup, and tokenizer used by render_glossary.py
 src/scorecard/sitenav.py         The tab bar on every page and ticket-number links
@@ -333,9 +349,10 @@ weekly/notes/*.yaml              Written part of a weekly review (decisions, ask
 patterns/lessons.yaml            Written part of the pattern review (root causes, lessons, actions)
 config/change_alarms.yaml        Alarm map, change-type catalog, robustness plants
 config/energy.yaml               Weather, chiller plant, and meter model for the energy layer; PUE check thresholds
+config/gpu_health.yaml           GPU health layer: watches per XID, thresholds, plants
 config/glossary.yaml             Code meanings: contract paths, acronyms, record families
-scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, energy, tickets, glossary, agreements, devices)
-scripts/generate_*.py            Synthetic data: sample, history, change layer, energy meters
+scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, energy, gpu_health, tickets, glossary, agreements, devices)
+scripts/generate_*.py            Synthetic data: sample, history, change layer, energy meters, GPU health
 scripts/run_engine.py            IT Partner engine -> reports/
 scripts/run_landlord.py          Landlord engine -> Landlord and attribution reports
 scripts/build_scorecard.py       Scorecard -> reports/
