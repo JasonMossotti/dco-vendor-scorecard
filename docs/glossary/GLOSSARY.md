@@ -6,7 +6,7 @@
 
 # Glossary: Site AUS-1
 
-Every acronym, contract code, and record ID the site's pages and documents use: 535 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
+Every acronym, contract code, and record ID the site's pages and documents use: 540 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
 
 ## Acronyms
 
@@ -15,7 +15,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | ANSI | **American National Standards Institute.** Coordinates US voluntary standards, including ANSI/ASSP Z10.0. | - | IT Partner SLA, Landlord SLA, Deployments |
 | API | **Application programming interface.** A way for one system to read from or send to another. | - | IT Partner SLA, Landlord SLA, Alarm Board, Incident Portal |
 | APS | **Alarm planning superintendent.** A Texas State Fire Marshal's Office license: fire alarm plans are signed by a licensed APS or sealed by a fire protection engineer. | - | Deployments |
-| ASHRAE | **American Society of Heating, Refrigerating and Air-Conditioning Engineers.** Publisher of Guideline 0 (the commissioning process behind levels L1 to L5) and the thermal guidelines for data centers. | - | Deployments |
+| ASHRAE | **American Society of Heating, Refrigerating and Air-Conditioning Engineers.** Publisher of Guideline 0 (the commissioning process behind levels L1 to L5) and the thermal guidelines for data centers. | - | Telemetry, Deployments |
 | ASN | **Advance ship notice.** The shipper's list of what is in a delivery, used to reconcile asset tags and serial numbers at receipt. | - | IT Partner SLA, Deployments |
 | ASSP | **American Society of Safety Professionals.** Publisher of the ANSI/ASSP Z10.0 safety management standard. | - | IT Partner SLA, Landlord SLA |
 | BER | **Bit error rate.** The share of bits received in error on a link; pre-FEC BER drift can warn of a failing optic. | - | IT Partner SLA |
@@ -39,6 +39,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | DCGM | **Data Center GPU Manager.** The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM. | - | IT Partner SLA, Landlord SLA, Failure Patterns, GPU Health, Telemetry, Overview |
 | DCIM | **Data center infrastructure management.** Software that tracks power, capacity, and assets across the facility. | - | Site model document |
 | DCO | **Data center operations.** The Customer's site operations team, which runs the Telemetry of Record and manages both partners. | - | IT Partner SLA, Landlord SLA, Scorecards |
+| DMTF | **Distributed Management Task Force.** The standards body behind Redfish, the REST API the CDUs report their telemetry through. | - | Telemetry, Overview |
 | DOM | **Digital optical monitoring.** An optic's own report of temperature, power, and signal levels; a DOM alarm warns the optic is failing. | - | Failure Patterns, Overview |
 | ECC | **Error-correcting code.** Memory that detects and corrects bit errors; rising corrected errors can warn of a failing part. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, GPU Health, Telemetry, Incident Portal |
 | EHS | **Environment.** The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Post-Incident Review, Weekly Review |
@@ -66,7 +67,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | IT | **Information technology.** Here, the data hall equipment and the IT Partner that works on it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Energy, GPU Health, Telemetry, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | L-L | **Line to line.** Voltage measured between two phases of a three-phase supply; 0 V line to line means the feed is dead. | - | Scorecards, Incident Portal, Post-Incident Review, Weekly Review |
 | LLC | **Limited liability company.** A US company form; both partners are fictional LLCs. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Energy, Site model document, Overview, Weekly Review |
-| LPM | **Liters per minute.** Coolant flow rate. | - | Deployments, Site model document |
+| LPM | **Liters per minute.** Coolant flow rate. | - | Telemetry, Deployments, Site model document |
 | MOP | **Method of procedure.** The step-by-step plan for planned work on live equipment: scope, window, isolation, back-out, and the alarms the work is expected to raise. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Deployments, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | MV | **Medium voltage.** Here, the 13.8 kV switchgear between the utility, the generators, and the unit substations. | - | Alarm Board, Incident Portal, Post-Incident Review |
 | MVA | **Megavolt-ampere.** A unit of apparent power, used to rate transformers. | - | Site model document |
@@ -78,6 +79,8 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | NIC | **Network interface card.** A server's network adapter; each GB300 tray has one per fabric rail. | - | Deployments |
 | NMC | **Network management card.** The UPS's monitoring card, which sends SNMP traps and answers polls. | - | Landlord SLA, Incident Portal, Post-Incident Review |
 | NMX | **NVLink management software.** Manages and reports on the NVLink switches inside the racks; the source for DS-NMX. | - | Site model document |
+| OAI | **OCP Accelerator Infrastructure.** The OCP project behind the Redfish profiles for accelerator and liquid-cooling equipment. | - | Telemetry |
+| OCP | **Open Compute Project.** An industry group that publishes open hardware specifications, including Redfish profiles for cooling units. | - | Telemetry |
 | OEM | **Original equipment manufacturer.** The company that built the equipment (here, the rack and system integrator), with its own warranty and support contract. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Failure Patterns, Deployments, Incident Portal, Post-Incident Review, Weekly Review |
 | OOB | **Out-of-band.** The separate management network that reaches equipment even when the main network is down. | - | IT Partner SLA, Deployments |
 | OSFP | **Octal small form-factor pluggable.** The optic module format for the 800G network links. | - | IT Partner SLA, Incident Portal |
@@ -87,7 +90,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | PDF | **Portable Document Format.** A printable document file. | - | Failure Patterns, Energy, GPU Health, Post-Incident Review, Weekly Review |
 | PE | **Professional engineer.** A licensed engineer; in Texas a PE seals the construction documents and load calculations (the Landlord's engineer of record). | - | Deployments |
 | PF | **Power factor.** The ratio of real to apparent power; the calculation sheet converts rack kW to amps at 480 V with PF 0.99. | - | Deployments |
-| PG25 | **Propylene glycol, 25%.** The coolant in the racks' liquid loop: water with 25% propylene glycol. | - | IT Partner SLA, Landlord SLA, Site model document |
+| PG25 | **Propylene glycol, 25%.** The coolant in the racks' liquid loop: water with 25% propylene glycol. | - | IT Partner SLA, Landlord SLA, Telemetry, Site model document |
 | PIR | **Post-incident review.** The written review after a major incident: timeline, causes, contributing factors, and owned, dated actions. | - | Alarm Board |
 | POST | **Power-on self-test.** The checks a system runs when it powers on. | - | IT Partner SLA, Deployments |
 | PPE | **Personal protective equipment.** Gloves, arc-rated clothing, face shields, and similar gear a task's hazard analysis requires. | - | IT Partner SLA, Landlord SLA |
@@ -111,16 +114,17 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | SN | **Serial number.** The manufacturer's unique number for a part; a part swap must show a serial change in inventory. | - | Incident Portal, Post-Incident Review |
 | SNMP | **Simple Network Management Protocol.** A standard protocol for reading equipment status and receiving alarms (traps). | - | Alarm Board, Site model document |
 | TAC | **Texas Administrative Code.** The state's compiled agency rules; 16 TAC chapter 73 holds the electrical rules that adopt the NEC. | - | Deployments |
-| TCP | **Transmission Control Protocol.** The network transport; Modbus TCP is Modbus over an Ethernet network. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Site model document |
+| TCP | **Transmission Control Protocol.** The network transport; Modbus TCP is Modbus over an Ethernet network. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Telemetry, Site model document |
 | TDLR | **Texas Department of Licensing and Regulation.** The state agency that adopts the Texas electrical code, licenses electricians, and runs the Architectural Barriers program (TX-TABA). | - | Deployments |
 | TRIR | **Total recordable incident rate.** Recordable injuries per 200,000 hours worked, a standard safety statistic used to qualify partners. | - | IT Partner SLA, Landlord SLA |
+| TTDM | **TraceTek leak detection module.** The module that monitors the sensing cable under each CDU and reports a leak to the BMS. | - | Telemetry |
 | UFM | **Unified Fabric Manager.** Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM. | - | Failure Patterns, Site model document |
 | UPS | **Uninterruptible power supply.** Batteries and power electronics that carry the load through a utility loss until the generators take over. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Energy, Telemetry, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | US | **United States.** The United States. | - | Alarm Board |
 | USA | **United States of America.** The United States. | - | Site model document |
 | UTC | **Coordinated Universal Time.** The time standard every record is stamped in. The site is in US Central time (UTC minus 5 in summer). | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, GPU Health, Telemetry, Deployments, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | UUID | **Universally unique identifier.** The GPU's own identifier, a label on every exporter series. A replaced tray brings new GPUs with new UUIDs, so their readings start new series. | - | Telemetry |
-| VDC | **Volts direct current.** DC voltage, as in the 800 VDC pilot racks. | - | IT Partner SLA, Landlord SLA, Site model document |
+| VDC | **Volts direct current.** DC voltage, as in the 800 VDC pilot racks. | - | IT Partner SLA, Landlord SLA, Telemetry, Site model document |
 | VESDA | **Very early smoke detection apparatus.** Aspirating smoke detection that samples room air through pipes and alarms in stages (Alert, Action, Fire 1, Fire 2). | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Deployments, Incident Portal, Post-Incident Review |
 | VFD | **Variable frequency drive.** Controls a pump or fan motor's speed. | - | Landlord SLA, Site model document |
 | XDR | **Extended data rate (InfiniBand, 800 Gb/s).** An InfiniBand speed generation. | - | Site model document |
@@ -385,6 +389,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 |---|---|---|---|
 | A# (post-incident review) | **Post-incident review action.** An owned, dated action from the post-incident review, carried into the weekly pack until done. *(On: pir, weekly.)* | - | Post-Incident Review, Weekly Review |
 | A-###, E-###, M-###, D-### | **Site drawing sheet.** A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical, D for equipment details (one representative sheet per product, typical of every unit of it). *(On: site.)* | - | Site model document |
+| AI-### | **BMS analog input point.** An illustrative point number in the BMS point list for the CDU telemetry: each analog input maps one Redfish reading to a BACnet object and a Modbus register. No CDU vendor publishes its map; these numbers are this site's own. | - | Telemetry |
 | ALM-#### | **Alarm.** One alarm on the Alarm Board, checked against the change work that declared it. | - | Alarm Board, Incident Portal, Post-Incident Review |
 | B##### | **Access badge.** An access badge; badge-ins and badge-outs at the hall doors are the evidence for on-site times. | - | Incident Portal, Post-Incident Review |
 | CAP-### | **Corrective action plan.** A corrective action plan drafted at the period review for each serious finding, grouped by the tickets it affects. | - | Scorecards |
@@ -413,13 +418,13 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | INSP-B-### | **Inspection record.** One inspection result (pass or fail) by an internal, third-party, or authority inspector, on a deployment step. | - | Deployments |
 | L-### | **Landlord finding.** A place where the Landlord's work orders or maintenance records do not reconcile with the telemetry, from the monthly scorecard. | - | Scorecards, Incident Portal, Post-Incident Review, Weekly Review |
 | LOT-#### | **Manufacturing lot.** A batch of parts made together; a bad lot fails more often than the others. | - | Failure Patterns, Overview |
-| MOP-### | **Method of procedure (change record).** An approved plan for planned work on live equipment, with its window and the alarms it declares it will cause. The Alarm Board checks every alarm against it. | - | Alarm Board, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| MOP-### | **Method of procedure (change record).** An approved plan for planned work on live equipment, with its window and the alarms it declares it will cause. The Alarm Board checks every alarm against it. | - | Alarm Board, Telemetry, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | NS + 8 characters | **NVLink switch tray serial number.** An NVLink switch tray's serial number. | - | Incident Portal, Post-Incident Review |
 | OP + 8 characters | **Optic serial number.** A network optic's serial number. | - | Incident Portal, Post-Incident Review |
 | P# (failure pattern review) | **Failure pattern number.** On the Failure Pattern Review, P1, P2, and P3 also number the patterns found. In the action tables, the Priority column uses the SLA priorities. *(On: patterns.)* | - | Failure Patterns |
 | PA# | **Failure pattern action.** An owned, dated action from the failure pattern review. | - | Failure Patterns |
 | PIR-YYYY-### | **Post-incident review.** A completed post-incident review. | - | Alarm Board, Overview, Incident Portal, Post-Incident Review, Weekly Review |
-| PM-#### | **Preventive maintenance record.** A scheduled maintenance task on facility equipment, such as a generator's monthly loaded exercise. | - | Scorecards, Alarm Board, Energy, Incident Portal, Post-Incident Review, Weekly Review |
+| PM-#### | **Preventive maintenance record.** A scheduled maintenance task on facility equipment, such as a generator's monthly loaded exercise. | - | Scorecards, Alarm Board, Energy, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | PS or PU + 8 characters | **Power shelf or PSU serial number.** A power shelf's (PS) or power supply's (PU) serial number. | - | Incident Portal, Post-Incident Review |
 | Q# (weekly review) | **Weekly review ask.** An ask of one party from the weekly operations review, with a due date. *(On: weekly.)* | - | Weekly Review |
 | R-M# | **Rack deployment step.** A step done once per rack, following the IT Partner SLA's milestones M1 (received) to M7 (Validated Handoff). | - | Deployments |
@@ -427,8 +432,8 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | RSS-DEP | **IT Partner's Jira project for the Hall B rack deployment.** Ridgeline's own Jira project: one story per rack with a sub-task per milestone M1 to M7. Read through the importer, never written. | - | Deployments |
 | SLA-CCF-AUS1-001 | **Service Level Agreement: Data Center Lease Services.** Schedule C (Landlord Service Levels) to the Data Center Lease. Version 1.0.0, effective 2026-10-05. | Landlord SLA,  | Landlord SLA |
 | SLA-RSS-AUS1-001 | **Service Level Agreement: Partner-Operated GPU Site Operations.** Schedule B (Service Levels) to the Master Services Agreement. Version 1.0.0, effective 2026-10-05. | IT Partner SLA,  | IT Partner SLA |
-| W## | **ISO week.** The week of the year (Monday to Sunday, UTC); one weekly operations review pack per week. | - | Overview |
-| WO-##### | **Landlord work order.** The Landlord's record of facility work: a fault repair, planned maintenance, or a change. | - | Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
+| W## | **ISO week.** The week of the year (Monday to Sunday, UTC); one weekly operations review pack per week. | - | Telemetry, Overview |
+| WO-##### | **Landlord work order.** The Landlord's record of facility work: a fault repair, planned maintenance, or a change. | - | Scorecards, Alarm Board, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 
 ## Site and equipment
 
@@ -448,7 +453,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | MV-B | **Medium-voltage bus B.** The other 13.8 kV switchgear bus. The B feeds of the halls trace back to it. | - | Landlord SLA, Alarm Board, Energy, Site model document, Incident Portal, Post-Incident Review |
 | OPS-MAIN | **Main operations entrance badge reader.** The door every shift badges through; the staffing check counts badge-ins here. | - | Scorecards |
 | PG-[hall]# | **Power group.** A group of racks fed by one pair of A and B busways; the calculation sheet checks each group's load against its busway and UPS. | - | Deployments |
-| Rack [hall]## | **Rack.** One NVL72 rack: 18 compute trays, 9 NVLink switch trays, and 8 power shelves, fed by an A and a B tap-off. Rack A07 is Hall A, rack 7 (row 1, position 7). | - | Scorecards, Alarm Board, Failure Patterns, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| Rack [hall]## | **Rack.** One NVL72 rack: 18 compute trays, 9 NVLink switch trays, and 8 power shelves, fed by an A and a B tap-off. Rack A07 is Hall A, rack 7 (row 1, position 7). | - | Scorecards, Alarm Board, Failure Patterns, Telemetry, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | TO-[rack]-[side] | **Busway tap-off.** The breaker box that takes power from the busway to one rack: TO-A07-B is rack A07's B-side tap-off. Its output terminals are the power demarcation (DM-PWR). | - | Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | TTDM-A | **Hall A leak detection module.** The leak alarm and locator module for Hall A's sensing cables. An alarm names the circuit (C1, C2, ...) and the distance along the cable. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | TTDM-B | **Hall B leak detection module.** The leak alarm and locator module for Hall B's sensing cables. | - | Alarm Board |
@@ -622,4 +627,4 @@ Every code NVIDIA's public [Xid catalog](https://docs.nvidia.com/deploy/xid-erro
 
 ## Left plain on purpose
 
-Capitalised text that is not a code (banners, emphasis) and rack positions such as A07, which the site drawings explain: A-07, A-14, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32, A4, B-03, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15, B16, B17, B18, B19, B20, B21, B22, B23, B24, B25, B26, B27, B28, B29, B30, B31, B32, B4, BY, DO, E1, EAB, EDIT, FAQ, FILE, GB, GENERATED, HAND, HELP, ILLUSTRATIVE, LIVE, MOCK, NETIR, NOT, NVLINK, OK, ONLY, RLW, TB, TYPE.
+Capitalised text that is not a code (banners, emphasis) and rack positions such as A07, which the site drawings explain: A-07, A-14, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32, A4, B-03, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15, B16, B17, B18, B19, B20, B21, B22, B23, B24, B25, B26, B27, B28, B29, B30, B31, B32, B4, BAS-PTS007C, BAS-PTS007C-EN_06302026, BY, DO, E1, EAB, EDIT, FAQ, FILE, GB, GENERATED, HAND, HELP, ILLUSTRATIVE, LIVE, MOCK, NETIR, NOT, NVLINK, OK, ONLY, RLW, TB, TYPE.

@@ -1,0 +1,143 @@
+{
+ "cdus": {
+  "CDU-A1": {
+   "hall": "HALL-A",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-A1"
+  },
+  "CDU-A2": {
+   "hall": "HALL-A",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-A2"
+  },
+  "CDU-A3": {
+   "hall": "HALL-A",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-A3"
+  },
+  "CDU-A4": {
+   "hall": "HALL-A",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-A4"
+  },
+  "CDU-B1": {
+   "hall": "HALL-B",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-B1"
+  },
+  "CDU-B2": {
+   "hall": "HALL-B",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-B2"
+  },
+  "CDU-B3": {
+   "hall": "HALL-B",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-B3"
+  },
+  "CDU-B4": {
+   "hall": "HALL-B",
+   "uri": "/redfish/v1/ThermalEquipment/CDUs/CDU-B4"
+  }
+ },
+ "disclaimer": "Synthetic CDU telemetry for a portfolio demonstration, in the published DMTF Redfish schema for cooling units. All names and readings are fictional; no vendor's register map is implied.",
+ "files": {
+  "cdu_hourly.csv": 5376,
+  "states.jsonl": 24,
+  "windows": 10
+ },
+ "minutes": {
+  "CDU-A1.json": {
+   "bytes": 2313635,
+   "sha256": "35940ccf49279f75031341101cce046bdd29d8889eb60c264bf5d74a4233480c"
+  },
+  "CDU-A2.json": {
+   "bytes": 2316715,
+   "sha256": "c6b7f547ddb5ec9770fe8e508d804e0bd35ad7a1251e693e6ec0564116f10061"
+  },
+  "CDU-A3.json": {
+   "bytes": 2310166,
+   "sha256": "df2c0c1b8397589202146feaf13dcd56c8eb2b0ee18935368669a8cb1db81ac6"
+  },
+  "CDU-A4.json": {
+   "bytes": 2312835,
+   "sha256": "f8c0bfde813c61e91d3090c716d82f8d45c3f4601eeb27cec1b220d9a1a2b04a"
+  },
+  "CDU-B1.json": {
+   "bytes": 2293711,
+   "sha256": "7b5458c4d29cbc49c93f89005d9c8dcf42a69c4bb2bb98efff70d73ccd9bf762"
+  },
+  "CDU-B2.json": {
+   "bytes": 2293574,
+   "sha256": "aafe9a48d8afb881af90f34496c1f669a840ecf5ddd9ff5208455c686e1d614d"
+  },
+  "CDU-B3.json": {
+   "bytes": 2288992,
+   "sha256": "03a62f5eb72552edaf0f3c5d56f168a2564ca3a7b255746a95c3c953042f6914"
+  },
+  "CDU-B4.json": {
+   "bytes": 2293634,
+   "sha256": "cfae0887d4f634cd5bdc48962c2137d27c5d3e72d0295b80495e427f32ebb04d"
+  }
+ },
+ "source": "data/sample + data/gpu_health + data/energy + GPU telemetry",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "start": "2026-08-31T00:00:00Z"
+ },
+ "windows": [
+  {
+   "cdu": "CDU-A1",
+   "file": "windows/CDU-A1_20260914T0842.json",
+   "from": "2026-09-14T08:42:00Z",
+   "minutes": 224
+  },
+  {
+   "cdu": "CDU-A2",
+   "file": "windows/CDU-A2_20260923T0335.json",
+   "from": "2026-09-23T03:35:00Z",
+   "minutes": 120
+  },
+  {
+   "cdu": "CDU-A2",
+   "file": "windows/CDU-A2_20260923T0707.json",
+   "from": "2026-09-23T07:07:00Z",
+   "minutes": 132
+  },
+  {
+   "cdu": "CDU-A3",
+   "file": "windows/CDU-A3_20260920T1807.json",
+   "from": "2026-09-20T18:07:00Z",
+   "minutes": 150
+  },
+  {
+   "cdu": "CDU-A4",
+   "file": "windows/CDU-A4_20260918T1651.json",
+   "from": "2026-09-18T16:51:00Z",
+   "minutes": 215
+  },
+  {
+   "cdu": "CDU-B2",
+   "file": "windows/CDU-B2_20260911T1254.json",
+   "from": "2026-09-11T12:54:00Z",
+   "minutes": 150
+  },
+  {
+   "cdu": "CDU-B3",
+   "file": "windows/CDU-B3_20260904T1807.json",
+   "from": "2026-09-04T18:07:00Z",
+   "minutes": 150
+  },
+  {
+   "cdu": "CDU-B3",
+   "file": "windows/CDU-B3_20260906T0152.json",
+   "from": "2026-09-06T01:52:00Z",
+   "minutes": 120
+  },
+  {
+   "cdu": "CDU-B3",
+   "file": "windows/CDU-B3_20260906T0719.json",
+   "from": "2026-09-06T07:19:00Z",
+   "minutes": 132
+  },
+  {
+   "cdu": "CDU-B4",
+   "file": "windows/CDU-B4_20260908T1231.json",
+   "from": "2026-09-08T12:31:00Z",
+   "minutes": 150
+  }
+ ]
+}

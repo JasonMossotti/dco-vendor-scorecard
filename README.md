@@ -38,7 +38,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
 | [GPU Health](#gpu-health) | Which GPUs are failing, or about to, and whose side is it on? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/gpu/) |
-| [Telemetry](#telemetry) | What is every GPU reading, minute by minute, and does it agree with the records? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
+| [Telemetry](#telemetry) | What is every GPU and CDU reading, minute by minute, and does it agree with the records? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
 | [Deployments](#deployments) | Where is the Hall B rollout, and do the partners' records of it hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
@@ -214,6 +214,10 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - Storage is tiered as a real site would: rack hourly and one-minute windows around events are committed (`data/telemetry/gpu/`); the per-GPU hourly tier (about 37 MB) is built when the site is published, and its checksums are committed so the tests catch any drift.
 - Building it found one disagreement in the GPU Health data itself: a brief slowdown could read higher than its rack's recorded daily peak. The GPU Health generator now records the higher reading (18 rack-days changed by under 1 °C; no finding or headline moved).
 
+**CDUs.** A selector on the left picks the device family: GPUs, CDUs, and the families still to come (power, network, mechanical) shown as planned. The 8 CDUs serving Halls A and B (CoolIT CHx2000, one duty pump and one standby, PG25) are read once a minute over **DMTF Redfish**, the open standard the site already uses for its read-only access to the Landlord's CDUs: the `CoolingUnit`, its primary (facility water) and secondary (rack loop) `CoolantConnectors` with supply and return temperature, flow, pressures and `HeatRemovedkW`, both `Pumps`, the filter, the reservoir, two leak detectors, and the environment. No CDU maker publishes its Modbus register map or BACnet point list (they ship with the unit or under NDA), so the BMS point numbers on the page are labelled illustrative. Each CDU has a month by hour, its events linked to the work orders, PMs, and tickets, and the Redfish JSON a client would read at any minute.
+
+- `src/scorecard/synthetic/telemetry_cdu.py` and `config/telemetry_cdu.yaml` build the readings on their own random stream; `src/scorecard/telemetry_cdu.py` checks them from what they publish against every CDU record: the hourly supply and flow to the last digit, each pump failure (the failed pump was the one running, flow dips for a minute while the standby ramps), each filter-change isolation, the leaks on the right detectors, the filter's pressure drop falling only at a recorded change, the facility water temperature in the energy meters, the CDUs' own draw inside the metered mechanical load, and a **heat balance**: each hall's heat removed equals the liquid share of its racks' power in the GPU telemetry, so rack A07's power loss and Hall B's burn-in show on the CDUs too. On the sample, 664,024 of 664,024 cases agree.
+
 ## Deployments
 
 ![Deployments: the Hall B GB300 rollout with gate status and record checks](docs/images/deployments.png)
@@ -304,6 +308,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | PUE report and free-cooling lockouts | 2 of 2 | 109 of 109 (report errors 49/49, cause named 49/49; lockouts 60/60), 0 false positives |
 | GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
 | GPU telemetry agreement with the records | 60,257 of 60,257 cases | 8,520,414 of 8,520,414 cases on 60 generated months |
+| CDU telemetry agreement with the records | 664,024 of 664,024 cases | CDU_ROBUST |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |

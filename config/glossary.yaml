@@ -164,6 +164,10 @@ terms:
   - {term: IMEX, type: acronym, expansion: Internode memory exchange, text: "The service that lets GPUs in one NVLink domain share memory; it must be up before a rack returns to service."}
   - {term: NCCL, type: acronym, expansion: Collective communications library, text: "The GPU vendor's library for multi-GPU communication; an NCCL all-reduce test checks a rack's bandwidth."}
   - {term: NMX, type: acronym, expansion: NVLink management software, text: "Manages and reports on the NVLink switches inside the racks; the source for DS-NMX."}
+  - {term: DMTF, type: acronym, expansion: Distributed Management Task Force, text: "The standards body behind Redfish, the REST API the CDUs report their telemetry through."}
+  - {term: OCP, type: acronym, expansion: Open Compute Project, text: "An industry group that publishes open hardware specifications, including Redfish profiles for cooling units."}
+  - {term: OAI, type: acronym, expansion: OCP Accelerator Infrastructure, text: "The OCP project behind the Redfish profiles for accelerator and liquid-cooling equipment."}
+  - {term: TTDM, type: acronym, expansion: TraceTek leak detection module, text: "The module that monitors the sensing cable under each CDU and reports a leak to the BMS."}
   - {term: UFM, type: acronym, expansion: Unified Fabric Manager, text: "Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM."}
   - {term: IB, type: acronym, expansion: InfiniBand, text: "The back-end network between compute trays and the leaf switches. The scheduler writes a lost link as 'IB link down'."}
   - {term: HCA, type: acronym, expansion: Host channel adapter, text: "The InfiniBand network card in a compute tray."}
@@ -246,6 +250,8 @@ families:
      text: "One alarm on the Alarm Board, checked against the change work that declared it.", see: "alarms/"}
   - {key: PM, label: "PM-####", pattern: 'PM-\d{4}', type: record, title: Preventive maintenance record, example: PM-0003,
      text: "A scheduled maintenance task on facility equipment, such as a generator's monthly loaded exercise."}
+  - {key: AI, label: "AI-###", pattern: 'AI-\d{3}', type: record, title: BMS analog input point, example: AI-101,
+     text: "An illustrative point number in the BMS point list for the CDU telemetry: each analog input maps one Redfish reading to a BACnet object and a Modbus register. No CDU vendor publishes its map; these numbers are this site's own.", see: "telemetry/#cdu-fields"}
   - {key: CAP-N, label: "CAP-###", pattern: 'CAP-\d{3}', type: record, title: Corrective action plan, example: CAP-001,
      text: "A corrective action plan drafted at the period review for each serious finding, grouped by the tickets it affects.", see: "app/"}
   - {key: F-N, label: "F-###", pattern: 'F-\d{3}', type: record, title: IT Partner finding, example: F-001,
@@ -377,6 +383,7 @@ plain:   # capitalised text that is not a code
     - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}
   patterns:
     - {pattern: '[A-C]-?\d{2}', why: "A rack position (A07 is Hall A, rack 7); the site drawings show where each is."}
+    - {pattern: 'BAS-PTS007C(-EN_\d+)?', why: "A Trane document number cited as a source for BACnet point lists.", pages: [telemetry]}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}
     - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}
     - {pattern: 'B[1-4]', why: "Shorthand for CDU-B1 to CDU-B4 in a deployment step.", pages: [deployments]}

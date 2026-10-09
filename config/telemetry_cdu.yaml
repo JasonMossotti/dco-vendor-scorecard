@@ -1,0 +1,129 @@
+# CDU telemetry for Site AUS-1 (synthetic; portfolio demo). Phase 2a of the Telemetry tab.
+#
+# The CDUs publish the DMTF Redfish resources for cooling units (CoolingUnit, CoolantConnector, Pump,
+# Filter, Reservoir, LeakDetector, EnvironmentMetrics), the open standard the site already uses: the
+# Customer reads the Landlord's CDUs over Redfish with a read-only account (site/site.yaml). No CDU maker
+# publishes its Modbus register map or BACnet point list (they ship with the unit or under NDA), so the
+# BMS point list on the page is illustrative and says so; it is not CoolIT's or any vendor's map.
+# Every number below is an assumption for the demo ("basis: assumption") unless a public source is named.
+# The series are shaped to agree with every CDU record already in data/sample, data/gpu_health,
+# data/energy, and the GPU telemetry (src/scorecard/telemetry_cdu.py holds the agreements).
+# Read by src/scorecard/synthetic/telemetry_cdu.py (the data) and src/scorecard/telemetry_cdu.py (the agreements).
+
+framing: "Synthetic CDU telemetry in the published DMTF Redfish schema for cooling units."
+sources:
+  - {name: "DMTF, Redfish for Cooling Units (liquid cooling added in Redfish release 2023.1)", url: "https://www.dmtf.org/sites/default/files/Redfish_for_Cooling_Units_v1.0.pdf", checked: "2026-10-09"}
+  - {name: "DMTF Redfish schema CoolingUnit v1_6_0 (EquipmentType CDU; /redfish/v1/ThermalEquipment/CDUs/{id})", url: "https://redfish.dmtf.org/schemas/v1/CoolingUnit.v1_6_0.json", checked: "2026-10-09"}
+  - {name: "DMTF Redfish schema CoolantConnector v1_1_0 (supply, return, delta, flow, pressures, HeatRemovedkW, control setpoints)", url: "https://redfish.dmtf.org/schemas/v1/CoolantConnector.v1_1_0.json", checked: "2026-10-09"}
+  - {name: "DMTF Redfish schemas Pump, Filter, Reservoir, LeakDetector v1_0_0", url: "https://redfish.dmtf.org/schemas/v1/", checked: "2026-10-09"}
+  - {name: "OCP Project Deschutes CDU specification v1.0 (monitored points, N+1 pumps, Modbus/TCP)", url: "https://www.opencompute.org/documents/ocp-specification-deschutes-v1-0-pdf", checked: "2026-10-09"}
+  - {name: "OCP OAI system liquid cooling guidelines (1.5 LPM/kW typical with PG25; about 10 C rise typical)", url: "https://www.opencompute.org/documents/oai-system-liquid-cooling-guidelines-in-ocp-template-mar-3-2023-update-pdf", checked: "2026-10-09"}
+  - {name: "ASHRAE liquid cooling facility water classes W17 to W45 (summary)", url: "https://www.upsite.com/blog/major-changes-to-ashraes-fifth-edition-of-thermal-guidelines-part-3-liquid-cooling-chapter-updates/", checked: "2026-10-09"}
+  - {name: "Trane points list BAS-PTS007C (style reference: a BACnet object and a Modbus register per point, 32-bit floats)", url: "https://elibrary.tranetechnologies.com/public/commercial-hvac/Literature/Points%20List/BAS-PTS007C-EN_06302026.pdf", checked: "2026-10-09"}
+
+collection:
+  base_uri: "/redfish/v1/ThermalEquipment/CDUs"
+  poll_interval_s: 60               # the site's collector reads each CDU once a minute; the series here are those reads
+  account: "read-only"              # site/site.yaml: the Customer's Redfish account on the Landlord's CDUs
+
+# The fields, by the Redfish resource and property a client reads (exact DMTF property names).
+# key: the short name used in this layer's files; scale: stored as an integer of value * scale.
+fields:
+  - {key: sec_supply_c, resource: "SecondaryCoolantConnectors/1", property: "SupplyTemperatureCelsius", unit: "°C", scale: 100, help: "Coolant temperature leaving the CDU to the racks (the technology cooling system)."}
+  - {key: sec_return_c, resource: "SecondaryCoolantConnectors/1", property: "ReturnTemperatureCelsius", unit: "°C", scale: 100, help: "Coolant temperature coming back from the racks."}
+  - {key: sec_dt_c, resource: "SecondaryCoolantConnectors/1", property: "DeltaTemperatureCelsius", unit: "°C", scale: 100, help: "Return minus supply on the rack side."}
+  - {key: sec_flow_lpm, resource: "SecondaryCoolantConnectors/1", property: "FlowLitersPerMinute", unit: "L/min", scale: 10, help: "Coolant flow to the racks."}
+  - {key: sec_supply_kpa, resource: "SecondaryCoolantConnectors/1", property: "SupplyPressurekPa", unit: "kPa", scale: 10, help: "Pressure leaving the CDU to the racks."}
+  - {key: sec_return_kpa, resource: "SecondaryCoolantConnectors/1", property: "ReturnPressurekPa", unit: "kPa", scale: 10, help: "Pressure coming back from the racks."}
+  - {key: sec_dp_kpa, resource: "SecondaryCoolantConnectors/1", property: "DeltaPressurekPa", unit: "kPa", scale: 10, help: "Supply minus return pressure across the rack loop."}
+  - {key: heat_kw, resource: "SecondaryCoolantConnectors/1", property: "HeatRemovedkW", unit: "kW", scale: 10, help: "Heat the CDU takes out of the rack loop (its heat meter)."}
+  - {key: setpoint_c, resource: "SecondaryCoolantConnectors/1", property: "SupplyTemperatureControlCelsius", unit: "°C", scale: 100, help: "The supply temperature the CDU controls to."}
+  - {key: pri_supply_c, resource: "PrimaryCoolantConnectors/1", property: "SupplyTemperatureCelsius", unit: "°C", scale: 100, help: "Facility water temperature into the CDU."}
+  - {key: pri_return_c, resource: "PrimaryCoolantConnectors/1", property: "ReturnTemperatureCelsius", unit: "°C", scale: 100, help: "Facility water temperature back to the chiller loop."}
+  - {key: pri_flow_lpm, resource: "PrimaryCoolantConnectors/1", property: "FlowLitersPerMinute", unit: "L/min", scale: 10, help: "Facility water flow through the heat exchanger."}
+  - {key: pri_dp_kpa, resource: "PrimaryCoolantConnectors/1", property: "DeltaPressurekPa", unit: "kPa", scale: 10, help: "Facility water pressure drop across the CDU."}
+  - {key: valve_pct, resource: "Sensors/PrimaryValve", property: "Reading", unit: "%", scale: 10, help: "Facility water control valve position (a Sensor: the CoolantConnector schema has no valve property)."}
+  - {key: pump1_pct, resource: "Pumps/1", property: "PumpSpeedPercent", unit: "%", scale: 10, help: "Pump 1 speed; 0 while it stands by."}
+  - {key: pump2_pct, resource: "Pumps/2", property: "PumpSpeedPercent", unit: "%", scale: 10, help: "Pump 2 speed; 0 while it stands by."}
+  - {key: filter_dp_kpa, resource: "Sensors/FilterDP", property: "Reading", unit: "kPa", scale: 10, help: "Pressure drop across the secondary filter (a Sensor: the Filter schema has no pressure property). It rises as the filter loads and falls when it is changed."}
+  - {key: reservoir_pct, resource: "Reservoirs/1", property: "FluidLevelPercent", unit: "%", scale: 10, help: "Expansion tank level."}
+  - {key: power_w, resource: "EnvironmentMetrics", property: "PowerWatts", unit: "W", scale: 1, help: "The CDU's own electrical draw (pumps and controls)."}
+  - {key: room_c, resource: "EnvironmentMetrics", property: "TemperatureCelsius", unit: "°C", scale: 10, help: "Air temperature at the CDU."}
+  - {key: rh_pct, resource: "EnvironmentMetrics", property: "HumidityPercent", unit: "%", scale: 10, help: "Relative humidity at the CDU."}
+  - {key: dew_c, resource: "EnvironmentMetrics", property: "DewPointCelsius", unit: "°C", scale: 10, help: "Dew point at the CDU: the supply must stay above it so pipes do not sweat."}
+# States, published as events and at every minute in the resource views.
+states:
+  - {resource: "", property: "Status.Health", values: [OK, Warning, Critical]}
+  - {resource: "", property: "PumpRedundancy.Status.Health", values: [OK, Warning, Critical]}
+  - {resource: "Pumps/n", property: "Status.State", values: [Enabled, Disabled, InTest]}
+  - {resource: "Pumps/n", property: "Status.Health", values: [OK, Warning, Critical]}
+  - {resource: "LeakDetection/LeakDetectors/n", property: "DetectorState", values: [OK, Warning, Critical]}
+
+# The unit (site/site.yaml: CoolIT CHx2000, 2,000 kW, 1,800 L/min secondary flow, PG25) and the physics.
+unit:
+  pumps: 2                          # one duty, one standby (the datasheet rates single-pump operation; the events name Pumps/2)
+  rotation_hours: 168               # lead-lag rotation: the duty pump changes weekly (basis: assumption)
+  duty_speed_pct: 82.0              # duty pump speed at the 1,800 L/min design flow (basis: assumption)
+  pump_kw_at_1500_lpm: 12.24        # site/site.yaml, per datasheet
+  controls_w: 350                   # controller, sensors, and display (basis: assumption)
+  rated_primary_flow_lpm: 2400      # basis: assumption (valve fully open)
+  leak_detectors:                   # what each detector watches (devices.py gives every CDU its own TTDM circuit)
+    - {id: 1, name: "Under-unit drip tray (TTDM circuit)", type: Moisture}
+    - {id: 2, name: "Row leak rope", type: Moisture}
+coolant:                            # PG25 near 30 C (published property tables; basis: rounded)
+  density_kg_per_l: 1.02
+  cp_kj_per_kg_k: 3.93
+water:
+  density_kg_per_l: 1.0
+  cp_kj_per_kg_k: 4.18
+
+# The rack heat on each hall's shared secondary header: the liquid share (site/site.yaml liquid_fraction)
+# of each rack's IT power, which is its GPUs (the GPU telemetry) plus the rest of the rack (Grace CPUs,
+# NVLink switch trays, NICs, power-shelf losses): a fixed part per GPU reporting and a part that follows
+# GPU power (basis: assumption; about 114 kW at full load, inside the 120 to 132 kW rack figures).
+rack_rest:
+  per_gpu_w: 250                    # 18 kW for a 72-GPU rack
+  per_gpu_watt: 0.12
+heat_lag_min: 2                     # the loop's thermal lag between rack load and return temperature
+
+secondary:
+  supply_noise_c: 0.05              # control noise around the hourly record (basis: assumption)
+  supply_kpa_static: 150            # basis: assumption
+  pump_head_kpa: 230                # at design flow; scales with flow squared
+  loop_dp_kpa: 180                  # rack loop pressure drop at design flow; scales with flow squared
+  sensor_noise_c: 0.03
+primary:
+  min_flow_lpm: 300                 # the valve never closes fully (basis: assumption)
+  hot_end_approach_c: 2.0           # facility water leaves at least this far below the rack return
+  max_dt_c: 10.0                    # the chiller loop's design rise (config/energy.yaml: 20 C supply, 30 C return)
+  dp_kpa_at_rated: 90               # scales with flow squared
+  supply_kpa: 420
+  supply_c_if_unmetered: 20.0       # config/energy.yaml plant supply, when a month has no meters
+filter:
+  clean_kpa: 14.0                   # basis: assumption (secondary 25 to 50 micron filter, clean)
+  rise_kpa_per_day: 0.06            # loading (basis: assumption)
+  rated_service_days: 91            # config/history.yaml: quarterly filter change
+reservoir:
+  level_pct: [86, 93]
+  leak_loss_pct_per_hour: 0.8       # level falls while a recorded leak is active, and is topped up when it clears
+room:
+  temp_c: [23.0, 26.0]
+  rh_pct: [38, 52]
+
+# Pump service hours at the start of the sample (basis: assumption; Hall B units are newer).
+service_hours:
+  HALL-A: [6000, 11000]
+  HALL-B: [300, 2500]
+
+# Minute windows published around every event (the same tiers as the GPU telemetry).
+tiers:
+  window_before_min: 60
+  window_after_min: 60
+
+# What the agreements tolerate (rounding and sensor noise, not modeling slack).
+checks:
+  heat_balance_fraction: 0.03       # hall heat removed vs the racks' liquid load, per hour
+  heat_balance_kw: 15
+  heat_formula_kw: 1.0              # HeatRemovedkW vs flow x density x cp x delta T, per minute (rounding)
+  filter_step_kpa: 2.0              # a drop this large (flow-corrected) is a filter change
+  flow_band_lpm: 1500               # config/gpu_health.yaml: the low edge of the rack band

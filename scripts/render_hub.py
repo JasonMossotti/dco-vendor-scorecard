@@ -41,6 +41,7 @@ DOCS = [
     ("PUE report", "reports/pue_report.md"),
     ("GPU health review", "reports/gpu_health.md"),
     ("GPU telemetry report", "reports/gpu_telemetry.md"),
+    ("CDU telemetry report", "reports/cdu_telemetry.md"),
     ("Hall B deployment plan", "docs/deployments/DEPLOYMENT_PLAN.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
 ]
@@ -105,7 +106,10 @@ def facts() -> dict:
                 "findings": [x["title"] for x in gh["findings"]]},
         "telemetry": {"gpus": tm["gpus"], "racks": len(tm["racks"]),
                       "agree": sum(a["checked"] - a["misses"] for a in tm["agreements"]), "cases": sum(a["checked"] for a in tm["agreements"]),
-                      "halls": [(h["name"], h["util_avg"], h["at_cap_pct"]) for h in tm["halls"].values()]},
+                      "halls": [(h["name"], h["util_avg"], h["at_cap_pct"]) for h in tm["halls"].values()],
+                      "cdus": len(tm["cdu"]["cdus"]),
+                      "cdu_agree": sum(a["checked"] - a["misses"] for a in tm["cdu"]["agreements"]),
+                      "cdu_cases": sum(a["checked"] for a in tm["cdu"]["agreements"])},
         "deploy": {"hall": dp["program"]["hall_name"], "racks": len(dp["racks"]["racks"]),
                    "handed": dp["racks"]["counts"].get("handed off", 0) + dp["racks"]["counts"].get("handed off late", 0),
                    "complete": sum(w["complete"] for w in dp["record"]["work_orders"]), "wos": len(dp["record"]["work_orders"]),
@@ -208,12 +212,13 @@ def body(f: dict) -> str:
              [("Open GPU health", "gpu/")],
              ("; ".join(gh["findings"]) + ".") if gh["findings"] else "Every GPU passed every check."),
         tile("telemetry", "Telemetry",
-             "Every GPU sampled once a minute, in the published format of NVIDIA's open-source DCGM exporter, and shaped "
-             "never to contradict the records the other pages show.",
-             [(f"{tm['gpus']:,}", f"GPUs in {tm['racks']} racks"), (f"{tm['agree']:,} of {tm['cases']:,}", "cases agree with the records"),
-              (f"{tm['halls'][-1][2]}%", f"of {tm['halls'][-1][0]} samples at the power limit")],
-             [("Open telemetry", "telemetry/"), ("Fields", "telemetry/#fields")],
-             "Mean utilization: " + ", ".join(f"{n} {u}%" for n, u, _c in tm["halls"]) + "."),
+             "Every GPU sampled once a minute in the published format of NVIDIA's open-source DCGM exporter, and every CDU "
+             "read once a minute over DMTF Redfish, both shaped never to contradict the records the other pages show.",
+             [(f"{tm['gpus']:,}", f"GPUs in {tm['racks']} racks"), (str(tm["cdus"]), "CDUs over Redfish"),
+              (f"{tm['agree'] + tm['cdu_agree']:,} of {tm['cases'] + tm['cdu_cases']:,}", "cases agree with the records")],
+             [("Open telemetry", "telemetry/"), ("CDUs", "telemetry/#cdus"), ("Fields", "telemetry/#fields")],
+             "Mean GPU utilization: " + ", ".join(f"{n} {u}%" for n, u, _c in tm["halls"])
+             + f"; {tm['halls'][-1][0]} at the power limit {tm['halls'][-1][2]}% of samples."),
         tile("deployments", "Deployments",
              f"The {dp['hall']} GB300 rollout: gates, steps, calculations, permits, and one work order per task from both "
              "partners' Jira projects, complete only when signed and inspected.",
