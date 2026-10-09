@@ -46,12 +46,13 @@ PLACES = {
     "reports/failure_patterns.md": ("Failure Patterns", "patterns/"),
     "reports/pue_report.md": ("Energy", "energy/"),
     "reports/gpu_health.md": ("GPU Health", "gpu/"),
+    "reports/gpu_telemetry.md": ("Telemetry", "telemetry/"),
     "docs/deployments/DEPLOYMENT_PLAN.md": ("Deployments", "deployments/"),
     "docs/site/SITE.md": ("Site model document", ""),
 }
 PAGES = [("hub", "Overview", ""), ("alarms", "Alarm Board", "alarms/"), ("tickets", "Incident Portal", "tickets/"),
          ("pir", "Post-Incident Review", "pir/"), ("weekly", "Weekly Review", "weekly/"), ("patterns", "Failure Patterns", "patterns/"),
-         ("energy", "Energy", "energy/"), ("gpu", "GPU Health", "gpu/"),
+         ("energy", "Energy", "energy/"), ("gpu", "GPU Health", "gpu/"), ("telemetry", "Telemetry", "telemetry/"),
          ("deployments", "Deployments", "deployments/")]
 
 
@@ -112,10 +113,11 @@ def corpus() -> dict[str, tuple[str, str, str]]:
     import render_hub
     import render_patterns
     import render_pir
+    import render_telemetry
     import render_tickets
     import render_weekly
     mods = {"hub": render_hub, "alarms": render_alarms, "tickets": render_tickets, "pir": render_pir, "weekly": render_weekly,
-            "patterns": render_patterns, "energy": render_energy, "gpu": render_gpu_health,
+            "patterns": render_patterns, "energy": render_energy, "gpu": render_gpu_health, "telemetry": render_telemetry,
             "deployments": render_deployments}
     out = {}
     for rel, (label, link) in PLACES.items():
@@ -137,7 +139,7 @@ def page_key(src: str) -> str:
     if src.startswith("docs/site/"):
         return "site"
     return {"Alarm Board": "alarms", "Failure Patterns": "patterns", "Post-Incident Review": "pir",
-            "Weekly Review": "weekly", "Scorecards": "scorecards", "Energy": "energy", "GPU Health": "gpu",
+            "Weekly Review": "weekly", "Scorecards": "scorecards", "Energy": "energy", "GPU Health": "gpu", "Telemetry": "telemetry",
             "Deployments": "deployments"}[PLACES[src][0] if src in PLACES else
                                                                   ("Post-Incident Review" if "/pir/" in src else "Weekly Review")]
 

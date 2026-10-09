@@ -40,6 +40,7 @@ DOCS = [
     ("Failure pattern review", "reports/failure_patterns.md"),
     ("PUE report", "reports/pue_report.md"),
     ("GPU health review", "reports/gpu_health.md"),
+    ("GPU telemetry report", "reports/gpu_telemetry.md"),
     ("Hall B deployment plan", "docs/deployments/DEPLOYMENT_PLAN.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
 ]
@@ -53,6 +54,7 @@ def facts() -> dict:
     import render_gpu_health
     import render_patterns
     import render_pir
+    import render_telemetry
     import render_weekly
 
     contract = load_sla(ROOT / "sla" / "it_partner.yaml")
@@ -67,6 +69,7 @@ def facts() -> dict:
     pat = render_patterns.prepare()
     en = render_energy.prepare()
     gh = render_gpu_health.prepare()
+    tm = render_telemetry.prepare()
     dp = render_deployments.prepare()
     from scorecard import tickets as T
     tk = T.build()
@@ -100,6 +103,9 @@ def facts() -> dict:
                    "findings": [x["title"] for x in en["findings"]]},
         "gpu": {"gpus": gh["gpus"], "fail": gh["watches"]["fail"], "warned": gh["warned"], "memory": len(gh["memory"]),
                 "findings": [x["title"] for x in gh["findings"]]},
+        "telemetry": {"gpus": tm["gpus"], "racks": len(tm["racks"]),
+                      "agree": sum(a["checked"] - a["misses"] for a in tm["agreements"]), "cases": sum(a["checked"] for a in tm["agreements"]),
+                      "halls": [(h["name"], h["util_avg"], h["at_cap_pct"]) for h in tm["halls"].values()]},
         "deploy": {"hall": dp["program"]["hall_name"], "racks": len(dp["racks"]["racks"]),
                    "handed": dp["racks"]["counts"].get("handed off", 0) + dp["racks"]["counts"].get("handed off late", 0),
                    "complete": sum(w["complete"] for w in dp["record"]["work_orders"]), "wos": len(dp["record"]["work_orders"]),
@@ -128,6 +134,7 @@ def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: l
 
 def body(f: dict) -> str:
     it, ll, al, pir, pat, tk, en, gh = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"], f["energy"], f["gpu"]
+    tm = f["telemetry"]
     dp = f["deploy"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
@@ -200,6 +207,13 @@ def body(f: dict) -> str:
              [(f"{gh['gpus']:,}", "GPUs reporting"), (str(gh["fail"]), "Fail watches"), (f"{gh['warned']} of {gh['memory']}", "memory errors warned ahead")],
              [("Open GPU health", "gpu/")],
              ("; ".join(gh["findings"]) + ".") if gh["findings"] else "Every GPU passed every check."),
+        tile("telemetry", "Telemetry",
+             "Every GPU sampled once a minute, in the published format of NVIDIA's open-source DCGM exporter, and shaped "
+             "never to contradict the records the other pages show.",
+             [(f"{tm['gpus']:,}", f"GPUs in {tm['racks']} racks"), (f"{tm['agree']:,} of {tm['cases']:,}", "cases agree with the records"),
+              (f"{tm['halls'][-1][2]}%", f"of {tm['halls'][-1][0]} samples at the power limit")],
+             [("Open telemetry", "telemetry/"), ("Fields", "telemetry/#fields")],
+             "Mean utilization: " + ", ".join(f"{n} {u}%" for n, u, _c in tm["halls"]) + "."),
         tile("deployments", "Deployments",
              f"The {dp['hall']} GB300 rollout: gates, steps, calculations, permits, and one work order per task from both "
              "partners' Jira projects, complete only when signed and inspected.",

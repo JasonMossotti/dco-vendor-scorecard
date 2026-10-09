@@ -35,6 +35,7 @@ TABS = [
     ("patterns", "Failure Patterns", "patterns/"),
     ("energy", "Energy", "energy/"),
     ("gpu", "GPU Health", "gpu/"),
+    ("telemetry", "Telemetry", "telemetry/"),
     ("deployments", "Deployments", "deployments/"),
 ]
 REFERENCE_TABS = [
@@ -57,10 +58,10 @@ CSS = """
 .usm-tabs a.on { color:#fff; font-weight:600; border-bottom-color:#5b9cff; }
 .usm-src { color:#aab6c3; font-size:12px; text-decoration:none; white-space:nowrap; }
 .usm-src:hover { color:#fff; }
-@media (max-width:1700px) { .usm-brand span { display:none; } }
-@media (max-width:1640px) { .usm-src { display:none; } .usm-tabs a { padding:12px 7px 10px; } .usm-in { gap:4px 10px; } }
-@media (max-width:1480px) { .usm-tabs a { padding:12px 5px 10px; font-size:13px; } .usm-brand b { font-size:15px; } }
-@media (max-width:1300px) { .usm-tabs a { padding:12px 4px 10px; font-size:12.5px; } .usm-tabs { gap:0; } }
+@media (max-width:2100px) { .usm-brand span { display:none; } .usm-tabs a { padding:12px 8px 10px; } }
+@media (max-width:1760px) { .usm-src { display:none; } .usm-tabs a { padding:12px 6px 10px; } .usm-in { gap:4px 10px; } }
+@media (max-width:1560px) { .usm-tabs a { padding:12px 4px 10px; font-size:13px; } .usm-brand b { font-size:15px; } }
+@media (max-width:1400px) { .usm-tabs a { padding:12px 3px 10px; font-size:12px; } .usm-tabs { gap:0; } .usm-brand b { font-size:14px; } .usm-in { padding:0 12px; } }
 @media (max-width:700px) { .usm-in { padding:0 10px; gap:0 12px; } .usm-tabs a { padding:8px 8px 6px; font-size:13px; } .usm-src { display:none; } }
 @media print { .usm { display:none !important; } }
 """

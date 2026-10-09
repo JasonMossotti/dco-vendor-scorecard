@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telemetry · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --it:#1f5fbf; --ok:#1b7a3d; --bad:#b42318; --warn:#9a6700;
+        --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#8a5cc4; --grid:#eef1f4; --none:#d9dee4; --dark:#2b3440; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:12px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.wrap { display:grid; grid-template-columns:260px minmax(0,1fr); gap:16px; max-width:1400px; margin:16px auto; padding:0 16px; align-items:start; }
+nav.tree { background:#fff; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); padding:8px 0; position:sticky; top:8px; max-height:calc(100vh - 16px); overflow:auto; font-size:14px; }
+nav.tree ul { list-style:none; margin:0; padding:0; }
+nav.tree li ul { padding-left:14px; }
+nav.tree a { display:block; padding:3px 12px; color:var(--ink); text-decoration:none; border-left:3px solid transparent; }
+nav.tree a:hover { background:var(--panel); }
+nav.tree a.on { background:#e8f0fc; color:var(--it); font-weight:600; border-left-color:var(--it); }
+nav.tree a small { color:var(--muted); margin-left:4px; font-weight:400; }
+nav.tree details > summary { cursor:pointer; padding:3px 12px; list-style:none; }
+nav.tree details > summary::-webkit-details-marker { display:none; }
+nav.tree details > summary::before { content:"▸"; display:inline-block; width:14px; color:var(--muted); }
+nav.tree details[open] > summary::before { content:"▾"; }
+nav.tree details > summary a { display:inline; padding:0; border:0; }
+nav.tree ul.racks { display:grid; grid-template-columns:repeat(4,1fr); padding-left:14px; }
+nav.tree ul.racks a { padding:2px 6px; font-variant-numeric:tabular-nums; }
+nav.tree .sec { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:12px 12px 2px; font-weight:600; }
+nav.tree .next { color:var(--muted); font-size:13px; padding:3px 12px 6px; }
+main { background:var(--bg); padding:22px 28px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
+h1 { font-size:24px; margin:0 0 2px; }
+.kind { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+.sub { color:var(--muted); margin:0 0 10px; } .note { font-size:13px; color:var(--muted); }
+h2.sec { font-size:16px; margin:22px 0 6px; padding-bottom:3px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:14px 0 6px; }
+table { border-collapse:collapse; width:100%; font-size:14px; }
+th { text-align:left; color:var(--muted); font-weight:600; padding:4px 10px 4px 0; vertical-align:top; border-bottom:1px solid var(--line); white-space:nowrap; }
+td { padding:4px 10px 4px 0; vertical-align:top; border-top:1px solid #edf0f3; }
+td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+main a { color:var(--it); }
+code { font-size:13px; background:var(--panel); padding:0 4px; border-radius:3px; }
+.tag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; background:var(--panel); border:1px solid var(--line); white-space:nowrap; }
+.tag.ok { color:var(--ok); border-color:#b7dfc4; background:#eef8f1; } .tag.bad { color:var(--bad); border-color:#f3c1bc; background:#fdf1f0; }
+.tag.warn { color:var(--warn); border-color:#ecd59a; background:#fdf8e8; } .tag.it { color:var(--it); border-color:#bfd3f2; background:#e8f0fc; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:12px 0; }
+.tile { background:var(--panel); border-radius:8px; padding:10px 12px; }
+.tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.tile .v { font-size:24px; font-weight:700; line-height:1.25; } .tile .s { font-size:12px; color:var(--muted); overflow-wrap:anywhere; }
+.tile a { text-decoration:none; }
+.hallname { font-size:13px; font-weight:600; color:var(--muted); margin:10px 0 2px; }
+.btns { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0; }
+.btns button, button.b { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:4px 10px; border-radius:6px; cursor:pointer; }
+.btns button.on { background:#e8f0fc; color:var(--it); border-color:#bfd3f2; font-weight:600; }
+.scroll { overflow-x:auto; }
+.hm { position:relative; }
+.hmgrid { display:grid; grid-template-columns:44px minmax(0,1fr); min-width:720px; }
+.hmlabels div { height:13px; font-size:11px; line-height:13px; text-align:right; padding-right:6px; color:var(--ink); white-space:nowrap; }
+.hmlabels div.hh { font-weight:600; color:var(--muted); }
+.hm svg { display:block; width:100%; cursor:pointer; }
+.hmticks { position:relative; height:18px; font-size:11px; color:var(--muted); }
+.hmticks span { position:absolute; top:2px; transform:translateX(-50%); white-space:nowrap; }
+.hmticks i { position:absolute; top:0; height:4px; border-left:1px solid var(--line); }
+.tip { position:absolute; pointer-events:none; background:#fff; border:1px solid var(--line); border-radius:6px; padding:5px 8px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,.12); display:none; white-space:nowrap; z-index:5; }
+.tip b { display:block; }
+.ramp { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); margin:6px 0; }
+.ramp i { display:inline-block; width:120px; height:10px; border-radius:2px; }
+.ramp i.none { width:14px; background:var(--none); } .ramp i.dark { width:14px; background:var(--dark); }
+.gg { display:grid; grid-template-columns:70px repeat(4,minmax(60px,1fr)); gap:3px; max-width:560px; font-size:12px; }
+.gg .h { color:var(--muted); font-size:11px; text-align:center; }
+.gg .t { color:var(--ink); text-align:right; padding-right:6px; line-height:24px; font-variant-numeric:tabular-nums; }
+.gg button { position:relative; height:24px; border:0; border-radius:3px; font:inherit; font-size:12px; cursor:pointer; color:#fff; text-shadow:0 0 2px rgba(0,0,0,.5); font-variant-numeric:tabular-nums; }
+.gg button.lt { color:var(--ink); text-shadow:none; } .gg button.no { background:var(--dark); color:#9aa6b2; }
+.gg button.on { outline:2px solid var(--ink); outline-offset:-2px; }
+.gg button i { position:absolute; top:3px; right:3px; width:7px; height:7px; border-radius:50%; border:1px solid #fff; }
+.gg button i.x { background:var(--bad); } .gg button i.s { background:#f2b84b; right:12px; }
+.chart { position:relative; margin:4px 0 10px; } .chart svg { display:block; max-width:100%; height:auto; }
+.chart h3 { margin:10px 0 2px; }
+svg text { font:11px "Inter","Segoe UI",Helvetica,Arial,sans-serif; fill:var(--muted); }
+.legend { display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:var(--muted); margin:2px 0 6px; }
+.legend i { display:inline-block; width:12px; height:3px; margin-right:5px; vertical-align:3px; border-radius:2px; }
+.legend i.dash { height:0; border-top:2px dashed var(--ink); } .legend i.band { height:12px; vertical-align:-2px; background:#e3e7ec; }
+.legend i.dot { width:8px; height:8px; border-radius:50%; vertical-align:-1px; }
+input[type=range] { width:100%; max-width:560px; margin:4px 0; }
+.ctl { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; margin:6px 0; font-size:13px; }
+.ctl label { color:var(--muted); }
+pre.scrape { background:#1e2933; color:#dfe6ee; font:12px/1.45 ui-monospace,Menlo,Consolas,monospace; padding:12px 14px; border-radius:8px; overflow-x:auto; margin:6px 0; max-height:420px; }
+pre.scrape .c { color:#8fa3b5; }
+.finding { background:#fdf1f0; border-left:3px solid var(--bad); padding:6px 10px; border-radius:4px; margin:8px 0; font-size:14px; }
+.err { background:#fdf8e8; border-left:3px solid var(--warn); padding:6px 10px; border-radius:4px; margin:8px 0; }
+.muted { color:var(--muted); }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
+.labels th { width:150px; }
+@media (max-width:860px) { .wrap { grid-template-columns:1fr; } nav.tree { position:static; max-height:40vh; } main { padding:16px 14px; } .tiles { grid-template-columns:repeat(2,1fr); } }
+@media print { nav.tree, header.top { display:none; } .wrap { display:block; } .tip { display:none !important; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Telemetry</strong> <span class="note" id="hdr"></span></div>
+  <span class="note">One-minute samples per GPU, in the published format of NVIDIA's open-source DCGM exporter</span>
+</header>
+<div class="wrap">
+  <nav class="tree" id="tree" aria-label="Telemetry views"></nav>
+  <main id="main" aria-live="polite"></main>
+</div>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+  const B = JSON.parse(document.getElementById("data").textContent);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const START = Date.parse(B.window.start), HOURS = B.hours, HOUR = 3600000, MIN = 60000;
+  const md = iso => { const [y, m, d] = iso.slice(0, 10).split("-"); return `${MON[+m - 1]} ${+d}`; };
+  const at = iso => `${md(iso)} ${iso.slice(11, 16)} UTC`;
+  const hourIso = h => new Date(START + h * HOUR).toISOString();
+  const hourAt = h => at(hourIso(h));
+  const hourOf = iso => Math.floor((Date.parse(iso) - START) / HOUR);
+  const minOf = iso => Math.floor((Date.parse(iso) - START) / MIN);
+  const num = (x, d = 0) => x == null || Number.isNaN(x) ? "–" : esc(Number(x).toLocaleString("en-US", {minimumFractionDigits: d, maximumFractionDigits: d}));
+  const unrle = r => { const out = []; for (const [v, c] of r) for (let i = 0; i < c; i++) out.push(v); return out; };
+  const tag = (txt, cls) => `<span class="tag ${esc(cls || "")}">${esc(txt)}</span>`;
+  const link = (h, txt) => `<a href="#${esc(h)}">${esc(txt)}</a>`;
+  const rackOf = host => host.slice(0, 3).toUpperCase();
+  const RACK = Object.fromEntries(B.racks.map(r => [r.rack, r]));
+  const HALLS = ["HALL-A", "HALL-B"];
+  const EV_HOST = {};
+  B.events.forEach(e => (EV_HOST[e.host] = EV_HOST[e.host] || []).push(e));
+  const WIN_HOST = {};
+  B.windows.forEach(w => (WIN_HOST[w.host] = WIN_HOST[w.host] || []).push(w));
+  const FIND_HOST = {};
+  B.findings.forEach(f => f.hosts.forEach(h => (FIND_HOST[h] = FIND_HOST[h] || []).push(f)));
+  const RAMP = ["#e6eefb", "#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#123b6f"];
+  const main = document.getElementById("main");
+  document.getElementById("hdr").textContent = `Site AUS-1 · ${md(B.window.start)} to ${md(B.window.end)}, ${B.gpus.toLocaleString("en-US")} GPUs`;
+
+  // ------------------------------------------------------------- data loading
+  const memo = new Map();
+  function getJson(url) {
+    if (!memo.has(url)) {
+      const p = (async () => {
+        const r = await fetch(url);
+        if (!r || !r.ok) throw new Error(`could not load ${url}`);
+        return r.json();
+      })().catch(e => { memo.delete(url); throw e; });
+      memo.set(url, p);
+    }
+    return memo.get(url);
+  }
+  const loadRacks = () => getJson("data/racks.json");
+  const loadRack = rack => getJson(`data/gpu/${encodeURIComponent(rack)}.json`).then(g => {
+    if (!g.decoded) { g.decoded = true; for (const x of g.gpus) { x.clockA = unrle(x.clock); x.nA = unrle(x.n); x.thA = unrle(x.thermal_s); x.pwA = unrle(x.power_s); x.sbeA = unrle(x.sbe); } }
+    return g;
+  });
+  const loadWindow = w => getJson("data/" + w.file.split("/").map(encodeURIComponent).join("/")).then(d => {
+    if (!d.decoded) { d.decoded = true; for (const x of d.gpus) for (const k of ["fb", "tensor", "thermal_s", "power_s", "sbe_total", "remap_corr", "remap_unc", "pending", "xid"]) x[k + "A"] = unrle(x[k]); }
+    return d;
+  });
+  const errBox = (e, what) => `<div class="err">Could not load ${esc(what)} (${esc(e && e.message ? e.message : e)}). The page's data folder is written by scripts/render_telemetry.py; open the page from the built site.</div>`;
+
+  // ------------------------------------------------------------------ colour
+  function hex2rgb(h) { return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+  const RAMP_RGB = RAMP.map(hex2rgb);
+  function ramp(t) {           // 0..1 -> colour on the sequential ramp, quantized to 24 steps so runs merge
+    t = Math.max(0, Math.min(1, t));
+    const q = Math.round(t * 23) / 23, p = q * (RAMP_RGB.length - 1), i = Math.min(RAMP_RGB.length - 2, Math.floor(p)), f = p - i;
+    const c = RAMP_RGB[i].map((a, k) => Math.round(a + (RAMP_RGB[i + 1][k] - a) * f));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  }
+  const light = t => t < 0.45;
+
+  // metric definitions: heatmap reads racks.json rows; the rack grid reads one GPU's hourly series
+  const METRICS = [
+    {k: "temp", label: "Peak GPU temperature", unit: "°C", d: 0, rack: (r, h) => r.temp[h], gpu: (x, h) => x.temp[h], lo: 40, hi: 90},
+    {k: "util", label: "Mean utilization", unit: "%", d: 0, rack: (r, h) => r.util[h], gpu: (x, h) => x.util[h], lo: 0, hi: 100},
+    {k: "kwh", label: "GPU power", unit: "kWh/h", d: 1, rack: (r, h) => r.gpus[h] ? r.kwh[h] : null, gpu: (x, h) => x.power[h], gunit: "W", gd: 0, lo: 0, hi: null},
+    {k: "thermal", label: "Thermal slowdown", unit: "s", d: 0, rack: (r, h) => r.gpus[h] ? r.thermal_s[h] : null, gpu: (x, h) => x.nA[h] ? x.thA[h] : null, lo: 0, hi: null},
+    {k: "cap", label: "Time at power limit", unit: "%", d: 1, rack: (r, h) => r.gpus[h] ? 100 * r.power_s[h] / (r.gpus[h] * 3600) : null, gpu: (x, h) => x.nA[h] ? 100 * x.pwA[h] / (x.nA[h] * 60) : null, lo: 0, hi: 100},
+    {k: "clock", label: "SM clock (loaded)", unit: "MHz", d: 0, rack: null, gpu: (x, h) => x.nA[h] ? x.clockA[h] : null, lo: 300, hi: 2050},
+  ];
+  const METRIC = Object.fromEntries(METRICS.map(m => [m.k, m]));
+  let hmMetric = "temp", gridMetric = "temp";
+
+  // --------------------------------------------------------------------- tree
+  function tree() {
+    let h = `<div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
+    for (const hall of HALLS) {
+      const H = B.halls[hall], rs = B.racks.filter(r => r.hall === hall);
+      h += `<li><details open><summary>${link("gpus", `${H.name} · ${H.model.replace("NVIDIA ", "")}`)} <small>${esc(rs.length)} racks</small></summary><ul class="racks">`
+         + rs.map(r => `<li>${link(r.rack, r.rack)}</li>`).join("") + `</ul></details></li>`;
+    }
+    h += `</ul><div class="sec">Reference</div><ul><li>${link("fields", "Field reference")}</li><li>${link("agreements", "Agreement with the records")}</li></ul>`;
+    h += `<div class="next">CDUs, power, network: next</div>`;
+    document.getElementById("tree").innerHTML = h;
+  }
+
+  // ---------------------------------------------------------------- charts
+  const CH = new Map();
+  let chartSeq = 0;
+  function nice(lo, hi) {
+    if (hi <= lo) hi = lo + 1;
+    const span = hi - lo, raw = span / 4, p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map(m => m * p).find(s => span / s <= 5) || p * 10;
+    return {lo: Math.floor(lo / step) * step, hi: Math.ceil(hi / step) * step, step};
+  }
+  // o: {n, series:[{v, color, w, name}], unit, d, hlines:[{y,label}], bands:[{a,b,label}], marks:[{i,color,label}], xlab:(i)=>text, xtick:n, xminor:n, lo, hi, title}
+  function chart(o) {
+    const W = o.W || chartWidth(), H = o.H || 150, L = 46, R = 10, T = 12, Bm = 22, pw = W - L - R, ph = H - T - Bm, n = o.n;
+    const vals = o.series.flatMap(s => s.v.filter(v => v != null)).concat((o.hlines || []).map(l => l.y));
+    let lo = o.lo != null ? o.lo : Math.min(...vals), hi = o.hi != null ? o.hi : Math.max(...vals);
+    if (!vals.length) { lo = 0; hi = 1; }
+    if (o.lo == null && lo > 0 && lo < 0.3 * hi) lo = 0;
+    const y0 = nice(lo, hi), Y = v => T + ph - (v - y0.lo) / (y0.hi - y0.lo) * ph, X = i => L + (i + 0.5) / n * pw;
+    const id = "ch" + (++chartSeq);
+    let s = `<svg viewBox="0 0 ${esc(W)} ${esc(H)}" width="${esc(W)}" height="${esc(H)}" data-ch="${id}" role="img" aria-label="${esc(o.title || "")}">`;
+    for (const b of o.bands || []) s += `<rect x="${esc(X(b.a) - pw / n / 2)}" y="${esc(T)}" width="${esc(Math.max(1, (b.b - b.a) / n * pw))}" height="${esc(ph)}" fill="#e3e7ec"><title>${esc(b.label)}</title></rect>`;
+    for (let v = y0.lo; v <= y0.hi + 1e-9; v += y0.step) {
+      s += `<line x1="${esc(L)}" x2="${esc(W - R)}" y1="${esc(Y(v))}" y2="${esc(Y(v))}" stroke="var(--grid)"/><text x="${esc(L - 6)}" y="${esc(Y(v) + 4)}" text-anchor="end">${num(v, y0.step < 1 ? 1 : 0)}</text>`;
+    }
+    const xt = o.xtick || 1;
+    for (let i = 0; i < n; i += o.xminor || xt) {
+      const lab = i % xt === 0;
+      s += `<line x1="${esc(X(i) - pw / n / 2)}" x2="${esc(X(i) - pw / n / 2)}" y1="${esc(T + ph)}" y2="${esc(T + ph + (lab ? 5 : 3))}" stroke="var(--line)"/>`;
+      if (lab) s += `<text x="${esc(X(i) - pw / n / 2)}" y="${esc(H - 6)}" text-anchor="${i === 0 ? "start" : "middle"}">${esc(o.xlab(i))}</text>`;
+    }
+    for (const l of o.hlines || []) s += `<line x1="${esc(L)}" x2="${esc(W - R)}" y1="${esc(Y(l.y))}" y2="${esc(Y(l.y))}" stroke="${esc(l.color || "var(--ink)")}" stroke-dasharray="5 4" stroke-width="1.5"/><text x="${esc(W - R)}" y="${esc(Y(l.y) - 4)}" text-anchor="end">${esc(l.label)}</text>`;
+    for (const sr of o.series) {
+      let d = "", pen = false;
+      sr.v.forEach((v, i) => { if (v == null) { pen = false; return; } d += `${pen ? "L" : "M"}${X(i).toFixed(1)} ${Y(v).toFixed(1)}`; pen = true; });
+      s += `<path d="${esc(d)}" fill="none" stroke="${esc(sr.color)}" stroke-width="${esc(sr.w || 1.6)}" stroke-linejoin="round" opacity="${esc(sr.op || 1)}"/>`;
+    }
+    for (const m of o.marks || []) s += `<line x1="${esc(X(m.i))}" x2="${esc(X(m.i))}" y1="${esc(T)}" y2="${esc(T + ph)}" stroke="${esc(m.color)}" stroke-width="1.5"><title>${esc(m.label)}</title></line>`;
+    s += `<line class="cur" x1="0" x2="0" y1="${esc(T)}" y2="${esc(T + ph)}" stroke="var(--ink)" stroke-width="1" style="display:none"/>`;
+    s += `<rect class="hit" x="${esc(L)}" y="${esc(T)}" width="${esc(pw)}" height="${esc(ph)}" fill="transparent"/></svg>`;
+    CH.set(id, {n, L, pw, W, series: o.series, unit: o.unit, d: o.d || 0, xlab: o.xlab, hover: o.hover});
+    return `<div class="chart">${o.title ? `<h3>${esc(o.title)}</h3>` : ""}${s}<div class="tip"></div></div>`;
+  }
+  function chartWidth() { const cw = main.clientWidth || 1056; return Math.max(300, Math.min(1100, cw - (cw < 700 ? 30 : 56))); }
+  main.addEventListener("mousemove", e => {
+    const svg = e.target.closest("svg[data-ch]");
+    if (!svg) return;
+    const c = CH.get(svg.dataset.ch), box = svg.getBoundingClientRect(), tip = svg.parentElement.querySelector(".tip");
+    if (!c || !tip) return;
+    const sx = c.W / (box.width || c.W), x = (e.clientX - box.left) * sx, i = Math.floor((x - c.L) / c.pw * c.n);
+    if (i < 0 || i >= c.n) { tip.style.display = "none"; svg.querySelector(".cur").style.display = "none"; return; }
+    const cur = svg.querySelector(".cur"), px = c.L + (i + 0.5) / c.n * c.pw;
+    cur.setAttribute("x1", px); cur.setAttribute("x2", px); cur.style.display = "";
+    tip.innerHTML = `<b>${esc(c.hover ? c.hover(i) : c.xlab(i))}</b>` + c.series.map(s => `<div>${esc(s.name)}: ${num(s.v[i], c.d)} ${esc(c.unit)}</div>`).join("");
+    tip.style.display = "block";
+    const left = e.clientX - box.left, flip = left > box.width * 0.65;
+    tip.style.left = flip ? "" : (left + 14) + "px"; tip.style.right = flip ? (box.width - left + 14) + "px" : ""; tip.style.top = (e.clientY - box.top - 10) + "px";
+  });
+  main.addEventListener("mouseleave", () => main.querySelectorAll(".tip").forEach(t => { t.style.display = "none"; }), true);
+  const dayLab = i => i % 24 === 0 ? md(hourIso(i)) : "";
+  const HX = {xlab: dayLab, xtick: 168, xminor: 24, hover: i => hourAt(i)};
+
+  // ------------------------------------------------------------- overview
+  function overview(seq) {
+    const agree = B.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = B.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = `<div class="kind">GPUs</div><h1>GPU telemetry</h1><p class="sub">${esc(B.framing)} ${esc(B.gpus.toLocaleString("en-US"))} GPUs in ${esc(B.racks.length)} racks, scraped once a minute, ${esc(md(B.window.start))} to ${esc(md(B.window.end))}. Hourly rollups here; minute detail around every event. All names, serials, and readings are fictional.</p>`;
+    for (const hall of HALLS) {
+      const H = B.halls[hall];
+      h += `<div class="hallname">${esc(H.name)} · ${esc(H.model)} NVL72 · ${esc(H.racks)} racks</div><div class="tiles">`
+        + tile("Mean utilization", `${num(H.util_avg, 1)}%`, `${num(H.mwh, 1)} MWh of GPU energy this month`)
+        + tile("Mean GPU power", `${num(H.power_avg_w)} W`, `site power limit ${num(H.power_limit_w)} W${H.power_max_w > H.power_limit_w ? `, capped from ${num(H.power_max_w)} W (132 kW rack envelope)` : " (the product maximum)"}`)
+        + tile("At the power limit", `${num(H.at_cap_pct, 1)}%`, "of samples held at the limit (power violation time)")
+        + tile("Thermal slowdown", `${num(H.thermal_min)}`, "GPU-minutes of hardware slowdown")
+        + tile("Peak GPU temperature", `${num(H.peak_c)} °C`, `slowdown at ${num(B.slowdown_c)} °C; ${num(H.xids)} XIDs`)
+        + `</div>`;
+    }
+    h += `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(B.agreements.length)} checks; the telemetry never contradicts the other pages</div></div></div>`;
+    h += `<h2 class="sec">Every rack, every hour</h2><p class="note">One row per rack, one column per hour. Grey: no samples (a Hall B rack before its power-on, a rack without power). Hover for the value; click to open the rack at that hour.</p>`
+       + `<div class="btns" id="hm-btns">${METRICS.filter(m => m.rack).map(m => `<button data-m="${esc(m.k)}" class="${m.k === hmMetric ? "on" : ""}">${esc(m.label)}</button>`).join("")}</div>`
+       + `<div id="hm">Loading the rack hours…</div>`;
+    h += `<h2 class="sec">Notable events</h2>` + eventsTable(B.events.filter(e => e.kind === "xid" || (e.kind === "dark" && e.gpu == null)), true);
+    main.innerHTML = h;
+    loadRacks().then(rj => { if (seq === current) { heatmap(rj); } }).catch(e => { if (seq === current) document.getElementById("hm").innerHTML = errBox(e, "data/racks.json"); });
+  }
+  function tile(k, v, s) { return `<div class="tile"><div class="k">${esc(k)}</div><div class="v">${v}</div><div class="s">${s}</div></div>`; }
+
+  function eventsTable(evs, grouped) {
+    const rows = [];
+    const seen = new Map();
+    for (const e of evs) {
+      if (grouped && e.kind === "dark") {
+        const key = rackOf(e.host) + "|" + e.t.slice(0, 16);
+        if (seen.has(key)) { seen.get(key).n++; continue; }
+        const row = {e, n: 1}; seen.set(key, row); rows.push(row);
+      } else rows.push({e, n: 1});
+    }
+    if (!rows.length) return `<p class="note">None.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Where</th><th>Event</th><th>Ticket</th></tr></thead><tbody>` + rows.map(({e, n}) => {
+      const where = e.gpu == null ? (n > 1 ? `${link(rackOf(e.host), "Rack " + rackOf(e.host))}, ${esc(n)} trays` : link(rackOf(e.host) + "/" + hourOf(e.t), e.host)) : link(`${e.host}/${e.gpu}`, `${e.host} GPU ${e.gpu}`);
+      return `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${where}</td><td>${kindTag(e.kind)} ${esc(e.text)}</td><td>${e.ticket ? `<a href="../tickets/#${esc(e.ticket)}">${esc(e.ticket)}</a>` : ""}</td></tr>`;
+    }).join("") + `</tbody></table></div>`;
+  }
+  const kindTag = k => tag({xid: "XID", slowdown: "slowdown", drain: "drain", dark: "no samples"}[k] || k, {xid: "bad", slowdown: "warn", drain: "", dark: ""}[k]);
+
+  let hmRows = null;
+  function heatmap(rj) {
+    const m = METRIC[hmMetric];
+    const rows = [];
+    for (const hall of HALLS) {
+      rows.push({hall: B.halls[hall].name + " · " + B.halls[hall].model.replace("NVIDIA ", "")});
+      for (const r of B.racks.filter(r => r.hall === hall)) rows.push({rack: r.rack, data: rj.racks[r.rack]});
+    }
+    hmRows = rows;
+    let lo = m.lo, hi = m.hi;
+    if (hi == null) { hi = 0; for (const r of rows) if (r.data) for (let h = 0; h < HOURS; h++) { const v = m.rack(r.data, h); if (v != null && v > hi) hi = v; } hi = hi || 1; }
+    const span = hi - lo || 1;
+    let svg = `<svg viewBox="0 0 ${esc(HOURS)} ${esc(rows.length)}" preserveAspectRatio="none" style="height:${esc(rows.length * 13)}px" aria-label="Rack hours heatmap">`;
+    rows.forEach((r, y) => {
+      if (!r.data) return;
+      let g = `<g data-rack="${esc(r.rack)}" transform="translate(0,${esc(y)})">`;
+      let x0 = 0, cur = null;
+      const flush = x => { if (cur !== null) g += `<rect x="${esc(x0)}" y="0" width="${esc(x - x0)}" height="1" fill="${esc(cur)}"/>`; };
+      for (let h = 0; h < HOURS; h++) {
+        const v = m.rack(r.data, h), c = v == null ? "var(--none)" : ramp((v - lo) / span);
+        if (c !== cur) { flush(h); cur = c; x0 = h; }
+      }
+      flush(HOURS);
+      svg += g + `</g>`;
+    });
+    svg += `</svg>`;
+    let ticks = "";
+    for (let h = 0; h < HOURS; h += 24) ticks += `<i style="left:${esc((h / HOURS * 100).toFixed(3))}%"></i>` + (h % 72 === 0 ? `<span style="left:${esc((h / HOURS * 100).toFixed(3))}%">${esc(md(hourIso(h)))}</span>` : "");
+    document.getElementById("hm").innerHTML = `<div class="ramp"><span>${num(lo, m.d)} ${esc(m.unit)}</span><i style="background:linear-gradient(90deg,${esc(RAMP.join(","))})"></i><span>${num(hi, m.d)} ${esc(m.unit)}</span><i class="none"></i><span>no samples</span></div>`
+      + `<div class="scroll"><div class="hm"><div class="hmgrid"><div class="hmlabels">${rows.map(r => r.data ? `<div>${esc(r.rack)}</div>` : `<div class="hh">${esc(r.hall)}</div>`).join("")}</div><div>${svg}</div><div></div><div class="hmticks">${ticks}</div></div><div class="tip"></div></div></div>`;
+    const el = document.querySelector("#hm svg"), tip = document.querySelector("#hm .tip");
+    const cell = e => {
+      const box = el.getBoundingClientRect();
+      const h = Math.floor((e.clientX - box.left) / (box.width || 1) * HOURS), y = Math.floor((e.clientY - box.top) / (box.height || 1) * rows.length);
+      return {h: Math.max(0, Math.min(HOURS - 1, h)), r: rows[y], box};
+    };
+    el.addEventListener("mousemove", e => {
+      const {h, r, box} = cell(e);
+      if (!r || !r.data) { tip.style.display = "none"; return; }
+      const v = m.rack(r.data, h);
+      tip.innerHTML = `<b>${esc(r.rack)} · ${esc(hourAt(h))}</b>${esc(m.label)}: ${v == null ? "no samples" : num(v, m.d) + " " + esc(m.unit)}`;
+      tip.style.display = "block";
+      const left = e.clientX - box.left, flip = left > box.width * 0.6;
+      tip.style.left = flip ? "" : (left + 58) + "px"; tip.style.right = flip ? (box.width - left + 10) + "px" : ""; tip.style.top = (e.clientY - box.top - 8) + "px";
+    });
+    el.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+    el.addEventListener("click", e => { const {h, r} = cell(e); if (r && r.data) location.hash = `${r.rack}/${h}`; });
+  }
+  main.addEventListener("click", e => {
+    const b = e.target.closest("#hm-btns button");
+    if (b) { hmMetric = b.dataset.m; main.querySelectorAll("#hm-btns button").forEach(x => x.classList.toggle("on", x === b)); loadRacks().then(heatmap).catch(() => {}); }
+  });
+
+  // ------------------------------------------------------------------ rack
+  let rackHour = null;
+  function rackView(rack, hour, seq) {
+    const r = RACK[rack];
+    const evs = B.events.filter(e => rackOf(e.host) === rack);
+    if (hour == null || Number.isNaN(hour)) {
+      const last = evs.filter(e => e.kind !== "dark").map(e => hourOf(e.t)).filter(h => h >= 0 && h < HOURS);
+      hour = last.length ? Math.max(...last) : HOURS - 1;
+    }
+    rackHour = Math.max(0, Math.min(HOURS - 1, hour));
+    const finds = B.findings.filter(f => f.hosts.some(h => rackOf(h) === rack));
+    let h = `<div class="kind">${esc(B.halls[r.hall].name)} · ${esc(r.model)} NVL72 · cooled by ${esc(r.cdu)}</div><h1>Rack ${esc(rack)}</h1>`
+      + `<p class="sub">${esc(r.trays)} compute trays, 4 GPUs each; power limit ${num(r.power_limit_w)} W per GPU. ${r.from_hour ? `Reporting from ${esc(hourAt(r.from_hour))} (power-on).` : "Reporting all month."} <a href="../gpu/#${esc(rack)}">GPU Health ↗</a> · <a href="../devices/#${esc(rack)}">Device card ↗</a></p>`;
+    for (const f of finds) h += `<div class="finding">${tag(f.id, "bad")} ${esc(f.title)} (${esc(f.party)}). <a href="../gpu/#${esc(rack)}">Open in GPU Health ↗</a></div>`;
+    h += `<h2 class="sec">The rack's GPUs at one hour</h2><div class="ctl"><label for="hr">Hour</label><b id="hr-lab">${esc(hourAt(rackHour))}</b></div><input type="range" id="hr" min="0" max="${esc(HOURS - 1)}" value="${esc(rackHour)}" aria-label="Hour of the month">`
+       + `<div class="btns" id="gg-btns">${METRICS.map(m => `<button data-m="${esc(m.k)}" class="${m.k === gridMetric ? "on" : ""}">${esc(m.label)}</button>`).join("")}</div>`
+       + `<div id="gg">Loading data/gpu/${esc(rack)}.json…</div>`
+       + `<div class="legend"><span><i class="dot" style="background:var(--bad)"></i>XID in this hour</span><span><i class="dot" style="background:#f2b84b"></i>thermal slowdown in this hour</span><span><i class="band" style="background:var(--dark)"></i>no samples</span></div>`;
+    h += `<h2 class="sec">The month</h2><div id="rc">Loading the rack hours…</div>`;
+    h += `<h2 class="sec">Events in this rack</h2>` + eventsTable(evs, true);
+    main.innerHTML = h;
+    loadRack(rack).then(g => { if (seq === current) { rackGrid(g); } }).catch(e => { if (seq === current) document.getElementById("gg").innerHTML = errBox(e, `data/gpu/${rack}.json`); });
+    loadRacks().then(rj => { if (seq === current) rackCharts(rack, rj); }).catch(e => { if (seq === current) document.getElementById("rc").innerHTML = errBox(e, "data/racks.json"); });
+  }
+  function rackGrid(g) {
+    const m = METRIC[gridMetric], hr = rackHour;
+    const hosts = [...new Set(g.gpus.map(x => x.host))];
+    let hi = m.hi, lo = m.lo, unit = m.unit, d = m.d;
+    if (m.k === "kwh") { unit = m.gunit; d = m.gd; hi = RACK[g.rack].power_limit_w * 1.05; }
+    if (hi == null) { hi = 0; for (const x of g.gpus) { const v = m.gpu(x, hr); if (v != null && v > hi) hi = v; } hi = hi || 1; }
+    const span = hi - lo || 1;
+    let h = `<div class="gg"><div></div>${[0, 1, 2, 3].map(i => `<div class="h">GPU ${i}</div>`).join("")}`;
+    for (const host of hosts) {
+      h += `<div class="t">${esc(host.slice(4))}</div>`;
+      for (let i = 0; i < 4; i++) {
+        const x = g.gpus.find(q => q.host === host && q.gpu === i);
+        const v = x ? m.gpu(x, hr) : null, ev = (EV_HOST[host] || []).filter(e => (e.gpu == null || e.gpu === i) && inHour(e, hr));
+        const marks = (ev.some(e => e.kind === "xid") ? `<i class="x" title="XID"></i>` : "") + (ev.some(e => e.kind === "slowdown") ? `<i class="s" title="thermal slowdown"></i>` : "");
+        const t = v == null ? null : (v - lo) / span;
+        h += v == null ? `<button class="no" data-host="${esc(host)}" data-gpu="${esc(i)}" title="${esc(host)} GPU ${esc(i)}: no samples">–${marks}</button>`
+          : `<button class="${light(t) ? "lt" : ""}" style="background:${esc(ramp(t))}" data-host="${esc(host)}" data-gpu="${esc(i)}" title="${esc(host)} GPU ${esc(i)}: ${num(v, d)} ${esc(unit)}">${num(v, d)}${marks}</button>`;
+      }
+    }
+    h += `</div><div class="ramp"><span>${num(lo, d)} ${esc(unit)}</span><i style="background:linear-gradient(90deg,${esc(RAMP.join(","))})"></i><span>${num(hi, d)} ${esc(unit)}</span></div>`;
+    document.getElementById("gg").innerHTML = h;
+  }
+  const inHour = (e, h) => { const a = hourOf(e.t), b = e.end ? hourOf(e.end) : a; return a <= h && h <= b; };
+  function rackCharts(rack, rj) {
+    const r = rj.racks[rack], cdu = rj.cdu[RACK[rack].cdu] || [];
+    let h = chart({...HX, n: HOURS, title: "Peak GPU temperature by hour, with the CDU supply", unit: "°C", series: [{v: r.temp, color: "var(--s2)", name: "Peak GPU temperature"}, {v: cdu, color: "var(--s1)", name: RACK[rack].cdu + " supply"}], hlines: [{y: B.slowdown_c, label: `slowdown ${B.slowdown_c} °C`, color: "var(--bad)"}], lo: 0})
+      + `<div class="legend"><span><i style="background:var(--s2)"></i>Peak GPU temperature</span><span><i style="background:var(--s1)"></i>${esc(RACK[rack].cdu)} secondary supply</span><span><i class="dash"></i>hardware slowdown</span></div>`
+      + chart({...HX, n: HOURS, title: "GPU energy by hour (kWh)", unit: "kWh", d: 1, series: [{v: r.kwh.map((v, i) => r.gpus[i] ? v : null), color: "var(--s1)", name: "GPU energy"}], lo: 0})
+      + chart({...HX, n: HOURS, title: "Mean utilization by hour (%)", unit: "%", series: [{v: r.util, color: "var(--s3)", name: "Utilization"}], lo: 0, hi: 100});
+    document.getElementById("rc").innerHTML = h;
+  }
+  main.addEventListener("input", e => {
+    if (e.target.id === "hr") {
+      rackHour = +e.target.value;
+      document.getElementById("hr-lab").textContent = hourAt(rackHour);
+      const rack = route().rack;
+      if (rack) { history.replaceState(null, "", `#${rack}/${rackHour}`); loadRack(rack).then(rackGrid).catch(() => {}); }
+    }
+    if (e.target.id === "wm") { winCursor = +e.target.value; winUpdate(); }
+  });
+  main.addEventListener("click", e => {
+    const b = e.target.closest("#gg-btns button");
+    if (b) { gridMetric = b.dataset.m; main.querySelectorAll("#gg-btns button").forEach(x => x.classList.toggle("on", x === b)); loadRack(route().rack).then(rackGrid).catch(() => {}); }
+    const c = e.target.closest(".gg button[data-host]");
+    if (c) location.hash = `${c.dataset.host}/${c.dataset.gpu}`;
+  });
+
+  // ------------------------------------------------------------------- GPU
+  let gpuCtx = null, winCursor = 60;
+  function gpuView(host, gi, seq) {
+    const rack = rackOf(host), r = RACK[rack];
+    if (!r) return false;
+    main.innerHTML = `<div class="kind">${esc(B.halls[r.hall].name)} · rack ${esc(rack)}</div><h1>${esc(host)} GPU ${esc(gi)}</h1><p class="sub">Loading data/gpu/${esc(rack)}.json…</p>`;
+    loadRack(rack).then(g => { if (seq === current) gpuRender(g, host, gi); }).catch(e => { if (seq === current) main.insertAdjacentHTML("beforeend", errBox(e, `data/gpu/${rack}.json`)); });
+    return true;
+  }
+  function gpuRender(g, host, gi) {
+    const rack = g.rack, r = RACK[rack], x = g.gpus.find(q => q.host === host && q.gpu === gi);
+    if (!x) { main.innerHTML = `<h1>${esc(host)} GPU ${esc(gi)}</h1><div class="err">No such GPU in ${esc(rack)}.</div>`; return; }
+    gpuCtx = {g, x, host, gi, win: null};
+    const evs = (EV_HOST[host] || []).filter(e => e.gpu == null || e.gpu === gi);
+    const finds = FIND_HOST[host] || [];
+    let h = `<div class="kind">${esc(B.halls[r.hall].name)} · ${link(rack, "rack " + rack)} · ${esc(r.model)} · cooled by ${esc(r.cdu)}</div><h1>${esc(host)} GPU ${esc(gi)}</h1>`
+      + `<p class="sub">Tray ${esc(host.slice(4))} of rack ${esc(rack)}, GPU index ${esc(gi)} of 4. Hourly rollups of the one-minute samples; the exporter's labels as published. <a href="../devices/#${esc(encodeURIComponent(host))}">Device card ↗</a></p>`;
+    for (const f of finds) h += `<div class="finding">${tag(f.id, "bad")} ${esc(f.title)} (${esc(f.party)}). <a href="../gpu/#${esc(rack)}">Open in GPU Health ↗</a></div>`;
+    // labels
+    const L = x.labels, keys = ["Hostname", "gpu", "device", "modelName", "UUID", "pci_bus_id", "DCGM_FI_DRIVER_VERSION"];
+    h += `<h2 class="sec">Exporter labels</h2>`;
+    if (L.length > 1) h += `<p class="note">The tray was replaced ${esc(at(L[1].from))}: new GPUs, new UUID, new series. Each span's labels below.</p>`;
+    h += `<div class="scroll"><table class="labels"><thead><tr><th>Label</th>${L.map(l => `<th>${esc(at(l.from))} to ${esc(at(l.to))}<br><span class="muted">serial ${esc(l.serial)}</span></th>`).join("")}</tr></thead><tbody>`
+       + keys.map(k => `<tr><th><code>${esc(k)}</code></th>${L.map(l => `<td><code>${esc(l[k])}</code></td>`).join("")}</tr>`).join("") + `</tbody></table></div>`;
+    // month charts
+    const marks = evs.filter(e => e.kind === "xid").map(e => ({i: hourOf(e.t), color: "var(--bad)", label: `${at(e.t)} ${e.text}`}))
+      .concat(evs.filter(e => e.kind === "slowdown").map(e => ({i: hourOf(e.t), color: "#f2b84b", label: `${at(e.t)} ${e.text}`})));
+    const bands = evs.filter(e => e.kind === "drain").map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : HOURS, label: `${at(e.t)}: ${e.text}`}));
+    h += `<h2 class="sec">The month, by hour</h2><div class="legend"><span><i style="background:var(--bad);height:12px;width:2px"></i>XID</span><span><i style="background:#f2b84b;height:12px;width:2px"></i>thermal slowdown</span><span><i class="band"></i>drained by the scheduler</span><span>gap in the line: no samples (never drawn as zero)</span></div>`
+      + chart({...HX, n: HOURS, title: "GPU temperature, hourly maximum (°C)", unit: "°C", series: [{v: x.temp, color: "var(--s2)", name: "GPU temperature"}], hlines: [{y: B.slowdown_c, label: `slowdown ${B.slowdown_c} °C`, color: "var(--bad)"}], marks, bands, lo: 0})
+      + chart({...HX, n: HOURS, title: "Power, hourly mean (W)", unit: "W", series: [{v: x.power, color: "var(--s1)", name: "Power"}], hlines: [{y: r.power_limit_w, label: `power limit ${r.power_limit_w.toLocaleString("en-US")} W`}], marks, bands, lo: 0})
+      + chart({...HX, n: HOURS, title: "Utilization, hourly mean (%)", unit: "%", series: [{v: x.util, color: "var(--s3)", name: "Utilization"}], marks, bands, lo: 0, hi: 100})
+      + chart({...HX, n: HOURS, title: "SM clock, lowest while loaded (MHz)", unit: "MHz", series: [{v: x.clockA, color: "var(--s4)", name: "SM clock"}], marks, bands, lo: 0})
+      + `<p><button class="b" id="csv">Download CSV (hourly series)</button> <span class="note" id="csv-note"></span></p>`;
+    // events
+    h += `<h2 class="sec">Events on this GPU and its tray</h2>` + (evs.length ? `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Event</th><th>Ticket</th></tr></thead><tbody>`
+      + evs.map(e => `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${kindTag(e.kind)} ${esc(e.text)}${e.gpu == null ? " (whole tray)" : ""}</td><td>${e.ticket ? `<a href="../tickets/#${esc(e.ticket)}">${esc(e.ticket)}</a>` : ""}</td></tr>`).join("") + `</tbody></table></div>` : `<p class="note">None this month.</p>`);
+    // counters
+    h += `<h2 class="sec">Counters</h2><p class="note">Each time a remapped-row counter, the pending flag, or the last XID changed.</p><div class="scroll"><table><thead><tr><th>From (UTC)</th><th class="n">Correctable remapped rows</th><th class="n">Uncorrectable remapped rows</th><th>Remap pending</th><th class="n">Last XID</th></tr></thead><tbody>`
+      + x.counters.map(c => `<tr><td>${esc(at(c[0]))}</td><td class="n">${num(c[1])}</td><td class="n">${num(c[2])}</td><td>${c[3] ? tag("pending", "warn") : "no"}</td><td class="n">${c[4] ? num(c[4]) : "–"}</td></tr>`).join("") + `</tbody></table></div>`;
+    // minute detail
+    const wins = WIN_HOST[host] || [];
+    h += `<h2 class="sec">Minute detail</h2><p class="note">The one-minute samples of the tray's 4 GPUs for an hour before and after each event (this GPU emphasized). Move the cursor to see the exporter's scrape at that minute.</p>`
+      + `<div class="btns" id="win-btns">${wins.length ? wins.map((w, i) => `<button data-w="${esc(i)}">${esc(at(w.from))} (${esc(w.minutes)} min)</button>`).join("") : `<span class="note">No events on this tray this month, so no minute windows were published.</span>`}</div><div id="win"></div>`;
+    h += `<h2 class="sec">Prometheus scrape</h2><p class="note" id="sc-note"></p><pre class="scrape" id="scrape" data-gl-skip></pre>`;
+    main.innerHTML = h;
+    scrapeLast();
+    document.getElementById("csv").addEventListener("click", downloadCsv);
+    main.querySelectorAll("#win-btns button").forEach(b => b.addEventListener("click", () => openWindow(wins[+b.dataset.w], b)));
+  }
+  function scrapeText(lab, vals, when) {
+    let s = `<span class="c"># ${esc(when)}</span>\n`;
+    const lb = `{gpu="${esc(lab.gpu)}",UUID="${esc(lab.UUID)}",pci_bus_id="${esc(lab.pci_bus_id)}",device="${esc(lab.device)}",modelName="${esc(lab.modelName)}",Hostname="${esc(lab.Hostname)}",DCGM_FI_DRIVER_VERSION="${esc(lab.DCGM_FI_DRIVER_VERSION)}"}`;
+    for (const f of B.fields) {
+      if (!(f.name in vals)) continue;
+      s += `<span class="c"># HELP ${esc(f.name)} ${esc(f.help)}\n# TYPE ${esc(f.name)} ${esc(f.type)}</span>\n${esc(f.name)}${lb} ${esc(vals[f.name])}\n`;
+    }
+    return s;
+  }
+  function scrapeLast() {
+    const {x} = gpuCtx, el = document.getElementById("scrape");
+    if (!x.last) { el.textContent = "# this GPU never reported this month"; return; }
+    document.getElementById("sc-note").textContent = `The month's last scrape of this GPU, ${at(x.last.at)}, as the exporter publishes it (the site's collector list: the default set plus the four fields the page marks).`;
+    el.innerHTML = scrapeText(x.labels[x.labels.length - 1], x.last, `scrape at ${x.last.at}`);
+  }
+  function openWindow(w, btn) {
+    const box = document.getElementById("win");
+    main.querySelectorAll("#win-btns button").forEach(b => b.classList.toggle("on", b === btn));
+    box.innerHTML = `<p class="note">Loading ${esc(w.file)}…</p>`;
+    const ctx = gpuCtx;
+    loadWindow(w).then(d => {
+      if (gpuCtx !== ctx) return;
+      ctx.win = d; winCursor = Math.min(60, d.minutes - 1);
+      const mlab = i => `${esc(new Date(Date.parse(d.from) + i * MIN).toISOString().slice(11, 16))}`;
+      const hov = i => at(new Date(Date.parse(d.from) + i * MIN).toISOString());
+      const gs = d.gpus, mine = gs.find(q => q.gpu === ctx.gi);
+      const ser = (k, color) => gs.map(q => ({v: q[k], color: q === mine ? color : "#b8c2cc", w: q === mine ? 2 : 1, name: `GPU ${q.gpu}`}));
+      const evm = [];
+      gs.forEach(q => { q.xidA.forEach((v, i) => { if (v && (i === 0 || q.xidA[i - 1] !== v)) evm.push({i, color: "var(--bad)", label: `GPU ${q.gpu}: XID ${v}`}); }); });
+      if (mine) mine.thermal_sA.forEach((v, i) => { if (v && !(mine.thermal_sA[i - 1])) evm.push({i, color: "#f2b84b", label: "thermal slowdown"}); });
+      const MX = {n: d.minutes, xlab: mlab, xtick: 15, xminor: 5, hover: hov, marks: evm, H: 130};
+      let h = `<p class="note">${esc(d.host)}, ${esc(at(d.from))} for ${esc(d.minutes)} minutes. GPU ${esc(ctx.gi)} in colour, the tray's other GPUs in grey.</p>`
+        + `<div class="ctl"><label for="wm">Minute</label><b id="wm-lab"></b></div><input type="range" id="wm" min="0" max="${esc(d.minutes - 1)}" value="${esc(winCursor)}" aria-label="Minute within the window">`
+        + chart({...MX, title: "GPU temperature (°C)", unit: "°C", series: ser("temp", "var(--s2)"), hlines: [{y: B.slowdown_c, label: `slowdown ${B.slowdown_c} °C`, color: "var(--bad)"}], lo: 0})
+        + chart({...MX, title: "Power (W)", unit: "W", series: ser("power", "var(--s1)"), hlines: [{y: RACK[d.rack].power_limit_w, label: "power limit"}], lo: 0})
+        + chart({...MX, title: "Utilization (%)", unit: "%", series: ser("util", "var(--s3)"), lo: 0, hi: 100})
+        + chart({...MX, title: "SM clock (MHz)", unit: "MHz", series: ser("clock", "var(--s4)"), lo: 0});
+      box.innerHTML = h;
+      winUpdate();
+    }).catch(e => { if (gpuCtx === ctx) box.innerHTML = errBox(e, w.file); });
+  }
+  function winUpdate() {
+    const ctx = gpuCtx, d = ctx && ctx.win;
+    if (!d) return;
+    const m = winCursor, when = new Date(Date.parse(d.from) + m * MIN).toISOString();
+    const lab = document.getElementById("wm-lab"); if (lab) lab.textContent = at(when);
+    main.querySelectorAll("svg[data-ch]").forEach(svg => { const c = CH.get(svg.dataset.ch); if (c && c.n === d.minutes) { const px = c.L + (m + 0.5) / c.n * c.pw, cur = svg.querySelector(".cur"); cur.setAttribute("x1", px); cur.setAttribute("x2", px); cur.style.display = ""; } });
+    const q = d.gpus.find(g => g.gpu === ctx.gi), el = document.getElementById("scrape");
+    document.getElementById("sc-note").textContent = `The exporter's scrape of this GPU at ${at(when)} (minute ${m} of the window). Counters are cumulative since the GPU's boot.`;
+    if (!q || q.temp[m] == null) { el.innerHTML = `<span class="c"># ${esc(when)}: no sample. The exporter did not answer this minute (tray dark, GPU off the bus, or booting).</span>`; return; }
+    const sum = (a, n) => { let s = 0; for (let i = 0; i <= n; i++) s += a[i] || 0; return s; };
+    const vals = {
+      DCGM_FI_DEV_GPU_TEMP: q.temp[m], DCGM_FI_DEV_MEMORY_TEMP: q.temp[m] + B.hbm_over_gpu_c, DCGM_FI_DEV_POWER_USAGE: q.power[m],
+      DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION: q.energy_mj[m], DCGM_FI_DEV_GPU_UTIL: q.util[m], DCGM_FI_DEV_SM_CLOCK: q.clock[m],
+      DCGM_FI_DEV_FB_USED: q.fbA[m], DCGM_FI_PROF_PIPE_TENSOR_ACTIVE: q.tensorA[m], DCGM_FI_DEV_XID_ERRORS: q.xidA[m],
+      DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS: q.remap_corrA[m], DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS: q.remap_uncA[m],
+      DCGM_FI_DEV_ROW_REMAP_PENDING: q.pendingA[m], DCGM_FI_DEV_ECC_SBE_AGG_TOTAL: q.sbe_totalA[m],
+      DCGM_FI_DEV_THERMAL_VIOLATION: q.thermal_ns_before + sum(q.thermal_sA, m) * 1e9, DCGM_FI_DEV_POWER_VIOLATION: q.power_ns_before + sum(q.power_sA, m) * 1e9,
+    };
+    el.innerHTML = scrapeText(q.labels, vals, `scrape at ${when}`);
+  }
+  function downloadCsv() {
+    const {x, host, gi} = gpuCtx, note = document.getElementById("csv-note");
+    const rows = [["hour_utc", "samples", "util_avg_pct", "power_avg_w", "gpu_temp_max_c", "sm_clock_min_loaded_mhz", "thermal_violation_s", "power_violation_s", "ecc_sbe"]];
+    for (let h = 0; h < HOURS; h++) rows.push([hourIso(h), x.nA[h], x.util[h], x.power[h], x.temp[h], x.clockA[h], x.thA[h], x.pwA[h], x.sbeA[h]].map(v => v == null ? "" : v));
+    const csv = rows.map(r => r.join(",")).join("\n") + "\n";
+    if (typeof Blob === "undefined" || typeof URL === "undefined" || !URL.createObjectURL) { note.textContent = `${rows.length - 1} rows ready; this browser cannot save files.`; return; }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], {type: "text/csv"}));
+    a.download = `${host}_gpu${gi}_hourly.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    note.textContent = `${rows.length - 1} rows.`;
+  }
+
+  // ------------------------------------------------------------- reference
+  function fields() {
+    const c = B.collection;
+    let h = `<div class="kind">Reference</div><h1>Field reference</h1><p class="sub">${esc(B.framing)} The field names, metric types, and help text are the exporter's public ones; the values are this site's synthetic series. No vendor's internal tooling is implied.</p>`;
+    h += `<div class="cards"><div class="tile"><div class="k">Exporter port</div><div class="v">${esc(c.exporter_port)}</div><div class="s">as in NVIDIA's install guide</div></div>`
+       + `<div class="tile"><div class="k">Collect interval</div><div class="v">${num(c.collect_interval_ms)} ms</div><div class="s">the exporter's published default</div></div>`
+       + `<div class="tile"><div class="k">Scrape interval</div><div class="v">${num(c.scrape_interval_s)} s</div><div class="s">the site's Prometheus; the series here are those samples</div></div>`
+       + `<div class="tile"><div class="k">Driver version label</div><div class="v" style="font-size:18px"><code>${esc(c.driver_version)}</code></div><div class="s">placeholder: a real site pins the driver it validated</div></div></div>`;
+    h += `<h2 class="sec">Fields</h2><div class="scroll"><table><thead><tr><th>Field</th><th>Type</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+       + B.fields.map(f => `<tr><td><code>${esc(f.name)}</code>${f.beyond_default ? ` ${tag("turned on at this site", "it")}` : ""}</td><td>${esc(f.type)}</td><td>${esc(f.unit)}</td><td>${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`
+       + `<p class="note">"Turned on at this site": in the exporter's default counter list these four ship commented out; the site's collector list enables them (${c.enabled_beyond_default.map(n => `<code>${esc(n)}</code>`).join(", ")}).</p>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + B.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function agreements() {
+    const agree = B.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = B.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = `<div class="kind">Reference</div><h1>Agreement with the records</h1><p class="sub">The telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the GPU Health counters and daily peaks, the XID log, the scheduler states, the Landlord's power record, and the energy meters. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + B.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (B.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + B.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/gpu_telemetry.md.</p>`;
+    main.innerHTML = h;
+  }
+
+  // ----------------------------------------------------------------- router
+  let current = 0;
+  function route() {
+    let raw;
+    try { raw = decodeURIComponent(location.hash.slice(1)); } catch (e) { raw = ""; }
+    const [a, b] = raw.split("/");
+    let m;
+    if ((m = /^([ab]\d\d)$/i.exec(a)) && RACK[a.toUpperCase()]) return {view: "rack", rack: a.toUpperCase(), hour: b == null ? null : parseInt(b, 10), key: a.toUpperCase()};
+    if ((m = /^([ab]\d\d-ct\d\d)$/i.exec(a)) && b != null && /^[0-3]$/.test(b) && RACK[rackOf(a)]) return {view: "gpu", host: a.toLowerCase(), gpu: +b, key: rackOf(a)};
+    if (a === "fields" || a === "agreements") return {view: a, key: a};
+    return {view: "gpus", key: "gpus"};
+  }
+  function show() {
+    const seq = ++current, r = route();
+    CH.clear(); gpuCtx = null;
+    if (r.view === "rack") rackView(r.rack, r.hour, seq);
+    else if (r.view === "gpu") gpuView(r.host, r.gpu, seq);
+    else if (r.view === "fields") fields();
+    else if (r.view === "agreements") agreements();
+    else overview(seq);
+    document.querySelectorAll("#tree a").forEach(a => {
+      const on = a.getAttribute("href") === "#" + r.key;
+      a.classList.toggle("on", on);
+      if (on) { let d = a.closest("details"); while (d) { d.open = true; d = d.parentElement.closest("details"); } }
+    });
+    if (r.view !== "rack" || r.hour == null) main.scrollIntoView && window.scrollY > 200 && window.scrollTo(0, 0);
+  }
+  tree();
+  window.addEventListener("hashchange", show);
+  let lastW = chartWidth();
+  window.addEventListener("resize", () => { const w = chartWidth(); if (Math.abs(w - lastW) > 40) { lastW = w; show(); } });
+  show();
+})();
+</script>
+</body>
+</html>

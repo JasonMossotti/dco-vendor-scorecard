@@ -25,6 +25,7 @@ types:   # filter chips on the Glossary tab, in this order
   - {key: equipment, label: Site and equipment}
   - {key: product, label: Products and models}
   - {key: xid, label: GPU XID codes}
+  - {key: metric, label: GPU telemetry fields}
 
 # Where the contracts define codes. "path" is a dotted path in the loaded contract (partner SLAs are
 # merged onto sla/common.yaml); "title" and "text" quote fields of each item. A sentence whose field is
@@ -151,6 +152,11 @@ terms:
   - {term: BMC, type: acronym, expansion: Baseboard management controller, text: "A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system."}
   - {term: XID, type: acronym, expansion: "Xid error (GPU driver error code)", text: "A numbered error the GPU driver reports, such as XID 79 (GPU has fallen off the bus). Critical XIDs start the restoration clock for a GPU fault. Every XID that applies to GB200 is listed under GPU XID codes, from NVIDIA's public Xid catalog."}
   - {term: DCGM, type: acronym, expansion: Data Center GPU Manager, text: "The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM."}
+  - {term: SM, type: acronym, expansion: Streaming multiprocessor, text: "The GPU's compute units. Its clock (DCGM_FI_DEV_SM_CLOCK) drops when the GPU throttles for heat or power."}
+  - {term: HMMA, type: acronym, expansion: Half-precision matrix multiply-accumulate, text: "The tensor core operation that dominates AI training; DCGM_FI_PROF_PIPE_TENSOR_ACTIVE is the share of cycles it runs."}
+  - {term: UUID, type: acronym, expansion: Universally unique identifier, text: "The GPU's own identifier, a label on every exporter series. A replaced tray brings new GPUs with new UUIDs, so their readings start new series."}
+  - {term: CSV, type: acronym, expansion: Comma-separated values, text: "A plain table file any spreadsheet opens."}
+  - {term: DCGM_FI_DRIVER_VERSION, type: metric, title: "Driver version (a label)", text: "The exporter attaches the GPU driver version to every series as a label. A real site shows the driver it validated; this demo shows a placeholder."}
   - {term: HBM, type: acronym, expansion: High-bandwidth memory, text: "The stacked memory beside each GPU. Its temperature is watched with the GPU's, and its bad rows are what row remapping replaces."}
   - {term: ECC, type: acronym, expansion: Error-correcting code, text: "Memory that detects and corrects bit errors; rising corrected errors can warn of a failing part."}
   - {term: GSP, type: acronym, expansion: GPU System Processor, text: "A processor on the GPU that runs its firmware; XID 119 is a timeout waiting for it."}
@@ -205,6 +211,8 @@ terms:
   - {term: NVIDIA, type: product, link: false, title: "GPU and network vendor", text: "Makes the GB200 and GB300 NVL72 racks, the NVLink switches, and the InfiniBand fabric."}
   - {term: GB200, type: product, title: "GB200 NVL72 rack", text: "A rack-scale GPU system: 72 GPUs and 36 Grace CPUs joined by NVLink, direct-to-chip liquid cooled. Hall A runs 32 of them."}
   - {term: GB300, type: product, title: "GB300 NVL72 rack", text: "The next generation of the NVL72 rack. Hall B is deploying 32 of them."}
+  - {term: B200, type: product, title: "B200 GPU", text: "The Blackwell GPU in a GB200 rack; public figures put it at up to 1,200 W. Hall A runs it at that default limit."}
+  - {term: B300, type: product, title: "B300 GPU", text: "The Blackwell Ultra GPU in a GB300 rack, up to 1,400 W by public figures. Hall B caps it at 1,200 W to fit the 132 kW rack envelope."}
   - {term: NVL72, type: product, title: "NVL72 rack", text: "A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours."}
   - {term: QM9700, type: product, title: "Quantum-2 QM9700 InfiniBand switch", text: "The 400 Gb/s (NDR) InfiniBand switch in Hall A's back-end fabric."}
   - {term: Q3400-RA, type: product, title: "Quantum-X800 Q3400-RA InfiniBand switch", text: "The 800 Gb/s (XDR) InfiniBand switch for Hall B and the planned 800 VDC pilot hall (Hall C)."}
@@ -364,6 +372,8 @@ plain:   # capitalised text that is not a code
     - {terms: [ONLY, OK, LIVE], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
     - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
+    - {terms: [GB, TB], why: "Units of memory: gigabytes and terabytes."}
+    - {terms: [HELP, TYPE], why: "Keywords of the Prometheus text format: each field's description and its metric type (gauge or counter)."}
     - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}
   patterns:
     - {pattern: '[A-C]-?\d{2}', why: "A rack position (A07 is Hall A, rack 7); the site drawings show where each is."}
