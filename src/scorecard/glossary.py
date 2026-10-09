@@ -201,6 +201,24 @@ def xid_text(c: dict[str, Any], buckets: dict[str, str]) -> str:
     return text + (" NVIDIA's recommended action: " + "; ".join(acts) + "." if acts else " The catalog lists no action.")
 
 
+TELEMETRY = ROOT / "config" / "telemetry.yaml"
+
+
+def telemetry_entries(path: Path = TELEMETRY) -> dict[str, Entry]:
+    """One entry per DCGM exporter field in config/telemetry.yaml: the exporter's help text as the title."""
+    import yaml
+    cfg = yaml.safe_load(path.read_text(encoding="utf-8"))
+    on = set(cfg["collection"]["enabled_beyond_default"])
+    out = {}
+    for f in cfg["fields"]:
+        kind = ("a counter: it only goes up, and starts again when the GPU resets or is replaced" if f["type"] == "counter"
+                else "a gauge: the reading at the moment of the scrape")
+        text = (f"A field of NVIDIA's open-source DCGM exporter, in {f['unit']}; {kind}."
+                + (" The exporter's default list ships it turned off; this site turned it on." if f["name"] in on else ""))
+        out[f["name"]] = Entry(f["name"], "metric", [Sense(f["help"].rstrip("."), text)], see="telemetry/#fields")
+    return out
+
+
 def xid_entries(path: Path = XID_CATALOG) -> dict[str, Entry]:
     """One entry per XID in config/xid_catalog.yaml: NVIDIA's name as the title, a link to the catalog."""
     cat = xid_catalog(path)
@@ -266,6 +284,10 @@ def load(root: Path = ROOT) -> Glossary:
         raise ValueError(f"config/glossary.yaml repeats terms the contracts define: {clash}")
     exact.update(hand)
     exact.update(xid_entries(root / "config" / "xid_catalog.yaml"))
+    fields = telemetry_entries(root / "config" / "telemetry.yaml")
+    if set(fields) & set(exact):
+        raise ValueError(f"config/glossary.yaml repeats telemetry fields: {sorted(set(fields) & set(exact))}")
+    exact.update(fields)
     for t, e in exact.items():
         e.key = e.key or t
     ign = cfg.get("plain", {})

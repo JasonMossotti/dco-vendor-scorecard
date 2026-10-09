@@ -80,6 +80,11 @@ class GpuHealthLayer:
             if i["property"] == "SerialNumber" and i.get("host"):
                 self.swaps.setdefault(i["host"], []).append((parse(i["observed_at"]), i["old_value"], i["new_value"]))
         self.reporting_from = self._reporting_from()
+        self.blocked: dict[str, list[tuple[datetime, datetime]]] = {}     # drained or down: no load, no throttling
+        for i, e in enumerate(self.sched):
+            if e["state"] in ("drain", "down"):
+                back = next((parse(x["timestamp"]) for x in self.sched[i + 1:] if x["node"] == e["node"] and x["state"] == "idle"), self.end)
+                self.blocked.setdefault(e["node"], []).append((parse(e["timestamp"]), back))
 
     # ----------------------------------------------------------------- the site over the month
     def _reporting_from(self) -> dict[str, datetime]:
@@ -91,6 +96,19 @@ class GpuHealthLayer:
                 if m["milestone"] == "M4" and m["reported_complete_at"]:
                     out[m["rack"]] = max(self.start, parse(m["reported_complete_at"]))
         return out
+
+    def clear(self, host: str, s: datetime, e: datetime, lo: datetime, hi: datetime) -> tuple[datetime, datetime] | None:
+        """Move an episode out of any span where the node was drained or down, within [lo, hi); None if it cannot fit."""
+        dur, gap = e - s, timedelta(minutes=10)
+        for _ in range(6):
+            hit = next(((a, b) for a, b in self.blocked.get(host, []) if s < b and s + dur > a), None)
+            if hit is None:
+                return s, s + dur
+            a, b = hit
+            s = b + gap if b + gap + dur < hi else a - gap - dur
+            if s < lo:
+                return None
+        return None
 
     def serials(self, host: str, initial: str) -> list[tuple[datetime, datetime, str]]:
         """The trays installed in a host over the month: (from, to, serial)."""
@@ -298,9 +316,11 @@ class GpuHealthLayer:
         for tr in trays:
             over = th["gpu_over_supply_c"][tr["product"]]
             for d in self.days:
-                if d + DAY <= tr["from"]:
-                    continue
+                if d + DAY - timedelta(minutes=1) < tr["from"]:
+                    continue                    # no sample today: the tray powers on in the day's last minute or later
                 ds = day_of(d)
+                # a tray that powers on today cannot throttle before it reports (the first whole minute after power-on)
+                on = tr["from"].replace(second=0, microsecond=0) + timedelta(minutes=1)
                 serial = next(s for a, b, s in tr["serials"] if a <= d + DAY / 2 < b or b == self.end)
                 supply = daily_supply_max[(tr["cdu"], ds)]
                 rise = 0.0
@@ -310,24 +330,31 @@ class GpuHealthLayer:
                 for g, p in enumerate(peaks):
                     if p >= th["slowdown_c"]:
                         for _ in range(rng.randint(1, 3)):
-                            s = d + timedelta(minutes=rng.randrange(60, 1380))
-                            episodes.append({"start": iso(s), "end": iso(s + timedelta(seconds=rng.randint(180, 900))),
+                            s = max(d + timedelta(minutes=rng.randrange(60, 1380)), on)
+                            e = s + timedelta(seconds=rng.randint(180, 900))
+                            s, e = self.clear(tr["host"], s, e, max(d, on), d + DAY) or (s, e)
+                            episodes.append({"start": iso(s), "end": iso(e),
                                              "host": tr["host"], "tray_serial": serial, "gpu": g,
                                              "gpu_temp_max_c": round(min(p, th["slowdown_c"] + 3.5), 1)})
                 if rng.random() < th["blip_probability"]:
                     key["decoys"]["brief_slowdowns"] += 1
                     g = rng.randrange(cfg["gpus_per_tray"])
-                    s = d + timedelta(minutes=rng.randrange(60, 1380))
-                    episodes.append({"start": iso(s), "end": iso(s + timedelta(seconds=rng.randint(30, 110))),
-                                     "host": tr["host"], "tray_serial": serial, "gpu": g,
-                                     "gpu_temp_max_c": round(th["slowdown_c"] + rng.uniform(0.1, 1.2), 1)})
-                    peaks[g] = max(peaks[g], th["slowdown_c"] + 0.5)
+                    s = max(d + timedelta(minutes=rng.randrange(60, 1380)), on)
+                    e = s + timedelta(seconds=rng.randint(30, 110))
+                    s, e = self.clear(tr["host"], s, e, max(d, on), d + DAY) or (s, e)
+                    blip = round(th["slowdown_c"] + rng.uniform(0.1, 1.2), 1)
+                    episodes.append({"start": iso(s), "end": iso(e), "host": tr["host"], "tray_serial": serial, "gpu": g,
+                                     "gpu_temp_max_c": blip})
+                    peaks[g] = max(peaks[g], blip)      # the day's peak is at least the episode's own reading
                 if exc and tr["cdu"] == exc["cdu"] and d <= exc["start"] < d + DAY and tr["from"] <= exc["start"]:
                     for g in range(cfg["gpus_per_tray"]):
                         if rng.random() < 0.7:
                             s = exc["start"] + timedelta(minutes=rng.uniform(2, 10))
-                            e = min(exc["end"] + timedelta(minutes=rng.uniform(0, 5)), s + timedelta(hours=2))
+                            e = min(exc["end"] + timedelta(minutes=rng.uniform(0, 5)), s + timedelta(hours=2),
+                                    d + DAY - timedelta(seconds=1))     # recorded on the day it began
                             temp = th["slowdown_c"] + rng.uniform(0.5, 3.5)
+                            if any(s < b and e > a for a, b in self.blocked.get(tr["host"], [])):
+                                continue                # a drained or dark tray draws no load and does not throttle
                             episodes.append({"start": iso(s), "end": iso(e), "host": tr["host"], "tray_serial": serial,
                                              "gpu": g, "gpu_temp_max_c": round(temp, 1)})
                             peaks[g] = max(peaks[g], temp)

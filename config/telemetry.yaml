@@ -1,0 +1,102 @@
+# Telemetry layer for Site AUS-1 (synthetic; portfolio demo).
+#
+# Phase 1: GPU telemetry, shaped like the output of NVIDIA's open-source DCGM exporter (Prometheus text
+# format, public DCGM_FI_* field names and labels). No vendor's internal tooling, dashboards, or thresholds
+# are implied: every number below is an assumption for the demo ("basis: assumption") unless a public
+# source is named. The series are shaped to agree with every record already in data/sample and
+# data/gpu_health (see src/scorecard/telemetry.py for the agreements and their tests).
+# Read by src/scorecard/synthetic/telemetry.py (the data) and src/scorecard/telemetry.py (the agreements).
+
+framing: "Synthetic GPU telemetry in the published format of NVIDIA's open-source DCGM exporter."
+sources:
+  - {name: "NVIDIA dcgm-exporter: default counter set etc/default-counters.csv (public, open source)", url: "https://github.com/NVIDIA/dcgm-exporter/blob/main/etc/default-counters.csv", checked: "2026-10-09"}
+  - {name: "NVIDIA DCGM documentation: Install DCGM Exporter (port 9400, --collect-interval default 30000 ms)", url: "https://docs.nvidia.com/datacenter/dcgm/latest/installation/install-dcgm-exporter.html", checked: "2026-10-09"}
+  - {name: "NVIDIA DCGM documentation: DCGM Exporter (Prometheus text format, HELP and TYPE lines)", url: "https://docs.nvidia.com/datacenter/cloud-native/gpu-telemetry/latest/dcgm-exporter.html", checked: "2026-10-09"}
+  - {name: "NVIDIA GB200 NVL72 product page (13.4 TB HBM3e per rack: 186 GB per GPU)", url: "https://www.nvidia.com/en-us/data-center/gb200-nvl72/", checked: "2026-10-09"}
+  - {name: "B300 notes, glennklockwood.com (B300 1,400 W up from B200 1,200 W; 288 GB HBM3e)", url: "https://glennklockwood.com/garden/processors/B300", checked: "2026-10-09"}
+
+# How the site collects (basis: assumption, within the exporter's published options).
+collection:
+  exporter_port: 9400               # as in NVIDIA's install guide
+  collect_interval_ms: 30000        # the exporter's published default
+  scrape_interval_s: 60             # the site's Prometheus scrapes once a minute; the series here are those samples
+  driver_version: "5xx.yy.zz"       # placeholder: a real site pins the driver it validated; not a claim about any release
+  # The site's collector list (the exporter's -f CSV): the default set plus four fields the default
+  # file ships commented out, which the site turned on (the page says so).
+  enabled_beyond_default: [DCGM_FI_DEV_ECC_SBE_AGG_TOTAL, DCGM_FI_DEV_THERMAL_VIOLATION, DCGM_FI_DEV_POWER_VIOLATION,
+                           DCGM_FI_DEV_ROW_REMAP_PENDING]
+
+# The fields this layer models, with the exporter's metric type and published help text (paraphrased
+# where the CSV's wording is long). Unit is what the value means on this page.
+fields:
+  - {name: DCGM_FI_DEV_GPU_TEMP, type: gauge, unit: "°C", help: "GPU temperature (in C)."}
+  - {name: DCGM_FI_DEV_MEMORY_TEMP, type: gauge, unit: "°C", help: "Memory temperature (in C)."}
+  - {name: DCGM_FI_DEV_POWER_USAGE, type: gauge, unit: "W", help: "Power draw (in W)."}
+  - {name: DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION, type: counter, unit: "mJ", help: "Total energy consumption since boot (in mJ)."}
+  - {name: DCGM_FI_DEV_GPU_UTIL, type: gauge, unit: "%", help: "GPU utilization (in %)."}
+  - {name: DCGM_FI_DEV_SM_CLOCK, type: gauge, unit: "MHz", help: "SM clock frequency (in MHz)."}
+  - {name: DCGM_FI_DEV_FB_USED, type: gauge, unit: "MiB", help: "Framebuffer memory used (in MiB)."}
+  - {name: DCGM_FI_PROF_PIPE_TENSOR_ACTIVE, type: gauge, unit: "ratio", help: "Ratio of cycles the tensor (HMMA) pipe is active."}
+  - {name: DCGM_FI_DEV_XID_ERRORS, type: gauge, unit: "XID", help: "Value of the last XID error encountered."}
+  - {name: DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS, type: counter, unit: "rows", help: "Number of remapped rows for correctable errors."}
+  - {name: DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS, type: counter, unit: "rows", help: "Number of remapped rows for uncorrectable errors."}
+  - {name: DCGM_FI_DEV_ROW_REMAP_PENDING, type: gauge, unit: "0 or 1", help: "Whether remapping of rows is pending (the GPU must be reset)."}
+  - {name: DCGM_FI_DEV_ECC_SBE_AGG_TOTAL, type: counter, unit: "errors", help: "Total number of single-bit persistent ECC errors."}
+  - {name: DCGM_FI_DEV_THERMAL_VIOLATION, type: counter, unit: "ns", help: "Throttling duration due to thermal constraints (in ns)."}
+  - {name: DCGM_FI_DEV_POWER_VIOLATION, type: counter, unit: "ns", help: "Throttling duration due to power constraints (in ns)."}
+
+# Per product (basis: public figures where named above, otherwise assumption).
+products:
+  gb200_nvl72:
+    model_name: "NVIDIA GB200"
+    power_max_w: 1200               # public: B200-class GPU up to 1,200 W
+    power_limit_w: 1200             # basis: assumption (the site runs Hall A at the default limit)
+    idle_w: 150                     # basis: assumption
+    fb_total_mib: 177383            # 186 GB (13.4 TB HBM3e per 72-GPU rack, public) in MiB
+    sm_clock_max_mhz: 1965          # basis: assumption (representative boost clock)
+    demand_w: [960, 1150]           # basis: assumption: what a training job asks for at full utilization
+  gb300_nvl72:
+    model_name: "NVIDIA GB300"
+    power_max_w: 1400               # public: B300 up to 1,400 W
+    power_limit_w: 1200             # basis: assumption: Hall B is capped to the 132 kW rack envelope (site/site.yaml)
+    idle_w: 170                     # basis: assumption
+    fb_total_mib: 274658            # 288 GB HBM3e (public) in MiB
+    sm_clock_max_mhz: 2032          # basis: assumption
+    demand_w: [1150, 1380]          # basis: assumption: demand above the cap is held at the cap (power violation time)
+idle_sm_clock_mhz: 345              # basis: assumption (low idle clock, as in NVIDIA's public sample output)
+
+# The workload (basis: assumption). An NVL72 rack is one NVLink domain and usually runs one job.
+workload:
+  job_hours: [2, 72]                # log-uniform job length
+  short_gap_min: [5, 30]            # most jobs are followed by the next one within minutes ...
+  long_gap_probability: 0.25
+  long_gap_hours: [1, 6]            # ... some by an idle gap
+  utilization: [93, 99]             # per job, at full step
+  checkpoint_every_min: [45, 90]    # per job
+  checkpoint_min: [2, 5]
+  checkpoint_utilization: [10, 30]
+  startup_min: [5, 12]              # loading: utilization 30 to 60 percent
+  restart_after_fault_min: [8, 30]  # a job that fails on a GPU fault restarts from its checkpoint without that node
+  fb_used_fraction: [0.80, 0.94]    # per job
+  tensor_active_at_full: [0.55, 0.75]
+  burn_in: {stress_hours: 4, rest_hours: 1, utilization: 100}   # Hall B between power-on (M4) and validated handoff
+
+# Thermal model (basis: assumption; shaped to the GPU Health layer's daily peaks).
+thermal:
+  tau_min: 3.0                      # GPU temperature follows power with this time constant
+  gpu_offset_sd_c: 1.0              # position in the tray, cold plate fit
+  sample_noise_c: 0.4
+  hbm_over_gpu_c: 6.0               # as config/gpu_health.yaml
+  slowdown_clock_fraction: [0.60, 0.72]   # SM clock during hardware thermal slowdown
+  slowdown_power_fraction: [0.75, 0.88]
+  below_slowdown_c: 0.6             # outside an episode the GPU stays at least this far below slowdown
+
+# XIDs after which the GPU stops answering until it is reset or replaced (basis: NVIDIA's Xid catalog: XID 79,
+# "GPU has fallen off the bus").
+gone_xids: [79]
+boot_min: [5, 9]                    # after rack power returns, trays boot and the exporter starts reporting again
+
+# Publishing tiers.
+tiers:
+  window_before_min: 60             # minute detail this long before ...
+  window_after_min: 60              # ... and after each event on a tray

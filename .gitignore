@@ -13,9 +13,13 @@ data/*
 !data/energy/
 !data/gpu_health/
 !data/deployments/
+!data/telemetry/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/
 
 # Built site (published by the Pages workflow, never committed)
 _site/
+
+# Built telemetry tier (published by build_site.py; checksums in data/telemetry/gpu/manifest.json)
+build/

@@ -1,0 +1,1167 @@
+{
+ "disclaimer": "Synthetic GPU telemetry for a portfolio demonstration, in the published format of NVIDIA's open-source DCGM exporter. All names, serials, UUIDs, and readings are fictional.",
+ "files": {
+  "gaps.jsonl": 28,
+  "rack_hourly.csv": 30912,
+  "windows": 131
+ },
+ "gpu_hourly": {
+  "A01.json": {
+   "bytes": 731367,
+   "sha256": "93de351c1aa2cf77bac774d5622b6597399e08792997290e33756b1c058cb9a1"
+  },
+  "A02.json": {
+   "bytes": 731665,
+   "sha256": "15e9fc1c2fb0044764fdab43815c2a5730eb37fe40fb1f8ecc24946cce92843d"
+  },
+  "A03.json": {
+   "bytes": 750414,
+   "sha256": "9bf91c6cab7b117e3c51cac89f12604dd4d5cbe0e0826873fdce1c2fe08db611"
+  },
+  "A04.json": {
+   "bytes": 716919,
+   "sha256": "ad75bd01058bd0148b6d93b5b08e1cd3224e4857664abe7394d81da6f8632eff"
+  },
+  "A05.json": {
+   "bytes": 742726,
+   "sha256": "a217f4c83b2971f132a8b1c73e4781e1eff375436f09173bf9202cd217e7ee4d"
+  },
+  "A06.json": {
+   "bytes": 737062,
+   "sha256": "637e5808e676a19afe914bc83778c460365c16398e7210cf6efd893eacfe1fde"
+  },
+  "A07.json": {
+   "bytes": 744406,
+   "sha256": "29d62d06efb7aab3e18b0ccd9a9f7a8be22238adaf95129a2c42d81913cce31c"
+  },
+  "A08.json": {
+   "bytes": 737853,
+   "sha256": "90922f53d1acd61ba77c97fb6a399c5414ad45557239a5b16d806ac4c80237b2"
+  },
+  "A09.json": {
+   "bytes": 734024,
+   "sha256": "3a142899e209f5fa5686393f0c60f3d05faafe4e1ebee581344deeaa0d9bd710"
+  },
+  "A10.json": {
+   "bytes": 729038,
+   "sha256": "2623c0d9a658fdf86a4942c7bbe34d2c904159c3f853230422553aad73faa355"
+  },
+  "A11.json": {
+   "bytes": 723969,
+   "sha256": "54fc7ca6cd9b86f3a8a18c42f3041e6747c44879d0163bbceb8905ab13d89a1e"
+  },
+  "A12.json": {
+   "bytes": 726717,
+   "sha256": "a9949afe2ab13694a889a9e1ffaad00d60feaa517762bfab10b0f754db5e161b"
+  },
+  "A13.json": {
+   "bytes": 741328,
+   "sha256": "e38f1b112b9391c95faf0cf7494b1d9b41123ea7c3ea15ace68392c452be1a73"
+  },
+  "A14.json": {
+   "bytes": 738319,
+   "sha256": "c622795a06b20ce75925613d0c08b51083b81ad0d722b57ab3234fd7c2a799f4"
+  },
+  "A15.json": {
+   "bytes": 728159,
+   "sha256": "a0e857007de7e8beafdc52c455caf6722e9f59caecd6caba94c00fd5327cade9"
+  },
+  "A16.json": {
+   "bytes": 740135,
+   "sha256": "9ea19691b0f11a0b28b4c1ab3e4a62e86cc7108237ce28e2ca0b72adb34e83c0"
+  },
+  "A17.json": {
+   "bytes": 729806,
+   "sha256": "5eb16f40750064af92cb220e16672cc63b9605d889b635968a016848b5392645"
+  },
+  "A18.json": {
+   "bytes": 728445,
+   "sha256": "4b7c5a28b990853d8b4da0e70bde112db34bff3aa1c1d71d41e06c2a2e42f000"
+  },
+  "A19.json": {
+   "bytes": 733782,
+   "sha256": "58a16ba1f830583c1364430bf66d82a056465ca1623bf2b63c7c1e9e8369158a"
+  },
+  "A20.json": {
+   "bytes": 736035,
+   "sha256": "b7f42413a0199b4f9d232f292a795c121d35024599aebf8e7d3e63e85f20b82e"
+  },
+  "A21.json": {
+   "bytes": 733823,
+   "sha256": "d8798033b29c4206577b17db806d1440836df3aa48aeabc766114782f0005ea4"
+  },
+  "A22.json": {
+   "bytes": 725238,
+   "sha256": "0ae48c9a49e3f163fc99cd2128d347f4207d13e1aec43dedf15aba69e29f89c7"
+  },
+  "A23.json": {
+   "bytes": 729515,
+   "sha256": "58e8f55484863db2e66586ff27d590fc138d8b8c4e08a74d8f1487776898fdbb"
+  },
+  "A24.json": {
+   "bytes": 727685,
+   "sha256": "55f266dc0d47428c07d9bd86c1d7203f8bbceb54f0370271837f2ea5fb2ddff9"
+  },
+  "A25.json": {
+   "bytes": 733053,
+   "sha256": "c52f253da97eb400b35b5a5e6051955db57451ee7626b4f87663b55128c7d90e"
+  },
+  "A26.json": {
+   "bytes": 729652,
+   "sha256": "eaaeaf672cb06315f89c91ae734058818547820f3f9f2ecafaeb1b1526b4976c"
+  },
+  "A27.json": {
+   "bytes": 746695,
+   "sha256": "cd927c715ca3b993c44b14194266da34940e6a459a4acc1f95246c4c6e799bd1"
+  },
+  "A28.json": {
+   "bytes": 742050,
+   "sha256": "559abd5f47fecfbcc39e53586ac56cf24280e4d3ebe03123a560385a16eb2db0"
+  },
+  "A29.json": {
+   "bytes": 729414,
+   "sha256": "ed559498830f8709545271c3380b2ffd85f42d69d27c72de7efe4da574343573"
+  },
+  "A30.json": {
+   "bytes": 733280,
+   "sha256": "b5f6986af872f881c0ba6df35c4461a63fd13c43a0a0536687e89399ec72b52a"
+  },
+  "A31.json": {
+   "bytes": 733729,
+   "sha256": "28714c892c76476dc124aad2bae695707209de219dbf98fd3e4b5942499d5a1b"
+  },
+  "A32.json": {
+   "bytes": 735319,
+   "sha256": "4a6be3196991bffca92003dd23c759e2a1bea194b79e5906463d67757473f5fc"
+  },
+  "B01.json": {
+   "bytes": 1037001,
+   "sha256": "3e59364895351762c56df83b074ab21802fb39ddbb8028534498504ed9e7a8ea"
+  },
+  "B02.json": {
+   "bytes": 1073470,
+   "sha256": "44e23a9951ed2c7a913849671f370316ce0a314f7a18491e1d3c49ffb507c2db"
+  },
+  "B03.json": {
+   "bytes": 1054414,
+   "sha256": "f57a6bb42db484d4023dc8b949207c8f3f0a274886b50bd0f44d8f9dd01dcbe2"
+  },
+  "B04.json": {
+   "bytes": 991322,
+   "sha256": "4e7b424a2db49bd0745b4dd847d2cf9ca922748ab030a49658a6a6461b1ed158"
+  },
+  "B05.json": {
+   "bytes": 1051821,
+   "sha256": "30b77b78ced3cd64bf054d382e13c83808a2c19ac2ed26295b18f0ff3bf62785"
+  },
+  "B06.json": {
+   "bytes": 956701,
+   "sha256": "e07bdaf3faa8bb1800ba1754fa5c6cc5185bfe85992fe152d6eee399cd6eb965"
+  },
+  "B07.json": {
+   "bytes": 955533,
+   "sha256": "f8994c4ac5e2c924ad3493e45eb249eee7c5e951cf4f273b40654096f1a225a2"
+  },
+  "B08.json": {
+   "bytes": 966534,
+   "sha256": "cd95dad06bf2aef70a63061bade091053cd8ea81e24759d017ec05c2bb70d21f"
+  },
+  "B09.json": {
+   "bytes": 918829,
+   "sha256": "dd726f60a854d34d78c4f067b13c458889bbb3ced453eded06dece0115009bf4"
+  },
+  "B10.json": {
+   "bytes": 915556,
+   "sha256": "6ab5e45398832e4c42c1977aba6b5eaa9c902c49951b36023c50c96e21d42181"
+  },
+  "B11.json": {
+   "bytes": 909707,
+   "sha256": "79e32f6a0014e8cddbb507da742f2fe3e5e114ae41c482c7f434ff5e90b75f72"
+  },
+  "B12.json": {
+   "bytes": 885160,
+   "sha256": "9a639644810ab05af28ab232654b64c0cb1a8fb988ffd3b0fe5820b3de064f0f"
+  },
+  "B13.json": {
+   "bytes": 874499,
+   "sha256": "3723a403dcbaf4c8438450092300b62e2820c5a72bb3bd1c8191c1c67d55a745"
+  },
+  "B14.json": {
+   "bytes": 868804,
+   "sha256": "4e619e3e078f097ecbb005e94fec54a8a0a5cddb326f400f640677a3d20dfd9c"
+  }
+ },
+ "gpus": 3312,
+ "racks": [
+  "A01",
+  "A02",
+  "A03",
+  "A04",
+  "A05",
+  "A06",
+  "A07",
+  "A08",
+  "A09",
+  "A10",
+  "A11",
+  "A12",
+  "A13",
+  "A14",
+  "A15",
+  "A16",
+  "A17",
+  "A18",
+  "A19",
+  "A20",
+  "A21",
+  "A22",
+  "A23",
+  "A24",
+  "A25",
+  "A26",
+  "A27",
+  "A28",
+  "A29",
+  "A30",
+  "A31",
+  "A32",
+  "B01",
+  "B02",
+  "B03",
+  "B04",
+  "B05",
+  "B06",
+  "B07",
+  "B08",
+  "B09",
+  "B10",
+  "B11",
+  "B12",
+  "B13",
+  "B14"
+ ],
+ "source": "data/sample + data/gpu_health",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "start": "2026-08-31T00:00:00Z"
+ },
+ "windows": [
+  {
+   "file": "windows/a01-ct03_20260925T2135.json",
+   "from": "2026-09-25T21:35:00Z",
+   "host": "a01-ct03",
+   "minutes": 121,
+   "rack": "A01"
+  },
+  {
+   "file": "windows/a01-ct05_20260915T1149.json",
+   "from": "2026-09-15T11:49:00Z",
+   "host": "a01-ct05",
+   "minutes": 121,
+   "rack": "A01"
+  },
+  {
+   "file": "windows/a01-ct10_20260924T1558.json",
+   "from": "2026-09-24T15:58:00Z",
+   "host": "a01-ct10",
+   "minutes": 121,
+   "rack": "A01"
+  },
+  {
+   "file": "windows/a03-ct02_20260917T1213.json",
+   "from": "2026-09-17T12:13:00Z",
+   "host": "a03-ct02",
+   "minutes": 121,
+   "rack": "A03"
+  },
+  {
+   "file": "windows/a03-ct04_20260925T0922.json",
+   "from": "2026-09-25T09:22:00Z",
+   "host": "a03-ct04",
+   "minutes": 122,
+   "rack": "A03"
+  },
+  {
+   "file": "windows/a03-ct14_20260904T1924.json",
+   "from": "2026-09-04T19:24:00Z",
+   "host": "a03-ct14",
+   "minutes": 121,
+   "rack": "A03"
+  },
+  {
+   "file": "windows/a05-ct15_20260913T0251.json",
+   "from": "2026-09-13T02:51:00Z",
+   "host": "a05-ct15",
+   "minutes": 121,
+   "rack": "A05"
+  },
+  {
+   "file": "windows/a05-ct18_20260903T2336.json",
+   "from": "2026-09-03T23:36:00Z",
+   "host": "a05-ct18",
+   "minutes": 121,
+   "rack": "A05"
+  },
+  {
+   "file": "windows/a06-ct08_20260923T1357.json",
+   "from": "2026-09-23T13:57:00Z",
+   "host": "a06-ct08",
+   "minutes": 123,
+   "rack": "A06"
+  },
+  {
+   "file": "windows/a06-ct13_20260904T0838.json",
+   "from": "2026-09-04T08:38:00Z",
+   "host": "a06-ct13",
+   "minutes": 121,
+   "rack": "A06"
+  },
+  {
+   "file": "windows/a06-ct13_20260904T1523.json",
+   "from": "2026-09-04T15:23:00Z",
+   "host": "a06-ct13",
+   "minutes": 121,
+   "rack": "A06"
+  },
+  {
+   "file": "windows/a07-ct01_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct01",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct01_20260915T1815.json",
+   "from": "2026-09-15T18:15:00Z",
+   "host": "a07-ct01",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct02_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct02",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct02_20260915T1815.json",
+   "from": "2026-09-15T18:15:00Z",
+   "host": "a07-ct02",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct03_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct03",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct03_20260915T1812.json",
+   "from": "2026-09-15T18:12:00Z",
+   "host": "a07-ct03",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct04_20260915T0832.json",
+   "from": "2026-09-15T08:32:00Z",
+   "host": "a07-ct04",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct04_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct04",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct04_20260915T1813.json",
+   "from": "2026-09-15T18:13:00Z",
+   "host": "a07-ct04",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct05_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct05",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct05_20260915T1816.json",
+   "from": "2026-09-15T18:16:00Z",
+   "host": "a07-ct05",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct06_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct06",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct06_20260915T1815.json",
+   "from": "2026-09-15T18:15:00Z",
+   "host": "a07-ct06",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct07_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct07",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct07_20260915T1816.json",
+   "from": "2026-09-15T18:16:00Z",
+   "host": "a07-ct07",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct08_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct08",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct08_20260915T1813.json",
+   "from": "2026-09-15T18:13:00Z",
+   "host": "a07-ct08",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct09_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct09",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct09_20260915T1816.json",
+   "from": "2026-09-15T18:16:00Z",
+   "host": "a07-ct09",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct10_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct10",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct10_20260915T1813.json",
+   "from": "2026-09-15T18:13:00Z",
+   "host": "a07-ct10",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct11_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct11",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct11_20260915T1815.json",
+   "from": "2026-09-15T18:15:00Z",
+   "host": "a07-ct11",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct12_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct12",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct12_20260915T1815.json",
+   "from": "2026-09-15T18:15:00Z",
+   "host": "a07-ct12",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct13_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct13",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct13_20260915T1816.json",
+   "from": "2026-09-15T18:16:00Z",
+   "host": "a07-ct13",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct14_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct14",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct14_20260915T1814.json",
+   "from": "2026-09-15T18:14:00Z",
+   "host": "a07-ct14",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct15_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct15",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct15_20260915T1815.json",
+   "from": "2026-09-15T18:15:00Z",
+   "host": "a07-ct15",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct16_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct16",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct16_20260915T1814.json",
+   "from": "2026-09-15T18:14:00Z",
+   "host": "a07-ct16",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct17_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct17",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct17_20260915T1816.json",
+   "from": "2026-09-15T18:16:00Z",
+   "host": "a07-ct17",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct18_20260915T1443.json",
+   "from": "2026-09-15T14:43:00Z",
+   "host": "a07-ct18",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a07-ct18_20260915T1814.json",
+   "from": "2026-09-15T18:14:00Z",
+   "host": "a07-ct18",
+   "minutes": 121,
+   "rack": "A07"
+  },
+  {
+   "file": "windows/a09-ct04_20260903T0301.json",
+   "from": "2026-09-03T03:01:00Z",
+   "host": "a09-ct04",
+   "minutes": 181,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260903T0838.json",
+   "from": "2026-09-03T08:38:00Z",
+   "host": "a09-ct04",
+   "minutes": 135,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260903T1118.json",
+   "from": "2026-09-03T11:18:00Z",
+   "host": "a09-ct04",
+   "minutes": 130,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260903T1952.json",
+   "from": "2026-09-03T19:52:00Z",
+   "host": "a09-ct04",
+   "minutes": 129,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260904T0314.json",
+   "from": "2026-09-04T03:14:00Z",
+   "host": "a09-ct04",
+   "minutes": 133,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260905T0132.json",
+   "from": "2026-09-05T01:32:00Z",
+   "host": "a09-ct04",
+   "minutes": 127,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260905T0623.json",
+   "from": "2026-09-05T06:23:00Z",
+   "host": "a09-ct04",
+   "minutes": 134,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260907T0911.json",
+   "from": "2026-09-07T09:11:00Z",
+   "host": "a09-ct04",
+   "minutes": 125,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260907T1637.json",
+   "from": "2026-09-07T16:37:00Z",
+   "host": "a09-ct04",
+   "minutes": 129,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260907T2010.json",
+   "from": "2026-09-07T20:10:00Z",
+   "host": "a09-ct04",
+   "minutes": 127,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260908T1824.json",
+   "from": "2026-09-08T18:24:00Z",
+   "host": "a09-ct04",
+   "minutes": 131,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260908T2130.json",
+   "from": "2026-09-08T21:30:00Z",
+   "host": "a09-ct04",
+   "minutes": 131,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260910T0308.json",
+   "from": "2026-09-10T03:08:00Z",
+   "host": "a09-ct04",
+   "minutes": 128,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260910T1941.json",
+   "from": "2026-09-10T19:41:00Z",
+   "host": "a09-ct04",
+   "minutes": 131,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260913T0323.json",
+   "from": "2026-09-13T03:23:00Z",
+   "host": "a09-ct04",
+   "minutes": 131,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260913T2109.json",
+   "from": "2026-09-13T21:09:00Z",
+   "host": "a09-ct04",
+   "minutes": 134,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260915T0445.json",
+   "from": "2026-09-15T04:45:00Z",
+   "host": "a09-ct04",
+   "minutes": 136,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260915T1028.json",
+   "from": "2026-09-15T10:28:00Z",
+   "host": "a09-ct04",
+   "minutes": 126,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260915T1416.json",
+   "from": "2026-09-15T14:16:00Z",
+   "host": "a09-ct04",
+   "minutes": 128,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260916T0228.json",
+   "from": "2026-09-16T02:28:00Z",
+   "host": "a09-ct04",
+   "minutes": 133,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260916T0707.json",
+   "from": "2026-09-16T07:07:00Z",
+   "host": "a09-ct04",
+   "minutes": 131,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260916T1103.json",
+   "from": "2026-09-16T11:03:00Z",
+   "host": "a09-ct04",
+   "minutes": 131,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260916T2053.json",
+   "from": "2026-09-16T20:53:00Z",
+   "host": "a09-ct04",
+   "minutes": 125,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260917T0207.json",
+   "from": "2026-09-17T02:07:00Z",
+   "host": "a09-ct04",
+   "minutes": 138,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260917T0433.json",
+   "from": "2026-09-17T04:33:00Z",
+   "host": "a09-ct04",
+   "minutes": 130,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260917T1818.json",
+   "from": "2026-09-17T18:18:00Z",
+   "host": "a09-ct04",
+   "minutes": 161,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260919T1818.json",
+   "from": "2026-09-19T18:18:00Z",
+   "host": "a09-ct04",
+   "minutes": 136,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260920T0507.json",
+   "from": "2026-09-20T05:07:00Z",
+   "host": "a09-ct04",
+   "minutes": 129,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260920T0930.json",
+   "from": "2026-09-20T09:30:00Z",
+   "host": "a09-ct04",
+   "minutes": 128,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260921T1530.json",
+   "from": "2026-09-21T15:30:00Z",
+   "host": "a09-ct04",
+   "minutes": 136,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260922T0511.json",
+   "from": "2026-09-22T05:11:00Z",
+   "host": "a09-ct04",
+   "minutes": 136,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260924T1506.json",
+   "from": "2026-09-24T15:06:00Z",
+   "host": "a09-ct04",
+   "minutes": 159,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260927T0036.json",
+   "from": "2026-09-27T00:36:00Z",
+   "host": "a09-ct04",
+   "minutes": 132,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260927T0512.json",
+   "from": "2026-09-27T05:12:00Z",
+   "host": "a09-ct04",
+   "minutes": 131,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct04_20260927T0725.json",
+   "from": "2026-09-27T07:25:00Z",
+   "host": "a09-ct04",
+   "minutes": 130,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct09_20260918T1254.json",
+   "from": "2026-09-18T12:54:00Z",
+   "host": "a09-ct09",
+   "minutes": 123,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a09-ct10_20260906T0753.json",
+   "from": "2026-09-06T07:53:00Z",
+   "host": "a09-ct10",
+   "minutes": 121,
+   "rack": "A09"
+  },
+  {
+   "file": "windows/a10-ct12_20260922T2004.json",
+   "from": "2026-09-22T20:04:00Z",
+   "host": "a10-ct12",
+   "minutes": 121,
+   "rack": "A10"
+  },
+  {
+   "file": "windows/a10-ct13_20260921T0415.json",
+   "from": "2026-09-21T04:15:00Z",
+   "host": "a10-ct13",
+   "minutes": 121,
+   "rack": "A10"
+  },
+  {
+   "file": "windows/a11-ct18_20260919T0551.json",
+   "from": "2026-09-19T05:51:00Z",
+   "host": "a11-ct18",
+   "minutes": 123,
+   "rack": "A11"
+  },
+  {
+   "file": "windows/a13-ct01_20260923T1134.json",
+   "from": "2026-09-23T11:34:00Z",
+   "host": "a13-ct01",
+   "minutes": 121,
+   "rack": "A13"
+  },
+  {
+   "file": "windows/a13-ct10_20260920T2355.json",
+   "from": "2026-09-20T23:55:00Z",
+   "host": "a13-ct10",
+   "minutes": 121,
+   "rack": "A13"
+  },
+  {
+   "file": "windows/a14-ct02_20260909T2007.json",
+   "from": "2026-09-09T20:07:00Z",
+   "host": "a14-ct02",
+   "minutes": 121,
+   "rack": "A14"
+  },
+  {
+   "file": "windows/a14-ct06_20260906T1922.json",
+   "from": "2026-09-06T19:22:00Z",
+   "host": "a14-ct06",
+   "minutes": 123,
+   "rack": "A14"
+  },
+  {
+   "file": "windows/a14-ct07_20260913T0207.json",
+   "from": "2026-09-13T02:07:00Z",
+   "host": "a14-ct07",
+   "minutes": 121,
+   "rack": "A14"
+  },
+  {
+   "file": "windows/a14-ct14_20260915T1915.json",
+   "from": "2026-09-15T19:15:00Z",
+   "host": "a14-ct14",
+   "minutes": 121,
+   "rack": "A14"
+  },
+  {
+   "file": "windows/a15-ct07_20260910T1702.json",
+   "from": "2026-09-10T17:02:00Z",
+   "host": "a15-ct07",
+   "minutes": 121,
+   "rack": "A15"
+  },
+  {
+   "file": "windows/a16-ct01_20260915T1907.json",
+   "from": "2026-09-15T19:07:00Z",
+   "host": "a16-ct01",
+   "minutes": 121,
+   "rack": "A16"
+  },
+  {
+   "file": "windows/a16-ct14_20260915T2033.json",
+   "from": "2026-09-15T20:33:00Z",
+   "host": "a16-ct14",
+   "minutes": 121,
+   "rack": "A16"
+  },
+  {
+   "file": "windows/a17-ct12_20260921T0235.json",
+   "from": "2026-09-21T02:35:00Z",
+   "host": "a17-ct12",
+   "minutes": 123,
+   "rack": "A17"
+  },
+  {
+   "file": "windows/a18-ct06_20260912T1150.json",
+   "from": "2026-09-12T11:50:00Z",
+   "host": "a18-ct06",
+   "minutes": 122,
+   "rack": "A18"
+  },
+  {
+   "file": "windows/a19-ct15_20260923T0552.json",
+   "from": "2026-09-23T05:52:00Z",
+   "host": "a19-ct15",
+   "minutes": 121,
+   "rack": "A19"
+  },
+  {
+   "file": "windows/a20-ct06_20260924T0614.json",
+   "from": "2026-09-24T06:14:00Z",
+   "host": "a20-ct06",
+   "minutes": 122,
+   "rack": "A20"
+  },
+  {
+   "file": "windows/a20-ct07_20260925T2257.json",
+   "from": "2026-09-25T22:57:00Z",
+   "host": "a20-ct07",
+   "minutes": 121,
+   "rack": "A20"
+  },
+  {
+   "file": "windows/a20-ct12_20260922T1454.json",
+   "from": "2026-09-22T14:54:00Z",
+   "host": "a20-ct12",
+   "minutes": 123,
+   "rack": "A20"
+  },
+  {
+   "file": "windows/a20-ct15_20260902T1240.json",
+   "from": "2026-09-02T12:40:00Z",
+   "host": "a20-ct15",
+   "minutes": 121,
+   "rack": "A20"
+  },
+  {
+   "file": "windows/a21-ct14_20260913T1331.json",
+   "from": "2026-09-13T13:31:00Z",
+   "host": "a21-ct14",
+   "minutes": 123,
+   "rack": "A21"
+  },
+  {
+   "file": "windows/a22-ct02_20260921T2348.json",
+   "from": "2026-09-21T23:48:00Z",
+   "host": "a22-ct02",
+   "minutes": 121,
+   "rack": "A22"
+  },
+  {
+   "file": "windows/a22-ct07_20260904T0622.json",
+   "from": "2026-09-04T06:22:00Z",
+   "host": "a22-ct07",
+   "minutes": 121,
+   "rack": "A22"
+  },
+  {
+   "file": "windows/a22-ct07_20260907T0125.json",
+   "from": "2026-09-07T01:25:00Z",
+   "host": "a22-ct07",
+   "minutes": 121,
+   "rack": "A22"
+  },
+  {
+   "file": "windows/a23-ct04_20260913T0711.json",
+   "from": "2026-09-13T07:11:00Z",
+   "host": "a23-ct04",
+   "minutes": 121,
+   "rack": "A23"
+  },
+  {
+   "file": "windows/a23-ct04_20260916T0030.json",
+   "from": "2026-09-16T00:30:00Z",
+   "host": "a23-ct04",
+   "minutes": 121,
+   "rack": "A23"
+  },
+  {
+   "file": "windows/a23-ct18_20260901T1247.json",
+   "from": "2026-09-01T12:47:00Z",
+   "host": "a23-ct18",
+   "minutes": 121,
+   "rack": "A23"
+  },
+  {
+   "file": "windows/a23-ct18_20260906T1521.json",
+   "from": "2026-09-06T15:21:00Z",
+   "host": "a23-ct18",
+   "minutes": 121,
+   "rack": "A23"
+  },
+  {
+   "file": "windows/a23-ct18_20260912T0646.json",
+   "from": "2026-09-12T06:46:00Z",
+   "host": "a23-ct18",
+   "minutes": 121,
+   "rack": "A23"
+  },
+  {
+   "file": "windows/a26-ct16_20260908T1202.json",
+   "from": "2026-09-08T12:02:00Z",
+   "host": "a26-ct16",
+   "minutes": 121,
+   "rack": "A26"
+  },
+  {
+   "file": "windows/a28-ct03_20260905T0828.json",
+   "from": "2026-09-05T08:28:00Z",
+   "host": "a28-ct03",
+   "minutes": 122,
+   "rack": "A28"
+  },
+  {
+   "file": "windows/a28-ct04_20260904T2053.json",
+   "from": "2026-09-04T20:53:00Z",
+   "host": "a28-ct04",
+   "minutes": 121,
+   "rack": "A28"
+  },
+  {
+   "file": "windows/a29-ct03_20260904T2234.json",
+   "from": "2026-09-04T22:34:00Z",
+   "host": "a29-ct03",
+   "minutes": 121,
+   "rack": "A29"
+  },
+  {
+   "file": "windows/a30-ct06_20260920T1530.json",
+   "from": "2026-09-20T15:30:00Z",
+   "host": "a30-ct06",
+   "minutes": 121,
+   "rack": "A30"
+  },
+  {
+   "file": "windows/a30-ct08_20260924T2344.json",
+   "from": "2026-09-24T23:44:00Z",
+   "host": "a30-ct08",
+   "minutes": 121,
+   "rack": "A30"
+  },
+  {
+   "file": "windows/a31-ct05_20260915T1218.json",
+   "from": "2026-09-15T12:18:00Z",
+   "host": "a31-ct05",
+   "minutes": 123,
+   "rack": "A31"
+  },
+  {
+   "file": "windows/a31-ct11_20260901T0449.json",
+   "from": "2026-09-01T04:49:00Z",
+   "host": "a31-ct11",
+   "minutes": 121,
+   "rack": "A31"
+  },
+  {
+   "file": "windows/a31-ct11_20260901T1155.json",
+   "from": "2026-09-01T11:55:00Z",
+   "host": "a31-ct11",
+   "minutes": 121,
+   "rack": "A31"
+  },
+  {
+   "file": "windows/a31-ct15_20260913T0614.json",
+   "from": "2026-09-13T06:14:00Z",
+   "host": "a31-ct15",
+   "minutes": 121,
+   "rack": "A31"
+  },
+  {
+   "file": "windows/a31-ct17_20260911T1502.json",
+   "from": "2026-09-11T15:02:00Z",
+   "host": "a31-ct17",
+   "minutes": 121,
+   "rack": "A31"
+  },
+  {
+   "file": "windows/b01-ct04_20260905T0417.json",
+   "from": "2026-09-05T04:17:00Z",
+   "host": "b01-ct04",
+   "minutes": 123,
+   "rack": "B01"
+  },
+  {
+   "file": "windows/b02-ct15_20260914T1526.json",
+   "from": "2026-09-14T15:26:00Z",
+   "host": "b02-ct15",
+   "minutes": 123,
+   "rack": "B02"
+  },
+  {
+   "file": "windows/b03-ct14_20260912T0740.json",
+   "from": "2026-09-12T07:40:00Z",
+   "host": "b03-ct14",
+   "minutes": 123,
+   "rack": "B03"
+  },
+  {
+   "file": "windows/b03-ct18_20260925T2156.json",
+   "from": "2026-09-25T21:56:00Z",
+   "host": "b03-ct18",
+   "minutes": 122,
+   "rack": "B03"
+  },
+  {
+   "file": "windows/b05-ct17_20260918T1618.json",
+   "from": "2026-09-18T16:18:00Z",
+   "host": "b05-ct17",
+   "minutes": 123,
+   "rack": "B05"
+  },
+  {
+   "file": "windows/b06-ct17_20260925T1430.json",
+   "from": "2026-09-25T14:30:00Z",
+   "host": "b06-ct17",
+   "minutes": 123,
+   "rack": "B06"
+  },
+  {
+   "file": "windows/b11-ct13_20260922T1912.json",
+   "from": "2026-09-22T19:12:00Z",
+   "host": "b11-ct13",
+   "minutes": 123,
+   "rack": "B11"
+  }
+ ]
+}

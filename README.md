@@ -38,6 +38,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
 | [GPU Health](#gpu-health) | Which GPUs are failing, or about to, and whose side is it on? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/gpu/) |
+| [Telemetry](#telemetry) | What is every GPU reading, minute by minute, and does it agree with the records? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
 | [Deployments](#deployments) | Where is the Hall B rollout, and do the partners' records of it hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
@@ -201,6 +202,18 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - The month's two CDU pump trips dipped flow inside the band and throttled no GPU, which matches the attribution report and OT-CSL-03 at 100%.
 - Scored on 60 generated months with the cases moved each time: every planted case found, 548 of 548 (early warning 360/360, remap pending at return 97/97, hot trays 60/60, CDU excursions 31/31), 0 false positives against 1,942 stable remaps, 120 error bursts, and 1,159 brief slowdowns.
 
+## Telemetry
+
+![Telemetry: tiles per hall and every rack, every hour](docs/images/telemetry.png)
+
+**What it shows.** Every GPU at the site (3,312 in 46 racks) sampled once a minute for the month, in the published format of NVIDIA's open-source DCGM exporter: temperature, memory temperature, power, energy, utilization, SM clock, memory used, tensor activity, the last XID, remapped rows, pending remaps, corrected errors, and the time spent throttled for heat or power. A heatmap of every rack by hour opens a rack's 72 GPUs at any hour, and a GPU's month by hour, with its XIDs, drains, and slowdowns marked and linked to their tickets. Around each event the page has one-minute detail for the tray's four GPUs, and shows the exporter's own text output (`/metrics`) at any of those minutes. Hall B's GB300s are capped at 1,200 W to fit the 132 kW rack envelope, so they spend much of the month held at that limit.
+
+**How it works.**
+- The data is synthetic and on its own random stream (`src/scorecard/synthetic/telemetry.py`, `config/telemetry.yaml`): field names, metric types, help text, and labels as the exporter publishes them; a workload model per rack (one job per NVLink domain, checkpoints, restarts after a GPU fault, burn-in on Hall B until each node's validated handoff); temperature following power above the CDU supply. Every number is an assumption or a cited public figure.
+- It is shaped never to contradict the records the other pages show, and `src/scorecard/telemetry.py` checks that from what the telemetry publishes: each rack's daily peak and each counter row's peak (in whole degrees, as the exporter reports), every XID at its minute, drains with nothing running, the rack A07 power loss as a gap with no samples (not zeros) matching the Landlord's record, slowdown temperatures only inside recorded episodes, remapped rows and corrected errors day by day, Hall B silent before power-on, and GPU energy below the UPS output. On the sample, 60,257 of 60,257 cases agree.
+- Storage is tiered as a real site would: rack hourly and one-minute windows around events are committed (`data/telemetry/gpu/`); the per-GPU hourly tier (about 37 MB) is built when the site is published, and its checksums are committed so the tests catch any drift.
+- Building it found one disagreement in the GPU Health data itself: a brief slowdown could read higher than its rack's recorded daily peak. The GPU Health generator now records the higher reading (18 rack-days changed by under 1 °C; no finding or headline moved).
+
 ## Deployments
 
 ![Deployments: the Hall B GB300 rollout with gate status and record checks](docs/images/deployments.png)
@@ -290,6 +303,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Change-aware alarms | 120 alarms, 11 expected, 4 flags (all MOP-310) | every case 60/60, decoys 0/60 |
 | PUE report and free-cooling lockouts | 2 of 2 | 109 of 109 (report errors 49/49, cause named 49/49; lockouts 60/60), 0 false positives |
 | GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
+| GPU telemetry agreement with the records | 60,257 of 60,257 cases | 8,520,414 of 8,520,414 cases on 60 generated months |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
@@ -301,6 +315,7 @@ python scripts/render_patterns.py --robustness 60
 python scripts/render_alarms.py --robustness 60
 python scripts/render_energy.py --robustness 60
 python scripts/render_gpu_health.py --robustness 60
+python scripts/render_telemetry.py --robustness 60
 python scripts/render_tickets.py --robustness 60
 python scripts/render_deployments.py --robustness 60
 ```

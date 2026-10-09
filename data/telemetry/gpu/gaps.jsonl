@@ -1,0 +1,28 @@
+{"from": "2026-09-04T00:37:00Z", "gpu": 1, "host": "a05-ct18", "reason": "XID 79: GPU not answering", "to": "2026-09-04T04:09:00Z"}
+{"from": "2026-09-04T23:35:00Z", "gpu": 3, "host": "a29-ct03", "reason": "XID 79: GPU not answering", "to": "2026-09-05T03:40:00Z"}
+{"from": "2026-09-06T16:22:00Z", "gpu": 0, "host": "a23-ct18", "reason": "XID 79: GPU not answering", "to": "2026-09-06T19:18:00Z"}
+{"from": "2026-09-13T03:08:00Z", "gpu": 0, "host": "a14-ct07", "reason": "XID 79: GPU not answering", "to": "2026-09-13T06:36:00Z"}
+{"from": "2026-09-13T07:15:00Z", "gpu": 3, "host": "a31-ct15", "reason": "XID 79: GPU not answering", "to": "2026-09-13T10:59:00Z"}
+{"from": "2026-09-15T12:50:00Z", "gpu": 3, "host": "a01-ct05", "reason": "XID 79: GPU not answering", "to": "2026-09-15T17:08:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct01", "reason": "rack input power lost", "to": "2026-09-15T19:15:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct02", "reason": "rack input power lost", "to": "2026-09-15T19:15:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct03", "reason": "rack input power lost", "to": "2026-09-15T19:12:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct04", "reason": "rack input power lost", "to": "2026-09-15T19:13:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct05", "reason": "rack input power lost", "to": "2026-09-15T19:16:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct06", "reason": "rack input power lost", "to": "2026-09-15T19:15:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct07", "reason": "rack input power lost", "to": "2026-09-15T19:16:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct08", "reason": "rack input power lost", "to": "2026-09-15T19:13:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct09", "reason": "rack input power lost", "to": "2026-09-15T19:16:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct10", "reason": "rack input power lost", "to": "2026-09-15T19:13:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct11", "reason": "rack input power lost", "to": "2026-09-15T19:15:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct12", "reason": "rack input power lost", "to": "2026-09-15T19:15:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct13", "reason": "rack input power lost", "to": "2026-09-15T19:16:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct14", "reason": "rack input power lost", "to": "2026-09-15T19:14:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct15", "reason": "rack input power lost", "to": "2026-09-15T19:15:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct16", "reason": "rack input power lost", "to": "2026-09-15T19:14:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct17", "reason": "rack input power lost", "to": "2026-09-15T19:16:00Z"}
+{"from": "2026-09-15T15:43:00Z", "gpu": null, "host": "a07-ct18", "reason": "rack input power lost", "to": "2026-09-15T19:14:00Z"}
+{"from": "2026-09-15T21:34:00Z", "gpu": 2, "host": "a16-ct14", "reason": "XID 79: GPU not answering", "to": "2026-09-16T00:44:00Z"}
+{"from": "2026-09-17T13:14:00Z", "gpu": 2, "host": "a03-ct02", "reason": "XID 79: GPU not answering", "to": "2026-09-17T17:17:00Z"}
+{"from": "2026-09-21T05:16:00Z", "gpu": 2, "host": "a10-ct13", "reason": "XID 79: GPU not answering", "to": "2026-09-21T09:12:00Z"}
+{"from": "2026-09-24T16:59:00Z", "gpu": 2, "host": "a01-ct10", "reason": "XID 79: GPU not answering", "to": "2026-09-24T20:40:00Z"}

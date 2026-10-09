@@ -7,6 +7,7 @@ Output (default _site/):
     app/streamlit_app.py    the app entrypoint
     app/app_bundle.zip      Python package, SLA, generator config, and datasets
     alarms/ pir/ weekly/ patterns/ energy/ gpu/ deployments/  the static pages, each with the same tab bar
+    telemetry/              GPU telemetry (scripts/render_telemetry.py) and the data it fetches (telemetry/data/)
     tickets/                the Incident Portal: both partners' tickets, changes, and work orders (scripts/render_tickets.py)
     agreements/             the Interface Agreement and both SLAs, readable (scripts/render_agreements.py)
     glossary/               every code, acronym, and record ID (scripts/render_glossary.py)
@@ -98,7 +99,7 @@ def bundle_members(root: Path) -> list[Path]:
     files += sorted((root / "sla").glob("*.yaml")) + [root / "config" / "synthetic.yaml", root / "site" / "site.yaml",
                                                    root / "site" / "details.yaml"]   # the lookup panel draws the detail sheets
     # The code lookup: the glossary and the generated contracts it points into.
-    files += [root / "config" / "glossary.yaml", root / "config" / "xid_catalog.yaml"] + sorted((root / "docs" / "sla").glob("*.md"))
+    files += [root / "config" / "glossary.yaml", root / "config" / "xid_catalog.yaml", root / "config" / "telemetry.yaml"] + sorted((root / "docs" / "sla").glob("*.md"))
     for ds in ("sample", "latest"):
         d = root / "data" / ds
         if d.exists():
@@ -142,6 +143,8 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
         (out / path).mkdir(parents=True, exist_ok=True)
         (out / path / "index.html").write_text(mod.html_page(), encoding="utf-8", newline="\n")
     # The reference tabs: the contracts, the glossary, and the device directory.
+    import render_telemetry
+    render_telemetry.write_site(out / "telemetry")      # the page plus the per-GPU hourly tier it fetches
     import render_agreements
     import render_devices
     import render_glossary
