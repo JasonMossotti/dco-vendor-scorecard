@@ -28,7 +28,13 @@ nav.tree details > summary a { display:inline; padding:0; border:0; }
 nav.tree ul.racks { display:grid; grid-template-columns:repeat(4,1fr); padding-left:14px; }
 nav.tree ul.racks a { padding:2px 6px; font-variant-numeric:tabular-nums; }
 nav.tree .sec { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:12px 12px 2px; font-weight:600; }
-nav.tree .next { color:var(--muted); font-size:13px; padding:3px 12px 6px; }
+nav.tree ul.fam { display:flex; flex-wrap:wrap; gap:4px; padding:0 12px 4px; }
+nav.tree ul.fam a, nav.tree ul.fam .planned { display:inline-block; font-size:13px; padding:2px 10px; border:1px solid var(--line); border-radius:14px; }
+nav.tree ul.fam a.on { border-color:#bfd3f2; }
+nav.tree ul.fam .planned { border-style:dashed; color:var(--muted); }
+nav.tree .planned { color:var(--muted); cursor:default; } nav.tree .planned small { font-size:11px; margin-left:4px; }
+nav.tree li > .planned { display:block; padding:3px 12px; }
+nav.tree .famsec.off { display:none; }
 main { background:var(--bg); padding:22px 28px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
 h1 { font-size:24px; margin:0 0 2px; }
 .kind { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
@@ -51,7 +57,18 @@ code { font-size:13px; background:var(--panel); padding:0 4px; border-radius:3px
 .tile a { text-decoration:none; }
 .hallname { font-size:13px; font-weight:600; color:var(--muted); margin:10px 0 2px; }
 .btns { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0; }
-.btns button, button.b { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:4px 10px; border-radius:6px; cursor:pointer; }
+.btns button, button.b, main a.b { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:4px 10px; border-radius:6px; cursor:pointer; }
+main a.b { display:inline-block; text-decoration:none; padding:2px 8px; white-space:nowrap; }
+.ctiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin:8px 0 14px; }
+main a.ctile { display:block; color:inherit; text-decoration:none; border:1px solid transparent; }
+main a.ctile:hover { border-color:var(--it); }
+.ctile .k { font-size:14px; text-transform:none; letter-spacing:0; color:var(--ink); font-weight:700; }
+.ctile .k span { font-weight:400; font-size:12px; }
+.ctile .spark { height:34px; margin:4px 0 6px; } .ctile .spark svg { display:block; }
+.kv { display:flex; justify-content:space-between; gap:8px; font-size:12px; line-height:1.45; }
+.kv span { color:var(--muted); } .kv b { font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.kv .tag { font-size:11px; padding:0 6px; margin-left:4px; }
+.ctl input[type=number] { font:inherit; font-size:13px; width:92px; padding:2px 6px; border:1px solid var(--line); border-radius:6px; }
 .btns button.on { background:#e8f0fc; color:var(--it); border-color:#bfd3f2; font-weight:600; }
 .scroll { overflow-x:auto; }
 .hm { position:relative; }
@@ -100,7 +117,7 @@ pre.scrape .c { color:#8fa3b5; }
 __SITENAV__
 <header class="top">
   <div><strong>Telemetry</strong> <span class="note" id="hdr"></span></div>
-  <span class="note">One-minute samples per GPU, in the published format of NVIDIA's open-source DCGM exporter</span>
+  <span class="note">One-minute samples: GPUs in the published format of NVIDIA's open-source DCGM exporter, CDUs in the DMTF Redfish schema for cooling units</span>
 </header>
 <div class="wrap">
   <nav class="tree" id="tree" aria-label="Telemetry views"></nav>
@@ -185,14 +202,25 @@ __SITENAV__
 
   // --------------------------------------------------------------------- tree
   function tree() {
-    let h = `<div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
+    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li>`
+      + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
+    h += `<div class="famsec" data-fam="gpu"><div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
     for (const hall of HALLS) {
       const H = B.halls[hall], rs = B.racks.filter(r => r.hall === hall);
       h += `<li><details open><summary>${link("gpus", `${H.name} · ${H.model.replace("NVIDIA ", "")}`)} <small>${esc(rs.length)} racks</small></summary><ul class="racks">`
          + rs.map(r => `<li>${link(r.rack, r.rack)}</li>`).join("") + `</ul></details></li>`;
     }
-    h += `</ul><div class="sec">Reference</div><ul><li>${link("fields", "Field reference")}</li><li>${link("agreements", "Agreement with the records")}</li></ul>`;
-    h += `<div class="next">CDUs, power, network: next</div>`;
+    h += `</ul><div class="sec">Reference</div><ul><li>${link("fields", "Field reference")}</li><li>${link("agreements", "Agreement with the records")}</li></ul></div>`;
+    h += `<div class="famsec" data-fam="cdu"><div class="sec">CDUs</div><ul><li>${link("cdus", "Overview")}</li>`;
+    for (const hall of CDU_HALLS) {
+      const H = C.halls[hall];
+      h += `<li><details open><summary>${link("cdus", H.name)} <small>${esc(H.cdus.length)} CDUs</small></summary><ul>` + H.cdus.map(id => `<li>${link(id, id)}</li>`).join("") + `</ul></details></li>`;
+    }
+    for (const hall of CDU_PLANNED_HALLS) {
+      const H = C.halls[hall];
+      h += `<li><details><summary><span class="planned">${esc(H.name)}</span> <small>not in service</small></summary><ul>` + H.cdus.map(id => `<li><span class="planned" title="${esc(H.name)} is ${esc(H.state)}: no telemetry">${esc(id)} <small>${esc(H.state)}</small></span></li>`).join("") + `</ul></details></li>`;
+    }
+    h += `</ul><div class="sec">CDU reference</div><ul><li>${link("cdu-fields", "Redfish fields")}</li><li>${link("cdu-agreements", "Agreement with the records")}</li></ul></div>`;
     document.getElementById("tree").innerHTML = h;
   }
 
@@ -215,7 +243,7 @@ __SITENAV__
     const y0 = nice(lo, hi), Y = v => T + ph - (v - y0.lo) / (y0.hi - y0.lo) * ph, X = i => L + (i + 0.5) / n * pw;
     const id = "ch" + (++chartSeq);
     let s = `<svg viewBox="0 0 ${esc(W)} ${esc(H)}" width="${esc(W)}" height="${esc(H)}" data-ch="${id}" role="img" aria-label="${esc(o.title || "")}">`;
-    for (const b of o.bands || []) s += `<rect x="${esc(X(b.a) - pw / n / 2)}" y="${esc(T)}" width="${esc(Math.max(1, (b.b - b.a) / n * pw))}" height="${esc(ph)}" fill="#e3e7ec"><title>${esc(b.label)}</title></rect>`;
+    for (const b of o.bands || []) s += `<rect x="${esc(X(b.a) - pw / n / 2)}" y="${esc(T)}" width="${esc(Math.max(1, (b.b - b.a) / n * pw))}" height="${esc(ph)}" fill="${esc(b.color || "#e3e7ec")}"><title>${esc(b.label)}</title></rect>`;
     for (let v = y0.lo; v <= y0.hi + 1e-9; v += y0.step) {
       s += `<line x1="${esc(L)}" x2="${esc(W - R)}" y1="${esc(Y(v))}" y2="${esc(Y(v))}" stroke="var(--grid)"/><text x="${esc(L - 6)}" y="${esc(Y(v) + 4)}" text-anchor="end">${num(v, y0.step < 1 ? 1 : 0)}</text>`;
     }
@@ -363,7 +391,8 @@ __SITENAV__
     rackHour = Math.max(0, Math.min(HOURS - 1, hour));
     const finds = B.findings.filter(f => f.hosts.some(h => rackOf(h) === rack));
     let h = `<div class="kind">${esc(B.halls[r.hall].name)} · ${esc(r.model)} NVL72 · cooled by ${esc(r.cdu)}</div><h1>Rack ${esc(rack)}</h1>`
-      + `<p class="sub">${esc(r.trays)} compute trays, 4 GPUs each; power limit ${num(r.power_limit_w)} W per GPU. ${r.from_hour ? `Reporting from ${esc(hourAt(r.from_hour))} (power-on).` : "Reporting all month."} <a href="../gpu/#${esc(rack)}">GPU Health ↗</a> · <a href="../devices/#${esc(rack)}">Device card ↗</a></p>`;
+      + `<p class="sub">${esc(r.trays)} compute trays, 4 GPUs each; power limit ${num(r.power_limit_w)} W per GPU. ${r.from_hour ? `Reporting from ${esc(hourAt(r.from_hour))} (power-on).` : "Reporting all month."} `
+      + `Cooled by ${CDU[r.cdu] ? link(r.cdu, r.cdu) : esc(r.cdu)} (row CDU on the shared ${esc(B.halls[r.hall].name)} header). <a href="../gpu/#${esc(rack)}">GPU Health ↗</a> · <a href="../devices/#${esc(rack)}">Device card ↗</a></p>`;
     for (const f of finds) h += `<div class="finding">${tag(f.id, "bad")} ${esc(f.title)} (${esc(f.party)}). <a href="../gpu/#${esc(rack)}">Open in GPU Health ↗</a></div>`;
     h += `<h2 class="sec">The rack's GPUs at one hour</h2><div class="ctl"><label for="hr">Hour</label><b id="hr-lab">${esc(hourAt(rackHour))}</b></div><input type="range" id="hr" min="0" max="${esc(HOURS - 1)}" value="${esc(rackHour)}" aria-label="Hour of the month">`
        + `<div class="btns" id="gg-btns">${METRICS.map(m => `<button data-m="${esc(m.k)}" class="${m.k === gridMetric ? "on" : ""}">${esc(m.label)}</button>`).join("")}</div>`
@@ -401,7 +430,7 @@ __SITENAV__
   function rackCharts(rack, rj) {
     const r = rj.racks[rack], cdu = rj.cdu[RACK[rack].cdu] || [];
     let h = chart({...HX, n: HOURS, title: "Peak GPU temperature by hour, with the CDU supply", unit: "°C", series: [{v: r.temp, color: "var(--s2)", name: "Peak GPU temperature"}, {v: cdu, color: "var(--s1)", name: RACK[rack].cdu + " supply"}], hlines: [{y: B.slowdown_c, label: `slowdown ${B.slowdown_c} °C`, color: "var(--bad)"}], lo: 0})
-      + `<div class="legend"><span><i style="background:var(--s2)"></i>Peak GPU temperature</span><span><i style="background:var(--s1)"></i>${esc(RACK[rack].cdu)} secondary supply</span><span><i class="dash"></i>hardware slowdown</span></div>`
+      + `<div class="legend"><span><i style="background:var(--s2)"></i>Peak GPU temperature</span><span><i style="background:var(--s1)"></i>${CDU[RACK[rack].cdu] ? link(RACK[rack].cdu, RACK[rack].cdu) : esc(RACK[rack].cdu)} secondary supply (hourly mean)</span><span><i class="dash"></i>hardware slowdown</span></div>`
       + chart({...HX, n: HOURS, title: "GPU energy by hour (kWh)", unit: "kWh", d: 1, series: [{v: r.kwh.map((v, i) => r.gpus[i] ? v : null), color: "var(--s1)", name: "GPU energy"}], lo: 0})
       + chart({...HX, n: HOURS, title: "Mean utilization by hour (%)", unit: "%", series: [{v: r.util, color: "var(--s3)", name: "Utilization"}], lo: 0, hi: 100});
     document.getElementById("rc").innerHTML = h;
@@ -437,7 +466,7 @@ __SITENAV__
     gpuCtx = {g, x, host, gi, win: null};
     const evs = (EV_HOST[host] || []).filter(e => e.gpu == null || e.gpu === gi);
     const finds = FIND_HOST[host] || [];
-    let h = `<div class="kind">${esc(B.halls[r.hall].name)} · ${link(rack, "rack " + rack)} · ${esc(r.model)} · cooled by ${esc(r.cdu)}</div><h1>${esc(host)} GPU ${esc(gi)}</h1>`
+    let h = `<div class="kind">${esc(B.halls[r.hall].name)} · ${link(rack, "rack " + rack)} · ${esc(r.model)} · cooled by ${CDU[r.cdu] ? link(r.cdu, r.cdu) : esc(r.cdu)}</div><h1>${esc(host)} GPU ${esc(gi)}</h1>`
       + `<p class="sub">Tray ${esc(host.slice(4))} of rack ${esc(rack)}, GPU index ${esc(gi)} of 4. Hourly rollups of the one-minute samples; the exporter's labels as published. <a href="../devices/#${esc(encodeURIComponent(host))}">Device card ↗</a></p>`;
     for (const f of finds) h += `<div class="finding">${tag(f.id, "bad")} ${esc(f.title)} (${esc(f.party)}). <a href="../gpu/#${esc(rack)}">Open in GPU Health ↗</a></div>`;
     // labels
@@ -570,6 +599,268 @@ __SITENAV__
     main.innerHTML = h;
   }
 
+  // ------------------------------------------------------------------- CDUs
+  // Page data: B.cdu (scripts/render_telemetry.py prepare_cdu). Fetched: data/cdu/<id>.json (hourly), data/cdu_minutes/<id>.json (minutes, on demand).
+  const C = B.cdu, CDU = Object.fromEntries(C.cdus.map(c => [c.id, c]));
+  const FIELD = Object.fromEntries(C.fields.map(f => [f.key, f]));
+  const CDU_HALLS = Object.keys(C.halls).filter(k => C.halls[k].in_service), CDU_PLANNED_HALLS = Object.keys(C.halls).filter(k => !C.halls[k].in_service);
+  const minIso = m => new Date(START + m * MIN).toISOString();
+  const minAt = m => at(minIso(m));
+  const ST = {};
+  C.redfish_states.forEach(s => (ST[s.cdu] = ST[s.cdu] || []).push(s));
+  Object.values(ST).forEach(l => l.sort((a, b) => a.m - b.m));
+  const HEALTH = ["OK", "Warning", "Critical"];
+  const worst = (...hs) => hs.reduce((a, b) => HEALTH.indexOf(b) > HEALTH.indexOf(a) ? b : a, "OK");
+  function stateAt(id, resource, property, m, dflt) {   // the latest recorded state change at or before minute m
+    let v = dflt;
+    for (const s of ST[id] || []) { if (s.m > m) break; if (s.resource === resource && s.property === property) v = s.value; }
+    return v;
+  }
+  const cduEvents = id => C.events.filter(e => e.cdu === id || (e.kind === "rack" && e.hall === CDU[id].hall));
+  const loadCdu = id => getJson(`data/cdu/${encodeURIComponent(id)}.json`);
+  const loadCduMin = id => getJson(`data/cdu_minutes/${encodeURIComponent(id)}.json`).then(d => {
+    if (!d.decoded) {
+      d.decoded = true; d.v = {};
+      for (const [k, arr] of Object.entries(d.fields)) {    // first value, then minute-to-minute steps, stored as integers of value x scale
+        const sc = FIELD[k] ? FIELD[k].scale : 1, out = new Array(arr.length);
+        let s = 0;
+        arr.forEach((x, i) => { s += x; out[i] = s / sc; });
+        d.v[k] = out;
+      }
+      d.run = [1, 2].map(p => { const a = d.v[`pump${p}_pct`] || [], out = new Int32Array(a.length); let c = 0; a.forEach((x, i) => { if (x > 0) c++; out[i] = c; }); return out; });
+    }
+    return d;
+  });
+  const refLinks = refs => (refs || []).map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}">${esc(r)}</a>`).join(", ");
+  const cduKind = k => tag({pm: "PM", pump: "pump failure", leak: "leak", rack: "rack power", excursion: "excursion"}[k] || k, {pm: "", pump: "bad", leak: "warn", rack: "it", excursion: "warn"}[k]);
+  const EVC = {pm: "#e3e7ec", pump: "#f8d9d5", leak: "#fbeccb", rack: "#dde8fb", excursion: "#fbeccb"};
+  const r1 = x => Math.round(x * 10) / 10;
+  function spark(v, W = 160, H = 34) {
+    const vals = v.filter(x => x != null);
+    if (!vals.length) return "";
+    const lo = Math.min(...vals), hi = Math.max(...vals), sp = hi - lo || 1, n = Math.max(2, v.length);
+    let d = "", pen = false;
+    v.forEach((x, i) => { if (x == null) { pen = false; return; } d += `${pen ? "L" : "M"}${(i / (n - 1) * W).toFixed(1)} ${(H - 2 - (x - lo) / sp * (H - 4)).toFixed(1)}`; pen = true; });
+    return `<svg viewBox="0 0 ${esc(W)} ${esc(H)}" width="${esc(W)}" height="${esc(H)}" aria-hidden="true"><path d="${esc(d)}" fill="none" stroke="var(--s1)" stroke-width="1.2"/></svg>`;
+  }
+  function cduEventsTable(evs, id) {
+    if (!evs.length) return `<p class="note">None this month.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>CDU</th><th>Event</th><th>Records</th>${id ? "<th></th>" : ""}</tr></thead><tbody>` + evs.map(e => {
+      const where = e.cdu ? link(e.cdu, e.cdu) : `${esc(C.halls[e.hall] ? C.halls[e.hall].name : e.hall)} header (${link(e.rack, "rack " + e.rack)})`;
+      const m = Math.max(0, minOf(e.t) - 10);
+      return `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${where}</td><td>${cduKind(e.kind)} ${esc(e.text)}</td><td>${refLinks(e.refs)}</td>`
+        + (id ? `<td><a class="b" href="#${esc(id)}/${esc(m)}">Minute detail</a></td>` : "") + `</tr>`;
+    }).join("") + `</tbody></table></div>`;
+  }
+  const cduAgreeTile = () => {
+    const agree = C.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = C.agreements.reduce((a, c) => a + c.checked, 0);
+    return `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#cdu-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(C.agreements.length)} checks: the CDU hourly record, the Redfish events, the PM and leak records, the GPU telemetry, and the energy meters</div></div></div>`;
+  };
+
+  function cdusOverview(seq) {
+    const U = C.unit;
+    let h = `<div class="kind">CDUs</div><h1>CDU telemetry</h1><p class="sub">${esc(C.framing)} ${esc(C.cdus.length)} ${esc(U.manufacturer)} ${esc(U.model)} units (${num(U.capacity_kw)} kW, ${num(U.flow_lpm)} L/min, ${esc(U.coolant)}), each read once a minute over Redfish with the Customer's ${esc(C.collection.account)} account, ${esc(md(C.window.start))} to ${esc(md(C.window.end))}. Hourly rollups here; minute detail at any minute of the month. All names and readings are fictional.</p>`;
+    for (const hall of CDU_HALLS) {
+      const H = C.halls[hall], headroom = H.capacity_n_kw ? 100 * (1 - H.heat_peak_kw / H.capacity_n_kw) : null;
+      h += `<div class="hallname">${esc(H.name)} · ${esc(H.cdus.length)} CDUs on one shared header · ${esc(H.state)}</div><div class="tiles">`
+        + tile("Heat removed", `${num(H.heat_avg_kw)} kW`, `hourly mean across the hall; peak hour ${num(H.heat_peak_kw)} kW`)
+        + tile("Capacity with one CDU down", `${num(H.capacity_n_kw)} kW`, `${num(H.cdus.length - 1)} of ${num(H.cdus.length)} units at ${num(U.capacity_kw)} kW each (N+1)`)
+        + tile("N+1 headroom at the peak", `${num(headroom, 1)}%`, `of the ${num(H.capacity_n_kw)} kW still free in the month's peak hour`)
+        + `</div><div class="ctiles">` + H.cdus.filter(id => CDU[id]).map(id => cduTile(CDU[id])).join("") + `</div>`;
+    }
+    for (const hall of CDU_PLANNED_HALLS) {
+      const H = C.halls[hall];
+      h += `<div class="hallname">${esc(H.name)} · ${esc(H.state)}</div><div class="tiles"><div class="tile"><div class="k">Not in service</div><div class="v" style="font-size:16px">${esc(H.cdus.join(", "))}</div><div class="s">${esc(H.cdus.length)} CDUs planned (${num(H.capacity_n_kw)} kW with one down); no telemetry until the hall is commissioned</div></div></div>`;
+    }
+    h += cduAgreeTile();
+    h += `<h2 class="sec">Events</h2><p class="note">Every CDU state change the Redfish events published, and the rack outages that moved heat off a hall header. Record ids open the Incident Portal.</p>` + cduEventsTable(C.events);
+    main.innerHTML = h;
+    Promise.all(C.cdus.map(c => loadCdu(c.id).then(j => [c.id, j]))).then(rs => {
+      if (seq !== current) return;
+      for (const [id, j] of rs) { const el = document.getElementById("sp-" + id); if (el) el.innerHTML = spark(j.series.heat_kwh); }
+    }).catch(e => { if (seq === current) main.querySelectorAll(".ctile .spark").forEach(el => { el.innerHTML = `<span class="note">${esc(e && e.message ? e.message : e)}</span>`; }); });
+  }
+  function cduTile(c) {
+    const kv = (k, v, t) => `<div class="kv"><span>${esc(k)}</span><b>${v}${t || ""}</b></div>`;
+    return `<a class="tile ctile" href="#${esc(c.id)}"><div class="k">${esc(c.id)} <span>· racks ${esc(c.racks[0])} to ${esc(c.racks[c.racks.length - 1])}</span></div><div class="spark" id="sp-${esc(c.id)}" title="Heat removed by hour"></div>`
+      + kv("Supply avg / max", `${num(c.supply_avg, 2)} / ${num(c.supply_max, 2)} °C`, c.supply_max > C.alarm_high_c ? tag("above alarm", "bad") : "")
+      + kv("Setpoint · alarm", `${num(C.setpoint_c, 1)} · ${num(C.alarm_high_c, 1)} °C`)
+      + kv("Return avg", `${num(c.return_avg, 2)} °C`)
+      + kv("Flow avg / min", `${num(c.flow_avg)} / ${num(c.flow_min)} L/min`, c.flow_min < C.band_min_lpm ? tag("below band", "warn") : "")
+      + kv("Heat avg / peak", `${num(c.heat_avg_kw)} / ${num(c.heat_peak_kw)} kW`)
+      + kv("Filter dP at month end", `${num(c.filter_dp_end, 1)} kPa`)
+      + kv("Reservoir at month end", `${num(c.reservoir_end, 1)}%`)
+      + kv("Leak detected", `${num(c.leak_min)} min`, c.leak_min > 0 ? tag("leak", "warn") : "")
+      + kv("Pump redundancy lost", `${num(c.redundancy_lost_min)} min`, c.redundancy_lost_min > 0 ? tag("pump", "bad") : "")
+      + `</a>`;
+  }
+
+  function cduHeader(c) {
+    const H = C.halls[c.hall], U = C.unit;
+    return `<div class="kind">${esc(H.name)} · ${esc(U.manufacturer)} ${esc(U.model)}</div><h1>${esc(c.id)}</h1>`
+      + `<p class="sub">Row CDU on the shared ${esc(H.name)} secondary header: ${num(U.capacity_kw)} kW, ${num(U.flow_lpm)} L/min, ${esc(U.coolant)}, ${esc(U.pumps)} pumps (one duty, one standby, rotated weekly). Redfish <code>${esc(c.uri)}</code>, read once a minute with the Customer's ${esc(C.collection.account)} account. Racks served: ${c.racks.map(r => link(r, r)).join(", ")}. <a href="../devices/#${esc(encodeURIComponent(c.id))}">Device card ↗</a></p>`;
+  }
+  const cduLegend = `<div class="legend"><span><i class="band"></i>PM (pump isolated, filter change)</span><span><i class="band" style="background:${esc(EVC.pump)}"></i>pump failure, redundancy lost</span><span><i class="band" style="background:${esc(EVC.leak)}"></i>leak detected</span><span><i class="band" style="background:${esc(EVC.rack)}"></i>rack lost power (hall header)</span><span>gap in the line: no reading (never drawn as zero)</span></div>`;
+  function cduView(id, seq) {
+    const c = CDU[id], H = C.halls[c.hall], evs = cduEvents(id);
+    let h = cduHeader(c);
+    h += `<h2 class="sec">The month, by hour</h2>` + cduLegend + `<div id="cc">Loading data/cdu/${esc(id)}.json…</div>`;
+    h += `<p class="note">Hall heat comes from the racks on the hall's shared header, so a rack outage (${esc(H.name)}) shows on every CDU in the hall; those hall-level events are listed below with this CDU's own.</p>`;
+    h += `<h2 class="sec">Events on this CDU and its hall header</h2>` + cduEventsTable(evs, id);
+    main.innerHTML = h;
+    loadCdu(id).then(j => { if (seq === current) cduCharts(c, j, evs); }).catch(e => { if (seq === current) document.getElementById("cc").innerHTML = errBox(e, `data/cdu/${id}.json`); });
+  }
+  function cduCharts(c, j, evs) {
+    const S = j.series, n = j.hours || HOURS;
+    const bands = evs.map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : n, label: `${at(e.t)}: ${e.text}`, color: EVC[e.kind]}));
+    const X = {...HX, n, bands};
+    const lg = items => `<div class="legend">${items.map(([col, name]) => `<span><i style="background:${esc(col)}"></i>${esc(name)}</span>`).join("")}</div>`;
+    let h = chart({...X, title: "Secondary supply and return (°C)", unit: "°C", d: 2, series: [{v: S.supply_max_c, color: "var(--s2)", name: "Supply, hourly max", w: 1, op: 0.8}, {v: S.supply_c, color: "var(--s1)", name: "Supply, hourly mean", w: 1.8}, {v: S.return_c, color: "var(--s3)", name: "Return, hourly mean"}], hlines: [{y: C.setpoint_c, label: `setpoint ${C.setpoint_c} °C`}, {y: C.alarm_high_c, label: `alarm high ${C.alarm_high_c} °C`, color: "var(--bad)"}]})
+      + lg([["var(--s1)", "supply, hourly mean"], ["var(--s2)", "supply, hourly max"], ["var(--s3)", "return, hourly mean"]])
+      + chart({...X, title: "Secondary flow (L/min)", unit: "L/min", series: [{v: S.flow_min_lpm, color: "var(--s2)", name: "Flow, hourly min", w: 1, op: 0.8}, {v: S.flow_lpm, color: "var(--s1)", name: "Flow, hourly mean", w: 1.8}], hlines: [{y: C.band_min_lpm, label: `band minimum ${C.band_min_lpm.toLocaleString("en-US")} L/min`, color: "var(--warn)"}]})
+      + lg([["var(--s1)", "flow, hourly mean"], ["var(--s2)", "flow, hourly min"]])
+      + chart({...X, title: "Heat removed (kW, hourly mean)", unit: "kW", series: [{v: S.heat_kwh, color: "var(--s2)", name: "Heat removed"}], lo: 0})
+      + chart({...X, title: "Pump speed (%): weekly duty rotation, PM isolations, failovers", unit: "%", d: 1, series: [{v: S.pump1_pct, color: "var(--s1)", name: "Pump 1"}, {v: S.pump2_pct, color: "var(--s4)", name: "Pump 2"}], lo: 0, hi: 100})
+      + lg([["var(--s1)", "pump 1"], ["var(--s4)", "pump 2"]])
+      + chart({...X, title: "Filter differential pressure (kPa)", unit: "kPa", d: 1, series: [{v: S.filter_dp_kpa, color: "var(--s4)", name: "Filter dP"}], lo: 0})
+      + chart({...X, title: "Reservoir level (%)", unit: "%", d: 1, series: [{v: S.reservoir_pct, color: "var(--s3)", name: "Reservoir"}]})
+      + chart({...X, title: "Primary side: facility water supply and return (°C)", unit: "°C", d: 2, series: [{v: S.pri_supply_c, color: "var(--s1)", name: "Facility supply"}, {v: S.pri_return_c, color: "var(--s2)", name: "Facility return"}]})
+      + lg([["var(--s1)", "facility water supply"], ["var(--s2)", "facility water return"]])
+      + chart({...X, title: "Primary side: control valve (%) ", unit: "%", d: 1, series: [{v: S.valve_pct, color: "var(--s4)", name: "Valve"}], lo: 0, hi: 100});
+    document.getElementById("cc").innerHTML = h;
+  }
+
+  // minute detail: #CDU-A1/<minute index from the window start>
+  let cduCtx = null, cduRes = "all";
+  const RES = ["CoolingUnit", "PrimaryCoolantConnectors/1", "SecondaryCoolantConnectors/1", "Pumps/1", "Pumps/2", "Filters/1", "Reservoirs/1", "LeakDetection/LeakDetectors/1", "LeakDetection/LeakDetectors/2", "EnvironmentMetrics", "Sensors"];
+  function cduMinuteView(id, m, seq) {
+    const c = CDU[id];
+    main.innerHTML = cduHeader(c) + `<p class="sub"><a href="#${esc(id)}">← The month by hour</a></p><div id="cm"><p class="note">Loading data/cdu_minutes/${esc(id)}.json (every minute of the month, about 2 MB)…</p></div>`;
+    loadCduMin(id).then(d => {
+      if (seq !== current) return;
+      cduCtx = {c, d, m: Math.max(0, Math.min(d.minutes - 1, m))};
+      const n = d.minutes;
+      document.getElementById("cm").innerHTML = `<h2 class="sec">Minute detail</h2><p class="note">Any minute of the month: the readings, the hour around it, and the Redfish resources a client would read at that minute. States come from the recorded Redfish events; readings from the one-minute series.</p>`
+        + `<div class="ctl"><label for="cmi">Minute</label><input type="number" id="cmi" min="0" max="${esc(n - 1)}" value="${esc(cduCtx.m)}"> <span class="muted">of ${num(n - 1)}</span> <b id="cm-lab"></b></div>`
+        + `<div class="btns" id="cm-step">${[-60, -10, -1, 1, 10, 60].map(s => `<button data-s="${esc(s)}">${esc((s > 0 ? "+" : "") + s + " min")}</button>`).join("")}</div>`
+        + `<input type="range" id="cmr" min="0" max="${esc(n - 1)}" value="${esc(cduCtx.m)}" aria-label="Minute of the month">`
+        + `<div id="cm-ch"></div><h3>Readings at this minute</h3><div id="cm-tbl"></div>`
+        + `<p><button class="b" id="ccsv">Download CSV (±60 minutes, every field)</button> <span class="note" id="ccsv-note"></span></p>`
+        + `<h2 class="sec">Redfish resources at this minute</h2><div class="btns" id="cm-res"><button data-r="all" class="${cduRes === "all" ? "on" : ""}">All</button>${RES.map(r => `<button data-r="${esc(r)}" class="${cduRes === r ? "on" : ""}">${esc(r)}</button>`).join("")}</div><pre class="scrape" id="cm-json" data-gl-skip></pre>`
+        + `<h2 class="sec">Events on this CDU and its hall header</h2>` + cduEventsTable(cduEvents(id), id);
+      cduMinuteUpdate();
+    }).catch(e => { if (seq === current) document.getElementById("cm").innerHTML = errBox(e, `data/cdu_minutes/${id}.json`); });
+  }
+  function cduSetMinute(m) {
+    const ctx = cduCtx;
+    if (!ctx) return;
+    m = Math.max(0, Math.min(ctx.d.minutes - 1, Number.isNaN(m) ? 0 : m));
+    ctx.m = m;
+    const i = document.getElementById("cmi"), r = document.getElementById("cmr");
+    if (i && document.activeElement !== i) i.value = m;
+    if (r) r.value = m;
+    history.replaceState(null, "", `#${ctx.c.id}/${m}`);
+    cduMinuteUpdate();
+  }
+  function cduMinuteUpdate() {
+    const ctx = cduCtx;
+    if (!ctx) return;
+    const {c, d, m} = ctx, n = d.minutes, a = Math.max(0, m - 60), b = Math.min(n - 1, m + 60), v = k => d.v[k] ? d.v[k][m] : null;
+    document.getElementById("cm-lab").textContent = minAt(m);
+    const sl = k => (d.v[k] || []).slice(a, b + 1);
+    const MX = {n: b - a + 1, xlab: i => minIso(a + i).slice(11, 16), xtick: 15, xminor: 5, hover: i => minAt(a + i), H: 130, marks: [{i: m - a, color: "var(--ink)", label: minAt(m)}]};
+    document.getElementById("cm-ch").innerHTML = chart({...MX, title: "Secondary supply and return, ±60 minutes (°C)", unit: "°C", d: 2, series: [{v: sl("sec_supply_c"), color: "var(--s1)", name: "Supply"}, {v: sl("sec_return_c"), color: "var(--s3)", name: "Return"}], hlines: [{y: C.setpoint_c, label: `setpoint ${C.setpoint_c} °C`}]})
+      + chart({...MX, title: "Secondary flow (L/min)", unit: "L/min", d: 1, series: [{v: sl("sec_flow_lpm"), color: "var(--s1)", name: "Flow"}], hlines: [{y: C.band_min_lpm, label: `band minimum ${C.band_min_lpm.toLocaleString("en-US")} L/min`, color: "var(--warn)"}]})
+      + chart({...MX, title: "Pump speeds (%)", unit: "%", d: 1, series: [{v: sl("pump1_pct"), color: "var(--s1)", name: "Pump 1"}, {v: sl("pump2_pct"), color: "var(--s4)", name: "Pump 2"}], lo: 0, hi: 100});
+    document.getElementById("cm-tbl").innerHTML = `<div class="scroll"><table><thead><tr><th>Resource</th><th>Property</th><th class="n">Reading</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + C.fields.map(f => { const x = v(f.key); return `<tr><td><code>${esc(f.resource)}</code></td><td><code>${esc(f.property)}</code></td><td class="n">${x == null ? "–" : num(x, f.scale >= 100 ? 2 : f.scale >= 10 ? 1 : 0)}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`; }).join("") + `</tbody></table></div>`;
+    const rs = redfishAt(c, d, m), el = document.getElementById("cm-json");
+    el.innerHTML = rs.filter(([name]) => cduRes === "all" || cduRes === name).map(([name, obj]) => `<span class="c"># GET ${esc(obj["@odata.id"])}   (${esc(name)}, ${esc(minIso(m))})</span>\n${esc(JSON.stringify(obj, null, 2))}\n`).join("\n");
+  }
+  function redfishAt(c, d, m) {
+    const u = c.uri, v = k => d.v[k] ? d.v[k][m] : null, R = k => ({Reading: v(k)}), when = START + m * MIN;
+    const st = (res, prop, dflt) => stateAt(c.id, res ? `${u}/${res}` : u, prop, m, dflt);
+    const conn = (res, name) => {
+      const o = {"@odata.id": `${u}/${res}`, "@odata.type": "#CoolantConnector.v1_1_0.CoolantConnector", Id: res.split("/")[1], Name: name, CoolantConnectorType: "Pair", Status: {State: "Enabled", Health: "OK"}};
+      for (const f of C.fields.filter(f => f.resource === res)) o[f.property] = f.key === "setpoint_c" ? {SetPoint: v(f.key), ControlMode: "Automatic"} : R(f.key);
+      return o;
+    };
+    const pumps = [1, 2].map(p => ({"@odata.id": `${u}/Pumps/${p}`, "@odata.type": "#Pump.v1_0_0.Pump", Id: String(p), Name: `Pump ${p}`, PumpType: "Liquid",
+      Status: {State: st(`Pumps/${p}`, "Status.State", "Enabled"), Health: st(`Pumps/${p}`, "Status.Health", "OK")},
+      PumpSpeedPercent: R(`pump${p}_pct`), ServiceHours: d.service_hours_start ? r1(d.service_hours_start[p - 1] + d.run[p - 1][m] / 60) : null}));
+    const dets = C.detectors.map(x => ({"@odata.id": `${u}/LeakDetection/LeakDetectors/${x.id}`, "@odata.type": "#LeakDetector.v1_0_0.LeakDetector", Id: String(x.id), Name: x.name, LeakDetectorType: x.type,
+      DetectorState: st(`LeakDetection/LeakDetectors/${x.id}`, "DetectorState", "OK"), Status: {State: "Enabled", Health: "OK"}}));
+    const redH = st("", "PumpRedundancy.Status.Health", "OK");
+    const sv = (d.filter_serviced || []).filter(t => Date.parse(t) <= when).sort().pop() || null;
+    const unit = {"@odata.id": u, "@odata.type": "#CoolingUnit.v1_6_0.CoolingUnit", Id: c.id, Name: `${c.id} row CDU`, EquipmentType: "CDU", Manufacturer: C.unit.manufacturer, Model: C.unit.model,
+      Status: {State: st("", "Status.State", "Enabled"), Health: st("", "Status.Health", "OK"), HealthRollup: worst(redH, ...dets.map(x => x.DetectorState))},
+      PumpRedundancy: [{RedundancyType: "NPlusM", MinNumNeeded: 1, MaxNumSupported: 2, RedundancyGroup: pumps.map(p => ({"@odata.id": p["@odata.id"]})), Status: {State: "Enabled", Health: redH}}],
+      CoolingCapacityWatts: C.unit.capacity_kw * 1000, Coolant: {CoolantType: "Water", AdditiveName: "Propylene glycol", AdditivePercent: 25},
+      PrimaryCoolantConnectors: {"@odata.id": `${u}/PrimaryCoolantConnectors`}, SecondaryCoolantConnectors: {"@odata.id": `${u}/SecondaryCoolantConnectors`}, Pumps: {"@odata.id": `${u}/Pumps`},
+      Filters: {"@odata.id": `${u}/Filters`}, Reservoirs: {"@odata.id": `${u}/Reservoirs`}, LeakDetection: {"@odata.id": `${u}/LeakDetection`}, EnvironmentMetrics: {"@odata.id": `${u}/EnvironmentMetrics`}};
+    const filt = {"@odata.id": `${u}/Filters/1`, "@odata.type": "#Filter.v1_0_0.Filter", Id: "1", Name: "Secondary loop filter", Status: {State: "Enabled", Health: "OK"}, Replaceable: true,
+      ServicedDate: sv, ServiceHours: sv ? r1((when - Date.parse(sv)) / HOUR) : null, RatedServiceHours: C.unit.rated_service_hours};
+    const resv = {"@odata.id": `${u}/Reservoirs/1`, "@odata.type": "#Reservoir.v1_0_0.Reservoir", Id: "1", Name: "Expansion tank", ReservoirType: "Reserve", Status: {State: "Enabled", Health: "OK"}, FluidLevelPercent: R("reservoir_pct")};
+    const env = {"@odata.id": `${u}/EnvironmentMetrics`, "@odata.type": "#EnvironmentMetrics.v1_3_0.EnvironmentMetrics", Id: "EnvironmentMetrics", Name: "CDU environment metrics"};
+    for (const f of C.fields.filter(f => f.resource === "EnvironmentMetrics")) env[f.property] = R(f.key);
+    const sensors = {"@odata.id": `${u}/Sensors`, "@odata.type": "#SensorCollection.SensorCollection", Name: "Sensors",
+      Members: C.fields.filter(f => f.resource.startsWith("Sensors/")).map(f => ({"@odata.id": `${u}/${f.resource}`, Reading: v(f.key), ReadingUnits: f.unit}))};
+    return [["CoolingUnit", unit], ["PrimaryCoolantConnectors/1", conn("PrimaryCoolantConnectors/1", "Facility water (primary)")], ["SecondaryCoolantConnectors/1", conn("SecondaryCoolantConnectors/1", "Rack loop (secondary)")],
+      ["Pumps/1", pumps[0]], ["Pumps/2", pumps[1]], ["Filters/1", filt], ["Reservoirs/1", resv], ["LeakDetection/LeakDetectors/1", dets[0]], ["LeakDetection/LeakDetectors/2", dets[1]], ["EnvironmentMetrics", env], ["Sensors", sensors]];
+  }
+  function cduCsv() {
+    const ctx = cduCtx, note = document.getElementById("ccsv-note");
+    if (!ctx) return;
+    const {c, d, m} = ctx, a = Math.max(0, m - 60), b = Math.min(d.minutes - 1, m + 60), keys = C.fields.map(f => f.key).filter(k => d.v[k]);
+    const rows = [["minute_utc", ...keys]];
+    for (let i = a; i <= b; i++) rows.push([minIso(i), ...keys.map(k => d.v[k][i] == null ? "" : d.v[k][i])]);
+    const csv = rows.map(r => r.join(",")).join("\n") + "\n";
+    if (typeof Blob === "undefined" || typeof URL === "undefined" || !URL.createObjectURL) { note.textContent = `${rows.length - 1} rows ready; this browser cannot save files.`; return; }
+    const el = document.createElement("a");
+    el.href = URL.createObjectURL(new Blob([csv], {type: "text/csv"}));
+    el.download = `${c.id}_minutes_${a}-${b}.csv`;
+    document.body.appendChild(el); el.click(); el.remove();
+    setTimeout(() => URL.revokeObjectURL(el.href), 1000);
+    note.textContent = `${rows.length - 1} rows.`;
+  }
+  main.addEventListener("input", e => { if (e.target.id === "cmr") cduSetMinute(+e.target.value); });
+  main.addEventListener("change", e => { if (e.target.id === "cmi") cduSetMinute(parseInt(e.target.value, 10)); });
+  main.addEventListener("click", e => {
+    const s = e.target.closest("#cm-step button");
+    if (s && cduCtx) cduSetMinute(cduCtx.m + (+s.dataset.s));
+    const r = e.target.closest("#cm-res button");
+    if (r) { cduRes = r.dataset.r; main.querySelectorAll("#cm-res button").forEach(x => x.classList.toggle("on", x === r)); cduMinuteUpdate(); }
+    if (e.target.closest("#ccsv")) cduCsv();
+  });
+
+  function cduFields() {
+    const K = C.collection, U = C.unit;
+    let h = `<div class="kind">CDU reference</div><h1>Redfish fields</h1><p class="sub">${esc(C.framing)} The resource and property names are DMTF's published ones (CoolingUnit, CoolantConnector, Pump, Filter, Reservoir, LeakDetector, EnvironmentMetrics); the values are this site's synthetic series. No vendor's internal tooling is implied.</p>`;
+    h += `<div class="cards"><div class="tile"><div class="k">Collection</div><div class="v" style="font-size:14px;overflow-wrap:anywhere"><code>${esc(K.base_uri)}/&lt;id&gt;</code></div><div class="s">the DMTF path for CDUs; one member per unit</div></div>`
+       + `<div class="tile"><div class="k">Poll interval</div><div class="v">${num(K.poll_interval_s)} s</div><div class="s">the site's collector reads each CDU once a minute; the series here are those reads</div></div>`
+       + `<div class="tile"><div class="k">Account</div><div class="v" style="font-size:18px">${esc(K.account)}</div><div class="s">the Customer's Redfish account on the Landlord's CDUs</div></div>`
+       + `<div class="tile"><div class="k">Unit</div><div class="v" style="font-size:18px">${esc(U.manufacturer)} ${esc(U.model)}</div><div class="s">${num(U.capacity_kw)} kW, ${num(U.flow_lpm)} L/min, ${esc(U.coolant)}, ${esc(U.pumps)} pumps; filter rated ${num(U.rated_service_hours)} h</div></div></div>`;
+    h += `<h2 class="sec">Fields</h2><div class="scroll"><table><thead><tr><th>Resource</th><th>Property</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+       + C.fields.map(f => `<tr><td><code>${esc(f.resource)}</code></td><td><code>${esc(f.property)}</code></td><td>${esc(f.unit)}</td><td>${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Illustrative BMS points</h2><p class="note">The same readings as a building management system would take them: one BACnet analog input and one pair of Modbus input registers (a 32-bit float in two registers) per point, in the usual points-list style. No CDU maker publishes its Modbus register map or BACnet point list (they ship with the unit or under NDA), so these object and register numbers are illustrative and are not CoolIT's or any vendor's map.</p>`
+       + `<div class="scroll"><table data-gl-skip><thead><tr><th>Point</th><th>BACnet object</th><th>Modbus input registers</th><th>Unit</th></tr></thead><tbody>`
+       + C.fields.map(f => `<tr><td><code>${esc(f.resource)}.${esc(f.property)}</code></td><td>${esc(f.bacnet)}</td><td>${num(f.modbus)}–${num(f.modbus + 1)} <span class="note">(float32)</span></td><td>${esc(f.unit)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">States</h2><p class="note">Published as Redfish events when they change, and readable at every minute in the resource views. The defaults are Enabled and OK.</p><div class="scroll"><table><thead><tr><th>Resource</th><th>Property</th><th>Values</th></tr></thead><tbody>`
+       + C.states.map(s => `<tr><td><code>${esc(s.resource || "(the CoolingUnit)")}</code></td><td><code>${esc(s.property)}</code></td><td>${s.values.map(x => `<code>${esc(x)}</code>`).join(" ")}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Leak detectors</h2><div class="scroll"><table><thead><tr><th>Id</th><th>Name</th><th>Type</th></tr></thead><tbody>`
+       + C.detectors.map(x => `<tr><td><code>LeakDetection/LeakDetectors/${esc(x.id)}</code></td><td>${esc(x.name)}</td><td>${esc(x.type)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + C.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function cduAgreements() {
+    const agree = C.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = C.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = `<div class="kind">CDU reference</div><h1>Agreement with the records</h1><p class="sub">The CDU telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the CDU hourly record, the Redfish events, the PM and leak records, the GPU telemetry, and the energy meters. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + C.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (C.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + C.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/cdu_telemetry.md.</p>`;
+    main.innerHTML = h;
+  }
+
   // ----------------------------------------------------------------- router
   let current = 0;
   function route() {
@@ -580,22 +871,31 @@ __SITENAV__
     if ((m = /^([ab]\d\d)$/i.exec(a)) && RACK[a.toUpperCase()]) return {view: "rack", rack: a.toUpperCase(), hour: b == null ? null : parseInt(b, 10), key: a.toUpperCase()};
     if ((m = /^([ab]\d\d-ct\d\d)$/i.exec(a)) && b != null && /^[0-3]$/.test(b) && RACK[rackOf(a)]) return {view: "gpu", host: a.toLowerCase(), gpu: +b, key: rackOf(a)};
     if (a === "fields" || a === "agreements") return {view: a, key: a};
+    if (/^cdu-[a-c]\d$/i.test(a) && CDU[a.toUpperCase()]) { const mi = b == null ? null : parseInt(b, 10); return {view: "cdu", cdu: a.toUpperCase(), minute: mi == null || Number.isNaN(mi) ? null : mi, key: a.toUpperCase(), fam: "cdu"}; }
+    if (a === "cdu-fields" || a === "cdu-agreements") return {view: a, key: a, fam: "cdu"};
+    if (a === "cdus" || /^cdu/i.test(a)) return {view: "cdus", key: "cdus", fam: "cdu"};
     return {view: "gpus", key: "gpus"};
   }
   function show() {
-    const seq = ++current, r = route();
-    CH.clear(); gpuCtx = null;
+    const seq = ++current, r = route(), fam = r.fam || "gpu";
+    CH.clear(); gpuCtx = null; cduCtx = null;
     if (r.view === "rack") rackView(r.rack, r.hour, seq);
     else if (r.view === "gpu") gpuView(r.host, r.gpu, seq);
     else if (r.view === "fields") fields();
     else if (r.view === "agreements") agreements();
+    else if (r.view === "cdus") cdusOverview(seq);
+    else if (r.view === "cdu") r.minute == null ? cduView(r.cdu, seq) : cduMinuteView(r.cdu, r.minute, seq);
+    else if (r.view === "cdu-fields") cduFields();
+    else if (r.view === "cdu-agreements") cduAgreements();
     else overview(seq);
     document.querySelectorAll("#tree a").forEach(a => {
       const on = a.getAttribute("href") === "#" + r.key;
       a.classList.toggle("on", on);
       if (on) { let d = a.closest("details"); while (d) { d.open = true; d = d.parentElement.closest("details"); } }
     });
-    if (r.view !== "rack" || r.hour == null) main.scrollIntoView && window.scrollY > 200 && window.scrollTo(0, 0);
+    document.querySelectorAll("#tree a[data-fam]").forEach(a => a.classList.toggle("on", a.dataset.fam === fam));
+    document.querySelectorAll("#tree .famsec").forEach(s => s.classList.toggle("off", s.dataset.fam !== fam));
+    if ((r.view !== "rack" || r.hour == null) && (r.view !== "cdu" || r.minute == null)) main.scrollIntoView && window.scrollY > 200 && window.scrollTo(0, 0);
   }
   tree();
   window.addEventListener("hashchange", show);
