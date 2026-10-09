@@ -6,7 +6,7 @@
 
 # Glossary: Site AUS-1
 
-Every acronym, contract code, and record ID the site's pages and documents use: 540 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
+Every acronym, contract code, and record ID the site's pages and documents use: 541 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
 
 ## Acronyms
 
@@ -20,7 +20,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | ASSP | **American Society of Safety Professionals.** Publisher of the ANSI/ASSP Z10.0 safety management standard. | - | IT Partner SLA, Landlord SLA |
 | BER | **Bit error rate.** The share of bits received in error on a link; pre-FEC BER drift can warn of a failing optic. | - | IT Partner SLA |
 | BMC | **Baseboard management controller.** A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
-| BMS | **Building management system.** The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
+| BMS | **Building management system.** The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Telemetry, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | CAB | **Change advisory board.** The Customer's board that reviews and approves the IT Partner's change records before work starts. | - | Alarm Board, Incident Portal, Post-Incident Review |
 | CAP | **Corrective action plan.** A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure. | - | IT Partner SLA, Landlord SLA, Scorecards |
 | CCTV | **Closed-circuit television.** Security cameras. | - | Deployments, Site model document |
@@ -73,6 +73,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | MVA | **Megavolt-ampere.** A unit of apparent power, used to rate transformers. | - | Site model document |
 | MW | **Megawatt.** One million watts. | - | IT Partner SLA, Landlord SLA, Alarm Board, Deployments, Site model document, Incident Portal, Post-Incident Review |
 | NCCL | **Collective communications library.** The GPU vendor's library for multi-GPU communication; an NCCL all-reduce test checks a rack's bandwidth. | - | IT Partner SLA, Deployments |
+| NDA | **Non-disclosure agreement.** A confidentiality contract; vendors share some technical documents, such as BMS point maps, only under one. | - | Telemetry |
 | NDR | **Next data rate (InfiniBand, 400 Gb/s).** An InfiniBand speed generation. | - | Site model document |
 | NETA | **InterNational Electrical Testing Association.** Publishes the acceptance testing specifications (ANSI/NETA ATS) that third-party testers follow for breakers, busway, and tap-offs before energization. | - | Deployments |
 | NFPA | **National Fire Protection Association.** Publisher of the fire and electrical safety codes the SLAs cite, such as NFPA 70E. | - | IT Partner SLA, Landlord SLA, Scorecards, Deployments, Incident Portal, Post-Incident Review, Weekly Review |
@@ -627,4 +628,4 @@ Every code NVIDIA's public [Xid catalog](https://docs.nvidia.com/deploy/xid-erro
 
 ## Left plain on purpose
 
-Capitalised text that is not a code (banners, emphasis) and rack positions such as A07, which the site drawings explain: A-07, A-14, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32, A4, B-03, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15, B16, B17, B18, B19, B20, B21, B22, B23, B24, B25, B26, B27, B28, B29, B30, B31, B32, B4, BAS-PTS007C, BAS-PTS007C-EN_06302026, BY, DO, E1, EAB, EDIT, FAQ, FILE, GB, GENERATED, HAND, HELP, ILLUSTRATIVE, LIVE, MOCK, NETIR, NOT, NVLINK, OK, ONLY, RLW, TB, TYPE.
+Capitalised text that is not a code (banners, emphasis) and rack positions such as A07, which the site drawings explain: A-07, A-14, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32, A4, B-03, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15, B16, B17, B18, B19, B20, B21, B22, B23, B24, B25, B26, B27, B28, B29, B30, B31, B32, B4, BAS-PTS007C, BAS-PTS007C-EN_06302026, BY, DO, E1, EAB, EDIT, FAQ, FILE, GB, GENERATED, GET, HAND, HELP, ILLUSTRATIVE, LIVE, MB, MOCK, NETIR, NOT, NVLINK, OK, ONLY, RLW, TB, TYPE.

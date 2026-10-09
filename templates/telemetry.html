@@ -632,7 +632,7 @@ __SITENAV__
     return d;
   });
   const refLinks = refs => (refs || []).map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}">${esc(r)}</a>`).join(", ");
-  const cduKind = k => tag({pm: "PM", pump: "pump failure", leak: "leak", rack: "rack power", excursion: "excursion"}[k] || k, {pm: "", pump: "bad", leak: "warn", rack: "it", excursion: "warn"}[k]);
+  const cduKind = k => tag({pm: "maintenance", pump: "pump failure", leak: "leak", rack: "rack power", excursion: "excursion"}[k] || k, {pm: "", pump: "bad", leak: "warn", rack: "it", excursion: "warn"}[k]);
   const EVC = {pm: "#e3e7ec", pump: "#f8d9d5", leak: "#fbeccb", rack: "#dde8fb", excursion: "#fbeccb"};
   const r1 = x => Math.round(x * 10) / 10;
   function spark(v, W = 160, H = 34) {
@@ -654,7 +654,7 @@ __SITENAV__
   }
   const cduAgreeTile = () => {
     const agree = C.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = C.agreements.reduce((a, c) => a + c.checked, 0);
-    return `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#cdu-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(C.agreements.length)} checks: the CDU hourly record, the Redfish events, the PM and leak records, the GPU telemetry, and the energy meters</div></div></div>`;
+    return `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#cdu-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(C.agreements.length)} checks: the CDU hourly record, the Redfish events, the maintenance and leak records, the GPU telemetry, and the energy meters</div></div></div>`;
   };
 
   function cdusOverview(seq) {
@@ -700,7 +700,7 @@ __SITENAV__
     return `<div class="kind">${esc(H.name)} · ${esc(U.manufacturer)} ${esc(U.model)}</div><h1>${esc(c.id)}</h1>`
       + `<p class="sub">Row CDU on the shared ${esc(H.name)} secondary header: ${num(U.capacity_kw)} kW, ${num(U.flow_lpm)} L/min, ${esc(U.coolant)}, ${esc(U.pumps)} pumps (one duty, one standby, rotated weekly). Redfish <code>${esc(c.uri)}</code>, read once a minute with the Customer's ${esc(C.collection.account)} account. Racks served: ${c.racks.map(r => link(r, r)).join(", ")}. <a href="../devices/#${esc(encodeURIComponent(c.id))}">Device card ↗</a></p>`;
   }
-  const cduLegend = `<div class="legend"><span><i class="band"></i>PM (pump isolated, filter change)</span><span><i class="band" style="background:${esc(EVC.pump)}"></i>pump failure, redundancy lost</span><span><i class="band" style="background:${esc(EVC.leak)}"></i>leak detected</span><span><i class="band" style="background:${esc(EVC.rack)}"></i>rack lost power (hall header)</span><span>gap in the line: no reading (never drawn as zero)</span></div>`;
+  const cduLegend = `<div class="legend"><span><i class="band"></i>Maintenance (pump isolated, filter change)</span><span><i class="band" style="background:${esc(EVC.pump)}"></i>pump failure, redundancy lost</span><span><i class="band" style="background:${esc(EVC.leak)}"></i>leak detected</span><span><i class="band" style="background:${esc(EVC.rack)}"></i>rack lost power (hall header)</span><span>gap in the line: no reading (never drawn as zero)</span></div>`;
   function cduView(id, seq) {
     const c = CDU[id], H = C.halls[c.hall], evs = cduEvents(id);
     let h = cduHeader(c);
@@ -720,7 +720,7 @@ __SITENAV__
       + chart({...X, title: "Secondary flow (L/min)", unit: "L/min", series: [{v: S.flow_min_lpm, color: "var(--s2)", name: "Flow, hourly min", w: 1, op: 0.8}, {v: S.flow_lpm, color: "var(--s1)", name: "Flow, hourly mean", w: 1.8}], hlines: [{y: C.band_min_lpm, label: `band minimum ${C.band_min_lpm.toLocaleString("en-US")} L/min`, color: "var(--warn)"}]})
       + lg([["var(--s1)", "flow, hourly mean"], ["var(--s2)", "flow, hourly min"]])
       + chart({...X, title: "Heat removed (kW, hourly mean)", unit: "kW", series: [{v: S.heat_kwh, color: "var(--s2)", name: "Heat removed"}], lo: 0})
-      + chart({...X, title: "Pump speed (%): weekly duty rotation, PM isolations, failovers", unit: "%", d: 1, series: [{v: S.pump1_pct, color: "var(--s1)", name: "Pump 1"}, {v: S.pump2_pct, color: "var(--s4)", name: "Pump 2"}], lo: 0, hi: 100})
+      + chart({...X, title: "Pump speed (%): weekly duty rotation, maintenance isolations, failovers", unit: "%", d: 1, series: [{v: S.pump1_pct, color: "var(--s1)", name: "Pump 1"}, {v: S.pump2_pct, color: "var(--s4)", name: "Pump 2"}], lo: 0, hi: 100})
       + lg([["var(--s1)", "pump 1"], ["var(--s4)", "pump 2"]])
       + chart({...X, title: "Filter differential pressure (kPa)", unit: "kPa", d: 1, series: [{v: S.filter_dp_kpa, color: "var(--s4)", name: "Filter dP"}], lo: 0})
       + chart({...X, title: "Reservoir level (%)", unit: "%", d: 1, series: [{v: S.reservoir_pct, color: "var(--s3)", name: "Reservoir"}]})
@@ -854,7 +854,7 @@ __SITENAV__
   }
   function cduAgreements() {
     const agree = C.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = C.agreements.reduce((a, c) => a + c.checked, 0);
-    let h = `<div class="kind">CDU reference</div><h1>Agreement with the records</h1><p class="sub">The CDU telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the CDU hourly record, the Redfish events, the PM and leak records, the GPU telemetry, and the energy meters. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    let h = `<div class="kind">CDU reference</div><h1>Agreement with the records</h1><p class="sub">The CDU telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the CDU hourly record, the Redfish events, the maintenance and leak records, the GPU telemetry, and the energy meters. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
     h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + C.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
     if (C.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + C.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
     h += `<p class="note">The same checks run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/cdu_telemetry.md.</p>`;

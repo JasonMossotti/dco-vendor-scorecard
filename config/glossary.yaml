@@ -168,6 +168,7 @@ terms:
   - {term: OCP, type: acronym, expansion: Open Compute Project, text: "An industry group that publishes open hardware specifications, including Redfish profiles for cooling units."}
   - {term: OAI, type: acronym, expansion: OCP Accelerator Infrastructure, text: "The OCP project behind the Redfish profiles for accelerator and liquid-cooling equipment."}
   - {term: TTDM, type: acronym, expansion: TraceTek leak detection module, text: "The module that monitors the sensing cable under each CDU and reports a leak to the BMS."}
+  - {term: NDA, type: acronym, expansion: Non-disclosure agreement, text: "A confidentiality contract; vendors share some technical documents, such as BMS point maps, only under one."}
   - {term: UFM, type: acronym, expansion: Unified Fabric Manager, text: "Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM."}
   - {term: IB, type: acronym, expansion: InfiniBand, text: "The back-end network between compute trays and the leaf switches. The scheduler writes a lost link as 'IB link down'."}
   - {term: HCA, type: acronym, expansion: Host channel adapter, text: "The InfiniBand network card in a compute tray."}
@@ -378,7 +379,8 @@ plain:   # capitalised text that is not a code
     - {terms: [ONLY, OK, LIVE], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
     - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
-    - {terms: [GB, TB], why: "Units of memory: gigabytes and terabytes."}
+    - {terms: [MB, GB, TB], why: "Units of memory and file size: megabytes, gigabytes, and terabytes."}
+    - {terms: [GET], why: "The HTTP method a Redfish client uses to read a resource."}
     - {terms: [HELP, TYPE], why: "Keywords of the Prometheus text format: each field's description and its metric type (gauge or counter)."}
     - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}
   patterns:
