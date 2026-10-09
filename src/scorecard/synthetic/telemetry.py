@@ -564,6 +564,7 @@ class Published:
         self.windows: dict[str, dict] = {}
         self.gpu_hourly: dict[str, dict] = {}
         self.conflicts: list[str] = []
+        self.rack_load: dict[str, dict] = {}         # per rack per minute: GPU watts and GPUs reporting (the CDU layer's heat)
 
     def run(self, racks: list[str] | None = None) -> "Published":
         for r in racks or self.tel.racks:
@@ -601,6 +602,8 @@ class Published:
                 hh[a // 60: (b + 59) // 60] = True
             drained_h += hh
         rack = x["rack"]
+        self.rack_load[rack] = {"hall": x["hall"], "cdu": x["cdu"], "product": x["product"],
+                                "gpu_w": np.where(av, x["power"], 0).astype(np.float64).sum(axis=0), "n": av.sum(axis=0)}
         for h in range(H):
             ok = n[:, h] > 0
             samples = int(n[:, h].sum())
