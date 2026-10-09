@@ -277,7 +277,7 @@ class GpuTelemetry:
 
         # ---- power, clocks, violations
         idle, limit = P["idle_w"], P["power_limit_w"]
-        want = np.where(loaded, idle + (demand - idle) * (util / 100.0) ** 1.15, idle) * (1 + nrng.normal(0, 0.012, (G, M)))
+        want = np.where(loaded, idle + (demand - idle) * _curve(util), idle) * (1 + nrng.normal(0, 0.012, (G, M)))
         power = np.minimum(want, limit).astype(np.float32)
         pviol = (want > limit) & loaded
         smax = P["sm_clock_max_mhz"]
@@ -512,6 +512,18 @@ class GpuTelemetry:
 
 
 # ===================================================================== publishing
+# Power follows utilization on a slight curve. numpy's power and exp take CPU-specific vector paths whose last bits
+# differ between machines, which would change the published data from one computer to the next; a table built with
+# the math module and read with np.interp gives the same numbers everywhere.
+_CURVE_X = np.linspace(0.0, 1.0, 20001)
+_CURVE_Y = np.array([round(math.pow(x, 1.15), 12) for x in _CURVE_X])
+
+
+def _curve(util: np.ndarray) -> np.ndarray:
+    """(util / 100) ** 1.15, identical on every CPU."""
+    return np.interp(np.asarray(util, dtype=float) / 100.0, _CURVE_X, _CURVE_Y)
+
+
 def _rle(a: np.ndarray) -> list[list]:
     """Run-length pairs [value, count]; NaN becomes null, whole numbers become integers."""
     out: list[list] = []
