@@ -99,9 +99,9 @@ optics:
   module_c_at_load: 6.0             # rise at full traffic (basis: assumption)
   volt_mv: [3260, 3320]
   # A failing optic's signature, as the records name the end that was replaced:
-  #   host end: its laser sags, so the switch reads low receive power on one lane;
+  #   host end: its laser sags, so the switch reads low receive power on one lane (to this level);
   #   switch end: its receiver degrades, so the switch reads low SNR at normal power, and the module runs warm.
-  fault_tx_sag_db: [6.0, 9.0]
+  fault_rx_dbm: [-9.0, -7.0]
   fault_snr_db: [10.5, 13.0]
   fault_warm_c: [4.0, 9.0]
   onset_before_errors_min: [60, 180]   # the optic drifts before the first errors are counted (basis: assumption)

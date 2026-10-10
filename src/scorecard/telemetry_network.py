@@ -172,18 +172,29 @@ def agreements(t: NetData, cfg: dict[str, Any], directory: dict[str, Any] | None
     # ---- 1. symbol errors
     c = Check("symbol_errors", "Every symbol-error count the fabric manager reported equals the port counter's rise over that report")
     for lid, evs in sorted(ev_by.items()):
+        # each report against the counter's rise since the previous one; reports within one minute share that
+        # minute's sample, so they are checked together; reports before the window have no counter to read
+        groups: list[list] = []
         prev = None
-        total = 0
         for e in evs:
             if e["event"] not in ("symbol_errors", "symbol_error_threshold"):
                 continue
             tt = parse(e["timestamp"])
             a = max(tt - timedelta(minutes=rmin), prev) if prev else tt - timedelta(minutes=rmin)
-            hi, lo = t.minute(lid, "sym", t.last_m(tt)), t.minute(lid, "sym", t.last_m(a))
-            got = None if hi is None or lo is None else hi - lo
-            c(got == int(e["count"]), f"{lid} report at {e['timestamp']}: fabric manager {e['count']}, counter rose {got}")
-            total += int(e["count"])
             prev = tt
+            if t.last_m(tt) < 0:
+                continue
+            if groups and t.last_m(groups[-1][1]) == t.last_m(tt):
+                groups[-1][1:] = [tt, groups[-1][2] + int(e["count"]), groups[-1][3] + [e["timestamp"]]]
+            else:
+                groups.append([a, tt, int(e["count"]), [e["timestamp"]]])
+        total = 0
+        for a, tt, n, stamps in groups:
+            hi = t.minute(lid, "sym", t.last_m(tt))
+            lo = 0 if t.last_m(a) < 0 else t.minute(lid, "sym", t.last_m(a))
+            got = None if hi is None or lo is None else hi - lo
+            c(got == n, f"{lid} report at {', '.join(stamps)}: fabric manager {n}, counter rose {got}")
+            total += n
         if lid in ports:
             pub = int(unpack(t.port(lid)["sym"]).sum())
             c(pub == total, f"{lid}: {pub} symbol errors in the month, reports total {total}")

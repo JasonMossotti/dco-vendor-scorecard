@@ -175,9 +175,14 @@ class NetworkTelemetry:
             if prev is not None and prev > a:
                 a = prev
             m0, m1 = self.last_m(a) + 1, self.last_m(t)      # minutes with a < t_m <= t
-            if m1 < m0 or m1 < 0:
-                self.conflicts.append(f"{x['switch']} port {x['port']}: symbol report at {e['timestamp']} has no minute to count in")
-                continue
+            if m1 < 0:
+                prev = t
+                continue                                    # reported before the telemetry window
+            if m1 < m0:
+                if prev is None or self.last_m(prev) != m1:
+                    self.conflicts.append(f"{x['switch']} port {x['port']}: symbol report at {e['timestamp']} has no minute to count in")
+                    continue
+                m0 = m1                                     # a second report in the same minute: that minute's sample counts both
             m0 = max(m0, 0)
             n = m1 - m0 + 1
             w = np.linspace(0.5, 1.5, n) * rng.uniform(0.6, 1.4, n)
@@ -269,7 +274,7 @@ class NetworkTelemetry:
                 k = np.arange(b - lo)
                 ramp[lo:b] = np.minimum(1.0, (k + 1) / max(1, a - lo + 30)) * (0.85 + 0.15 * rng.random(b - lo))
             if ep["kind"] == "host":
-                rx = rx - ramp * rng.uniform(*oc["fault_tx_sag_db"])
+                rx = rx - ramp * (rx - rng.uniform(*oc["fault_rx_dbm"]))
             else:
                 snr = snr - ramp * (snr - rng.uniform(*oc["fault_snr_db"]))
                 mod = mod + ramp * rng.uniform(*oc["fault_warm_c"])
@@ -412,6 +417,8 @@ class NetworkTelemetry:
         spans += [(max(0, p["from_m"] - 1), min(M, p["to_m"] + 2)) for p in x["reports"]]
         merged: list[list[int]] = []
         for a, b in sorted(spans):
+            if b <= a:
+                continue                                    # a record before the window: no minute to show
             if merged and a <= merged[-1][1]:
                 merged[-1][1] = max(merged[-1][1], b)
             else:

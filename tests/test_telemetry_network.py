@@ -109,6 +109,18 @@ def test_rack_power_loss_is_one_event_not_72_faults(data):
     assert not any("a07-ct" in json.dumps(f["evidence"]) and "ufm" in json.dumps(f["evidence"]) for f in findings)
 
 
+def test_a_flap_after_the_trays_power_on_is_a_fault_of_its_own():
+    """The drop at the power loss and the link's return are folded; a later drop before the scheduler returns the
+    tray to service (a loose connector found during the restart) is not."""
+    sched = [{"node": "a27-ct15", "state": "down", "reason": "NotResponding (rack input power lost)", "timestamp": "2025-08-02T16:42:45Z"},
+             {"node": "a27-ct15", "state": "idle", "reason": "returned to service", "timestamp": "2025-08-02T21:22:16Z"}]
+    base = {"switch": "leaf-a14-r1", "port": 15, "peer_host": "a27-ct15", "peer_hca": "mlx5_1", "count": 1}
+    ufm = [{**base, "event": "link_down", "timestamp": "2025-08-02T16:42:23Z"}, {**base, "event": "link_up", "timestamp": "2025-08-02T20:42:05Z"},
+           {**base, "event": "link_down", "timestamp": "2025-08-02T20:49:20Z"}, {**base, "event": "link_up", "timestamp": "2025-08-02T20:51:09Z"}]
+    lost = fabric.power_loss_links(ufm, sched)
+    assert [fabric.peer_power_lost(e, lost) for e in ufm] == [True, True, False, False]
+
+
 def test_hall_b_links_come_up_as_each_rack_is_cabled(page):
     cabled = [e for e in page["events"] if e["kind"] == "cabled"]
     assert len(cabled) == page["halls"]["HALL-B"]["racks"] == 14 and all(e["links"] == 72 and e["deploy"] for e in cabled)
