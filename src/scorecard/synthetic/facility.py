@@ -327,11 +327,13 @@ class FacilityGenerator:
 
     # ------------------------------------------------------------------ utility outage
     def utility_outage(self) -> None:
+        self.outage_windows: list[tuple[datetime, datetime]] = []
         for _ in range(self.cfg["utility_outages"]):
             t0 = self._rand_t(48, 72, local_hours=(13, 18))
             dur = self.rng.uniform(35, 60)
             load_mw = self.rng.uniform(*self.cfg["site_load_mw"])
             back = t0 + mins(dur)
+            self.outage_windows.append((t0, back + mins(5)))
             self.out["epms"] += [
                 {"timestamp": iso(t0), "device": "MV-A main breaker", "event": "Trip (utility undervoltage)"},
                 {"timestamp": iso(t0), "device": "MV-B main breaker", "event": "Trip (utility undervoltage)"},
@@ -398,6 +400,9 @@ class FacilityGenerator:
             day = self.start + timedelta(days=int(i * (days - 2) / len(self.gens)) + 1)
             t = day.replace(hour=0) + timedelta(hours=9 + self.rng.uniform(0, 5)) - self.utc_offset
             dur = self.rng.uniform(32, 40)          # loaded minutes; NFPA 110 excludes the cooldown
+            # a test is never started while the sets are carrying a utility outage: it moves to the next day
+            if any(a - mins(dur + 30) < t < b + mins(30) for a, b in getattr(self, "outage_windows", ())):
+                t += timedelta(days=1)
             eng = self.rng.choice(self.on_duty(t))
             self.badge(eng, "Generator yard", t - mins(self.rng.uniform(4, 12)))
             if g in no_load:
