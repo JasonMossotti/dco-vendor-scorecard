@@ -1,6 +1,6 @@
 // node tests/js/telemetry_page.cjs <site>/index.html <site>
 // <site> is the folder scripts/render_telemetry.py write_site() wrote: index.html plus data/ (racks.json, gpu/, windows/, cdu/, cdu_minutes/,
-// power/, power/windows/, power_minutes/).
+// power/, power/windows/, power_minutes/, network/, network/windows/).
 const { JSDOM, VirtualConsole } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
@@ -127,8 +127,8 @@ async function until(fn, what, ms = 8000) {
   const C = D.cdu;
   const noBad = what => ok(!/\bundefined\b|\bNaN\b/.test(t()), `no undefined/NaN text in ${what}`);
   const fam = () => [...d.querySelectorAll("#tree ul.fam > li")].map(li => li.textContent.trim());
-  ok(fam()[0].startsWith("GPUs") && fam()[1].startsWith("CDUs") && fam()[2].startsWith("Power") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists GPUs, CDUs, Power and the greyed planned families: " + fam().join(" | "));
-  ok(d.querySelectorAll("#tree ul.fam a").length === 3 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
+  ok(fam()[0].startsWith("GPUs") && fam()[1].startsWith("CDUs") && fam()[2].startsWith("Power") && fam()[3].startsWith("Network") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists GPUs, CDUs, Power, Network and the greyed planned families: " + fam().join(" | "));
+  ok(d.querySelectorAll("#tree ul.fam a").length === 4 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
   ok(!d.querySelector('#tree .famsec[data-fam="gpu"]').classList.contains("off") && d.querySelector('#tree .famsec[data-fam="cdu"]').classList.contains("off"), "on a GPU view the GPU section shows and the CDU section is hidden");
   ok([...d.querySelectorAll("#tree .planned")].some(x => x.textContent.includes("CDU-C1")) && !d.querySelector('#tree a[href="#CDU-C1"]'), "Hall C CDUs are greyed, not links");
   await go("#cdus");
@@ -298,6 +298,67 @@ async function until(fn, what, ms = 8000) {
   await go("#UPS-B2/5");
   await until(() => d.getElementById("pm-raw-out") && d.getElementById("pm-raw-out").textContent.includes("UPS-B2"), "UPS-B2 after the file returns");
   ok(d.getElementById("pm-raw-out") && praw().includes("UPS-B2"), "the UPS minute view loads once the file is back");
+
+  // ---- network
+  const N = D.network;
+  await go("#network");
+  ok(t().includes("Network telemetry") && d.querySelectorAll(".fm a").length === N.leaves.length
+     && d.querySelectorAll(".fm a i.x").length === N.leaves.filter(x => x.flagged.length).length, "network overview: a fabric-map cell per leaf, a red dot per leaf with a faulty link");
+  const nAgree = N.agreements.reduce((a, c) => a + c.checked - c.misses, 0);
+  ok(t().includes(`${nAgree.toLocaleString("en-US")} of`) && N.agreements.length === 9 && N.agreements.every(c => c.misses === 0), "network agreements on the overview, none missed");
+  ok(d.querySelector('#main a[href="../tickets/#INC3100136"]') && t().includes("errors continued") && t().includes("F-011") && t().includes("Rack A07 lost input power"), "events: the wrong-end replacement, its finding, and the rack power loss");
+  ok(d.querySelector('#tree a[data-fam="network"]').classList.contains("on") && !d.querySelector('#tree .famsec[data-fam="network"]').classList.contains("off")
+     && d.querySelector('#tree .famsec[data-fam="power"]').classList.contains("off"), "tree highlights Network and shows only its section");
+  const hb = N.halls["HALL-B"];
+  ok(hb.cabled_start < hb.cabled_end && N.events.filter(e => e.kind === "cabled").length === hb.racks && d.querySelector('#main a[href="../deployments/#rack/B07"]'), "Hall B: links cabled during the month, one cabling event per rack linked to its deployment record");
+  noBad("#network");
+  await go("#leaf-a07-r1");
+  await until(() => d.querySelectorAll("#lp tbody tr").length === 36 && d.querySelector("#lc svg"), "leaf ports");
+  ok(d.querySelectorAll("#lp tbody tr").length === 36 && d.querySelector('#lp a[href="#leaf-a07-r1:swp18"]').parentElement.textContent.includes("record"), "leaf: 36 ports, swp18 marked with a record");
+  ok(d.querySelector('#tree a[href="#leaf-a07-r1"]').classList.contains("on"), "tree highlights the leaf");
+  d.getElementById("lcsv").click();
+  await until(() => /rows/.test(d.getElementById("lcsv-note").textContent), "leaf CSV");
+  ok(d.getElementById("lcsv-note").textContent.startsWith(`${36 * D.network.hours} rows`), "leaf CSV: every port, every hour");
+  noBad("#leaf-a07-r1");
+  const ev = N.events.find(e => e.device === "leaf-a07-r1:swp18");
+  const win = N.windows.find(w => w.device === ev.device && Date.parse(w.from) <= Date.parse(ev.t) && Date.parse(ev.t) < Date.parse(w.from) + w.minutes * 60000);
+  const W = JSON.parse(fs.readFileSync(path.join(site, "data/network", win.file), "utf8"));
+  await go(`#leaf-a07-r1:swp18/${ev.m}`);
+  await until(() => d.getElementById("nw-pre") && d.getElementById("nw-pre").textContent.includes("PortXmitDataExtended"), "port minute detail");
+  const pre = () => d.getElementById("nw-pre").textContent, i = ev.m - W.m0;
+  ok(d.querySelector(".finding") && t().includes("F-011") && d.querySelectorAll("#pc svg[data-ch]").length === 6, "port: the finding, and six hourly charts");
+  ok(pre().includes(`SymbolErrorCounterExtended{`) && pre().includes(` ${W.fields.tx[i]}`) && W.fields.up[i] === 0, "UFM scrape at the drop minute reads the window's counters; the link is down then");
+  d.querySelector('#nw-raw button[data-r="mlx"]').click();
+  ok(/Physical state\s+: Polling/.test(pre()), "mlxlink shows the link polling while it is down");
+  d.querySelector('#nw-raw button[data-r="perf"]').click();
+  ok(pre().includes("SymbolErrorCounter:") && pre().includes(`LinkDownedCounter:`), "perfquery shows the IBTA counters");
+  d.querySelector('#nw-raw button[data-r="host"]').click();
+  ok(pre().includes(`node_infiniband_port_data_received_bytes_total{device="mlx5_1",port="1"} ${W.fields.tx[i] * 4}`), "the tray's node_exporter receives exactly what the switch port sent (4-octet words x 4)");
+  d.getElementById("nwcsv").click();
+  ok(d.getElementById("nwcsv-note").textContent.startsWith(`${W.minutes} rows`), "port window CSV: one row a minute");
+  noBad("#leaf-a07-r1:swp18 minute view");
+  await go("#nvlink-A15");
+  await until(() => d.querySelectorAll("#nvc svg[data-ch]").length === 4, "NVLink charts");
+  ok(d.querySelectorAll("#nvc tbody tr").length === 9 && d.querySelector('#nvc a[href="#a15-nvsw3"]').parentElement.textContent.includes("record"), "NVLink rack: nine trays, a15-nvsw3 marked");
+  await go("#a15-nvsw3");
+  await until(() => d.getElementById("nv-pre"), "NVLink tray window");
+  ok(d.getElementById("nv-pre").textContent.includes("nmx-telemetry") && t().includes("the rack's other trays together") && d.querySelectorAll("#nv svg[data-ch]").length === 2, "the failed tray's window opens with the NMX-T read and the other trays' traffic");
+  noBad("#a15-nvsw3");
+  await go("#A07");
+  const a07Leaves = N.leaves.filter(x => x.racks.includes("A07")).map(x => x.id);
+  ok(a07Leaves.length === 4 && a07Leaves.every(l => d.querySelector(`#main a[href="#${l}"]`)) && d.querySelector('#main a[href="#nvlink-A07"]'), "a GPU rack links its four leaves and its NVLink trays");
+  await go("#network-fields");
+  ok(["port", "chassis", "nvlink"].every(k => N.fields[k].every(f => t().includes(f.name))) && N.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#network-fields lists every field and source");
+  await go("#network-agreements");
+  ok(d.querySelectorAll("tbody tr").length === N.agreements.length && N.agreements.every(a => t().includes(a.title)), "#network-agreements shows every check");
+  fs.renameSync(path.join(site, "data/network/leaf-a02-r0.json"), path.join(site, "data/network/leaf-a02-r0.json.bak"));
+  try {
+    await go("#leaf-a02-r0");
+    await until(() => t().includes("Could not load"), "network error message");
+    ok(t().includes("Could not load data/network/leaf-a02-r0.json") && errors.length === 0, "a missing leaf file shows a message, not an exception");
+  } finally {
+    fs.renameSync(path.join(site, "data/network/leaf-a02-r0.json.bak"), path.join(site, "data/network/leaf-a02-r0.json"));
+  }
 
   // ---- error state
   await go("#A99");

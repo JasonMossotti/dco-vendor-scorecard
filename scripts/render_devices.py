@@ -21,8 +21,34 @@ sys.path.insert(0, str(ROOT / "src"))
 from scorecard import devices, sitenav  # noqa: E402
 
 
+TEL = ROOT / "data" / "telemetry"
+
+
+def telemetry_links() -> dict[str, str]:
+    """Each device the Telemetry tab has a view of, and that view's address (relative to the Telemetry tab). Read
+    from the committed telemetry manifests, so a planned rack or a hall with no telemetry gets no link."""
+    out: dict[str, str] = {}
+    rd = lambda name: json.loads((TEL / name / "manifest.json").read_text(encoding="utf-8")) if (TEL / name / "manifest.json").exists() else {}  # noqa: E731
+    for rack in rd("gpu").get("racks", []):
+        out[rack] = f"#{rack}"
+    for cdu in rd("cdu").get("cdus", {}):
+        out[cdu] = f"#{cdu}"
+    for d, x in rd("power").get("devices", {}).items():
+        if x.get("family") in ("ups", "busway", "tapoff", "generator"):
+            out[d] = f"#{d}"
+    for d, x in rd("network").get("devices", {}).items():
+        if x["family"] == "leaf":
+            out[d] = f"#{d}"
+        elif x["family"] == "port":
+            out[f"{x['leaf']} port {x['port']}"] = f"#{d}"
+            out.setdefault(x["peer_host"], f"#{x['peer_host']}/0")
+        elif x["family"] == "nvlink":
+            out[d] = f"#{d}"
+    return out
+
+
 def html_page() -> str:
-    data = devices.load()
+    data = {**devices.load(), "telemetry": telemetry_links()}
     tpl = sitenav.inject((ROOT / "templates" / "devices.html").read_text(encoding="utf-8"), "devices")
     body = json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/")
     return sitenav.finish(tpl.replace("__DEVICES__", body))

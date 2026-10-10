@@ -577,6 +577,7 @@ class Published:
         self.gpu_hourly: dict[str, dict] = {}
         self.conflicts: list[str] = []
         self.rack_load: dict[str, dict] = {}         # per rack per minute: GPU watts and GPUs reporting (the CDU layer's heat)
+        self.tray_load: dict[str, dict] = {}         # per tray per minute: GPUs reporting and mean utilization (the network's load)
 
     def run(self, racks: list[str] | None = None) -> "Published":
         for r in racks or self.tel.racks:
@@ -614,6 +615,11 @@ class Published:
                 hh[a // 60: (b + 59) // 60] = True
             drained_h += hh
         rack = x["rack"]
+        for i, host in enumerate(x["hosts"]):      # per tray per minute: GPUs reporting and their mean utilization (the network's load)
+            a, u = av[i * GPUS:(i + 1) * GPUS], x["util"][i * GPUS:(i + 1) * GPUS]
+            k = a.sum(axis=0)
+            self.tray_load[host] = {"rack": x["rack"], "n": k.astype(np.int8),
+                                    "util": (np.where(a, u, 0.0).sum(axis=0) / np.maximum(k, 1)).astype(np.float32)}
         self.rack_load[rack] = {"hall": x["hall"], "cdu": x["cdu"], "product": x["product"],
                                 "gpu_w": np.where(av, x["power"], 0).astype(np.float64).sum(axis=0), "n": av.sum(axis=0)}
         for h in range(H):

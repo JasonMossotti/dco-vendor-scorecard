@@ -37,6 +37,12 @@ const go = async h => { w.location.hash = h; await tick(); await tick(); };
   ok(/^1\d matches|^\d+ matches/.test(d.getElementById("count").textContent), "search finds trays: " + d.getElementById("count").textContent);
   q.value = "leaf-a07-r1 port 18"; q.dispatchEvent(new w.Event("input"));
   ok([...list.querySelectorAll("a")].some(a => a.textContent.startsWith("leaf-a07-r1 port 18")), "search finds a port");
+  for (const [dev, href] of [["leaf-a07-r1 port 18", "#leaf-a07-r1:swp18"], ["leaf-a07-r1", "#leaf-a07-r1"], ["A07", "#A07"], ["a13-ct18", "#a13-ct18/0"], ["a15-nvsw3", "#a15-nvsw3"], ["UPS-B4", "#UPS-B4"], ["CDU-A1", "#CDU-A1"]]) {
+    await go("#" + encodeURIComponent(dev));
+    ok(main.querySelector(`a.tel[href="../telemetry/${href}"]`), `${dev}: the card links to its telemetry view`);
+  }
+  await go("#B30");
+  ok(!main.querySelector("a.tel"), "a rack with no telemetry gets no Telemetry link");
   await go("#nothing-here");
   ok(main.textContent.includes("No device by that name"), "an unknown name says so");
   const names = ["leaf-a07-r1 port 18", "leaf-a07-r1:swp18", "Rack A07", "a13-ct18", "A06_PowerShelf_1", "leaf-a07-r1 port 40", "UPS-B4"];

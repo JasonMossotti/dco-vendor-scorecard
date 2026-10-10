@@ -176,7 +176,28 @@ terms:
   - {term: XDR, type: acronym, expansion: "Extended data rate (InfiniBand, 800 Gb/s)", text: "An InfiniBand speed generation."}
   - {term: BER, type: acronym, expansion: Bit error rate, text: "The share of bits received in error on a link; pre-FEC BER drift can warn of a failing optic."}
   - {term: DOM, type: acronym, expansion: Digital optical monitoring, text: "An optic's own report of temperature, power, and signal levels; a DOM alarm warns the optic is failing."}
-  - {term: OSFP, type: acronym, expansion: Octal small form-factor pluggable, text: "The optic module format for the 800G network links."}
+  - {term: OSFP, type: acronym, expansion: Octal small form-factor pluggable, text: "The optic module format for the 400G and 800G network links; a QM9700 cage holds two 400G ports."}
+  - {term: ASIC, type: acronym, expansion: Application-specific integrated circuit, text: "The switching chip in a network switch or NVLink switch tray; its temperature is one of the chassis readings."}
+  - {term: FEC, type: acronym, expansion: Forward error correction, text: "Extra bits on every InfiniBand link that let the receiver fix raw bit errors. Errors FEC cannot fix are counted as symbol errors."}
+  - {term: RS-FEC, type: acronym, expansion: Reed-Solomon forward error correction, text: "The FEC code NDR and XDR links use, written RS-FEC (544,514): 514 data symbols protected by 30 check symbols."}
+  - {term: PLR, type: acronym, expansion: Physical layer retransmission, text: "An XDR link feature that resends a block FEC could not correct, on top of RS-FEC."}
+  - {term: BER, type: acronym, expansion: Bit error rate, text: "Errored bits per bit sent. Raw BER is before FEC corrects them (about 1E-8 to 1E-6 on a healthy link); a failing optic pushes it up until FEC can no longer keep up."}
+  - {term: SNR, type: acronym, expansion: Signal-to-noise ratio, text: "How far the optical signal stands above the noise at the receiver, in dB. Low SNR at normal receive power points at the switch-side optic."}
+  - {term: PHY, type: acronym, expansion: Physical layer, text: "The part of a link that turns bits into light and back: the optics, lanes, and FEC. UFM reads its fields every 5 minutes."}
+  - {term: GUID, type: acronym, expansion: Globally unique identifier, text: "The 64-bit number that names each InfiniBand switch (node GUID) and port (port GUID); UFM labels every reading with them."}
+  - {term: IBTA, type: acronym, expansion: InfiniBand Trade Association, text: "The body that publishes the InfiniBand specification, including the port counters (PortCounters, PortCountersExtended) every switch and NIC keeps."}
+  - {term: IB-NDR, type: acronym, expansion: InfiniBand NDR (400 Gb/s), text: "The 400 Gb/s InfiniBand speed of Hall A's back-end links: 4 lanes of 100G."}
+  - {term: IB-XDR, type: acronym, expansion: InfiniBand XDR (800 Gb/s), text: "The 800 Gb/s InfiniBand speed of Hall B's back-end links: 4 lanes of 200G."}
+  - {term: NMX-T, type: acronym, expansion: NMX Telemetry, text: "The NVLink management software's telemetry service: it reads every NVLink switch tray once a minute and serves the readings to Prometheus.", see: "telemetry/#network-fields"}
+  - {term: MFT, type: acronym, expansion: NVIDIA Firmware Tools, text: "The vendor's command-line tools for its NICs and switches; mlxlink, one of them, prints a port's link state, optic readings, and error counters."}
+  - {term: CMIS, type: acronym, expansion: Common Management Interface Specification, text: "The standard memory map an OSFP optic publishes its temperature, voltage, and per-lane transmit and receive power through."}
+  - {term: ENTITY-SENSOR-MIB, type: acronym, expansion: Entity sensor MIB (RFC 3433), text: "The standard SNMP MIB for a device's sensors (temperatures, fan speeds, power); the QM9700 switches answer it."}
+  - {term: ENTITY-MIB, type: acronym, expansion: Entity MIB (RFC 6933), text: "The standard SNMP MIB that lists a device's parts (chassis, fans, power supplies) that ENTITY-SENSOR-MIB readings attach to."}
+  - {term: MLNX-OS, type: product, title: "MLNX-OS switch operating system", text: "The operating system on the QM9700 InfiniBand switches; it names ports ib 1/<cage>/<port>."}
+  - {term: NVOS, type: product, title: "NVOS switch operating system", text: "The operating system on the Quantum-X800 switches; it streams telemetry over gNMI and names ports sw<cage>p<port>."}
+  - {term: QM9790, type: product, title: "Quantum-2 QM9790 InfiniBand switch", text: "The unmanaged sibling of the QM9700 (same hardware, run from the fabric manager); named here only in a source title."}
+  - {term: OS, type: acronym, link: false, expansion: Operating system, text: "The software a switch runs."}
+  - {term: ABI, type: acronym, link: false, expansion: Application binary interface, text: "In a source title: the Linux kernel's documented interface, here the InfiniBand counter files."}
   - {term: DAC, type: acronym, expansion: Direct attach copper, text: "A short copper network cable with connectors built on."}
   - {term: OOB, type: acronym, expansion: Out-of-band, text: "The separate management network that reaches equipment even when the main network is down."}
   - {term: RAID, type: acronym, expansion: Redundant array of independent disks, text: "Disks combined so one can fail without losing data; rebuilt after a drive swap."}
@@ -400,7 +421,8 @@ plain:   # capitalised text that is not a code
     - {terms: [ONLY, OK, LIVE], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
     - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
-    - {terms: [MB, GB, TB], why: "Units of memory and file size: megabytes, gigabytes, and terabytes."}
+    - {terms: [MB, GB, TB, PB, EB], why: "Units of data size: megabytes, gigabytes, terabytes, petabytes, and exabytes."}
+    - {terms: [FAN], why: "The sensor class a switch fan reports under in ENTITY-SENSOR-MIB (the field reference names it beside the reading)."}
     - {terms: [GET], why: "The HTTP method a Redfish client uses to read a resource."}
     - {terms: [HELP, TYPE], why: "Keywords of the Prometheus text format: each field's description and its metric type (gauge or counter)."}
     - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}
@@ -411,6 +433,8 @@ plain:   # capitalised text that is not a code
     - {pattern: 'BW-[A-C]-R\d-PG-[A-C]\d', why: "A busway run: its A and B segments together.", pages: [telemetry]}
     - {pattern: 'R[1-4]', why: "A row number in a busway name (BW-A-R1-... is row 1).", pages: [telemetry]}
     - {pattern: 'FA\d{6}', why: "A Schneider Electric FAQ number cited as a source.", pages: [telemetry]}
+    - {pattern: '(ASIC|FAN|PSU)\d(/\d)?', why: "A component name in a gNMI path (openconfig-platform names the parts of the switch).", pages: [telemetry]}
+    - {pattern: 'IB1', why: "The first part of an MLNX-OS port name (IB1/9/2 is ASIC 1, cage 9, port 2).", pages: [telemetry]}
     - {pattern: 'SITE', why: "The whole site, in the power events table (a utility event is not one device's).", pages: [telemetry]}
     - {pattern: 'L-N', why: "Line to neutral: a voltage measured between one phase and neutral (277 V on a 480 V system).", pages: [telemetry]}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}

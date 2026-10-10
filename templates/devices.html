@@ -146,7 +146,8 @@ __SITENAV__
     const [name, e] = hit;
     let h = `<div class="kind">${esc(KIND[e.kind])}</div><h1>${esc(e.title || name)}</h1>`;
     if (e.title && e.title !== name) h += `<div class="sub">${esc(name)}</div>`;
-    h += `<p>${esc(e.text)}</p><h2 class="sec">Connected to</h2><table class="conn"><tbody>`;
+    const tl = (D.telemetry || {})[name];
+    h += `<p>${esc(e.text)}</p>` + (tl ? `<p><a class="tel" href="../telemetry/${esc(tl)}">Telemetry ↗</a> <span class="note">this device's readings for the month</span></p>` : "") + `<h2 class="sec">Connected to</h2><table class="conn"><tbody>`;
     h += e.conn.map(([rel, n, note]) => `<tr><th scope="row">${esc(rel)}</th><td>${link(n)}${n && note ? " " : ""}<span class="note">${esc(note)}</span></td></tr>`).join("");
     h += `</tbody></table>`;
     h += `<h2 class="sec">On the drawings</h2><div class="fig" id="fig"></div>`;

@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Any
 
+from scorecard.fabric import peer_power_lost, power_loss_links
 from scorecard.connectors import SiteDataSource
 from scorecard.measurement import Outage, TicketOfRecord, build_tickets_of_record
 
@@ -131,7 +132,10 @@ class Context:
         for e in self.xid:
             self.xid_by_host[e["host"]].append(e)
         self.ufm_by_link: dict[str, list[dict]] = defaultdict(list)
+        lost = power_loss_links(self.ufm, self.sched)
         for e in self.ufm:
+            if peer_power_lost(e, lost):       # the rack outage seen from the fabric, not a link fault
+                continue
             self.ufm_by_link[f"{e['switch']}:swp{e['port']}"].append(e)
         self.health_by_target: dict[str, list[dict]] = defaultdict(list)
         for h in self.health:

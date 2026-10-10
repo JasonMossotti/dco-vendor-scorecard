@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the telemetry layers for the committed sample: data/telemetry/gpu/ and data/telemetry/cdu/.
+"""Generate the telemetry layers for the committed sample: data/telemetry/gpu/, cdu/, power/, and network/.
 
 One-minute GPU samples in the published format of NVIDIA's open-source DCGM exporter, shaped to agree with
 every record already in data/sample and data/gpu_health. Own random stream; those folders are read, never
@@ -15,6 +15,11 @@ The energy meters are rebuilt between the two (data/energy/: each hall's UPS out
 GPU telemetry), and the power layer comes last: one-minute UPS, busway, tap-off, and generator readings in the
 manufacturers' published SNMP and Modbus point maps, shaped to agree with the racks, the meters, and every
 power record. Committed tiers go to data/telemetry/power/, the one-minute files to build/telemetry/power_minutes/.
+
+The network layer follows the power layer: every back-end InfiniBand leaf port under the UFM Telemetry and IBTA
+counter names, the leaf chassis, and the NVLink switch trays under NMX-T names, shaped to agree with every fabric
+event, optic ticket, the device directory, and the GPU telemetry. Committed tiers go to data/telemetry/network/,
+the per-port and per-tray hourly files to build/telemetry/network_hourly/.
 
 Usage:
     python scripts/generate_telemetry.py
@@ -34,6 +39,7 @@ from scorecard.synthetic.telemetry import GpuTelemetry, Published, write_telemet
 from scorecard.synthetic.energy import EnergyLayer, history, write_energy  # noqa: E402
 from scorecard.synthetic.telemetry_cdu import CduTelemetry, write_cdu  # noqa: E402
 from scorecard.synthetic.telemetry_power import PowerTelemetry, write_power  # noqa: E402
+from scorecard.synthetic.telemetry_network import NetworkTelemetry, write_network  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 HEALTH = ROOT / "data" / "gpu_health"
@@ -43,14 +49,17 @@ OUT_CDU = ROOT / "data" / "telemetry" / "cdu"
 MINUTES_CDU = ROOT / "build" / "telemetry" / "cdu_minutes"
 OUT_POWER = ROOT / "data" / "telemetry" / "power"
 MINUTES_POWER = ROOT / "build" / "telemetry" / "power_minutes"
+OUT_NET = ROOT / "data" / "telemetry" / "network"
+MINUTES_NET = ROOT / "build" / "telemetry" / "network_hourly"
 ENERGY = ROOT / "data" / "energy"
 HISTORY = ROOT / "data" / "history"
 
 
 def generate(dest: Path = OUT, hourly: Path | None = HOURLY) -> dict:
-    """GPU telemetry to dest, the energy meters (to data/energy, or beside dest when dest is elsewhere), then CDU
-    and power telemetry to the sibling cdu/ and power/ folders (and their one-minute files beside the hourly ones).
-    Returns the GPU manifest, with the CDU and power manifests under "cdu" and "power"."""
+    """GPU telemetry to dest, the energy meters (to data/energy, or beside dest when dest is elsewhere), then CDU,
+    power, and network telemetry to the sibling cdu/, power/, and network/ folders (and their publish-time files
+    beside the hourly ones).
+    Returns the GPU manifest, with the CDU, power, and network manifests under "cdu", "power", and "network"."""
     window = json.loads((SAMPLE / "manifest.json").read_text(encoding="utf-8"))["window"]
     pub = Published(GpuTelemetry(SAMPLE, HEALTH, window["seed"])).run()
     if pub.conflicts:
@@ -73,6 +82,12 @@ def generate(dest: Path = OUT, hourly: Path | None = HOURLY) -> dict:
         raise SystemExit("power records disagree with each other: " + "; ".join(power.conflicts))
     man["power"] = write_power(power, pout, Path(dest).parent / "power",
                                "data/sample + data/energy + GPU telemetry", build / "power_minutes" if build else None)
+    net = NetworkTelemetry(pub.tel, pub)
+    nout = net.run()
+    if net.conflicts:
+        raise SystemExit("network records disagree with each other: " + "; ".join(net.conflicts))
+    man["network"] = write_network(net, nout, Path(dest).parent / "network", "data/sample + GPU telemetry",
+                                   build / "network_hourly" if build else None)
     return man
 
 
@@ -81,7 +96,8 @@ def hourly_current(dest: Path = OUT, hourly: Path = HOURLY) -> bool:
     import hashlib
     pairs = [(dest / "manifest.json", "gpu_hourly", hourly),
              (dest.parent / "cdu" / "manifest.json", "minutes", hourly.parent / "cdu_minutes"),
-             (dest.parent / "power" / "manifest.json", "minutes", hourly.parent / "power_minutes")]
+             (dest.parent / "power" / "manifest.json", "minutes", hourly.parent / "power_minutes"),
+             (dest.parent / "network" / "manifest.json", "minutes", hourly.parent / "network_hourly")]
     for mpath, key, folder in pairs:
         man = json.loads(mpath.read_text(encoding="utf-8"))
         for name, meta in man[key].items():
@@ -100,8 +116,9 @@ def ensure_hourly(hourly: Path = HOURLY) -> Path:
         committed = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
         committed_cdu = json.loads((OUT_CDU / "manifest.json").read_text(encoding="utf-8"))
         committed_power = json.loads((OUT_POWER / "manifest.json").read_text(encoding="utf-8"))
+        committed_net = json.loads((OUT_NET / "manifest.json").read_text(encoding="utf-8"))
         if (man["gpu_hourly"] != committed["gpu_hourly"] or man["cdu"]["minutes"] != committed_cdu["minutes"]
-                or man["power"]["minutes"] != committed_power["minutes"]):
+                or man["power"]["minutes"] != committed_power["minutes"] or man["network"]["minutes"] != committed_net["minutes"]):
             raise SystemExit("data/telemetry is out of date. Run: python scripts/generate_telemetry.py")
     return hourly
 
@@ -132,6 +149,16 @@ def main() -> int:
         print(f"  {rel:<28} {n:>6}")
     print(f"  one-minute readings (not committed) -> {MINUTES_POWER.relative_to(ROOT)}: "
           f"{sum(m['bytes'] for m in p['minutes'].values()) / 1e6:.1f} MB")
+    n = man["network"]
+    fam = {}
+    for x in n["devices"].values():
+        fam[x["family"]] = fam.get(x["family"], 0) + 1
+    print(f"Network telemetry -> {OUT_NET.relative_to(ROOT)}: {fam.get('leaf', 0)} leaf switches, {fam.get('port', 0):,} links, "
+          f"{fam.get('nvlink', 0)} NVLink switch trays")
+    for rel, k in n["files"].items():
+        print(f"  {rel:<28} {k:>6}")
+    print(f"  hourly per port and tray (not committed) -> {MINUTES_NET.relative_to(ROOT)}: "
+          f"{sum(m['bytes'] for m in n['minutes'].values()) / 1e6:.1f} MB")
     return 0
 
 

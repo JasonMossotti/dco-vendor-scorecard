@@ -27,6 +27,7 @@ nav.tree details[open] > summary::before { content:"▾"; }
 nav.tree details > summary a { display:inline; padding:0; border:0; }
 nav.tree ul.racks { display:grid; grid-template-columns:repeat(4,1fr); padding-left:14px; }
 nav.tree ul.racks a { padding:2px 6px; font-variant-numeric:tabular-nums; }
+nav.tree ul.leaves { display:grid; grid-template-columns:40px repeat(4,1fr); padding-left:14px; } nav.tree ul.leaves a { padding:2px 6px; } nav.tree ul.leaves .pr { color:var(--muted); padding:2px 0; font-variant-numeric:tabular-nums; }
 nav.tree .sec { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:12px 12px 2px; font-weight:600; }
 nav.tree ul.fam { display:flex; flex-wrap:wrap; gap:4px; padding:0 12px 4px; }
 nav.tree ul.fam a, nav.tree ul.fam .planned { display:inline-block; font-size:13px; padding:2px 10px; border:1px solid var(--line); border-radius:14px; }
@@ -109,6 +110,12 @@ pre.scrape .c { color:#8fa3b5; }
 .muted { color:var(--muted); }
 .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; }
 .labels th { width:150px; }
+.fmw { display:flex; flex-wrap:wrap; gap:8px 28px; }
+.fm { display:grid; grid-template-columns:70px repeat(4,64px); gap:3px; font-size:12px; margin-bottom:10px; }
+.fm .fh { color:var(--muted); font-size:11px; text-align:center; } .fm .ft { text-align:right; padding-right:6px; line-height:22px; font-variant-numeric:tabular-nums; }
+.fm a { position:relative; display:block; height:22px; line-height:22px; text-align:center; border-radius:3px; color:#fff; text-decoration:none; text-shadow:0 0 2px rgba(0,0,0,.5); font-variant-numeric:tabular-nums; }
+.fm a.lt { color:var(--ink); text-shadow:none; } .fm a.no { background:var(--none); color:var(--muted); text-shadow:none; }
+.fm a i.x { position:absolute; top:3px; right:3px; width:7px; height:7px; border-radius:50%; border:1px solid #fff; background:var(--bad); }
 @media (max-width:860px) { .wrap { grid-template-columns:1fr; } nav.tree { position:static; max-height:40vh; } main { padding:16px 14px; } .tiles { grid-template-columns:repeat(2,1fr); } }
 @media print { nav.tree, header.top { display:none; } .wrap { display:block; } .tip { display:none !important; } }
 </style>
@@ -117,7 +124,7 @@ pre.scrape .c { color:#8fa3b5; }
 __SITENAV__
 <header class="top">
   <div><strong>Telemetry</strong> <span class="note" id="hdr"></span></div>
-  <span class="note">One-minute samples: GPUs in the published format of NVIDIA's open-source DCGM exporter, CDUs in the DMTF Redfish schema for cooling units, power in the manufacturers' published SNMP and Modbus point maps</span>
+  <span class="note">One-minute samples: GPUs in the published format of NVIDIA's open-source DCGM exporter, CDUs in the DMTF Redfish schema for cooling units, power in the manufacturers' published SNMP and Modbus point maps, the network under UFM Telemetry, node_exporter, and NMX-T names</span>
 </header>
 <div class="wrap">
   <nav class="tree" id="tree" aria-label="Telemetry views"></nav>
@@ -202,7 +209,7 @@ __SITENAV__
 
   // --------------------------------------------------------------------- tree
   function tree() {
-    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li>`
+    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li>`
       + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
     h += `<div class="famsec" data-fam="gpu"><div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
     for (const hall of HALLS) {
@@ -221,7 +228,7 @@ __SITENAV__
       h += `<li><details><summary><span class="planned">${esc(H.name)}</span> <small>not in service</small></summary><ul>` + H.cdus.map(id => `<li><span class="planned" title="${esc(H.name)} is ${esc(H.state)}: no telemetry">${esc(id)} <small>${esc(H.state)}</small></span></li>`).join("") + `</ul></details></li>`;
     }
     h += `</ul><div class="sec">CDU reference</div><ul><li>${link("cdu-fields", "Redfish fields")}</li><li>${link("cdu-agreements", "Agreement with the records")}</li></ul></div>`;
-    h += powerTree();
+    h += powerTree() + networkTree();
     document.getElementById("tree").innerHTML = h;
   }
 
@@ -393,7 +400,7 @@ __SITENAV__
     const finds = B.findings.filter(f => f.hosts.some(h => rackOf(h) === rack));
     let h = `<div class="kind">${esc(B.halls[r.hall].name)} · ${esc(r.model)} NVL72 · cooled by ${esc(r.cdu)}</div><h1>Rack ${esc(rack)}</h1>`
       + `<p class="sub">${esc(r.trays)} compute trays, 4 GPUs each; power limit ${num(r.power_limit_w)} W per GPU. ${r.from_hour ? `Reporting from ${esc(hourAt(r.from_hour))} (power-on).` : "Reporting all month."} `
-      + `Cooled by ${CDU[r.cdu] ? link(r.cdu, r.cdu) : esc(r.cdu)} (row CDU on the shared ${esc(B.halls[r.hall].name)} header). ${(P.rack_feeds[rack] || []).length ? `Power: ${P.rack_feeds[rack].map(f => `${link(f.tapoff, f.tapoff)} on ${link(f.run, f.run)} from ${link(f.ups, f.ups)}`).join("; ")}. ` : ""}<a href="../gpu/#${esc(rack)}">GPU Health ↗</a> · <a href="../devices/#${esc(rack)}">Device card ↗</a></p>`;
+      + `Cooled by ${CDU[r.cdu] ? link(r.cdu, r.cdu) : esc(r.cdu)} (row CDU on the shared ${esc(B.halls[r.hall].name)} header). ${(P.rack_feeds[rack] || []).length ? `Power: ${P.rack_feeds[rack].map(f => `${link(f.tapoff, f.tapoff)} on ${link(f.run, f.run)} from ${link(f.ups, f.ups)}`).join("; ")}. ` : ""}${(RACK_LEAVES[rack] || []).length ? `Network: ${RACK_LEAVES[rack].map(l => link(l, l)).join(", ")}${NNV[rack] ? `; ${link("nvlink-" + rack, "NVLink trays")}` : ""}. ` : ""}<a href="../gpu/#${esc(rack)}">GPU Health ↗</a> · <a href="../devices/#${esc(rack)}">Device card ↗</a></p>`;
     for (const f of finds) h += `<div class="finding">${tag(f.id, "bad")} ${esc(f.title)} (${esc(f.party)}). <a href="../gpu/#${esc(rack)}">Open in GPU Health ↗</a></div>`;
     h += `<h2 class="sec">The rack's GPUs at one hour</h2><div class="ctl"><label for="hr">Hour</label><b id="hr-lab">${esc(hourAt(rackHour))}</b></div><input type="range" id="hr" min="0" max="${esc(HOURS - 1)}" value="${esc(rackHour)}" aria-label="Hour of the month">`
        + `<div class="btns" id="gg-btns">${METRICS.map(m => `<button data-m="${esc(m.k)}" class="${m.k === gridMetric ? "on" : ""}">${esc(m.label)}</button>`).join("")}</div>`
@@ -1376,6 +1383,365 @@ __SITENAV__
     return h;
   }
 
+  // ---------------------------------------------------------------- network
+  // Back-end InfiniBand fabric (UFM Telemetry, node_exporter on the trays, SNMP or gNMI on the leaves) and each NVL72
+  // rack's NVLink switch trays (NMX-T). The page embeds the summaries; each leaf, port, and NVLink rack is fetched.
+  const N = B.network;
+  const NLEAF = Object.fromEntries(N.leaves.map(x => [x.id, x])), NNV = Object.fromEntries(N.nvlink.map(x => [x.rack, x]));
+  const NHALLS = Object.keys(N.halls);
+  const NF = Object.fromEntries(N.fields.port.map(f => [f.key, f]));
+  const NWIN = {};
+  N.windows.forEach(w => (NWIN[w.device] = NWIN[w.device] || []).push(w));
+  const NEV = {};
+  N.events.forEach(e => (NEV[e.device] = NEV[e.device] || []).push(e));
+  const RACK_LEAVES = {};
+  N.leaves.forEach(x => x.racks.forEach(r => (RACK_LEAVES[r] = RACK_LEAVES[r] || []).push(x.id)));
+  const NONE = -9999;
+  const U = a => unpackSteps(a, 1);
+  const optA = (a, sc) => U(a).map(v => v === NONE ? null : v / sc);
+  const isLeaf = id => !!NLEAF[id];
+  const portOf = lid => { const m = /^(leaf-[ab]\d\d-r\d):swp(\d+)$/.exec(lid); return m && NLEAF[m[1]] ? {leaf: m[1], port: +m[2]} : null; };
+  const trayRack = id => /^[ab]\d\d-nvsw\d$/.test(id) && NNV[id.slice(0, 3).toUpperCase()] && NNV[id.slice(0, 3).toUpperCase()].trays.includes(id) ? id.slice(0, 3).toUpperCase() : null;
+  const pairName = leaf => { const x = NLEAF[leaf]; return x.racks.length > 1 ? `${x.racks[0]} and ${x.racks[1]}` : x.racks[0]; };
+  const loadLeaf = id => getJson(`data/network/${encodeURIComponent(id)}.json`).then(d => {
+    if (!d.decoded) {
+      d.decoded = true;
+      for (const p of Object.values(d.ports)) {
+        p.txA = U(p.tx_gbps); p.rxA = U(p.rx_gbps); p.upA = U(p.up_min); p.symA = U(p.sym); p.downsA = U(p.downs);
+        const o = p.optics, rep = o.per === "day" ? 24 : 1, ex = a => a.flatMap(v => new Array(rep).fill(v));
+        o.rxA = ex(optA(o.rx_dbm_min, 10)); o.snrA = ex(optA(o.snr_min, 10)); o.modA = ex(optA(o.mod_c_max, 1)); o.berA = ex(optA(o.raw_ber_max, 100));
+      }
+      d.upTx = U(d.uplink.tx_gbps); d.upRx = U(d.uplink.rx_gbps); d.asic = U(d.chassis.asic_c); d.fan = U(d.chassis.fan_rpm); d.pw = U(d.chassis.power_w);
+    }
+    return d;
+  });
+  const loadNv = rack => getJson(`data/network/nvlink_${encodeURIComponent(rack)}.json`).then(d => {
+    if (!d.decoded) { d.decoded = true; for (const t of Object.values(d.trays)) { t.okA = U(t.ok_min); t.txA = U(t.tx_gb); t.asicA = U(t.asic_c).map(v => v === -99 ? null : v); t.pwA = U(t.power_w).map((v, i) => t.okA[i] ? v : null); } }
+    return d;
+  });
+  const loadNWin = w => getJson("data/network/" + w.file.split("/").map(encodeURIComponent).join("/"));
+  const nKind = k => tag({optic: "optic or link", power: "rack power lost", cabled: "cabled", nvlink: "NVLink tray"}[k] || k, {optic: "bad", power: "it", cabled: "ok", nvlink: "bad"}[k]);
+  const NEVC = {optic: "#f8d9d5", power: "#dde8fb", cabled: "#e3f3e8", nvlink: "#f8d9d5"};
+  const nBands = (evs, n) => evs.map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : hourOf(e.t) + 1, label: `${at(e.t)}: ${e.text}`, color: NEVC[e.kind]}));
+  const nRecs = e => refLinks(e.refs) + (e.deploy ? `${e.refs.length ? ", " : ""}<a href="../deployments/#rack/${esc(encodeURIComponent(e.rack))}">${esc(e.deploy)}</a>` : "")
+    + e.findings.map(f => ` ${tag(f.id, "bad")}`).join("");
+  function nWhere(e) {
+    if (e.family === "port") { return `<span style="white-space:nowrap">${link(e.device, e.device)}</span><div class="note">to ${link(rackOf(e.host), e.host)}</div>`; }
+    if (e.family === "nvlink") return `${link(e.device, e.device)}<div class="note">rack ${link("nvlink-" + e.rack, e.rack)}</div>`;
+    return `Rack ${link(e.rack, e.rack)}, ${esc(e.links)} links`;
+  }
+  function nEventsTable(evs) {
+    if (!evs.length) return `<p class="note">None this month.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Where</th><th>Event</th><th>Records</th></tr></thead><tbody>` + evs.map(e =>
+      `<tr><td class="n">${esc(at(e.t))}${e.end ? `<div class="note">to ${esc(at(e.end))}</div>` : ""}</td><td>${nWhere(e)}</td><td>${nKind(e.kind)} ${esc(e.text)}</td><td>${nRecs(e)}</td></tr>`).join("") + `</tbody></table></div>`;
+  }
+  const nAgreeTile = () => {
+    const agree = N.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = N.agreements.reduce((a, c) => a + c.checked, 0);
+    return `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#network-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(N.agreements.length)} checks: the fabric events, tickets, device directory, GPU telemetry, and NMX records</div></div></div>`;
+  };
+  const prodOf = x => N.products[x.product];
+
+  function fabricMap(hall) {
+    const lv = N.leaves.filter(x => x.hall === hall), pairs = [...new Set(lv.map(x => x.id.slice(0, -3)))];
+    const hi = Math.max(1, ...lv.map(x => x.tx_pb));
+    let h = `<div class="fm" role="table" aria-label="${esc(N.halls[hall].name)} leaf switches"><div class="fh"></div>` + [0, 1, 2, 3].map(r => `<div class="fh">Rail ${r}</div>`).join("");
+    for (const pr of pairs) {
+      const first = NLEAF[pr + "-r0"] || lv.find(x => x.id.startsWith(pr));
+      h += `<div class="ft">${esc(first.racks.join("–"))}</div>`;
+      for (let r = 0; r < 4; r++) {
+        const x = NLEAF[`${pr}-r${r}`];
+        if (!x) { h += `<div></div>`; continue; }
+        const t = x.tx_pb / hi, none = x.cabled_end === 0;
+        const title = `${x.id}: ${x.cabled_end} of ${x.ports} links cabled, ${x.tx_pb.toLocaleString("en-US")} PB sent, ${x.sym.toLocaleString("en-US")} symbol errors, ${x.downs} link drops`;
+        h += `<a href="#${esc(x.id)}" class="${none ? "no" : light(t) ? "lt" : ""}" style="${none ? "" : `background:${esc(ramp(t))}`}" title="${esc(title)}">${x.cabled_end < x.ports ? `${esc(x.cabled_end)}/${esc(x.ports)}` : esc(x.id.slice(5))}${x.flagged.length ? `<i class="x" title="${esc(x.flagged.length)} link${x.flagged.length > 1 ? "s" : ""} with a fault on record"></i>` : ""}</a>`;
+      }
+    }
+    return h + `</div>`;
+  }
+  function networkOverview(seq) {
+    let h = `<div class="kind">Network</div><h1>Network telemetry</h1><p class="sub">${esc(N.framing)} Every back-end InfiniBand leaf port read once a minute through the fabric manager's telemetry endpoint (UFM Telemetry, Prometheus), the tray end of each link through node_exporter, each leaf's chassis over SNMP (Quantum-2) or gNMI (Quantum-X800), and each NVL72 rack's nine NVLink switch trays through NMX-T, ${esc(md(N.window.start))} to ${esc(md(N.window.end))}. Rail-optimized: each tray has one link per rail, to that rail's leaf for its rack pair. All names, GUIDs, serials, and readings are fictional.</p>`;
+    for (const hall of NHALLS) {
+      const H = N.halls[hall];
+      h += `<div class="hallname">${esc(H.name)} · ${esc(H.leaves)} × ${esc(H.model)} · ${esc(H.gbps)}G · ${esc(H.state)}</div><div class="tiles">`
+        + tile("Links cabled", `${num(H.cabled_end)}`, H.cabled_start === H.cabled_end ? `all ${num(H.links)} tray links, all month` : `of ${num(H.links)}; ${num(H.cabled_start)} at the start of the month (racks cabled as they deploy)`)
+        + tile("Data sent", H.tx_pb >= 1000 ? `${num(H.tx_pb / 1000, 1)} EB` : `${num(H.tx_pb, 1)} PB`, "leaf ports to trays this month (PortXmitDataExtended)")
+        + tile("Symbol errors", `${num(H.sym)}`, `post-FEC, on ${num(N.leaves.filter(x => x.hall === hall).reduce((a, x) => a + x.flagged.length, 0))} links with a fault on record`)
+        + tile("Link drops", `${num(H.downs)}`, "LinkDownedCounter, all links")
+        + tile("Leaf power", `${num(H.switch_kw, 1)} kW`, "mean, all leaves (PSU input)") + `</div>`;
+    }
+    h += nAgreeTile();
+    h += `<h2 class="sec">Fabric map</h2><p class="note">One cell per leaf switch: rows are rack pairs, columns are the four rails. Shaded by the data it sent this month; grey: no link cabled yet; a fraction: links cabled so far; red dot: a link with a fault on record. Click a leaf for its ports.</p>`
+      + `<div class="fmw">` + NHALLS.map(hall => `<div><div class="hallname">${esc(N.halls[hall].name)}</div>${fabricMap(hall)}</div>`).join("") + `</div>`;
+    h += `<h2 class="sec">The month, by hour</h2><div id="nc"></div>`;
+    h += `<h2 class="sec">NVLink</h2><p class="note">Each NVL72 rack's GPUs talk to each other over NVLink through nine switch trays; NMX-T reads every tray once a minute. ${num(N.nvlink.length)} racks, ${num(N.nvlink.reduce((a, x) => a + x.trays.length, 0))} trays.</p>`
+      + `<div class="btns">${N.nvlink.map(x => `<a class="b" href="#nvlink-${esc(x.rack)}">${esc(x.rack)}${(NEV[x.trays.find(t => NEV[t])] || []).length ? " ⚠" : ""}</a>`).join("")}</div>`;
+    h += `<h2 class="sec">Events</h2><p class="note">Every fabric record, summarized: each link's fault with its tickets and what each repair did, each rack power loss, each Hall B rack's cabling, each NVLink tray failure. Record ids open the Incident Portal; a finding id is the IT Partner scorecard's.</p>` + nEventsTable(N.events);
+    main.innerHTML = h;
+    const nc = document.getElementById("nc"), X = {...HX, n: HOURS};
+    nc.innerHTML = NHALLS.map(hall => {
+      const S = N.halls[hall].hourly;
+      return `<div class="hallname">${esc(N.halls[hall].name)}</div>`
+        + chart({...X, title: "Data sent to the trays (PB per hour)", unit: "PB", d: 1, series: [{v: S.tx_pb, color: "var(--s1)", name: "Data sent"}], lo: 0})
+        + chart({...X, title: "Links up all hour, and cabled", unit: "links", series: [{v: S.links_cabled, color: "#b8c2cc", name: "Cabled", w: 1}, {v: S.links_up, color: "var(--s3)", name: "Up all hour"}], lo: 0, H: 120})
+        + chart({...X, title: "Symbol errors and link drops (per hour)", unit: "", series: [{v: S.symbol_errors, color: "var(--bad)", name: "Symbol errors"}, {v: S.link_downs, color: "var(--warn)", name: "Link drops"}], lo: 0, H: 120});
+    }).join("");
+  }
+
+  // ------------------------------------------------------------------ leaf
+  function leafHeader(x) {
+    const P = prodOf(x), H = N.halls[x.hall];
+    return `<div class="kind">${esc(H.name)} · rail ${esc(x.rail)} · ${esc(P.model)} · ${esc(P.os)} · ${esc(P.speed)}</div><h1>${esc(x.id)}</h1>`
+      + `<p class="sub">Leaf for rail ${esc(x.rail)} of racks ${x.racks.map(r => link(r, r)).join(" and ")}: ports 1 to 36 go down to the trays' rail-${esc(x.rail)} NICs (${esc(P.host_nic)}), ${esc(x.uplinks)} ports go up to the spine plane (not modeled). ${esc(P.ports)} ports on ${esc(P.cages)} OSFP cages, named <code>${esc(P.port_name)}</code>; FEC ${esc(P.fec)}. Chassis read over ${esc(x.product.startsWith("quantum2") ? N.collection.chassis_qm9700.protocol + " (" + N.collection.chassis_qm9700.mib + ")" : N.collection.chassis_q3400.protocol + ", " + N.collection.chassis_q3400.model)}. <a href="../devices/#${esc(encodeURIComponent(x.id))}">Device card ↗</a></p>`;
+  }
+  function leafView(id, seq) {
+    const x = NLEAF[id], evs = N.events.filter(e => e.family === "port" && portOf(e.device).leaf === id).concat(N.events.filter(e => e.family === "rack" && x.racks.includes(e.rack)));
+    evs.sort((a, b) => a.t < b.t ? -1 : 1);
+    let h = leafHeader(x);
+    h += `<div class="tiles">` + tile("Links cabled", `${num(x.cabled_end)} of ${num(x.ports)}`, x.cabled_start === x.cabled_end ? "all month" : `${num(x.cabled_start)} at the start of the month`)
+      + tile("Data sent", `${num(x.tx_pb, 1)} PB`, "to the trays this month") + tile("Symbol errors", `${num(x.sym)}`, x.flagged.length ? `on ${x.flagged.map(l => link(l, l.split(":")[1])).join(", ")}` : "none on any port")
+      + tile("Link drops", `${num(x.downs)}`, "all ports") + tile("ASIC", `${num(x.asic_max)} °C`, `hourly max; PSU input ${num(x.power_avg_w)} W mean`) + `</div>`;
+    h += `<h2 class="sec">Ports</h2><div id="lp">Loading data/network/${esc(id)}.json…</div>`;
+    h += `<h2 class="sec">The month, by hour</h2><div id="lc"></div><p><button class="b" id="lcsv">Download CSV (every port, by hour)</button> <span class="note" id="lcsv-note"></span></p>`;
+    h += `<h2 class="sec">Events on this leaf's links and racks</h2>` + nEventsTable(evs);
+    main.innerHTML = h;
+    loadLeaf(id).then(d => { if (seq !== current) return;
+      const ps = Object.keys(d.ports).map(Number).sort((a, b) => a - b);
+      document.getElementById("lp").innerHTML = `<div class="scroll"><table><thead><tr><th>Port</th><th>Name</th><th>Far end</th><th class="n">Sent PB</th><th class="n">Symbol errors</th><th class="n">Drops</th><th class="n">Rx min dBm</th><th class="n">Module max °C</th><th>Hourly Gb/s sent</th></tr></thead><tbody>`
+        + ps.map(n => { const p = d.ports[n], lid = `${id}:swp${n}`, rx = p.optics.rxA.filter(v => v != null), mod = p.optics.modA.filter(v => v != null);
+          const cabled = p.upA.some(v => v > 0);
+          return `<tr><td>${link(lid, "swp" + n)}${(NEV[lid] || []).length ? ` ${tag("record", "bad")}` : ""}</td><td><code>${esc(p.name)}</code></td><td>${link(p.rack, p.peer_host)} <span class="note">${esc(p.peer_hca)}</span>${cabled ? "" : ` ${tag("not cabled yet", "")}`}</td>`
+            + `<td class="n">${num(p.tx_words * 4 / 1e15, 1)}</td><td class="n">${num(p.symA.reduce((a, b) => a + b, 0))}</td><td class="n">${num(p.downsA.reduce((a, b) => a + b, 0))}</td><td class="n">${rx.length ? num(Math.min(...rx), 1) : "–"}</td><td class="n">${mod.length ? num(Math.max(...mod)) : "–"}</td><td>${spark(p.txA, 160, 22)}</td></tr>`; }).join("") + `</tbody></table></div>`;
+      const X = {...HX, n: d.hours, bands: nBands(evs, d.hours)};
+      const down = d.upTx.map((_, i) => ps.reduce((a, n) => a + d.ports[n].rxA[i], 0));
+      document.getElementById("lc").innerHTML = chart({...X, title: "Uplinks to the spine (Gb/s, hourly mean)", unit: "Gb/s", series: [{v: down, color: "#b8c2cc", name: "Received from the trays (all ports)", w: 1}, {v: d.upRx, color: "var(--s2)", name: "Received from the spine", w: 1}, {v: d.upTx, color: "var(--s1)", name: "Sent up", w: 1.4}], lo: 0})
+        + lg([["var(--s1)", "sent up to the spine"], ["var(--s2)", "received from the spine"], ["#b8c2cc", "received from the trays (the uplinks carry their share of it)"]])
+        + chart({...X, title: "ASIC temperature, hourly max (°C)", unit: "°C", series: [{v: d.asic, color: "var(--s4)", name: "ASIC"}], H: 120})
+        + chart({...X, title: "Fan speed, mean (rpm)", unit: "rpm", series: [{v: d.fan, color: "var(--s3)", name: "Fans"}], H: 120})
+        + chart({...X, title: "PSU input power (W)", unit: "W", series: [{v: d.pw, color: "var(--s2)", name: "Power"}], H: 120});
+    }).catch(e => { if (seq === current) document.getElementById("lp").innerHTML = errBox(e, `data/network/${id}.json`); });
+  }
+
+  // ------------------------------------------------------------------ port
+  let npCtx = null;
+  function portView(lid, minute, seq) {
+    const {leaf, port} = portOf(lid), x = NLEAF[leaf], evs = (NEV[lid] || []).concat(N.events.filter(e => e.family === "rack")), wins = NWIN[lid] || [];
+    let h = `<div class="kind">${esc(N.halls[x.hall].name)} · ${esc(prodOf(x).model)} · rail ${esc(x.rail)} · ${esc(prodOf(x).speed)}</div><h1>${esc(lid)}</h1><div id="pp">Loading data/network/${esc(leaf)}.json…</div>`;
+    main.innerHTML = h;
+    loadLeaf(leaf).then(d => { if (seq !== current) return;
+      const p = d.ports[port];
+      if (!p) { document.getElementById("pp").innerHTML = `<p class="note">Port ${esc(port)} is not cabled to a tray.</p>`; return; }
+      const mine = evs.filter(e => e.device === lid || (e.family === "rack" && e.rack === p.rack));
+      const rx = p.optics.rxA.filter(v => v != null), mod = p.optics.modA.filter(v => v != null), sym = p.symA.reduce((a, b) => a + b, 0), downs = p.downsA.reduce((a, b) => a + b, 0);
+      let s = `<p class="sub">Port ${esc(port)} (<code>${esc(p.name)}</code>) on ${link(leaf, leaf)} to ${link(p.rack, p.peer_host)} NIC <code>${esc(p.peer_hca)}</code> (rail ${esc(p.rail)}), one ${esc(p.gbps)}G link over an OSFP optic at each end. Port GUID <code>${esc(p.port_guid)}</code>, far-end GUID <code>${esc(p.peer_guid)}</code>, cable <code>${esc(p.cable_sn)}</code>. Healthy receive power on this link is about ${num(p.baseline.rx_dbm, 1)} dBm. ${p.cabled_at_start ? "" : "Cabled this month (Hall B deployment). "}<a href="../devices/#${esc(encodeURIComponent(p.peer_host))}">Tray's device card ↗</a></p>`;
+      for (const e of mine) for (const f of e.findings) s += `<div class="finding">${tag(f.id, "bad")} ${esc(f.title.replace(/\.?$/, "."))} The telemetry shows the same: ${esc(e.text.charAt(0).toLowerCase() + e.text.slice(1))}.</div>`;
+      s += `<div class="tiles">` + tile("Data sent / received", `${num(p.tx_words * 4 / 1e15, 1)} PB`, `received ${num(p.rx_words * 4 / 1e15, 1)} PB; the tray's NIC counts the same`)
+        + tile("Symbol errors", `${num(sym)}`, sym ? `UFM event 110 at ${num(N.symbol_threshold)} errors` : "none: FEC corrected every raw error")
+        + tile("Link drops", `${num(downs)}`, `${num(p.ler)} link error recoveries`)
+        + tile("Receive power", rx.length ? `${num(Math.min(...rx), 1)} dBm` : "–", `lowest ${p.optics.per === "day" ? "daily" : "hourly"} reading; warning ${num(N.warn_rx_dbm, 1)}, alarm ${num(N.thresholds.rx_dbm[0], 1)}`)
+        + tile("Module temperature", mod.length ? `${num(Math.max(...mod))} °C` : "–", `alarm at ${num(N.thresholds.temp_c[1])} °C`) + `</div>`;
+      s += `<h2 class="sec">The month, by hour</h2><div class="legend"><span><i class="band" style="background:${esc(NEVC.optic)}"></i>fault on record</span><span><i class="band" style="background:${esc(NEVC.power)}"></i>rack power lost</span><span><i class="band" style="background:${esc(NEVC.cabled)}"></i>cabled</span></div><div id="pc"></div>`;
+      s += `<h2 class="sec">Minute detail</h2><p class="note">The one-minute counters are published around every fault record (the month is hourly). Move the cursor to see what each collector read at that minute.</p>`
+        + `<div class="btns" id="nw-btns">${wins.length ? wins.map((w, i) => `<button data-w="${esc(i)}">${esc(at(w.from))} (${esc(w.minutes)} min)</button>`).join("") : `<span class="note">No fault on this link this month, so no minute windows were published.</span>`}</div><div id="nw"></div>`;
+      s += `<h2 class="sec">Events</h2>` + nEventsTable(mine);
+      document.getElementById("pp").innerHTML = s;
+      const X = {...HX, n: d.hours, bands: nBands(mine, d.hours)}, O = p.optics;
+      document.getElementById("pc").innerHTML = chart({...X, title: "Traffic (Gb/s, hourly mean)", unit: "Gb/s", series: [{v: p.rxA, color: "var(--s2)", name: "Received from the tray", w: 1}, {v: p.txA, color: "var(--s1)", name: "Sent to the tray"}], hlines: [{y: p.gbps, label: `line rate ${p.gbps} Gb/s`, color: "var(--line)"}], lo: 0})
+        + chart({...X, title: "Symbol errors and link drops (per hour)", unit: "", series: [{v: p.symA, color: "var(--bad)", name: "Symbol errors"}, {v: p.downsA, color: "var(--warn)", name: "Link drops"}], lo: 0, H: 120})
+        + chart({...X, title: `Receive power, worst lane, ${O.per === "day" ? "daily" : "hourly"} min (dBm)`, unit: "dBm", d: 1, series: [{v: O.rxA, color: "var(--s1)", name: "Rx power"}], hlines: [{y: N.warn_rx_dbm, label: "warning", color: "var(--warn)"}, {y: N.thresholds.rx_dbm[0], label: "alarm", color: "var(--bad)"}], H: 130})
+        + chart({...X, title: "SNR, worst lane, min (dB)", unit: "dB", d: 1, series: [{v: O.snrA, color: "var(--s3)", name: "SNR"}], H: 120})
+        + chart({...X, title: "Raw (pre-FEC) bit error rate, max (log10)", unit: "log10", d: 1, series: [{v: O.berA, color: "var(--s4)", name: "log10 raw BER"}], H: 120})
+        + chart({...X, title: "Module temperature, max (°C)", unit: "°C", series: [{v: O.modA, color: "var(--s2)", name: "Module"}], H: 120});
+      npCtx = {lid, p, x, wins, node: d.node_guid};
+      main.querySelectorAll("#nw-btns button").forEach(b => b.addEventListener("click", () => nwOpen(wins[+b.dataset.w], b, null)));
+      if (minute != null) {
+        const i = wins.findIndex(w => { const a = minOf(w.from); return minute >= a && minute < a + w.minutes; });
+        if (i >= 0) nwOpen(wins[i], main.querySelectorAll("#nw-btns button")[i], minute - minOf(wins[i].from));
+      }
+    }).catch(e => { if (seq === current) document.getElementById("pp").innerHTML = errBox(e, `data/network/${leaf}.json`); });
+  }
+  let nwCtx = null, nwRaw = "ufm";
+  const perMin = (a, sc) => a.map((v, i) => i ? (v - a[i - 1]) * sc : null);
+  function nwOpen(w, btn, cursor) {
+    const box = document.getElementById("nw");
+    main.querySelectorAll("#nw-btns button").forEach(b => b.classList.toggle("on", b === btn));
+    box.innerHTML = `<p class="note">Loading ${esc(w.file)}…</p>`;
+    loadNWin(w).then(d => {
+      if (!document.getElementById("nw")) return;
+      nwCtx = {d, c: cursor != null ? cursor : Math.min(30, d.minutes - 1)};
+      const n = d.minutes, f0 = Date.parse(d.from), F = d.fields;
+      const evm = (d.states || []).map(s => ({i: s.m - d.m0, color: s.point === "Optic signature" ? "var(--warn)" : "var(--bad)", label: `${s.time.slice(11, 19)} ${s.point}: ${s.value}`}));
+      const MX = {n, xlab: i => new Date(f0 + i * MIN).toISOString().slice(11, 16), xtick: n > 600 ? 120 : n > 240 ? 60 : 15, xminor: n > 600 ? 30 : n > 240 ? 15 : 5, hover: i => at(new Date(f0 + i * MIN).toISOString()), marks: evm, H: 130};
+      const gb = 32 / 60 / 1e9;
+      let h = `<p class="note">${esc(d.device)}, ${esc(at(d.from))} for ${esc(n)} minutes. Red lines: fabric events and repair notes on record; amber: where the failing optic's readings begin and clear.</p><div class="ctl"><label for="nwm">Minute</label><b id="nwm-lab"></b></div><input type="range" id="nwm" min="0" max="${esc(n - 1)}" value="${esc(nwCtx.c)}" aria-label="Minute within the window">`;
+      h += chart({...MX, title: "Traffic (Gb/s)", unit: "Gb/s", series: [{v: perMin(F.rx, gb), color: "var(--s2)", name: "Received", w: 1}, {v: perMin(F.tx, gb), color: "var(--s1)", name: "Sent"}], lo: 0})
+        + chart({...MX, title: "Link up (1) or down (0)", unit: "", series: [{v: F.up, color: "var(--s3)", name: "Up"}], lo: 0, hi: 1, H: 90})
+        + chart({...MX, title: "Symbol errors (per minute)", unit: "", series: [{v: perMin(F.sym, 1), color: "var(--bad)", name: "Symbol errors"}], lo: 0, H: 110})
+        + chart({...MX, title: "Receive power, worst lane (dBm)", unit: "dBm", d: 1, series: [{v: F.rx_dbm.map(v => v == null ? null : v / 10), color: "var(--s1)", name: "Rx power"}], hlines: [{y: N.warn_rx_dbm, label: "warning", color: "var(--warn)"}, {y: N.thresholds.rx_dbm[0], label: "alarm", color: "var(--bad)"}], H: 120})
+        + chart({...MX, title: "SNR, worst lane (dB) and raw BER (log10)", unit: "", d: 1, series: [{v: F.snr.map(v => v / 10), color: "var(--s3)", name: "SNR dB"}, {v: F.raw_ber.map(v => v / 100), color: "var(--s4)", name: "log10 raw BER"}], H: 120});
+      h += `<div class="btns" id="nw-raw">${[["ufm", "UFM Telemetry (Prometheus)"], ["perf", "perfquery"], ["mlx", "mlxlink"], ["host", "node_exporter (tray)"]].map(([k, l]) => `<button data-r="${esc(k)}" class="${k === nwRaw ? "on" : ""}">${esc(l)}</button>`).join("")}</div>`
+        + `<pre class="scrape" id="nw-pre" data-gl-skip></pre><p><button class="b" id="nwcsv">Download CSV (this window)</button> <span class="note" id="nwcsv-note"></span></p>`;
+      box.innerHTML = h;
+      nwUpdate();
+    }).catch(e => { box.innerHTML = errBox(e, w.file); });
+  }
+  const dots = (k, v) => `${k}:${".".repeat(Math.max(1, 33 - k.length))}${v}`;
+  const sci = log => { const v = Math.pow(10, log); const e = Math.floor(Math.log10(v)); return `${(v / Math.pow(10, e)).toFixed(1)}E${e < 0 ? "-" : "+"}${String(Math.abs(e)).padStart(2, "0")}`; };
+  function nwUpdate() {
+    const el = document.getElementById("nw-pre");
+    if (!nwCtx || !el || !npCtx) return;
+    const {d, c} = nwCtx, {p, x} = npCtx, F = d.fields, when = new Date(Date.parse(d.from) + c * MIN).toISOString(), P = prodOf(x);
+    document.getElementById("nwm-lab").textContent = at(when);
+    main.querySelectorAll("#nw svg[data-ch]").forEach(svg => { const ch = CH.get(svg.dataset.ch); if (ch && ch.n === d.minutes) { const px = ch.L + (c + 0.5) / ch.n * ch.pw, cur = svg.querySelector(".cur"); cur.setAttribute("x1", px); cur.setAttribute("x2", px); cur.style.display = ""; } });
+    const up = F.up[c] === 1, rx = F.rx_dbm[c], peerDark = rx != null && rx <= -400;
+    const port = d.device.split("swp")[1];
+    let out;
+    if (nwRaw === "ufm") {
+      const lab = `{node_guid="${esc(npCtx.node)}",port_guid="${esc(p.port_guid)}",port_num="${esc(port)}",node_description="${esc(x.id)}"}`;
+      out = `<span class="c"># GET http://ufm-telemetry:${esc(N.collection.ufm.port)}/metrics  ${esc(when)}  (primary fields every ${esc(N.collection.ufm.primary_s)} s, PHY and module fields every ${esc(N.collection.ufm.secondary_s)} s)</span>\n`
+        + [["PortXmitDataExtended", F.tx[c]], ["PortRcvDataExtended", F.rx[c]], ["SymbolErrorCounterExtended", F.sym[c]], ["LinkDownedCounterExtended", F.downs[c]], ["LinkErrorRecoveryCounterExtended", F.ler[c]], ["PortXmitWaitExtended", F.wait[c]]]
+          .map(([k, v]) => `${esc(k)}${lab} ${esc(v)}`).join("\n")
+        + `\nTotal_Raw_BER${lab} ${up ? esc(sci(F.raw_ber[c] / 100)) : "NaN"}\nModule_Temperature${lab} ${esc(F.mod_c[c])}`
+        + `\n<span class="c"># rx_power_lane_0..3 and snr_media_lane_0..3: this demo publishes the worst lane only: ${rx == null ? "no module" : esc((rx / 10).toFixed(1)) + " dBm"}, SNR ${esc((F.snr[c] / 10).toFixed(1))} dB</span>`;
+    } else if (nwRaw === "perf") {
+      out = `<span class="c"># perfquery -x -G ${esc(p.port_guid)} ${esc(port)}   (PortCountersExtended; counts since the last reset, data in 4-octet words; packet counts not modeled)</span>\n`
+        + [dots("# Port extended counters", ` GUID ${p.port_guid} port ${port}`), dots("PortSelect", port), dots("CounterSelect", "0x0000"), dots("PortXmitData", F.tx[c]), dots("PortRcvData", F.rx[c])].map(esc).join("\n")
+        + `\n\n<span class="c"># perfquery -G ${esc(p.port_guid)} ${esc(port)}   (PortCounters; 8- and 16-bit counters stop at their maximum)</span>\n`
+        + [dots("SymbolErrorCounter", Math.min(65535, F.sym[c])), dots("LinkErrorRecoveryCounter", Math.min(255, F.ler[c])), dots("LinkDownedCounter", Math.min(255, F.downs[c])), dots("PortXmitWait", Math.min(4294967295, F.wait[c]))].map(esc).join("\n");
+    } else if (nwRaw === "mlx") {
+      const T = N.thresholds;
+      out = `<span class="c"># mlxlink -d lid-of-${esc(x.id)} -p ${esc(port)} -m -c   ${esc(when)}</span>\n\nOperational Info\n----------------\n`
+        + [["State", up ? "Active" : "Polling"], ["Physical state", up ? "LinkUp" : "Polling"], ["Speed", up ? P.speed : "N/A"], ["Width", up ? "4x" : "N/A"], ["FEC", P.fec]].map(([k, v]) => `${esc(k.padEnd(32))}: ${esc(v)}`).join("\n")
+        + `\n\nModule Info\n-----------\n`
+        + [["Temperature [C]", `${F.mod_c[c]} [${T.temp_c[0]}..${T.temp_c[1]}]`], ["Rx Power Current [dBm]", rx == null ? "N/A" : `${(rx / 10).toFixed(1)} (worst lane) [${T.rx_dbm[0]}..${T.rx_dbm[1]}]`], ["Tx Power Current [dBm]", `${p.baseline.tx_dbm.toFixed(1)} [${T.tx_dbm[0]}..${T.tx_dbm[1]}]`], ["SNR Media Lanes [dB]", `${(F.snr[c] / 10).toFixed(1)} (worst lane)`]].map(([k, v]) => `${esc(k.padEnd(32))}: ${esc(v)}`).join("\n")
+        + `\n\nPhysical Counters and BER Info\n------------------------------\n`
+        + [["Raw Physical BER", up ? sci(F.raw_ber[c] / 100) : "N/A"], ["Effective Physical Errors", String(F.sym[c])], ["Link Down Counter", String(F.downs[c])], ["Link Error Recovery Counter", String(F.ler[c])]].map(([k, v]) => `${esc(k.padEnd(32))}: ${esc(v)}`).join("\n")
+        + (peerDark ? `\n<span class="c"># no light from the far end: the tray has no power</span>` : "");
+    } else {
+      const lab = `{device="${esc(p.peer_hca)}",port="1"}`;
+      out = peerDark ? `<span class="c"># ${esc(p.peer_host)}:${esc(N.collection.host.endpoint.split(":")[1] || "9100")}: no response (the tray has no power)</span>`
+        : `<span class="c"># GET http://${esc(p.peer_host)}:9100/metrics  ${esc(when)}  (InfiniBand collector; the tray end of the same link: it receives what the switch port sends)</span>\n`
+        + [["node_infiniband_port_data_received_bytes_total", F.tx[c] * 4], ["node_infiniband_port_data_transmitted_bytes_total", F.rx[c] * 4], ["node_infiniband_link_downed_total", F.downs[c]], ["node_infiniband_link_error_recovery_total", F.ler[c]],
+           ["node_infiniband_physical_state_id", up ? 5 : 2], ["node_infiniband_state_id", up ? 4 : 1], ["node_infiniband_rate_bytes_per_second", up ? p.gbps * 1e9 / 8 : 0]].map(([k, v]) => `${esc(k)}${lab} ${esc(v)}`).join("\n");
+    }
+    el.innerHTML = out;
+  }
+  main.addEventListener("input", e => { if (e.target.id === "nwm" && nwCtx) { nwCtx.c = +e.target.value; nwUpdate(); } });
+  main.addEventListener("click", e => {
+    const r = e.target.closest("#nw-raw button");
+    if (r) { nwRaw = r.dataset.r; main.querySelectorAll("#nw-raw button").forEach(b => b.classList.toggle("on", b === r)); nwUpdate(); return; }
+    if (!e.target.closest("#nwcsv") || !nwCtx) return;
+    const {d} = nwCtx, keys = Object.keys(d.fields), rows = [["minute_utc", ...keys.map(k => NF[k] ? NF[k].name.replace(/[ ,()]+/g, "_") + (NF[k].scale ? `_x${NF[k].scale}` : "") : k)]];
+    for (let i = 0; i < d.minutes; i++) rows.push([new Date(Date.parse(d.from) + i * MIN).toISOString(), ...keys.map(k => d.fields[k][i] == null ? "" : d.fields[k][i])]);
+    saveCsv(rows, `${d.device.replace(":", "_")}_${d.from.slice(0, 16).replace(/[-:]/g, "")}.csv`, document.getElementById("nwcsv-note"));
+  });
+
+  // ------------------------------------------------------------------ NVLink
+  let nvCtx = null;
+  function nvView(rack, tray, seq) {
+    const x = NNV[rack], evs = N.events.filter(e => e.rack === rack && (e.family === "nvlink" || e.kind === "power")), wins = x.trays.flatMap(t => NWIN[t] || []);
+    let h = `<div class="kind">${esc((N.halls[x.hall] || {name: x.hall}).name)} · NVL72 rack · ${esc(x.trays.length)} NVLink switch trays · NMX-T</div><h1>NVLink, rack ${esc(rack)}</h1>`
+      + `<p class="sub">The rack's 72 GPUs reach each other through ${esc(x.trays.length)} NVLink switch trays; NMX-T reads each tray once a minute. If a tray fails, the GPUs keep their NVLink domain through the other trays at reduced bandwidth. ${link(rack, "Rack " + rack + " GPUs")} · ${(RACK_LEAVES[rack] || []).map(l => link(l, l)).join(", ")} (InfiniBand leaves)</p>`;
+    h += `<div class="tiles">` + tile("NVLink data", `${num(x.tx_tb / 1000, 1)} PB`, "sent through the trays this month") + tile("Tray-minutes reporting", `${num(x.tray_minutes)}`, `${num(x.hours_reporting)} hours with a tray reporting`) + tile("Switch ASIC", `${num(x.asic_max)} °C`, "hottest tray, hourly max") + `</div>`;
+    h += `<h2 class="sec">The month, by hour</h2><div id="nvc">Loading data/network/nvlink_${esc(rack)}.json…</div><p><button class="b" id="nvcsv">Download CSV (every tray, by hour)</button> <span class="note" id="nvcsv-note"></span></p>`;
+    h += `<h2 class="sec">Minute detail</h2><div class="btns" id="nv-btns">${wins.length ? wins.map((w, i) => `<button data-w="${esc(i)}">${esc(w.device)}, ${esc(at(w.from))} (${esc(w.minutes)} min)</button>`).join("") : `<span class="note">No NMX event on this rack's trays this month, so no minute windows were published.</span>`}</div><div id="nv"></div>`;
+    h += `<h2 class="sec">Events</h2>` + nEventsTable(evs);
+    main.innerHTML = h;
+    main.querySelectorAll("#nv-btns button").forEach(b => b.addEventListener("click", () => nvOpen(wins[+b.dataset.w], b)));
+    loadNv(rack).then(d => { if (seq !== current) return;
+      const names = Object.keys(d.trays).sort(), X = {...HX, n: d.hours, bands: nBands(evs, d.hours)}, col = i => ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)", "#5aa9e6", "#e89a3c", "#2ec4a0", "#a77fd8", "#7d8a97"][i % 9];
+      const ser = (k, sc = 1) => names.map((nm, i) => ({v: sc === 1 ? d.trays[nm][k] : d.trays[nm][k].map(v => v == null ? null : v / sc), color: tray && nm !== tray ? "#c9d1d9" : col(i), w: nm === tray ? 2.2 : 1.2, name: nm}));
+      document.getElementById("nvc").innerHTML = chart({...X, title: "Data sent per tray (TB per hour)", unit: "TB", series: ser("txA", 1000), lo: 0})
+        + chart({...X, title: "Minutes reporting per tray (per hour)", unit: "min", series: ser("okA"), lo: 0, hi: 60, H: 110})
+        + chart({...X, title: "Switch temperature, hottest ASIC (°C)", unit: "°C", series: ser("asicA"), H: 120})
+        + chart({...X, title: "Tray power (W)", unit: "W", series: ser("pwA"), H: 120})
+        + `<div class="scroll"><table><thead><tr><th>Tray</th><th class="n">Data sent PB</th><th class="n">Minutes reporting</th><th class="n">Link-down events</th></tr></thead><tbody>`
+        + names.map(nm => { const t = d.trays[nm]; return `<tr><td>${link(nm, nm)}${(NEV[nm] || []).length ? ` ${tag("record", "bad")}` : ""}</td><td class="n">${num(t.txA.reduce((a, b) => a + b, 0) / 1e6, 1)}</td><td class="n">${num(t.okA.reduce((a, b) => a + b, 0))}</td><td class="n">${num(t.downs)}</td></tr>`; }).join("") + `</tbody></table></div>`;
+      if (tray) { const i = wins.findIndex(w => w.device === tray); if (i >= 0) nvOpen(wins[i], main.querySelectorAll("#nv-btns button")[i]); }
+    }).catch(e => { if (seq === current) document.getElementById("nvc").innerHTML = errBox(e, `data/network/nvlink_${rack}.json`); });
+  }
+  function nvOpen(w, btn) {
+    const box = document.getElementById("nv");
+    main.querySelectorAll("#nv-btns button").forEach(b => b.classList.toggle("on", b === btn));
+    box.innerHTML = `<p class="note">Loading ${esc(w.file)}…</p>`;
+    loadNWin(w).then(d => {
+      if (!document.getElementById("nv")) return;
+      nvCtx = {d, c: Math.min(30, d.minutes - 1)};
+      const n = d.minutes, f0 = Date.parse(d.from), F = d.fields;
+      const evm = (d.states || []).map(s => ({i: s.m - d.m0, color: "var(--bad)", label: `${s.time.slice(11, 19)} ${s.point}: ${s.value}`}));
+      const MX = {n, xlab: i => new Date(f0 + i * MIN).toISOString().slice(11, 16), xtick: 30, xminor: 10, hover: i => at(new Date(f0 + i * MIN).toISOString()), marks: evm, H: 130};
+      box.innerHTML = `<p class="note">${esc(d.device)}, ${esc(at(d.from))} for ${esc(n)} minutes. Red lines: the NMX records.</p><div class="ctl"><label for="nvm">Minute</label><b id="nvm-lab"></b></div><input type="range" id="nvm" min="0" max="${esc(n - 1)}" value="${esc(nvCtx.c)}" aria-label="Minute within the window">`
+        + chart({...MX, title: "NVLink data (TB per minute)", unit: "TB", d: 1, series: [{v: d.others_tx_gb.map(v => v / 1000), color: "#b8c2cc", name: "The rack's other trays", w: 1}, {v: F.tx_gb.map(v => v / 1000), color: "var(--s1)", name: d.device}], lo: 0})
+        + lg([["var(--s1)", d.device], ["#b8c2cc", "the rack's other trays together (they carry its share while it is out)"]])
+        + chart({...MX, title: "Ports up (of 144)", unit: "", series: [{v: F.up_ports, color: "var(--s3)", name: "Up"}], lo: 0, H: 100})
+        + `<pre class="scrape" id="nv-pre" data-gl-skip></pre>`;
+      nvUpdate();
+    }).catch(e => { box.innerHTML = errBox(e, w.file); });
+  }
+  function nvUpdate() {
+    const el = document.getElementById("nv-pre");
+    if (!nvCtx || !el) return;
+    const {d, c} = nvCtx, F = d.fields, when = new Date(Date.parse(d.from) + c * MIN).toISOString();
+    document.getElementById("nvm-lab").textContent = at(when);
+    main.querySelectorAll("#nv svg[data-ch]").forEach(svg => { const ch = CH.get(svg.dataset.ch); if (ch && ch.n === d.minutes) { const px = ch.L + (c + 0.5) / ch.n * ch.pw, cur = svg.querySelector(".cur"); cur.setAttribute("x1", px); cur.setAttribute("x2", px); cur.style.display = ""; } });
+    const lab = `{switch="${esc(d.device)}"}`;
+    el.innerHTML = F.ok[c] ? `<span class="c"># GET http://nmx-telemetry:9352/metrics  ${esc(when)}  (tray totals; NMX-T publishes these per port and per ASIC)</span>\n`
+      + `hw_port_state${lab} ${esc(F.up_ports[c])}  <span class="c">-- ports up</span>\nPortXmitDataExtended${lab} ${esc(F.tx_gb[c])}  <span class="c">-- GB this minute, summed over ports</span>\nswitch_temperature${lab} ${esc(F.asic_c[c])}`
+      : `<span class="c"># GET http://nmx-telemetry:9352/metrics  ${esc(when)}: no series for ${esc(d.device)} (unreachable)</span>`;
+  }
+  main.addEventListener("input", e => { if (e.target.id === "nvm" && nvCtx) { nvCtx.c = +e.target.value; nvUpdate(); } });
+  main.addEventListener("click", e => {
+    const lb = e.target.closest("#lcsv"), nb = e.target.closest("#nvcsv"), r = route();
+    if (lb && r.view === "leaf") loadLeaf(r.leaf).then(d => {
+      const rows = [["hour_utc", "port", "name", "far_end", "tx_gbps", "rx_gbps", "up_min", "symbol_errors", "link_downs"]];
+      for (const n of Object.keys(d.ports).map(Number).sort((a, b) => a - b)) { const p = d.ports[n]; for (let i = 0; i < d.hours; i++) rows.push([hourIso(i), n, p.name, `${p.peer_host}:${p.peer_hca}`, p.txA[i], p.rxA[i], p.upA[i], p.symA[i], p.downsA[i]]); }
+      saveCsv(rows, `${r.leaf}_hourly.csv`, document.getElementById("lcsv-note"));
+    });
+    if (nb && r.view === "nvlink") loadNv(r.rack).then(d => {
+      const rows = [["hour_utc", "tray", "minutes_reporting", "tx_gb", "switch_temperature_c", "power_w"]];
+      for (const nm of Object.keys(d.trays).sort()) { const t = d.trays[nm]; for (let i = 0; i < d.hours; i++) rows.push([hourIso(i), nm, t.okA[i], t.txA[i], t.asicA[i] == null ? "" : t.asicA[i], t.pwA[i] == null ? "" : t.pwA[i]]); }
+      saveCsv(rows, `nvlink_${r.rack}_hourly.csv`, document.getElementById("nvcsv-note"));
+    });
+  });
+
+  // ------------------------------------------------------------------ reference
+  function networkFields() {
+    const K = N.collection;
+    let h = `<div class="kind">Network reference</div><h1>Counters and fields</h1><p class="sub">${esc(N.framing)} Counter names are the published ones (IBTA PortCountersExtended as UFM Telemetry and perfquery name them, node_exporter's InfiniBand collector, ENTITY-SENSOR-MIB, openconfig-platform over gNMI, and the NMX-T names NVIDIA's NetQ documentation lists); the values are this site's synthetic series. Where a document gives no name, none is invented. No vendor's internal tooling is implied.</p>`;
+    h += `<div class="cards">` + tile("Fabric ports", esc(K.ufm.endpoint), esc(K.ufm.note)) + tile("Tray NICs", esc(K.host.endpoint), `every ${esc(K.host.scrape_s)} s`)
+      + tile("Quantum-2 chassis", esc(K.chassis_qm9700.protocol), `${esc(K.chassis_qm9700.mib)}, every ${esc(K.chassis_qm9700.poll_s)} s`) + tile("Quantum-X800 chassis", esc(K.chassis_q3400.protocol), `${esc(K.chassis_q3400.model)}, every ${esc(K.chassis_q3400.sample_s)} s`)
+      + tile("NVLink trays", esc(K.nmx.endpoint), `every ${esc(K.nmx.scrape_s)} s`) + `</div>`;
+    h += `<h2 class="sec">Switch ports</h2><div class="scroll"><table data-gl-skip><thead><tr><th>Field</th><th>UFM Telemetry</th><th>node_exporter (tray end)</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + N.fields.port.map(f => `<tr><td>${esc(f.name)}</td><td><code>${esc(f.ufm || "–")}</code></td><td>${f.host ? `<code>${esc(f.host)}</code>` : "–"}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Leaf chassis</h2><div class="scroll"><table data-gl-skip><thead><tr><th>Field</th><th>SNMP (QM9700)</th><th>gNMI path (Q3400-RA)</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + N.fields.chassis.map(f => `<tr><td>${esc(f.name)}</td><td><code>${esc(f.snmp)}</code></td><td><code>${esc(f.gnmi)}</code></td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">NVLink switch trays</h2><div class="scroll"><table data-gl-skip><thead><tr><th>Field</th><th>NMX-T</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + N.fields.nvlink.map(f => `<tr><td>${esc(f.name)}</td><td><code>${esc(f.nmx)}</code></td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Switches</h2><div class="scroll"><table><thead><tr><th>Model</th><th>OS</th><th>Speed</th><th class="n">Ports</th><th class="n">OSFP cages</th><th class="n">Uplinks</th><th>Port names</th><th>FEC</th><th>Tray NIC</th></tr></thead><tbody>`
+      + Object.values(N.products).map(p => `<tr><td>${esc(p.model)}</td><td>${esc(p.os)}</td><td>${esc(p.speed)} (${esc(p.gbps)}G)</td><td class="n">${esc(p.ports)}</td><td class="n">${esc(p.cages)}</td><td class="n">${esc(p.uplinks)}</td><td><code>${esc(p.port_name)}</code></td><td>${esc(p.fec)}</td><td>${esc(p.host_nic)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + N.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function networkAgreements() {
+    const agree = N.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = N.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = `<div class="kind">Network reference</div><h1>Agreement with the records</h1><p class="sub">The network telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the fabric manager's port events, the IT Partner's optic tickets, the device directory's cabling, the GPU telemetry, the Hall B deployment, and the NMX records. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + N.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (N.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + N.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/network_telemetry.md.</p>`;
+    main.innerHTML = h;
+  }
+  function networkTree() {
+    let h = `<div class="famsec" data-fam="network"><div class="sec">Network</div><ul><li>${link("network", "Overview")}</li>`;
+    for (const hall of NHALLS) {
+      const H = N.halls[hall], lv = N.leaves.filter(x => x.hall === hall);
+      const pairs = [...new Set(lv.map(x => x.id.slice(0, -3)))];
+      h += `<li><details${hall === NHALLS[0] ? " open" : ""}><summary>${link("network", `${H.name} leaves`)} <small>${esc(lv.length)}</small></summary><ul class="leaves">`
+        + pairs.map(pr => `<li class="pr" title="${esc(NLEAF[pr + "-r0"] ? NLEAF[pr + "-r0"].racks.join(" and ") : "")}">${esc(pr.slice(5))}</li>` + [0, 1, 2, 3].map(r => NLEAF[`${pr}-r${r}`] ? `<li>${link(`${pr}-r${r}`, "r" + r)}</li>` : "<li></li>").join("")).join("") + `</ul></details></li>`;
+    }
+    h += `<li><details><summary>${link("nvlink-" + N.nvlink[0].rack, "NVLink")} <small>${esc(N.nvlink.length)} racks</small></summary><ul class="racks">` + N.nvlink.map(x => `<li>${link("nvlink-" + x.rack, x.rack)}</li>`).join("") + `</ul></details></li>`;
+    h += `</ul><div class="sec">Network reference</div><ul><li>${link("network-fields", "Counters and fields")}</li><li>${link("network-agreements", "Agreement with the records")}</li></ul></div>`;
+    return h;
+  }
+
   // ----------------------------------------------------------------- router
   let current = 0;
   function route() {
@@ -1389,7 +1755,14 @@ __SITENAV__
     if (/^cdu-[a-c]\d$/i.test(a) && CDU[a.toUpperCase()]) { const mi = b == null ? null : parseInt(b, 10); return {view: "cdu", cdu: a.toUpperCase(), minute: mi == null || Number.isNaN(mi) ? null : mi, key: a.toUpperCase(), fam: "cdu"}; }
     if (a === "cdu-fields" || a === "cdu-agreements") return {view: a, key: a, fam: "cdu"};
     if (a === "cdus" || /^cdu/i.test(a)) return {view: "cdus", key: "cdus", fam: "cdu"};
-    const up = a.toUpperCase(), pf = famOf(up), mi = b == null ? null : parseInt(b, 10), pm = mi == null || Number.isNaN(mi) ? null : mi;
+    const mi = b == null ? null : parseInt(b, 10), pm = mi == null || Number.isNaN(mi) ? null : mi;
+    if (isLeaf(a)) return {view: "leaf", leaf: a, key: a, fam: "network"};
+    if (portOf(a)) return {view: "port", lid: a, minute: pm, key: portOf(a).leaf, fam: "network"};
+    if ((m = /^nvlink-([ab]\d\d)$/i.exec(a)) && NNV[m[1].toUpperCase()]) return {view: "nvlink", rack: m[1].toUpperCase(), tray: null, key: "nvlink-" + m[1].toUpperCase(), fam: "network"};
+    if (trayRack(a)) return {view: "nvlink", rack: trayRack(a), tray: a, key: "nvlink-" + trayRack(a), fam: "network"};
+    if (a === "network-fields" || a === "network-agreements") return {view: a, key: a, fam: "network"};
+    if (a === "network") return {view: "network", key: "network", fam: "network"};
+    const up = a.toUpperCase(), pf = famOf(up);
     if (pf) return {view: pf, dev: up, minute: pm, key: up, fam: "power"};
     if (a === "power-fields" || a === "power-agreements") return {view: a, key: a, fam: "power"};
     if (a === "power") return {view: "power", key: "power", fam: "power"};
@@ -1397,7 +1770,7 @@ __SITENAV__
   }
   function show() {
     const seq = ++current, r = route(), fam = r.fam || "gpu";
-    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null;
+    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null;
     if (r.view === "rack") rackView(r.rack, r.hour, seq);
     else if (r.view === "gpu") gpuView(r.host, r.gpu, seq);
     else if (r.view === "fields") fields();
@@ -1412,6 +1785,12 @@ __SITENAV__
     else if (r.view === "tapoff") tapView(r.dev, r.minute, seq);
     else if (r.view === "power-fields") powerFields();
     else if (r.view === "power-agreements") powerAgreements();
+    else if (r.view === "network") networkOverview(seq);
+    else if (r.view === "leaf") leafView(r.leaf, seq);
+    else if (r.view === "port") portView(r.lid, r.minute, seq);
+    else if (r.view === "nvlink") nvView(r.rack, r.tray, seq);
+    else if (r.view === "network-fields") networkFields();
+    else if (r.view === "network-agreements") networkAgreements();
     else overview(seq);
     document.querySelectorAll("#tree a").forEach(a => {
       const on = a.getAttribute("href") === "#" + r.key;
