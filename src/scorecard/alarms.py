@@ -31,6 +31,7 @@ from typing import Any
 import yaml
 
 from scorecard import site_model as S
+from scorecard.fabric import peer_power_lost, power_loss_links
 from scorecard.connectors import FileConnector
 from scorecard.synthetic.facility import room_for
 
@@ -374,7 +375,10 @@ def normalize(src: FileConnector, cfg: dict | None = None) -> list[Alarm]:
             it.raise_(("nmx", unit), t, mk(None, "nvlink_failed", t, unit.split()[-1], e["rack"], e["message"], source="NVLink manager"))
         else:
             it.clear(("nmx", unit), t)
+    lost = power_loss_links(src.get("ufm_events"), src.get("scheduler_states"))
     for e in src.get("ufm_events"):
+        if peer_power_lost(e, lost):       # folded under the rack-outage alarm (one root cause, not 72 link alarms)
+            continue
         t, ev = parse(e["timestamp"]), e["event"]
         dev = f"{e['switch']} port {e['port']}"
         rack = host_rack.get(e["peer_host"])

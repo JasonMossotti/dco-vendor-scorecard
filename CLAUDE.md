@@ -1,7 +1,7 @@
 # CLAUDE.md: dco-vendor-scorecard
 
 Portfolio project for a Data Center Operations Lead (partner-operated sites) application. Owner: Jason Mossotti.
-Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (Unified Site Management overview), `/app/` (scorecard app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/energy/` (PUE report), `/gpu/` (GPU health), `/telemetry/` (GPU and CDU telemetry; power, network, and a site health dashboard to follow), `/alarms/` (Customer alarm board), `/tickets/` (Incident Portal: both partners' tickets, changes, and work orders), `/agreements/` (the three contracts), `/glossary/` (every code; popups on every page), `/devices/` (every named device and its connections), `/deployments/` (Hall B GB300 rollout: gates, steps, calculations, permits, work orders, record checks).
+Repo: https://github.com/JasonMossotti/dco-vendor-scorecard · Live: https://jasonmossotti.github.io/dco-vendor-scorecard/ (Unified Site Management overview), `/app/` (scorecard app), `/pir/` (post-incident review), `/weekly/` (weekly operations review), `/patterns/` (failure pattern review), `/energy/` (PUE report), `/gpu/` (GPU health), `/telemetry/` (GPU, CDU, power, and network telemetry; a site health dashboard to follow), `/alarms/` (Customer alarm board), `/tickets/` (Incident Portal: both partners' tickets, changes, and work orders), `/agreements/` (the three contracts), `/glossary/` (every code; popups on every page), `/devices/` (every named device and its connections), `/deployments/` (Hall B GB300 rollout: gates, steps, calculations, permits, work orders, record checks).
 
 Fictional Site AUS-1 (Central Texas): the Customer leases halls from a Landlord (Caprock Critical Facilities: building, power, cooling, CDUs) and contracts an IT Partner (Ridgeline Site Services: data hall work). SLAs as code, synthetic telemetry with planted discrepancies, one engine per partner, cross-partner fault attribution, scorecards that compare self-reports with measurement. Everything synthetic; never imply knowledge of any real company's internal systems.
 
@@ -57,8 +57,8 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/generate_telemetry.py && python scripts/generate_energy.py && python scripts/render_energy.py \
   && python scripts/render_weekly.py && python scripts/render_glossary.py \
   && python scripts/generate_deployments.py && python scripts/render_deployments.py && python scripts/render_telemetry.py
-# generate_telemetry.py writes the GPU telemetry, then the energy meters (they follow the racks' power), then CDU and power
-pytest -q                                      # 575 tests as of 2026-10-10
+# generate_telemetry.py writes the GPU telemetry, then the energy meters (they follow the racks' power), then CDU, power, and network
+pytest -q                                      # 586 tests as of 2026-10-10
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 

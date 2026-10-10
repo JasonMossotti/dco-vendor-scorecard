@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Render the Telemetry tab (GPUs, CDUs, and power) and its reports: reports/gpu_telemetry.md, reports/cdu_telemetry.md,
-and reports/power_telemetry.md.
+"""Render the Telemetry tab (GPUs, CDUs, power, and network) and its reports: reports/gpu_telemetry.md,
+reports/cdu_telemetry.md, reports/power_telemetry.md, and reports/network_telemetry.md.
 
 Reads the committed GPU telemetry (data/telemetry/gpu/), the per-GPU hourly tier (built into
 build/telemetry/gpu_hourly/ by scripts/generate_telemetry.py if missing), and the records it must agree
@@ -8,7 +8,7 @@ with (data/gpu_health/, data/sample/). Synthetic data in the published format of
 exporter; no vendor's internal tooling is implied.
 
 Usage:
-    python scripts/render_telemetry.py                    # write the three reports
+    python scripts/render_telemetry.py                    # write the four reports
     python scripts/render_telemetry.py --check            # exit 1 if a report is out of date
     python scripts/render_telemetry.py --robustness 60    # every agreement on 60 generated months
     python scripts/render_telemetry.py --robustness 60 --jobs 4 --resume build/robustness/telemetry
@@ -38,11 +38,13 @@ from scorecard import sitenav  # noqa: E402
 from scorecard import site_model as S  # noqa: E402
 from scorecard import telemetry as TM  # noqa: E402
 from scorecard import telemetry_cdu as TC  # noqa: E402
+from scorecard import telemetry_network as TN  # noqa: E402
 from scorecard import telemetry_power as TP  # noqa: E402
 from scorecard import xid as X  # noqa: E402
 from scorecard.synthetic import gpu_health as G  # noqa: E402
 from scorecard.synthetic import telemetry as T  # noqa: E402
 from scorecard.synthetic import telemetry_cdu as TCS  # noqa: E402
+from scorecard.synthetic import telemetry_network as TNS  # noqa: E402
 from scorecard.synthetic import telemetry_power as TPS  # noqa: E402
 
 DATA = ROOT / "data" / "telemetry" / "gpu"
@@ -152,6 +154,7 @@ def prepare(t: TM.Telemetry | None = None) -> dict:
         "misses": [m for c in checks for m in c.misses][:20],
         "cdu": prepare_cdu(gpu=t),
         "power": prepare_power(),
+        "network": prepare_network(),
     }
 
 
@@ -159,7 +162,7 @@ def prepare(t: TM.Telemetry | None = None) -> dict:
 DATA_CDU = ROOT / "data" / "telemetry" / "cdu"
 ENERGY = ROOT / "data" / "energy"
 OUT_CDU = ROOT / "reports" / "cdu_telemetry.md"
-PLANNED = ["Network", "Mechanical"]          # device families still to come: shown greyed in the selector
+PLANNED = ["Mechanical"]          # device families still to come: shown greyed in the selector
 
 
 def load_cdu() -> TC.CduData:
@@ -614,6 +617,237 @@ def power_markdown(f: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+# --------------------------------------------------------------------------- network
+DATA_NET = ROOT / "data" / "telemetry" / "network"
+OUT_NET = ROOT / "reports" / "network_telemetry.md"
+SYM_POINTS = ("Symbol Error (110)", "Symbol Error (110), threshold")
+
+
+def load_network() -> TN.NetData:
+    h = hourly_dir()
+    return TN.load(DATA_NET, h.parent / "network_hourly", SAMPLE, h)
+
+
+def _tickets() -> list[dict]:
+    d = json.loads((SAMPLE / "vendor" / "tickets.json").read_text(encoding="utf-8"))
+    return d if isinstance(d, list) else d.get("tickets", [])
+
+
+def _deploy_wo(rack: str, step: str = "DEP-B-RK-05") -> str | None:
+    """The IT Partner's Jira sub-task for a Hall B rack's deployment step (R-M5: network cabled and verified)."""
+    p = ROOT / "data" / "deployments" / "jira" / "RSS-DEP.json"
+    if not p.exists():
+        return None
+    for i in json.loads(p.read_text(encoding="utf-8"))["issues"]:
+        f = i["fields"]
+        if f.get("customfield_10102") == rack and f.get("customfield_10103") == step:
+            return i["key"]
+    return None
+
+
+def network_events(states: list[dict], dev: dict, findings: list[dict], recur_h: int) -> list[dict]:
+    """The fabric's records summarized for a reader: each faulty link's episode with its tickets and what each repair
+    did, each rack power loss across its links, each Hall B rack's cabling, and each NVLink tray failure."""
+    out: list[dict] = []
+    tickets = _tickets()
+    by_link: dict[str, list[dict]] = {}
+    for s in states:
+        if s["family"] == "port" and s.get("cause") == "fault":
+            by_link.setdefault(s["device"], []).append(s)
+    for lid, sts in sorted(by_link.items()):
+        sts.sort(key=lambda s: (s["time"], s["point"]))
+        groups: list[list[dict]] = []
+        for s in sts:
+            if groups and (G.parse(s["time"]) - G.parse(groups[-1][-1]["time"])) <= timedelta(hours=recur_h):
+                groups[-1].append(s)
+            else:
+                groups.append([s])
+        d = dev[lid]
+        for g in groups:
+            sym = [s for s in g if s["point"] in SYM_POINTS]
+            downs = [s for s in g if s["point"].startswith("Link is Down")]
+            fixes = [s for s in g if s["point"].startswith("Optic (")]
+            parts = []
+            if downs:
+                parts.append(f"link dropped {len(downs)} time{'s' * (len(downs) > 1)}")
+            if sym:
+                thr = sum(1 for s in sym if s["point"].endswith("threshold"))
+                parts.append(f"{len(sym)} symbol-error report{'s' * (len(sym) > 1)}, {sum(int(s['value']) for s in sym):,} errors"
+                             + (f" (over the UFM threshold {thr} time{'s' * (thr > 1)})" if thr else ""))
+            refs = []
+            for f in fixes:
+                tk = f["point"][len("Optic ("):-1]
+                refs.append(tk)
+                after = [s for s in g if s["time"] > f["time"] and (s["point"] in SYM_POINTS or s["point"].startswith("Link is Down"))]
+                parts.append(f"{f['value']} ({tk}), {'errors continued' if after else 'errors stopped'}")
+            # a ticket opened on the link before its first repair note (or without one) still belongs to the episode
+            a, b = G.parse(g[0]["time"]), G.parse(g[-1]["time"])
+            for x in tickets:
+                if x["category"] == "optic_link" and x["short_description"].endswith(" <-> " + lid) and x["number"] not in refs \
+                        and a - timedelta(hours=2) <= G.parse(x["opened_at"]) <= b + timedelta(hours=2):
+                    refs.append(x["number"])
+            if not fixes:
+                parts.append("no repair on record this month" if not refs else "no part replaced")
+            text = "; ".join(parts)
+            fs = [f for f in findings if lid in json.dumps(f["evidence"]) or any(r in json.dumps(f["evidence"]) for r in refs)]
+            out.append({"t": g[0]["time"], "end": g[-1]["time"] if len(g) > 1 else None, "device": lid, "family": "port", "kind": "optic",
+                        "host": d["peer_host"], "rack": d["rack"], "text": text[0].upper() + text[1:], "refs": refs,
+                        "findings": [{"id": f["id"], "title": f["title"]} for f in fs], "m": g[0]["m"]})
+    for cause, kind in (("rack power lost", "power"), ("cabled", "cabled")):
+        racks: dict[str, list[dict]] = {}
+        for s in states:
+            if s["family"] == "port" and s.get("cause") == cause:
+                racks.setdefault(dev[s["device"]]["rack"], []).append(s)
+        for rack, sts in sorted(racks.items()):
+            sts.sort(key=lambda s: s["time"])
+            links = sorted({s["device"] for s in sts})
+            if kind == "power":
+                dn = [s for s in sts if s["point"].startswith("Link is Down")]
+                up = [s for s in sts if s["point"].startswith("Link is Up")]
+                refs = [x["number"] for x in tickets if x["category"] == "rack_facility" and x.get("rack") == rack
+                        and abs((G.parse(x["opened_at"]) - G.parse(sts[0]["time"])).total_seconds()) <= 3 * 3600]
+                refs += [w["wo"] for w in _work_orders() if w.get("unit") == f"Rack {rack}" and w.get("opened")
+                         and abs((G.parse(w["opened"]) - G.parse(sts[0]["time"])).total_seconds()) <= 3 * 3600]
+                text = (f"Rack {rack} lost input power: its {len(links)} back-end links went down within "
+                        f"{(G.parse(dn[-1]['time']) - G.parse(dn[0]['time'])).total_seconds():.0f} s (the trays' NICs lost power, so the "
+                        f"fabric logged Link is Down on every port), and came back as the trays booted after power returned")
+                out.append({"t": dn[0]["time"], "end": up[-1]["time"] if up else None, "device": rack, "family": "rack", "kind": kind,
+                            "rack": rack, "links": len(links), "text": text, "refs": refs, "findings": [], "m": sts[0]["m"]})
+            else:
+                wo = _deploy_wo(rack)
+                out.append({"t": sts[0]["time"], "end": sts[-1]["time"], "device": rack, "family": "rack", "kind": kind, "rack": rack,
+                            "links": len(links), "text": f"Rack {rack} cabled: {len(links)} back-end links came up one tray at a time "
+                                                          f"(Link is Up, 4 rails per tray)", "refs": [], "deploy": wo, "findings": [], "m": sts[0]["m"]})
+    since: dict[str, dict] = {}
+    for s in states:
+        if s["family"] != "nvlink":
+            continue
+        if s["value"] == "failed":
+            since[s["device"]] = s
+        elif s["device"] in since:
+            a = since.pop(s["device"])
+            refs = [x["number"] for x in tickets if x["category"] == "switch_tray" and x["configuration_item"].endswith(s["device"])
+                    and abs((G.parse(x["opened_at"]) - G.parse(a["time"])).total_seconds()) <= 3600]
+            mins = (G.parse(s["time"]) - G.parse(a["time"])).total_seconds() / 60
+            out.append({"t": a["time"], "end": s["time"], "device": s["device"], "family": "nvlink", "kind": "nvlink", "rack": s["device"][:3].upper(),
+                        "text": f"NVLink switch tray unreachable for {mins:.0f} min (NMX: domain degraded); the rack's other trays carried its share",
+                        "refs": refs, "findings": [], "m": a["m"]})
+    return sorted(out, key=lambda e: (e["t"], e["device"]))
+
+
+def prepare_network(t: TN.NetData | None = None) -> dict:
+    cfg = TNS.load_config()
+    t = t or load_network()
+    from scorecard import devices as DV
+    checks = TN.agreements(t, cfg, DV.load())
+    dev, H = t.manifest["devices"], t.H
+    states = _jsonl(DATA_NET / "states.jsonl") if t.dir == DATA_NET else _jsonl(t.dir / "states.jsonl")
+    findings = json.loads((ROOT / "reports" / "findings.json").read_text(encoding="utf-8"))["findings"]
+    events = network_events(states, dev, findings, cfg["checks"]["recur_hours"])
+    flagged = {e["device"] for e in events if e["family"] == "port"}
+    leaves = []
+    for name, x in sorted(t.devices("leaf").items()):
+        L = t.leaf(name)
+        ports = L["ports"]
+        sym = sum(int(TN.unpack(p["sym"]).sum()) for p in ports.values())
+        downs = sum(int(TN.unpack(p["downs"]).sum()) for p in ports.values())
+        up_min = [TN.unpack(p["up_min"]) for p in ports.values()]
+        asic, pw = TN.unpack(L["chassis"]["asic_c"]), TN.unpack(L["chassis"]["power_w"])
+        lids = [f"{name}:swp{p}" for p in x["ports"]]
+        leaves.append({"id": name, "hall": x["hall"], "rail": x["rail"], "product": x["product"], "gbps": x["gbps"], "uplinks": x["uplinks"],
+                       "racks": sorted({dev[lid]["rack"] for lid in lids}), "ports": len(lids),
+                       "cabled_end": sum(1 for u in up_min if u[-1] > 0), "cabled_start": sum(1 for lid in lids if dev[lid]["cabled_at_start"]),
+                       "tx_pb": round(sum(p["tx_words"] for p in ports.values()) * 4 / 1e15, 1), "sym": sym, "downs": downs,
+                       "flagged": sorted((lid for lid in lids if lid in flagged), key=lambda s: int(s.split("swp")[1])),
+                       "asic_max": int(asic.max()), "power_avg_w": int(round(float(pw.mean())))})
+    halls = {}
+    site = S.load_site()
+    for h in site["halls"]:
+        rows = [r for r in t.fabric_hourly if r["hall"] == h["id"]]
+        if not rows:
+            continue
+        lv = [x for x in leaves if x["hall"] == h["id"]]
+        series = {k: [0.0] * H for k in ("tx_tb", "links_up", "links_cabled", "symbol_errors", "link_downs", "switch_kw")}
+        for r in rows:
+            i = int((G.parse(r["hour"]) - t.start).total_seconds() // 3600)
+            for k in series:
+                series[k][i] += float(r[k])
+        series["tx_pb"] = [v / 1000 for v in series.pop("tx_tb")]
+        for k in series:
+            series[k] = [round(v, 2) for v in series[k]]
+        prod = cfg["products"][lv[0]["product"]]
+        halls[h["id"]] = {"name": h["name"], "state": h["state"], "product": lv[0]["product"], "model": prod["model"], "gbps": prod["gbps"],
+                          "leaves": len(lv), "links": sum(x["ports"] for x in lv), "cabled_start": sum(x["cabled_start"] for x in lv),
+                          "cabled_end": sum(x["cabled_end"] for x in lv), "racks": len({r for x in lv for r in x["racks"]}),
+                          "tx_pb": round(sum(x["tx_pb"] for x in lv), 1), "sym": sum(x["sym"] for x in lv), "downs": sum(x["downs"] for x in lv),
+                          "switch_kw": round(sum(series["switch_kw"]) / H, 1), "hourly": series}
+    nv: dict[str, dict] = {}
+    for r in t.nvlink_hourly:
+        x = nv.setdefault(r["rack"], {"rack": r["rack"], "hall": r["hall"], "tx_tb": 0.0, "asic_max": 0, "tray_minutes": 0, "hours_reporting": 0})
+        x["tx_tb"] += float(r["tx_tb"])
+        x["tray_minutes"] += int(r["tray_minutes"])
+        x["hours_reporting"] += int(r["trays_reporting"]) > 0
+        if r["asic_c_max"] != "":
+            x["asic_max"] = max(x["asic_max"], int(r["asic_c_max"]))
+    for x in nv.values():
+        x["tx_tb"] = round(x["tx_tb"], 1)
+        x["trays"] = sorted(k for k, d in dev.items() if d["family"] == "nvlink" and d["rack"] == x["rack"])
+    return {"framing": cfg["framing"], "sources": cfg["sources"], "collection": cfg["collection"], "fields": cfg["fields"],
+            "products": {k: {f: v[f] for f in ("model", "os", "speed", "gbps", "ports", "cages", "uplinks", "port_name", "fec", "host_nic") if f in v}
+                         for k, v in cfg["products"].items()},
+            "thresholds": cfg["optics"]["thresholds"], "warn_rx_dbm": cfg["optics"]["warn_rx_dbm"], "symbol_threshold": cfg["ufm_events"]["symbol_errors"]["threshold"],
+            "symbol_report_min": cfg["symbol_report_min"],
+            "window": t.manifest["window"], "hours": H, "halls": halls, "leaves": leaves, "nvlink": [nv[k] for k in sorted(nv, key=_rk)],
+            "events": events, "windows": t.manifest["windows"],
+            "agreements": [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks],
+            "misses": [m for c in checks for m in c.misses][:20]}
+
+
+def leaf_json(t: TN.NetData, leaf: str) -> dict:
+    """The publish-time leaf file plus each port's identity from the manifest (what the leaf and port views read)."""
+    L = dict(t.leaf(leaf))
+    dev = t.manifest["devices"]
+    L["ports"] = {p: {**x, **{k: v for k, v in dev[f"{leaf}:swp{p}"].items() if k not in ("family", "leaf", "hall")}} for p, x in L["ports"].items()}
+    L["node_guid"] = dev[leaf]["node_guid"]
+    return L
+
+
+def network_markdown(f: dict) -> str:
+    w = f["window"]
+    L = ["# Network telemetry (Site AUS-1, synthetic)", "",
+         f"{f['framing']} Window {day(w['start'])} to {day(w['end'])}: every back-end InfiniBand leaf port read once a minute "
+         "through the fabric manager's telemetry (UFM Telemetry, Prometheus endpoint), the tray end of each link through node_exporter, "
+         "each leaf's chassis over SNMP (Quantum-2) or gNMI (Quantum-X800), and each NVL72 rack's NVLink switch trays through NMX-T. "
+         "All names and readings are fictional; no vendor's internal tooling is implied.", "",
+         "Generator: scripts/generate_telemetry.py, scripts/render_telemetry.py", "",
+         "Each GPU's tray has one link per rail to that rail's leaf (rail-optimized); a link carries traffic only while its tray's GPUs "
+         "report and the link is up, and every fabric event, ticket, and device-directory connection agrees with the counters.", "",
+         "## Halls", "", "| Hall | Leaf switch | Leaves | Racks | Links cabled (start / end) | Data sent PB | Symbol errors | Link drops | Leaf power avg kW |",
+         "|---|---|---:|---:|---:|---:|---:|---:|---:|"]
+    for h in f["halls"].values():
+        L.append(f"| {h['name']} | {h['model']} ({h['gbps']}G) | {h['leaves']} | {h['racks']} | {h['cabled_start']:,} / {h['cabled_end']:,} of {h['links']:,} | "
+                 f"{h['tx_pb']:,} | {h['sym']:,} | {h['downs']:,} | {h['switch_kw']:,} |")
+    L += ["", "## Leaf switches", "", "| Leaf | Rail | Racks | Links cabled | Data sent PB | Symbol errors | Link drops | ASIC max °C | Power avg W | Links with records |",
+          "|---|---:|---|---:|---:|---:|---:|---:|---:|---|"]
+    for x in f["leaves"]:
+        L.append(f"| {x['id']} | {x['rail']} | {', '.join(x['racks'])} | {x['cabled_end']} of {x['ports']} | {x['tx_pb']:,} | {x['sym']:,} | {x['downs']:,} | "
+                 f"{x['asic_max']} | {x['power_avg_w']:,} | {', '.join(s.split(':')[1] for s in x['flagged'])} |")
+    L += ["", "## NVLink switch trays (per rack)", "", "| Rack | Trays | Data sent PB | Tray-minutes reporting | ASIC max °C |", "|---|---:|---:|---:|---:|"]
+    for x in f["nvlink"]:
+        L.append(f"| {x['rack']} | {len(x['trays'])} | {x['tx_tb'] / 1000:,.1f} | {x['tray_minutes']:,} | {x['asic_max']} |")
+    L += ["", "## Events", "", "| From | To | Where | What | Records |", "|---|---|---|---|---|"]
+    for e in f["events"]:
+        refs = list(e["refs"]) + ([e["deploy"]] if e.get("deploy") else []) + [x["id"] for x in e["findings"]]
+        L.append(f"| {e['t']} | {e.get('end') or ''} | {e['device']} | {e['text']} | {', '.join(refs)} |")
+    L += ["", "## Agreement with the records", "", "| Check | Agrees |", "|---|---:|"]
+    for a in f["agreements"]:
+        L.append(f"| {a['title']} | {a['checked'] - a['misses']:,} of {a['checked']:,} |")
+    if f["misses"]:
+        L += ["", "Disagreements:", ""] + [f"- {m}" for m in f["misses"]]
+    L += ["", "## Sources", ""] + [f"- {s['name']}: {s['url']} (checked {s['checked']})" for s in f["sources"]]
+    return "\n".join(L) + "\n"
+
+
 def racks_json(t: TM.Telemetry) -> dict:
     """Per rack per hour, from rack_hourly.csv, plus the CDU supply per hour (the page's fleet view)."""
     hours = t.hourly[next(iter(t.hourly))]["hours"]
@@ -642,7 +876,8 @@ def html_page(f: dict | None = None) -> str:
 
 
 def write_site(out: Path) -> None:
-    """out/index.html plus the files the page fetches: data/racks.json, data/gpu/<rack>.json, data/windows/*.json."""
+    """out/index.html plus the files the page fetches: data/racks.json, data/gpu/<rack>.json, data/windows/*.json, and the
+    CDU, power, and network files (data/network/<leaf>.json, nvlink_<rack>.json, windows/)."""
     t = load()
     out.mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_text(html_page(prepare(t)), encoding="utf-8", newline="\n")
@@ -673,6 +908,16 @@ def write_site(out: Path) -> None:
     for name in pw.manifest["minutes"]:
         shutil.copy2(pw.minutes_dir / name, data / "power_minutes" / name)
     shutil.copytree(DATA_POWER / "windows", data / "power" / "windows")
+    nt = load_network()
+    if (data / "network").exists():
+        shutil.rmtree(data / "network")
+    (data / "network").mkdir(parents=True)
+    for leaf in sorted(nt.devices("leaf")):
+        (data / "network" / f"{leaf}.json").write_text(json.dumps(leaf_json(nt, leaf), separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
+    for name in nt.manifest["minutes"]:
+        if name.startswith("nvlink_"):
+            shutil.copy2(nt.minutes_dir / name, data / "network" / name)
+    shutil.copytree(DATA_NET / "windows", data / "network" / "windows")
 
 
 def markdown(f: dict) -> str:
@@ -711,14 +956,16 @@ def markdown(f: dict) -> str:
 
 
 def robustness_month(k: int, keep: Path | None = None) -> dict:
-    """Every GPU, CDU, and power agreement on generated month k (its own dataset, GPU Health layer, telemetry, and
+    """Every GPU, CDU, power, and network agreement on generated month k (its own dataset, GPU Health layer, telemetry, and
     energy meters, in a temporary folder, or in keep to look at afterwards)."""
     import contextlib
     from scorecard.sla_model import load_sla
     from scorecard.synthetic import SiteGenerator, write_dataset
     from scorecard.synthetic.energy import EnergyLayer, load_config as energy_config, write_energy
     syn = yaml.safe_load((ROOT / "config" / "synthetic.yaml").read_text(encoding="utf-8"))
+    from scorecard import devices as DV
     cfg, hcfg, ccfg, ecfg, pcfg = T.load_config(), G.load_config(), TCS.load_config(), energy_config(), TPS.load_config()
+    ncfg = TNS.load_config()
     with (contextlib.nullcontext(str(keep)) if keep else tempfile.TemporaryDirectory()) as tmp:
         d = Path(tmp)
         write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
@@ -733,11 +980,15 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         power = TPS.PowerTelemetry(pub.tel, pub, d / "energy", pcfg, energy_cfg=ecfg, rack_rest=ccfg["rack_rest"])
         TPS.write_power(power, power.run(), d / "power", "", d / "power_min")
         pchecks = TP.agreements(TP.load(d / "power", d / "power_min", d, d / "energy", d / "telemetry", d / "cdu"), pcfg, ccfg["rack_rest"], ecfg)
+        net = TNS.NetworkTelemetry(pub.tel, pub, ncfg)
+        TNS.write_network(net, net.run(), d / "network", "", d / "net_min")
+        nchecks = TN.agreements(TN.load(d / "network", d / "net_min", d, d / "hourly"), ncfg, DV.load())
     conflicts = [f"records disagree with each other: {pub.conflicts[:3]}"] * bool(pub.conflicts) \
         + [f"CDU records disagree with each other: {layer.conflicts[:3]}"] * bool(layer.conflicts) \
-        + [f"power records disagree with each other: {power.conflicts[:3]}"] * bool(power.conflicts)
+        + [f"power records disagree with each other: {power.conflicts[:3]}"] * bool(power.conflicts) \
+        + [f"network records disagree with each other: {net.conflicts[:3]}"] * bool(net.conflicts)
     pack = lambda cs: {c.name: [c.checked - len(c.misses), c.checked, c.misses[:3]] for c in cs}      # noqa: E731
-    return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "conflicts": conflicts}
+    return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "network": pack(nchecks), "conflicts": conflicts}
 
 
 def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
@@ -769,9 +1020,13 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
             keep(robustness_month(k))
     bad = 0
     ok = True
-    for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12)):
+    for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("network", "Network", 14)):
         tot: dict[str, list[int]] = {}
         for k in range(n):
+            if fam not in done[k]:
+                ok = False
+                print(f"  month {k}: no {fam} result (kept from before the {fam} checks existed; delete it and rerun)")
+                continue
             for name, (a, b, misses) in done[k][fam].items():
                 x = tot.setdefault(name, [0, 0])
                 x[0], x[1] = x[0] + a, x[1] + b
@@ -798,7 +1053,7 @@ def main() -> int:
     if args.robustness:
         return robustness(args.robustness, args.jobs, args.resume)
     f = prepare()
-    texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"])}
+    texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"]), OUT_NET: network_markdown(f["network"])}
     if args.check:
         stale = [p for p, text in texts.items() if not p.exists() or p.read_text(encoding="utf-8") != text]
         for p in stale:
@@ -806,10 +1061,11 @@ def main() -> int:
         return 1 if stale else 0
     for p, text in texts.items():
         p.write_text(text, encoding="utf-8", newline="\n")
-    for name, a in (("GPU", f["agreements"]), ("CDU", f["cdu"]["agreements"]), ("Power", f["power"]["agreements"])):
+    for name, a in (("GPU", f["agreements"]), ("CDU", f["cdu"]["agreements"]), ("Power", f["power"]["agreements"]),
+                    ("Network", f["network"]["agreements"])):
         ok = sum(x["checked"] - x["misses"] for x in a)
         print(f"{name}: {len(a)} agreements, {ok:,} of {sum(x['checked'] for x in a):,} cases agree")
-    print(f"Wrote {OUT.relative_to(ROOT)}, {OUT_CDU.relative_to(ROOT)}, and {OUT_POWER.relative_to(ROOT)}")
+    print("Wrote " + ", ".join(str(p.relative_to(ROOT)) for p in texts))
     return 0
 
 

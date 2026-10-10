@@ -65,7 +65,8 @@ def test_facility_stream_only_adds_the_it_side_of_rack_outages(config):
             extra.remove(r)               # raises if any original record changed or vanished
         for r in map(json.loads, extra):
             assert (r.get("rack") in racks or r.get("target") in racks or r.get("category") == "rack_facility"
-                    or any(r.get("node", "").startswith(x.lower() + "-") for x in racks) or key == "badge"), (key, r)
+                    or any(r.get("node", "").startswith(x.lower() + "-") for x in racks) or key == "badge"
+                    or any(r.get("peer_host", "").startswith(x.lower() + "-") for x in racks)), (key, r)
 
 
 def test_every_configured_landlord_discrepancy_is_planted(planted, config):

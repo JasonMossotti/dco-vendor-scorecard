@@ -1067,6 +1067,27 @@ class SiteGenerator:
                 for t in rack["compute_trays"]:
                     out["scheduler"].append({"timestamp": iso(ev["completed_at"] + minutes(5)), "node": t["host"],
                                              "state": "idle", "reason": "validated handoff"})
+        self._emit_cabling_link_ups(out)
+
+    def _emit_cabling_link_ups(self, out: dict) -> None:
+        """Hall B racks cabled at M5 (DEP-B-RK-05): the fabric manager logs "Link is Up" for each of the rack's back-end
+        links as it is cabled between the rack's M4 power-on and the M5 sign-off. Own random stream per rack, so no
+        other value moves; links cabled before the window opened log nothing in it."""
+        done = {(e["rack"], e["milestone"]): e["completed_at"] for e in self.deploy_events}
+        for (rack_id, ms), m5 in sorted(done.items()):
+            if ms != "M5" or m5 > self.end or m5 < self.start:
+                continue
+            rack = self.rack_by_id[rack_id]
+            rng = random.Random(f"{self.seed}:deploy:ufm:{rack_id}")
+            a = max(done.get((rack_id, "M4"), m5 - timedelta(hours=8)), self.start)
+            span = max((m5 - a).total_seconds() - 1800, 60.0)       # the last half hour is the soak
+            for slot, tray in enumerate(rack["compute_trays"], 1):
+                t = a + timedelta(seconds=span * (slot - 1 + rng.random() * 0.8) / len(rack["compute_trays"]))
+                for rail in range(4):
+                    L = self.link_for(rack, slot, rail)
+                    out["ufm"].append({"timestamp": iso(t + timedelta(seconds=rng.randint(20, 240) + rail * 30)),
+                                       "switch": L["switch"], "port": L["port"], "peer_host": L["host"],
+                                       "peer_hca": L["hca"], "event": "link_up", "count": 1})
 
     # ============================================================ summary
     def vendor_self_report(self) -> list[dict]:
@@ -1134,6 +1155,17 @@ class SiteGenerator:
                     {"node": tray["host"], "reason": "NotResponding (rack input power lost)", "state": "down",
                      "timestamp": iso(t0 + timedelta(seconds=rng.randint(15, 40)))},
                     {"node": tray["host"], "reason": "returned to service", "state": "idle", "timestamp": iso(rts)}]
+            # The fabric manager sees every back-end link of the rack drop with its trays' power, and come back
+            # when the trays power on (link training, before the OS boots). Own stream, so no other value moves.
+            lr = random.Random(f"{self.seed}:rackfx:ufm:{k}")
+            power_on = datetime.fromisoformat(checks[0]["started_at"].replace("Z", "+00:00"))
+            for slot, tray in enumerate(rack["compute_trays"], 1):
+                for rail in range(4):
+                    L = self.link_for(rack, slot, rail)
+                    base = {"switch": L["switch"], "port": L["port"], "peer_host": L["host"], "peer_hca": L["hca"], "count": 1}
+                    streams["ufm"] += [{**base, "event": "link_down", "timestamp": iso(t0 + timedelta(seconds=lr.randint(1, 3)))},
+                                       {**base, "event": "link_up",
+                                        "timestamp": iso(power_on + timedelta(seconds=lr.randint(60, 240)))}]
             opened = t0 + minutes(rng.uniform(2, 4))
             name = tech["name"]
             streams["tickets"].append({
@@ -1151,6 +1183,7 @@ class SiteGenerator:
         for key in ("badge", "health", "scheduler", "tickets"):
             field_ = {"badge": "timestamp", "health": "started_at", "scheduler": "timestamp", "tickets": "opened_at"}[key]
             streams[key].sort(key=lambda r: r[field_])      # stable: existing records keep their order
+        streams["ufm"].sort(key=lambda r: (r["timestamp"], json.dumps(r, sort_keys=True)))   # the same order as before
 
     def run(self) -> dict[str, Any]:
         self.build_topology()

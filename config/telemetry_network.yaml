@@ -1,0 +1,178 @@
+# Network telemetry for Site AUS-1 (synthetic; portfolio demo). Phase 2c of the Telemetry tab.
+#
+# Two networks, each read the way site/site.yaml says the Customer reads it, with the names NVIDIA and the
+# standards bodies publish:
+#   * The InfiniBand back-end fabric (rail optimized: one NIC per tray per rail, a leaf per rack pair per rail).
+#     Hall A leaves are Quantum-2 QM9700 (NDR, 400 Gb/s per port, MLNX-OS); Hall B leaves are Quantum-X800
+#     Q3400-RA (XDR, 800 Gb/s per port, NVOS; air-cooled per NVIDIA's hardware manual). Port counters and PHY
+#     and cable fields come from UFM Telemetry under its published field names (the IBTA PortCounters in their
+#     64-bit "Extended" form; Effective_BER, rx_power_lane_N and the rest from the low-frequency set). The host
+#     end of each link is the tray's ConnectX NIC, read by Prometheus node_exporter's InfiniBand collector.
+#     Switch chassis sensors: ENTITY-SENSOR-MIB over SNMPv3 (QM9700) and OpenConfig over gNMI (Q3400-RA).
+#   * The NVLink switch trays inside each rack (nine per NVL72 rack), read through NMX-Telemetry. NVIDIA's full
+#     NMX-T metric list is not public (NVOnline 1092300); only the names NVIDIA publishes in its NetQ
+#     documentation are used.
+# Every number below is an assumption for the demo ("basis: assumption") unless a public source is named.
+# The series are shaped to agree with every record already in data/sample and with the GPU telemetry
+# (src/scorecard/telemetry_network.py holds the agreements).
+# Read by src/scorecard/synthetic/telemetry_network.py (the data) and src/scorecard/telemetry_network.py (the agreements).
+
+framing: "Synthetic network telemetry under the published UFM Telemetry, node_exporter, SNMP, gNMI, and NMX-T names."
+sources:
+  - {name: "rdma-core libibmad fields.c: IBTA PortCounters and PortCountersExtended field names (perfquery)", url: "https://github.com/linux-rdma/rdma-core/blob/master/libibmad/fields.c", checked: "2026-10-10"}
+  - {name: "Linux kernel ABI, sysfs-class-infiniband (port_xmit_data and port_rcv_data are octets divided by 4)", url: "https://www.kernel.org/doc/Documentation/ABI/stable/sysfs-class-infiniband", checked: "2026-10-10"}
+  - {name: "NVIDIA UFM Enterprise: high-frequency (primary) telemetry fields", url: "https://networking-docs.nvidia.com/ufmenterprisearum/6193/high-frequency-primary-telemetry-fields", checked: "2026-10-10"}
+  - {name: "NVIDIA UFM Enterprise: low-frequency (secondary) telemetry fields", url: "https://networking-docs.nvidia.com/ufmenterpriseum/6242/low-frequency-secondary-telemetry-fields", checked: "2026-10-10"}
+  - {name: "NVIDIA UFM Telemetry: Prometheus endpoint (/metrics; labels node_guid, port_guid, port_num)", url: "https://networking-docs.nvidia.com/ufmtelemetryum/1212/prometheus-endpoint-support", checked: "2026-10-10"}
+  - {name: "NVIDIA UFM Enterprise: threshold-crossing events reference (event IDs and default thresholds)", url: "https://networking-docs.nvidia.com/ufmenterpriseum/62311/threshold-crossing-events-reference", checked: "2026-10-10"}
+  - {name: "NVIDIA MFT: mlxlink utility (Module Info block and the module's own threshold ranges)", url: "https://networking-docs.nvidia.com/mftswum/4350/mlxlink-utility", checked: "2026-10-10"}
+  - {name: "NVIDIA QM9700/QM9790 hardware manual: specifications (32 OSFP cages, 64 NDR ports, 747 W typical)", url: "https://networking-docs.nvidia.com/qm97x0hw/specifications", checked: "2026-10-10"}
+  - {name: "NVIDIA MLNX-OS 3.12.6200: InfiniBand interface (port names ib 1/<cage>/<port>)", url: "https://docs.nvidia.com/networking/display/nvidiamlnxosusermanualv3126200lts/infiniband-interface", checked: "2026-10-10"}
+  - {name: "NVIDIA MLNX-OS 3.12.6200: network management interfaces (ENTITY-MIB, ENTITY-SENSOR-MIB supported)", url: "https://docs.nvidia.com/networking/display/nvidiamlnxosusermanualv3126200lts/network-management-interfaces", checked: "2026-10-10"}
+  - {name: "NVIDIA XDR switches hardware manual: Q3400-RA (144 XDR ports on 72 OSFP cages, air-cooled, 8 PSUs, 10 fans)", url: "https://networking-docs.nvidia.com/xdrswitcheshw/introduction", checked: "2026-10-10"}
+  - {name: "NVIDIA NVOS for InfiniBand: gNMI streaming (port 9339, openconfig-platform, interfaces named sw<cage>p<port>)", url: "https://networking-docs.nvidia.com/nvosinfinibandum/25.02.8008/gnmi-streaming", checked: "2026-10-10"}
+  - {name: "Prometheus node_exporter InfiniBand collector (node_infiniband_* metric names)", url: "https://github.com/prometheus/node_exporter/blob/master/collector/infiniband_linux.go", checked: "2026-10-10"}
+  - {name: "NVIDIA NMX-Telemetry: collected data (full metric list not public)", url: "https://networking-docs.nvidia.com/nmxtswum/123/collected-data", checked: "2026-10-10"}
+  - {name: "NVIDIA NetQ 5.3: NVLink monitoring with Prometheus (published NMX-T metric names)", url: "https://docs.nvidia.com/networking-ethernet-software/cumulus-netq-53/NVLink-Management/Monitor-with-Prometheus/", checked: "2026-10-10"}
+  - {name: "CMIS optical monitors (module temperature, per-lane Tx and Rx power) as encoded in SONiC's public CMIS memory map", url: "https://github.com/sonic-net/sonic-platform-common/tree/master/sonic_platform_base/sonic_xcvr/mem_maps/public/cmis/pages", checked: "2026-10-10"}
+
+collection:
+  ufm: {endpoint: "UFM Telemetry /metrics (Prometheus)", primary_s: 60, secondary_s: 300, port: 9001,
+        note: "primary fields once a minute, PHY and cable fields every 5 minutes"}
+  host: {endpoint: "node_exporter :9100/metrics, InfiniBand collector", scrape_s: 60}
+  chassis_qm9700: {protocol: "SNMPv3", mib: "ENTITY-SENSOR-MIB (RFC 3433)", poll_s: 60}
+  chassis_q3400: {protocol: "gNMI (port 9339)", model: "openconfig-platform", sample_s: 60}
+  nmx: {endpoint: "NMX-Telemetry :9352 Prometheus", scrape_s: 60}
+
+# The switches and NICs. Port numbers follow the records: 1 to 36 down to the trays (two racks, 18 trays
+# each), then the uplinks to the spine plane (not modeled: no record names a spine switch).
+products:
+  quantum2_qm9700:
+    model: "NVIDIA Quantum-2 QM9700"
+    os: "MLNX-OS"
+    speed: "IB-NDR"
+    gbps: 400
+    ports: 64
+    cages: 32                       # two ports per OSFP cage
+    uplinks: 28                     # ports 37 to 64 (basis: assumption; 36 down, 28 up)
+    port_name: "IB1/{cage}/{port}"  # MLNX-OS: ib <asic>/<cage>/<port>
+    fec: "Standard RS-FEC (544,514)"
+    lanes: 4                        # 4x 100G PAM4 per NDR port
+    power_w: {base: 640.0, per_cage: 14.0, at_full_traffic: 60.0}   # 747 W typical with passive cables (NVIDIA); optics add (assumption)
+    fans: 6                         # basis: assumption (fan count not given in the public manual)
+    psus: 2
+    host_nic: "ConnectX-7"
+  quantum_x800_q3400:
+    model: "NVIDIA Quantum-X800 Q3400-RA"
+    os: "NVOS"
+    speed: "IB-XDR"
+    gbps: 800
+    ports: 144
+    cages: 72
+    uplinks: 36                     # ports 37 to 72 (basis: assumption)
+    port_name: "sw{cage}p{port}"    # NVOS interface names
+    fec: "RS-FEC (544,514) with PLR"
+    lanes: 4                        # 4x 200G per XDR port
+    power_w: {base: 1450.0, per_cage: 18.0, at_full_traffic: 120.0}
+    fans: 10                        # NVIDIA hardware manual
+    psus: 8
+    host_nic: "ConnectX-8 SuperNIC"
+
+traffic:
+  peak_line_fraction: 0.70          # each rail link's share of line rate at full GPU utilization (basis: assumption)
+  util_exponent: 1.3                # collectives grow faster than linearly with utilization (basis: assumption)
+  rail_spread: 0.04                 # rail-to-rail spread of a tray's traffic, per hour (basis: assumption)
+  rx_over_tx: [0.97, 1.03]          # all-reduce traffic is close to symmetric (basis: assumption)
+  uplink_share: 0.60                # share of a leaf's downlink traffic bound for other rack pairs (basis: assumption)
+  background_bps: 200000            # subnet management and keepalives on an idle up link (basis: assumption)
+  bytes_per_packet: 4096            # IB MTU 4096 for data packets (basis: assumption)
+  xmit_wait_per_util: 0.03          # PortXmitWait ticks per data word at full load (congestion; basis: assumption)
+
+optics:
+  # The module's own threshold ranges as mlxlink prints them (NVIDIA MFT example): [low alarm .. high alarm].
+  thresholds: {temp_c: [-10, 80], volt_mv: [3100, 3500], rx_dbm: [-13.4, 5.4], tx_dbm: [-11.4, 5.4]}
+  warn_rx_dbm: -10.4                # low warning 3 dB inside the alarm (basis: assumption)
+  tx_dbm: [0.8, 2.2]                # healthy lane launch power (basis: assumption)
+  link_loss_db: [0.4, 1.6]          # connectors and fiber, per link (basis: assumption)
+  snr_db: [19.0, 22.0]              # snr_media_lane on a healthy receiver (basis: assumption)
+  module_c: [42.0, 52.0]            # module temperature at rest (basis: assumption)
+  module_c_at_load: 6.0             # rise at full traffic (basis: assumption)
+  volt_mv: [3260, 3320]
+  # A failing optic's signature, as the records name the end that was replaced:
+  #   host end: its laser sags, so the switch reads low receive power on one lane;
+  #   switch end: its receiver degrades, so the switch reads low SNR at normal power, and the module runs warm.
+  fault_tx_sag_db: [6.0, 9.0]
+  fault_snr_db: [10.5, 13.0]
+  fault_warm_c: [4.0, 9.0]
+  onset_before_errors_min: [60, 180]   # the optic drifts before the first errors are counted (basis: assumption)
+  flap_rx_dip_db: [14.0, 18.0]      # a dirty or loose connector: receive power drops through sensitivity at each flap
+  # What the checks call a signature (the page marks it): receive power under this on any lane, or SNR under this.
+  signature_rx_dbm: -5.0
+  signature_snr_db: 15.0
+
+ber:
+  raw_log10: [-8.0, -6.5]           # healthy pre-FEC BER (basis: assumption)
+  raw_log10_fault: -4.3             # pre-FEC BER at the worst of a failing optic (basis: assumption)
+  effective_floor_log10: -15        # mlxlink prints an upper bound when no post-FEC error was seen
+
+chassis:
+  inlet_c: [22.0, 25.0]             # hall supply air at the switch inlet (basis: assumption)
+  asic_rise_c: [28.0, 34.0]         # ASIC over inlet at idle (basis: assumption)
+  asic_rise_at_full_c: 12.0
+  fan_rpm: [9000, 11500]            # basis: assumption
+  fan_rpm_per_c: 220.0
+
+# UFM event IDs and default thresholds (NVIDIA's threshold-crossing events reference). The records already
+# hold the fabric manager's port events; the page shows each with its UFM ID.
+ufm_events:
+  symbol_errors: {id: 110, name: "Symbol Error", severity: "Warning", threshold: 200}
+  symbol_error_threshold: {id: 110, name: "Symbol Error", severity: "Warning", threshold: 200}
+  link_down: {id: 329, name: "Link is Down", severity: "Warning", threshold: 1}
+  link_up: {id: 328, name: "Link is Up", severity: "Info", threshold: 1}
+
+symbol_report_min: 90               # each symbol-error report counts the errors since the link's previous report, at most 90 minutes
+
+nvlink:
+  trays_per_rack: 9
+  ports_per_tray: 144               # 72 GPUs x 18 NVLink5 links over 9 trays
+  link_gbyte_s: 50.0                # NVLink5: 100 GB/s per link both ways, 50 GB/s each way
+  peak_fraction: 0.38               # share of NVLink bandwidth used at full GPU utilization (basis: assumption)
+  asic_c: [38.0, 44.0]              # liquid-cooled tray, idle (basis: assumption)
+  asic_rise_at_full_c: 14.0
+  power_w: {idle: 650.0, at_full: 1250.0}   # per tray (basis: assumption)
+
+# Committed tiers: per hall and rail hourly, per rack NVLink hourly, states, minute windows around every
+# fabric event. Built at publish time: every port's hourly series per leaf (checksums in the manifest).
+tiers:
+  window_before_min: 30
+  window_after_min: 90
+
+# Points per family. key: this layer's short name; scale: stored as an integer of value * scale.
+fields:
+  port:
+    - {key: tx, name: "PortXmitDataExtended", unit: "words", ufm: "PortXmitDataExtended", host: "node_infiniband_port_data_received_bytes_total", help: "Data octets sent by the switch port, divided by 4 (IBTA counts 4-octet words); the host NIC receives the same data. Bytes = value x 4."}
+    - {key: rx, name: "PortRcvDataExtended", unit: "words", ufm: "PortRcvDataExtended", host: "node_infiniband_port_data_transmitted_bytes_total", help: "Data octets received by the switch port from the tray's NIC, divided by 4."}
+    - {key: sym, name: "SymbolErrorCounterExtended", unit: "", ufm: "SymbolErrorCounterExtended", help: "Symbol errors the switch port's receiver counted that FEC could not correct (the tray's own receive-side counter is not modeled). Zero on a healthy link; UFM event 110 Symbol Error fires at 200."}
+    - {key: downs, name: "LinkDownedCounterExtended", unit: "", ufm: "LinkDownedCounterExtended", host: "node_infiniband_link_downed_total", help: "Times the link failed to recover from errors and went down."}
+    - {key: ler, name: "LinkErrorRecoveryCounterExtended", unit: "", ufm: "LinkErrorRecoveryCounterExtended", host: "node_infiniband_link_error_recovery_total", help: "Times the link retrained successfully after errors."}
+    - {key: wait, name: "PortXmitWaitExtended", unit: "ticks", ufm: "PortXmitWaitExtended", help: "Ticks the port had data to send but no credits: congestion."}
+    - {key: up, name: "Physical state", unit: "", ufm: "Link_Down (state)", host: "node_infiniband_physical_state_id", help: "1 LinkUp, 0 down (Polling or Disabled). node_exporter reports 5 for LinkUp."}
+    - {key: raw_ber, name: "Total_Raw_BER", unit: "log10", scale: 100, ufm: "Total_Raw_BER", help: "Bit error rate before FEC, every 5 minutes. Healthy NDR and XDR links run around 1E-8 to 1E-6; FEC corrects it."}
+    - {key: rx_dbm, name: "rx_power_lane (worst)", unit: "dBm", scale: 10, ufm: "rx_power_lane_0..3", help: "Optical power the switch-side module receives, worst of four lanes. The module warns below -10.4 dBm and alarms below -13.4 dBm."}
+    - {key: snr, name: "snr_media_lane (worst)", unit: "dB", scale: 10, ufm: "snr_media_lane_0..3", help: "Signal-to-noise ratio at the switch-side module's receiver, worst lane. Low SNR at normal power points at the switch-side optic."}
+    - {key: mod_c, name: "Module_Temperature", unit: "°C", scale: 1, ufm: "Module_Temperature", help: "Switch-side optical module temperature (the module alarms at 80 °C; UFM event 392)."}
+  chassis:
+    - {key: asic_c, name: "ASIC temperature", unit: "°C", snmp: "entPhySensorValue (ASIC, celsius)", gnmi: "/components/component[name=ASIC1]/state/temperature/instant", help: "Switch ASIC temperature."}
+    - {key: fan_rpm, name: "Fan speed", unit: "rpm", snmp: "entPhySensorValue (FAN, rpm)", gnmi: "/components/component[name=FAN1/1]/fan/state/speed", help: "Mean fan speed."}
+    - {key: power_w, name: "Input power", unit: "W", snmp: "entPhySensorValue (PSU, watts)", gnmi: "/components/component[name=PSU1]/power-supply/state/input-power", help: "Total power drawn by the switch's PSUs."}
+  nvlink:
+    - {key: tx, name: "PortXmitDataExtended", unit: "GB", nmx: "PortXmitDataExtended", help: "Data the tray's NVLink ports sent, summed over its ports (the page shows GB per hour)."}
+    - {key: up, name: "hw_port_state (up ports)", unit: "", nmx: "hw_port_state", help: "NVLink ports up, of 144."}
+    - {key: asic_c, name: "switch_temperature", unit: "°C", nmx: "switch_temperature", help: "Hottest NVLink switch ASIC on the tray."}
+    - {key: power_w, name: "power_consumption", unit: "W", nmx: "power_consumption", help: "Tray power."}
+    - {key: downs, name: "link_down_counter", unit: "", nmx: "link_down_counter", help: "NVLink port down events."}
+
+checks:
+  traffic_idle_bps: 1000000         # a link carrying less than this in an hour (mean) is idle
+  busy_util: 50                     # a tray whose GPUs average at least this utilization in an hour must move traffic
+  recur_hours: 24                   # errors within this long after a replacement mean it did not end them (FC-LINK stability window)
