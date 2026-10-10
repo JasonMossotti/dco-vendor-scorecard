@@ -37,7 +37,7 @@ summary_technical: >-
   at the MV switchgear in 8 minutes (P1 target 15). The utility returned at 21:56:06Z and both mains
   closed in a closed-transition retransfer, with the generator tie breakers opening 5 seconds later, so
   the site returned to the utility without a second interruption. Measured restoration is 42 min from the
-  trip, which matches the work order; the Landlord recorded 10.5 MW carried on generators. Under FA-6 the
+  trip, which matches the work order; the Landlord recorded the generators carrying the site. Under FA-6 the
   event is Utility-attributed, with no capacity lost and no IT Partner clock. No finding was raised.
 trigger: "Loss of voltage on the 138 kV utility service feeding the site."
 detection: "Immediate and automatic: both MV main breakers tripped on undervoltage and the generators started without a human decision; the work order was opened 69 seconds later."
@@ -52,7 +52,7 @@ factors:
 lessons:
   went_well:
     - "The transfer was automatic and complete in 12 seconds: bus live at 10 seconds, ties closed at 12."
-    - "All 7 of 7 generators ran, and the Landlord recorded 10.5 MW carried."
+    - "All 7 of 7 generators ran and shared the site's load."
     - "The return to the utility was a closed transition, so there was no second interruption when the utility came back."
     - "The work order's own times and the site's electrical data agreed on the trip and the restoration to the second."
   went_poorly:

@@ -228,6 +228,27 @@ terms:
   - {term: RAYCHEM, type: product, link: false, title: "TraceTek product line", text: "The brand line of the leak detection cable and modules."}
   - {term: VX, type: product, title: "Galaxy VX UPS", text: "The 1,500 kW UPS model for the halls' critical power."}
   - {term: VL, type: product, title: "Galaxy VL UPS", text: "The 300 kW UPS model for mechanical loads (pumps, CDUs)."}
+  - {term: VS, type: product, title: "Galaxy VS UPS", text: "A smaller UPS model in the same family as the VX and VL; the NMC4 card's documentation covers all of them. The site does not run one."}
+  - {term: VXL, type: product, title: "Galaxy VXL UPS", text: "A larger UPS model in the same family as the VX; the NMC4 card's documentation covers it. The site does not run one."}
+  - {term: NMC4, type: product, title: "Network management card 4", text: "The SNMPv3 and Modbus TCP card in each Galaxy UPS. The power telemetry polls it once a minute; its event log is the record of mode changes."}
+  - {term: APC, type: product, link: false, title: "UPS brand", text: "Schneider Electric's UPS brand. Its PowerNet-MIB holds the battery and output-status objects the Galaxy UPS cards answer."}
+  - {term: CAT, type: product, link: false, title: "Generator brand", text: "Caterpillar. The site's 7 standby generators are CAT C175-16 sets with EMCP 4.4 controllers."}
+  - {term: M70, type: product, title: "Starline M70 CPM", text: "The monitoring module on each busway's end feed: it meters the run and every tap-off on it and answers SNMP polls."}
+  - {term: CPM, type: acronym, expansion: Critical power monitor, text: "Starline's busway metering module (the M70 at this site). It records each tap-off breaker opening and closing, and the busway losing its feed."}
+  - {term: MIB, type: acronym, expansion: Management information base, text: "The published list of what a device answers over SNMP: each reading's object name, number (OID), type, and unit."}
+  - {term: OID, type: acronym, expansion: Object identifier, text: "The dotted number that names one SNMP reading, such as 1.3.6.1.2.1.33.1.4.4.1.4.1 for a UPS's output power."}
+  - {term: UPS-MIB, type: product, title: "UPS-MIB (RFC 1628)", text: "The IETF standard MIB every UPS card answers: input, output, bypass, and battery readings under mib-2 33."}
+  - {term: STARLINE-CPM-MIB, type: product, title: "Starline CPM MIB", text: "Starline's published MIB for the M70 CPM (enterprise 35774): run and tap-off voltage, current, power, energy, and breaker state."}
+  - {term: IETF, type: acronym, expansion: Internet Engineering Task Force, text: "The standards body that publishes RFCs, including RFC 1628, the UPS-MIB."}
+  - {term: RFC, type: acronym, expansion: Request for Comments, text: "An IETF standards document. RFC 1628 defines the UPS-MIB."}
+  - {term: RMS, type: acronym, expansion: Root mean square, text: "The effective value of an AC voltage or current; meters report RMS volts and amps."}
+  - {term: L1, type: acronym, expansion: Line 1, text: "The first phase of a three-phase supply; L2 and L3 are the other two."}
+  - {term: L2, type: acronym, expansion: Line 2, text: "The second phase of a three-phase supply."}
+  - {term: L3, type: acronym, expansion: Line 3, text: "The third phase of a three-phase supply."}
+  - {term: UINT16, type: acronym, expansion: Unsigned 16-bit integer, text: "A Modbus value held in one register (0 to 65,535); the point map gives its scale, such as 0.1 Hz."}
+  - {term: UINT32, type: acronym, expansion: Unsigned 32-bit integer, text: "A Modbus value held in two registers, used for counters such as energy and engine hours."}
+  - {term: ENUM, type: acronym, expansion: Enumerated value, text: "A register or object whose number stands for a state, such as 1 for normal, 2 for bypass, 4 for battery."}
+  - {term: INTEGER, type: acronym, link: false, expansion: SNMP integer type, text: "The SNMP type of a whole-number reading; snmpget prints it before the value."}
   - {term: AP9644, type: product, title: "Network management card 4", text: "The UPS's monitoring card (the NMC), the source of SNMP traps."}
   - {term: MVSST, type: product, title: "Medium-voltage solid-state transformer", text: "Converts 13.8 kV directly to 800 VDC for the planned 800 VDC racks."}
   - {term: PME, type: product, title: "Power Monitoring Expert", text: "The electrical power monitoring software (EPMS) that records switchgear and meter data."}
@@ -386,6 +407,12 @@ plain:   # capitalised text that is not a code
   patterns:
     - {pattern: '[A-C]-?\d{2}', why: "A rack position (A07 is Hall A, rack 7); the site drawings show where each is."}
     - {pattern: 'BAS-PTS007C(-EN_\d+)?', why: "A Trane document number cited as a source for BACnet point lists.", pages: [telemetry]}
+    - {pattern: '[A-Z0-9-]+_\d{8}T\d{4}', why: "The file name of a one-minute window around an event (device and start time).", pages: [telemetry]}
+    - {pattern: 'BW-[A-C]-R\d-PG-[A-C]\d', why: "A busway run: its A and B segments together.", pages: [telemetry]}
+    - {pattern: 'R[1-4]', why: "A row number in a busway name (BW-A-R1-... is row 1).", pages: [telemetry]}
+    - {pattern: 'FA\d{6}', why: "A Schneider Electric FAQ number cited as a source.", pages: [telemetry]}
+    - {pattern: 'SITE', why: "The whole site, in the power events table (a utility event is not one device's).", pages: [telemetry]}
+    - {pattern: 'L-N', why: "Line to neutral: a voltage measured between one phase and neutral (277 V on a 480 V system).", pages: [telemetry]}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}
     - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}
     - {pattern: 'B[1-4]', why: "Shorthand for CDU-B1 to CDU-B4 in a deployment step.", pages: [deployments]}

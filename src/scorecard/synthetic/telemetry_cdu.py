@@ -35,7 +35,8 @@ import pandas as pd
 import yaml
 
 from scorecard import site_model as S
-from scorecard.synthetic.telemetry import MIN, GpuTelemetry, Published, _csv, _csv_rows, _dump, _jsonl, iso, parse
+from scorecard.synthetic.telemetry import (MIN, GpuTelemetry, Published, _csv, _csv_rows, _dump, _jsonl, iso, parse,
+                                           rack_input_w)
 
 ROOT = Path(__file__).resolve().parents[3]
 CONFIG = ROOT / "config" / "telemetry_cdu.yaml"
@@ -151,7 +152,7 @@ class CduTelemetry:
         out: dict[str, np.ndarray] = {}
         for rack, x in sorted(self.pub.rack_load.items()):
             lf = S.product(self.site, x["product"])["liquid_fraction"]
-            it_w = x["n"] * rr["per_gpu_w"] + (1 + rr["per_gpu_watt"]) * x["gpu_w"]
+            it_w = rack_input_w(x["n"], x["gpu_w"], rr)
             out[x["hall"]] = out.get(x["hall"], np.zeros(self.M)) + lf * it_w / 1000
         lag = self.cfg["heat_lag_min"]
         a = 1 - math.exp(-1 / lag)

@@ -114,7 +114,7 @@ def markdown(f: dict) -> str:
                  f"{p['pue']:.3f} | {p['ppue_cooling']:.3f} | {p['ppue_power']:.3f} | {mwh(p['it_kwh'])} |")
     if y:
         L += ["", f"52-week PUE ({short(y['start'])}, {y['start'][:4]} to {short(y['end'])}, {y['end'][:4]}): **{y['pue']:.3f}**. "
-                  "The periods before the sample month are synthetic history (Hall B ramping up as it deployed)."]
+                  "The periods before the sample month are synthetic history (Hall A only: no Hall B rack drew power before September 5)."]
     L += ["", "## Findings", ""]
     if not f["findings"]:
         L.append("None: the Landlord's report reconciles with the meters and no free-cooling lockout ran past 24 hours.")
@@ -143,29 +143,65 @@ def html_page() -> str:
     return sitenav.finish(tpl.replace("__DATA__", json.dumps(f, sort_keys=True).replace("</", "<\\/")))
 
 
-def robustness(n: int) -> int:
+def robustness_month(k: int) -> dict:
+    """PUE checks on generated month k. The meters follow the racks, so the month's GPU Health layer and GPU telemetry
+    (rack_hourly.csv) are built first."""
     from scorecard.sla_model import load_sla
     from scorecard.synthetic import SiteGenerator, write_dataset
+    from scorecard.synthetic import gpu_health as GH
+    from scorecard.synthetic import telemetry as TS
     from scorecard.synthetic.energy import EnergyLayer, write_energy
     syn = yaml.safe_load((ROOT / "config" / "synthetic.yaml").read_text(encoding="utf-8"))
-    cfg = E.load_config()
+    cfg, hcfg = E.load_config(), GH.load_config()
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp)
+        write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
+        GH.write_gpu_health(GH.GpuHealthLayer(d, 2000 + k, hcfg).run(), d / "gpu_health")
+        TS.write_telemetry(TS.Published(TS.GpuTelemetry(d, d / "gpu_health", 2000 + k, None, hcfg)).run(), d / "telemetry", "", None)
+        write_energy(EnergyLayer(d, 2000 + k, cfg, rack_hourly=d / "telemetry" / "rack_hourly.csv").run(), d / "energy")
+        data = N.load(d / "energy")
+        ev = N.evaluate(N.analyse(data, cfg), data.key)
+    return {"month": k, "kind": data.key["report_error"], "planted": ev.planted, "detected": ev.detected, "named": ev.cause_named,
+            "missed": list(ev.missed), "fps": list(ev.false_positives)}
+
+
+def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
+    """PUE checks on n generated months, jobs at a time; with resume, each month's result is kept in that folder and
+    a rerun skips the months already there."""
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    done: dict[int, dict] = {}
+    if resume:
+        resume.mkdir(parents=True, exist_ok=True)
+        for p in resume.glob("month_*.json"):
+            r = json.loads(p.read_text(encoding="utf-8"))
+            if r["month"] < n:
+                done[r["month"]] = r
+    todo = [k for k in range(n) if k not in done]
+
+    def keep(r: dict) -> None:
+        done[r["month"]] = r
+        if resume:
+            (resume / f"month_{r['month']:03d}.json").write_text(json.dumps(r) + "\n", encoding="utf-8")
+
+    if jobs > 1:
+        with ProcessPoolExecutor(jobs) as ex:
+            for f in as_completed([ex.submit(robustness_month, k) for k in todo]):
+                keep(f.result())
+    else:
+        for k in todo:
+            keep(robustness_month(k))
     planted = detected = named = mismatches = 0
     fps, by_kind = [], {}
     for k in range(n):
-        with tempfile.TemporaryDirectory() as tmp:
-            d = Path(tmp)
-            write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
-            write_energy(EnergyLayer(d, 2000 + k, cfg).run(), d / "energy")
-            data = N.load(d / "energy")
-            ev = N.evaluate(N.analyse(data, cfg), data.key)
-        kind = data.key["report_error"]
+        r = done[k]
+        kind = r["kind"]
         by_kind.setdefault(kind, [0, 0])
         by_kind[kind][1] += 1
-        by_kind[kind][0] += kind == "none" or not any(m.startswith("report_mismatch") for m in ev.missed)
-        planted, detected, named = planted + ev.planted, detected + ev.detected, named + ev.cause_named
+        by_kind[kind][0] += kind == "none" or not any(m.startswith("report_mismatch") for m in r["missed"])
+        planted, detected, named = planted + r["planted"], detected + r["detected"], named + r["named"]
         mismatches += kind != "none"
-        fps += [(k, x) for x in ev.false_positives]
-        for m in ev.missed:
+        fps += [(k, x) for x in r["fps"]]
+        for m in r["missed"]:
             print(f"  month {k}: missed {m}")
     print(f"PUE checks on {n} generated months (report errors and lockouts planted, weather and loads vary):")
     for kind, (ok, tot) in sorted(by_kind.items()):
@@ -181,9 +217,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--robustness", type=int, metavar="N")
+    ap.add_argument("--jobs", type=int, default=1, help="months to run at once (robustness)")
+    ap.add_argument("--resume", type=Path, metavar="DIR", help="keep each month's result here and skip months already done")
     args = ap.parse_args()
     if args.robustness:
-        return robustness(args.robustness)
+        return robustness(args.robustness, args.jobs, args.resume)
     f = prepare()
     text = markdown(f)
     if args.check:

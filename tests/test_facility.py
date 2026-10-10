@@ -117,8 +117,13 @@ def test_utility_outage_is_carried_by_ups_then_generators(src):
     for e in on_batt:
         back = next(x for x in src.get("ups_nmc_events") if x["ups"] == e["ups"] and x["timestamp"] > t0)
         assert back["event"].endswith("onLine") and (back["timestamp"] - t0).total_seconds() <= 15
-    running = {r["generator"] for r in src.get("emcp_readings")
-               if r["engine_operating_state"] == "Running" and t0 < r["timestamp"] < t0 + timedelta(minutes=10)}
+    # The EMCP log holds the monthly test runs; the outage readings live in the power telemetry, which follows the racks.
+    assert not [r for r in src.get("emcp_readings") if t0 - timedelta(minutes=5) < r["timestamp"] < t0 + timedelta(hours=2)]
+    if "FACILITY_DATASET" in os.environ:
+        return          # a generated month has no power telemetry; tests/test_telemetry_power.py and its robustness cover it
+    states = [json.loads(x) for x in (ROOT / "data" / "telemetry" / "power" / "states.jsonl").read_text(encoding="utf-8").splitlines() if x]
+    running = {s["device"] for s in states if s["family"] == "generator" and s["value"] == "Running"
+               and t0 < datetime.fromisoformat(s["time"].replace("Z", "+00:00")) < t0 + timedelta(minutes=10)}
     assert len(running) == 7
 
 

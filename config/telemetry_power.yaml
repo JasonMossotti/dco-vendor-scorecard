@@ -1,0 +1,164 @@
+# Power telemetry for Site AUS-1 (synthetic; portfolio demo). Phase 2b of the Telemetry tab.
+#
+# Four device families, each read the way site/site.yaml says the Customer reads it, with the point names
+# the manufacturer or the standards body publishes:
+#   * IT UPSs (Schneider Galaxy VX 1500 kW) and mechanical UPSs (Galaxy VL 300 kW): SNMPv3 through the
+#     Network Management Card, IETF UPS-MIB (RFC 1628) and APC PowerNet-MIB. Schneider also publishes a
+#     Modbus register map for the Galaxy VX (990-5915F), so each Galaxy VX point shows its register too. No
+#     public Modbus map for the Galaxy VL was found, so none is shown for it.
+#   * Busway runs and tap-offs (Starline Track Busway 1200T5 with the M70 Critical Power Monitor): the
+#     object names in Starline's published M70 CPM SNMP OID map. Each tap-off is a plug-in unit with its own
+#     meter; each run has an end-feed meter.
+#   * Generators (Caterpillar C175-16 with the EMCP 4.4 controller): Modbus holding registers from
+#     Caterpillar's published EMCP 4 SCADA Data Links guide. The guide's Appendix A (resolution and offset per
+#     register) is not public, so the register scaling shown is marked an assumption (J1939-style resolution).
+# Every number below is an assumption for the demo ("basis: assumption") unless a public source is named.
+# The series are built from the bottom up (racks -> tap-offs -> busway runs -> UPS) and shaped to agree with
+# every power record already in data/sample, data/energy, the GPU telemetry, and the CDU telemetry
+# (src/scorecard/telemetry_power.py holds the agreements).
+# Read by src/scorecard/synthetic/telemetry_power.py (the data) and src/scorecard/telemetry_power.py (the agreements).
+
+framing: "Synthetic power telemetry in the manufacturers' published SNMP and Modbus point maps."
+sources:
+  - {name: "IETF RFC 1628, UPS Management Information Base (UPS-MIB, mib-2 33)", url: "https://www.rfc-editor.org/rfc/rfc1628", checked: "2026-10-09"}
+  - {name: "APC PowerNet-MIB, upsAdvBattery and upsBasicOutputStatus objects (enterprise 318)", url: "https://mibs.observium.org/object/PowerNet-MIB/upsAdvBattery", checked: "2026-10-09"}
+  - {name: "Schneider Electric, Galaxy VX Modbus Register Map, 990-5915F (2026-01-20); FAQ FA321205", url: "https://www.se.com/us/en/download/document/SPD_CDIG_GalaxyVX-MM-EN", checked: "2026-10-09"}
+  - {name: "Schneider Electric, NMC4 for Galaxy VS, VL and VXL (SNMPv3 network management card)", url: "https://www.se.com/us/en/product/AP9644/network-management-card-4-nmc4-for-galaxy-vs-galaxy-vl-galaxy-vxl-remote-ups-monitoring-and-management/", checked: "2026-10-09"}
+  - {name: "Starline M70 CPM SNMP OID map, firmware 1.08 (enterprise 35774, cpmAcMeter)", url: "https://starlinepower.com/sites/default/files/files/M70-CPM-SNMP-OID-MAP-fw1.08.pdf", checked: "2026-10-09"}
+  - {name: "Starline M70 Critical Power Monitor data sheet", url: "https://starlinepower.com/sites/default/files/2025-01/BUS_M70_DataSheet_4.24.2024.pdf", checked: "2026-10-09"}
+  - {name: "Caterpillar, Application and Installation Guide: EMCP 4 SCADA Data Links (register numbers)", url: "https://www.ccontrols.com/support/dp/ManualEMCP4.pdf", checked: "2026-10-09"}
+  - {name: "Caterpillar EMCP 3 Modbus map (electrical-point resolution on the same registers)", url: "https://store.chipkin.com/articles/cat-m5x-modbus-memory-map-ecmp-31-32-33", checked: "2026-10-09"}
+  - {name: "NFPA 110 monthly exercise: 30% of nameplate for 30 minutes (as cited by finding L-003)", url: "https://www.nfpa.org/codes-and-standards/nfpa-110-standard-development/110", checked: "2026-10-09"}
+
+collection:
+  poll_interval_s: 60               # the site's collector reads every power device once a minute
+  ups: {protocol: "SNMPv3", account: "read-only user on the NMC", mibs: ["UPS-MIB (RFC 1628)", "PowerNet-MIB"]}
+  busway: {protocol: "SNMP", account: "read-only community on each M70 CPM", mib: "Starline M70 CPM (1.3.6.1.4.1.35774.2.1)"}
+  generator: {protocol: "Modbus TCP", account: "read-only (EMCP 4.4 SCADA data link, holding registers)", unit_id: 1}
+
+# Voltages, frequency, and power factor (480 V, 60 Hz site; site/site.yaml power factor 0.99).
+electrical:
+  ll_v: 480.0
+  ln_v: 277.1
+  hz: 60.0
+  utility_v_sd_pct: 0.4             # utility voltage wander at the UPS input (basis: assumption)
+  ups_out_v_sd_pct: 0.08            # double conversion holds the output tightly (basis: assumption)
+  busway_drop_pct_at_rated: 0.6     # voltage drop along a run at its 1,200 A rating (basis: assumption)
+  rack_pf: [0.985, 0.996]           # GB200/GB300 power-shelf power factor at load, per rack (basis: assumption)
+  phase_imbalance_pct: 1.5          # per-line share spread on a rack's three-phase shelves (basis: assumption)
+  share_a: [0.490, 0.510]           # share of a healthy rack's load on its A tap-off (shelves 1 to 4 A, 5 to 8 B)
+  gen_v_ll: 13800                   # generator output (site/site.yaml: C175-16 at 13.8 kV)
+  gen_pf: [0.985, 0.995]
+  enclosure_c: [24.0, 27.0]         # electrical room air at the busway end-feed (basis: assumption)
+  enclosure_rise_c_at_rated: 9.0
+
+ups:
+  modules_vx: 6                     # Galaxy VX 1500 kW: six 250 kW power cabinets (as the detail sheet D-301 draws them)
+  modules_vl: 6                     # Galaxy VL 300 kW: six 50 kW power modules (basis: assumption)
+  bypass_efficiency: 0.995          # on static or maintenance bypass the conversion loss is saved (basis: assumption)
+  battery:                          # Galaxy Lithium-ion, 5 minutes at full rated load (site/site.yaml)
+    nominal_v: 576.0                # basis: assumption (a string near the Galaxy VX DC bus)
+    float_v: 590.0
+    temp_c: [22.5, 25.5]
+    recharge_frac: 0.05             # recharge power as a share of the UPS rating after a discharge (basis: assumption)
+    runtime_cap_min: 99             # runtime the NMC reports is capped here at light load (basis: assumption)
+  # Galaxy VX register map 990-5915F: "UPS Operation Mode" (register 45379) is 1 Normal operation, 2 Battery
+  # Operation, and 4, 5, 6, or 8 for its bypass modes. The UPS-MIB's upsOutputSource is published for all.
+  output_source: {normal: 3, bypass: 4, battery: 5}
+
+generator:
+  rated_kw: 3000                    # mission-critical rating (site/site.yaml)
+  rpm: 1800
+  standby_coolant_c: [38.0, 44.0]   # jacket-water heater holds the block warm (basis: assumption)
+  running_coolant_c: 82.0           # thermostat-controlled at load (basis: assumption)
+  coolant_tau_min: 7.0
+  oil_kpa_running: [410, 450]       # basis: assumption
+  battery_float_v: [27.2, 27.6]     # 24 V starting system on float charge (basis: assumption)
+  battery_running_v: [27.9, 28.3]   # alternator charging (basis: assumption)
+  fuel_lph_idle: 60.0               # litres per hour at no load (basis: assumption)
+  fuel_lph_per_kw: 0.235            # about 765 L/h at 3,000 kW (basis: assumption)
+  tank_hours_full_load: 48          # site/site.yaml: 48 hours of fuel at full load
+  fuel_start_pct: [86.0, 96.0]
+  hours_start: [310.0, 690.0]       # engine hours at the start of the month (basis: assumption)
+  starts_start: [180, 420]
+  exhaust_c: [140.0, 520.0]         # stopped-warm to full load (basis: assumption)
+  load_share_sd_pct: 0.6            # isochronous load sharing in parallel (basis: assumption)
+  # EMCP 4 "Automatic Start/Stop State" (register 206) and "Engine Control Switch Position" (301): the guide
+  # names the registers; their enumerations are in its Appendix A, not public. The labels are the states the
+  # EMCP readings already record; the codes are this demo's.
+  states: {Stopped: 0, Starting: 1, Running: 2, Cooldown: 3}
+  switch: {0: "Off/Reset", 1: "Auto", 2: "Run"}
+
+# Points per family. key: this layer's short name; scale: stored as an integer of value * scale.
+# snmp: the published object (and OID); modbus: the published register (and type). One entry per point.
+fields:
+  ups:
+    - {key: source, name: "Output source", unit: "", scale: 1, snmp: "upsOutputSource", oid: "1.3.6.1.2.1.33.1.4.1.0", modbus: 45379, mtype: "ENUM (UPS Operation Mode)", help: "Where the output comes from: normal (double conversion), bypass, or battery."}
+    - {key: in_v, name: "Input voltage L-N", unit: "V", scale: 1, snmp: "upsInputVoltage", oid: "1.3.6.1.2.1.33.1.3.3.1.3.1", modbus: 44624, mtype: "UINT16, V", help: "Rectifier input voltage, line 1 to neutral."}
+    - {key: in_a, name: "Input current", unit: "A", scale: 10, snmp: "upsInputCurrent", oid: "1.3.6.1.2.1.33.1.3.3.1.4.1", modbus: 44613, mtype: "UINT16, A", help: "Rectifier input current, line 1."}
+    - {key: in_hz, name: "Input frequency", unit: "Hz", scale: 10, snmp: "upsInputFrequency", oid: "1.3.6.1.2.1.33.1.3.3.1.2.1", modbus: 44609, mtype: "UINT16, 0.1 Hz", help: "Utility (or generator) frequency at the input."}
+    - {key: in_kw, name: "Input power", unit: "kW", scale: 10, snmp: "upsInputTruePower", oid: "1.3.6.1.2.1.33.1.3.3.1.5", modbus: null, mtype: "", help: "Power drawn at the UPS input: the output divided by the efficiency, plus the UPS's own no-load loss and any battery recharge (rectifier and bypass inputs together)."}
+    - {key: byp_v, name: "Bypass voltage L-N", unit: "V", scale: 1, snmp: "upsBypassVoltage", oid: "1.3.6.1.2.1.33.1.5.3.1.2.1", modbus: 44880, mtype: "UINT16, V", help: "Voltage on the bypass source, line 1 to neutral."}
+    - {key: out_v, name: "Output voltage L-N", unit: "V", scale: 1, snmp: "upsOutputVoltage", oid: "1.3.6.1.2.1.33.1.4.4.1.2.1", modbus: 45153, mtype: "UINT16, V", help: "Output voltage, line 1 to neutral."}
+    - {key: out_a1, name: "Output current L1", unit: "A", scale: 10, snmp: "upsOutputCurrent", oid: "1.3.6.1.2.1.33.1.4.4.1.3.1", modbus: 45126, mtype: "UINT16, A", help: "Output current on line 1."}
+    - {key: out_a2, name: "Output current L2", unit: "A", scale: 10, snmp: "upsOutputCurrent", oid: "1.3.6.1.2.1.33.1.4.4.1.3.2", modbus: 45127, mtype: "UINT16, A", help: "Output current on line 2."}
+    - {key: out_a3, name: "Output current L3", unit: "A", scale: 10, snmp: "upsOutputCurrent", oid: "1.3.6.1.2.1.33.1.4.4.1.3.3", modbus: 45128, mtype: "UINT16, A", help: "Output current on line 3."}
+    - {key: out_kw, name: "Output power", unit: "kW", scale: 10, snmp: "upsOutputPower (sum of lines)", oid: "1.3.6.1.2.1.33.1.4.4.1.4", modbus: 45144, mtype: "UINT16, kW (Total active power (output))", help: "Real power delivered to the busway runs: the IT load."}
+    - {key: load_pct, derived: "out_kw * 100 / rating_kw", name: "Output load", unit: "%", scale: 10, snmp: "upsOutputPercentLoad", oid: "1.3.6.1.2.1.33.1.4.4.1.5.1", modbus: 45146, mtype: "UINT16, 0.1 % (Total Output Percent load)", help: "Output power as a share of the UPS rating. In a 4-make-3 hall each UPS must stay under 75% so any three can carry the hall."}
+    - {key: out_hz, from: in_hz, name: "Output frequency", unit: "Hz", scale: 10, snmp: "upsOutputFrequency", oid: "1.3.6.1.2.1.33.1.4.2.0", modbus: 45122, mtype: "UINT16, 0.1 Hz", help: "Output frequency (synchronized to the bypass source)."}
+    - {key: soc_pct, name: "Battery charge", unit: "%", scale: 1, snmp: "upsAdvBatteryCapacity", oid: "1.3.6.1.4.1.318.1.1.1.2.2.1.0", modbus: 44359, mtype: "UINT16, % (Estimated charge %)", help: "Battery state of charge."}
+    - {key: runtime_s, name: "Runtime remaining", unit: "s", scale: 1, snmp: "upsAdvBatteryRunTimeRemaining", oid: "1.3.6.1.4.1.318.1.1.1.2.2.3.0", modbus: 44355, mtype: "UINT32, s (Runtime remaining)", help: "How long the battery would carry the present load. The MIB returns TimeTicks (hundredths of a second)."}
+    - {key: batt_v, name: "Battery voltage", unit: "V", scale: 10, snmp: "upsBatteryVoltage", oid: "1.3.6.1.2.1.33.1.2.5.0", modbus: 44372, mtype: "UINT16, 0.1 Vdc", help: "Battery string voltage (DC)."}
+    - {key: batt_a, name: "Battery current", unit: "A", scale: 10, snmp: "upsBatteryCurrent", oid: "1.3.6.1.2.1.33.1.2.6.0", modbus: 44382, mtype: "UINT16, A", help: "Battery current: positive while charging, negative while discharging."}
+    - {key: batt_c, name: "Battery temperature", unit: "°C", scale: 1, snmp: "upsBatteryTemperature", oid: "1.3.6.1.2.1.33.1.2.7.0", modbus: 44368, mtype: "UINT16, °C", help: "Battery cabinet temperature."}
+    - {key: modules_ok, name: "Power modules in service", unit: "", scale: 1, snmp: "", oid: "", modbus: 45414, mtype: "UINT16 (Power Cabinet Redundancy Status)", help: "Power cabinets (Galaxy VX) or modules (Galaxy VL) running. With one out the UPS still carries its load but has no module redundancy."}
+  busway:
+    - {key: v_ll, name: "Voltage L-L average", unit: "V", scale: 10, snmp: "cpmAcInfLineToLineVoltAve", oid: "1.3.6.1.4.1.35774.2.1.4.2", help: "Average line-to-line voltage at the run's end feed."}
+    - {key: v_ln, name: "Voltage L-N average", unit: "V", scale: 10, snmp: "cpmAcInfLineToNeutVoltAve", oid: "1.3.6.1.4.1.35774.2.1.4.1", help: "Average line-to-neutral voltage."}
+    - {key: a1, name: "Current line 1", unit: "A", scale: 10, snmp: "cpmAcInfLineCurrent.1", oid: "1.3.6.1.4.1.35774.2.1.5.1.3.1", help: "Current on line 1. The run is rated 1,200 A; with one feed lost a run may carry up to 90% of that."}
+    - {key: a2, name: "Current line 2", unit: "A", scale: 10, snmp: "cpmAcInfLineCurrent.2", oid: "1.3.6.1.4.1.35774.2.1.5.1.3.2", help: "Current on line 2."}
+    - {key: a3, name: "Current line 3", unit: "A", scale: 10, snmp: "cpmAcInfLineCurrent.3", oid: "1.3.6.1.4.1.35774.2.1.5.1.3.3", help: "Current on line 3."}
+    - {key: an, name: "Current neutral", unit: "A", scale: 10, snmp: "cpmAcInfLineCurrent.4", oid: "1.3.6.1.4.1.35774.2.1.5.1.3.4", help: "Neutral current (neutralC): the imbalance between the lines."}
+    - {key: kw, name: "Active power total", unit: "kW", scale: 10, snmp: "cpmAcInfTotalActivePower", oid: "1.3.6.1.4.1.35774.2.1.4.7", help: "Real power through the run (the CPM publishes watts)."}
+    - {key: pf, name: "Power factor total", unit: "", scale: 1000, snmp: "cpmAcInfTotalPowerFactor", oid: "1.3.6.1.4.1.35774.2.1.4.17", help: "Power factor of the run's load."}
+    - {key: hz, name: "Frequency", unit: "Hz", scale: 100, snmp: "cpmAcInfFrequency", oid: "1.3.6.1.4.1.35774.2.1.4.18", help: "Frequency at the end feed."}
+    - {key: encl_c, name: "Enclosure temperature", unit: "°C", scale: 10, snmp: "cpmAcEnclosureTemp", oid: "1.3.6.1.4.1.35774.2.1.11.1", help: "Temperature inside the end-feed enclosure: it rises with the square of the current."}
+  tapoff:
+    - {key: kw, name: "Active power", unit: "kW", scale: 1000, snmp: "cpmAcInfTotalActivePower", oid: "1.3.6.1.4.1.35774.2.1.4.7", help: "Real power to the rack on this feed (stored in watts)."}
+    - {key: a1, name: "Current line 1", unit: "A", scale: 10, snmp: "cpmAcInfLineCurrent.1", oid: "1.3.6.1.4.1.35774.2.1.5.1.3.1", help: "Current on line 1 of the tap-off."}
+    - {key: a2, name: "Current line 2", unit: "A", scale: 10, snmp: "cpmAcInfLineCurrent.2", oid: "1.3.6.1.4.1.35774.2.1.5.1.3.2", help: "Current on line 2."}
+    - {key: a3, name: "Current line 3", unit: "A", scale: 10, snmp: "cpmAcInfLineCurrent.3", oid: "1.3.6.1.4.1.35774.2.1.5.1.3.3", help: "Current on line 3."}
+    - {key: pf, name: "Power factor", unit: "", scale: 1000, snmp: "cpmAcInfTotalPowerFactor", oid: "1.3.6.1.4.1.35774.2.1.4.17", help: "Power factor of the rack's power shelves on this feed."}
+    - {key: brk, name: "Breaker status", unit: "", scale: 1, snmp: "cpmAcBrkrCurrentStatus.1", oid: "1.3.6.1.4.1.35774.2.1.14.1.2.1", help: "The tap-off breaker: 1 closed, 0 open."}
+  generator:
+    - {key: state, name: "Automatic start/stop state", unit: "", scale: 1, reg: 206, rscale: "enumeration (Appendix A)", res: 1, offset: 0, help: "Stopped, Starting, Running, or Cooldown (unloaded run before stopping)."}
+    - {key: ecs, name: "Engine control switch position", unit: "", scale: 1, reg: 301, rscale: "enumeration (Appendix A)", res: 1, offset: 0, help: "Auto (starts on a utility failure), Run (started by hand for a test), or Off/Reset."}
+    - {key: brk, name: "Generator circuit breaker status", unit: "", scale: 1, reg: 1065, rscale: "enumeration (Appendix A)", res: 1, offset: 0, help: "1 closed (connected to the paralleling bus or the test load bank), 0 open."}
+    - {key: kw, name: "Generator total real power", unit: "kW", scale: 10, reg: 106, rscale: "1 W/bit, 2 registers", res: 0.001, offset: 0, help: "Real power the generator delivers."}
+    - {key: pct_kw, name: "Generator total percent real power", unit: "%", scale: 10, reg: 105, rscale: "0.0078125 %/bit, offset -251 %", res: 0.0078125, offset: -251, help: "Real power as a share of the 3,000 kW rating. NFPA 110's monthly exercise asks for at least 30%."}
+    - {key: kvar, name: "Generator total reactive power", unit: "kVAr", scale: 10, reg: 141, rscale: "1 VAr/bit, 2 registers", res: 0.001, offset: 0, help: "Reactive power."}
+    - {key: pf, name: "Generator overall power factor", unit: "", scale: 100, reg: 103, rscale: "1/16384 per bit", res: 0.00006103515625, offset: 0, help: "Power factor (lagging)."}
+    - {key: v_ll, name: "Generator average line-line voltage", unit: "V", scale: 1, reg: 100, rscale: "1 V/bit", res: 1, offset: 0, help: "Output voltage (13.8 kV machines)."}
+    - {key: amps, name: "Generator average current", unit: "A", scale: 1, reg: 101, rscale: "1 A/bit", res: 1, offset: 0, help: "Average line current."}
+    - {key: hz, name: "Generator average frequency", unit: "Hz", scale: 100, reg: 102, rscale: "1/128 Hz/bit", res: 0.0078125, offset: 0, help: "Output frequency."}
+    - {key: rpm, name: "Engine speed", unit: "rpm", scale: 1, reg: 203, rscale: "0.125 rpm/bit (assumption)", res: 0.125, offset: 0, help: "Engine speed: 1,800 rpm for 60 Hz."}
+    - {key: coolant_c, name: "Engine coolant temperature", unit: "°C", scale: 10, reg: 201, rscale: "0.03125 °C/bit, offset -273 °C (assumption)", res: 0.03125, offset: -273, help: "Jacket water: held warm by the block heater when stopped, about 82 °C at load."}
+    - {key: oil_kpa, name: "Engine oil pressure", unit: "kPa", scale: 1, reg: 200, rscale: "0.125 kPa/bit (assumption)", res: 0.125, offset: 0, help: "Oil pressure: zero when stopped."}
+    - {key: batt_v, name: "Battery voltage", unit: "V", scale: 100, reg: 202, rscale: "0.05 V/bit (assumption)", res: 0.05, offset: 0, help: "24 V starting battery at the EMCP input: float charge when stopped, alternator charge when running."}
+    - {key: fuel_pct, name: "Fuel level", unit: "%", scale: 10, reg: 198, rscale: "0.0078125 %/bit (assumption)", res: 0.0078125, offset: 0, help: "Main tank level (48 hours at full load when full)."}
+    - {key: hours, name: "Engine operating hours", unit: "h", scale: 100, reg: 204, rscale: "0.05 h/bit, 2 registers (assumption)", res: 0.05, offset: 0, help: "Engine hour meter: advances only while the engine runs."}
+    - {key: exhaust_c, name: "Exhaust temperature", unit: "°C", scale: 1, reg: 801, rscale: "0.03125 °C/bit, offset -273 °C (assumption)", res: 0.03125, offset: -273, help: "Exhaust temperature: follows load."}
+    - {key: starts, name: "Number of successful starts", unit: "", scale: 1, reg: 215, rscale: "1 per bit", res: 1, offset: 0, help: "Lifetime count of starts."}
+
+# Committed tiers: hourly per UPS, run, and generator; states; minute windows around every event.
+# Built at publish time: every device's one-minute series (with checksums in the manifest).
+tiers:
+  window_before_min: 30
+  window_after_min: 90
+checks:
+  energy_kwh_tolerance: 1.0         # hall UPS output and input against the meters, per hour (meter rounding)
+  generator_energy_tolerance: 0.002 # generators' outage energy against the metered generator energy, once the meter's
+                                    # flat hourly split and the battery bridge are allowed for (meter rounding)
+  voltage_band_pct: 5.0             # ANSI C84.1 range A is +/-5% at service (basis: rounded)
+  frequency_band_hz: 0.5
+  busway_limit: 0.9                 # site/site.yaml: a run may carry up to 90% of its rating with one feed lost

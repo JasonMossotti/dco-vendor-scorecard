@@ -81,9 +81,9 @@ These are real performance outcomes the scorecard should report, not discrepanci
 | File | Source | Contents |
 |---|---|---|
 | `facility/ups_nmc_events.jsonl` | UPS network management cards (SNMPv3) | Module faults and repairs; output state changes using PowerNet MIB `upsBasicOutputStatus` values (`onLine`, `onBattery`, `switchedBypass`, ...) |
-| `facility/ups_status.jsonl` | Same, polled every 4 hours | `upsBasicOutputStatus` and load percent per UPS |
+| `facility/ups_status.jsonl` | Same, polled every 4 hours | `upsBasicOutputStatus` per UPS; load percent for the mechanical UPSs only (the IT UPSs' load follows the racks and is in `data/telemetry/power/`) |
 | `facility/busway_cpm_events.jsonl` | Starline Critical Power Monitors | Feed lost and restored per busway (voltage), tap-off breaker operations |
-| `facility/emcp_readings.jsonl` | Generator controllers (EMCP 4.4) | One reading a minute while running: engine state, kW, percent of rated kW |
+| `facility/emcp_readings.jsonl` | Generator controllers (EMCP 4.4) | One reading a minute while running a monthly test: engine state, kW, percent of rated kW (a utility outage's readings follow the site load and are in `data/telemetry/power/`) |
 | `facility/cdu_redfish_events.jsonl` | CDU controllers (Redfish) | Changes on `/redfish/v1/ThermalEquipment/CDUs/{id}` resources: pump `Status.Health` and `Status.State`, `PumpRedundancy` health |
 | `facility/bms_events.jsonl` | BMS (EcoStruxure Building Operation export) | Alarms with acknowledgments (user) and clears; overrides and alarm inhibits with the change reference (or none) |
 | `facility/epms_events.jsonl` | Power monitoring | Utility trips, generator bus, breaker trips and closes |

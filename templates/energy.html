@@ -137,7 +137,7 @@ function render() {
 
   h += `<h2>52 weeks, by four-week period</h2>
   <p class="note">Each bar is PUE for one period: 1.0 is the IT energy itself; above it, the energy each IT kWh needed for cooling, the power path (UPS and distribution losses), and house load.
-  Cooling follows the weather: the free-cooling chillers do most of the work in winter. The periods before the sample month are synthetic history, with Hall B ramping up as it deployed.</p>
+  Cooling follows the weather: the free-cooling chillers do most of the work in winter. The periods before the sample month are synthetic history, with Hall A only: no Hall B rack drew power before September 5. The site runs its full cooling and house overhead at well under half its IT design load (Hall B is still deploying), which is why PUE sits above the 1.35 target.</p>
   <div class="legend">${SERIES.map(([, name, c]) => `<span><i style="background:${c}"></i>${esc(name)}</span>`).join("")}<span><i class="dash"></i>Target ${esc(D.kpi.target.toFixed(2))} (52 weeks)</span>
   <button class="toggle" id="tbl1">Show table</button></div>
   <div class="chart" id="c1">${periodChart()}</div>

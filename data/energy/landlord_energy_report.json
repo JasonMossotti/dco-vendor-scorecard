@@ -1,12 +1,12 @@
 {
-  "it_kwh": 5283600.0,
+  "it_kwh": 2611700.0,
   "method": "Total facility energy from the site revenue and generator meters; IT energy at the UPS meters.",
   "period": {
     "end": "2026-09-28T00:00:00Z",
     "start": "2026-08-31T00:00:00Z"
   },
-  "pue": 1.313,
+  "pue": 1.434,
   "standard": "ISO/IEC 30134-2:2026",
   "supplier": "Caprock Critical Facilities, LLC",
-  "total_facility_kwh": 6935200.0
+  "total_facility_kwh": 3745300.0
 }

@@ -1,5 +1,6 @@
 // node tests/js/telemetry_page.cjs <site>/index.html <site>
-// <site> is the folder scripts/render_telemetry.py write_site() wrote: index.html plus data/ (racks.json, gpu/, windows/, cdu/, cdu_minutes/).
+// <site> is the folder scripts/render_telemetry.py write_site() wrote: index.html plus data/ (racks.json, gpu/, windows/, cdu/, cdu_minutes/,
+// power/, power/windows/, power_minutes/).
 const { JSDOM, VirtualConsole } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
@@ -126,8 +127,8 @@ async function until(fn, what, ms = 8000) {
   const C = D.cdu;
   const noBad = what => ok(!/\bundefined\b|\bNaN\b/.test(t()), `no undefined/NaN text in ${what}`);
   const fam = () => [...d.querySelectorAll("#tree ul.fam > li")].map(li => li.textContent.trim());
-  ok(fam()[0].startsWith("GPUs") && fam()[1].startsWith("CDUs") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists GPUs, CDUs and the greyed planned families: " + fam().join(" | "));
-  ok(d.querySelectorAll("#tree ul.fam a").length === 2 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
+  ok(fam()[0].startsWith("GPUs") && fam()[1].startsWith("CDUs") && fam()[2].startsWith("Power") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists GPUs, CDUs, Power and the greyed planned families: " + fam().join(" | "));
+  ok(d.querySelectorAll("#tree ul.fam a").length === 3 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
   ok(!d.querySelector('#tree .famsec[data-fam="gpu"]').classList.contains("off") && d.querySelector('#tree .famsec[data-fam="cdu"]').classList.contains("off"), "on a GPU view the GPU section shows and the CDU section is hidden");
   ok([...d.querySelectorAll("#tree .planned")].some(x => x.textContent.includes("CDU-C1")) && !d.querySelector('#tree a[href="#CDU-C1"]'), "Hall C CDUs are greyed, not links");
   await go("#cdus");
@@ -220,6 +221,83 @@ async function until(fn, what, ms = 8000) {
   await go("#CDU-B1/5");
   await until(() => d.getElementById("cm-json") && d.getElementById("cm-json").textContent.includes("CoolingUnit"), "CDU-B1 minute view after the file returns");
   ok(d.getElementById("cm-json") && d.getElementById("cm-json").textContent.includes("CoolingUnit"), "the minute view loads once the file is back (no stale failure cached)");
+
+  // ---- power
+  const P = D.power;
+  await go("#power");
+  await until(() => d.querySelectorAll(".ctile .spark svg").length === P.ups.length, "UPS sparklines");
+  ok(t().includes("Power telemetry") && d.querySelector("#main svg a[href='#UPS-A1']") && d.querySelectorAll(".ctile").length === P.ups.length + P.gens.length, "power overview: one-line diagram and a tile per UPS and generator");
+  ok(d.querySelectorAll(".ctile .spark svg").length === P.ups.length, "every UPS tile draws its load sparkline");
+  const pAgree = P.agreements.reduce((a, c) => a + c.checked - c.misses, 0);
+  ok(t().includes(`${pAgree.toLocaleString("en-US")} of`) && P.agreements.every(c => c.misses === 0), "power agreements on the overview, none missed");
+  ok(t().includes("below 30%") && d.querySelector('#main a[href="#GEN-4"]'), "GEN-4's monthly test below 30% of rated is flagged");
+  ok(d.querySelector('#tree a[href="#power"]').classList.contains("on"), "tree highlights Power");
+  noBad("#power");
+  await go("#UPS-A1");
+  await until(() => d.querySelectorAll("#pc svg").length === 4, "UPS-A1 charts");
+  ok(d.querySelectorAll("#pc svg").length === 4 && t().includes("Busway runs fed") && t().includes("Galaxy VX"), "UPS-A1: four charts and its busway runs");
+  ok(d.querySelector('#main a[href="#BW-A-R1-PG-A1-A"]') && t().includes("WO-41009"), "UPS-A1 links its runs and the outage work order");
+  noBad("#UPS-A1");
+  const byp = P.events.find(e => e.device === "UPS-A1" && e.kind === "bypass"), mo = mOf(byp.t) + 5;
+  await go(`#UPS-A1/${mo}`);
+  await until(() => d.getElementById("pm-raw-out") && d.getElementById("pm-raw-out").textContent.includes("upsOutputSource"), "UPS minute view");
+  const praw = () => d.getElementById("pm-raw-out").textContent;
+  ok(praw().includes("upsOutputSource: bypass") && /1\.3\.6\.1\.4\.1\.318\.1\.1\.1\.4\.1\.1\.0 = INTEGER: 9/.test(praw()), "five minutes into the maintenance bypass the SNMP walk reads bypass (PowerNet 9 switchedBypass)");
+  ok(d.querySelectorAll("#pm-ch svg").length === 3 && d.querySelectorAll("#pm-tbl tbody tr").length === P.fields.ups.length, "minute view: three charts and every point");
+  d.querySelector('#pm-step button[data-s="-10"]').click();
+  await sleep(20);
+  ok(w.location.hash === `#UPS-A1/${mo - 10}` && praw().includes("upsOutputSource: normal"), "ten minutes earlier the UPS is on double conversion");
+  const out = P.outages[0];
+  await go(`#UPS-A1/${mOf(out.trip)}`);
+  await until(() => /33\.1\.2\.6\.0 = INTEGER: -\d/.test(praw()), "outage minute");
+  ok(/33\.1\.2\.6\.0 = INTEGER: -\d/.test(praw()) && t().includes("utility"), "in the outage minute the battery current is negative (discharging)");
+  d.querySelector('#pm-raw button[data-r="modbus"]').click();
+  await sleep(20);
+  ok(praw().includes("990-5915F") && praw().includes("45379"), "the Galaxy VX Modbus read lists its registers");
+  d.getElementById("pcsv").click();
+  await sleep(10);
+  ok(d.getElementById("pcsv-note").textContent.includes("121 rows"), "CSV of the ±60 window has 121 rows (" + d.getElementById("pcsv-note").textContent + ")");
+  noBad("#UPS-A1 minute view");
+  const g4 = P.gens.find(g => g.id === "GEN-4").runs.find(r => r.kind === "test");
+  await go(`#GEN-4/${mOf(g4.t) + 10}`);
+  await until(() => d.getElementById("pm-raw-out") && d.getElementById("pm-raw-out").textContent.includes("EMCP"), "GEN-4 minute view");
+  ok(praw().includes("function 03") && praw().includes("Running"), "GEN-4 ten minutes into its test: Modbus holding registers, Running");
+  ok(t().includes("30% of rated") && t().includes("L-003"), "GEN-4 minute view shows the NFPA 110 line and the Landlord finding");
+  noBad("#GEN-4 minute view");
+  await go("#GEN-4");
+  await until(() => d.querySelectorAll("#pc svg").length >= 2, "GEN-4 charts");
+  ok(t().includes("L-003") && t().includes("Monthly loaded exercise"), "GEN-4 shows its test run and the finding");
+  await go("#BW-A-R1-PG-A2-A");
+  await until(() => d.querySelectorAll("#pc svg").length === 4 && d.querySelector("#ptap table"), "run charts and tap-off table");
+  ok(d.querySelectorAll("#ptap tbody tr").length === P.runs.find(r => r.id === "BW-A-R1-PG-A2-A").tapoffs.length && t().includes("Starline"), "busway run: four charts and a row per tap-off");
+  const wb = d.querySelector("#pw-btns button");
+  ok(wb, "the run has a one-minute window around its events");
+  wb.click();
+  await until(() => d.getElementById("pw-raw") && d.getElementById("pw-raw").textContent.includes("35774"), "busway window raw read");
+  ok(d.getElementById("pw-raw").textContent.includes("snmpget") && d.querySelectorAll("#pw svg").length === 3, "the window charts the run and shows the CPM read");
+  noBad("#BW-A-R1-PG-A2-A");
+  await go("#TO-A07-A");
+  await until(() => d.querySelectorAll("#pc svg").length === 3, "tap-off charts");
+  ok(t().includes("went dark") && d.querySelector('#main a[href="#TO-A07-B"]'), "TO-A07-A: rack A07 lost both feeds, linked to its partner tap-off");
+  await go("#A07");
+  await until(() => d.querySelector('#main a[href="#TO-A07-A"]'), "A07 power feeds");
+  ok(d.querySelector('#main a[href="#TO-A07-A"]') && d.querySelector('#main a[href="#TO-A07-B"]'), "the rack view lists its A and B tap-offs");
+  await go("#power-fields");
+  ok(["ups", "busway", "tapoff", "generator"].every(k => P.fields[k].every(f => t().includes(f.name))) && P.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#power-fields lists every point and source");
+  await go("#power-agreements");
+  ok(d.querySelectorAll("tbody tr").length === P.agreements.length && P.agreements.every(a => t().includes(a.title)), "#power-agreements shows every check");
+  fs.renameSync(path.join(site, "data/power_minutes/UPS-B2.json"), path.join(site, "data/power_minutes/UPS-B2.json.bak"));
+  try {
+    await go("#UPS-B2/5");
+    await until(() => t().includes("Could not load"), "power error message");
+    ok(t().includes("Could not load data/power_minutes/UPS-B2.json") && errors.length === 0, "a missing UPS minute file shows a message, not an exception");
+  } finally {
+    fs.renameSync(path.join(site, "data/power_minutes/UPS-B2.json.bak"), path.join(site, "data/power_minutes/UPS-B2.json"));
+  }
+  await go("#power");
+  await go("#UPS-B2/5");
+  await until(() => d.getElementById("pm-raw-out") && d.getElementById("pm-raw-out").textContent.includes("UPS-B2"), "UPS-B2 after the file returns");
+  ok(d.getElementById("pm-raw-out") && praw().includes("UPS-B2"), "the UPS minute view loads once the file is back");
 
   // ---- error state
   await go("#A99");

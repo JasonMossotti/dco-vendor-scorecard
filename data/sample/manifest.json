@@ -9,7 +9,7 @@
     "facility/bms_events.jsonl": 41,
     "facility/busway_cpm_events.jsonl": 12,
     "facility/cdu_redfish_events.jsonl": 18,
-    "facility/emcp_readings.jsonl": 637,
+    "facility/emcp_readings.jsonl": 301,
     "facility/epms_events.jsonl": 9,
     "facility/leak_events.jsonl": 2,
     "facility/ups_nmc_events.jsonl": 31,

@@ -62,7 +62,7 @@ deployment:
 # anything here never changes the IT partner's data.
 # -----------------------------------------------------------------------------
 facility:
-  site_load_mw: [10.2, 11.2]        # Site load carried by the generators in a utility outage (matches the energy meters)
+  site_load_mw: [10.2, 11.2]        # Drawn only to keep the random stream; the outage load comes from the power telemetry
   utility_outages: 1                 # Utility interruptions in the window (Utility-attributed; Landlord carries the load)
   rack_power_outages: 1              # Landlord opens a rack's second tap-off by mistake during planned work (rack down; FA-1)
   fault_counts:                      # Expected faults in the 4-week window, by Landlord rule card
