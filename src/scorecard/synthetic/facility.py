@@ -347,29 +347,38 @@ class FacilityGenerator:
                     {"timestamp": iso(t0 + timedelta(seconds=self.rng.randint(11, 14))), "ups": u,
                      "event": "upsBasicOutputStatus onLine", "severity": "informational"},
                 ]
+            # The load the generators carry is the site's own load at that minute: the power telemetry builds it
+            # from the racks (data/telemetry/power). The draws stay so every other record keeps its values.
             per_gen = load_mw * 1000 / len(self.gens)
             for g in self.gens:
-                self._emcp_run(g, t0 + timedelta(seconds=2), back + mins(5), per_gen, cooldown_min=5)
+                self._emcp_run(g, t0 + timedelta(seconds=2), back + mins(5), per_gen, cooldown_min=5, keep=False)
             inc = FacIncident(self._gt(), "UTILITY", "138 kV utility service", "MV switchgear", t0, "P1",
-                              f"Utility outage {dur:.0f} min; generators carried {load_mw:.1f} MW; no IT impact",
+                              f"Utility outage {dur:.0f} min; generators carried the site; no IT impact",
                               attribution_claim="Utility")
             self.respond(inc, (dur, dur + 1), late=False)
             inc.restored_at = inc.wo_restored_at = back
             self.bms_alarm("MV switchgear", "Utility power lost", t0, "P1", back, inc.ack_at, inc.engineer)
 
-    def _emcp_run(self, gen: str, start: datetime, end: datetime, kw: float, cooldown_min: float = 5) -> None:
-        self.out["emcp"].append({"timestamp": iso(start), "generator": gen, "engine_operating_state": "Starting",
-                                 "gen_total_kw": 0.0, "gen_pct_rated_kw": 0.0})
+    def _emcp_run(self, gen: str, start: datetime, end: datetime, kw: float, cooldown_min: float = 5,
+                  keep: bool = True) -> None:
+        rows: list[dict] = []
+        self._emcp_rows(rows, gen, start, end, kw, cooldown_min)
+        if keep:
+            self.out["emcp"] += rows
+
+    def _emcp_rows(self, out: list[dict], gen: str, start: datetime, end: datetime, kw: float, cooldown_min: float) -> None:
+        out.append({"timestamp": iso(start), "generator": gen, "engine_operating_state": "Starting",
+                    "gen_total_kw": 0.0, "gen_pct_rated_kw": 0.0})
         t = start + timedelta(minutes=1)
         loaded_until = end - mins(cooldown_min)
         while t < end:
             load = kw * self.rng.uniform(0.96, 1.04) if t < loaded_until else 0.0
             state = "Running" if t < loaded_until else "Cooldown"
-            self.out["emcp"].append({"timestamp": iso(t), "generator": gen, "engine_operating_state": state,
-                                     "gen_total_kw": round(load, 1), "gen_pct_rated_kw": round(load / GEN_KW * 100, 1)})
+            out.append({"timestamp": iso(t), "generator": gen, "engine_operating_state": state,
+                        "gen_total_kw": round(load, 1), "gen_pct_rated_kw": round(load / GEN_KW * 100, 1)})
             t += timedelta(minutes=1)
-        self.out["emcp"].append({"timestamp": iso(end), "generator": gen, "engine_operating_state": "Stopped",
-                                 "gen_total_kw": 0.0, "gen_pct_rated_kw": 0.0})
+        out.append({"timestamp": iso(end), "generator": gen, "engine_operating_state": "Stopped",
+                    "gen_total_kw": 0.0, "gen_pct_rated_kw": 0.0})
 
     # ------------------------------------------------------------------ maintenance
     def _pm(self, system: str, asset: str, task: str, due: datetime, done: datetime, engineer: str,
@@ -627,9 +636,14 @@ class FacilityGenerator:
         # Hourly-ish UPS status poll (every 4 hours), so normal operation is visible, not only exceptions.
         t = self.start
         while t < self.end:
+            # IT UPS load follows the racks, so it lives in the power telemetry (data/telemetry/power), not here;
+            # the draw stays so every other record keeps its values. Mechanical UPS load stays in the poll.
             for u in self.ups:
-                self.out["ups_status"].append({"timestamp": iso(t), "ups": u, "upsBasicOutputStatus": "onLine",
-                                               "load_pct": round(self.rng.uniform(55, 72) if u.startswith("UPS-") else self.rng.uniform(30, 45), 1)})
+                load = round(self.rng.uniform(55, 72) if u.startswith("UPS-") else self.rng.uniform(30, 45), 1)
+                row = {"timestamp": iso(t), "ups": u, "upsBasicOutputStatus": "onLine"}
+                if u.startswith("MUPS-"):
+                    row["load_pct"] = load
+                self.out["ups_status"].append(row)
             t += timedelta(hours=4)
         # Weekly self-report: the Landlord says every service level was met.
         for w in range((self.end - self.start).days // 7):

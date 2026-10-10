@@ -92,6 +92,18 @@ def gpu_uuid(serial: str, gpu: int) -> str:
     return f"GPU-{h[:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:32]}"
 
 
+def rack_input_w(n: Any, gpu_w: Any, rest: dict[str, float]) -> Any:
+    """A rack's input power (W) at its tap-offs: its GPUs plus the rest of the rack, a fixed part per GPU
+    reporting and a part that follows GPU power (``rack_rest`` in config/telemetry_cdu.yaml). The CDU heat
+    balance, the energy meters, and the power telemetry all use this one model."""
+    return n * rest["per_gpu_w"] + (1 + rest["per_gpu_watt"]) * gpu_w
+
+
+def rack_input_kwh(row: dict[str, Any], rest: dict[str, float]) -> float:
+    """The same for one row of rack_hourly.csv: ``samples`` GPU-minutes and ``power_kwh`` of GPU energy."""
+    return int(row["samples"]) * rest["per_gpu_w"] / 60 / 1000 + (1 + rest["per_gpu_watt"]) * float(row["power_kwh"])
+
+
 def _rng(seed: int, *parts: object) -> np.random.Generator:
     key = ":".join(str(p) for p in (seed, "telemetry", "gpu") + parts)
     return np.random.default_rng(int.from_bytes(hashlib.sha256(key.encode()).digest()[:8], "big"))

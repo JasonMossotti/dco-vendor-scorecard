@@ -2,8 +2,10 @@
 """Generate the energy meters for the committed sample: data/energy/.
 
 Hourly meters for the sample month, the chiller free-cooling log, the Landlord's monthly energy
-report, the answer key, and 12 four-week periods of daily history before the month. Own random
-stream; data/sample is read, never written.
+report, the answer key, and 12 four-week periods of daily history before the month. Each hall's UPS
+output is its racks' power from the GPU telemetry (data/telemetry/gpu/rack_hourly.csv), so the GPU
+telemetry comes first; scripts/generate_telemetry.py runs this same step. Own random stream;
+data/sample is read, never written.
 
 Usage:
     python scripts/generate_energy.py

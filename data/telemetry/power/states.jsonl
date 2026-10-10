@@ -1,0 +1,108 @@
+{"device": "GEN-1", "family": "generator", "m": 2308, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-01T14:28:29Z", "value": "Starting"}
+{"device": "GEN-1", "family": "generator", "m": 2309, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-01T14:29:29Z", "value": "Running"}
+{"device": "GEN-1", "family": "generator", "m": 2345, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-01T15:05:29Z", "value": "Cooldown"}
+{"device": "GEN-1", "family": "generator", "m": 2350, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-01T15:10:07Z", "value": "Stopped"}
+{"device": "GEN-2", "family": "generator", "m": 6775, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-04T16:55:09Z", "value": "Starting"}
+{"device": "GEN-2", "family": "generator", "m": 6776, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-04T16:56:09Z", "value": "Running"}
+{"device": "GEN-2", "family": "generator", "m": 6812, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-04T17:32:09Z", "value": "Cooldown"}
+{"device": "GEN-2", "family": "generator", "m": 6816, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-04T17:36:59Z", "value": "Stopped"}
+{"device": "TO-B29-B", "family": "tapoff", "m": 6850, "note": "the record names BW-B-R1-PG-B1-B; tap-off TO-B29-B is on BW-B-R4-PG-B6-B", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-04T18:09:27Z", "value": "open"}
+{"device": "TO-B29-B", "family": "tapoff", "m": 6891, "note": "the record names BW-B-R1-PG-B1-B; tap-off TO-B29-B is on BW-B-R4-PG-B6-B", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-04T18:50:12Z", "value": "closed"}
+{"device": "GEN-3", "family": "generator", "m": 12446, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-08T15:26:41Z", "value": "Starting"}
+{"device": "GEN-3", "family": "generator", "m": 12447, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-08T15:27:41Z", "value": "Running"}
+{"device": "GEN-3", "family": "generator", "m": 12486, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-08T16:06:41Z", "value": "Cooldown"}
+{"device": "GEN-3", "family": "generator", "m": 12491, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-08T16:11:35Z", "value": "Stopped"}
+{"device": "BW-B-R3-PG-B4-B", "family": "busway", "m": 13979, "point": "Feeder breaker (EPMS)", "record": "facility/epms_events.jsonl", "time": "2026-09-09T16:58:24Z", "value": "Breaker trip (short-time overcurrent)"}
+{"device": "BW-B-R3-PG-B4-B", "family": "busway", "m": 13979, "point": "cpmAcInfLineToLineVoltAve", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-09T16:58:25Z", "value": "0.0 V (out of tolerance)"}
+{"device": "BW-B-R3-PG-B4-B", "family": "busway", "m": 14109, "point": "Feeder breaker (EPMS)", "record": "facility/epms_events.jsonl", "time": "2026-09-09T19:08:04Z", "value": "Breaker closed"}
+{"device": "BW-B-R3-PG-B4-B", "family": "busway", "m": 14109, "point": "cpmAcInfLineToLineVoltAve", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-09T19:08:24Z", "value": "477.5 V (in tolerance)"}
+{"device": "GEN-4", "family": "generator", "m": 18324, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-12T17:24:31Z", "value": "Starting"}
+{"device": "GEN-4", "family": "generator", "m": 18325, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-12T17:25:31Z", "value": "Running"}
+{"device": "GEN-4", "family": "generator", "m": 18363, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-12T18:03:31Z", "value": "Cooldown"}
+{"device": "GEN-4", "family": "generator", "m": 18368, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-12T18:08:03Z", "value": "Stopped"}
+{"device": "TO-B18-B", "family": "tapoff", "m": 19795, "note": "", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-13T17:54:59Z", "value": "open"}
+{"device": "TO-B18-B", "family": "tapoff", "m": 19816, "note": "", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-13T18:15:54Z", "value": "closed"}
+{"device": "UPS-A1", "family": "ups", "m": 19911, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-13T19:50:13Z", "value": "switchedBypass"}
+{"device": "UPS-A1", "family": "ups", "m": 20061, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-13T22:20:13Z", "value": "onLine"}
+{"device": "TO-A07-A", "family": "tapoff", "m": 22517, "note": "", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-15T15:16:03Z", "value": "open"}
+{"device": "TO-A07-B", "family": "tapoff", "m": 22543, "note": "", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-15T15:42:11Z", "value": "open"}
+{"device": "GEN-5", "family": "generator", "m": 22703, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-15T18:23:51Z", "value": "Starting"}
+{"device": "GEN-5", "family": "generator", "m": 22704, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-15T18:24:51Z", "value": "Running"}
+{"device": "GEN-5", "family": "generator", "m": 22739, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-15T18:59:51Z", "value": "Cooldown"}
+{"device": "GEN-5", "family": "generator", "m": 22744, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-15T19:04:38Z", "value": "Stopped"}
+{"device": "TO-A07-B", "family": "tapoff", "m": 22747, "note": "", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-15T19:06:55Z", "value": "closed"}
+{"device": "TO-A07-A", "family": "tapoff", "m": 22763, "note": "", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-15T19:22:05Z", "value": "closed"}
+{"device": "GEN-6", "family": "generator", "m": 28395, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-19T17:15:17Z", "value": "Starting"}
+{"device": "GEN-6", "family": "generator", "m": 28396, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-19T17:16:17Z", "value": "Running"}
+{"device": "GEN-6", "family": "generator", "m": 28431, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-19T17:51:17Z", "value": "Cooldown"}
+{"device": "GEN-6", "family": "generator", "m": 28435, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-19T17:55:25Z", "value": "Stopped"}
+{"device": "UPS-A2", "family": "ups", "m": 33123, "point": "Power module", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-23T00:02:56Z", "value": "Power module 6 fault"}
+{"device": "UPS-A2", "family": "ups", "m": 33439, "point": "Power module", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-23T05:18:33Z", "value": "Power module 6 replaced"}
+{"device": "UPS-A2", "family": "ups", "m": 33469, "point": "Power module", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-23T05:48:33Z", "value": "Power module redundancy restored"}
+{"device": "GEN-7", "family": "generator", "m": 34103, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-23T16:23:35Z", "value": "Starting"}
+{"device": "GEN-7", "family": "generator", "m": 34104, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-23T16:24:35Z", "value": "Running"}
+{"device": "GEN-7", "family": "generator", "m": 34137, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-23T16:57:35Z", "value": "Cooldown"}
+{"device": "GEN-7", "family": "generator", "m": 34142, "point": "Automatic Start/Stop State", "record": "facility/emcp_readings.jsonl", "time": "2026-09-23T17:02:09Z", "value": "Stopped"}
+{"device": "UPS-B3", "family": "ups", "m": 34282, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-23T19:21:58Z", "value": "switchedBypass"}
+{"device": "UPS-B3", "family": "ups", "m": 34432, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-23T21:51:58Z", "value": "onLine"}
+{"device": "TO-B09-A", "family": "tapoff", "m": 35603, "note": "the record names BW-B-R3-PG-B4-A; tap-off TO-B09-A is on BW-B-R2-PG-B2-A", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-24T17:22:19Z", "value": "open"}
+{"device": "TO-B09-A", "family": "tapoff", "m": 35643, "note": "the record names BW-B-R3-PG-B4-A; tap-off TO-B09-A is on BW-B-R2-PG-B2-A", "point": "cpmAcBrkrCurrentStatus", "record": "facility/busway_cpm_events.jsonl", "time": "2026-09-24T18:02:49Z", "value": "closed"}
+{"device": "MUPS-A1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "MUPS-A2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "MUPS-B1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "MUPS-B2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "SITE", "family": "site", "m": 35835, "point": "MV-A main breaker", "record": "facility/epms_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "Trip (utility undervoltage)"}
+{"device": "SITE", "family": "site", "m": 35835, "point": "MV-B main breaker", "record": "facility/epms_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "Trip (utility undervoltage)"}
+{"device": "UPS-A1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "UPS-A2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "UPS-A3", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "UPS-A4", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "UPS-B1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "UPS-B2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "UPS-B3", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "UPS-B4", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:20Z", "value": "onBattery"}
+{"device": "GEN-1", "family": "generator", "m": 35834, "point": "Automatic Start/Stop State", "record": "derived: EPMS trip (facility/epms_events.jsonl)", "time": "2026-09-24T21:14:22Z", "value": "Starting"}
+{"device": "GEN-2", "family": "generator", "m": 35834, "point": "Automatic Start/Stop State", "record": "derived: EPMS trip (facility/epms_events.jsonl)", "time": "2026-09-24T21:14:22Z", "value": "Starting"}
+{"device": "GEN-3", "family": "generator", "m": 35834, "point": "Automatic Start/Stop State", "record": "derived: EPMS trip (facility/epms_events.jsonl)", "time": "2026-09-24T21:14:22Z", "value": "Starting"}
+{"device": "GEN-4", "family": "generator", "m": 35834, "point": "Automatic Start/Stop State", "record": "derived: EPMS trip (facility/epms_events.jsonl)", "time": "2026-09-24T21:14:22Z", "value": "Starting"}
+{"device": "GEN-5", "family": "generator", "m": 35834, "point": "Automatic Start/Stop State", "record": "derived: EPMS trip (facility/epms_events.jsonl)", "time": "2026-09-24T21:14:22Z", "value": "Starting"}
+{"device": "GEN-6", "family": "generator", "m": 35834, "point": "Automatic Start/Stop State", "record": "derived: EPMS trip (facility/epms_events.jsonl)", "time": "2026-09-24T21:14:22Z", "value": "Starting"}
+{"device": "GEN-7", "family": "generator", "m": 35834, "point": "Automatic Start/Stop State", "record": "derived: EPMS trip (facility/epms_events.jsonl)", "time": "2026-09-24T21:14:22Z", "value": "Starting"}
+{"device": "SITE", "family": "site", "m": 35835, "point": "Generator paralleling bus", "record": "facility/epms_events.jsonl", "time": "2026-09-24T21:14:30Z", "value": "Bus live (7 of 7 generators)"}
+{"device": "MUPS-A2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:31Z", "value": "onLine"}
+{"device": "MUPS-B2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:31Z", "value": "onLine"}
+{"device": "UPS-A1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:31Z", "value": "onLine"}
+{"device": "UPS-A3", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:31Z", "value": "onLine"}
+{"device": "UPS-A4", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:31Z", "value": "onLine"}
+{"device": "SITE", "family": "site", "m": 35835, "point": "Generator tie breakers", "record": "facility/epms_events.jsonl", "time": "2026-09-24T21:14:32Z", "value": "Closed to MV-A and MV-B"}
+{"device": "UPS-B1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:32Z", "value": "onLine"}
+{"device": "UPS-B4", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:32Z", "value": "onLine"}
+{"device": "MUPS-B1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:33Z", "value": "onLine"}
+{"device": "UPS-B2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:33Z", "value": "onLine"}
+{"device": "UPS-B3", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:33Z", "value": "onLine"}
+{"device": "MUPS-A1", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:34Z", "value": "onLine"}
+{"device": "UPS-A2", "family": "ups", "m": 35835, "point": "upsBasicOutputStatus", "record": "facility/ups_nmc_events.jsonl", "time": "2026-09-24T21:14:34Z", "value": "onLine"}
+{"device": "GEN-1", "family": "generator", "m": 35835, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:15:22Z", "value": "Running"}
+{"device": "GEN-2", "family": "generator", "m": 35835, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:15:22Z", "value": "Running"}
+{"device": "GEN-3", "family": "generator", "m": 35835, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:15:22Z", "value": "Running"}
+{"device": "GEN-4", "family": "generator", "m": 35835, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:15:22Z", "value": "Running"}
+{"device": "GEN-5", "family": "generator", "m": 35835, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:15:22Z", "value": "Running"}
+{"device": "GEN-6", "family": "generator", "m": 35835, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:15:22Z", "value": "Running"}
+{"device": "GEN-7", "family": "generator", "m": 35835, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:15:22Z", "value": "Running"}
+{"device": "SITE", "family": "site", "m": 35877, "point": "MV-A main breaker", "record": "facility/epms_events.jsonl", "time": "2026-09-24T21:56:06Z", "value": "Closed (utility restored, closed-transition retransfer)"}
+{"device": "SITE", "family": "site", "m": 35877, "point": "MV-B main breaker", "record": "facility/epms_events.jsonl", "time": "2026-09-24T21:56:06Z", "value": "Closed (utility restored, closed-transition retransfer)"}
+{"device": "SITE", "family": "site", "m": 35877, "point": "Generator tie breakers", "record": "facility/epms_events.jsonl", "time": "2026-09-24T21:56:11Z", "value": "Open"}
+{"device": "GEN-1", "family": "generator", "m": 35876, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:56:22Z", "value": "Cooldown"}
+{"device": "GEN-2", "family": "generator", "m": 35876, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:56:22Z", "value": "Cooldown"}
+{"device": "GEN-3", "family": "generator", "m": 35876, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:56:22Z", "value": "Cooldown"}
+{"device": "GEN-4", "family": "generator", "m": 35876, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:56:22Z", "value": "Cooldown"}
+{"device": "GEN-5", "family": "generator", "m": 35876, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:56:22Z", "value": "Cooldown"}
+{"device": "GEN-6", "family": "generator", "m": 35876, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:56:22Z", "value": "Cooldown"}
+{"device": "GEN-7", "family": "generator", "m": 35876, "point": "Automatic Start/Stop State", "record": "derived: site load while the generators carried the site", "time": "2026-09-24T21:56:22Z", "value": "Cooldown"}
+{"device": "GEN-1", "family": "generator", "m": 35881, "point": "Automatic Start/Stop State", "record": "derived: EPMS retransfer plus the five-minute cooldown", "time": "2026-09-24T22:01:06Z", "value": "Stopped"}
+{"device": "GEN-2", "family": "generator", "m": 35881, "point": "Automatic Start/Stop State", "record": "derived: EPMS retransfer plus the five-minute cooldown", "time": "2026-09-24T22:01:06Z", "value": "Stopped"}
+{"device": "GEN-3", "family": "generator", "m": 35881, "point": "Automatic Start/Stop State", "record": "derived: EPMS retransfer plus the five-minute cooldown", "time": "2026-09-24T22:01:06Z", "value": "Stopped"}
+{"device": "GEN-4", "family": "generator", "m": 35881, "point": "Automatic Start/Stop State", "record": "derived: EPMS retransfer plus the five-minute cooldown", "time": "2026-09-24T22:01:06Z", "value": "Stopped"}
+{"device": "GEN-5", "family": "generator", "m": 35881, "point": "Automatic Start/Stop State", "record": "derived: EPMS retransfer plus the five-minute cooldown", "time": "2026-09-24T22:01:06Z", "value": "Stopped"}
+{"device": "GEN-6", "family": "generator", "m": 35881, "point": "Automatic Start/Stop State", "record": "derived: EPMS retransfer plus the five-minute cooldown", "time": "2026-09-24T22:01:06Z", "value": "Stopped"}
+{"device": "GEN-7", "family": "generator", "m": 35881, "point": "Automatic Start/Stop State", "record": "derived: EPMS retransfer plus the five-minute cooldown", "time": "2026-09-24T22:01:06Z", "value": "Stopped"}

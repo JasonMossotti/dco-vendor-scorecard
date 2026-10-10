@@ -32,6 +32,8 @@ plant:
   pump_floor: 0.30                # minimum pump speed fraction; basis: assumption
   supply_c: 20
 
+busway_loss_fraction: 0.004       # busway conductor loss between the UPS output and the tap-offs; basis: assumption
+ups_no_load_fraction: 0.005      # an energized UPS draws about 0.5% of its rating with no load (fans, controls, magnetics; basis: assumption)
 distribution_loss_fraction: 0.010  # transformers and MV distribution, unmetered; basis: assumption
 house_day_factor: 1.10             # house load by day (07:00 to 19:00 site time) and night, times house_load_kw
 house_night_factor: 0.90
@@ -39,10 +41,12 @@ meter_noise_sd: 0.004              # hour-to-hour variation on each modeled load
 tariff_usd_per_kwh: 0.065          # blended energy price used to cost findings; basis: assumption
 
 # The 12 four-week periods before the sample: with the sample month, 52 weeks of PUE (the standard asks
-# for a year). Hall B was deploying: its IT load ramps from the first value to the last across them.
+# for a year). Hall B was deploying: its IT load ramps from the first value to the last across them, as a
+# share of its sample-month average. No Hall B rack was in service before the sample month (the GPU telemetry
+# reports from September 5), so it carries no IT load; its CDUs and thermal walls ran (mechanical load).
 history:
   periods: 12
-  hall_b_ramp: [0.25, 0.95]
+  hall_b_ramp: [0.0, 0.0]
 
 # What the checks call a finding.
 checks:

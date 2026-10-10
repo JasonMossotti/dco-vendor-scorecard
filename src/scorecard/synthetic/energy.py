@@ -12,11 +12,13 @@ month) with its own random stream and writes beside it, never into it:
 * ``answer_key.json``: what was planted, for the engine self-check only.
 * ``history_daily.csv`` (committed sample only): 12 four-week periods before the month, by day.
 
-IT energy follows the UPS load readings already in the month (``facility/ups_status.jsonl``);
-generator energy counts toward the site only while the utility mains are open (``epms_events``),
-so a monthly loaded exercise on a portable load bank is left out. Cooling follows a modeled Central
-Texas temperature and the heat the halls reject. Sizes come from ``site/site.yaml`` and the
-assumptions from ``config/energy.yaml``.
+IT energy follows the racks: each rack's input power from the GPU telemetry (``rack_hourly.csv``, the
+same rack model as the CDU heat balance and the power telemetry) plus the busway's conductor loss, summed
+per hall at the UPS outputs. The mechanical UPS follows its own load readings (``facility/ups_status.jsonl``).
+While the utility mains are open (``epms_events``) the generators carry the whole site, so generator
+energy is the site's load for that part of the hour; a monthly loaded exercise on a portable load bank is
+left out. Cooling follows a modeled Central Texas temperature and the heat the halls reject. Sizes come
+from ``site/site.yaml`` and the assumptions from ``config/energy.yaml``.
 """
 
 from __future__ import annotations
@@ -33,6 +35,7 @@ from typing import Any
 import yaml
 
 from scorecard import site_model as S
+from scorecard.synthetic.telemetry import rack_input_kwh
 
 ROOT = Path(__file__).resolve().parents[3]
 CONFIG = ROOT / "config" / "energy.yaml"
@@ -94,6 +97,7 @@ class Plant:
         self.ups_eff = {k: S.product(s, h["power"]["ups_product"])["efficiency"] for k, h in self.halls.items()}
         self.mups_eff = {k: S.product(s, h["power"]["mech_ups_product"])["efficiency"] for k, h in self.halls.items()}
         self.ups_kw = {k: S.product(s, h["power"]["ups_product"])["rating_kw"] for k, h in self.halls.items()}
+        self.ups_idle = {k: h["power"]["ups_count"] * self.ups_kw[k] * cfg["ups_no_load_fraction"] for k, h in self.halls.items()}
         self.mups_kw = {k: S.product(s, h["power"]["mech_ups_product"])["rating_kw"] for k, h in self.halls.items()}
         self.crah_kw = sum(S.hall_crah_kw(s, h) for h in self.halls.values())
         hr = s["plants"]["heat_rejection"]
@@ -126,7 +130,7 @@ class Plant:
         heat = 0.0
         for k in self.halls:
             r[f"ups_out_{k.lower()}_kwh"] = it[k]
-            r[f"ups_in_{k.lower()}_kwh"] = it[k] / self.ups_eff[k]
+            r[f"ups_in_{k.lower()}_kwh"] = it[k] / self.ups_eff[k] + self.ups_idle[k]      # conversion loss plus no-load loss
             r[f"mech_{k.lower()}_kwh"] = mech_out[k] / self.mups_eff[k]
             heat += r[f"ups_in_{k.lower()}_kwh"] + r[f"mech_{k.lower()}_kwh"]
         r["crah_kwh"] = self.crah_kw * noise()
@@ -164,8 +168,16 @@ class Weather:
 # One month of meters
 # --------------------------------------------------------------------------- #
 class EnergyLayer:
-    def __init__(self, data_dir: str | Path, seed: int, cfg: dict[str, Any] | None = None, site: dict | None = None):
+    def __init__(self, data_dir: str | Path, seed: int, cfg: dict[str, Any] | None = None, site: dict | None = None,
+                 rack_hourly: str | Path | None = None, rack_rest: dict[str, float] | None = None):
+        """``rack_hourly`` is the month's GPU telemetry rack_hourly.csv (for the committed sample,
+        data/telemetry/gpu/rack_hourly.csv); ``rack_rest`` the rack model in config/telemetry_cdu.yaml."""
         self.dir = Path(data_dir)
+        self.rack_hourly = Path(rack_hourly) if rack_hourly else self.dir.parent / "telemetry" / "gpu" / "rack_hourly.csv"
+        if rack_rest is None:
+            from scorecard.synthetic.telemetry_cdu import load_config as cdu_config
+            rack_rest = cdu_config()["rack_rest"]
+        self.rack_rest = rack_rest
         self.cfg = cfg or load_config()
         self.plant = Plant(self.cfg, site)
         self.seed = seed
@@ -178,10 +190,23 @@ class EnergyLayer:
 
     # ---- the month's own records
     def _ups_series(self) -> dict[str, list[tuple[datetime, float]]]:
+        """The mechanical UPS load polls (IT UPS load follows the racks instead)."""
         series: dict[str, list[tuple[datetime, float]]] = {}
         for r in _read(self.dir / "facility" / "ups_status.jsonl"):
-            series.setdefault(r["ups"], []).append((parse(r["timestamp"]), r["load_pct"]))
+            if "load_pct" in r:
+                series.setdefault(r["ups"], []).append((parse(r["timestamp"]), r["load_pct"]))
         return {k: sorted(v) for k, v in series.items()}
+
+    def rack_it_kwh(self) -> dict[str, dict[str, float]]:
+        """Each hour's rack input energy per hall letter (kWh at the tap-offs), from the GPU telemetry."""
+        if not self.rack_hourly.exists():
+            raise FileNotFoundError(f"{self.rack_hourly}: the energy meters follow the racks; generate the GPU telemetry first")
+        out: dict[str, dict[str, float]] = {}
+        for r in _read(self.rack_hourly):
+            h = out.setdefault(r["hour"], {})
+            k = r["hall"].rsplit("-", 1)[1]
+            h[k] = h.get(k, 0.0) + rack_input_kwh(r, self.rack_rest)
+        return out
 
     @staticmethod
     def _interp(series: list[tuple[datetime, float]], t: datetime) -> float:
@@ -205,25 +230,10 @@ class EnergyLayer:
                 opened = None
         return out
 
-    def generator_kwh(self) -> dict[datetime, float]:
-        """Generator energy delivered to the site per hour: EMCP readings inside a utility outage only."""
-        spans = self.outages()
-        by_gen: dict[str, list[dict]] = {}
-        for r in _read(self.dir / "facility" / "emcp_readings.jsonl"):
-            by_gen.setdefault(r["generator"], []).append(r)
-        out: dict[datetime, float] = {}
-        for rows in by_gen.values():
-            rows.sort(key=lambda r: r["timestamp"])
-            for a, b in zip(rows, rows[1:]):
-                t0, t1 = parse(a["timestamp"]), min(parse(b["timestamp"]), parse(a["timestamp"]) + timedelta(minutes=2))
-                for s0, s1 in spans:
-                    lo, hi = max(t0, s0), min(t1, s1)
-                    while lo < hi:
-                        h = lo.replace(minute=0, second=0, microsecond=0)
-                        step = min(hi, h + HOUR)
-                        out[h] = out.get(h, 0.0) + a["gen_total_kw"] * (step - lo).total_seconds() / 3600
-                        lo = step
-        return out
+    def outage_fraction(self, spans: list[tuple[datetime, datetime]], t: datetime) -> float:
+        """The share of the hour starting at t when the generators carried the site."""
+        lo_hi = [(max(t, a), min(t + HOUR, b)) for a, b in spans]
+        return sum(max(0.0, (b - a).total_seconds()) for a, b in lo_hi) / 3600
 
     def chiller_pms(self) -> list[dict]:
         rows = _read(self.dir / "landlord" / "pm_records.csv")
@@ -264,7 +274,9 @@ class EnergyLayer:
     # ---- the month
     def run(self, report_error: str | None = None) -> dict[str, Any]:
         ups = self._ups_series()
-        gens = self.generator_kwh()
+        racks = self.rack_it_kwh()
+        loss = self.cfg["busway_loss_fraction"]
+        spans = self.outages()
         events, lockouts = self.plan_lockouts()
         weather = Weather(self.cfg, self.rng)
         rows = []
@@ -273,11 +285,12 @@ class EnergyLayer:
             mid = t + HOUR / 2
             it, mech = {}, {}
             for k in self.plant.halls:
-                it[k] = sum(self._interp(ups[u], mid) / 100 * self.plant.ups_kw[k] for u in ups if u.startswith(f"UPS-{k}")) * self._noise()
+                self._noise()                   # the draw the old UPS-load model made here: the stream stays the same
+                it[k] = racks.get(iso(t), {}).get(k, 0.0) * (1 + loss)
                 mech[k] = sum(self._interp(ups[u], mid) / 100 * self.plant.mups_kw[k] for u in ups if u.startswith(f"MUPS-{k}")) * self._noise()
             t_out = weather.at(mid)
             r = self.plant.hour(t_out, it, mech, self._locked_at(events, mid), local(mid).hour, self._noise)
-            gen = gens.get(t, 0.0)
+            gen = r["facility_kwh"] * self.outage_fraction(spans, t)
             row = {"hour": iso(t), "outdoor_c": round(t_out, 1), "fw_supply_c": round(self.cfg["plant"]["supply_c"] + self.rng.gauss(0, 0.15), 1),
                    "generator_kwh": round(gen, 1), "utility_kwh": round(max(0.0, r["facility_kwh"] - gen), 1)}
             row.update({m: round(r[m], 1) for m in METERS if m not in row})
@@ -312,7 +325,7 @@ class EnergyLayer:
 def history(month_rows: list[dict], start: datetime, seed: int, cfg: dict[str, Any] | None = None,
             site: dict | None = None) -> list[dict]:
     """Daily totals for the 12 four-week periods before ``start``. The IT load is the month's average per
-    hall (Hall B ramping up as it deployed) with day-to-day variation; the rest follows the same model."""
+    hall (Hall B had no racks in service before the sample month) with day-to-day variation; the rest follows the same model."""
     cfg = cfg or load_config()
     plant = Plant(cfg, site)
     rng = random.Random(f"{seed}:energy-history")
@@ -329,12 +342,12 @@ def history(month_rows: list[dict], start: datetime, seed: int, cfg: dict[str, A
         day0 = first + timedelta(days=d)
         ramp = {k: 1.0 for k in plant.halls}
         ramp["B"] = lo + (hi - lo) * (d // 28) / max(1, periods - 1)
-        level = {k: rng.gauss(1, 0.015) * ramp[k] for k in plant.halls}
+        level = {k: rng.gauss(1, 0.015) for k in plant.halls}
         tot = {c: 0.0 for c in HISTORY_COLUMNS[1:]}
         for h in range(24):
             mid = day0 + timedelta(hours=h, minutes=30)
             t_out = weather.at(mid)
-            it = {k: base_it[k] * level[k] * noise() for k in plant.halls}
+            it = {k: base_it[k] * level[k] * ramp[k] * noise() for k in plant.halls}
             mech = {k: base_mech[k] * level[k] * noise() for k in plant.halls}
             r = plant.hour(t_out, it, mech, 0, local(mid).hour, noise)
             ups_in = sum(r[f"ups_in_{k.lower()}_kwh"] for k in plant.halls)

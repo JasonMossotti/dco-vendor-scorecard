@@ -117,7 +117,7 @@ pre.scrape .c { color:#8fa3b5; }
 __SITENAV__
 <header class="top">
   <div><strong>Telemetry</strong> <span class="note" id="hdr"></span></div>
-  <span class="note">One-minute samples: GPUs in the published format of NVIDIA's open-source DCGM exporter, CDUs in the DMTF Redfish schema for cooling units</span>
+  <span class="note">One-minute samples: GPUs in the published format of NVIDIA's open-source DCGM exporter, CDUs in the DMTF Redfish schema for cooling units, power in the manufacturers' published SNMP and Modbus point maps</span>
 </header>
 <div class="wrap">
   <nav class="tree" id="tree" aria-label="Telemetry views"></nav>
@@ -202,7 +202,7 @@ __SITENAV__
 
   // --------------------------------------------------------------------- tree
   function tree() {
-    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li>`
+    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li>`
       + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
     h += `<div class="famsec" data-fam="gpu"><div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
     for (const hall of HALLS) {
@@ -221,6 +221,7 @@ __SITENAV__
       h += `<li><details><summary><span class="planned">${esc(H.name)}</span> <small>not in service</small></summary><ul>` + H.cdus.map(id => `<li><span class="planned" title="${esc(H.name)} is ${esc(H.state)}: no telemetry">${esc(id)} <small>${esc(H.state)}</small></span></li>`).join("") + `</ul></details></li>`;
     }
     h += `</ul><div class="sec">CDU reference</div><ul><li>${link("cdu-fields", "Redfish fields")}</li><li>${link("cdu-agreements", "Agreement with the records")}</li></ul></div>`;
+    h += powerTree();
     document.getElementById("tree").innerHTML = h;
   }
 
@@ -392,7 +393,7 @@ __SITENAV__
     const finds = B.findings.filter(f => f.hosts.some(h => rackOf(h) === rack));
     let h = `<div class="kind">${esc(B.halls[r.hall].name)} · ${esc(r.model)} NVL72 · cooled by ${esc(r.cdu)}</div><h1>Rack ${esc(rack)}</h1>`
       + `<p class="sub">${esc(r.trays)} compute trays, 4 GPUs each; power limit ${num(r.power_limit_w)} W per GPU. ${r.from_hour ? `Reporting from ${esc(hourAt(r.from_hour))} (power-on).` : "Reporting all month."} `
-      + `Cooled by ${CDU[r.cdu] ? link(r.cdu, r.cdu) : esc(r.cdu)} (row CDU on the shared ${esc(B.halls[r.hall].name)} header). <a href="../gpu/#${esc(rack)}">GPU Health ↗</a> · <a href="../devices/#${esc(rack)}">Device card ↗</a></p>`;
+      + `Cooled by ${CDU[r.cdu] ? link(r.cdu, r.cdu) : esc(r.cdu)} (row CDU on the shared ${esc(B.halls[r.hall].name)} header). ${(P.rack_feeds[rack] || []).length ? `Power: ${P.rack_feeds[rack].map(f => `${link(f.tapoff, f.tapoff)} on ${link(f.run, f.run)} from ${link(f.ups, f.ups)}`).join("; ")}. ` : ""}<a href="../gpu/#${esc(rack)}">GPU Health ↗</a> · <a href="../devices/#${esc(rack)}">Device card ↗</a></p>`;
     for (const f of finds) h += `<div class="finding">${tag(f.id, "bad")} ${esc(f.title)} (${esc(f.party)}). <a href="../gpu/#${esc(rack)}">Open in GPU Health ↗</a></div>`;
     h += `<h2 class="sec">The rack's GPUs at one hour</h2><div class="ctl"><label for="hr">Hour</label><b id="hr-lab">${esc(hourAt(rackHour))}</b></div><input type="range" id="hr" min="0" max="${esc(HOURS - 1)}" value="${esc(rackHour)}" aria-label="Hour of the month">`
        + `<div class="btns" id="gg-btns">${METRICS.map(m => `<button data-m="${esc(m.k)}" class="${m.k === gridMetric ? "on" : ""}">${esc(m.label)}</button>`).join("")}</div>`
@@ -861,6 +862,520 @@ __SITENAV__
     main.innerHTML = h;
   }
 
+  // ------------------------------------------------------------------ power
+  // Page data: B.power (scripts/render_telemetry.py prepare_power). Fetched: data/power/<id>.json (hourly, UPS, runs,
+  // generators), data/power_minutes/<id>.json (every minute, UPS and generators), data/power_minutes/tapoff_hourly.json,
+  // and data/power/windows/*.json (one-minute windows around every event, every device).
+  const P = B.power;
+  const PUPS = Object.fromEntries(P.ups.map(u => [u.id, u])), PRUN = Object.fromEntries(P.runs.map(r => [r.id, r])), PGEN = Object.fromEntries(P.gens.map(g => [g.id, g]));
+  const PTAP = {};
+  Object.entries(P.rack_feeds).forEach(([rack, fs]) => fs.forEach(f => { PTAP[f.tapoff] = {...f, rack}; }));
+  const PF = {};
+  Object.entries(P.fields).forEach(([fam, fs]) => { PF[fam] = Object.fromEntries(fs.map(f => [f.key, f])); });
+  const PWIN = {};
+  P.windows.forEach(w => (PWIN[w.device] = PWIN[w.device] || []).push(w));
+  const SRC_NAME = Object.fromEntries(Object.entries(P.output_source).map(([k, v]) => [v, k]));
+  const GST_NAME = Object.fromEntries(Object.entries(P.gen_states).map(([k, v]) => [v, k]));
+  const PHALLS = Object.keys(P.halls);
+  const famOf = id => PUPS[id] ? "ups" : PRUN[id] ? "busway" : PTAP[id] ? "tapoff" : PGEN[id] ? "generator" : null;
+  const partnerRun = id => id.slice(0, -1) + (id.endsWith("A") ? "B" : "A");
+  const pEvents = id => P.events.filter(e => e.device === id || (famOf(id) === "busway" && PRUN[id].tapoffs.includes(e.device)));
+  const loadPw = id => getJson(`data/power/${encodeURIComponent(id)}.json`);
+  const loadTapH = () => getJson("data/power_minutes/tapoff_hourly.json");
+  function unpackSteps(arr, sc) {      // first value, then minute-to-minute steps; [n] is n minutes unchanged
+    const out = [];
+    let s = 0;
+    for (const x of arr) {
+      if (Array.isArray(x)) { for (let i = 0; i < x[0]; i++) out.push(s / sc); }
+      else { s += x; out.push(s / sc); }
+    }
+    return out;
+  }
+  const loadPwMin = id => getJson(`data/power_minutes/${encodeURIComponent(id)}.json`).then(d => {
+    if (!d.decoded) {
+      d.decoded = true; d.v = {};
+      const F = PF[d.family];
+      for (const [k, arr] of Object.entries(d.fields)) d.v[k] = unpackSteps(arr, F[k] ? F[k].scale : 1);
+      if (d.family === "ups") { d.v.load_pct = d.v.out_kw.map(x => Math.round(x * 1000 / d.rating_kw) / 10); d.v.out_hz = d.v.in_hz; }
+    }
+    return d;
+  });
+  const loadPwWin = w => getJson("data/power/" + w.file.split("/").map(encodeURIComponent).join("/")).then(d => {
+    if (!d.decoded) {
+      d.decoded = true; d.v = {};
+      const F = PF[d.family] || {};
+      for (const [k, arr] of Object.entries(d.fields)) d.v[k] = arr.map(x => x / (F[k] ? F[k].scale : 1));
+      if (d.family === "ups") { const u = PUPS[d.device]; d.v.load_pct = d.v.out_kw.map(x => Math.round(x * 1000 / u.rating_kw) / 10); d.v.out_hz = d.v.in_hz; }
+    }
+    return d;
+  });
+  const pKind = k => tag({bypass: "bypass", battery: "on battery", module: "power module", breaker: "tap-off breaker", feed: "feed lost", test: "monthly test", outage: "utility outage", utility: "utility outage"}[k] || k,
+    {bypass: "warn", battery: "bad", module: "bad", breaker: "warn", feed: "bad", test: "", outage: "bad", utility: "bad"}[k]);
+  const PEVC = {bypass: "#fbeccb", battery: "#f8d9d5", module: "#f8d9d5", breaker: "#fbeccb", feed: "#f8d9d5", test: "#e3e7ec", outage: "#f8d9d5", utility: "#f8d9d5"};
+  const devLink = id => id === "SITE" ? "Site" : famOf(id) ? link(id, id) : esc(id);
+  const pctOf = (v, of) => of ? 100 * v / of : 0;
+  const hasMinutes = id => !!PUPS[id] || !!PGEN[id];
+  function pDetailHref(e) {
+    const id = e.device === "SITE" ? "UPS-A1" : e.device;
+    if (hasMinutes(id)) return `#${id}/${Math.max(0, e.m - 10)}`;
+    return (PWIN[id] || []).some(w => { const a = minOf(w.from); return e.m >= a && e.m < a + w.minutes; }) ? `#${id}/${e.m}` : null;
+  }
+  function pEventsTable(evs, withDetail) {
+    if (!evs.length) return `<p class="note">None this month.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Device</th><th>Event</th><th>Records</th>${withDetail ? "<th></th>" : ""}</tr></thead><tbody>` + evs.map(e => {
+      const recs = refLinks(e.refs) + (e.finding ? `${e.refs.length ? ", " : ""}${tag(e.finding.id, "bad")}` : "");
+      const href = withDetail ? pDetailHref(e) : null;
+      return `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${devLink(e.device)}</td><td>${pKind(e.kind)} ${esc(e.text)}</td><td>${recs}</td>`
+        + (withDetail ? `<td>${href ? `<a class="b" href="${esc(href)}">Minute detail</a>` : ""}</td>` : "") + `</tr>`;
+    }).join("") + `</tbody></table></div>`;
+  }
+  const pBands = (evs, n) => evs.map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : n, label: `${at(e.t)}: ${e.text}`, color: PEVC[e.kind]}));
+  const lg = items => `<div class="legend">${items.map(([col, name, cls]) => `<span><i class="${esc(cls || "")}" style="${cls === "dash" ? "" : `background:${esc(col)}`}"></i>${esc(name)}</span>`).join("")}</div>`;
+  const pLegend = `<div class="legend"><span><i class="band" style="background:${esc(PEVC.bypass)}"></i>bypass or tap-off breaker open</span><span><i class="band" style="background:${esc(PEVC.feed)}"></i>on battery, feed lost, module out, utility outage</span><span><i class="band"></i>generator test</span></div>`;
+  const pAgreeTile = () => {
+    const agree = P.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = P.agreements.reduce((a, c) => a + c.checked, 0);
+    return `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#power-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(P.agreements.length)} checks: the racks' power in the GPU telemetry, the energy meters, the UPS, busway, EPMS, and generator records, and the CDU telemetry</div></div></div>`;
+  };
+  const kv = (k, v, t) => `<div class="kv"><span>${esc(k)}</span><b>${v}${t || ""}</b></div>`;
+
+  // the one-line in miniature: utility and generators, the MV switchgear, each UPS, and the busway runs it feeds
+  function oneLine() {
+    const W = Math.max(720, chartWidth()), rowH = 26, hallH = 22, boxW = 112, x0 = 6, xBus = 196, xUps = 226, xRun = xUps + boxW + 24;
+    const runW = Math.max(84, Math.min(118, Math.floor((W - xRun - 8) / 6) - 4));
+    let y = 8, body = "";
+    const rows = [];
+    for (const hall of PHALLS) {
+      const H = P.halls[hall];
+      rows.push({hall: H.name + ` · ${H.racks} racks on busway`, y}); y += hallH;
+      for (const u of H.ups.concat(H.mups)) { rows.push({ups: PUPS[u], y}); y += rowH; }
+      y += 6;
+    }
+    const Ht = y + 4, mid = Ht / 2;
+    const box = (x, yy, w, h, fill, text, href, title, dark) => `<a href="${esc(href || "#power")}"><rect x="${esc(x)}" y="${esc(yy)}" width="${esc(w)}" height="${esc(h)}" rx="4" fill="${esc(fill)}" stroke="#9aa6b2"><title>${esc(title || text)}</title></rect><text x="${esc(x + 6)}" y="${esc(yy + h / 2 + 4)}" style="fill:${dark ? "#fff" : "var(--ink)"};font-weight:600">${esc(text)}</text></a>`;
+    body += box(x0, mid - 64, 150, 26, "#fff", "138 kV utility", "#power", "The utility service (WO-41009 records the 09-24 outage)");
+    body += box(x0, mid - 30, 150, 26, "#fff", `${P.gens.length} generators (N+1)`, "#GEN-1", `${P.gens.length} × CAT C175-16, ${P.gen_rated_kw.toLocaleString("en-US")} kW each, 13.8 kV`);
+    body += box(x0, mid + 8, 150, 26, "#fff", "MV-A / MV-B", "#power", "13.8 kV switchgear: utility mains and generator tie breakers");
+    body += `<line x1="${esc(x0 + 150)}" x2="${esc(xBus)}" y1="${esc(mid + 21)}" y2="${esc(mid + 21)}" stroke="#7b8794"/><line x1="${esc(x0 + 75)}" x2="${esc(x0 + 75)}" y1="${esc(mid - 38)}" y2="${esc(mid + 8)}" stroke="#7b8794"/>`;
+    const ups = rows.filter(r => r.ups);
+    body += `<line x1="${esc(xBus)}" x2="${esc(xBus)}" y1="${esc(ups[0].y + 11)}" y2="${esc(ups[ups.length - 1].y + 11)}" stroke="#7b8794" stroke-width="2"/>`;
+    for (const r of rows) {
+      if (r.hall) { body += `<text x="${esc(xUps)}" y="${esc(r.y + 15)}" style="font-weight:600;fill:var(--muted)">${esc(r.hall)}</text>`; continue; }
+      const u = r.ups, f = u.load_peak / 100, c = ramp(f / 0.9);
+      body += `<line x1="${esc(xBus)}" x2="${esc(xUps)}" y1="${esc(r.y + 11)}" y2="${esc(r.y + 11)}" stroke="#7b8794"/>`;
+      body += box(xUps, r.y, boxW, 22, c, `${u.id} ${num(u.load_peak)}%`, `#${u.id}`, `${u.id}: peak load ${u.load_peak}% of ${u.rating_kw} kW`, !light(f / 0.9));
+      if (u.kind === "mech") { body += `<text x="${esc(xRun)}" y="${esc(r.y + 15)}">CDU pumps and thermal-wall fans (2N)</text>`; continue; }
+      body += `<line x1="${esc(xUps + boxW)}" x2="${esc(xRun)}" y1="${esc(r.y + 11)}" y2="${esc(r.y + 11)}" stroke="#7b8794"/>`;
+      u.runs.forEach((id, i) => {
+        const rn = PRUN[id], g = rn.amps_peak / P.rating_a, x = xRun + i * (runW + 4), label = `${id.split("-").slice(2).join("-")}`;
+        body += `<a href="#${esc(id)}"><rect x="${esc(x)}" y="${esc(r.y + 2)}" width="${esc(runW)}" height="18" rx="3" fill="${esc(ramp(g / 0.9))}" stroke="${rn.dead_min ? "var(--bad)" : "#c3ccd5"}" stroke-width="${rn.dead_min ? 2 : 1}"><title>${esc(id)}: peak ${esc(rn.amps_peak)} A of ${esc(P.rating_a)} A; racks ${esc(rn.racks.join(", "))}${rn.dead_min ? `; ${rn.dead_min} min without feed` : ""}</title></rect><text x="${esc(x + 4)}" y="${esc(r.y + 15)}" style="fill:${light(g / 0.9) ? "var(--ink)" : "#fff"}">${esc(label)}</text></a>`;
+      });
+    }
+    return `<div class="scroll"><svg viewBox="0 0 ${esc(W)} ${esc(Ht)}" width="${esc(W)}" height="${esc(Ht)}" role="img" aria-label="One-line diagram in miniature">${body}</svg></div>`
+      + `<div class="ramp"><span>0%</span><i style="background:linear-gradient(90deg,${esc(RAMP.join(","))})"></i><span>90% of rating</span><span>· UPS boxes: peak load of the UPS rating; busway cells: peak current of the 1,200 A rating; red outline: a run that lost its feed</span></div>`;
+  }
+
+  function powerOverview(seq) {
+    let h = `<div class="kind">Power</div><h1>Power telemetry</h1><p class="sub">${esc(P.framing)} Every UPS (SNMPv3 through its network management card), every busway run and tap-off (Starline M70 meters, SNMP), and every generator (EMCP 4.4, Modbus TCP), read once a minute, ${esc(md(P.window.start))} to ${esc(md(P.window.end))}. Built from the bottom up: each rack's power splits across its A and B tap-offs, the tap-offs add up to their run, and the runs to their UPS. All names and readings are fictional.</p>`;
+    h += `<h2 class="sec">One-line, coloured by the month's peak load</h2>` + oneLine();
+    for (const hall of PHALLS) {
+      const H = P.halls[hall];
+      h += `<div class="hallname">${esc(H.name)} · ${esc(H.n)} × ${esc(PUPS[H.ups[0]].model)} · 4-make-3 · ${esc(H.state)}</div><div class="tiles">`
+        + tile("IT load", `${num(H.avg_kw)} kW`, `hourly mean at the UPS outputs; peak hour ${num(H.peak_kw)} kW (${esc(hourAt(H.peak_hour))})`)
+        + tile("Design load", `${num(H.design_kw)} kW`, `${num(H.n - 1)} of ${num(H.n)} UPSs at ${num(H.rating_kw)} kW: any one can fail`)
+        + tile("One UPS out", `${num(H.one_down_pct, 1)}%`, `each other UPS's load at the month's peak if one fails (limit 100%)`)
+        + `</div><div class="ctiles">` + H.ups.concat(H.mups).map(id => upsTile(PUPS[id], H)).join("") + `</div>`;
+    }
+    h += `<div class="hallname">Generators · ${esc(P.gens.length)} × CAT C175-16 with EMCP 4.4 · ${num(P.gen_rated_kw)} kW, 13.8 kV · N+1</div><div class="ctiles">` + P.gens.map(genTile).join("") + `</div>`;
+    h += pAgreeTile();
+    const evs = P.events.filter(e => e.kind !== "battery" && e.kind !== "outage");
+    h += `<h2 class="sec">Events</h2><p class="note">Every state change the power records published, with the records that explain it. The utility outage put every UPS on battery for 11 to 14 seconds and started all ${esc(P.gens.length)} generators: those rows are on each device's own view. Record ids open the Incident Portal.</p>` + pEventsTable(evs, true);
+    main.innerHTML = h;
+    Promise.all(P.ups.map(u => loadPw(u.id).then(j => [u.id, j]))).then(rs => {
+      if (seq !== current) return;
+      for (const [id, j] of rs) { const el = document.getElementById("sp-" + id); if (el) el.innerHTML = spark(j.series.load_avg_pct); }
+    }).catch(e => { if (seq === current) main.querySelectorAll(".ctile .spark").forEach(el => { el.innerHTML = `<span class="note">${esc(e && e.message ? e.message : e)}</span>`; }); });
+  }
+  function upsTile(u, H) {
+    const ceil = u.kind === "it" ? 100 * (H.n - 1) / H.n : 50;
+    return `<a class="tile ctile" href="#${esc(u.id)}"><div class="k">${esc(u.id)} <span>· ${esc(u.kind === "it" ? `${u.runs.length} busway runs` : "mechanical, 2N")}</span></div><div class="spark" id="sp-${esc(u.id)}" title="Load by hour"></div>`
+      + kv("Load avg / peak", `${num(u.load_avg, 1)} / ${num(u.load_peak, 1)}%`, u.load_peak > ceil ? tag("over ceiling", "bad") : "")
+      + kv(u.kind === "it" ? "Ceiling (4-make-3)" : "Ceiling (2N)", `${num(ceil)}% of ${num(u.rating_kw)} kW`)
+      + kv("Output avg", `${num(u.out_avg_kw)} kW`)
+      + kv("On bypass", `${num(u.bypass_min)} min`, u.bypass_min ? tag("maintenance", "warn") : "")
+      + kv("On battery", `${num(u.battery_s)} s`, u.battery_s ? tag("outage", "bad") : "")
+      + kv("Lowest battery charge", `${num(u.soc_min)}%`)
+      + kv("Power module out", `${num(u.modules_lost_h)} h`, u.modules_lost_h ? tag("module", "bad") : "") + `</a>`;
+  }
+  function genTile(g) {
+    const tests = g.runs.filter(r => r.kind === "test"), low = tests.some(r => r.pct_max < 30);
+    return `<a class="tile ctile" href="#${esc(g.id)}"><div class="k">${esc(g.id)} <span>· ${esc(g.runs.length)} runs this month</span></div>`
+      + kv("Monthly test peak", tests.length ? `${num(Math.max(...tests.map(r => r.pct_max)), 1)}% of rated` : "–", low ? tag("below 30%", "bad") : "")
+      + kv("Running", `${num(g.run_min)} min`) + kv("Energy", `${num(g.mwh, 2)} MWh`)
+      + kv("Fuel at month end", `${num(g.fuel_end, 1)}%`) + kv("Hour meter", `${num(g.hours_end, 1)} h`) + `</a>`;
+  }
+
+  // ------------------------------------------------------------- UPS
+  function upsHeader(u) {
+    const H = P.halls[u.hall];
+    return `<div class="kind">${esc(H.name)} · ${esc(u.model)} · ${esc(u.kind === "it" ? "IT UPS, 4-make-3" : "mechanical UPS, 2N")}</div><h1>${esc(u.id)}</h1>`
+      + `<p class="sub">${esc(u.modules)} ${u.kind === "it" ? "250 kW power cabinets" : "50 kW power modules"}, lithium-ion battery (5 minutes at full load). Read once a minute over SNMPv3 through the network management card (UPS-MIB and PowerNet-MIB)${u.kind === "it" ? "; each point also shown with its register in Schneider's published Galaxy VX Modbus map" : ""}. `
+      + (u.kind === "it" ? `Feeds ${u.runs.map(r => link(r, r)).join(", ")}.` : `Feeds the hall's CDU pumps and thermal-wall fans.`)
+      + ` <a href="../devices/#${esc(encodeURIComponent(u.id))}">Device card ↗</a></p>`;
+  }
+  function upsView(id, seq) {
+    const u = PUPS[id], H = P.halls[u.hall], evs = pEvents(id);
+    let h = upsHeader(u);
+    const eff = u.in_mwh ? 100 * u.out_mwh / u.in_mwh : null;
+    h += `<div class="tiles">` + tile("Load avg / peak", `${num(u.load_avg, 1)}%`, `peak ${num(u.load_peak, 1)}% of ${num(u.rating_kw)} kW; ceiling ${num(u.kind === "it" ? 100 * (H.n - 1) / H.n : 50)}%`)
+      + tile("Energy out / in", `${num(u.out_mwh, 1)} MWh`, `in ${num(u.in_mwh, 1)} MWh: ${num(eff, 1)}% through the UPS`)
+      + tile("On bypass", `${num(u.bypass_min)} min`, "maintenance bypass this month")
+      + tile("On battery", `${num(u.battery_s)} s`, `lowest charge ${num(u.soc_min)}%`) + `</div>`;
+    h += `<p><a class="b" href="#${esc(id)}/${esc(evs.length ? Math.max(0, evs[evs.length - 1].m - 10) : HOURS * 60 - 61)}">Minute detail and raw SNMP${u.kind === "it" ? " / Modbus" : ""} reads</a></p>`;
+    h += `<h2 class="sec">The month, by hour</h2>` + pLegend + `<div id="pc">Loading data/power/${esc(id)}.json…</div>`;
+    if (u.kind === "it") h += `<h2 class="sec">Busway runs fed</h2><div class="scroll"><table><thead><tr><th>Run</th><th>Racks</th><th class="n">Energy MWh</th><th class="n">Amps avg / peak</th><th class="n">If its partner feed failed</th></tr></thead><tbody>`
+      + u.runs.map(r => { const x = PRUN[r]; return `<tr><td>${link(r, r)}</td><td>${x.racks.map(k => link(k, k)).join(" ")}</td><td class="n">${num(x.mwh, 1)}</td><td class="n">${num(x.amps_avg)} / ${num(x.amps_peak)} A</td><td class="n">${num(x.single_feed_peak_a)} A</td></tr>`; }).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Events</h2>` + pEventsTable(evs, true);
+    main.innerHTML = h;
+    loadPw(id).then(j => { if (seq !== current) return;
+      const S = j.series, n = j.hours, X = {...HX, n, bands: pBands(evs, n)};
+      const ceil = u.kind === "it" ? 100 * (H.n - 1) / H.n : 50;
+      document.getElementById("pc").innerHTML = chart({...X, title: "Load (% of rating)", unit: "%", d: 1, series: [{v: S.load_max_pct, color: "var(--s2)", name: "Load, hourly max", w: 1, op: 0.8}, {v: S.load_avg_pct, color: "var(--s1)", name: "Load, hourly mean", w: 1.8}], hlines: [{y: ceil, label: `ceiling ${num(ceil)}%${u.kind === "it" ? " (4-make-3)" : " (2N)"}`, color: "var(--warn)"}], lo: 0})
+        + lg([["var(--s1)", "hourly mean"], ["var(--s2)", "hourly max"], ["", u.kind === "it" ? "4-make-3 ceiling: any one UPS can fail" : "2N ceiling", "dash"]])
+        + chart({...X, title: "Energy in and out (kWh per hour)", unit: "kWh", d: 1, series: [{v: S.in_kwh, color: "var(--s2)", name: "Input"}, {v: S.out_kwh, color: "var(--s1)", name: "Output"}], lo: 0})
+        + lg([["var(--s1)", "output (to the busway)"], ["var(--s2)", "input: output over efficiency plus the no-load loss, less the bypass saving, plus battery recharge"]])
+        + chart({...X, title: "Output current, highest line (A)", unit: "A", d: 1, series: [{v: S.amps_max, color: "var(--s4)", name: "Output current"}], lo: 0})
+        + chart({...X, title: "Battery charge, lowest each hour (%)", unit: "%", series: [{v: S.soc_min_pct, color: "var(--s3)", name: "Battery charge"}], lo: 0, hi: 100});
+    }).catch(e => { if (seq === current) document.getElementById("pc").innerHTML = errBox(e, `data/power/${id}.json`); });
+  }
+
+  // minute detail for a UPS or generator: #UPS-A1/<minute>, #GEN-4/<minute>
+  let pmCtx = null, pmRaw = "snmp";
+  function pMinuteView(id, m, seq) {
+    const fam = famOf(id);
+    main.innerHTML = (fam === "ups" ? upsHeader(PUPS[id]) : genHeader(PGEN[id])) + `<p class="sub"><a href="#${esc(id)}">← The month by hour</a></p><div id="pm"><p class="note">Loading data/power_minutes/${esc(id)}.json (every minute of the month)…</p></div>`;
+    loadPwMin(id).then(d => {
+      if (seq !== current) return;
+      pmCtx = {id, fam, d, m: Math.max(0, Math.min(d.minutes - 1, m))};
+      const n = d.minutes, raws = fam === "ups" ? [["snmp", "SNMP walk"]].concat(PUPS[id].kind === "it" ? [["modbus", "Modbus (Galaxy VX register map)"]] : []) : [["modbus", "Modbus holding registers (EMCP 4)"]];
+      if (!raws.some(r => r[0] === pmRaw)) pmRaw = raws[0][0];
+      document.getElementById("pm").innerHTML = `<h2 class="sec">Minute detail</h2><p class="note">Any minute of the month: the readings, the hour around it, and the raw read a client would get at that minute. kW are one-minute averages; states and positions are read at the minute.</p>`
+        + `<div class="ctl"><label for="pmi">Minute</label><input type="number" id="pmi" min="0" max="${esc(n - 1)}" value="${esc(pmCtx.m)}"> <span class="muted">of ${num(n - 1)}</span> <b id="pm-lab"></b></div>`
+        + `<div class="btns" id="pm-step">${[-60, -10, -1, 1, 10, 60].map(s => `<button data-s="${esc(s)}">${esc((s > 0 ? "+" : "") + s + " min")}</button>`).join("")}</div>`
+        + `<input type="range" id="pmr" min="0" max="${esc(n - 1)}" value="${esc(pmCtx.m)}" aria-label="Minute of the month">`
+        + `<div id="pm-ch"></div><h3>Readings at this minute</h3><div id="pm-tbl"></div>`
+        + `<p><button class="b" id="pcsv">Download CSV (±60 minutes, every point)</button> <span class="note" id="pcsv-note"></span></p>`
+        + `<h2 class="sec">Raw read at this minute</h2><div class="btns" id="pm-raw">${raws.map(([k, t]) => `<button data-r="${esc(k)}" class="${k === pmRaw ? "on" : ""}">${esc(t)}</button>`).join("")}</div><pre class="scrape" id="pm-raw-out" data-gl-skip></pre>`
+        + `<h2 class="sec">Events</h2>` + pEventsTable(pEvents(id), true);
+      pMinuteUpdate();
+    }).catch(e => { if (seq === current) document.getElementById("pm").innerHTML = errBox(e, `data/power_minutes/${id}.json`); });
+  }
+  function pSetMinute(m) {
+    const ctx = pmCtx;
+    if (!ctx) return;
+    m = Math.max(0, Math.min(ctx.d.minutes - 1, Number.isNaN(m) ? 0 : m));
+    ctx.m = m;
+    const i = document.getElementById("pmi"), r = document.getElementById("pmr");
+    if (i && document.activeElement !== i) i.value = m;
+    if (r) r.value = m;
+    history.replaceState(null, "", `#${ctx.id}/${m}`);
+    pMinuteUpdate();
+  }
+  const pDec = f => f.scale >= 100 ? 2 : f.scale >= 10 ? 1 : 0;
+  const pFmt = (fam, f, x) => {
+    if (x == null) return "–";
+    if (fam === "ups" && f.key === "source") return `${esc(SRC_NAME[x] || x)} (${esc(x)})`;
+    if (fam === "generator" && f.key === "state") return `${esc(GST_NAME[x] || x)} (${esc(x)})`;
+    if (fam === "generator" && f.key === "ecs") return `${esc(P.gen_switch[x] || x)} (${esc(x)})`;
+    if (f.key === "brk") return x ? "closed (1)" : "open (0)";
+    return num(x, pDec(f));
+  };
+  function pMinuteUpdate() {
+    const ctx = pmCtx;
+    if (!ctx) return;
+    const {id, fam, d, m} = ctx, n = d.minutes, a = Math.max(0, m - 60), b = Math.min(n - 1, m + 60), v = k => d.v[k] ? d.v[k][m] : null;
+    document.getElementById("pm-lab").textContent = minAt(m);
+    const sl = k => (d.v[k] || []).slice(a, b + 1);
+    const evm = pEvents(id).filter(e => e.m >= a && e.m <= b).map(e => ({i: e.m - a, color: "var(--bad)", label: `${at(e.t)} ${e.text}`}));
+    const MX = {n: b - a + 1, xlab: i => minIso(a + i).slice(11, 16), xtick: 15, xminor: 5, hover: i => minAt(a + i), H: 130, marks: [{i: m - a, color: "var(--ink)", label: minAt(m)}].concat(evm)};
+    let ch = "";
+    if (fam === "ups") {
+      const u = PUPS[id];
+      ch = chart({...MX, title: "Output and input power, ±60 minutes (kW)", unit: "kW", d: 1, series: [{v: sl("out_kw"), color: "var(--s1)", name: "Output"}, {v: sl("in_kw"), color: "var(--s2)", name: "Input"}], lo: 0, hlines: [{y: u.rating_kw * (u.kind === "it" ? 0.75 : 0.5), label: u.kind === "it" ? "4-make-3 ceiling" : "2N ceiling", color: "var(--warn)"}]})
+        + lg([["var(--s1)", "output"], ["var(--s2)", "input (falls to zero on battery, rises while recharging)"]])
+        + chart({...MX, title: "Voltage line to neutral (V)", unit: "V", series: [{v: sl("in_v"), color: "var(--s2)", name: "Input"}, {v: sl("byp_v"), color: "var(--s4)", name: "Bypass"}, {v: sl("out_v"), color: "var(--s1)", name: "Output"}]})
+        + chart({...MX, title: "Battery charge (%) and current (A)", unit: "", d: 1, series: [{v: sl("soc_pct"), color: "var(--s3)", name: "Charge %"}, {v: sl("batt_a"), color: "var(--s2)", name: "Current A"}]});
+    } else {
+      ch = chart({...MX, title: "Generator real power, ±60 minutes (kW)", unit: "kW", d: 1, series: [{v: sl("kw"), color: "var(--s1)", name: "kW"}], lo: 0, hlines: [{y: P.gen_rated_kw * 0.3, label: "30% of rated (NFPA 110 monthly exercise)", color: "var(--warn)"}]})
+        + chart({...MX, title: "Coolant and exhaust temperature (°C)", unit: "°C", d: 1, series: [{v: sl("coolant_c"), color: "var(--s1)", name: "Coolant"}, {v: sl("exhaust_c"), color: "var(--s2)", name: "Exhaust"}], lo: 0})
+        + lg([["var(--s1)", "coolant (block heater holds it warm when stopped)"], ["var(--s2)", "exhaust (follows load)"]])
+        + chart({...MX, title: "Engine speed (rpm) and oil pressure (kPa)", unit: "", series: [{v: sl("rpm"), color: "var(--s4)", name: "rpm"}, {v: sl("oil_kpa"), color: "var(--s3)", name: "Oil kPa"}], lo: 0});
+    }
+    document.getElementById("pm-ch").innerHTML = ch;
+    const F = P.fields[fam];
+    document.getElementById("pm-tbl").innerHTML = `<div class="scroll"><table><thead><tr><th>Point</th><th>${fam === "ups" ? "SNMP object" : "Register"}</th>${fam === "ups" && PUPS[id].kind === "it" ? "<th>Galaxy VX register</th>" : ""}<th class="n">Reading</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + F.map(f => `<tr><td>${esc(f.name)}</td><td>${fam === "ups" ? (f.snmp ? `<code>${esc(f.snmp)}</code>` : "–") : `<code>${esc(f.reg)}</code>`}</td>${fam === "ups" && PUPS[id].kind === "it" ? `<td>${f.modbus ? `<code>${esc(f.modbus)}</code>` : "–"}</td>` : ""}<td class="n">${pFmt(fam, f, v(f.key))}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    document.getElementById("pm-raw-out").innerHTML = pRaw(id, fam, d, m);
+  }
+  const vxMode = s => ({3: 1, 5: 2, 4: 4}[s] || 1);       // upsOutputSource -> Galaxy VX "UPS Operation Mode"
+  function pRaw(id, fam, d, m) {
+    const v = k => d.v[k] ? d.v[k][m] : null, when = minIso(m);
+    if (fam === "ups" && pmRaw === "snmp") {
+      const u = PUPS[id], rows = [];
+      const put = (oid, type, val, note) => rows.push(`.${esc(oid)} = ${esc(type)}: ${esc(val)}  <span class="c">-- ${esc(note)}</span>`);
+      put("1.3.6.1.2.1.33.1.4.1.0", "INTEGER", v("source"), `upsOutputSource: ${SRC_NAME[v("source")]}`);
+      put("1.3.6.1.2.1.33.1.2.5.0", "INTEGER", Math.round(v("batt_v") * 10), "upsBatteryVoltage, 0.1 V DC");
+      put("1.3.6.1.2.1.33.1.2.6.0", "INTEGER", Math.round(v("batt_a") * 10), "upsBatteryCurrent, 0.1 A (negative discharging)");
+      put("1.3.6.1.2.1.33.1.2.7.0", "INTEGER", Math.round(v("batt_c")), "upsBatteryTemperature, °C");
+      put("1.3.6.1.2.1.33.1.3.3.1.2.1", "INTEGER", Math.round(v("in_hz") * 10), "upsInputFrequency.1, 0.1 Hz");
+      put("1.3.6.1.2.1.33.1.3.3.1.3.1", "INTEGER", Math.round(v("in_v")), "upsInputVoltage.1, V RMS");
+      put("1.3.6.1.2.1.33.1.3.3.1.4.1", "INTEGER", Math.round(v("in_a") * 10), "upsInputCurrent.1, 0.1 A RMS");
+      for (let l = 1; l <= 3; l++) put(`1.3.6.1.2.1.33.1.3.3.1.5.${l}`, "INTEGER", Math.round(v("in_kw") * 1000 / 3), `upsInputTruePower.${l}, W`);
+      put("1.3.6.1.2.1.33.1.4.2.0", "INTEGER", Math.round(v("out_hz") * 10), "upsOutputFrequency, 0.1 Hz");
+      for (let l = 1; l <= 3; l++) {
+        put(`1.3.6.1.2.1.33.1.4.4.1.2.${l}`, "INTEGER", Math.round(v("out_v")), `upsOutputVoltage.${l}, V RMS`);
+        put(`1.3.6.1.2.1.33.1.4.4.1.3.${l}`, "INTEGER", Math.round(v(`out_a${l}`) * 10), `upsOutputCurrent.${l}, 0.1 A RMS`);
+        put(`1.3.6.1.2.1.33.1.4.4.1.4.${l}`, "INTEGER", Math.round(v("out_kw") * 1000 / 3), `upsOutputPower.${l}, W`);
+        put(`1.3.6.1.2.1.33.1.4.4.1.5.${l}`, "INTEGER", Math.round(v("load_pct")), `upsOutputPercentLoad.${l}, %`);
+      }
+      put("1.3.6.1.2.1.33.1.5.3.1.2.1", "INTEGER", Math.round(v("byp_v")), "upsBypassVoltage.1, V RMS");
+      put("1.3.6.1.4.1.318.1.1.1.2.2.1.0", "Gauge32", Math.round(v("soc_pct")), "upsAdvBatteryCapacity, %");
+      put("1.3.6.1.4.1.318.1.1.1.2.2.3.0", "Timeticks", `(${Math.round(v("runtime_s") * 100)})`, `upsAdvBatteryRunTimeRemaining, ${Math.round(v("runtime_s") / 60)} min`);
+      put("1.3.6.1.4.1.318.1.1.1.4.1.1.0", "INTEGER", {3: 2, 5: 3, 4: 9}[v("source")], "upsBasicOutputStatus (PowerNet): 2 onLine, 3 onBattery, 9 switchedBypass");
+      return `<span class="c"># snmpwalk -v3 -l authPriv (read-only user) ${esc(id)} NMC, ${esc(when)}, ${esc(u.model)}</span>\n` + rows.join("\n");
+    }
+    if (fam === "ups") {
+      const u = PUPS[id], rows = [];
+      for (const f of P.fields.ups.filter(f => f.modbus)) {
+        let raw = v(f.key);
+        if (f.key === "source") raw = vxMode(raw);
+        else if (f.key === "modules_ok") raw = raw >= u.modules ? 1 : 0;
+        else raw = Math.round(raw * (/0\.1/.test(f.mtype) ? 10 : 1));
+        rows.push(`${esc(String(f.modbus).padEnd(6))} ${esc((f.mtype.split(" ")[0] || "").replace(",", "").padEnd(7))} ${esc(String(raw).padStart(7))}  <span class="c">-- ${esc(f.name)}: ${esc(f.mtype)}${f.key === "modules_ok" ? " (1 redundant, 0 redundancy lost)" : ""}</span>`);
+      }
+      return `<span class="c"># Modbus TCP read, ${esc(id)}, ${esc(when)}: register  type  raw value  (Schneider Galaxy VX Modbus Register Map 990-5915F)</span>\n` + rows.join("\n");
+    }
+    const rows = [];
+    for (const f of P.fields.generator) {
+      const x = v(f.key);
+      const raw = x == null ? null : Math.round((x - f.offset) / f.res);
+      rows.push(`${esc(String(f.reg).padEnd(5))} ${esc(String(raw).padStart(9))}  <span class="c">-- ${esc(f.name)} = ${pFmt("generator", f, x)} ${esc(f.unit)} (${esc(f.rscale)})</span>`);
+    }
+    return `<span class="c"># Modbus TCP, function 03 (read holding registers), unit ${esc(P.collection.generator.unit_id)}, ${esc(id)} EMCP 4.4, ${esc(when)}: register  raw  (EMCP 4 SCADA Data Links; scaling marked "assumption" is not in the public guide)</span>\n` + rows.join("\n");
+  }
+  function pCsv() {
+    const ctx = pmCtx, note = document.getElementById("pcsv-note");
+    if (!ctx) return;
+    const {id, fam, d, m} = ctx, a = Math.max(0, m - 60), b = Math.min(d.minutes - 1, m + 60), keys = P.fields[fam].map(f => f.key).filter(k => d.v[k]);
+    const rows = [["minute_utc", ...keys]];
+    for (let i = a; i <= b; i++) rows.push([minIso(i), ...keys.map(k => d.v[k][i] == null ? "" : d.v[k][i])]);
+    saveCsv(rows, `${id}_minutes_${a}-${b}.csv`, note);
+  }
+  function saveCsv(rows, name, note) {
+    const csv = rows.map(r => r.join(",")).join("\n") + "\n";
+    if (typeof Blob === "undefined" || typeof URL === "undefined" || !URL.createObjectURL) { note.textContent = `${rows.length - 1} rows ready; this browser cannot save files.`; return; }
+    const el = document.createElement("a");
+    el.href = URL.createObjectURL(new Blob([csv], {type: "text/csv"}));
+    el.download = name;
+    document.body.appendChild(el); el.click(); el.remove();
+    setTimeout(() => URL.revokeObjectURL(el.href), 1000);
+    note.textContent = `${rows.length - 1} rows.`;
+  }
+  main.addEventListener("input", e => { if (e.target.id === "pmr") pSetMinute(+e.target.value); });
+  main.addEventListener("change", e => { if (e.target.id === "pmi") pSetMinute(parseInt(e.target.value, 10)); });
+  main.addEventListener("click", e => {
+    const s = e.target.closest("#pm-step button");
+    if (s && pmCtx) pSetMinute(pmCtx.m + (+s.dataset.s));
+    const r = e.target.closest("#pm-raw button");
+    if (r) { pmRaw = r.dataset.r; main.querySelectorAll("#pm-raw button").forEach(x => x.classList.toggle("on", x === r)); pMinuteUpdate(); }
+    if (e.target.closest("#pcsv")) pCsv();
+  });
+
+  // ------------------------------------------------------------- busway runs and tap-offs
+  function runHeader(r) {
+    const H = P.halls[r.hall];
+    return `<div class="kind">${esc(H.name)} · row ${esc(r.row.slice(1))} · Starline Track Busway 1200T5 · ${esc(r.side)} feed</div><h1>${esc(r.id)}</h1>`
+      + `<p class="sub">Segment ${esc(r.segment)}, ${esc(r.side)} side, fed from ${link(r.ups, r.ups)}; its partner ${link(partnerRun(r.id), partnerRun(r.id))} carries the other feed. Rated ${num(P.rating_a)} A; with one feed lost a run may carry up to ${num(P.busway_limit * 100)}% of that (${num(P.rating_a * P.busway_limit)} A). End-feed M70 meter read over SNMP. Racks: ${r.racks.map(k => link(k, k)).join(", ")}. <a href="../devices/#${esc(encodeURIComponent(r.id))}">Device card ↗</a></p>`;
+  }
+  function runView(id, minute, seq) {
+    const r = PRUN[id], evs = pEvents(id), lim = P.rating_a * P.busway_limit;
+    let h = runHeader(r);
+    h += `<div class="tiles">` + tile("Current avg / peak", `${num(r.amps_avg)} A`, `peak ${num(r.amps_peak)} A of ${num(P.rating_a)} A`)
+      + tile("If its partner failed", `${num(r.single_feed_peak_a)} A`, `this run carrying both feeds at the month's peak hour, against ${num(lim)} A`)
+      + tile("Energy", `${num(r.mwh, 1)} MWh`, "through the run this month")
+      + tile("Without feed", `${num(r.dead_min)} min`, r.dead_min ? "0 V: the feeder breaker was open" : `voltage ${num(r.v_min, 1)} to ${num(r.v_max, 1)} V`) + `</div>`;
+    h += `<h2 class="sec">The month, by hour</h2>` + pLegend + `<div id="pc">Loading data/power/${esc(id)}.json…</div>`;
+    h += `<h2 class="sec">Tap-offs on this run</h2><div id="ptap">Loading data/power_minutes/tapoff_hourly.json…</div>`;
+    const wins = PWIN[id] || [];
+    h += `<h2 class="sec">Minute detail</h2><p class="note">The M70 meters' one-minute readings are published around every event (busway runs and tap-offs keep only these windows; the month is hourly). Move the cursor to see the CPM's SNMP read at that minute.</p>`
+      + `<div class="btns" id="pw-btns">${wins.length ? wins.map((w, i) => `<button data-w="${esc(i)}">${esc(at(w.from))} (${esc(w.minutes)} min)</button>`).join("") : `<span class="note">No events on this run this month, so no minute windows were published.</span>`}</div><div id="pw"></div>`;
+    h += `<h2 class="sec">Events on this run and its tap-offs</h2>` + pEventsTable(evs, true);
+    main.innerHTML = h;
+    pwBind(id, wins, minute);
+    Promise.all([loadPw(id), loadPw(partnerRun(id))]).then(([j, k]) => { if (seq !== current) return;
+      const S = j.series, n = j.hours, X = {...HX, n, bands: pBands(evs, n)};
+      const both = S.amps_avg.map((v, i) => v + k.series.amps_avg[i]);
+      document.getElementById("pc").innerHTML = chart({...X, title: "Current (A)", unit: "A", d: 1, series: [{v: both, color: "#b8c2cc", name: "If the partner feed failed (A + B)", w: 1}, {v: S.amps_max, color: "var(--s2)", name: "Highest line, hourly max", w: 1, op: 0.8}, {v: S.amps_avg, color: "var(--s1)", name: "Hourly mean", w: 1.8}], hlines: [{y: lim, label: `single-feed limit ${num(lim)} A`, color: "var(--warn)"}, {y: P.rating_a, label: `rating ${num(P.rating_a)} A`, color: "var(--bad)"}], lo: 0})
+        + lg([["var(--s1)", "hourly mean"], ["var(--s2)", "highest line, hourly max"], ["#b8c2cc", "this run carrying both feeds (its mean plus its partner's)"]])
+        + chart({...X, title: "Voltage line to line, hourly min and max (V)", unit: "V", d: 1, series: [{v: S.v_min, color: "var(--s2)", name: "Min"}, {v: S.v_max, color: "var(--s1)", name: "Max"}], hlines: [{y: P.electrical.ll_v * 0.95, label: "-5%", color: "var(--warn)"}]})
+        + chart({...X, title: "Energy (kWh per hour)", unit: "kWh", d: 1, series: [{v: S.kwh, color: "var(--s1)", name: "Energy"}], lo: 0})
+        + chart({...X, title: "End-feed enclosure temperature, hourly max (°C)", unit: "°C", d: 1, series: [{v: S.encl_max_c, color: "var(--s4)", name: "Enclosure"}], lo: 15, hi: 40});
+    }).catch(e => { if (seq === current) document.getElementById("pc").innerHTML = errBox(e, `data/power/${id}.json`); });
+    loadTapH().then(t => { if (seq !== current) return;
+      document.getElementById("ptap").innerHTML = `<div class="scroll"><table><thead><tr><th>Tap-off</th><th>Rack</th><th class="n">Energy kWh</th><th class="n">Peak amps</th><th class="n">Minutes open</th><th>Hourly energy</th></tr></thead><tbody>`
+        + r.tapoffs.map(tp => { const x = t.tapoffs[tp]; const wh = x ? x.wh : [];
+          return `<tr><td>${link(tp, tp)}</td><td>${link(PTAP[tp].rack, PTAP[tp].rack)}</td><td class="n">${num(wh.reduce((a, b) => a + b, 0) / 1000)}</td><td class="n">${x ? num(Math.max(...x.amps_max), 1) : "–"}</td><td class="n">${x ? num(x.open_min.reduce((a, b) => a + b, 0)) : 0}</td><td>${spark(wh.map(w => w / 1000), 160, 24)}</td></tr>`; }).join("") + `</tbody></table></div>`;
+    }).catch(e => { if (seq === current) document.getElementById("ptap").innerHTML = errBox(e, "data/power_minutes/tapoff_hourly.json"); });
+  }
+  function tapView(id, minute, seq) {
+    const tp = PTAP[id], r = PRUN[tp.run], other = P.rack_feeds[tp.rack].find(f => f.tapoff !== id), evs = P.events.filter(e => e.device === id);
+    let h = `<div class="kind">${esc(P.halls[r.hall].name)} · rack ${esc(tp.rack)} · ${esc(tp.side)} feed · Starline plug-in unit with M70 meter</div><h1>${esc(id)}</h1>`
+      + `<p class="sub">Feeds rack ${link(tp.rack, tp.rack)} (power shelves ${tp.side === "A" ? "1 to 4" : "5 to 8"}) from ${link(tp.run, tp.run)}, fed by ${link(r.ups, r.ups)}. The rack's other feed is ${link(other.tapoff, other.tapoff)} on ${link(other.run, other.run)}. A healthy rack splits close to 50/50; when one tap-off opens, the other carries the whole rack.</p>`;
+    h += `<h2 class="sec">The month, by hour</h2>` + pLegend + `<div id="pc">Loading data/power_minutes/tapoff_hourly.json…</div>`;
+    const wins = PWIN[id] || [];
+    h += `<h2 class="sec">Minute detail</h2><div class="btns" id="pw-btns">${wins.length ? wins.map((w, i) => `<button data-w="${esc(i)}">${esc(at(w.from))} (${esc(w.minutes)} min)</button>`).join("") : `<span class="note">No events on this tap-off this month, so no minute windows were published.</span>`}</div><div id="pw"></div>`;
+    h += `<h2 class="sec">Events</h2>` + pEventsTable(evs, true);
+    main.innerHTML = h;
+    pwBind(id, wins, minute);
+    loadTapH().then(t => { if (seq !== current) return;
+      const z = new Array(HOURS).fill(0), a = t.tapoffs[id], b = t.tapoffs[other.tapoff];
+      const X = {...HX, n: HOURS, bands: pBands(evs, HOURS)};
+      document.getElementById("pc").innerHTML = chart({...X, title: "Energy by feed (kWh per hour)", unit: "kWh", d: 2, series: [{v: (b ? b.wh : z).map(w => w / 1000), color: "#b8c2cc", name: other.tapoff, w: 1}, {v: (a ? a.wh : z).map(w => w / 1000), color: "var(--s1)", name: id, w: 1.8}], lo: 0})
+        + lg([["var(--s1)", id], ["#b8c2cc", `${other.tapoff} (the rack's other feed)`]])
+        + chart({...X, title: "Peak current, highest line (A)", unit: "A", d: 1, series: [{v: a ? a.amps_max : z, color: "var(--s4)", name: "Peak current"}], lo: 0})
+        + chart({...X, title: "Breaker open (minutes per hour)", unit: "min", series: [{v: a ? a.open_min : z, color: "var(--bad)", name: "Open"}], lo: 0, hi: 60});
+    }).catch(e => { if (seq === current) document.getElementById("pc").innerHTML = errBox(e, "data/power_minutes/tapoff_hourly.json"); });
+  }
+  let pwCtx = null;
+  function pwBind(id, wins, minute) {
+    main.querySelectorAll("#pw-btns button").forEach(b => b.addEventListener("click", () => pwOpen(id, wins[+b.dataset.w], b, null)));
+    if (minute != null) {
+      const i = wins.findIndex(w => { const a = minOf(w.from); return minute >= a && minute < a + w.minutes; });
+      if (i >= 0) pwOpen(id, wins[i], main.querySelectorAll("#pw-btns button")[i], minute - minOf(wins[i].from));
+    }
+  }
+  function pwOpen(id, w, btn, cursor) {
+    const box = document.getElementById("pw");
+    main.querySelectorAll("#pw-btns button").forEach(b => b.classList.toggle("on", b === btn));
+    box.innerHTML = `<p class="note">Loading ${esc(w.file)}…</p>`;
+    loadPwWin(w).then(d => {
+      if (!document.getElementById("pw")) return;
+      pwCtx = {id, d, c: cursor != null ? cursor : Math.min(30, d.minutes - 1)};
+      const fam = d.family, n = d.minutes, f0 = Date.parse(d.from);
+      const evm = (d.states || []).map(s => ({i: s.m - d.m0, color: "var(--bad)", label: `${s.time.slice(11, 19)} ${s.point}: ${s.value}`}));
+      const MX = {n, xlab: i => new Date(f0 + i * MIN).toISOString().slice(11, 16), xtick: 15, xminor: 5, hover: i => at(new Date(f0 + i * MIN).toISOString()), marks: evm, H: 130};
+      let h = `<p class="note">${esc(d.device)}, ${esc(at(d.from))} for ${esc(n)} minutes. Red lines: the recorded state changes.</p><div class="ctl"><label for="pwm">Minute</label><b id="pwm-lab"></b></div><input type="range" id="pwm" min="0" max="${esc(n - 1)}" value="${esc(pwCtx.c)}" aria-label="Minute within the window">`;
+      if (fam === "busway" || fam === "tapoff") {
+        h += chart({...MX, title: "Current by line (A)", unit: "A", d: 1, series: [1, 2, 3].map((l, k) => ({v: d.v["a" + l], color: ["var(--s1)", "var(--s2)", "var(--s3)"][k], name: "Line " + l})), lo: 0})
+          + chart({...MX, title: "Active power (kW)", unit: "kW", d: 1, series: [{v: d.v.kw, color: "var(--s4)", name: "kW"}], lo: 0});
+        if (fam === "busway") h += chart({...MX, title: "Voltage line to line (V)", unit: "V", d: 1, series: [{v: d.v.v_ll, color: "var(--s1)", name: "V L-L"}]});
+        else h += chart({...MX, title: "Breaker (1 closed, 0 open)", unit: "", series: [{v: d.v.brk, color: "var(--bad)", name: "Breaker"}], lo: 0, hi: 1});
+      } else if (fam === "ups") {
+        h += chart({...MX, title: "Output and input power (kW)", unit: "kW", d: 1, series: [{v: d.v.out_kw, color: "var(--s1)", name: "Output"}, {v: d.v.in_kw, color: "var(--s2)", name: "Input"}], lo: 0});
+      } else {
+        h += chart({...MX, title: "Generator real power (kW)", unit: "kW", d: 1, series: [{v: d.v.kw, color: "var(--s1)", name: "kW"}], lo: 0});
+      }
+      h += `<pre class="scrape" id="pw-raw" data-gl-skip></pre><p><button class="b" id="pwcsv">Download CSV (this window)</button> <span class="note" id="pwcsv-note"></span></p>`;
+      box.innerHTML = h;
+      pwUpdate();
+    }).catch(e => { box.innerHTML = errBox(e, w.file); });
+  }
+  function pwUpdate() {
+    const ctx = pwCtx, el = document.getElementById("pw-raw");
+    if (!ctx || !el) return;
+    const {d, c} = ctx, when = new Date(Date.parse(d.from) + c * MIN).toISOString(), fam = d.family;
+    document.getElementById("pwm-lab").textContent = at(when);
+    main.querySelectorAll("#pw svg[data-ch]").forEach(svg => { const ch = CH.get(svg.dataset.ch); if (ch && ch.n === d.minutes) { const px = ch.L + (c + 0.5) / ch.n * ch.pw, cur = svg.querySelector(".cur"); cur.setAttribute("x1", px); cur.setAttribute("x2", px); cur.style.display = ""; } });
+    const F = P.fields[fam] || [];
+    if (fam === "busway" || fam === "tapoff") {
+      el.innerHTML = `<span class="c"># snmpget ${esc(d.device)} M70 CPM (STARLINE-CPM-MIB, enterprise 35774), ${esc(when)}</span>\n` + F.map(f => {
+        const x = d.v[f.key] ? d.v[f.key][c] : null;
+        const raw = x == null ? "" : f.key === "kw" ? Math.round(x * 1000) : f.key === "pf" ? Math.round(x * 1000) : f.key === "brk" ? (x ? 2 : 1) : Math.round(x * f.scale);
+        const note = f.key === "kw" ? "W" : f.key === "pf" ? "thousandths" : f.key === "brk" ? "1 open, 2 closed (cpmAcBrkrCurrentStatus)" : f.scale === 1 ? f.unit : `${f.unit} x ${f.scale}`;
+        return `.${esc(f.oid)} = INTEGER: ${esc(raw)}  <span class="c">-- ${esc(f.snmp)} (${esc(note)})</span>`;
+      }).join("\n");
+    } else {
+      const keys = F.map(f => f.key).filter(k => d.v[k]);
+      el.innerHTML = `<span class="c"># ${esc(d.device)} at ${esc(when)} (open the device's minute detail for the full raw read)</span>\n` + keys.map(k => `${esc(k.padEnd(12))} ${esc(d.v[k][c])}`).join("\n");
+    }
+  }
+  main.addEventListener("input", e => { if (e.target.id === "pwm" && pwCtx) { pwCtx.c = +e.target.value; pwUpdate(); } });
+  main.addEventListener("click", e => {
+    if (!e.target.closest("#pwcsv") || !pwCtx) return;
+    const {d} = pwCtx, keys = Object.keys(d.v), rows = [["minute_utc", ...keys]];
+    for (let i = 0; i < d.minutes; i++) rows.push([new Date(Date.parse(d.from) + i * MIN).toISOString(), ...keys.map(k => d.v[k][i])]);
+    saveCsv(rows, `${d.device}_${d.from.slice(0, 16).replace(/[-:]/g, "")}.csv`, document.getElementById("pwcsv-note"));
+  });
+
+  // ------------------------------------------------------------- generators
+  function genHeader(g) {
+    return `<div class="kind">Generators · CAT C175-16 with EMCP 4.4 · ${num(P.gen_rated_kw)} kW, 13.8 kV · N+1</div><h1>${esc(g.id)}</h1>`
+      + `<p class="sub">Read once a minute over Modbus TCP (EMCP 4 SCADA data link, holding registers, unit ${esc(P.collection.generator.unit_id)}). Starts on a utility failure in Auto; started by hand (Run) for the monthly loaded exercise on the load bank. <a href="../devices/#${esc(encodeURIComponent(g.id))}">Device card ↗</a></p>`;
+  }
+  function genView(id, seq) {
+    const g = PGEN[id], evs = P.events.filter(e => e.device === id);
+    let h = genHeader(g);
+    for (const e of evs.filter(e => e.finding)) h += `<div class="finding">${tag(e.finding.id, "bad")} ${esc(e.finding.title)}: ${esc(e.finding.summary)} The telemetry shows the same: ${esc(e.text.toLowerCase())}.</div>`;
+    h += `<div class="tiles">` + tile("Running", `${num(g.run_min)} min`, `${num(g.runs.length)} runs this month`) + tile("Energy", `${num(g.mwh, 2)} MWh`, `peak ${num(g.kw_max)} kW (${num(g.pct_max, 1)}% of rated)`)
+      + tile("Fuel at month end", `${num(g.fuel_end, 1)}%`, "main tank, 48 hours at full load when full") + tile("Hour meter", `${num(g.hours_end, 2)} h`, `advances only while running`) + `</div>`;
+    h += `<h2 class="sec">Runs</h2><div class="scroll"><table><thead><tr><th>Start (UTC)</th><th>Stop</th><th>Why</th><th class="n">Running min</th><th class="n">Peak kW</th><th class="n">% of rated</th><th>Records</th><th></th></tr></thead><tbody>`
+      + evs.map(e => `<tr><td class="n">${esc(at(e.t))}</td><td class="n">${esc(at(e.end))}</td><td>${pKind(e.kind)}</td><td class="n">${num(e.run_min)}</td><td class="n">${num(e.kw_max)}</td><td class="n">${num(e.pct_max, 1)}%${e.kind === "test" && e.pct_max < 30 ? ` ${tag("below 30%", "bad")}` : ""}</td><td>${refLinks(e.refs)}${e.finding ? ` ${tag(e.finding.id, "bad")}` : ""}</td><td><a class="b" href="#${esc(id)}/${esc(Math.max(0, e.m - 10))}">Minute detail</a></td></tr>`).join("") + `</tbody></table></div>`
+      + `<p class="note">NFPA 110 asks for a monthly exercise at no less than 30% of the nameplate rating for 30 minutes. The tests run on a load bank (power factor 1.0); in the utility outage all seven sets shared the site's load in parallel.</p>`;
+    h += `<h2 class="sec">The month, by hour</h2>` + pLegend + `<div id="pc">Loading data/power/${esc(id)}.json…</div>`;
+    main.innerHTML = h;
+    loadPw(id).then(j => { if (seq !== current) return;
+      const S = j.series, n = j.hours, X = {...HX, n, bands: pBands(evs, n)};
+      document.getElementById("pc").innerHTML = chart({...X, title: "Real power, hourly max (% of rated)", unit: "%", d: 1, series: [{v: S.pct_max, color: "var(--s1)", name: "% of rated"}], hlines: [{y: 30, label: "30% (NFPA 110 monthly exercise)", color: "var(--warn)"}], lo: 0})
+        + chart({...X, title: "Coolant temperature, hourly max (°C)", unit: "°C", d: 1, series: [{v: S.coolant_max_c, color: "var(--s2)", name: "Coolant"}], lo: 0})
+        + chart({...X, title: "Fuel level at the end of each hour (%)", unit: "%", d: 1, series: [{v: S.fuel_pct, color: "var(--s3)", name: "Fuel"}]})
+        + chart({...X, title: "Hour meter (h)", unit: "h", d: 2, series: [{v: S.hours, color: "var(--s4)", name: "Hours"}]});
+    }).catch(e => { if (seq === current) document.getElementById("pc").innerHTML = errBox(e, `data/power/${id}.json`); });
+  }
+
+  // ------------------------------------------------------------- reference
+  function powerFields() {
+    const K = P.collection;
+    let h = `<div class="kind">Power reference</div><h1>Points and registers</h1><p class="sub">${esc(P.framing)} Object names and register numbers are the published ones; the values are this site's synthetic series. Where a document gives no point (a Galaxy VL Modbus map, the EMCP 4 register scaling), none is invented: the scaling marked "assumption" is this demo's. No vendor's internal tooling is implied.</p>`;
+    h += `<div class="cards">` + tile("Poll interval", `${num(K.poll_interval_s)} s`, "every power device read once a minute")
+      + tile("UPS", esc(K.ups.protocol), `${esc(K.ups.account)}; ${esc(K.ups.mibs.join(", "))}`)
+      + tile("Busway", esc(K.busway.protocol), `${esc(K.busway.account)}; ${esc(K.busway.mib)}`)
+      + tile("Generators", esc(K.generator.protocol), `${esc(K.generator.account)}`) + `</div>`;
+    h += `<h2 class="sec">UPS (Galaxy VX and VL)</h2><div class="scroll"><table data-gl-skip><thead><tr><th>Point</th><th>SNMP object</th><th>OID</th><th>Galaxy VX register</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + P.fields.ups.map(f => `<tr><td>${esc(f.name)}</td><td><code>${esc(f.snmp || "–")}</code></td><td><code>${esc(f.oid || "–")}</code></td><td>${f.modbus ? `${esc(f.modbus)} <span class="note">${esc(f.mtype)}</span>` : "–"}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    for (const [fam, title] of [["busway", "Busway runs (M70 end-feed meter)"], ["tapoff", "Tap-offs (M70 plug-in meter)"]]) {
+      h += `<h2 class="sec">${esc(title)}</h2><div class="scroll"><table data-gl-skip><thead><tr><th>Point</th><th>CPM object</th><th>OID</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+        + P.fields[fam].map(f => `<tr><td>${esc(f.name)}</td><td><code>${esc(f.snmp)}</code></td><td><code>${esc(f.oid)}</code></td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    }
+    h += `<h2 class="sec">Generators (EMCP 4.4)</h2><div class="scroll"><table data-gl-skip><thead><tr><th>Point</th><th>Register</th><th>Scaling</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + P.fields.generator.map(f => `<tr><td>${esc(f.name)}</td><td><code>${esc(f.reg)}</code></td><td class="note">${esc(f.rscale)}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + P.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function powerAgreements() {
+    const agree = P.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = P.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = `<div class="kind">Power reference</div><h1>Agreement with the records</h1><p class="sub">The power telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the racks' power in the GPU telemetry, the energy meters, the UPS network-card events, the busway meter and EPMS events, the generator controller readings, and the CDU telemetry. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + P.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (P.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + P.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/power_telemetry.md.</p>`;
+    main.innerHTML = h;
+  }
+  function powerTree() {
+    let h = `<div class="famsec" data-fam="power"><div class="sec">Power</div><ul><li>${link("power", "Overview")}</li>`;
+    for (const hall of PHALLS) {
+      const H = P.halls[hall];
+      h += `<li><details open><summary>${link("power", `${H.name} UPS`)} <small>${esc(H.ups.length)} + ${esc(H.mups.length)}</small></summary><ul>`
+        + H.ups.map(id => `<li>${link(id, id)}</li>`).join("") + H.mups.map(id => `<li>${link(id, id)}</li>`).join("") + `</ul></details></li>`;
+    }
+    for (const hall of PHALLS) {
+      const H = P.halls[hall];
+      h += `<li><details><summary>${link("power", `${H.name} busway`)} <small>${esc(Object.values(H.rows).flat().length)} runs</small></summary><ul>`
+        + Object.entries(H.rows).map(([row, ids]) => `<li><details><summary>Row ${esc(row.slice(1))} <small>${esc(ids.length)}</small></summary><ul>` + ids.map(id => `<li>${link(id, id.split("-").slice(3).join("-"))}</li>`).join("") + `</ul></details></li>`).join("")
+        + `</ul></details></li>`;
+    }
+    h += `<li><details open><summary>${link("GEN-1", "Generators")} <small>${esc(P.gens.length)}</small></summary><ul>` + P.gens.map(g => `<li>${link(g.id, g.id)}</li>`).join("") + `</ul></details></li>`;
+    h += `</ul><div class="sec">Power reference</div><ul><li>${link("power-fields", "Points and registers")}</li><li>${link("power-agreements", "Agreement with the records")}</li></ul></div>`;
+    return h;
+  }
+
   // ----------------------------------------------------------------- router
   let current = 0;
   function route() {
@@ -874,11 +1389,15 @@ __SITENAV__
     if (/^cdu-[a-c]\d$/i.test(a) && CDU[a.toUpperCase()]) { const mi = b == null ? null : parseInt(b, 10); return {view: "cdu", cdu: a.toUpperCase(), minute: mi == null || Number.isNaN(mi) ? null : mi, key: a.toUpperCase(), fam: "cdu"}; }
     if (a === "cdu-fields" || a === "cdu-agreements") return {view: a, key: a, fam: "cdu"};
     if (a === "cdus" || /^cdu/i.test(a)) return {view: "cdus", key: "cdus", fam: "cdu"};
+    const up = a.toUpperCase(), pf = famOf(up), mi = b == null ? null : parseInt(b, 10), pm = mi == null || Number.isNaN(mi) ? null : mi;
+    if (pf) return {view: pf, dev: up, minute: pm, key: up, fam: "power"};
+    if (a === "power-fields" || a === "power-agreements") return {view: a, key: a, fam: "power"};
+    if (a === "power") return {view: "power", key: "power", fam: "power"};
     return {view: "gpus", key: "gpus"};
   }
   function show() {
     const seq = ++current, r = route(), fam = r.fam || "gpu";
-    CH.clear(); gpuCtx = null; cduCtx = null;
+    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null;
     if (r.view === "rack") rackView(r.rack, r.hour, seq);
     else if (r.view === "gpu") gpuView(r.host, r.gpu, seq);
     else if (r.view === "fields") fields();
@@ -887,6 +1406,12 @@ __SITENAV__
     else if (r.view === "cdu") r.minute == null ? cduView(r.cdu, seq) : cduMinuteView(r.cdu, r.minute, seq);
     else if (r.view === "cdu-fields") cduFields();
     else if (r.view === "cdu-agreements") cduAgreements();
+    else if (r.view === "power") powerOverview(seq);
+    else if (r.view === "ups" || r.view === "generator") r.minute == null ? (r.view === "ups" ? upsView(r.dev, seq) : genView(r.dev, seq)) : pMinuteView(r.dev, r.minute, seq);
+    else if (r.view === "busway") runView(r.dev, r.minute, seq);
+    else if (r.view === "tapoff") tapView(r.dev, r.minute, seq);
+    else if (r.view === "power-fields") powerFields();
+    else if (r.view === "power-agreements") powerAgreements();
     else overview(seq);
     document.querySelectorAll("#tree a").forEach(a => {
       const on = a.getAttribute("href") === "#" + r.key;
@@ -895,7 +1420,7 @@ __SITENAV__
     });
     document.querySelectorAll("#tree a[data-fam]").forEach(a => a.classList.toggle("on", a.dataset.fam === fam));
     document.querySelectorAll("#tree .famsec").forEach(s => s.classList.toggle("off", s.dataset.fam !== fam));
-    if ((r.view !== "rack" || r.hour == null) && (r.view !== "cdu" || r.minute == null)) main.scrollIntoView && window.scrollY > 200 && window.scrollTo(0, 0);
+    if ((r.view !== "rack" || r.hour == null) && (r.view !== "cdu" || r.minute == null) && r.minute == null) main.scrollIntoView && window.scrollY > 200 && window.scrollTo(0, 0);
   }
   tree();
   window.addEventListener("hashchange", show);

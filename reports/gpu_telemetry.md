@@ -55,7 +55,7 @@ The telemetry is synthetic, so it is shaped never to contradict the records the 
 | No samples while a GPU or tray is dark; rack power loss matches the Landlord's record | 100 of 100 |
 | Slowdown temperature only inside recorded episodes, with a lower clock and matching violation time | 56,110 of 56,110 |
 | A Hall B rack has no samples before its power-on milestone | 14 of 14 |
-| GPU energy never exceeds the UPS output in any hour (GPU share of UPS output 25% to 47%) | 672 of 672 |
+| GPU energy never exceeds the UPS output in any hour (GPU share of UPS output 70% to 73%) | 672 of 672 |
 
 ## Sources
 

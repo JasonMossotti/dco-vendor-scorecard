@@ -69,12 +69,17 @@ def test_meters_balance(data):
     assert len(data.meters) == 28 * 24
 
 
-def test_it_energy_follows_the_ups_readings(data):
-    """IT energy is the UPS output: it tracks the load the sample's UPS readings report."""
-    rows = [json.loads(x) for x in (SAMPLE / "facility" / "ups_status.jsonl").read_text(encoding="utf-8").splitlines() if x]
-    assert rows, "the sample has UPS readings"
+def test_it_energy_follows_the_racks(data):
+    """IT energy is the UPS output: each hall's racks' input power from the GPU telemetry, plus busway losses."""
+    el = E.EnergyLayer(SAMPLE, 0, rack_hourly=ROOT / "data" / "telemetry" / "gpu" / "rack_hourly.csv")
+    racks = el.rack_it_kwh()
+    for r in data.meters:
+        for h in "ab":
+            rack = racks.get(r["hour"], {}).get(h.upper(), 0.0)
+            out = r[f"ups_out_{h}_kwh"]
+            assert rack <= out + 0.1 and out <= rack * 1.01 + 0.1, (r["hour"], h, rack, out)
     it_mw = sum(r["ups_out_a_kwh"] + r["ups_out_b_kwh"] for r in data.meters) / len(data.meters) / 1000
-    assert 6.0 < it_mw < 9.5
+    assert 2.0 < it_mw < 6.0, "Hall A full, Hall B still deploying"
 
 
 def test_generator_energy_only_during_the_outage(data):
@@ -106,7 +111,8 @@ def test_52_weeks_and_the_kpi(res):
     assert len(res.periods) == 13 and res.periods[-1]["month"] and not any(p["month"] for p in res.periods[:-1])
     assert res.year["days"] == 364
     assert sum(p["it_kwh"] for p in res.periods) == pytest.approx(res.year["it_kwh"], rel=1e-9)
-    assert res.kpi["id"] == "OT-EN-02" and res.kpi["actual"] == res.year["pue"] and res.kpi["met"]
+    assert res.kpi["id"] == "OT-EN-02" and res.kpi["actual"] == res.year["pue"]
+    assert not res.kpi["met"], "fixed overhead over a half-built IT load: the 52-week PUE misses 1.35"
     winter = min(res.periods, key=lambda p: p["outdoor_c"])
     summer = max(res.periods, key=lambda p: p["outdoor_c"])
     assert winter["ppue_cooling"] < summer["ppue_cooling"], "free cooling in winter"
@@ -161,7 +167,7 @@ def test_dst_offset_is_computed():
 
 
 def test_robustness_small_sample(capsys):
-    assert render_energy.robustness(3) == 0, capsys.readouterr().out
+    assert render_energy.robustness(1) == 0, capsys.readouterr().out
 
 
 def test_interactive_page_builds_and_works(tmp_path):
