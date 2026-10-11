@@ -1,6 +1,6 @@
 // node tests/js/telemetry_page.cjs <site>/index.html <site>
 // <site> is the folder scripts/render_telemetry.py write_site() wrote: index.html plus data/ (racks.json, gpu/, windows/, cdu/, cdu_minutes/,
-// power/, power/windows/, power_minutes/, network/, network/windows/).
+// power/, power/windows/, power_minutes/, network/, network/windows/, mechanical/, mechanical/windows/, mechanical_minutes/).
 const { JSDOM, VirtualConsole } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
@@ -127,8 +127,8 @@ async function until(fn, what, ms = 8000) {
   const C = D.cdu;
   const noBad = what => ok(!/\bundefined\b|\bNaN\b/.test(t()), `no undefined/NaN text in ${what}`);
   const fam = () => [...d.querySelectorAll("#tree ul.fam > li")].map(li => li.textContent.trim());
-  ok(fam()[0].startsWith("GPUs") && fam()[1].startsWith("CDUs") && fam()[2].startsWith("Power") && fam()[3].startsWith("Network") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists GPUs, CDUs, Power, Network and the greyed planned families: " + fam().join(" | "));
-  ok(d.querySelectorAll("#tree ul.fam a").length === 4 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
+  ok(fam()[0].startsWith("GPUs") && fam()[1].startsWith("CDUs") && fam()[2].startsWith("Power") && fam()[3].startsWith("Network") && fam()[4].startsWith("Mechanical") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists GPUs, CDUs, Power, Network, Mechanical and any greyed planned families: " + fam().join(" | "));
+  ok(d.querySelectorAll("#tree ul.fam a").length === 5 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
   ok(!d.querySelector('#tree .famsec[data-fam="gpu"]').classList.contains("off") && d.querySelector('#tree .famsec[data-fam="cdu"]').classList.contains("off"), "on a GPU view the GPU section shows and the CDU section is hidden");
   ok([...d.querySelectorAll("#tree .planned")].some(x => x.textContent.includes("CDU-C1")) && !d.querySelector('#tree a[href="#CDU-C1"]'), "Hall C CDUs are greyed, not links");
   await go("#cdus");
@@ -358,6 +358,63 @@ async function until(fn, what, ms = 8000) {
     ok(t().includes("Could not load data/network/leaf-a02-r0.json") && errors.length === 0, "a missing leaf file shows a message, not an exception");
   } finally {
     fs.renameSync(path.join(site, "data/network/leaf-a02-r0.json.bak"), path.join(site, "data/network/leaf-a02-r0.json"));
+  }
+
+  // ---- mechanical
+  const Mx = D.mechanical;
+  await go("#mechanical");
+  await until(() => d.querySelectorAll(".ctile .spark svg").length === Mx.air.length, "air unit sparklines");
+  ok(t().includes("Mechanical telemetry") && d.querySelectorAll(".ctile").length === Mx.chillers.length + Mx.pumps.length + 1 + Mx.air.length, "mechanical overview: a tile per chiller, pump, the loop, and each air unit");
+  ok(d.querySelectorAll('#main svg a[href^="#CH-"]').length === Mx.chillers.length && d.querySelector('#main svg rect[fill="#d64545"]') && d.querySelector('#main svg rect[fill="#7a4b00"]'), "plant map: a row per chiller, the trips in red, the lockouts marked");
+  const mAgree = Mx.agreements.reduce((a, c) => a + c.checked - c.misses, 0);
+  ok(t().includes(`${mAgree.toLocaleString("en-US")} of`) && Mx.agreements.every(c => c.misses === 0), "mechanical agreements on the overview, none missed");
+  ok(t().includes("WO-41035") && t().includes("PM-0015") && t().includes("EN-F2") && t().includes("L-005") && t().includes("hid no excursion"), "events carry the work orders, PM tasks, and findings");
+  ok(t().includes("Hall C") && t().includes("not in service".slice(0, 3)) && d.querySelector('#tree a[href="#mechanical"]').classList.contains("on"), "Hall C shown as planned; tree highlights Mechanical");
+  noBad("#mechanical");
+  await go("#CH-03");
+  await until(() => d.querySelectorAll("#mc svg").length === 4, "CH-03 charts");
+  ok(d.querySelectorAll("#mc svg").length === 4 && t().includes("143.0 h") && t().includes("EN-F2") && d.querySelector('#main a[href="../devices/#CH-03"]'), "CH-03: four charts, the 143-hour lockout, its finding, and its device card");
+  noBad("#CH-03");
+  const trip = Mx.events.find(e => e.device === "CH-08" && e.kind === "trip");
+  await go(`#CH-08/${trip.m}`);
+  await until(() => d.getElementById("mm-raw") && d.getElementById("mm-raw").textContent.includes("present-value"), "CH-08 minute view");
+  const mraw = () => d.getElementById("mm-raw").textContent;
+  ok(t().includes("Alarm Off (7)") && t().includes("ALARM (4)") && /binary-value #35[\s\S]*?present-value: active[\s\S]*?status-flags: \{true,false,false,false\}/.test(mraw()), "CH-08 at its trip: Alarm Off, compressor ALARM, BV 35 active and in alarm");
+  ok(d.querySelectorAll("#mm-ch svg").length === 3 && t().includes("Download CSV"), "minute view: three charts and the CSV button");
+  d.querySelector('#mm-step button[data-s="-60"]').click();
+  await sleep(30);
+  ok(w.location.hash === `#CH-08/${trip.m - 60}` && (t().includes("Local On (0)") || t().includes("Standby (12)")), "stepping back an hour updates the hash and the readings");
+  const hold = Mx.events.find(e => e.device === "CH-06" && e.kind === "hold");
+  await go(`#CH-06/${hold.m + 30}`);
+  await until(() => d.getElementById("mm-raw") && /priority-array: \{(Null,){7}inactive/.test(d.getElementById("mm-raw").textContent), "CH-06 priority array");
+  ok(/priority-array: \{(Null,){7}inactive/.test(mraw()) && t().includes("BMS Off (14)") && /binary-value #1 [\s\S]*?status-flags: \{false,false,false,false\}/.test(mraw()), "CH-06 under its BMS hold: Off at priority 8, BMS Off, and OVERRIDDEN stays false");
+  const inh = Mx.events.find(e => e.device === "TW-B2" && e.kind === "inhibit");
+  await go(`#TW-B2/${inh.m + 60}`);
+  await until(() => d.getElementById("mm-raw") && d.getElementById("mm-raw").textContent.includes("event-algorithm-inhibit"), "TW-B2 minute view");
+  ok(mraw().includes("event-algorithm-inhibit: TRUE") && t().includes("High supply temperature (Event_Algorithm_Inhibit)"), "TW-B2 during its inhibit: Event_Algorithm_Inhibit TRUE");
+  noBad("#TW-B2 minute");
+  const fan = Mx.events.find(e => e.device === "TW-A4" && e.kind === "fan");
+  await go(`#TW-A4/${fan.m + 5}`);
+  await until(() => d.getElementById("mm-tbl") && d.getElementById("mm-tbl").textContent.includes("Failed fan"), "TW-A4 minute view");
+  const failed = [...d.querySelectorAll("#mm-tbl tr")].find(r => r.textContent.startsWith("Failed fan")), running = [...d.querySelectorAll("#mm-tbl tr")].find(r => r.textContent.startsWith("Evaporator fans running"));
+  ok(failed && failed.querySelector("td.n").textContent === "6" && running.querySelector("td.n").textContent === "5", "TW-A4 during its fan failure: fan 6 failed, five running");
+  for (const id of ["FWP-1", "FW-LOOP", "CRAH-B1"]) {
+    await go("#" + id);
+    await until(() => d.querySelectorAll("#mc svg").length >= 3, id + " charts");
+    ok(d.querySelectorAll("#mc svg").length >= 3, `${id}: its month charts`);
+    noBad("#" + id);
+  }
+  await go("#mech-fields");
+  ok(["chiller", "pump", "loop", "air"].every(k => Mx.objects[k].every(o => t().includes(o.name))) && Mx.sources.every(s => d.querySelector(`a[href="${s.url}"]`)) && t().includes("OVERRIDDEN"), "#mech-fields lists every object and source and explains priority writes");
+  await go("#mech-agreements");
+  ok(d.querySelectorAll("tbody tr").length === Mx.agreements.length && Mx.agreements.every(a => t().includes(a.title)), "#mech-agreements shows every check");
+  fs.renameSync(path.join(site, "data/mechanical_minutes/CH-05.json"), path.join(site, "data/mechanical_minutes/CH-05.json.bak"));
+  try {
+    await go("#CH-05/100");
+    await until(() => t().includes("Could not load"), "mechanical error message");
+    ok(t().includes("Could not load data/mechanical_minutes/CH-05.json") && errors.length === 0, "a missing chiller minute file shows a message, not an exception");
+  } finally {
+    fs.renameSync(path.join(site, "data/mechanical_minutes/CH-05.json.bak"), path.join(site, "data/mechanical_minutes/CH-05.json"));
   }
 
   // ---- error state

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Render the Telemetry tab (GPUs, CDUs, power, and network) and its reports: reports/gpu_telemetry.md,
-reports/cdu_telemetry.md, reports/power_telemetry.md, and reports/network_telemetry.md.
+"""Render the Telemetry tab (GPUs, CDUs, power, network, and mechanical) and its reports: reports/gpu_telemetry.md,
+reports/cdu_telemetry.md, reports/power_telemetry.md, reports/network_telemetry.md, and reports/mechanical_telemetry.md.
 
 Reads the committed GPU telemetry (data/telemetry/gpu/), the per-GPU hourly tier (built into
 build/telemetry/gpu_hourly/ by scripts/generate_telemetry.py if missing), and the records it must agree
@@ -8,7 +8,7 @@ with (data/gpu_health/, data/sample/). Synthetic data in the published format of
 exporter; no vendor's internal tooling is implied.
 
 Usage:
-    python scripts/render_telemetry.py                    # write the four reports
+    python scripts/render_telemetry.py                    # write the five reports
     python scripts/render_telemetry.py --check            # exit 1 if a report is out of date
     python scripts/render_telemetry.py --robustness 60    # every agreement on 60 generated months
     python scripts/render_telemetry.py --robustness 60 --jobs 4 --resume build/robustness/telemetry
@@ -27,6 +27,7 @@ import time
 from datetime import date, timedelta
 from pathlib import Path
 
+import numpy as np
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,12 +39,14 @@ from scorecard import sitenav  # noqa: E402
 from scorecard import site_model as S  # noqa: E402
 from scorecard import telemetry as TM  # noqa: E402
 from scorecard import telemetry_cdu as TC  # noqa: E402
+from scorecard import telemetry_mechanical as TMM  # noqa: E402
 from scorecard import telemetry_network as TN  # noqa: E402
 from scorecard import telemetry_power as TP  # noqa: E402
 from scorecard import xid as X  # noqa: E402
 from scorecard.synthetic import gpu_health as G  # noqa: E402
 from scorecard.synthetic import telemetry as T  # noqa: E402
 from scorecard.synthetic import telemetry_cdu as TCS  # noqa: E402
+from scorecard.synthetic import telemetry_mechanical as TMS  # noqa: E402
 from scorecard.synthetic import telemetry_network as TNS  # noqa: E402
 from scorecard.synthetic import telemetry_power as TPS  # noqa: E402
 
@@ -155,6 +158,7 @@ def prepare(t: TM.Telemetry | None = None) -> dict:
         "cdu": prepare_cdu(gpu=t),
         "power": prepare_power(),
         "network": prepare_network(),
+        "mechanical": prepare_mechanical(),
     }
 
 
@@ -162,7 +166,7 @@ def prepare(t: TM.Telemetry | None = None) -> dict:
 DATA_CDU = ROOT / "data" / "telemetry" / "cdu"
 ENERGY = ROOT / "data" / "energy"
 OUT_CDU = ROOT / "reports" / "cdu_telemetry.md"
-PLANNED = ["Mechanical"]          # device families still to come: shown greyed in the selector
+PLANNED: list[str] = []          # device families still to come: shown greyed in the selector
 
 
 def load_cdu() -> TC.CduData:
@@ -848,6 +852,258 @@ def network_markdown(f: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+# --------------------------------------------------------------------------- mechanical
+DATA_MECH = ROOT / "data" / "telemetry" / "mechanical"
+OUT_MECH = ROOT / "reports" / "mechanical_telemetry.md"
+# Chiller modes for the plant heatmap, one code per chiller-hour
+MODES = {0: "Standby", 1: "Compressors only", 2: "Free cooling with compressors", 3: "Free cooling only", 4: "Tripped (Alarm Off)",
+         5: "Held off by the BMS"}
+
+
+def load_mech() -> TMM.MechData:
+    return TMM.load(DATA_MECH, hourly_dir().parent / "mechanical_minutes", SAMPLE, ENERGY, DATA_CDU, DATA_POWER)
+
+
+def chiller_mode(r: dict) -> int:
+    """The hour's mode: a trip or a BMS hold first, then how the running chiller carried its load."""
+    if int(r["alarm_min"]):
+        return 4
+    if int(r["bms_off_min"]):
+        return 5
+    if not int(r["run_min"]):
+        return 0
+    fc, mech = float(r["fc_kwh"]), float(r["mech_kwh"])
+    return 3 if fc > 0 and mech == 0 else 2 if fc > 0 else 1
+
+
+def _dur(a: int, b: int) -> str:
+    n = b - a
+    return f"{n} min" if n < 120 else f"{n / 60:.1f} h" if n < 48 * 60 else f"{n / 1440:.1f} days"
+
+
+def mechanical_events(t: TMM.MechData, cfg: dict) -> list[dict]:
+    """Each record span the telemetry carries, with what the readings show over it and the records that explain it."""
+    spans = TMM.record_spans(t)
+    lfind = {f["unit"]: f for f in json.loads((ROOT / "reports" / "landlord_findings.json").read_text(encoding="utf-8"))}
+    from scorecard import energy as N
+    from scorecard.synthetic.energy import load_config as energy_config
+    efind = N.analyse(N.load(), energy_config()).findings if t.dir == DATA_MECH else []
+    wo_outage = next((w["wo"] for w in _work_orders() if w.get("unit") == "138 kV utility service"), None)
+    chillers = t.devices("chiller")
+    stat = {v: k for k, v in cfg["chiller"]["unit_status"].items()}
+    out: list[dict] = []
+    at: dict[tuple[str, int], str] = {}
+    for s in t.states:
+        at.setdefault((s["device"], s["m"]), s["time"])
+
+    def add(dev: str, fam: str, kind: str, a: int, b: int, text: str, refs: list[str], finding: dict | None = None) -> None:
+        f = {"id": finding["id"], "title": finding["title"], "summary": finding.get("summary", "")} if finding else None
+        out.append({"t": at.get((dev, a), _iso(t, a)), "end": at.get((dev, b), _iso(t, b)) if b < t.M else None, "device": dev,
+                    "family": fam, "kind": kind,
+                    "text": text, "refs": list(dict.fromkeys(r for r in refs if r)), "finding": f, "m": a})
+
+    def lf(dev: str, refs: list[str]) -> dict | None:
+        f = lfind.get(dev)
+        return f if f and (not f.get("tickets") or any(r in refs for r in f["tickets"]) or dev.startswith("TW-")) else None
+
+    for dev in chillers:
+        sp, f = spans.get(dev, {}), t.minutes(dev)
+        for a, b, _ in sp.get("trip", []):
+            started = [c for c in chillers if c != dev and any(
+                int(t.minutes(c)["status"][m]) == stat["Local On"] and int(t.minutes(c)["status"][m - 1]) != stat["Local On"]
+                for m in range(max(1, a), min(t.M, a + 6)))]
+            hp = int(f["hp1_bar"][max(0, a - 1)]) / 10
+            refs = _power_refs(dev, [dev], _iso(t, a), _iso(t, b))
+            add(dev, "chiller", "trip", a, b,
+                f"Compressor trip: circuit 1 condensing pressure reached {hp:.1f} bar and BV 35 (High Condensing Pressure) went active; "
+                f"the unit read Alarm Off for {_dur(a, b)}" + (f", and {', '.join(started)} started to carry its load" if started else ""),
+                refs, lf(dev, refs))
+        for a, b, rec in sp.get("off", []):
+            refs = [rec.get("change_ref", "")] + _power_refs(dev, [dev], _iso(t, a), _iso(t, b))
+            add(dev, "chiller", "hold", a, b, f"BMS hold: Chiller enable written Off at priority 8 (Manual Operator) for {_dur(a, b)}; "
+                f"the unit read BMS Off with no load while the other chillers carried the plant, then the write was relinquished", refs)
+        for a, b, rec in sp.get("fan100", []):
+            add(dev, "chiller", "fan100", a, b, f"Condenser fan override: the BMS held the condenser fans at 100% for {_dur(a, b)}",
+                [rec.get("change_ref", "")])
+        for a, b, rec in sp.get("lock", []):
+            ran = f["cap_kw"][a:b] > 0
+            others = np.zeros(b - a, dtype=bool)
+            for c in chillers:
+                if c != dev:
+                    others |= t.minutes(c)["fc"][a:b] == 1
+            both = int((ran & others).sum())
+            note = rec.get("note", "")
+            refs = re.findall(r"\bPM-\d+\b", note)
+            fi = next((x for x in efind if dev in x.title and "ree cooling" in x.title), None)
+            add(dev, "chiller", "lockout", a, b,
+                f"Free cooling inhibited (Stop or Inhibit FC activation = 1) for {_dur(a, b)}: the chiller ran {int(ran.sum()) / 60:.0f} h "
+                f"on its compressors only" + (f", {both / 60:.0f} h of them while the other running chillers were free cooling" if both >= 60
+                                                 else ", and the weather allowed little free cooling on the others meanwhile"),
+                refs, {"id": fi.id, "title": fi.title} if fi else None)
+    for dev in t.devices("wall") + t.devices("crah"):
+        sp, f = spans.get(dev, {}), t.minutes(dev)
+        fam = t.manifest["devices"][dev]["family"]
+        for a, b, fan in sp.get("fan", []):
+            refs = _power_refs(dev, [dev], _iso(t, a), _iso(t, b))
+            add(dev, fam, "fan", a, b, f"Fan {fan} failed (FanSts_OV[{fan}] Alarm, Al_EvpFan active) for {_dur(a, b)}: the other five ran at "
+                f"up to {int(f['fan_pct'][a:b].max())}% and held supply air at up to {int(f['sup_c'][a:b].max()) / 100:.1f} C", refs)
+        for a, b, rec in sp.get("inhibit", []):
+            hi = cfg["air"]["high_supply_c"]
+            add(dev, fam, "inhibit", a, b,
+                f"High supply temperature alarm inhibited (Event_Algorithm_Inhibit TRUE) for {_dur(a, b)} with no change record: supply air "
+                f"read {int(f['sup_c'][a:b].min()) / 100:.1f} to {int(f['sup_c'][a:b].max()) / 100:.1f} C over the span, under the "
+                f"{hi:.0f} C limit, so the inhibit hid no excursion", [rec.get("change_ref", "")], lf(dev, []))
+    pf = stat["Power Failure"]
+    for s in (x for x in t.states if x["device"] == "SITE" and x["value"].startswith("Trip")):
+        a = s["m"]
+        hit = [c for c in chillers if (t.minutes(c)["status"][a:a + 30] == pf).any()]
+        if not hit:
+            continue
+        full = [int(t.minutes(c)["cap_kw"][a - 1]) for c in hit]
+        back = max(next(i for i in range(1, 60) if int(t.minutes(c)["cap_kw"][a + i]) >= 0.95 * v) for c, v in zip(hit, full)) + 1
+        sup = t.minutes("FW-LOOP")["supply_c"]
+        rise = (int(sup[a:a + 20].max()) - int(sup[a - 5:a].mean())) / 100
+        add("SITE", "site", "outage", a, a + back,
+            f"Utility outage: the {len(hit)} running chillers read Power Failure until the generators carried the plant, and Quick Start "
+            f"had them back to full capacity {back} min later; meanwhile the water in the loop took the heat, and the supply header "
+            f"warmed {rise:.1f} C and recovered", [wo_outage] if wo_outage else [])
+    return sorted(out, key=lambda e: (e["t"], e["device"]))
+
+
+def _iso(t: TMM.MechData, m: int) -> str:
+    return (t.start + timedelta(minutes=m)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def prepare_mechanical(t: TMM.MechData | None = None) -> dict:
+    from scorecard.synthetic.energy import load_config as energy_config
+    cfg, ecfg = TMS.load_config(), energy_config()
+    t = t or load_mech()
+    site = S.load_site()
+    checks = TMM.agreements(t, cfg, ecfg, site)
+    H = t.M // 60
+    fl = lambda rows, k: [float(r[k]) for r in rows]          # noqa: E731
+    by = lambda rows, key: {k: [r for r in rows if r[key] == k] for k in dict.fromkeys(r[key] for r in rows)}   # noqa: E731
+    met = [t.meters[t.hour(k)] for k in range(H)]
+    loop = t.loop_hourly
+    chs = by(t.chiller_hourly, "chiller")
+    chillers = []
+    for c, rows in chs.items():
+        run = sum(int(r["run_min"]) for r in rows)
+        kwh, cap = sum(fl(rows, "kwh")), sum(fl(rows, "cap_kwh"))
+        chillers.append({"id": c, "run_h": round(run / 60, 1), "fc_h": round(sum(int(r["fc_min"]) for r in rows) / 60, 1),
+                         "mwh": round(kwh / 1000, 1), "cap_mwh": round(cap / 1000, 1), "cop": round(cap / kwh, 2) if kwh else None,
+                         "fc_share": round(100 * sum(fl(rows, "fc_kwh")) / cap, 1) if cap else 0,
+                         "alarm_min": sum(int(r["alarm_min"]) for r in rows), "off_min": sum(int(r["bms_off_min"]) for r in rows),
+                         "inhibit_h": round(sum(int(r["inhibit_min"]) for r in rows) / 60, 1),
+                         "hp_max": max(fl(rows, "hp_max_bar")), "mode": "".join(str(chiller_mode(r)) for r in rows),
+                         "inhibit": "".join("1" if int(r["inhibit_min"]) else "0" for r in rows)})
+    pumps = []
+    for p, rows in by(t.pump_hourly, "pump").items():
+        runs = [r for r in rows if int(r["run_min"])]
+        pumps.append({"id": p, "run_h": round(sum(int(r["run_min"]) for r in rows) / 60, 1), "mwh": round(sum(fl(rows, "kwh")) / 1000, 1),
+                      "speed_avg": round(sum(fl(runs, "speed_pct")) / len(runs), 1) if runs else 0,
+                      "flow_avg": round(sum(fl(runs, "flow_lps")) / len(runs), 1) if runs else 0})
+    air = []
+    for u, rows in by(t.air_hourly, "unit").items():
+        air.append({"id": u, "hall": rows[0]["hall"], "kind": rows[0]["kind"], "sup_avg": round(sum(fl(rows, "sup_c")) / H, 2),
+                    "sup_max": max(fl(rows, "sup_max_c")), "ret_avg": round(sum(fl(rows, "ret_c")) / H, 2),
+                    "fan_avg": round(sum(fl(rows, "fan_pct")) / H, 1), "load_avg_kw": round(sum(fl(rows, "load_kwh")) / H, 1),
+                    "kw_avg": round(sum(fl(rows, "kwh")) / H, 2), "mwh": round(sum(fl(rows, "kwh")) / 1000, 2),
+                    "fans_min": min(int(r["fans_min"]) for r in rows), "alarm_min": sum(int(r["alarm_min"]) for r in rows),
+                    "inhibit_h": round(sum(int(r["inhibit_min"]) for r in rows) / 60, 1)})
+    halls = {}
+    for h in site["halls"]:
+        mine = [a for a in air if a["hall"] == h["id"]]
+        c = h["cooling"]
+        halls[h["id"]] = {"name": h["name"], "state": h["state"], "walls": [a["id"] for a in mine if a["kind"] == "wall"],
+                          "crahs": [a["id"] for a in mine if a["kind"] == "crah"],
+                          "wall_count": c.get("thermal_wall_count", 0), "crah_count": c.get("electrical_room_crah_count", 0),
+                          "wall_load_kw": round(sum(a["load_avg_kw"] for a in mine if a["kind"] == "wall"), 1),
+                          "wall_kw": round(sum(a["kw_avg"] for a in mine if a["kind"] == "wall"), 1)}
+    events = mechanical_events(t, cfg)
+    afc = S.product(site, "liebert_afc_1500")
+    return {"framing": cfg["framing"], "sources": cfg["sources"], "collection": cfg["collection"], "objects": cfg["objects"],
+            "enums": {"chiller_status": {str(k): v for k, v in cfg["chiller"]["unit_status"].items()},
+                      "compressor": {str(k): v for k, v in cfg["chiller"]["compressor_status"].items()},
+                      "air_status": {str(k): v for k, v in cfg["air"]["unit_status"].items()},
+                      "fan_status": {str(k): v for k, v in cfg["air"]["fan_status"].items()}},
+            "modes": {str(k): v for k, v in MODES.items()}, "window": t.manifest["window"], "hours": H,
+            "limits": {"hp_alarm_bar": cfg["chiller"]["hp_alarm_bar"], "high_supply_c": cfg["air"]["high_supply_c"],
+                       "supply_setpoint_c": cfg["air"]["supply_setpoint_c"], "chw_setpoint_c": cfg["chiller"]["setpoint_c"],
+                       "dp_setpoint_kpa": cfg["pump"]["dp_setpoint_kpa"], "fans_per_wall": cfg["air"]["fans_per_wall"]},
+            "free_cooling_c": [ecfg["plant"]["free_cooling_full_below_c"], ecfg["plant"]["free_cooling_none_above_c"]],
+            "chiller_model": afc["model"], "chiller_kw": afc["capacity_kw"], "refrigerant": cfg["chiller"]["refrigerant"],
+            "plant": {"outdoor": [float(m["outdoor_c"]) for m in met], "supply": fl(loop, "supply_c"), "return": fl(loop, "return_c"),
+                      "flow": fl(loop, "flow_lps"), "heat": fl(loop, "heat_kwh"), "running": [int(r["chillers_running"]) for r in loop],
+                      "needed": [int(r["chillers_needed"]) for r in loop], "dp": fl(loop, "dp_kpa"),
+                      "chillers_kw": [float(m["chillers_kwh"]) for m in met], "pumps_kw": [float(m["pumps_kwh"]) for m in met]},
+            "chillers": chillers, "pumps": pumps, "air": air, "halls": halls, "events": events, "windows": t.manifest["windows"],
+            "loop": {"supply_avg": round(sum(fl(loop, "supply_c")) / H, 2), "return_avg": round(sum(fl(loop, "return_c")) / H, 2),
+                     "flow_avg": round(sum(fl(loop, "flow_lps")) / H, 1), "flow_peak": max(fl(loop, "flow_lps")),
+                     "heat_mwh": round(sum(fl(loop, "heat_kwh")) / 1000, 1), "heat_peak_kw": max(fl(loop, "heat_kwh")),
+                     "running_max": max(int(r["chillers_running"]) for r in loop), "running_min": min(int(r["chillers_running"]) for r in loop),
+                     "chillers_mwh": round(sum(float(m["chillers_kwh"]) for m in met) / 1000, 1),
+                     "pumps_mwh": round(sum(float(m["pumps_kwh"]) for m in met) / 1000, 1)},
+            "agreements": [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks],
+            "misses": [m for c in checks for m in c.misses][:20]}
+
+
+def mech_json(t: TMM.MechData, device: str) -> dict:
+    """One machine's month by hour (from the committed hourly tables): what its view charts."""
+    fam = t.manifest["devices"][device]["family"]
+    table, key, cols = {"chiller": (t.chiller_hourly, "chiller", TMS.CHILLER_HOURLY), "pump": (t.pump_hourly, "pump", TMS.PUMP_HOURLY),
+                        "loop": (t.loop_hourly, None, TMS.LOOP_HOURLY), "wall": (t.air_hourly, "unit", TMS.AIR_HOURLY),
+                        "crah": (t.air_hourly, "unit", TMS.AIR_HOURLY)}[fam]
+    rows = [r for r in table if key is None or r[key] == device]
+    keep = [c for c in cols if c not in ("hour", "chiller", "pump", "unit", "hall", "kind")]
+    num = lambda v: v if not re.fullmatch(r"-?\d+(\.\d+)?", v) else float(v) if "." in v else int(v)    # noqa: E731
+    return {"device": device, "family": fam, "start": t.manifest["window"]["start"], "hours": len(rows),
+            "series": {c: [num(r[c]) for r in rows] for c in keep}}
+
+
+def mechanical_markdown(f: dict) -> str:
+    w, lp = f["window"], f["loop"]
+    L = ["# Mechanical telemetry (Site AUS-1, synthetic)", "",
+         f"{f['framing']} Window {day(w['start'])} to {day(w['end'])}: one read a minute of every chiller, facility water pump, the "
+         "facility water loop, every thermal wall, and every electrical-room CRAH, over BACnet/IP from the Landlord's BMS server. "
+         "All names and readings are fictional; no vendor's internal tooling is implied.", "",
+         "Generator: scripts/generate_telemetry.py, scripts/render_telemetry.py", "",
+         "The series split the hourly energy meters into each machine. Each hall's thermal walls carry the heat its CDUs do not "
+         "(the racks' air-side heat), and their fans plus the CDUs' pumps are that hall's mechanical UPS load. The chillers "
+         "carry everything the plant rejects, staged by load with a weekly lead rotation.", "",
+         "## Plant", "", "| Measure | Value |", "|---|---|",
+         f"| Chillers | {len(f['chillers'])} x {f['chiller_model']} ({f['refrigerant']}) |",
+         f"| Running | {lp['running_min']} to {lp['running_max']} at once |",
+         f"| Facility water supply / return, mean | {lp['supply_avg']} C / {lp['return_avg']} C |",
+         f"| Loop flow, mean / peak | {lp['flow_avg']} / {lp['flow_peak']} L/s |",
+         f"| Heat rejected | {lp['heat_mwh']:,} MWh (peak {lp['heat_peak_kw']:,.0f} kW) |",
+         f"| Chiller energy | {lp['chillers_mwh']:,} MWh |", f"| Pump energy | {lp['pumps_mwh']:,} MWh |", "",
+         "## Chillers", "", "| Chiller | Running h | Free cooling h | Energy MWh | Heat MWh | Heat per kWh | Free-cooling share | "
+         "Highest condensing bar | Tripped min | Held off min | FC inhibited h |", "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for c in f["chillers"]:
+        L.append(f"| {c['id']} | {c['run_h']} | {c['fc_h']} | {c['mwh']} | {c['cap_mwh']} | {c['cop'] if c['cop'] else ''} | {c['fc_share']}% | "
+                 f"{c['hp_max']} | {c['alarm_min']} | {c['off_min']} | {c['inhibit_h']} |")
+    L += ["", "## Facility water pumps", "", "| Pump | Running h | Energy MWh | Speed when running % | Flow when running L/s |", "|---|---:|---:|---:|---:|"]
+    for p in f["pumps"]:
+        L.append(f"| {p['id']} | {p['run_h']} | {p['mwh']} | {p['speed_avg']} | {p['flow_avg']} |")
+    L += ["", "## Thermal walls and CRAHs", "", "| Unit | Hall | Supply air mean / max C | Return air mean C | Fan speed mean % | "
+          "Cooling mean kW | Draw mean kW | Fewest fans running | Fan alarm min | Alarm inhibited h |", "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for a in f["air"]:
+        L.append(f"| {a['id']} | {f['halls'][a['hall']]['name']} | {a['sup_avg']} / {a['sup_max']} | {a['ret_avg']} | {a['fan_avg']} | "
+                 f"{a['load_avg_kw']} | {a['kw_avg']} | {a['fans_min']} | {a['alarm_min']} | {a['inhibit_h']} |")
+    L += ["", "## Events", "", "| From | To | Device | What | Records |", "|---|---|---|---|---|"]
+    for e in f["events"]:
+        refs = list(e["refs"]) + ([e["finding"]["id"]] if e.get("finding") else [])
+        L.append(f"| {e['t']} | {e.get('end') or ''} | {e['device']} | {e['text']} | {', '.join(refs)} |")
+    L += ["", "## Agreement with the records", "", "| Check | Agrees |", "|---|---:|"]
+    for a in f["agreements"]:
+        L.append(f"| {a['title']} | {a['checked'] - a['misses']:,} of {a['checked']:,} |")
+    if f["misses"]:
+        L += ["", "Disagreements:", ""] + [f"- {m}" for m in f["misses"]]
+    L += ["", "## Sources", ""] + [f"- {s['name']}: {s['url']} (checked {s['checked']})" for s in f["sources"]]
+    return "\n".join(L) + "\n"
+
+
 def racks_json(t: TM.Telemetry) -> dict:
     """Per rack per hour, from rack_hourly.csv, plus the CDU supply per hour (the page's fleet view)."""
     hours = t.hourly[next(iter(t.hourly))]["hours"]
@@ -877,7 +1133,8 @@ def html_page(f: dict | None = None) -> str:
 
 def write_site(out: Path) -> None:
     """out/index.html plus the files the page fetches: data/racks.json, data/gpu/<rack>.json, data/windows/*.json, and the
-    CDU, power, and network files (data/network/<leaf>.json, nvlink_<rack>.json, windows/)."""
+    CDU, power, network, and mechanical files (data/network/<leaf>.json, nvlink_<rack>.json, data/mechanical/<device>.json,
+    windows/)."""
     t = load()
     out.mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_text(html_page(prepare(t)), encoding="utf-8", newline="\n")
@@ -918,6 +1175,16 @@ def write_site(out: Path) -> None:
         if name.startswith("nvlink_"):
             shutil.copy2(nt.minutes_dir / name, data / "network" / name)
     shutil.copytree(DATA_NET / "windows", data / "network" / "windows")
+    mt = load_mech()
+    for sub in ("mechanical", "mechanical_minutes"):
+        if (data / sub).exists():
+            shutil.rmtree(data / sub)
+        (data / sub).mkdir(parents=True)
+    for d in sorted(mt.manifest["devices"]):
+        (data / "mechanical" / f"{d}.json").write_text(json.dumps(mech_json(mt, d), separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
+    for name in mt.manifest["minutes"]:
+        shutil.copy2(mt.minutes_dir / name, data / "mechanical_minutes" / name)
+    shutil.copytree(DATA_MECH / "windows", data / "mechanical" / "windows")
 
 
 def markdown(f: dict) -> str:
@@ -956,16 +1223,17 @@ def markdown(f: dict) -> str:
 
 
 def robustness_month(k: int, keep: Path | None = None) -> dict:
-    """Every GPU, CDU, power, and network agreement on generated month k (its own dataset, GPU Health layer, telemetry, and
-    energy meters, in a temporary folder, or in keep to look at afterwards)."""
+    """Every GPU, CDU, power, network, and mechanical agreement on generated month k (its own dataset, GPU Health layer,
+    telemetry, and energy meters, in a temporary folder, or in keep to look at afterwards)."""
     import contextlib
     from scorecard.sla_model import load_sla
     from scorecard.synthetic import SiteGenerator, write_dataset
-    from scorecard.synthetic.energy import EnergyLayer, load_config as energy_config, write_energy
+    from types import SimpleNamespace
+    from scorecard.synthetic.energy import EnergyLayer, follow_devices, load_config as energy_config, write_energy
     syn = yaml.safe_load((ROOT / "config" / "synthetic.yaml").read_text(encoding="utf-8"))
     from scorecard import devices as DV
     cfg, hcfg, ccfg, ecfg, pcfg = T.load_config(), G.load_config(), TCS.load_config(), energy_config(), TPS.load_config()
-    ncfg = TNS.load_config()
+    ncfg, mcfg = TNS.load_config(), TMS.load_config()
     with (contextlib.nullcontext(str(keep)) if keep else tempfile.TemporaryDirectory()) as tmp:
         d = Path(tmp)
         write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
@@ -973,9 +1241,15 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         pub = T.Published(T.GpuTelemetry(d, d / "gpu_health", 2000 + k, cfg, hcfg)).run()
         T.write_telemetry(pub, d / "telemetry", "", d / "hourly")
         checks = TM.agreements(TM.load(d / "telemetry", d / "hourly", d / "gpu_health", d), cfg, hcfg)
-        write_energy(EnergyLayer(d, 2000 + k, ecfg, rack_hourly=d / "telemetry" / "rack_hourly.csv").run(), d / "energy")
-        layer = TCS.CduTelemetry(pub.tel, pub, d / "energy", None, ccfg)
-        TCS.write_cdu(layer, layer.run(), d / "cdu", "", d / "cdu_min")
+        built: dict = {}
+
+        def cdu_build(edir: Path) -> SimpleNamespace:
+            built["layer"] = TCS.CduTelemetry(pub.tel, pub, edir, None, ccfg)
+            TCS.write_cdu(built["layer"], built["layer"].run(), d / "cdu", "", d / "cdu_min")
+            return SimpleNamespace(dir=d / "cdu")
+        el = EnergyLayer(d, 2000 + k, ecfg, rack_hourly=d / "telemetry" / "rack_hourly.csv")
+        write_energy(follow_devices(el, None, d / "energy", cdu_build)[0], d / "energy")
+        layer = built["layer"]
         cchecks = TC.agreements(TC.load(d / "cdu", d / "cdu_min", d / "gpu_health", d, d / "energy", d / "telemetry"), ccfg, hcfg)
         power = TPS.PowerTelemetry(pub.tel, pub, d / "energy", pcfg, energy_cfg=ecfg, rack_rest=ccfg["rack_rest"])
         TPS.write_power(power, power.run(), d / "power", "", d / "power_min")
@@ -983,12 +1257,17 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         net = TNS.NetworkTelemetry(pub.tel, pub, ncfg)
         TNS.write_network(net, net.run(), d / "network", "", d / "net_min")
         nchecks = TN.agreements(TN.load(d / "network", d / "net_min", d, d / "hourly"), ncfg, DV.load())
+        mech = TMS.MechanicalTelemetry(d, 2000 + k, d / "energy", d / "cdu", mcfg, energy_cfg=ecfg)
+        TMS.write_mechanical(mech, mech.run(), d / "mechanical", "", d / "mech_min")
+        mchecks = TMM.agreements(TMM.load(d / "mechanical", d / "mech_min", d, d / "energy", d / "cdu", d / "power"), mcfg, ecfg, S.load_site())
     conflicts = [f"records disagree with each other: {pub.conflicts[:3]}"] * bool(pub.conflicts) \
         + [f"CDU records disagree with each other: {layer.conflicts[:3]}"] * bool(layer.conflicts) \
         + [f"power records disagree with each other: {power.conflicts[:3]}"] * bool(power.conflicts) \
-        + [f"network records disagree with each other: {net.conflicts[:3]}"] * bool(net.conflicts)
+        + [f"network records disagree with each other: {net.conflicts[:3]}"] * bool(net.conflicts) \
+        + [f"mechanical records disagree with each other: {mech.conflicts[:3]}"] * bool(mech.conflicts)
     pack = lambda cs: {c.name: [c.checked - len(c.misses), c.checked, c.misses[:3]] for c in cs}      # noqa: E731
-    return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "network": pack(nchecks), "conflicts": conflicts}
+    return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "network": pack(nchecks), "mechanical": pack(mchecks),
+            "conflicts": conflicts}
 
 
 def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
@@ -1020,7 +1299,8 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
             keep(robustness_month(k))
     bad = 0
     ok = True
-    for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("network", "Network", 14)):
+    for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("network", "Network", 14),
+                         ("mechanical", "Mechanical", 12)):
         tot: dict[str, list[int]] = {}
         for k in range(n):
             if fam not in done[k]:
@@ -1053,7 +1333,8 @@ def main() -> int:
     if args.robustness:
         return robustness(args.robustness, args.jobs, args.resume)
     f = prepare()
-    texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"]), OUT_NET: network_markdown(f["network"])}
+    texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"]), OUT_NET: network_markdown(f["network"]),
+             OUT_MECH: mechanical_markdown(f["mechanical"])}
     if args.check:
         stale = [p for p, text in texts.items() if not p.exists() or p.read_text(encoding="utf-8") != text]
         for p in stale:
@@ -1062,7 +1343,7 @@ def main() -> int:
     for p, text in texts.items():
         p.write_text(text, encoding="utf-8", newline="\n")
     for name, a in (("GPU", f["agreements"]), ("CDU", f["cdu"]["agreements"]), ("Power", f["power"]["agreements"]),
-                    ("Network", f["network"]["agreements"])):
+                    ("Network", f["network"]["agreements"]), ("Mechanical", f["mechanical"]["agreements"])):
         ok = sum(x["checked"] - x["misses"] for x in a)
         print(f"{name}: {len(a)} agreements, {ok:,} of {sum(x['checked'] for x in a):,} cases agree")
     print("Wrote " + ", ".join(str(p.relative_to(ROOT)) for p in texts))

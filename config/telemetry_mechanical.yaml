@@ -1,0 +1,169 @@
+# Mechanical telemetry for Site AUS-1 (synthetic; portfolio demo). Phase 2d of the Telemetry tab.
+#
+# The chiller plant, the facility water loop, the thermal walls, and the electrical-room CRAHs, read the way
+# site/site.yaml says the Customer reads them: BACnet/IP from the Landlord's EcoStruxure Building Operation
+# server (the BMS feed), which serves each unit controller's points as its own BACnet objects. The point names
+# are the ones the manufacturer publishes:
+#   * Chillers (Vertiv Liebert AFC): the AFC runs Vertiv's Liebert iCOM 3 "V1C" control application (AFC
+#     installer guide). Vertiv publishes the V1C points list as the CoolLoop Chiller Screw Communication Points
+#     List (80340 Rev A): point names, Modbus registers, and the BACnet binary values for its alarms. The names
+#     are used here on that basis, and the page says so.
+#   * Thermal walls (Liebert CWA) and CRAHs (Liebert CW): Liebert iCOM 3 chilled-water application points as
+#     published in the Liebert PDX and PCW V1A Application Monitoring Guide. Vertiv publishes no list for the
+#     CWA; the page says the PCW names are used.
+#   * Facility water pumps: the drive is "to be selected" in site/site.yaml, so the pump points are plain
+#     ASHRAE 135 objects with names marked an assumption.
+# Object instances are this site's EBO mapping (an assumption), except the V1C alarm binary values, whose
+# instances Vertiv publishes. Every number below is an assumption for the demo ("basis: assumption") unless a
+# public source is named. The series split the hourly energy meters (data/energy) into each machine and are
+# shaped to agree with every mechanical record already in data/sample, data/energy, the CDU telemetry, and the
+# power telemetry (src/scorecard/telemetry_mechanical.py holds the agreements).
+# Read by src/scorecard/synthetic/telemetry_mechanical.py (the data) and src/scorecard/telemetry_mechanical.py (the agreements).
+
+framing: "Synthetic mechanical telemetry over BACnet/IP, with the point names Vertiv publishes for its iCOM controllers."
+sources:
+  - {name: "Vertiv, CoolLoop Chiller Screw Communication Points List, 80340 Rev A (iCOM 3, V1C application; BACnet/IP B-ASC, Modbus TCP, SNMP)", url: "https://www.vertiv.com/4aad3b/globalassets/shared/80340-coolloop-chiller-screw-communication-rev-a_10-25.pdf", checked: "2026-10-11"}
+  - {name: "Vertiv, Liebert AFC packaged air-cooled free-cooling chiller installer guide (iCOM V1C control application, two screw circuits)", url: "https://www.vertiv.com/49c08b/globalassets/shared/liebert--afc-packaged-air-cooled-free-cooling-chiller-installer-guide-sl-70790.pdf", checked: "2026-10-11"}
+  - {name: "Vertiv, Liebert PDX and Liebert PCW V1A Application Monitoring Installer/User Guide for Liebert iCOM 3 (chilled-water point names)", url: "https://www.vertiv.com/49d3e3/globalassets/products/thermal-management/room-cooling/liebert-pdx-and-liebert-pcw-v1a-application-monitoring-user-guide-installeruser-guide-for-liebert-icom-3.pdf", checked: "2026-10-11"}
+  - {name: "Vertiv, Liebert CWA chilled water thermal wall (200 to 500 kW)", url: "https://www.vertiv.com/en-us/products-catalog/thermal-management/room-cooling/liebert-cwa-chilled-water-thermal-wall-unit-from-200-to-500kw/", checked: "2026-10-11"}
+  - {name: "BACnet International, ANSI/ASHRAE 135-2024 published (the current edition)", url: "https://bacnet.org/news/ansi-ashrae-135-2024-now-published/", checked: "2026-10-11"}
+  - {name: "ASHRAE 135 engineering units, status flags, and reliability enumerations as encoded in BACpypes", url: "https://github.com/JoelBender/bacpypes/blob/master/py34/bacpypes/basetypes.py", checked: "2026-10-11"}
+  - {name: "Vertiv Unity card BACnet PICS (BACnet International listing)", url: "https://www.bacnetinternational.net/catalog/manu/vertiv/BACnet-PICS-Unity-20170711.pdf", checked: "2026-10-11"}
+
+collection:
+  protocol: "BACnet/IP (UDP 47808), ReadPropertyMultiple, read-only"
+  server: "EBO (EcoStruxure Building Operation), the Landlord's BMS; site/site.yaml customer_tap: BMS feed"
+  poll_interval_s: 60               # the Customer's collector reads every mechanical object once a minute
+  controller_profile: "B-ASC (V1C points list, protocol revision 19)"
+
+# The plant (site/site.yaml: 11 Liebert AFC 1,500 kW, N+1; 3 facility water pumps, 2 duty; one 20 C / 30 C loop).
+chiller:
+  rotation_hours: 168               # lead/lag: the lead chiller moves on by 3 places each week (basis: assumption)
+  rotation_step: 3
+  start_delay_min: 2                # a standby chiller is running this long after it is called (basis: assumption)
+  refrigerant: "R-513A"             # AFC installer guide: R-513A charge tables
+  # Saturation pressure, ln(P bar abs) = a - b / T(K); fitted to published R-513A tables at 0 C and 60 C (basis: rounded)
+  sat_a: 10.424
+  sat_b: 2521.0
+  condensing_approach_k: [8.0, 16.0]    # condensing over ambient, light to full mechanical load (basis: assumption)
+  evaporating_below_outlet_k: 4.0       # evaporating under the leaving water (basis: assumption)
+  hp_alarm_bar: 20.0                # high condensing pressure trip, gauge (basis: assumption)
+  trip_ramp_min: 18                 # condensing pressure climbs to the trip over this long (basis: assumption)
+  quick_start_min: 3                # after a power interruption the V1C Quick Start brings compressors back (basis: assumption)
+  outage_rise_c: 0.8                # the supply header warms this much while the chillers restart after an outage (basis: assumption)
+  setpoint_c: 20.0                  # Current Temperature Setpoint (site/site.yaml supply 20 C)
+  fan_speed_fc_pct: [35, 100]       # condenser fans from little to full free cooling (basis: assumption)
+  fan_speed_mech_pct: [45, 100]     # condenser fans from light to full mechanical load (basis: assumption)
+  outlet_sd_c: 0.08                 # each running chiller's leaving water around the header (basis: assumption)
+  # V1C "Unit Status" (input register 49201): the published enumeration
+  unit_status: {0: "Local On", 2: "Local Off", 3: "Remote Off", 6: "Manual", 7: "Alarm Off", 8: "Power Failure", 9: "Alarm On",
+                10: "Warning On", 11: "System Off", 12: "Standby", 14: "BMS Off"}
+  # V1C compressor status (49215 and 49218): the published enumeration
+  compressor_status: {0: "N.A.", 1: "ON", 2: "MTN", 3: "OFF", 4: "ALARM", 10: "STARTING", 11: "LOADING", 12: "LOADED", 13: "UNLOADING", 14: "UNLOADED"}
+  # V1C pump status (49208 to 49210): this plant has central facility water pumps, so the chiller's own pumps are N.A.
+  pump_status: {0: "N.A.", 1: "ON", 2: "Maintenance", 3: "OFF", 4: "Alarm", 5: "Starting", 6: "Stopping"}
+
+pump:
+  design_dt_k: 10.0                 # site/site.yaml loop 20 C supply / 30 C return
+  dp_setpoint_kpa: 150.0            # plant differential pressure setpoint (basis: assumption)
+  rotation_hours: 168               # the standby pump changes weekly (basis: assumption)
+  motor_hz: 60.0
+
+air:
+  fans_per_wall: 6                  # iCOM 3 chilled-water monitoring publishes evaporator fan status FanSts_OV[1] to [6]
+  wall_fan_kw_max: 20.0             # site/site.yaml liebert_cwa_400 power_kw (EC fan power), at full speed
+  wall_speed_min: 0.45              # walls hold cold-aisle pressure; they never slow below this (basis: assumption)
+  wall_speed_per_load: 1.2          # speed = min + this x load fraction (basis: assumption)
+  wall_controls_kw: 0.3             # controller, valve actuator, sensors (basis: assumption)
+  wall_design_dt_air_k: 12.0        # air rise across the hall at full airflow and full load (basis: assumption)
+  crah_fan_pct: 80.0                # electrical-room CRAHs run at a fixed speed (basis: assumption)
+  crah_design_dt_air_k: 10.0
+  supply_setpoint_c: 25.0           # Cfg_supSetP: supply air setpoint (ASHRAE recommended inlet range 18 to 27 C)
+  high_supply_c: 30.0               # Cfg_supHiTThrs: high supply temperature event limit (basis: assumption)
+  supply_sd_c: 0.15
+  water_dt_k: 9.0                   # chilled-water valve holds about this rise across the coil (basis: assumption)
+  return_rh_pct: [38.0, 46.0]       # return humidity (basis: assumption)
+  fan_failed_bump_c: 0.3            # supply air rises this much while the other fans pick up a failed fan (basis: assumption)
+  # Fan status labels (FanSts_OV[n]); the guide's enumeration table is not in the public excerpt, so these are this demo's
+  fan_status: {0: "Off", 1: "On", 2: "Alarm"}
+  # iCOM UnitStatus (holding register 280): the published enumeration (0 to 17)
+  unit_status: {0: "display off", 1: "remote off", 2: "three-position switch off", 3: "monitoring off", 4: "timer off", 5: "alarm off",
+                6: "shutdown delay", 7: "standby", 8: "TR standby", 9: "alarm standby", 10: "fan-back", 11: "unit on", 12: "warning on",
+                13: "alarm on", 14: "damper opening", 15: "power fail", 16: "manual", 17: "restart delay"}
+
+water:
+  density_kg_per_l: 1.0
+  cp_kj_per_kg_k: 4.18
+air_props:
+  density_kg_per_m3: 1.2
+  cp_kj_per_kg_k: 1.006
+
+# BACnet objects as the EBO server presents them. type and instance: this site's mapping (an assumption) unless
+# "published" names Vertiv's own; units: the ASHRAE 135 engineering-units name; scale: stored as value x scale.
+objects:
+  chiller:
+    - {key: status, type: multi-state-value, instance: 1, name: "Unit Status", vendor: "BMS_UnitSts", modbus: "IR 49201", units: "", scale: 1, help: "The V1C unit status: Local On while it runs, Standby while it waits to be called, BMS Off while the BMS holds it off, Alarm Off after a trip."}
+    - {key: enable, type: binary-value, instance: 1, name: "Chiller enable", vendor: "BmsOnOffCmd", modbus: "HR 45101", units: "", scale: 1, commandable: true, help: "The BMS's run permission (Unit ON/OFF). Commandable: a write at priority 8 (Manual Operator) overrides the plant's automatic staging."}
+    - {key: setp_c, type: analog-value, instance: 1, name: "Current Temperature Setpoint", vendor: "W_Reg_UserSetP", modbus: "IR 49202", units: "degrees-celsius", scale: 10, help: "Leaving water setpoint."}
+    - {key: inlet_c, type: analog-input, instance: 1, name: "Unit Inlet Temperature", vendor: "UnitInletTempVal", modbus: "IR 49203", units: "degrees-celsius", scale: 100, help: "Facility water returning from the halls."}
+    - {key: outlet_c, type: analog-input, instance: 2, name: "Unit Outlet Temperature", vendor: "EvapOutletTempVal", modbus: "IR 49205", units: "degrees-celsius", scale: 100, help: "Facility water leaving the chiller to the halls."}
+    - {key: ambient_c, type: analog-input, instance: 3, name: "Ambient Temperature", vendor: "AmbAirTempVal", modbus: "IR 49206", units: "degrees-celsius", scale: 10, help: "Outdoor air at the chiller's coils: below the return water temperature, free cooling can take some of the load."}
+    - {key: fc, type: binary-input, instance: 1, name: "Status of Freecooling", vendor: "FC_Active", modbus: "IR 49207", units: "", scale: 1, help: "1 while the free-cooling coils take load."}
+    - {key: fc_inhibit, type: binary-value, instance: 2, name: "Stop or Inhibit FC activation", vendor: "gfBmsStopFC", modbus: "HR 45152", units: "", scale: 1, commandable: true, help: "1 while free cooling is held off. Locked out for maintenance work and released after it."}
+    - {key: fc_valve_pct, type: analog-input, instance: 4, name: "Freecooling Valve Position Request", vendor: "FC_Info.FC_VlvReq", modbus: "IR 49211", units: "percent", scale: 10, help: "How far the free-cooling valve is open."}
+    - {key: fan1_pct, type: analog-input, instance: 5, name: "Circuit 1 Fans Speed Request", vendor: "FanSpeed[1]", modbus: "IR 49212", units: "percent", scale: 1, help: "Condenser and free-cooling coil fans, circuit 1."}
+    - {key: fan2_pct, type: analog-input, instance: 6, name: "Circuit 2 Fans Speed Request", vendor: "FanSpeed[2]", modbus: "IR 49213", units: "percent", scale: 1, help: "Condenser and free-cooling coil fans, circuit 2."}
+    - {key: cmp1, type: multi-state-input, instance: 1, name: "Compressor 1 Circuit 1 Status", vendor: "BMS_Cmp_Sts[1]", modbus: "IR 49215", units: "", scale: 1, help: "The circuit 1 screw compressor."}
+    - {key: cmp2, type: multi-state-input, instance: 2, name: "Compressor 1 Circuit 2 Status", vendor: "BMS_Cmp_Sts[5]", modbus: "IR 49218", units: "", scale: 1, help: "The circuit 2 screw compressor."}
+    - {key: hp1_bar, type: analog-input, instance: 7, name: "Condenser Pressure Circuit 1", vendor: "HP_Circ1.Value", modbus: "IR 49221", units: "bars", scale: 10, help: "Condensing pressure, circuit 1: follows the outdoor air while the compressor runs."}
+    - {key: lp1_bar, type: analog-input, instance: 8, name: "Evaporating Pressure Circuit 1", vendor: "LP_Circ1.Value", modbus: "IR 49222", units: "bars", scale: 10, help: "Evaporating pressure, circuit 1."}
+    - {key: hp2_bar, type: analog-input, instance: 9, name: "Condenser Pressure Circuit 2", vendor: "HP_Circ2.Value", modbus: "IR 49223", units: "bars", scale: 10, help: "Condensing pressure, circuit 2."}
+    - {key: flow_m3h, type: analog-input, instance: 10, name: "Water Flow", vendor: "WaterFlowFilt_m3h", modbus: "IR 49257", units: "cubic-meters-per-hour", scale: 10, help: "Facility water through the chiller (its isolation valve closes while it stands by)."}
+    - {key: kw, type: analog-input, instance: 11, name: "Instant Power Consumption", vendor: "kWtot", modbus: "IR 49253", units: "kilowatts", scale: 10, help: "The chiller's electrical draw: compressors, fans, and controls."}
+    - {key: cap_kw, type: analog-input, instance: 12, name: "Total Capacity", vendor: "EnEff_TotalCapacityF", modbus: "IR 49288", units: "kilowatts", scale: 10, help: "Heat the chiller is taking out of the water."}
+    - {key: fc_kw, type: analog-input, instance: 13, name: "Freecooling Capacity", vendor: "EnEff_FCCapacityF", modbus: "IR 49289", units: "kilowatts", scale: 10, help: "The part of that heat the free-cooling coils reject to the outdoor air."}
+    - {key: mech_kw, type: analog-input, instance: 14, name: "Mechanical Capacity", vendor: "EnEff_MechCapacityF", modbus: "IR 49290", units: "kilowatts", scale: 10, help: "The part the compressors carry."}
+    - {key: alarm, type: binary-input, instance: 2, name: "General Alarm", vendor: "EventsActive", modbus: "IR 49267", units: "", scale: 1, help: "1 while any alarm is active on the unit."}
+    - {key: hp1_alarm, type: binary-value, instance: 35, published: true, name: "Circuit 1 - High Condensing Pressure", vendor: "AlarmsData[35].Active", modbus: "", units: "", scale: 1, help: "Vertiv's published BV 35: the circuit 1 compressor has tripped on high condensing pressure."}
+    - {key: cond_fan_override, type: binary-value, instance: 3, name: "Condenser fan speed override", vendor: "", modbus: "", units: "", scale: 1, commandable: true, help: "The BMS's 100% condenser fan command (EBO object, not a V1C point)."}
+  pump:
+    - {key: run, type: binary-input, instance: 1, name: "Run status", units: "", scale: 1, help: "1 while the pump runs (two of the three are duty; the third stands by)."}
+    - {key: speed_pct, type: analog-input, instance: 1, name: "Speed", units: "percent", scale: 10, help: "Drive speed: the plant holds its differential pressure, so speed follows the halls' heat load."}
+    - {key: hz, type: analog-input, instance: 2, name: "Output frequency", units: "hertz", scale: 10, help: "Drive output frequency."}
+    - {key: kw, type: analog-input, instance: 3, name: "Power", units: "kilowatts", scale: 10, help: "Drive input power."}
+    - {key: flow_lps, type: analog-input, instance: 4, name: "Flow", units: "liters-per-second", scale: 10, help: "Water through this pump."}
+    - {key: fault, type: binary-input, instance: 2, name: "Drive fault", units: "", scale: 1, help: "1 while the drive is faulted."}
+  loop:
+    - {key: supply_c, type: analog-input, instance: 1, name: "FW supply header temperature", units: "degrees-celsius", scale: 100, help: "Water leaving the plant to the halls (the energy meters' facility water temperature)."}
+    - {key: return_c, type: analog-input, instance: 2, name: "FW return header temperature", units: "degrees-celsius", scale: 100, help: "Water coming back from the halls."}
+    - {key: flow_lps, type: analog-input, instance: 3, name: "FW loop flow", units: "liters-per-second", scale: 10, help: "Total flow: the CDUs' primary flow plus the thermal walls' and CRAHs' chilled water."}
+    - {key: dp_kpa, type: analog-input, instance: 4, name: "Plant differential pressure", units: "kilopascals", scale: 10, help: "Supply minus return header pressure; the pumps hold it at setpoint."}
+    - {key: heat_kw, type: analog-value, instance: 1, name: "Plant heat load", units: "kilowatts", scale: 10, help: "Flow times the header temperature difference."}
+  air:
+    - {key: status, type: multi-state-value, instance: 1, name: "UnitStatus", vendor: "UnitStatus", modbus: "HR 280", units: "", scale: 1, help: "iCOM unit status: unit on, warning on, or alarm on."}
+    - {key: sup_c, type: analog-input, instance: 1, name: "Supply temperature sensor 1", vendor: "SupAirTemp.Value", modbus: "HR 59", units: "degrees-celsius", scale: 100, help: "Air the unit delivers to the cold aisle (or the electrical room)."}
+    - {key: ret_c, type: analog-input, instance: 2, name: "Return temperature sensor 1", vendor: "RetAirTemp.Value", modbus: "HR 49", units: "degrees-celsius", scale: 100, help: "Air coming back to the unit."}
+    - {key: setp_c, type: analog-value, instance: 1, name: "Supply temperature setpoint", vendor: "Cfg_supSetP", modbus: "HR 3", units: "degrees-celsius", scale: 10, help: "The supply air the unit controls to."}
+    - {key: hi_c, type: analog-value, instance: 2, name: "High supply temperature event limit", vendor: "Cfg_supHiTThrs", modbus: "HR 211", units: "degrees-celsius", scale: 10, help: "Supply air above this raises High supply temperature."}
+    - {key: fan_pct, type: analog-input, instance: 3, name: "System fan speed request", vendor: "TwSensorsMinMaxAvgResult_Glo[5]", modbus: "HR 281", units: "percent", scale: 1, help: "Speed of the running fans."}
+    - {key: fans_ok, type: analog-value, instance: 3, name: "Evaporator fans running", vendor: "FanSts_OV[1] to [6]", modbus: "HR 247 to 252", units: "no-units", scale: 1, help: "How many of the unit's fans report On (each fan's own status is FanSts_OV[n])."}
+    - {key: valve_pct, type: analog-input, instance: 4, name: "Cooling request (DX/CW)", vendor: "CoolingReq_Mask", modbus: "HR 275", units: "percent", scale: 10, help: "Chilled-water valve position the unit asks for."}
+    - {key: cw_in_c, type: analog-input, instance: 5, name: "Inlet water temperature, circuit 1", vendor: "EvapInletTemp.Value", modbus: "HR 96", units: "degrees-celsius", scale: 100, help: "Facility water into the coil."}
+    - {key: cw_out_c, type: analog-input, instance: 6, name: "Outlet water temperature, circuit 1", vendor: "EvapOutletTemp.Value", modbus: "HR 97", units: "degrees-celsius", scale: 100, help: "Facility water leaving the coil."}
+    - {key: flow_lps, type: analog-input, instance: 7, name: "Water flow, circuit 1", vendor: "CW_RT_Info.Out.Valve1.FlowRateLS", modbus: "HR 100", units: "liters-per-second", scale: 100, help: "Chilled water through the coil."}
+    - {key: load_kw, type: analog-input, instance: 8, name: "Gross cooling load, circuit 1", vendor: "CW_RT_Info.Out.Valve1.CoolLoad", modbus: "HR 102", units: "kilowatts", scale: 10, help: "Heat the coil takes out of the air."}
+    - {key: kw, type: analog-input, instance: 9, name: "Instantaneous power", vendor: "EnMet.PwrSum", modbus: "HR 120", units: "watts", scale: 1, help: "The unit's electrical draw (fans and controls), in watts as published."}
+    - {key: rh_pct, type: analog-input, instance: 10, name: "Return humidity sensor 1", vendor: "RetAirHum.Value", modbus: "HR 54", units: "percent", scale: 10, help: "Relative humidity of the return air."}
+    - {key: hi_alarm, type: binary-value, instance: 1, name: "High supply temperature", vendor: "Al_HiSupAirTemp.Active", modbus: "IS 5", units: "", scale: 1, help: "The warning itself, with its event algorithm (an inhibit sets Event_Algorithm_Inhibit)."}
+    - {key: fan_alarm, type: binary-value, instance: 2, name: "One or more evaporator fans in alarm", vendor: "Al_EvpFan.Active", modbus: "IS 10", units: "", scale: 1, help: "1 while any fan reports Alarm."}
+    - {key: fan_failed, type: multi-state-value, instance: 2, name: "Failed fan", vendor: "FanSts_OV[n] = Alarm", modbus: "HR 247 to 252", units: "", scale: 1, help: "Which fan reports Alarm (0: none). This site's EBO mapping reduces the six FanSts_OV[n] reads to the failed fan's number."}
+    - {key: hi_inhibit, type: binary-value, instance: 1, property: "Event_Algorithm_Inhibit", name: "High supply temperature (Event_Algorithm_Inhibit)", vendor: "", modbus: "", units: "", scale: 1, help: "TRUE (1) while the alarm's event algorithm is inhibited: the object still reads its value, but no notification is sent. An inhibit hides the alarm, not the temperature."}
+
+tiers:
+  window_before_min: 30
+  window_after_min: 90
+checks:
+  energy_kwh_tolerance: 0.3         # per hour, against the meters (one decimal on each side)
+  heat_kwh_tolerance: 0.6
+  flow_tolerance_pct: 0.5
+  temp_tolerance_c: 0.06

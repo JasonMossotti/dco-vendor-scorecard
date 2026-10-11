@@ -1,0 +1,437 @@
+{
+ "devices": {
+  "CH-01": {
+   "family": "chiller"
+  },
+  "CH-02": {
+   "family": "chiller"
+  },
+  "CH-03": {
+   "family": "chiller"
+  },
+  "CH-04": {
+   "family": "chiller"
+  },
+  "CH-05": {
+   "family": "chiller"
+  },
+  "CH-06": {
+   "family": "chiller"
+  },
+  "CH-07": {
+   "family": "chiller"
+  },
+  "CH-08": {
+   "family": "chiller"
+  },
+  "CH-09": {
+   "family": "chiller"
+  },
+  "CH-10": {
+   "family": "chiller"
+  },
+  "CH-11": {
+   "family": "chiller"
+  },
+  "CRAH-A1": {
+   "family": "crah",
+   "hall": "HALL-A"
+  },
+  "CRAH-A2": {
+   "family": "crah",
+   "hall": "HALL-A"
+  },
+  "CRAH-A3": {
+   "family": "crah",
+   "hall": "HALL-A"
+  },
+  "CRAH-B1": {
+   "family": "crah",
+   "hall": "HALL-B"
+  },
+  "CRAH-B2": {
+   "family": "crah",
+   "hall": "HALL-B"
+  },
+  "CRAH-B3": {
+   "family": "crah",
+   "hall": "HALL-B"
+  },
+  "FW-LOOP": {
+   "family": "loop"
+  },
+  "FWP-1": {
+   "family": "pump"
+  },
+  "FWP-2": {
+   "family": "pump"
+  },
+  "FWP-3": {
+   "family": "pump"
+  },
+  "TW-A1": {
+   "family": "wall",
+   "hall": "HALL-A"
+  },
+  "TW-A2": {
+   "family": "wall",
+   "hall": "HALL-A"
+  },
+  "TW-A3": {
+   "family": "wall",
+   "hall": "HALL-A"
+  },
+  "TW-A4": {
+   "family": "wall",
+   "hall": "HALL-A"
+  },
+  "TW-B1": {
+   "family": "wall",
+   "hall": "HALL-B"
+  },
+  "TW-B2": {
+   "family": "wall",
+   "hall": "HALL-B"
+  },
+  "TW-B3": {
+   "family": "wall",
+   "hall": "HALL-B"
+  },
+  "TW-B4": {
+   "family": "wall",
+   "hall": "HALL-B"
+  }
+ },
+ "disclaimer": "Synthetic mechanical telemetry for a portfolio demonstration, using the point names Vertiv publishes for its iCOM controllers and the ASHRAE 135 (BACnet) object model. All names and readings are fictional.",
+ "files": {
+  "air_hourly.csv": 9408,
+  "chiller_hourly.csv": 7392,
+  "loop_hourly.csv": 672,
+  "pump_hourly.csv": 2016,
+  "states.jsonl": 23,
+  "windows": 33
+ },
+ "minutes": {
+  "CH-01.json": {
+   "bytes": 467316,
+   "sha256": "b127e99c1024982e979a3892d176ca8c329275b0474909a4b9cfab1529b46e97"
+  },
+  "CH-02.json": {
+   "bytes": 465694,
+   "sha256": "01043cf4fea35d8597e24f207b950c1d6b3a55c9c869a39057743864a70d13a9"
+  },
+  "CH-03.json": {
+   "bytes": 457098,
+   "sha256": "6eb350cb5712159d3cda610f4c785a03d7d52d55025763703f48e5e5092ff57a"
+  },
+  "CH-04.json": {
+   "bytes": 426537,
+   "sha256": "85965428311bec9dca3662b1f1274acf4cc126df952b6fd5eb527c1281894aef"
+  },
+  "CH-05.json": {
+   "bytes": 426323,
+   "sha256": "8f0fbd726be799f682ded50196ea8a81f1dffb21a62be5dc1cde99d00766a6a8"
+  },
+  "CH-06.json": {
+   "bytes": 424149,
+   "sha256": "7fbaff60136488640474bbfdb4b4628894906f901338d22986dd9eca81307acb"
+  },
+  "CH-07.json": {
+   "bytes": 442595,
+   "sha256": "b435618677c17a97c3c87cb9d9aa000ba07fb201999f99e622814fc860248a94"
+  },
+  "CH-08.json": {
+   "bytes": 425646,
+   "sha256": "edb2201a198876f9e5f08613902181ce999a216f5ea5df7aacfbe41b9dc8e288"
+  },
+  "CH-09.json": {
+   "bytes": 425102,
+   "sha256": "29baeefacb4bdd2af7161feec6ef46c3f1f522b164b1245e9b512b0058da8002"
+  },
+  "CH-10.json": {
+   "bytes": 435675,
+   "sha256": "67513461365cd1c001f636fae64faf5658e1b4454350f9eaf6d038093be5187e"
+  },
+  "CH-11.json": {
+   "bytes": 425327,
+   "sha256": "19455bd2fc547fca1dfb6e538d3dd257dce788a40066d1e027c26340b4cd3521"
+  },
+  "CRAH-A1.json": {
+   "bytes": 776268,
+   "sha256": "686bf59e2c042081db49deeb088f9ecc2a2bf781932224359ed0e43f586d2efe"
+  },
+  "CRAH-A2.json": {
+   "bytes": 778087,
+   "sha256": "f89bf996313b3ee3e9d6b263533b348cb008f7beac7354d777cab9943bdfe2e3"
+  },
+  "CRAH-A3.json": {
+   "bytes": 776224,
+   "sha256": "04b2b7db289f3bf141ed85260c4e67aa44a8c894e1a4f7cf94376483443dc019"
+  },
+  "CRAH-B1.json": {
+   "bytes": 732844,
+   "sha256": "1b904c9e9e449bab86c1914217c64cc88e887376b84d7595eb5e79bf8b547dd6"
+  },
+  "CRAH-B2.json": {
+   "bytes": 732251,
+   "sha256": "5d5b415f83a71ef9bfd52353faa976248a56dc0296f087a9ab836b6d6755efff"
+  },
+  "CRAH-B3.json": {
+   "bytes": 731869,
+   "sha256": "b43c0d6fb5d4675f09c625691ee631c5d66e1777afb8d6ce61f116f22f147b60"
+  },
+  "FW-LOOP.json": {
+   "bytes": 330716,
+   "sha256": "6ff4aaf96a3a9fdc4319bc5f4faecc858d96624d52d762a2f6041d8a4898f309"
+  },
+  "FWP-1.json": {
+   "bytes": 105112,
+   "sha256": "4532ac6528b1f61bf8291d07c6263cc1253d7017bc0e3f13918b2eac232be889"
+  },
+  "FWP-2.json": {
+   "bytes": 158455,
+   "sha256": "f8f94c1813ed24c9b6dec987acffdc210ad03f14f99e8f74318b3ad7d079d39c"
+  },
+  "FWP-3.json": {
+   "bytes": 152735,
+   "sha256": "ce3f385d554fe7c529b0f43763c787f403e38f9d31f49dd32a90d85d5fd7d817"
+  },
+  "TW-A1.json": {
+   "bytes": 906149,
+   "sha256": "96270849e05e2f2519a7df5bd57cb39f849a5606febbae6794e5ec07ae547e83"
+  },
+  "TW-A2.json": {
+   "bytes": 904911,
+   "sha256": "b2f84ae6cf02e9df13c3c278627947dccaf7ee0cf2a64c7301d16856ec3f2f5b"
+  },
+  "TW-A3.json": {
+   "bytes": 908055,
+   "sha256": "968c03f2cf170284fb0ffb9cd0a5108bde9e521ada9855d31129baee6c2dd679"
+  },
+  "TW-A4.json": {
+   "bytes": 905647,
+   "sha256": "2ea8db5936afdfb6adb953ac85dcad878a0c2529b3d2b86376ba49fc20f7f73a"
+  },
+  "TW-B1.json": {
+   "bytes": 803082,
+   "sha256": "f3754bb0649a267428e17650360d87a0b234a82961eca29a7c6010f90fac61e4"
+  },
+  "TW-B2.json": {
+   "bytes": 806262,
+   "sha256": "f3ee2b6b0a264b32905b0f76bb6bdef9cddb2f15ed93f32c60d91d379fcd66f6"
+  },
+  "TW-B3.json": {
+   "bytes": 802613,
+   "sha256": "8c33051f6becd8cfeae5af16b4a64045d482281d612957950af8dcdd059e6000"
+  },
+  "TW-B4.json": {
+   "bytes": 802978,
+   "sha256": "d937af080a26e093b77ee7213b294854ece8b1ac23927bf57f0db845dd097c74"
+  }
+ },
+ "source": "data/sample + data/energy + CDU telemetry",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "start": "2026-08-31T00:00:00Z"
+ },
+ "windows": [
+  {
+   "device": "CH-01",
+   "file": "windows/CH-01_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-02",
+   "file": "windows/CH-02_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-03",
+   "file": "windows/CH-03_20260913T1155.json",
+   "from": "2026-09-13T11:55:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-03",
+   "file": "windows/CH-03_20260913T1639.json",
+   "from": "2026-09-13T16:39:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-03",
+   "file": "windows/CH-03_20260913T1939.json",
+   "from": "2026-09-13T19:39:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-03",
+   "file": "windows/CH-03_20260919T1054.json",
+   "from": "2026-09-19T10:54:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-03",
+   "file": "windows/CH-03_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-04",
+   "file": "windows/CH-04_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-05",
+   "file": "windows/CH-05_20260916T1025.json",
+   "from": "2026-09-16T10:25:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-05",
+   "file": "windows/CH-05_20260916T1346.json",
+   "from": "2026-09-16T13:46:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-05",
+   "file": "windows/CH-05_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-06",
+   "file": "windows/CH-06_20260908T1111.json",
+   "from": "2026-09-08T11:11:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-06",
+   "file": "windows/CH-06_20260908T1352.json",
+   "from": "2026-09-08T13:52:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-06",
+   "file": "windows/CH-06_20260908T1652.json",
+   "from": "2026-09-08T16:52:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-06",
+   "file": "windows/CH-06_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-07",
+   "file": "windows/CH-07_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-08",
+   "file": "windows/CH-08_20260901T0431.json",
+   "from": "2026-09-01T04:31:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-08",
+   "file": "windows/CH-08_20260901T0904.json",
+   "from": "2026-09-01T09:04:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-08",
+   "file": "windows/CH-08_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-09",
+   "file": "windows/CH-09_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-10",
+   "file": "windows/CH-10_20260911T1516.json",
+   "from": "2026-09-11T15:16:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-10",
+   "file": "windows/CH-10_20260911T1858.json",
+   "from": "2026-09-11T18:58:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-10",
+   "file": "windows/CH-10_20260911T2158.json",
+   "from": "2026-09-11T21:58:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "CH-10",
+   "file": "windows/CH-10_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "CH-11",
+   "file": "windows/CH-11_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "FW-LOOP",
+   "file": "windows/FW-LOOP_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "FWP-1",
+   "file": "windows/FWP-1_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "FWP-2",
+   "file": "windows/FWP-2_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "FWP-3",
+   "file": "windows/FWP-3_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 162
+  },
+  {
+   "device": "TW-A4",
+   "file": "windows/TW-A4_20260922T0918.json",
+   "from": "2026-09-22T09:18:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "TW-A4",
+   "file": "windows/TW-A4_20260922T1212.json",
+   "from": "2026-09-22T12:12:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "TW-B2",
+   "file": "windows/TW-B2_20260919T0058.json",
+   "from": "2026-09-19T00:58:00Z",
+   "minutes": 120
+  },
+  {
+   "device": "TW-B2",
+   "file": "windows/TW-B2_20260920T1118.json",
+   "from": "2026-09-20T11:18:00Z",
+   "minutes": 120
+  }
+ ]
+}

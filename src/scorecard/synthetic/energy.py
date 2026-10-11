@@ -14,7 +14,10 @@ month) with its own random stream and writes beside it, never into it:
 
 IT energy follows the racks: each rack's input power from the GPU telemetry (``rack_hourly.csv``, the
 same rack model as the CDU heat balance and the power telemetry) plus the busway's conductor loss, summed
-per hall at the UPS outputs. The mechanical UPS follows its own load readings (``facility/ups_status.jsonl``).
+per hall at the UPS outputs. The mechanical UPS follows the devices it feeds: each hall's CDUs (their own draw in the
+CDU telemetry) and thermal walls (``telemetry_mechanical.wall_power``), passed in as ``mech_kw``. The CDU telemetry
+reads only the facility water temperature from these meters, and that column does not depend on ``mech_kw``, so the
+meters are built twice: once without it, for the CDU telemetry, and once with it (``follow_devices``).
 While the utility mains are open (``epms_events``) the generators carry the whole site, so generator
 energy is the site's load for that part of the hour; a monthly loaded exercise on a portable load bank is
 left out. Cooling follows a modeled Central Texas temperature and the heat the halls reject. Sizes come
@@ -189,14 +192,6 @@ class EnergyLayer:
         return 1 + self.rng.gauss(0, self.cfg["meter_noise_sd"])
 
     # ---- the month's own records
-    def _ups_series(self) -> dict[str, list[tuple[datetime, float]]]:
-        """The mechanical UPS load polls (IT UPS load follows the racks instead)."""
-        series: dict[str, list[tuple[datetime, float]]] = {}
-        for r in _read(self.dir / "facility" / "ups_status.jsonl"):
-            if "load_pct" in r:
-                series.setdefault(r["ups"], []).append((parse(r["timestamp"]), r["load_pct"]))
-        return {k: sorted(v) for k, v in series.items()}
-
     def rack_it_kwh(self) -> dict[str, dict[str, float]]:
         """Each hour's rack input energy per hall letter (kWh at the tap-offs), from the GPU telemetry."""
         if not self.rack_hourly.exists():
@@ -207,15 +202,6 @@ class EnergyLayer:
             k = r["hall"].rsplit("-", 1)[1]
             h[k] = h.get(k, 0.0) + rack_input_kwh(r, self.rack_rest)
         return out
-
-    @staticmethod
-    def _interp(series: list[tuple[datetime, float]], t: datetime) -> float:
-        if t <= series[0][0]:
-            return series[0][1]
-        for (t0, v0), (t1, v1) in zip(series, series[1:]):
-            if t0 <= t < t1:
-                return v0 + (v1 - v0) * (t - t0) / (t1 - t0)
-        return series[-1][1]
 
     def outages(self) -> list[tuple[datetime, datetime]]:
         """When the utility mains were open and the generators carried the site (EPMS breaker events)."""
@@ -272,8 +258,9 @@ class EnergyLayer:
         return sum(state.values())
 
     # ---- the month
-    def run(self, report_error: str | None = None) -> dict[str, Any]:
-        ups = self._ups_series()
+    def run(self, report_error: str | None = None, mech_kw: dict[str, list[float]] | None = None) -> dict[str, Any]:
+        """``mech_kw``: each hall's mechanical UPS output per hour (kW), keyed by hall id; without it the mechanical UPS
+        columns are 0 (the first pass of ``follow_devices``)."""
         racks = self.rack_it_kwh()
         loss = self.cfg["busway_loss_fraction"]
         spans = self.outages()
@@ -281,13 +268,15 @@ class EnergyLayer:
         weather = Weather(self.cfg, self.rng)
         rows = []
         t = self.start
+        i = 0
         while t < self.end:
             mid = t + HOUR / 2
             it, mech = {}, {}
             for k in self.plant.halls:
-                self._noise()                   # the draw the old UPS-load model made here: the stream stays the same
+                self._noise()                   # the draws the old UPS-load models made here: the stream stays the same
+                self._noise()
                 it[k] = racks.get(iso(t), {}).get(k, 0.0) * (1 + loss)
-                mech[k] = sum(self._interp(ups[u], mid) / 100 * self.plant.mups_kw[k] for u in ups if u.startswith(f"MUPS-{k}")) * self._noise()
+                mech[k] = mech_kw[f"HALL-{k}"][i] if mech_kw else 0.0
             t_out = weather.at(mid)
             r = self.plant.hour(t_out, it, mech, self._locked_at(events, mid), local(mid).hour, self._noise)
             gen = r["facility_kwh"] * self.outage_fraction(spans, t)
@@ -296,6 +285,7 @@ class EnergyLayer:
             row.update({m: round(r[m], 1) for m in METERS if m not in row})
             rows.append(row)
             t += HOUR
+            i += 1
         kind = report_error or self.rng.choice(self.cfg["plants"]["report_errors"])
         return {"meters": rows, "chiller_events": events, "report": self.landlord_report(rows, kind),
                 "key": {"report_error": kind, "lockouts": lockouts}}
@@ -317,6 +307,33 @@ class EnergyLayer:
                 "standard": self.cfg["standard"]["name"], "total_facility_kwh": facility, "it_kwh": it,
                 "pue": round(facility / it, 3),
                 "method": "Total facility energy from the site revenue and generator meters; IT energy at the UPS meters."}
+
+
+def with_devices(layer: EnergyLayer, report_error: str | None, first: dict[str, Any], cdu_dir: str | Path) -> dict[str, Any]:
+    """The month's meters again, with each hall's mechanical UPS output its CDUs' draw (the CDU telemetry in cdu_dir) plus
+    its thermal walls' (``telemetry_mechanical.wall_power``, from the first pass's IT meters and the CDUs' heat). The
+    second pass draws the same random numbers, so every column but the mechanical ones and what follows from them (the
+    plant, the site total) is unchanged."""
+    from scorecard.synthetic.telemetry_mechanical import MechanicalTelemetry
+    mt = MechanicalTelemetry(layer.dir, layer.seed, cdu_dir, cdu_dir, site=layer.plant.site, energy_cfg=layer.cfg, meters=first["meters"])
+    mech = {h: v.tolist() for h, v in mt.hall_mech_kw().items()}
+    layer.rng = random.Random(f"{layer.seed}:energy")
+    out = layer.run(report_error=report_error, mech_kw=mech)
+    for a, b in zip(first["meters"], out["meters"]):
+        if (a["fw_supply_c"], a["outdoor_c"], a["ups_out_a_kwh"]) != (b["fw_supply_c"], b["outdoor_c"], b["ups_out_a_kwh"]):
+            raise RuntimeError(f"{a['hour']}: the second pass changed a column it should not")
+    return out
+
+
+def follow_devices(layer: EnergyLayer, report_error: str | None, dest: str | Path, cdu_build: Any) -> tuple[dict[str, Any], Any]:
+    """The month's meters when its CDU telemetry does not exist yet. The CDU telemetry reads only the facility water
+    temperature from the meters, which the mechanical UPS does not change: so the first pass (mechanical UPS 0) is written
+    to dest, ``cdu_build(dest)`` builds the CDU telemetry from it and returns what it built with its folder as ``.dir``,
+    and ``with_devices`` makes the final meters. Returns them (not written) and what ``cdu_build`` returned."""
+    first = layer.run(report_error=report_error)
+    write_energy(first, dest)
+    cdu = cdu_build(Path(dest))
+    return with_devices(layer, report_error, first, cdu.dir), cdu
 
 
 # --------------------------------------------------------------------------- #

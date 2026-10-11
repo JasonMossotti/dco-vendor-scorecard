@@ -17,10 +17,10 @@ The series are built from the bottom up: each rack's power (its GPUs from the GP
 
 | UPS | Model | Output avg / peak kW | Load avg / peak % | Energy out / in MWh | Bypass min | On battery s | Lowest charge % |
 |---|---|---:|---:|---:|---:|---:|---:|
-| MUPS-A1 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 112.8 / 134.1 | 37.6 / 45.3 | 75.8 / 78.1 | 0 | 14 | 98 |
-| MUPS-A2 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 113.2 / 134.4 | 37.7 / 45.5 | 76.1 / 78.4 | 0 | 11 | 99 |
-| MUPS-B1 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 115.6 / 134.0 | 38.5 / 45.6 | 77.7 / 80.1 | 0 | 13 | 98 |
-| MUPS-B2 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 112.5 / 136.2 | 37.5 / 46.2 | 75.6 / 77.9 | 0 | 11 | 99 |
+| MUPS-A1 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 68.3 / 71.6 | 22.8 / 24.2 | 45.9 / 47.3 | 0 | 14 | 99 |
+| MUPS-A2 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 68.2 / 72.1 | 22.7 / 24.4 | 45.8 / 47.3 | 0 | 11 | 99 |
+| MUPS-B1 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 51.7 / 56.2 | 17.2 / 19.0 | 34.7 / 35.8 | 0 | 13 | 99 |
+| MUPS-B2 | Galaxy VL 300 kW, 480 V (mechanical UPS) | 51.7 / 55.7 | 17.2 / 18.9 | 34.8 / 35.8 | 0 | 11 | 99 |
 | UPS-A1 | Galaxy VX 1500 kW, 480 V | 744.0 / 799.9 | 49.6 / 55.1 | 500.0 / 520.4 | 151 | 11 | 98 |
 | UPS-A2 | Galaxy VX 1500 kW, 480 V | 746.3 / 798.7 | 49.8 / 54.9 | 501.5 / 522.0 | 0 | 14 | 98 |
 | UPS-A3 | Galaxy VX 1500 kW, 480 V | 744.9 / 799.2 | 49.7 / 55.1 | 500.6 / 521.1 | 0 | 11 | 98 |
@@ -77,13 +77,13 @@ Rated 1,200 A; with one feed lost a run may carry up to 90% of that.
 
 | Generator | Minutes running | Energy MWh | Peak kW (% of rated) | Fuel at month end % | Hour meter at month end |
 |---|---:|---:|---:|---:|---:|
-| GEN-1 | 87 | 1.64 | 1,682.3 (56.1%) | 85.8 | 541.75 |
-| GEN-2 | 86 | 1.47 | 1,382.7 (46.1%) | 88.7 | 675.97 |
-| GEN-3 | 90 | 1.57 | 1,446.3 (48.2%) | 92.4 | 548.74 |
-| GEN-4 | 89 | 0.73 | 1,062.8 (35.4%) | 85.4 | 634.22 |
-| GEN-5 | 86 | 1.43 | 1,345.4 (44.8%) | 91.8 | 563.19 |
-| GEN-6 | 85 | 1.3 | 1,120.8 (37.4%) | 87.2 | 608.93 |
-| GEN-7 | 84 | 1.49 | 1,550.7 (51.7%) | 91.3 | 644.26 |
+| GEN-1 | 87 | 1.62 | 1,682.3 (56.1%) | 85.8 | 541.75 |
+| GEN-2 | 86 | 1.44 | 1,382.7 (46.1%) | 88.7 | 675.97 |
+| GEN-3 | 90 | 1.54 | 1,446.3 (48.2%) | 92.5 | 548.74 |
+| GEN-4 | 89 | 0.7 | 1,021.7 (34.1%) | 85.5 | 634.22 |
+| GEN-5 | 86 | 1.4 | 1,345.4 (44.8%) | 91.8 | 563.19 |
+| GEN-6 | 85 | 1.27 | 1,120.8 (37.4%) | 87.2 | 608.93 |
+| GEN-7 | 84 | 1.47 | 1,550.7 (51.7%) | 91.3 | 644.26 |
 
 ## Events
 
@@ -118,13 +118,13 @@ Rated 1,200 A; with one feed lost a run may carry up to 90% of that.
 | 2026-09-24T21:14:20Z | 2026-09-24T21:14:33Z | UPS-B2 | On battery for 13 s: the utility failed and the generators took the load | WO-41009 |
 | 2026-09-24T21:14:20Z | 2026-09-24T21:14:33Z | UPS-B3 | On battery for 13 s: the utility failed and the generators took the load | WO-41009 |
 | 2026-09-24T21:14:20Z | 2026-09-24T21:14:32Z | UPS-B4 | On battery for 12 s: the utility failed and the generators took the load | WO-41009 |
-| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-1 | Utility outage: 41 min running, carrying the site in parallel, up to 1,076 kW (35.9% of rated) | WO-41009 |
-| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-2 | Utility outage: 41 min running, carrying the site in parallel, up to 1,064 kW (35.5% of rated) | WO-41009 |
-| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-3 | Utility outage: 41 min running, carrying the site in parallel, up to 1,065 kW (35.5% of rated) | WO-41009 |
-| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-4 | Utility outage: 41 min running, carrying the site in parallel, up to 1,063 kW (35.4% of rated) | WO-41009 |
-| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-5 | Utility outage: 41 min running, carrying the site in parallel, up to 1,065 kW (35.5% of rated) | WO-41009 |
-| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-6 | Utility outage: 41 min running, carrying the site in parallel, up to 1,068 kW (35.6% of rated) | WO-41009 |
-| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-7 | Utility outage: 41 min running, carrying the site in parallel, up to 1,069 kW (35.6% of rated) | WO-41009 |
+| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-1 | Utility outage: 41 min running, carrying the site in parallel, up to 1,034 kW (34.5% of rated) | WO-41009 |
+| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-2 | Utility outage: 41 min running, carrying the site in parallel, up to 1,023 kW (34.1% of rated) | WO-41009 |
+| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-3 | Utility outage: 41 min running, carrying the site in parallel, up to 1,024 kW (34.1% of rated) | WO-41009 |
+| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-4 | Utility outage: 41 min running, carrying the site in parallel, up to 1,022 kW (34.1% of rated) | WO-41009 |
+| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-5 | Utility outage: 41 min running, carrying the site in parallel, up to 1,024 kW (34.1% of rated) | WO-41009 |
+| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-6 | Utility outage: 41 min running, carrying the site in parallel, up to 1,027 kW (34.2% of rated) | WO-41009 |
+| 2026-09-24T21:14:22Z | 2026-09-24T22:01:06Z | GEN-7 | Utility outage: 41 min running, carrying the site in parallel, up to 1,028 kW (34.3% of rated) | WO-41009 |
 
 ## Agreement with the records
 
@@ -135,8 +135,8 @@ Rated 1,200 A; with one feed lost a run may carry up to 90% of that.
 | A run reads 0 V exactly while its feed is recorded lost; no run exceeds its single-feed limit | 48,395 of 48,395 |
 | Tap-offs add up to their runs, runs to their UPS, and each hall's UPSs to the energy meters | 32,256 of 32,256 |
 | UPS output source and working power modules match the NMC events, minute by minute | 36 of 36 |
-| Batteries discharge only while on battery, recover after, and match the seconds on battery | 70 of 70 |
-| Mechanical UPSs read their recorded polls, equal the meter, and cover the CDUs' draw | 3,360 of 3,360 |
+| Batteries discharge only while on battery, recover after, and match the seconds on battery | 67 of 67 |
+| Mechanical UPSs equal the meter and cover the CDUs' draw | 2,688 of 2,688 |
 | Generators match every EMCP reading, are stopped otherwise, and carry the outage energy | 335 of 335 |
 | Voltage and frequency stay inside the bands except where the records show a feed lost | 24,254 of 24,254 |
 

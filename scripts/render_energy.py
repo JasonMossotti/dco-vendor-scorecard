@@ -144,21 +144,30 @@ def html_page() -> str:
 
 
 def robustness_month(k: int) -> dict:
-    """PUE checks on generated month k. The meters follow the racks, so the month's GPU Health layer and GPU telemetry
-    (rack_hourly.csv) are built first."""
+    """PUE checks on generated month k. The meters follow the racks and the cooling devices, so the month's GPU Health
+    layer, GPU telemetry (rack_hourly.csv), and CDU telemetry are built first (energy.follow_devices)."""
+    from types import SimpleNamespace
     from scorecard.sla_model import load_sla
     from scorecard.synthetic import SiteGenerator, write_dataset
     from scorecard.synthetic import gpu_health as GH
     from scorecard.synthetic import telemetry as TS
-    from scorecard.synthetic.energy import EnergyLayer, write_energy
+    from scorecard.synthetic import telemetry_cdu as TCS
+    from scorecard.synthetic.energy import EnergyLayer, follow_devices, write_energy
     syn = yaml.safe_load((ROOT / "config" / "synthetic.yaml").read_text(encoding="utf-8"))
     cfg, hcfg = E.load_config(), GH.load_config()
     with tempfile.TemporaryDirectory() as tmp:
         d = Path(tmp)
         write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
         GH.write_gpu_health(GH.GpuHealthLayer(d, 2000 + k, hcfg).run(), d / "gpu_health")
-        TS.write_telemetry(TS.Published(TS.GpuTelemetry(d, d / "gpu_health", 2000 + k, None, hcfg)).run(), d / "telemetry", "", None)
-        write_energy(EnergyLayer(d, 2000 + k, cfg, rack_hourly=d / "telemetry" / "rack_hourly.csv").run(), d / "energy")
+        pub = TS.Published(TS.GpuTelemetry(d, d / "gpu_health", 2000 + k, None, hcfg)).run()
+        TS.write_telemetry(pub, d / "telemetry", "", None)
+
+        def cdu_build(edir: Path) -> SimpleNamespace:
+            layer = TCS.CduTelemetry(pub.tel, pub, edir, None)
+            TCS.write_cdu(layer, layer.run(), d / "cdu", "", None)
+            return SimpleNamespace(dir=d / "cdu")
+        el = EnergyLayer(d, 2000 + k, cfg, rack_hourly=d / "telemetry" / "rack_hourly.csv")
+        write_energy(follow_devices(el, None, d / "energy", cdu_build)[0], d / "energy")
         data = N.load(d / "energy")
         ev = N.evaluate(N.analyse(data, cfg), data.key)
     return {"month": k, "kind": data.key["report_error"], "planted": ev.planted, "detected": ev.detected, "named": ev.cause_named,

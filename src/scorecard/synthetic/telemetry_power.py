@@ -14,8 +14,9 @@ Built from the bottom up, one reading a minute per device:
 * **IT UPSs** (Galaxy VX, SNMPv3: UPS-MIB and PowerNet-MIB): the sum of the runs they feed. Each hall's
   output equals the metered UPS output every hour. Modes, battery discharge and recharge, and power-module
   faults follow the NMC events (``ups_nmc_events``).
-* **Mechanical UPSs** (Galaxy VL): the recorded load polls (``ups_status``) at the poll minute, and each hall's
-  input equals the metered mechanical UPS energy every hour.
+* **Mechanical UPSs** (Galaxy VL, 2N): the pair shares the hall's mechanical load (the CDUs' own draw and the
+  thermal-wall fans, which the energy meters follow), and each hall's input equals the metered mechanical UPS
+  energy every hour.
 * **Generators** (EMCP 4.4, Modbus): every EMCP reading on record at its minute (the monthly tests), and in a
   utility outage (``epms_events``) the site's own load, shared across the running sets.
 
@@ -170,7 +171,6 @@ class PowerTelemetry:
         d = tel.dir
         self.meters = {r["hour"]: r for r in _csv_rows(Path(energy_dir) / "meters_hourly.csv")}
         self.nmc = sorted(_jsonl(d / "facility" / "ups_nmc_events.jsonl"), key=lambda e: (e["timestamp"], e["ups"]))
-        self.polls = _jsonl(d / "facility" / "ups_status.jsonl")
         self.cpm = sorted(_jsonl(d / "facility" / "busway_cpm_events.jsonl"), key=lambda e: e["timestamp"])
         self.epms = sorted(_jsonl(d / "facility" / "epms_events.jsonl"), key=lambda e: e["timestamp"])
         self.emcp = sorted(_jsonl(d / "facility" / "emcp_readings.jsonl"), key=lambda e: (e["generator"], e["timestamp"]))
@@ -485,30 +485,18 @@ class PowerTelemetry:
         return out
 
     def mech_output(self) -> dict[str, np.ndarray]:
-        """Mechanical UPS output, tenths of kW per minute: the recorded poll at its minute; each hall's input each hour the
-        metered mechanical UPS energy."""
-        polls: dict[str, list[tuple[int, float]]] = {}
-        for p in self.polls:
-            if p["ups"].startswith("MUPS-") and "load_pct" in p:
-                polls.setdefault(p["ups"], []).append((self.m_of(parse(p["timestamp"])), float(p["load_pct"])))
+        """Mechanical UPS output, tenths of kW per minute: the two units of a 2N pair share the hall's load, and each hall's
+        input each hour is the metered mechanical UPS energy."""
         out = {}
         for h in self.halls:
             ids = [u for u, x in self.ups.items() if x["hall"] == h["id"] and x["kind"] == "mech"]
-            base = {}
-            for u in ids:
-                pts = sorted(polls.get(u, []))
-                if not pts:
-                    base[u] = np.full(self.M, 35.0 * self.ups[u]["rating_kw"] / 100)
-                    continue
-                xs, ys = [m for m, _ in pts], [v * self.ups[u]["rating_kw"] / 100 for _, v in pts]
-                base[u] = np.interp(np.arange(self.M), xs, ys) * (1 + _ar(_rng(self.seed, u, "mech"), self.M, 0.01, 0.95))
+            base = {u: np.full(self.M, 35.0 * self.ups[u]["rating_kw"] / 100) * (1 + _ar(_rng(self.seed, u, "mech"), self.M, 0.01, 0.95))
+                    for u in ids}
             series = {u: np.zeros(self.M, dtype=np.int64) for u in ids}
             col = f"mech_{h['letter'].lower()}_kwh"
             for k in range(self.H):
                 sl = slice(k * HOUR_MIN, (k + 1) * HOUR_MIN)
                 row = self.meters.get(iso(self.t_of(k * HOUR_MIN)))
-                fixed = {u: {m - k * HOUR_MIN: int(round(v * self.ups[u]["rating_kw"] / 100 * 10)) for m, v in polls.get(u, [])
-                             if k * HOUR_MIN <= m < (k + 1) * HOUR_MIN} for u in ids}
                 if row is None:
                     for u in ids:
                         series[u][sl] = np.round(base[u][sl] * 10)
@@ -520,7 +508,7 @@ class PowerTelemetry:
                 for j, u in enumerate(ids):
                     t_u = left if j == len(ids) - 1 else int(round(target * float(base[u][sl].sum()) / tot_base))
                     left -= t_u
-                    series[u][sl] = pin_sum(base[u][sl] * 10, t_u, fixed[u])
+                    series[u][sl] = pin_sum(base[u][sl] * 10, t_u)
             out.update(series)
         return out
 

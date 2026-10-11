@@ -3,8 +3,9 @@
 
 Hourly meters for the sample month, the chiller free-cooling log, the Landlord's monthly energy
 report, the answer key, and 12 four-week periods of daily history before the month. Each hall's UPS
-output is its racks' power from the GPU telemetry (data/telemetry/gpu/rack_hourly.csv), so the GPU
-telemetry comes first; scripts/generate_telemetry.py runs this same step. Own random stream;
+output is its racks' power from the GPU telemetry (data/telemetry/gpu/rack_hourly.csv), and each hall's
+mechanical UPS output is its CDUs' draw (data/telemetry/cdu) plus its thermal walls', so the GPU and CDU
+telemetry come first; scripts/generate_telemetry.py runs this same step. Own random stream;
 data/sample is read, never written.
 
 Usage:
@@ -20,16 +21,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from scorecard.synthetic.energy import EnergyLayer, history, write_energy  # noqa: E402
+from scorecard.synthetic.energy import EnergyLayer, history, with_devices, write_energy  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 OUT = ROOT / "data" / "energy"
+CDU = ROOT / "data" / "telemetry" / "cdu"
 
 
 def generate(dest: Path = OUT) -> dict:
     window = json.loads((SAMPLE / "manifest.json").read_text(encoding="utf-8"))["window"]
     layer = EnergyLayer(SAMPLE, window["seed"])
-    out = layer.run(report_error=layer.cfg["plants"]["sample_report_error"])
+    kind = layer.cfg["plants"]["sample_report_error"]
+    out = with_devices(layer, kind, layer.run(report_error=kind), CDU)
     hist = history(out["meters"], layer.start, window["seed"])
     return write_energy(out, dest, hist, "data/sample")
 
