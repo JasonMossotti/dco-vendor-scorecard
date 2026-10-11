@@ -99,10 +99,10 @@ function rackPanel(rack) {
   for (const s of r.status) counts[s]++;
   let h = `<div class="panel" id="rack-panel"><h3>Rack ${esc(rack)} · ${esc(r.hall === "HALL-A" ? "Hall A, GB200 NVL72" : "Hall B, GB300 NVL72")} · cooled by ${esc(r.cdu)}</h3>
   <p class="note">${esc(r.trays)} compute trays reporting at the end of the month. Days: ${esc(counts.p)} Pass, ${esc(counts.w)} Warn, ${esc(counts.f)} Fail${counts["-"] ? `, ${esc(counts["-"])} not yet reporting` : ""}.
-  Peak GPU ${esc(r.gpu_max.toFixed(1))} C, HBM ${esc(r.hbm_max.toFixed(1))} C.</p>`;
+  Peak GPU ${esc(r.gpu_max.toFixed(1))} C, HBM ${esc(r.hbm_max.toFixed(1))} C. <a href="../telemetry/#${esc(rack)}">Open in Telemetry ↗</a></p>`;
   if (!trays.length) h += `<p style="font-size:13px;margin:0">Every tray passed every health watch all month.</p>`;
   for (const t of trays) {
-    h += `<div style="font-size:13px;font-weight:600;margin-top:6px">${esc(t.host)}</div><ul>` +
+    h += `<div style="font-size:13px;font-weight:600;margin-top:6px">${esc(t.host)} <a style="font-weight:400" href="../telemetry/#${esc(t.host)}/${esc(t.items.find(x => x.gpu != null)?.gpu ?? 0)}">Telemetry ↗</a></div><ul>` +
       t.items.map(x => `<li>${LEVEL(x.level)} ${esc(at(x.when))} UTC${x.gpu != null ? ` · GPU ${esc(x.gpu)}` : ""}: ${esc(x.text)}</li>`).join("") + `</ul>`;
   }
   return h + `<p class="note" style="margin:0">Trays not listed passed every health watch all month.</p></div>`;
@@ -126,7 +126,7 @@ function render() {
   const T = D.thermal, ll = D.findings.filter(f => f.party === "Landlord").length;
   let h = `<h1>GPU Health</h1>
   <p class="sub">GB200 racks in Hall A and GB300 racks in Hall B, ${esc(mdy(D.window.start))} to ${esc(md(D.days[D.days.length - 1]))}.
-  ${esc(D.framing)} All names and serials are fictional.</p>
+  ${esc(D.framing)} All names and serials are fictional. This page judges the health data: the checks, findings, and attribution. The readings behind it, every GPU by the hour and the minutes around each event, are on the <a href="../telemetry/">Telemetry</a> tab.</p>
   <div class="tiles">
     ${tile("GPUs reporting", esc(D.gpus.toLocaleString("en-US")), "at the end of the month; Hall B racks report from power-on")}
     ${tile("Health watches", `${esc(D.watches.fail)} <span style="font-size:15px;font-weight:600">Fail</span> · ${esc(D.watches.warn)} <span style="font-size:15px;font-weight:600">Warn</span>`, "every XID in the month appears here on the same GPU at the same time")}
@@ -151,17 +151,17 @@ function render() {
   h += `<h2>Early warning</h2>
   <p class="note">Flagged at the end of the first day a GPU's remapped rows rose by ${esc(D.checks.remap_rise_rows)} within ${esc(D.checks.rise_window_days)} days, or its corrected memory errors stayed above ${esc(D.checks.sbe_floor)} a day and rose ${esc(D.checks.sbe_rising_days)} days running. Bars are corrected errors per day; red marks an uncorrectable error.</p>
   <div class="wide"><table><tr><th>GPU</th><th>Corrected errors by day</th><th>Flagged</th><th>Why</th><th class="n">Remapped rows</th><th>Then</th></tr>
-  ${D.flags.map(f => `<tr><td>${esc(f.host)} GPU ${esc(f.gpu)}</td><td>${spark(f.series)}</td><td>${esc(md(f.flagged))}</td><td>${esc(f.why)}</td><td class="n">${esc(f.remapped_rows)}</td>
+  ${D.flags.map(f => `<tr><td><a href="../telemetry/#${esc(f.host)}/${esc(f.gpu)}">${esc(f.host)} GPU ${esc(f.gpu)}</a></td><td>${spark(f.series)}</td><td>${esc(md(f.flagged))}</td><td>${esc(f.why)}</td><td class="n">${esc(f.remapped_rows)}</td>
     <td>${f.xid_after ? `XID ${esc(f.xid_after.xid)} on ${esc(at(f.xid_after.at))}, ${esc(f.xid_after.lead_h.toFixed(0))} h later` : f.xid_before ? `After XID ${esc(f.xid_before)}` : "No uncorrectable error yet: drain and replace"}</td></tr>`).join("")}</table></div>
   <h3>Every uncorrectable memory XID this month</h3>
   <div class="wide"><table><tr><th>XID</th><th>GPU</th><th>When (UTC)</th><th>Warned ahead</th></tr>
-  ${D.memory.map(m => `<tr><td>XID ${esc(m.xid)}</td><td>${esc(m.host)} GPU ${esc(m.gpu)}</td><td>${esc(at(m.at))}</td><td>${m.warned ? `Yes, ${esc(m.lead_h.toFixed(0))} h` : "No"}</td></tr>`).join("")}</table></div>
+  ${D.memory.map(m => `<tr><td>XID ${esc(m.xid)}</td><td><a href="../telemetry/#${esc(m.host)}/${esc(m.gpu)}">${esc(m.host)} GPU ${esc(m.gpu)}</a></td><td>${esc(at(m.at))}</td><td>${m.warned ? `Yes, ${esc(m.lead_h.toFixed(0))} h` : "No"}</td></tr>`).join("")}</table></div>
   <p class="note">Not every memory failure gives warning; the ones that do are the reason to watch the counters.</p>`;
 
   h += `<h2>Returned to service with a row remap pending</h2>
   <p class="note">An uncorrectable memory error leaves a row remap pending until the GPU is reset. A node returned to service before the reset runs on the bad row.</p>`;
   h += D.pending.length ? `<div class="wide"><table><tr><th>Node</th><th>GPU</th><th>Pending since</th><th>Returned to service</th><th>Ticket</th><th>Cleared</th></tr>
-  ${D.pending.map(p => `<tr><td>${esc(p.host)}</td><td>${esc(p.gpu)}</td><td>${esc(at(p.pending_since))}</td><td>${esc(at(p.rts))}${p.again.length ? ` (again ${p.again.map(a => esc(at(a))).join(", ")})` : ""}</td><td>${esc(p.ticket || "none")}${p.close_code ? ` <span class="note">${esc(p.close_code)}</span>` : ""}</td><td>${p.cleared ? esc(at(p.cleared)) : "Still pending"}</td></tr>`).join("")}</table></div>` : `<p>None.</p>`;
+  ${D.pending.map(p => `<tr><td>${esc(p.host)}</td><td><a href="../telemetry/#${esc(p.host)}/${esc(p.gpu)}">${esc(p.gpu)}</a></td><td>${esc(at(p.pending_since))}</td><td>${esc(at(p.rts))}${p.again.length ? ` (again ${p.again.map(a => esc(at(a))).join(", ")})` : ""}</td><td>${esc(p.ticket || "none")}${p.close_code ? ` <span class="note">${esc(p.close_code)}</span>` : ""}</td><td>${p.cleared ? esc(at(p.cleared)) : "Still pending"}</td></tr>`).join("")}</table></div>` : `<p>None.</p>`;
 
   h += `<h2>Thermal slowdown and the cooling demarcation</h2>
   <p class="note">The demarcation is the rack manifold isolation valves (DM-COOL). If the CDU secondary left the rack band (supply above ${esc(D.cdu_band.supply_max_c)} C or flow below ${esc(D.cdu_band.flow_min_lpm.toLocaleString("en-US"))} L/min) when GPUs throttled, the cause is upstream, on the Landlord's side. If the CDU held the band, it is inside the rack, on the IT Partner's side.</p>

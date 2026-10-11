@@ -1,0 +1,52 @@
+id,system,level,script,category,opened,closed,text
+CXI-C-001,CDU-C2,L1,CX-C-CDU-C2-L1,3,2026-07-01T20:31:00Z,2026-07-11T15:47:48Z,Operating and maintenance manual not yet delivered
+CXI-C-002,MVS-C2,L1,CX-C-MVS-C2-L1,1,2026-07-01T21:35:00Z,2026-07-02T20:30:19Z,Output did not transfer to the alternate source within the design time
+CXI-C-003,CDU-C3,L1,CX-C-CDU-C3-L1,3,2026-07-04T18:25:00Z,2026-07-30T17:49:39Z,Operating and maintenance manual not yet delivered
+CXI-C-004,CDU-C3,L1,CX-C-CDU-C3-L1,2,2026-07-04T19:00:00Z,,Valve tag missing on the secondary isolation
+CXI-C-005,CDU-C3,L1,CX-C-CDU-C3-L1,2,2026-07-04T20:26:00Z,,"Trend logging interval set to 15 minutes, not 1"
+CXI-C-006,MVS-C2,L1,CX-C-MVS-C2-L1,2,2026-07-04T21:13:00Z,2026-07-14T23:21:02Z,Nameplate data differs from the approved submittal
+CXI-C-007,MVS-C2,L1,CX-C-MVS-C2-L1,2,2026-07-04T22:36:00Z,2026-07-16T14:49:06Z,Torque marks missing on two terminations
+CXI-C-008,MVS-C2,L1,CX-C-MVS-C2-L1,2,2026-07-04T22:44:00Z,2026-07-14T23:55:43Z,Arc flash label missing on an access panel
+CXI-C-009,CDU-C1,L1,CX-C-CDU-C1-L1,2,2026-07-06T14:00:00Z,2026-07-20T07:47:28Z,"Trend logging interval set to 15 minutes, not 1"
+CXI-C-010,CDU-C1,L1,CX-C-CDU-C1-L1,3,2026-07-06T15:24:00Z,2026-07-24T10:30:45Z,Coolant laboratory report awaiting the second sample
+CXI-C-011,MVS-C1,L1,CX-C-MVS-C1-L1,3,2026-07-06T22:31:00Z,2026-08-04T02:54:02Z,Factory test report page missing a signature
+CXI-C-012,MVS-C1,L1,CX-C-MVS-C1-L1,3,2026-07-06T23:52:00Z,,Spare fuses not yet delivered
+CXI-C-013,LD-C,L2,CX-C-LD-C-L2,2,2026-08-02T17:29:00Z,2026-08-11T14:29:04Z,Leak cable map does not match the installed route
+CXI-C-014,MVS-C2,L2,CX-C-MVS-C2-L2,2,2026-08-02T21:40:00Z,,Nameplate data differs from the approved submittal
+CXI-C-015,CDU-C3,L2,CX-C-CDU-C3-L2,2,2026-08-03T20:54:00Z,2026-09-02T17:19:00Z,Strainer differential pressure reads high after flush
+CXI-C-016,CDU-C3,L2,CX-C-CDU-C3-L2,1,2026-08-03T22:41:00Z,2026-08-04T22:33:06Z,Supply temperature overshot the limit on the step load
+CXI-C-017,DCB-C-A,L2,CX-C-DCB-C-A-L2,2,2026-08-04T20:55:00Z,,Nameplate data differs from the approved submittal
+CXI-C-018,CDU-C3,L2,CX-C-CDU-C3-L2,3,2026-08-06T18:38:00Z,2026-08-30T22:58:56Z,Insulation touch-up needed at one header joint
+CXI-C-019,CDU-C3,L2,CX-C-CDU-C3-L2,2,2026-08-06T19:25:00Z,2026-08-16T18:29:57Z,Valve tag missing on the secondary isolation
+CXI-C-020,CDU-C3,L2,CX-C-CDU-C3-L2,3,2026-08-06T19:59:00Z,2026-08-11T15:35:52Z,Coolant laboratory report awaiting the second sample
+CXI-C-021,CRAH-C2,L2,CX-C-CRAH-C2-L2,2,2026-08-07T21:48:00Z,2026-08-17T21:59:22Z,Strainer differential pressure reads high after flush
+CXI-C-022,CRAH-C1,L2,CX-C-CRAH-C1-L2,1,2026-08-07T22:11:00Z,2026-08-09T13:54:50Z,Lead pump did not fail over to lag on loss of flow
+CXI-C-023,CRAH-C1,L2,CX-C-CRAH-C1-L2,2,2026-08-07T22:21:00Z,2026-08-19T16:29:00Z,Valve tag missing on the secondary isolation
+CXI-C-024,CRAH-C2,L2,CX-C-CRAH-C2-L2,3,2026-08-08T00:12:00Z,2026-08-12T07:07:10Z,Insulation touch-up needed at one header joint
+CXI-C-025,MVS-C1,L2,CX-C-MVS-C1-L2,1,2026-08-08T15:19:00Z,2026-08-10T16:15:53Z,DC ground fault detection did not alarm on the test
+CXI-C-026,VESDA-C1,L2,CX-C-VESDA-C1-L2,3,2026-08-08T15:59:00Z,,Commissioning photos not yet uploaded
+CXI-C-027,VESDA-C1,L2,CX-C-VESDA-C1-L2,2,2026-08-08T16:16:00Z,2026-08-17T20:12:06Z,Battery calculation not on file
+CXI-C-028,VESDA-C1,L2,CX-C-VESDA-C1-L2,3,2026-08-08T17:23:00Z,,As-built riser drawing pending
+CXI-C-029,DCB-C-B,L2,CX-C-DCB-C-B-L2,3,2026-08-08T21:05:00Z,2026-09-01T09:43:51Z,As-built single line not yet updated
+CXI-C-030,CDU-C2,L2,CX-C-CDU-C2-L2,3,2026-08-08T21:28:00Z,,Coolant laboratory report awaiting the second sample
+CXI-C-031,CDU-C2,L2,CX-C-CDU-C2-L2,2,2026-08-08T23:18:00Z,2026-08-22T06:51:16Z,Valve tag missing on the secondary isolation
+CXI-C-032,CDU-C2,L2,CX-C-CDU-C2-L2,2,2026-08-08T23:42:00Z,2026-08-12T11:10:26Z,"Trend logging interval set to 15 minutes, not 1"
+CXI-C-033,CDU-C1,L3,CX-C-CDU-C1-L3,2,2026-09-04T18:21:00Z,,"Trend logging interval set to 15 minutes, not 1"
+CXI-C-034,CDU-C1,L3,CX-C-CDU-C1-L3,3,2026-09-04T20:19:00Z,2026-09-07T15:14:28Z,Operating and maintenance manual not yet delivered
+CXI-C-035,CDU-C1,L3,CX-C-CDU-C1-L3,3,2026-09-04T20:23:00Z,,Insulation touch-up needed at one header joint
+CXI-C-036,MVS-C2,L3,CX-C-MVS-C2-L3,2,2026-09-04T20:34:00Z,,Nameplate data differs from the approved submittal
+CXI-C-037,VESDA-C1,L3,CX-C-VESDA-C1-L3,2,2026-09-04T21:44:00Z,,Sampling pipe labels missing in one aisle
+CXI-C-038,VESDA-C1,L3,CX-C-VESDA-C1-L3,2,2026-09-04T21:52:00Z,2026-09-09T09:53:33Z,Leak cable map does not match the installed route
+CXI-C-039,MVS-C2,L3,CX-C-MVS-C2-L3,2,2026-09-04T22:22:00Z,,Torque marks missing on two terminations
+CXI-C-040,DCB-C-B,L3,CX-C-DCB-C-B-L3,2,2026-09-05T19:50:00Z,,Arc flash label missing on an access panel
+CXI-C-041,DCB-C-B,L3,CX-C-DCB-C-B-L3,2,2026-09-05T20:54:00Z,,Torque marks missing on two terminations
+CXI-C-042,CDU-C3,L3,CX-C-CDU-C3-L3,3,2026-09-07T18:56:00Z,2026-09-20T13:58:32Z,Coolant laboratory report awaiting the second sample
+CXI-C-043,MVS-C1,L3,CX-C-MVS-C1-L3,1,2026-09-08T17:31:00Z,2026-09-10T10:05:41Z,DC ground fault detection did not alarm on the test
+CXI-C-044,MVS-C1,L3,CX-C-MVS-C1-L3,2,2026-09-08T20:02:00Z,,Nameplate data differs from the approved submittal
+CXI-C-045,DCB-C-A,L3,CX-C-DCB-C-A-L3,2,2026-09-09T17:20:00Z,2026-09-25T22:10:15Z,Nameplate data differs from the approved submittal
+CXI-C-046,DCB-C-A,L3,CX-C-DCB-C-A-L3,3,2026-09-09T17:46:00Z,,As-built single line not yet updated
+CXI-C-047,CDU-C2,L3,CX-C-CDU-C2-L3,2,2026-09-11T23:33:00Z,,"Trend logging interval set to 15 minutes, not 1"
+CXI-C-048,MVS-C1,L3,CX-C-MVS-C1-L3,1,2026-09-12T21:17:00Z,2026-09-15T08:18:53Z,Output did not transfer to the alternate source within the design time
+CXI-C-049,MVS-C2,L4,CX-C-MVS-C2-L4,1,2026-09-23T17:07:36Z,,Output did not transfer to the alternate source within the design time
+CXI-C-050,MVS-C2,L4,CX-C-MVS-C2-L4,2,2026-09-25T21:40:00Z,,Arc flash label missing on an access panel
+CXI-C-051,MVS-C2,L4,CX-C-MVS-C2-L4,3,2026-09-25T22:22:00Z,,Factory test report page missing a signature

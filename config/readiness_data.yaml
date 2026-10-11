@@ -1,0 +1,49 @@
+# How the synthetic Hall C readiness record is generated (src/scorecard/synthetic/readiness.py).
+# Every day count is relative to the record's as-of date (the end of the sample month), so every
+# generated month holds a program at the same stage: L1 to L3 mostly done, L4 under way, L5 ahead.
+# Values are modeling assumptions, not anyone's real schedule.
+
+first_compute_days: 55          # committed first-compute date, days after the as-of date
+level_start_days:               # baseline (planned) start of each level, days from the as-of date: [earliest, latest]
+  L1: [-88, -62]
+  L2: [-58, -38]
+  L3: [-34, -14]
+  L4: [-9, 12]
+  L5: [20, 20]
+level_gap_days: 1               # a level never starts within a day of the level below it passing
+work_hours_local: [8, 16]       # tests run in local working hours
+slipped_system: "ESS-C"         # the energy storage factory test slipped with the vendor (the pilot's long lead item)
+slipped_to_days: [18, 24]       # its L1 is now scheduled this many days after the as-of date; its later levels follow
+fail_probability: 0.12          # a run fails and is retested
+retest_days: [2, 6]
+signature_hours: [2, 70]        # each signature after the one before it (the first after the passing run)
+issues_per_run: [0, 3]
+issue_category_weights: {2: 0.5, 3: 0.5}   # issues raised at a passing run (Category 1 only comes with a failed run)
+issue_close_days: [2, 30]
+issue_open_probability: 0.25    # a Category 2 or 3 issue is still open at the as-of date
+item_jitter_days: [-12, 4]      # actual finish of a readiness item against its plan (finish = committed date - due)
+spares_item_done_days: [-22, -8]   # the initial-spares claim, days from the as-of date
+spares_shipments: [1, 3]
+spares_lead_days: [3, 40]       # receipts land this many days before the claim
+
+issue_texts:
+  power:
+    1: ["Protection relay trip setting differs from the coordination study", "DC ground fault detection did not alarm on the test", "Output did not transfer to the alternate source within the design time"]
+    2: ["Arc flash label missing on an access panel", "Nameplate data differs from the approved submittal", "Torque marks missing on two terminations"]
+    3: ["As-built single line not yet updated", "Factory test report page missing a signature", "Spare fuses not yet delivered"]
+  cooling:
+    1: ["Lead pump did not fail over to lag on loss of flow", "Leak alarm did not reach the BMS", "Supply temperature overshot the limit on the step load"]
+    2: ["Strainer differential pressure reads high after flush", "Valve tag missing on the secondary isolation", "Trend logging interval set to 15 minutes, not 1"]
+    3: ["Operating and maintenance manual not yet delivered", "Coolant laboratory report awaiting the second sample", "Insulation touch-up needed at one header joint"]
+  life safety:
+    1: ["Transport time to the end sampling hole exceeds the design", "A leak circuit break did not report as a cable fault", "Fire alarm panel did not receive the Action level"]
+    2: ["Sampling pipe labels missing in one aisle", "Leak cable map does not match the installed route", "Battery calculation not on file"]
+    3: ["Commissioning photos not yet uploaded", "Spare sampling hole caps not yet delivered", "As-built riser drawing pending"]
+  monitoring:
+    1: ["Points read different values in the BMS and the Customer collector", "Alarm reached the BMS but not the Customer collector"]
+    2: ["Point names do not follow the naming standard", "Alarm priority differs from the points list"]
+    3: ["Graphics page not yet built for Hall C", "Points list revision not yet issued"]
+  hall:
+    1: ["A rack position lost power during the utility transfer", "Coolant flow dropped below the band during the CDU failure"]
+    2: ["Load bank placement differed from the test plan", "Trend export missing one MVSST"]
+    3: ["Test report draft pending the agent's review", "Witness log not yet scanned"]

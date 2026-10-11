@@ -1,0 +1,126 @@
+# New-hall readiness for Site AUS-1 (fictional; portfolio demo): Hall C, the 800 VDC pilot.
+#
+# This file is the program's standard work: the commissioning levels, the systems each level covers,
+# the Customer's readiness gates and items, and the spares a pilot needs before first compute. It is
+# judgment, written by people; the facts (dates, test runs, signatures, issues, receipts) come from
+# data/readiness/. The hall itself (racks, MVSSTs, CDUs, detection) comes from site/site.yaml, and the
+# sign-off roles from config/deployments.yaml, so nothing here repeats them.
+#
+# Read by src/scorecard/readiness.py. Durations and minimums are planning assumptions for this model.
+
+meta:
+  title: "Hall C readiness: 800 VDC pilot"
+  checked: "2026-10-11"
+  disclaimer: >-
+    Fictional program at a fictional site. Commissioning levels L1 to L5 follow common industry usage
+    (ASHRAE Guideline 0 process, the levels as building commissioning firms and owners use them), not
+    the text of any one standard. The parties, records, and numbers are invented. Equipment the site
+    model has not selected yet (the 800 VDC busway and the energy storage) is generic.
+
+program:
+  id: "RDY-C-PILOT"
+  name: "Hall C readiness: 800 VDC pilot"
+  hall: "HALL-C"
+  # Committed first-compute date, set at program start; the generator places it relative to the
+  # record's as-of date so every generated month has a program at the same stage.
+  first_compute_label: "First compute online"
+
+# Commissioning levels. `by` performs the level; `sign` must sign each script, in order.
+levels:
+  L1: {name: "Factory witness test", by: oem, sign: [oem, cxa, cust-wit],
+       does: "The manufacturer tests the unit at the factory to its own procedure; the commissioning agent and a Customer witness observe and sign."}
+  L2: {name: "Receipt and installation inspection", by: ll-qa, sign: [ll-qa, cxa],
+       does: "Checks the delivered and installed unit against its submittal, with its L1 report on file."}
+  L3: {name: "Start-up and pre-functional checks", by: oem, sign: [oem, ll-ops, cxa],
+       does: "Energizes or fills the unit for the first time; proves sensors, controls, and protection settings."}
+  L4: {name: "Functional performance test", by: cxa, sign: [cxa, ll-ops, cust-wit],
+       does: "Runs every sequence of the unit under load: failover, alarms, and limits, against the design intent."}
+  L5: {name: "Integrated systems test", by: cxa, sign: [cxa, ll-ops, ll-eor, cust-wit, cust-dep],
+       does: "Runs the hall as a whole under load bank: loss of utility, loss of one MVSST, loss of one CDU, and return to normal."}
+
+# The systems the commissioning covers. `levels` lists the levels that apply; L5 is one hall-wide script.
+systems:
+  - {id: "MVS-C1", name: "Solid-state transformer C1 (13.8 kV to 800 VDC)", product: eaton_mvsst, domain: power, levels: [L1, L2, L3, L4]}
+  - {id: "MVS-C2", name: "Solid-state transformer C2 (13.8 kV to 800 VDC)", product: eaton_mvsst, domain: power, levels: [L1, L2, L3, L4]}
+  - {id: "ESS-C", name: "Energy storage, 800 VDC (per pilot submittal)", domain: power, levels: [L1, L2, L3, L4]}
+  - {id: "DCB-C-A", name: "800 VDC busway, A side (per pilot submittal)", domain: power, levels: [L2, L3, L4]}
+  - {id: "DCB-C-B", name: "800 VDC busway, B side (per pilot submittal)", domain: power, levels: [L2, L3, L4]}
+  - {id: "CDU-C1", name: "CDU C1", product: coolit_chx2000, domain: cooling, levels: [L1, L2, L3, L4]}
+  - {id: "CDU-C2", name: "CDU C2", product: coolit_chx2000, domain: cooling, levels: [L1, L2, L3, L4]}
+  - {id: "CDU-C3", name: "CDU C3", product: coolit_chx2000, domain: cooling, levels: [L1, L2, L3, L4]}
+  - {id: "CRAH-C1", name: "Electrical room CRAH C1", product: liebert_cw_crah, domain: cooling, levels: [L2, L3, L4]}
+  - {id: "CRAH-C2", name: "Electrical room CRAH C2", product: liebert_cw_crah, domain: cooling, levels: [L2, L3, L4]}
+  - {id: "VESDA-C1", name: "VESDA detector, Hall C", product: vesda_e_vep, domain: life safety, levels: [L2, L3, L4]}
+  - {id: "LD-C", name: "Leak detection, 5 circuits", product: tracetek_ttdm128, domain: life safety, levels: [L2, L3, L4]}
+  - {id: "BMS-C", name: "Monitoring points, Hall C (BMS, EPMS, Customer collector)", domain: monitoring, levels: [L4]}
+
+# Planning durations in days (from start to a passed script), used to forecast what has not run yet.
+duration_days: {L1: 2, L2: 1, L3: 2, L4: 2, L5: 4}
+cx_report_days: 7          # after L5 passes, the commissioning agent issues the report
+
+# Issues log categories (the commissioning agent's). A level cannot pass with a Category 1 open on its system.
+issue_categories:
+  1: "Prevents the level from passing: safety, a failed sequence, or a missing protection."
+  2: "Must be fixed before handoff; the level may pass with it open."
+  3: "Observation or documentation; tracked to closure."
+
+# The Customer's readiness gates, R0 to R4. `due` is days before the committed first-compute date.
+# `from_cx` items are not records: they are computed from the commissioning record.
+gates:
+  - id: "R0"
+    name: "Commissioning accepted"
+    items:
+      - {id: "R0-01", name: "Integrated systems test (L5) passed and the commissioning report issued", owner: cxa, due: 21, from_cx: "l5_report"}
+      - {id: "R0-02", name: "No Category 1 issue open", owner: cxa, due: 21, from_cx: "no_cat1"}
+      - {id: "R0-03", name: "Ready-for-racks certificate with its open-issues list", owner: ll-ops, due: 18, after: ["R0-01", "R0-02"], days: 2,
+         evidence: "Ready-for-racks certificate"}
+  - id: "R1"
+    name: "Spares and logistics"
+    items:
+      - {id: "R1-01", name: "Pilot spares list and minimums approved", owner: cust-dep, due: 90, days: 3, evidence: "Approved spares list"}
+      - {id: "R1-02", name: "Initial spares received to minimum", owner: it-dep, due: 60, after: ["R1-01"], days: 20, spares: true,
+         evidence: "Spares receipt confirmation"}
+      - {id: "R1-03", name: "OEM return path and advance replacement agreed for the pilot FRUs", owner: cust-dep, due: 45, after: ["R1-01"], days: 10,
+         evidence: "OEM service agreement amendment"}
+      - {id: "R1-04", name: "Hall C spares cage on access control", owner: cust-sec, due: 30, days: 5, evidence: "Access control test record"}
+  - id: "R2"
+    name: "Security and access"
+    items:
+      - {id: "R2-01", name: "Hall C doors on access control, every reader tested", owner: cust-sec, due: 40, days: 5, evidence: "Access control test record"}
+      - {id: "R2-02", name: "CCTV covers every door and aisle, recording verified", owner: cust-sec, due: 35, days: 4, evidence: "CCTV coverage check"}
+      - {id: "R2-03", name: "Hall C access list approved (least privilege)", owner: cust-sec, due: 21, after: ["R2-01"], days: 3, evidence: "Approved access list"}
+  - id: "R3"
+    name: "People and process"
+    items:
+      - {id: "R3-01", name: "IT Partner staffing plan for Hall C", owner: it-dep, due: 45, days: 5, evidence: "Staffing plan"}
+      - {id: "R3-02", name: "800 VDC electrical safety training (NFPA 70E, DC) for IT Partner technicians", owner: it-dep, due: 21, after: ["R3-01"], days: 15,
+         evidence: "Training roster by person ID"}
+      - {id: "R3-03", name: "Ownership matrix and runbooks updated for the MVSSTs, 800 VDC busway, and energy storage", owner: cust-dep, due: 21, days: 10,
+         evidence: "Interface Agreement change and runbook revisions"}
+      - {id: "R3-04", name: "Break-fix MOP templates for 800 VDC racks", owner: it-dep, due: 14, after: ["R3-03"], days: 7, evidence: "MOP templates"}
+  - id: "R4"
+    name: "First compute"
+    items:
+      - {id: "R4-01", name: "Racks set, fabric cabled and certified", owner: it-dep, due: 7, after: ["R0-03", "R3-02"], days: 10, evidence: "Fabric certification report"}
+      - {id: "R4-02", name: "Rack burn-in passed", owner: it-dep, due: 3, after: ["R4-01", "R1-02"], days: 3, evidence: "Burn-in results"}
+      - {id: "R4-03", name: "Go / no-go for first compute", owner: cust-dep, due: 0, after: ["R4-02", "R2-03", "R3-04", "R1-03", "R1-04", "R2-02"], days: 1,
+         evidence: "Go / no-go record"}
+
+# Customer-owned spares the pilot needs on site before first compute (IT FRUs only; the Landlord holds its own).
+spares:
+  - {fru: "Compute tray (Vera Rubin class)", minimum: 2}
+  - {fru: "NVLink switch tray", minimum: 1}
+  - {fru: "800 VDC rack power module", minimum: 4}
+  - {fru: "1.6T OSFP optic", minimum: 24}
+  - {fru: "Rack manifold quick-disconnect kit", minimum: 4}
+
+checks:
+  passed_open_cat1: "Level passed with a Category 1 issue open"
+  signed_before_run: "Signed before the test ran"
+  out_of_sequence: "Level passed before the level below it"
+  spares_short: "Spares claimed at minimum, receipts short"
+check_help:
+  passed_open_cat1: "A script's passing run is compared with the issues log: a Category 1 issue on the same system and level, opened before the run and not closed by then, means the level could not pass."
+  signed_before_run: "Each signature on a script is compared with the time of the run it accepts. A Category 2 issue open at the pass, or a signature the same day after the run, is normal."
+  out_of_sequence: "A system's level counts as passed at its passing run; the level below it on the same system must have passed first. A failed run retested and passed before the next level is normal."
+  spares_short: "The readiness item that claims the initial spares are on site is compared with the spares receipts: by the claim, every pilot FRU class must have reached its minimum."

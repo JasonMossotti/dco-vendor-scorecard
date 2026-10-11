@@ -43,6 +43,7 @@ DOCS = [
     ("GPU telemetry report", "reports/gpu_telemetry.md"),
     ("CDU telemetry report", "reports/cdu_telemetry.md"),
     ("Hall B deployment plan", "docs/deployments/DEPLOYMENT_PLAN.md"),
+    ("Hall C readiness", "docs/deployments/HALL_C_READINESS.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
 ]
 
@@ -114,7 +115,9 @@ def facts() -> dict:
                    "handed": dp["racks"]["counts"].get("handed off", 0) + dp["racks"]["counts"].get("handed off late", 0),
                    "complete": sum(w["complete"] for w in dp["record"]["work_orders"]), "wos": len(dp["record"]["work_orders"]),
                    "gates": [(g["gate"], g["closed"]) for g in dp["gate_status"]], "findings": len(dp["findings"]),
-                   "checks": sorted({x["check"] for x in dp["findings"]})},
+                   "checks": sorted({x["check"] for x in dp["findings"]}),
+                   "hallc": {"forecast": dp["readiness"]["forecast"]["first_compute"], "committed": dp["readiness"]["forecast"]["committed"],
+                             "slip": dp["readiness"]["forecast"]["slip_days"], "findings": len(dp["readiness"]["findings"])}},
     }
 
 
@@ -224,8 +227,11 @@ def body(f: dict) -> str:
              "partners' Jira projects, complete only when signed and inspected.",
              [(f"{dp['handed']} of {dp['racks']}", "racks handed off (measured)"), (f"{dp['complete']} of {dp['wos']}", "work orders complete"),
               (str(dp["findings"]), "records do not reconcile")],
-             [("Open the program", "deployments/"), ("Record checks", "deployments/#checks")],
-             "Gates: " + ", ".join(f"{g} {'closed' if c else 'open'}" for g, c in dp["gates"]) + "."),
+             [("Open the program", "deployments/"), ("Record checks", "deployments/#checks"), ("Hall C readiness", "deployments/#hallc")],
+             "Gates: " + ", ".join(f"{g} {'closed' if c else 'open'}" for g, c in dp["gates"]) + ". "
+             + f"Hall C pilot: first compute forecast {dp['hallc']['forecast']} against {dp['hallc']['committed']} committed"
+             + (f" ({dp['hallc']['slip']} day{'s' if dp['hallc']['slip'] != 1 else ''} late)" if dp['hallc']['slip'] > 0 else " (on time)")
+             + f"; {dp['hallc']['findings']} readiness records do not reconcile."),
     ]
     docs = "".join(f'<li><a href="{p if p.endswith("/") else BLOB + p}">{escape(t)}</a></li>' for t, p in DOCS)
     return (

@@ -1,0 +1,107 @@
+[
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R0-03",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "2026-08-22T16:52:00Z",
+  "evidence": "RDY-C-R1-01",
+  "item": "R1-01",
+  "started": "2026-08-19T16:52:00Z",
+  "state": "done"
+ },
+ {
+  "done": "2026-09-11T19:54:00Z",
+  "evidence": "RDY-C-R1-02",
+  "item": "R1-02",
+  "started": "2026-08-22T19:54:00Z",
+  "state": "done"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R1-03",
+  "started": "2026-09-27T18:13:00Z",
+  "state": "in progress"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R1-04",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R2-01",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R2-02",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R2-03",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "2026-09-26T18:53:00Z",
+  "evidence": "RDY-C-R3-01",
+  "item": "R3-01",
+  "started": "2026-09-21T18:53:00Z",
+  "state": "done"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R3-02",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R3-03",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R3-04",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R4-01",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R4-02",
+  "started": "",
+  "state": "not started"
+ },
+ {
+  "done": "",
+  "evidence": "",
+  "item": "R4-03",
+  "started": "",
+  "state": "not started"
+ }
+]

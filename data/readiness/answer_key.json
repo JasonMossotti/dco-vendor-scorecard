@@ -1,0 +1,25 @@
+{
+ "decoys": {
+  "cat2_open_at_pass": 3,
+  "retested_then_passed": 5,
+  "signed_same_day_after_run": 3
+ },
+ "planted": [
+  {
+   "kind": "passed_open_cat1",
+   "ref": "CX-C-MVS-C2-L4"
+  },
+  {
+   "kind": "signed_before_run",
+   "ref": "CX-C-CDU-C3-L1"
+  },
+  {
+   "kind": "out_of_sequence",
+   "ref": "CX-C-CRAH-C1-L3"
+  },
+  {
+   "kind": "spares_short",
+   "ref": "R1-02"
+  }
+ ]
+}
