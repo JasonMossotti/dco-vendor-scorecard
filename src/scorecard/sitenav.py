@@ -28,6 +28,7 @@ REPO = "https://github.com/JasonMossotti/dco-vendor-scorecard"
 TABS = [
     ("overview", "Overview", ""),
     ("scorecards", "Scorecards", "app/"),
+    ("availability", "Availability", "availability/"),
     ("alarms", "Alarm Board", "alarms/"),
     ("tickets", "Incident Portal", "tickets/"),
     ("pir", "Post-Incident Review", "pir/"),

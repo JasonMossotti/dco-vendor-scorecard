@@ -113,6 +113,11 @@ def markdown(w: dict, n: dict | None) -> str:
                     [[r["id"], r["name"], r["min_txt"], f"{r['week_txt']} · {r['week_status_txt']}", r["reported_txt"] + (f" ({r['gap_txt']})" if r["gap_txt"] else ""),
                       r["mtd_txt"], f"**{r['mtd_status_txt']}**" if r["mtd_status"] in ("below_minimum", "deep_below_minimum") else r["mtd_status_txt"]] for r in p["levels"]])
         L.append("")
+    av = w["availability"]
+    L += [f"Availability: the scheduler could place work on {av['week']['sched_pct']:.3f}% of installed GPU-hours this week "
+          f"({av['mtd']['sched_pct']:.3f}% month to date). GPU-hours lost this week: IT Partner {av['week']['it']:,.1f}, "
+          f"Landlord {av['week']['landlord']:,.1f} (month to date {av['mtd']['it']:,.1f} and {av['mtd']['landlord']:,.1f}). "
+          "Detail on the Availability tab.", ""]
     inc = w["incidents"]
     L += ["## 3. Incidents", "", "P1 incidents in full; P2 incidents summarized with every one that missed its target or was still open at the end of the week. "
           "Restore times are the SLA clock (Telemetry of Record, to Validated RTS).", ""]

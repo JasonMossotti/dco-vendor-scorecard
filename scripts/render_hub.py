@@ -36,6 +36,7 @@ DOCS = [
     ("IT Partner scorecard", "reports/scorecard.md"),
     ("Landlord scorecard", "reports/landlord_scorecard.md"),
     ("Fault attribution report", "reports/attribution_report.md"),
+    ("Availability and repair turnaround", "reports/availability.md"),
     ("Change-aware alarm review", "reports/change_alarms.md"),
     ("Failure pattern review", "reports/failure_patterns.md"),
     ("PUE report", "reports/pue_report.md"),
@@ -51,6 +52,7 @@ DOCS = [
 def facts() -> dict:
     """The overview's numbers, each from the module that renders the page it summarizes."""
     import render_alarms
+    import render_availability
     import render_deployments
     import render_energy
     import render_gpu_health
@@ -73,6 +75,7 @@ def facts() -> dict:
     gh = render_gpu_health.prepare()
     tm = render_telemetry.prepare()
     dp = render_deployments.prepare()
+    av = render_availability.prepare()
     from scorecard import tickets as T
     tk = T.build()
     start, end = sc["window"]["start"], sc["window"]["end"]
@@ -111,6 +114,10 @@ def facts() -> dict:
                       "cdus": len(tm["cdu"]["cdus"]),
                       "cdu_agree": sum(a["checked"] - a["misses"] for a in tm["cdu"]["agreements"]),
                       "cdu_cases": sum(a["checked"] for a in tm["cdu"]["agreements"])},
+        "availability": {"sched": av["sched"]["pct"], "csl01": av["csl01"]["actual"],
+                         "owners": [(o["owner"], o["hours"]) for o in av["owners"] if o["hours"] > 0],
+                         "below": [(r["fru"], r["days_below"]) for r in av["spares"]["rows"] if r["days_below"]], "days": av["spares"]["days"],
+                         "common": max(av["stage_summary"], key=lambda r: r["tickets"])},
         "deploy": {"hall": dp["program"]["hall_name"], "racks": len(dp["racks"]["racks"]),
                    "handed": dp["racks"]["counts"].get("handed off", 0) + dp["racks"]["counts"].get("handed off late", 0),
                    "complete": sum(w["complete"] for w in dp["record"]["work_orders"]), "wos": len(dp["record"]["work_orders"]),
@@ -142,6 +149,7 @@ def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: l
 def body(f: dict) -> str:
     it, ll, al, pir, pat, tk, en, gh = f["it"], f["ll"], f["alarms"], f["pir"], f["patterns"], f["tickets"], f["energy"], f["gpu"]
     tm = f["telemetry"]
+    av = f["availability"]
     dp = f["deploy"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
@@ -173,6 +181,16 @@ def body(f: dict) -> str:
              [("Open the scorecards", "app/")],
              f"Engine self-check: IT Partner {check(it)}, Landlord {check(ll)} planted discrepancies found. "
              "Runs Python in your browser; the first visit takes 20 to 40 seconds to start."),
+        tile("availability", "Availability",
+             "Where the GPU-hours went: what the scheduler could not use, who owns each lost hour under the contracts, "
+             "repair turnaround stage by stage, and the spares and RMA pipeline.",
+             [(f"{av['sched']:.3f}%", "fleet availability (scheduler)"), (f"{av['csl01']:.3f}%", "CSL-01 measured"),
+              (" / ".join(f"{h:,.0f}" for _, h in av["owners"]), "GPU-hours lost: " + " / ".join(o for o, _ in av["owners"]))],
+             [("Open availability", "availability/")],
+             (f"{av['common']['cause']} repairs, the most common: median {av['common']['measured']['median']:.0f} minutes "
+              "from the fault signal to the validated return to service. ")
+             + ("; ".join(f"{fru} below its minimum on {n} of {av['days']} days" for fru, n in av["below"]) + "." if av["below"]
+                else "Every spares class stayed at or above its minimum.")),
         tile("alarms", "Alarm Board",
              "Every alarm checked against the change work that declared it; anything outside the declared impact is flagged.",
              [(str(al["total"]), "alarms this month"), (str(al["expected"]), "expected from change work"),

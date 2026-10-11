@@ -189,6 +189,7 @@ def _node(script, *args):
     ("patterns/", "#tabs button:nth-child(4)", ["INC3100816"]),
     ("glossary/", None, ["INC3100816", "WO-41023", "MOP-310", "CHG2040031"]),
     ("tickets/#INC3100068", None, ["INC3100068", "INC3100085"]),
+    ("availability/", None, ["INC3100068", "INC3900001", "INC3100748"]),
 ])
 def test_numbers_link_to_the_portal_in_a_browser(site, path, redraw, must):
     out = _node("ticket_links.cjs", site / path.split("#")[0] / "index.html", f"https://example.test/{path}", *([redraw] if redraw else []))
