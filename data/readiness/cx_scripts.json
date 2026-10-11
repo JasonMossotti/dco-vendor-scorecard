@@ -1,0 +1,882 @@
+[
+ {
+  "id": "CX-C-MVS-C1-L1",
+  "level": "L1",
+  "planned": "2026-07-06",
+  "runs": [
+   {
+    "at": "2026-07-06T20:05:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-07-06",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-07-07T09:15:12Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-07-07T18:57:12Z"
+   },
+   {
+    "role": "cust-wit",
+    "signed_at": "2026-07-07T23:38:28Z"
+   }
+  ],
+  "system": "MVS-C1"
+ },
+ {
+  "id": "CX-C-MVS-C1-L2",
+  "level": "L2",
+  "planned": "2026-08-08",
+  "runs": [
+   {
+    "at": "2026-08-08T14:57:00Z",
+    "result": "fail"
+   },
+   {
+    "at": "2026-08-13T14:09:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-08",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-14T16:14:53Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-16T20:59:53Z"
+   }
+  ],
+  "system": "MVS-C1"
+ },
+ {
+  "id": "CX-C-MVS-C1-L3",
+  "level": "L3",
+  "planned": "2026-09-08",
+  "runs": [
+   {
+    "at": "2026-09-08T16:54:00Z",
+    "result": "fail"
+   },
+   {
+    "at": "2026-09-12T19:40:00Z",
+    "result": "fail"
+   },
+   {
+    "at": "2026-09-17T14:28:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-08",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-18T13:05:29Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-18T22:43:58Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-19T16:04:13Z"
+   }
+  ],
+  "system": "MVS-C1"
+ },
+ {
+  "id": "CX-C-MVS-C1-L4",
+  "level": "L4",
+  "planned": "2026-09-27",
+  "runs": [],
+  "scheduled": "2026-09-27",
+  "signatures": [],
+  "system": "MVS-C1"
+ },
+ {
+  "id": "CX-C-MVS-C2-L1",
+  "level": "L1",
+  "planned": "2026-07-01",
+  "runs": [
+   {
+    "at": "2026-07-01T19:08:00Z",
+    "result": "fail"
+   },
+   {
+    "at": "2026-07-04T19:58:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-07-01",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-07-05T16:51:03Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-07-06T23:09:29Z"
+   },
+   {
+    "role": "cust-wit",
+    "signed_at": "2026-07-08T16:05:39Z"
+   }
+  ],
+  "system": "MVS-C2"
+ },
+ {
+  "id": "CX-C-MVS-C2-L2",
+  "level": "L2",
+  "planned": "2026-08-02",
+  "runs": [
+   {
+    "at": "2026-08-02T19:40:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-02",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-04T13:58:35Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-06T17:43:24Z"
+   }
+  ],
+  "system": "MVS-C2"
+ },
+ {
+  "id": "CX-C-MVS-C2-L3",
+  "level": "L3",
+  "planned": "2026-09-04",
+  "runs": [
+   {
+    "at": "2026-09-04T17:31:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-04",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-06T23:01:38Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-09T04:42:41Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-09T13:13:03Z"
+   }
+  ],
+  "system": "MVS-C2"
+ },
+ {
+  "id": "CX-C-MVS-C2-L4",
+  "level": "L4",
+  "planned": "2026-09-25",
+  "runs": [
+   {
+    "at": "2026-09-25T18:36:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-25",
+  "signatures": [
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-27T12:40:51Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": null
+   },
+   {
+    "role": "cust-wit",
+    "signed_at": null
+   }
+  ],
+  "system": "MVS-C2"
+ },
+ {
+  "id": "CX-C-ESS-C-L1",
+  "level": "L1",
+  "planned": "2026-07-01",
+  "runs": [],
+  "scheduled": "2026-10-16",
+  "signatures": [],
+  "system": "ESS-C"
+ },
+ {
+  "id": "CX-C-ESS-C-L2",
+  "level": "L2",
+  "planned": "2026-08-03",
+  "runs": [],
+  "scheduled": "2026-10-18",
+  "signatures": [],
+  "system": "ESS-C"
+ },
+ {
+  "id": "CX-C-ESS-C-L3",
+  "level": "L3",
+  "planned": "2026-09-05",
+  "runs": [],
+  "scheduled": "2026-10-21",
+  "signatures": [],
+  "system": "ESS-C"
+ },
+ {
+  "id": "CX-C-ESS-C-L4",
+  "level": "L4",
+  "planned": "2026-09-29",
+  "runs": [],
+  "scheduled": "2026-10-24",
+  "signatures": [],
+  "system": "ESS-C"
+ },
+ {
+  "id": "CX-C-DCB-C-A-L2",
+  "level": "L2",
+  "planned": "2026-08-04",
+  "runs": [
+   {
+    "at": "2026-08-04T18:08:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-04",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-07T02:58:36Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-07T06:56:34Z"
+   }
+  ],
+  "system": "DCB-C-A"
+ },
+ {
+  "id": "CX-C-DCB-C-A-L3",
+  "level": "L3",
+  "planned": "2026-09-09",
+  "runs": [
+   {
+    "at": "2026-09-09T15:22:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-09",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-11T19:50:14Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-14T06:13:43Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-16T15:34:31Z"
+   }
+  ],
+  "system": "DCB-C-A"
+ },
+ {
+  "id": "CX-C-DCB-C-A-L4",
+  "level": "L4",
+  "planned": "2026-10-02",
+  "runs": [],
+  "scheduled": "2026-10-02",
+  "signatures": [],
+  "system": "DCB-C-A"
+ },
+ {
+  "id": "CX-C-DCB-C-B-L2",
+  "level": "L2",
+  "planned": "2026-08-08",
+  "runs": [
+   {
+    "at": "2026-08-08T19:59:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-08",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-10T12:29:48Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-12T03:50:05Z"
+   }
+  ],
+  "system": "DCB-C-B"
+ },
+ {
+  "id": "CX-C-DCB-C-B-L3",
+  "level": "L3",
+  "planned": "2026-09-05",
+  "runs": [
+   {
+    "at": "2026-09-05T17:39:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-05",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-06T05:56:09Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-07T09:29:34Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-07T17:53:28Z"
+   }
+  ],
+  "system": "DCB-C-B"
+ },
+ {
+  "id": "CX-C-DCB-C-B-L4",
+  "level": "L4",
+  "planned": "2026-10-02",
+  "runs": [],
+  "scheduled": "2026-10-02",
+  "signatures": [],
+  "system": "DCB-C-B"
+ },
+ {
+  "id": "CX-C-CDU-C1-L1",
+  "level": "L1",
+  "planned": "2026-07-06",
+  "runs": [
+   {
+    "at": "2026-07-06T13:12:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-07-06",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-07-07T01:24:01Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-07-07T23:37:28Z"
+   },
+   {
+    "role": "cust-wit",
+    "signed_at": "2026-07-08T11:36:46Z"
+   }
+  ],
+  "system": "CDU-C1"
+ },
+ {
+  "id": "CX-C-CDU-C1-L2",
+  "level": "L2",
+  "planned": "2026-08-07",
+  "runs": [
+   {
+    "at": "2026-08-07T20:18:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-07",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-08T06:50:05Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-09T13:30:45Z"
+   }
+  ],
+  "system": "CDU-C1"
+ },
+ {
+  "id": "CX-C-CDU-C1-L3",
+  "level": "L3",
+  "planned": "2026-09-04",
+  "runs": [
+   {
+    "at": "2026-09-04T18:09:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-04",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-07T00:24:49Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-07T23:45:48Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-09T01:52:02Z"
+   }
+  ],
+  "system": "CDU-C1"
+ },
+ {
+  "id": "CX-C-CDU-C1-L4",
+  "level": "L4",
+  "planned": "2026-09-26",
+  "runs": [],
+  "scheduled": "2026-09-26",
+  "signatures": [],
+  "system": "CDU-C1"
+ },
+ {
+  "id": "CX-C-CDU-C2-L1",
+  "level": "L1",
+  "planned": "2026-07-01",
+  "runs": [
+   {
+    "at": "2026-07-01T16:33:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-07-01",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-07-02T07:24:31Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-07-03T08:54:06Z"
+   },
+   {
+    "role": "cust-wit",
+    "signed_at": "2026-07-05T09:37:56Z"
+   }
+  ],
+  "system": "CDU-C2"
+ },
+ {
+  "id": "CX-C-CDU-C2-L2",
+  "level": "L2",
+  "planned": "2026-08-08",
+  "runs": [
+   {
+    "at": "2026-08-08T19:19:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-08",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-08T21:53:31Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-09T01:51:18Z"
+   }
+  ],
+  "system": "CDU-C2"
+ },
+ {
+  "id": "CX-C-CDU-C2-L3",
+  "level": "L3",
+  "planned": "2026-09-11",
+  "runs": [
+   {
+    "at": "2026-09-11T20:32:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-11",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-14T03:48:47Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-15T00:06:30Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-17T18:59:45Z"
+   }
+  ],
+  "system": "CDU-C2"
+ },
+ {
+  "id": "CX-C-CDU-C2-L4",
+  "level": "L4",
+  "planned": "2026-09-28",
+  "runs": [],
+  "scheduled": "2026-09-28",
+  "signatures": [],
+  "system": "CDU-C2"
+ },
+ {
+  "id": "CX-C-CDU-C3-L1",
+  "level": "L1",
+  "planned": "2026-07-04",
+  "runs": [
+   {
+    "at": "2026-07-04T16:41:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-07-04",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-07-04T20:40:11Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-07-06T16:59:12Z"
+   },
+   {
+    "role": "cust-wit",
+    "signed_at": "2026-07-03T13:50:04Z"
+   }
+  ],
+  "system": "CDU-C3"
+ },
+ {
+  "id": "CX-C-CDU-C3-L2",
+  "level": "L2",
+  "planned": "2026-08-03",
+  "runs": [
+   {
+    "at": "2026-08-03T19:57:00Z",
+    "result": "fail"
+   },
+   {
+    "at": "2026-08-06T17:19:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-03",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-09T00:12:59Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-10T13:54:05Z"
+   }
+  ],
+  "system": "CDU-C3"
+ },
+ {
+  "id": "CX-C-CDU-C3-L3",
+  "level": "L3",
+  "planned": "2026-09-07",
+  "runs": [
+   {
+    "at": "2026-09-07T18:34:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-07",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-10T15:10:55Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-12T13:35:35Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-12T20:29:16Z"
+   }
+  ],
+  "system": "CDU-C3"
+ },
+ {
+  "id": "CX-C-CDU-C3-L4",
+  "level": "L4",
+  "planned": "2026-09-26",
+  "runs": [],
+  "scheduled": "2026-09-26",
+  "signatures": [],
+  "system": "CDU-C3"
+ },
+ {
+  "id": "CX-C-CRAH-C1-L2",
+  "level": "L2",
+  "planned": "2026-08-07",
+  "runs": [
+   {
+    "at": "2026-08-07T20:55:00Z",
+    "result": "fail"
+   },
+   {
+    "at": "2026-08-10T16:29:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-07",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-11T16:35:24Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-11T23:41:23Z"
+   }
+  ],
+  "system": "CRAH-C1"
+ },
+ {
+  "id": "CX-C-CRAH-C1-L3",
+  "level": "L3",
+  "planned": "2026-09-10",
+  "runs": [
+   {
+    "at": "2026-08-10T09:07:50Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-10",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-08-12T08:35:59Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-08-13T04:24:36Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-13T08:12:20Z"
+   }
+  ],
+  "system": "CRAH-C1"
+ },
+ {
+  "id": "CX-C-CRAH-C1-L4",
+  "level": "L4",
+  "planned": "2026-09-29",
+  "runs": [],
+  "scheduled": "2026-09-29",
+  "signatures": [],
+  "system": "CRAH-C1"
+ },
+ {
+  "id": "CX-C-CRAH-C2-L2",
+  "level": "L2",
+  "planned": "2026-08-07",
+  "runs": [
+   {
+    "at": "2026-08-07T19:52:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-07",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-10T12:34:49Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-13T04:27:01Z"
+   }
+  ],
+  "system": "CRAH-C2"
+ },
+ {
+  "id": "CX-C-CRAH-C2-L3",
+  "level": "L3",
+  "planned": "2026-09-10",
+  "runs": [
+   {
+    "at": "2026-09-10T19:46:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-10",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-11T18:28:05Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-14T03:29:44Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-16T14:14:17Z"
+   }
+  ],
+  "system": "CRAH-C2"
+ },
+ {
+  "id": "CX-C-CRAH-C2-L4",
+  "level": "L4",
+  "planned": "2026-09-28",
+  "runs": [],
+  "scheduled": "2026-09-28",
+  "signatures": [],
+  "system": "CRAH-C2"
+ },
+ {
+  "id": "CX-C-VESDA-C1-L2",
+  "level": "L2",
+  "planned": "2026-08-08",
+  "runs": [
+   {
+    "at": "2026-08-08T15:28:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-08",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-11T07:27:42Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-13T17:00:17Z"
+   }
+  ],
+  "system": "VESDA-C1"
+ },
+ {
+  "id": "CX-C-VESDA-C1-L3",
+  "level": "L3",
+  "planned": "2026-09-04",
+  "runs": [
+   {
+    "at": "2026-09-04T18:27:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-04",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-06T13:52:27Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-08T08:09:32Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-09T04:34:24Z"
+   }
+  ],
+  "system": "VESDA-C1"
+ },
+ {
+  "id": "CX-C-VESDA-C1-L4",
+  "level": "L4",
+  "planned": "2026-09-30",
+  "runs": [],
+  "scheduled": "2026-09-30",
+  "signatures": [],
+  "system": "VESDA-C1"
+ },
+ {
+  "id": "CX-C-LD-C-L2",
+  "level": "L2",
+  "planned": "2026-08-02",
+  "runs": [
+   {
+    "at": "2026-08-02T15:29:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-08-02",
+  "signatures": [
+   {
+    "role": "ll-qa",
+    "signed_at": "2026-08-03T19:09:58Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-08-05T08:46:51Z"
+   }
+  ],
+  "system": "LD-C"
+ },
+ {
+  "id": "CX-C-LD-C-L3",
+  "level": "L3",
+  "planned": "2026-09-08",
+  "runs": [
+   {
+    "at": "2026-09-08T18:25:00Z",
+    "result": "pass"
+   }
+  ],
+  "scheduled": "2026-09-08",
+  "signatures": [
+   {
+    "role": "oem",
+    "signed_at": "2026-09-08T22:00:24Z"
+   },
+   {
+    "role": "ll-ops",
+    "signed_at": "2026-09-11T00:10:42Z"
+   },
+   {
+    "role": "cxa",
+    "signed_at": "2026-09-11T20:11:47Z"
+   }
+  ],
+  "system": "LD-C"
+ },
+ {
+  "id": "CX-C-LD-C-L4",
+  "level": "L4",
+  "planned": "2026-10-01",
+  "runs": [],
+  "scheduled": "2026-10-01",
+  "signatures": [],
+  "system": "LD-C"
+ },
+ {
+  "id": "CX-C-BMS-C-L4",
+  "level": "L4",
+  "planned": "2026-09-28",
+  "runs": [],
+  "scheduled": "2026-09-28",
+  "signatures": [],
+  "system": "BMS-C"
+ },
+ {
+  "id": "CX-C-HALL-L5",
+  "level": "L5",
+  "planned": "2026-10-18",
+  "runs": [],
+  "scheduled": "2026-10-18",
+  "signatures": [],
+  "system": "HALL-C"
+ }
+]

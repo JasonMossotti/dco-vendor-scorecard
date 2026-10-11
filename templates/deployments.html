@@ -118,6 +118,11 @@ __SITENAV__
     h += `<div class="sec">Records</div><ul><li>${link("workorders", "Deployment work orders")} <small>${esc(WO.length)}</small></li>`
        + `<li>${link("checks", "Record checks")} <small>${esc(FIND.length)}</small></li>`
        + Object.keys(R.projects).map(k => `<li>${link("jira/" + k, "Jira " + k)} <small>${esc(R.projects[k].issues)}</small></li>`).join("") + `</ul>`;
+    h += `<div class="sec">Hall C readiness</div><ul><li>${link("hallc", "800 VDC pilot")}</li>`
+       + `<li><details><summary>Commissioning</summary><ul>` + RD.systems.map(x => `<li>${link("cx/" + x.id, x.id)}</li>`).join("") + `<li>${link("cx/HALL-C", "HALL-C (L5)")}</li></ul></details></li>`
+       + `<li>${link("cxissues/all,all", "Issues log")} <small>${esc(RD.issues.length)}</small></li>`
+       + RD.gates.map(g => `<li>${link("rgate/" + g.id, g.id + " " + g.name)}</li>`).join("")
+       + `<li>${link("hcspares", "Pilot spares")}</li><li>${link("hcchecks", "Readiness checks")} <small>${esc(RD.findings.length)}</small></li></ul>`;
     h += `<div class="sec">Library</div><ul><li>${link("docs", "Documents")}</li><li>${link("standards", "Standards and sources")}</li></ul>`;
     document.getElementById("tree").innerHTML = h;
   }
@@ -382,9 +387,135 @@ __SITENAV__
       + `</tbody></table><p class="note">Checked ${esc(B.meta.checked)}. Editions are named only where one was checked against the publisher.</p>`;
   }
 
+
+  // ------------------------------------------------------- Hall C readiness
+  const RD = B.readiness, RSC = Object.fromEntries(RD.scripts.map(x => [x.id, x]));
+  const RISS = Object.fromEntries(RD.issues.map(i => [i.id, i]));
+  const RFIND = {};
+  RD.findings.forEach(f => (RFIND[f.ref] = RFIND[f.ref] || []).push(f));
+  const RITEM = Object.fromEntries(RD.gates.flatMap(g => g.items.map(i => [i.id, i])));
+  const SYS = Object.fromEntries(RD.systems.map(x => [x.id, x]));
+  const LEVELS = Object.keys(RD.levels);
+  const day = s => esc((s || "").slice(0, 10) || "-");
+  const addDays = (d, n) => { const t = new Date(d + "T00:00:00Z"); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
+  const SC_TAG = {passed: "ok", "in progress": "warn", overdue: "bad", "failed, retest scheduled": "bad", scheduled: ""};
+  const IT_TAG = {done: "ok", "in progress": "warn", "not started": "", met: "ok", open: "bad"};
+  const late = n => n <= 0 ? tag("on time", "ok") : tag(`${n} day${n > 1 ? "s" : ""} late`, "bad");
+  const pathName = k => RSC[k] ? (RSC[k].system === "HALL-C" ? "Hall C L5" : RSC[k].system + " " + RSC[k].level) : k + " " + RITEM[k].name;
+  const pathLink = k => RSC[k] ? link("cx/" + RSC[k].system, pathName(k)) : link("rgate/" + k.slice(0, 2), pathName(k));
+  function cell(k) {
+    const x = RSC[k];
+    if (!x) return `<td></td>`;
+    const f = RFIND[k] ? " " + tag("does not reconcile", "bad") : "";
+    return `<td>${tag(x.state === "passed" ? "passed" : x.state, SC_TAG[x.state])}<br><span class="note" style="white-space:nowrap">${x.passed_at ? day(x.passed_at) : "forecast " + day(x.forecast)}</span>${f}</td>`;
+  }
+
+  function hallc() {
+    const fc = RD.forecast, P = RD.program, oc = RD.open_by_category;
+    const passed = RD.scripts.filter(x => x.passed_at).length;
+    const items = RD.gates.reduce((a, g) => a + g.done, 0), itemsAll = RD.gates.reduce((a, g) => a + g.total, 0);
+    let h = `<div class="kind">New-hall readiness · ${esc(P.id)}</div><h1>${esc(P.name)}</h1>`
+      + `<p class="sub">${esc(P.hall_name)}: ${esc(P.racks)} racks (${esc(P.rack_model)}). From the Landlord's commissioning to the Customer's first compute. Record as of ${stamp(P.as_of)}.</p>`
+      + `<p class="disclaimer">${esc(RD.meta.disclaimer)}</p>`;
+    h += `<div class="cards">`
+      + `<div class="card"><b>${day(fc.first_compute)}</b>${esc(P.first_compute_label)}, forecast (committed ${day(fc.committed)}) ${late(fc.slip_days)}</div>`
+      + `<div class="card"><b>${esc(passed)} of ${esc(RD.scripts.length)}</b>commissioning scripts passed</div>`
+      + `<div class="card"><b>${esc(items)} of ${esc(itemsAll)}</b>readiness items done</div>`
+      + `<div class="card"><a href="#cxissues/all,open"><b>${esc(oc[1])} · ${esc(oc[2])} · ${esc(oc[3])}</b></a>issues open, Category 1 · 2 · 3</div>`
+      + `<div class="card"><a href="#hcchecks"><b>${esc(RD.findings.length)}</b></a>records that do not reconcile</div></div>`;
+    h += `<h2 class="sec">Critical path to first compute</h2><div class="chain">${fc.critical_path.map(pathLink).join('<span class="arrow">→</span>')}</div>`
+      + `<p class="note">Forecast: anything not yet passed or done starts at the later of its schedule and what it waits for, and takes its planned duration (L1 ${esc(RD.duration_days.L1)} days, L2 ${esc(RD.duration_days.L2)}, L3 ${esc(RD.duration_days.L3)}, L4 ${esc(RD.duration_days.L4)}, L5 ${esc(RD.duration_days.L5)}). A level that waits on the level below it follows that level's forecast, whatever its own schedule says.</p>`;
+    h += `<h2 class="sec">Commissioning, by system and level</h2><div class="scroll"><table><thead><tr><th>System</th>${LEVELS.map(l => `<th>${esc(l)}</th>`).join("")}</tr></thead><tbody>`;
+    for (const x of RD.systems) h += `<tr><td>${link("cx/" + x.id, x.id)}<br><span class="note" data-gl-skip>${esc(x.name)}</span></td>${LEVELS.map(l => cell(RD.matrix[x.id][l])).join("")}</tr>`;
+    h += `<tr><td>${link("cx/HALL-C", "HALL-C")}<br><span class="note">Integrated, hall-wide</span></td>${LEVELS.map(l => cell((RD.matrix["HALL-C"] || {})[l])).join("")}</tr>`;
+    h += `</tbody></table></div><p class="note">A level passes at its passing run, signed by every role in order (open a system for its runs, signatures, and issues). Blank: the level does not apply to that system.</p>`;
+    h += `<h2 class="sec">Readiness gates</h2><table><thead><tr><th>Gate</th><th>Done</th><th>Forecast to finish</th></tr></thead><tbody>`
+      + RD.gates.map(g => `<tr><td>${link("rgate/" + g.id, g.id + " " + g.name)}</td><td class="n">${esc(g.done)} of ${esc(g.total)}</td><td>${day(g.items.map(i => i.forecast).sort().slice(-1)[0])}</td></tr>`).join("")
+      + `</tbody></table><p class="note">R0 is the Landlord's commissioning accepted; R1 to R4 are the Customer's own readiness: spares, security, people and process, and first compute. Standard work in config/readiness.yaml; record in data/readiness/.</p>`;
+    return h;
+  }
+
+  function cx(id) {
+    const hall = id === "HALL-C", x = SYS[id];
+    if (!x && !hall) return null;
+    const mine = RD.scripts.filter(s => s.system === id);
+    let h = `<div class="kind">Hall C commissioning</div><h1>${esc(hall ? "Hall C integrated systems test" : id + " " + x.name)}</h1>`
+      + `<p class="sub">${esc(hall ? "Hall-wide: every system under load bank together." : x.model + " · " + x.domain)}</p>`;
+    for (const sc of mine) {
+      const L = RD.levels[sc.level];
+      h += `<h2 class="sec">${esc(sc.level + " " + L.name)} · ${esc(sc.id)}</h2>` + (RFIND[sc.id] || []).map(f => `<p class="finding">${tag(f.check, "bad")} ${esc(f.text)}</p>`).join("")
+        + `<p>${tag(sc.state, SC_TAG[sc.state])} <span class="note">${esc(L.does)}</span></p>`
+        + `<table class="meta"><tbody><tr><th>Performed by</th><td>${role(L.by)} <span class="note">(${org(L.by)})</span></td></tr>`
+        + `<tr><th>Planned</th><td>${day(sc.planned)}</td></tr><tr><th>Scheduled</th><td>${day(sc.scheduled)}${sc.scheduled !== sc.planned ? ` <span class="note">(${esc(Math.round((new Date(sc.scheduled) - new Date(sc.planned)) / 864e5))} days from the plan)</span>` : ""}</td></tr>`
+        + `<tr><th>${sc.passed_at ? "Passed" : "Forecast to pass"}</th><td>${sc.passed_at ? stamp(sc.passed_at) : day(sc.forecast)}</td></tr></tbody></table>`;
+      if (sc.runs.length) h += `<h3>Runs</h3><table><thead><tr><th>When</th><th>Result</th></tr></thead><tbody>` + sc.runs.map(r => `<tr><td>${stamp(r.at)}</td><td>${tag(r.result, r.result === "pass" ? "ok" : "bad")}</td></tr>`).join("") + `</tbody></table>`;
+      if (sc.signatures.length) h += `<h3>Signatures, in order</h3><table><thead><tr><th>#</th><th>Role</th><th>Organization</th><th>Signed</th></tr></thead><tbody>`
+        + sc.signatures.map((g, i) => `<tr><td class="n">${esc(i + 1)}</td><td>${role(g.role)}</td><td>${org(g.role)}</td><td>${g.signed_at ? stamp(g.signed_at) : tag("pending")}</td></tr>`).join("") + `</tbody></table>`;
+      const iss = sc.issues.map(k => RISS[k]);
+      if (iss.length) h += `<h3>Issues</h3>` + issueTable(iss);
+    }
+    return h;
+  }
+
+  function issueTable(rows) {
+    return `<div class="scroll"><table><thead><tr><th>Issue</th><th>Script</th><th>Cat.</th><th>Opened</th><th>Closed</th><th>What</th></tr></thead><tbody>`
+      + (rows.length ? rows.map(i => `<tr><td style="white-space:nowrap">${esc(i.id)}</td><td style="white-space:nowrap">${link("cx/" + i.system, i.script)}</td><td>${tag(i.category, i.category === "1" || i.category === 1 ? "bad" : "")}</td><td>${stamp(i.opened)}</td><td>${i.closed ? stamp(i.closed) : tag("open", "warn")}</td><td>${esc(i.text)}</td></tr>`).join("")
+        : `<tr><td colspan="6">None.</td></tr>`) + `</tbody></table></div>`;
+  }
+
+  function cxissues(arg) {
+    const [csel, osel] = (arg || "all,all").split(",");
+    const rows = RD.issues.filter(i => (csel === "all" || String(i.category) === csel) && (osel === "all" || !i.closed));
+    const opt = (v, cur, label) => `<option value="${esc(v)}"${v === cur ? " selected" : ""}>${esc(label)}</option>`;
+    return `<div class="kind">Hall C commissioning</div><h1>Issues log</h1><p class="sub">The commissioning agent's log. ${Object.entries(RD.issue_categories).map(([k, v]) => `Category ${esc(k)}: ${esc(v)}`).join(" ")}</p>`
+      + `<p><label>Category <select id="ci-c">${opt("all", csel, "All")}${opt("1", csel, "1")}${opt("2", csel, "2")}${opt("3", csel, "3")}</select></label> `
+      + `<label>Show <select id="ci-o">${opt("all", osel, "All")}${opt("open", osel, "Open only")}</select></label> <span class="note">${esc(rows.length)} issues</span></p>` + issueTable(rows);
+  }
+
+  function rgate(id) {
+    const g = RD.gates.find(x => x.id === id);
+    if (!g) return null;
+    let h = `<div class="kind">Hall C readiness gate</div><h1>${esc(g.id + " " + g.name)}</h1><p class="sub">${esc(g.done)} of ${esc(g.total)} done. Due dates count back from the committed first-compute date, ${day(RD.forecast.committed)}.</p>`;
+    h += `<div class="scroll"><table><thead><tr><th>Item</th><th>Owner</th><th>After</th><th>Due</th><th>State</th><th>Done</th><th>Forecast</th><th>Evidence</th></tr></thead><tbody>`
+      + g.items.map(i => `<tr><td>${esc(i.id + " " + i.name)}${(RFIND[i.id] || []).map(f => `<br>${tag(f.check, "bad")}`).join("")}${i.note ? `<br><span class="note">${esc(i.note)}</span>` : ""}</td><td>${role(i.owner)}</td>`
+        + `<td>${(i.after || []).map(a => link("rgate/" + a.slice(0, 2), a)).join(", ")}${i.from_cx ? link("hallc", "commissioning") : ""}</td><td>${day(addDays(RD.forecast.committed, -i.due))}</td>`
+        + `<td>${tag(i.state, IT_TAG[i.state])}</td><td>${day(i.done)}</td><td>${day(i.forecast)}</td><td>${i.evidence ? esc(i.evidence) + `<br><span class="note">${esc(i.evidence_kind || "")}</span>` : "-"}</td></tr>`).join("")
+      + `</tbody></table></div>`;
+    if (g.items.some(i => i.spares)) h += `<p>${link("hcspares", "Pilot spares and receipts")}</p>`;
+    return h;
+  }
+
+  function hcspares() {
+    const claim = RITEM[RD.spares_item];
+    let h = `<div class="kind">Hall C readiness · R1</div><h1>Pilot spares</h1><p class="sub">Customer-owned IT spares the pilot needs on site before first compute; the Landlord holds its own. ${esc(claim.id)} (${esc(claim.name.toLowerCase())}): ${tag(claim.state, IT_TAG[claim.state])}${claim.done ? " at " + stamp(claim.done) : ""}.</p>`;
+    h += (RFIND[claim.id] || []).map(f => `<p class="finding">${tag(f.check, "bad")} ${esc(f.text)}</p>`).join("");
+    h += `<table><thead><tr><th>FRU</th><th class="n">Minimum</th><th class="n">Received by the claim</th><th class="n">Received to date</th></tr></thead><tbody>`
+      + RD.spares.map(s => { const by = claim.done ? s.receipts.filter(r => r.received_at <= claim.done).reduce((a, r) => a + r.qty, 0) : null;
+          return `<tr><td>${esc(s.fru)}</td><td class="n">${esc(s.minimum)}</td><td class="n">${by === null ? "-" : esc(by)}${by !== null && by < s.minimum ? " " + tag("short", "bad") : ""}</td><td class="n">${esc(s.received)}</td></tr>`; }).join("")
+      + `</tbody></table>`;
+    h += `<h2 class="sec">Receipts</h2><table><thead><tr><th>Received</th><th>FRU</th><th class="n">Qty</th><th>Purchase order</th></tr></thead><tbody>`
+      + RD.spares.flatMap(s => s.receipts).sort((a, b) => a.received_at < b.received_at ? -1 : 1).map(r => `<tr><td>${stamp(r.received_at)}</td><td>${esc(r.fru)}</td><td class="n">${esc(r.qty)}</td><td>${esc(r.po)}</td></tr>`).join("")
+      + `</tbody></table>`;
+    return h;
+  }
+
+  function hcchecks() {
+    const c = RD.self_check;
+    let h = `<div class="kind">Hall C readiness</div><h1>Readiness record checks</h1><p class="sub">Records that do not reconcile, found from the readiness record alone. A finding means the records disagree, not that the work was not done.</p>`;
+    h += `<table><thead><tr><th>Check</th><th>Record</th><th>Whose record</th><th>Finding</th></tr></thead><tbody>`
+      + (RD.findings.length ? RD.findings.map(f => `<tr><td>${tag(f.check, "bad")}</td><td>${RSC[f.ref] ? link("cx/" + RSC[f.ref].system, f.ref) : link("rgate/" + f.ref.slice(0, 2), f.ref)}</td><td>${esc(f.party)}</td><td>${esc(f.text)}</td></tr>`).join("")
+        : `<tr><td colspan="4">No findings.</td></tr>`) + `</tbody></table>`;
+    h += `<h2 class="sec">What each check compares</h2><ul>` + Object.entries(RD.check_names).map(([k, v]) => `<li><b>${esc(v)}.</b> ${esc(RD.check_help[k])}</li>`).join("") + `</ul>`;
+    if (c) {
+      const d = c.decoys;
+      h += `<p class="note">Self-check: found ${esc(c.detected)} of ${esc(c.planted)} planted records, ${esc(c.false_positives.length)} false positives. Left alone: ${esc(d.retested_then_passed || 0)} levels that failed and passed on a retest, ${esc(d.cat2_open_at_pass || 0)} levels passed with a Category 2 open, ${esc(d.signed_same_day_after_run || 0)} first signatures the same day after the run. The checks cannot read the answer key.</p>`;
+    }
+    return h;
+  }
+
   // ----------------------------------------------------------------- router
   // A Map, not an object: a name from the link can only reach these views, never a prototype method.
-  const VIEWS = new Map(Object.entries({overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards, dwo, workorders, jira, checks}));
+  const VIEWS = new Map(Object.entries({overview, gate, step, wave, rack, calc, cabling, permits, statewide, inspections, signoff, docs, standards, dwo, workorders, jira, checks, hallc, cx, cxissues, rgate, hcspares, hcchecks}));
   function show() {
     let raw;
     try { raw = decodeURIComponent(location.hash.slice(1)) || "overview"; } catch (e) { raw = "overview"; }
@@ -401,6 +532,8 @@ __SITENAV__
   }
   tree();
   document.getElementById("main").addEventListener("change", e => {
+    if (e.target.id === "ci-c" || e.target.id === "ci-o")
+      location.hash = "cxissues/" + document.getElementById("ci-c").value + "," + document.getElementById("ci-o").value;
     if (e.target.id === "wo-g" || e.target.id === "wo-s")
       location.hash = "workorders/" + document.getElementById("wo-g").value + "," + document.getElementById("wo-s").value;
   });

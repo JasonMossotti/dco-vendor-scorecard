@@ -13,6 +13,7 @@ data/*
 !data/energy/
 !data/gpu_health/
 !data/deployments/
+!data/readiness/
 !data/telemetry/
 
 # Extra engine runs (only the committed reports/ files are tracked)

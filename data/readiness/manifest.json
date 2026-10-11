@@ -1,0 +1,13 @@
+{
+  "as_of": "2026-09-28T00:00:00Z",
+  "disclaimer": "Synthetic readiness record for Hall C (the 800 VDC pilot) in a portfolio demonstration: the commissioning agent's scripts, runs, and signatures by role, the issues log, the Customer's readiness items, and the pilot spares receipts. Fictional parties and numbers; no person is named. answer_key.json lists the planted records that do not reconcile, for the checks' self-test only; the checks never read it.",
+  "files": {
+    "answer_key.json": 4,
+    "cx_issues.csv": 51,
+    "cx_scripts.json": 44,
+    "program.json": 1,
+    "readiness_items.json": 15,
+    "spares_receipts.csv": 9
+  },
+  "source": "data/sample (as-of date and seed)"
+}

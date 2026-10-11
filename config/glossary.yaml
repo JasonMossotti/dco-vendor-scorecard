@@ -231,6 +231,7 @@ terms:
   - {term: NIC, type: acronym, expansion: Network interface card, text: "A server's network adapter; each GB300 tray has one per fabric rail."}
   - {term: CCF-DEP, type: record, title: "Landlord's Jira project for the Hall B fit-out", text: "Caprock's own Jira project for the hall readiness work it runs or coordinates and each rack's tap-off energization (HO-4). Read through the importer, never written.", see: "deployments/#jira/CCF-DEP"}
   - {term: RSS-DEP, type: record, title: "IT Partner's Jira project for the Hall B rack deployment", text: "Ridgeline's own Jira project: one story per rack with a sub-task per milestone M1 to M7. Read through the importer, never written.", see: "deployments/#jira/RSS-DEP"}
+  - {term: RDY-C-PILOT, type: record, title: "Hall C readiness program", text: "The readiness program for Hall C, the 800 VDC pilot: commissioning L1 to L5, the Customer's readiness gates R0 to R4, pilot spares, and the first-compute forecast.", see: "deployments/#hallc"}
   - {term: DEP-B-GB300, type: record, title: "Hall B GB300 rollout program", text: "The deployment program for Hall B's 32 GB300 NVL72 racks: gates G0 to G3, their steps, calculations, permits, and records.", see: "deployments/"}
   - {term: R-HO4, type: rule, title: "Tap-off energization (Interface Agreement HO-4)", text: "The Landlord energizes the rack's tap-off and opens its isolation valves only after the IT Partner confirms the rack is set and leak-tested (M3). A rack step between M3 and M4.", see: "deployments/#step/R-HO4"}
   # --- Products and models named in the site model
@@ -361,6 +362,18 @@ families:
      text: "A step done once per rack, following the IT Partner SLA's milestones M1 (received) to M7 (Validated Handoff)."}
   - {key: CX-L, label: "L1 to L5", pattern: 'L[1-5]', type: safety, title: Commissioning level, example: L4, pages: [deployments],
      text: "The commissioning levels: L1 factory witness test, L2 receipt inspection, L3 installation and start-up checks, L4 functional test of each system, L5 integrated systems test."}
+  - {key: RDY-GATE, label: "R0 to R4", pattern: 'R[0-4]', type: record, title: Hall C readiness gate, example: R1, pages: [deployments], see: "deployments/#hallc",
+     text: "A gate of the Customer's readiness for Hall C: R0 commissioning accepted, R1 spares and logistics, R2 security and access, R3 people and process, R4 first compute. Done when every item in it is done."}
+  - {key: PO-C, label: "PO-C-####", pattern: 'PO-C-\d{4}', type: record, title: Pilot spares purchase order, example: PO-C-4101, pages: [deployments], see: "deployments/#hcspares",
+     text: "A purchase order line for the Hall C pilot spares; each receipt names the order it delivers against."}
+  - {key: RDY-ITEM, label: "R#-##", pattern: 'R[0-4]-\d{2}', type: record, title: Hall C readiness item, example: R1-02, pages: [deployments], see: "deployments/#hallc",
+     text: "An item of the Customer's readiness for a new hall: R0 commissioning accepted, R1 spares and logistics, R2 security and access, R3 people and process, R4 first compute (config/readiness.yaml)."}
+  - {key: RDY-EV, label: "RDY-C-R#-##", pattern: 'RDY-C-R[0-4]-\d{2}', type: record, title: Readiness evidence record, example: RDY-C-R1-02, pages: [deployments], see: "deployments/#hallc",
+     text: "The record that closes a Hall C readiness item (a certificate, a test record, an approved list), numbered after the item it closes."}
+  - {key: CX-SCRIPT, label: "CX-C-<system>-L#", pattern: 'CX-C-[A-Z0-9]+(?:-[A-Z0-9]+)*-L[1-5]', type: record, title: Commissioning script, example: CX-C-CDU-C1-L4, pages: [deployments], see: "deployments/#hallc",
+     text: "The commissioning agent's test script for one Hall C system at one level, with its runs and its signatures by role, in order."}
+  - {key: CXI, label: "CXI-C-###", pattern: 'CXI-C-\d{3}', type: record, title: Commissioning issue, example: CXI-C-001, pages: [deployments], see: "deployments/#cxissues/all,all",
+     text: "An entry in the commissioning agent's issues log. Category 1 prevents the level from passing; Category 2 must be fixed before handoff; Category 3 is an observation."}
   - {key: DWO, label: "DWO-B-####", pattern: 'DWO-B-\d{4}', type: record, title: Deployment work order, example: DWO-B-0001, see: "deployments/#workorders",
      text: "One unit of deployment work (a program step, or a rack step for one rack) built from the partner's Jira issue or the Customer's record. Complete only when done, signed by every role, and every required inspection passed."}
   - {key: JIRA-DEP, label: "CCF-DEP-#, RSS-DEP-#", pattern: '(?:CCF|RSS)-DEP-\d+', type: record, title: Partner Jira issue, example: CCF-DEP-4,
@@ -464,5 +477,6 @@ plain:   # capitalised text that is not a code
     - {pattern: 'SITE', why: "The whole site, in the power events table (a utility event is not one device's).", pages: [telemetry]}
     - {pattern: 'L-N', why: "Line to neutral: a voltage measured between one phase and neutral (277 V on a 480 V system).", pages: [telemetry]}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}
+    - {pattern: 'MVS-C[12]|ESS-C|DCB-C-[AB]|LD-C|BMS-C|HALL-C', why: "A Hall C system in the readiness tracker (planned hall, not yet in the device directory); its page lists its commissioning.", pages: [deployments]}
     - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}
     - {pattern: 'B[1-4]', why: "Shorthand for CDU-B1 to CDU-B4 in a deployment step.", pages: [deployments]}

@@ -246,6 +246,12 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - Each weekly pack carries a deployment line that reconciles with the tab.
 - Scored on 60 generated programs with the planted records moved each time: 240 of 240 found (60 per check). There were 0 false positives against pending signatures, failed-then-passed inspections, and tap-offs energized minutes after their leak test.
 
+**Hall C readiness** (`#hallc`). The tab also carries the next hall: Hall C, the 800 VDC pilot, from the Landlord's commissioning to the Customer's first compute.
+- Commissioning levels L1 to L5 for 13 systems from the site model (MVSSTs, energy storage, 800 VDC busway, CDUs, CRAHs, VESDA, leak detection, monitoring points) plus the hall-wide integrated test. Each script shows its runs, its signatures in order, and its issues log entries by category.
+- The Customer's own readiness gates: R0 commissioning accepted, R1 spares and logistics, R2 security and access, R3 people and process, R4 first compute.
+- A first-compute forecast with its critical path. In the sample, the energy storage factory test slipped with the vendor, and the forecast runs one day past the committed date.
+- Four record checks: a level passed with a Category 1 issue open, a signature before the test ran, a level passed before the level below it, and an initial-spares claim the receipts do not support. 4 of 4 planted found in the sample, and 240 of 240 on 60 generated programs with 0 false positives (`config/readiness.yaml`, `src/scorecard/readiness.py`).
+
 ## Agreements: SLAs as code
 
 ![The Interface Agreement rendered with its contents](docs/images/agreements.png)

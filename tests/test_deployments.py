@@ -406,4 +406,6 @@ def test_overview_tile():
     import render_hub
     f = render_hub.facts()["deploy"]
     assert (f["handed"], f["racks"], f["findings"]) == (13, 32, 4)
-    assert 'data-tile="deployments"' in render_hub.body(render_hub.facts())
+    assert f["hallc"] == {"forecast": "2026-11-23", "committed": "2026-11-22", "slip": 1, "findings": 4}
+    body = render_hub.body(render_hub.facts())
+    assert 'data-tile="deployments"' in body and "Hall C pilot: first compute forecast 2026-11-23" in body and "deployments/#hallc" in body
