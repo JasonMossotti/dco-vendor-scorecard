@@ -31,6 +31,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 |---|---|---|
 | [Overview](#overview) | How are both partners doing this month? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/) |
 | [Scorecards](#scorecards) | What did each partner report, and what does the telemetry say? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/app/) |
+| [Availability](#availability-and-repair-turnaround) | Where did the GPU-hours go, who owns each lost hour, and how fast are repairs, stage by stage? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/availability/) |
 | [Alarm Board](#alarm-board) | Which alarms are expected from approved change work, and which are not? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/) |
 | [Incident Portal](#incident-portal) | What do the partners' own tickets and work orders say, record by record? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/) |
 | [Post-Incident Review](#post-incident-review) | What happened in an event, why, and what are we doing about it? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) |
@@ -100,6 +101,18 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 - `src/scorecard/app_support.py` runs the same pipeline the command line runs: generator, engines, `build_scorecard(sla, result)`. The scorecard is a pure function of the contract and the data, so a contract amendment is a one-line YAML change and the effect on breaches and credits shows on the next run.
 - Service levels are measured from telemetry in `src/scorecard/kpi.py`, using the contract's ticket handling rules (`src/scorecard/measurement.py`, TR-1 to TR-7). Credits, the monthly cap, and the S1 to S4 severity index come from `src/scorecard/sla_model.py`.
 - The app is tested in CI against a fake Streamlit (`tests/fake_streamlit.py`) that records every element it renders.
+
+## Availability and repair turnaround
+
+![Availability: the scheduler's view, GPU-hours lost by owner, and the daily chart](docs/images/availability.png)
+
+**What it shows.** Where the month's GPU-hours went. The scheduler could place work on 99.918% of installed GPU-hours; the IT Partner's CSL-01 measures 99.927%. Of the 1,524.9 GPU-hours the contracts count as lost, 1,279.2 are the IT Partner's (exactly CSL-01's loss) and 245.7 the Landlord's (rack A07, from the power loss to the handoff, the same split as the post-incident review). A bridge walks the scheduler's 1,440.2 GPU-hours to the contracts' total node by node: the contract clock starts at the first fault signal, a repair that did not hold counts as one outage, degraded links count at 25%, and nodes went back to the scheduler a few minutes after their validated return to service. Below: lost hours by cause and by day, each week's CSL-01 beside the IT Partner's self-report, every ticket's repair split into five stages (detect, acknowledge, reach the rack by badge, repair, validate) that add up to the measured time, restoration per Ticket of Record against the reported times, and the spares pipeline (the compute tray class sat below its minimum on 16 of 28 days by the ledger) with RMA shipping lag.
+
+**How it works.**
+- `src/scorecard/availability.py` reads only records that already exist (scheduler node states, tickets, badges, health checks, the spares ledger, cycle counts, RMA shipments) and the engine's own scored incidents, so it scores nothing new and no headline number moves.
+- A stage with no record says so instead of guessing: the two tickets returned to service without a validation record show "no validation record" and name the engine's finding. The work notes name technicians, so the page shows none.
+- The weekly packs carry the week's and month-to-date availability, tested to equal this page; the Overview has a tile.
+- On 60 generated months: the bridge closes 60/60 with no scheduler hour left unexplained, the IT Partner's hours equal CSL-01 60/60, and every ticket's stages add up 60/60 (120 of 4,913 tickets have a stage with no record, every one with an engine finding).
 
 ## Alarm Board
 
@@ -325,6 +338,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
 | GPU telemetry agreement with the records | 60,257 of 60,257 cases | 8,520,414 of 8,520,414 cases on 60 generated months |
 | CDU telemetry agreement with the records | 664,024 of 664,024 cases | 39,841,812 of 39,841,812 cases on 60 generated months |
+| Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
@@ -339,6 +353,7 @@ python scripts/render_gpu_health.py --robustness 60
 python scripts/render_telemetry.py --robustness 60
 python scripts/render_tickets.py --robustness 60
 python scripts/render_deployments.py --robustness 60
+python scripts/render_availability.py --robustness 60
 ```
 
 ## Toward live data: the read-only collector
@@ -352,7 +367,7 @@ python scripts/render_deployments.py --robustness 60
 
 ## Tests and deployment
 
-- **540 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
+- **630 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).

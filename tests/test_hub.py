@@ -18,7 +18,7 @@ from scorecard import sitenav
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-PAGES = {"": "overview", "app/": "scorecards", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns", "energy/": "energy", "gpu/": "gpu", "telemetry/": "telemetry",
+PAGES = {"": "overview", "app/": "scorecards", "availability/": "availability", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns", "energy/": "energy", "gpu/": "gpu", "telemetry/": "telemetry",
          "agreements/": "agreements", "agreements/interface-agreement/": "agreements", "agreements/it-partner-sla/": "agreements",
          "agreements/landlord-sla/": "agreements", "glossary/": "glossary"}
 
@@ -47,6 +47,9 @@ def test_overview_matches_the_headline_results(facts):
     assert facts["patterns"]["found"] == 3 and facts["pir"]["id"] == "PIR-2026-001"
     assert facts["pir"]["reviews"] >= 2 and facts["pir"]["open"] < facts["pir"]["actions"]
     assert [w for w, _ in facts["weeks"]] == ["2026-W36", "2026-W37", "2026-W38", "2026-W39"]
+    av = facts["availability"]
+    assert (av["sched"], av["csl01"]) == (99.918, 99.927)
+    assert av["owners"] == [("IT Partner", 1279.2), ("Landlord", 245.7)] and av["below"] == [("Compute tray", 16)]
 
 
 def test_overview_agrees_with_the_app_table(facts):
@@ -124,7 +127,7 @@ def test_app_page_keeps_one_scroll_bar_and_the_light_theme(site):
 
 
 def test_static_pages_use_the_light_toolbar():
-    for name in ("alarms", "pir", "weekly", "patterns", "energy", "gpu_health"):
+    for name in ("alarms", "pir", "weekly", "patterns", "energy", "gpu_health", "availability"):
         tpl = (ROOT / "templates" / f"{name}.html").read_text(encoding="utf-8")
         assert "header.top { background:#fff;" in tpl, name
         assert "__SITENAV__" in tpl and "__SITENAV_CSS__" in tpl, name

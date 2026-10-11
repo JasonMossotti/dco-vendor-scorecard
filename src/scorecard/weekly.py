@@ -90,6 +90,8 @@ class WeeklyData:
         self.pattern_review = self._pattern_review()
         self.energy = self._energy()
         self.deploy = self._deploy()
+        from scorecard.availability import Rollup
+        self.avail = Rollup(self.data_dir)
 
     def _energy(self):
         """The energy meters (data/energy/, beside the sample), if they have been generated."""
@@ -328,6 +330,20 @@ def _energy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
     return {"week": span(ws, we), "mtd": span(d.window_start, we)}
 
 
+def _avail_line(d: WeeklyData, ws: datetime, we: datetime) -> dict:
+    """Fleet availability from the scheduler and GPU-hours lost by owner, for the week and the month to date, from the same
+    rollup as the Availability tab. The IT Partner's GPU-hours are the CSL-01 loss in the service levels above."""
+    R = d.avail
+
+    def span(a: datetime, b: datetime) -> dict:
+        inst = sum(R.installed(a, b).values())
+        lost = R.sched_lost(a, b)
+        own = R.lost_by_owner(a, b)
+        return {"sched_pct": round(100 * (1 - lost / inst), 3) if inst else None, "it": round(own["IT Partner"], 1),
+                "landlord": round(own["Landlord"], 1), "installed": round(inst, 1)}
+    return {"week": span(ws, we), "mtd": span(d.window_start, we)}
+
+
 def _deploy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
     """Deployment work orders completed this week and to date, gates closed, and record checks known by the week's end,
     from the same work orders as the Deployments tab."""
@@ -383,6 +399,7 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
         "resources": _resources(d, ws, we, it_rows, ll_rows, it_known),
         "ehs": _ehs(d, ws, we, actions),
         "energy": _energy_line(d, ws, we),
+        "availability": _avail_line(d, ws, we),
         "deploy": _deploy_line(d, ws, we),
     }
 

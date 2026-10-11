@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Availability · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --bad:#b42318; --good:#1d7a46; --warn:#9a6700;
+        --grid:#eef1f4; --band:#fdecea; --it:#2a78d6; --ll:#eb6834;
+        --c1:#2a78d6; --c2:#1baf7a; --c3:#8b5cf6; --c4:#0e9fb5; --c5:#eb6834; --c6:#d4a017; --c7:#7a8794;
+        --s1:#9aa7b4; --s2:#8b5cf6; --s3:#d4a017; --s4:#2a78d6; --s5:#1baf7a; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+main { max-width:1180px; margin:20px auto; background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:30px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:16px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:14px 0; }
+.tile { background:var(--panel); border-radius:8px; padding:12px 14px; }
+.tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.tile .v { font-size:28px; font-weight:700; line-height:1.2; } .tile .s { font-size:12px; color:var(--muted); }
+.flag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; margin-left:4px; vertical-align:2px; white-space:nowrap; }
+.flag.bad { background:var(--band); color:var(--bad); } .flag.ok { background:#e7f4ec; color:var(--good); } .flag.warn { background:#fff4d6; color:var(--warn); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+tr.tot td { font-weight:600; border-top:2px solid var(--ink); } .wide { overflow-x:auto; } .nw { white-space:nowrap; }
+.legend { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12px; color:var(--muted); margin:6px 0; align-items:center; }
+.legend i { display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+.chart { position:relative; } svg text { font:11px "Inter","Segoe UI",Helvetica,Arial,sans-serif; fill:var(--muted); }
+.tip { position:absolute; pointer-events:none; background:#fff; border:1px solid var(--line); border-radius:6px; padding:6px 9px; font-size:12px;
+       box-shadow:0 2px 8px rgba(0,0,0,.12); display:none; white-space:nowrap; z-index:5; }
+.tip b { display:block; margin-bottom:2px; } .tip .row { display:flex; gap:10px; justify-content:space-between; }
+.toggle { font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; padding:3px 10px; border-radius:6px; cursor:pointer; }
+.owners { display:flex; height:26px; border-radius:6px; overflow:hidden; margin:8px 0 4px; background:var(--grid); }
+.owners div { height:100%; }
+.hbar { position:relative; height:14px; background:var(--grid); border-radius:3px; min-width:120px; }
+.hbar span { position:absolute; top:0; height:100%; border-radius:3px; }
+.stack { display:flex; height:14px; border-radius:3px; overflow:hidden; background:var(--grid); min-width:160px; }
+.stack span { height:100%; }
+.chips { font-size:12px; color:var(--muted); } .chips b { color:var(--ink); font-weight:600; }
+.filters { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; font-size:13px; margin:8px 0; }
+.filters select { font:inherit; font-size:13px; padding:3px 6px; border:1px solid var(--line); border-radius:6px; }
+.spark { display:block; }
+.box { background:var(--panel); border-radius:8px; padding:10px 14px; margin:10px 0; font-size:14px; }
+@media print { header.top, .filters, .toggle { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } .tip { display:none !important; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Availability and Repair Turnaround</strong></div>
+  <div class="tools"><button id="print">Print / save PDF</button></div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const md = iso => { const [, m, d] = iso.slice(0, 10).split("-"); return `${MON[+m - 1]} ${+d}`; };
+const mdy = iso => md(iso) + ", " + iso.slice(0, 4);
+const lastDay = iso => new Date(Date.parse(iso) - 3600e3).toISOString();
+const hhmm = iso => iso ? iso.slice(11, 16) : "";
+const gh = v => esc((+v).toLocaleString("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1}));
+const pct = v => v == null ? "n/a" : esc((+v).toFixed(3)) + "%";
+const hm = m => { if (m == null) return "no record"; const r = Math.round(m); return r >= 60 ? `${Math.floor(r / 60)} h ${String(r % 60).padStart(2, "0")} min` : `${r} min`; };
+const hall = h => "Hall " + esc(h.slice(-1));
+const CAUSE_COLOR = {tray_gpu: "var(--c1)", optic_link: "var(--c2)", switch_tray: "var(--c3)", leak: "var(--c4)", rack_facility: "var(--c6)",
+                     psu: "var(--c7)", power_shelf: "var(--c7)", cdu_pump: "var(--c7)"};
+const CAUSE_NAME = Object.fromEntries(D.causes.map(c => [c.category, c.cause]));
+const STAGE_COLOR = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)", "var(--s5)"];
+const OWNER_COLOR = {"IT Partner": "var(--it)", "Landlord": "var(--ll)", "OEM": "var(--c3)", "Customer": "var(--c2)", "Planned work": "var(--c7)"};
+const OWNER_BASIS = {
+  "IT Partner": "CSL-01: capacity-weighted GPU-hours, each Ticket of Record from the first fault signal to the validated return to service (TR-1, TR-2 applied).",
+  "Landlord": "Each rack power loss up to the Landlord's handoff, when the feed is back at the tap-off (FA-1, FA-3). The IT Partner's clock starts at the handoff.",
+  "OEM": "Excused only for part unavailability while the Customer's spares for that FRU class were at minimum. None claimed.",
+  "Customer": "Customer holds and withheld access, recorded in the ticket with Customer approval. None recorded.",
+  "Planned work": "Drains inside an approved change window. None in the scheduler record.",
+};
+
+function tile(k, v, s, flag) { return `<div class="tile"><div class="k">${esc(k)}</div><div class="v">${v}${flag || ""}</div><div class="s">${s}</div></div>`; }
+function tipFor(box) {
+  const t = document.createElement("div"); t.className = "tip"; box.appendChild(t);
+  return {
+    show(html, x, y) { t.innerHTML = html; t.style.display = "block";
+      const w = box.clientWidth, tw = t.offsetWidth; t.style.left = Math.min(Math.max(0, x + 12), Math.max(0, w - tw)) + "px"; t.style.top = Math.max(0, y - 10) + "px"; },
+    hide() { t.style.display = "none"; },
+  };
+}
+
+// Lost GPU-hours by day, stacked by cause (the IT Partner's share) with the Landlord's on top.
+const DAY_KEYS = [...new Set(D.days.flatMap(d => Object.keys(d.it_by_cause)))].sort((a, b) =>
+  D.causes.findIndex(c => c.category === a) - D.causes.findIndex(c => c.category === b));
+function dayChart() {
+  const X = D.days, W = 1000, H = 240, l = 50, r = 12, t = 14, b = 30, n = X.length;
+  const tot = d => Object.values(d.it_by_cause).reduce((s, v) => s + v, 0) + d.landlord;
+  const hi = Math.max(50, ...X.map(tot)) * 1.08, step = hi > 400 ? 100 : 50;
+  const bw = (W - l - r) / n, y = v => t + (H - t - b) * (1 - v / hi);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="GPU-hours lost by day, by cause and owner">`;
+  for (let v = 0; v <= hi; v += step) s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  X.forEach((d, i) => {
+    const x = l + i * bw + 2, w = bw - 4;
+    let base = 0;
+    for (const k of DAY_KEYS) { const v = d.it_by_cause[k] || 0; if (v > 0) { s += `<rect x="${x}" y="${y(base + v)}" width="${w}" height="${y(base) - y(base + v)}" fill="${CAUSE_COLOR[k] || "var(--c7)"}"/>`; base += v; } }
+    if (d.landlord > 0) s += `<rect x="${x}" y="${y(base + d.landlord)}" width="${w}" height="${y(base) - y(base + d.landlord)}" fill="var(--ll)" stroke="#fff" stroke-width="1"/>`;
+    if (i % 7 === 0) s += `<text x="${x + w / 2}" y="${H - b + 16}" text-anchor="middle">${esc(md(d.date))}</text>`;
+    s += `<rect class="hit" data-i="${i}" x="${l + i * bw}" y="${t}" width="${bw}" height="${H - t - b}" fill="transparent"/>`;
+  });
+  return s + `</svg>`;
+}
+
+function stageBar(stages, scale) {
+  return `<div class="stack" style="width:${Math.max(4, Math.min(100, scale))}%">` + D.stages.map((st, j) => {
+    const v = stages[st.key]; return v ? `<span style="flex:${v} 0 0;background:${STAGE_COLOR[j]}" title="${esc(st.short)}: ${esc(hm(v))}"></span>` : "";
+  }).join("") + `</div>`;
+}
+
+function sparkline(r) {
+  const W = 180, H = 34, p = 3, vals = r.daily_low.filter(v => v != null);
+  if (!vals.length) return "";
+  const lo = Math.min(...vals, r.minimum ?? Infinity) * 0.9, hi = Math.max(...vals, r.minimum ?? 0) * 1.05 || 1;
+  const x = i => p + (W - 2 * p) * i / Math.max(1, r.daily_low.length - 1), y = v => H - p - (H - 2 * p) * (v - lo) / Math.max(1e-9, hi - lo);
+  let s = `<svg class="spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(r.fru)} daily low against the minimum">`;
+  if (r.minimum != null) s += `<line x1="${p}" x2="${W - p}" y1="${y(r.minimum)}" y2="${y(r.minimum)}" stroke="var(--bad)" stroke-dasharray="3 3"/>`;
+  s += `<path d="${r.daily_low.map((v, i) => v == null ? "" : (i ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1)).join(" ")}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`;
+  r.daily_low.forEach((v, i) => { if (r.minimum != null && v != null && v < r.minimum) s += `<circle cx="${x(i)}" cy="${y(v)}" r="2" fill="var(--bad)"/>`; });
+  return s + `</svg>`;
+}
+
+function ticketRows(list) {
+  const maxM = Math.max(1, ...list.map(t => t.measured_min || 0));
+  return list.map(t => {
+    const notes = [];
+    if (t.fa3) notes.push("IT clock starts at the Landlord's handoff (FA-3)");
+    if (t.missing.length) notes.push("No " + t.missing.join(", no "));
+    for (const k of t.early.filter(k => !(t.fa3 && (k === "detect" || k === "ack")))) notes.push(k === "travel" ? "Badged in before acknowledging" : "Recorded before the stage before it");
+    if (t.tor) notes.push(`One Ticket of Record with ${t.tor}`);
+    if (t.findings.length) notes.push("Finding " + t.findings.map(f => `${f} (${D.findings[f].title})`).join(", "));
+    const gap = t.measured_min != null && t.reported_min != null ? t.measured_min - t.reported_min : null;
+    return `<tr data-cause="${esc(t.category)}" data-flag="${t.missing.length || t.findings.length || (gap != null && Math.abs(gap) >= 15) ? 1 : 0}">
+      <td class="nw">${esc(t.ticket)}</td><td>${esc(t.priority)}</td><td class="nw"><span data-loc="${esc(t.rack)}">${esc(t.rack)}</span></td><td>${esc(t.cause)}</td>
+      <td style="min-width:200px">${stageBar(t.stages, 100 * (t.measured_min || 0) / maxM)}</td>
+      <td class="n">${esc(hm(t.measured_min))}</td><td class="n">${esc(hm(t.reported_min))}</td>
+      <td class="n">${gap == null ? "" : Math.abs(gap) < 0.5 ? "0 min" : (gap > 0 ? "+" : "−") + esc(hm(Math.abs(gap)))}</td><td>${notes.map(n => esc(n).replace(/\b(F-\d{3})\b/g, '<span class="nw">$1</span>')).join("; ")}</td></tr>`;
+  }).join("");
+}
+
+function render() {
+  const S = D.sched, C = D.csl01, own = Object.fromEntries(D.owners.map(o => [o.owner, o.hours]));
+  const sp = D.spares, below = sp.rows.filter(r => r.days_below > 0);
+  const kmMiss = sp.kms.filter(k => k.met === false);
+  let h = `<h1>Availability and repair turnaround</h1>
+  <p class="sub">Where the GPU-hours went in the sample month, ${esc(mdy(D.window.start))} to ${esc(mdy(lastDay(D.window.end)))}: what the scheduler could not use,
+  who owns each lost hour under the contracts, how long repairs take stage by stage, and whether the spares and RMA pipeline keeps up.
+  This view reads the records and the engine's measurement; it scores nothing new. Synthetic data; all names are fictional.</p>
+  <div class="tiles">
+    ${tile("Fleet availability (scheduler)", pct(S.pct), `${gh(S.lost)} of ${esc(Math.round(D.installed).toLocaleString("en-US"))} installed GPU-hours could not take work`)}
+    ${tile("CSL-01 (IT Partner)", pct(C.actual), `Minimum ${esc(C.minimum.toFixed(1))}%; ${esc(C.detail)}`, `<span class="flag ${C.actual >= C.minimum ? "ok" : "bad"}">${C.actual >= C.minimum ? "met" : "missed"}</span>`)}
+    ${tile("GPU-hours lost, by owner", gh(D.contract_lost), `IT Partner ${gh(own["IT Partner"])}; Landlord ${gh(own["Landlord"])}`)}
+    ${tile("Spares below minimum", esc(below.length ? below.map(r => r.days_below).reduce((a, b) => Math.max(a, b), 0) : 0) + ` <span style="font-size:15px;font-weight:600">of ${esc(sp.days)} days</span>`,
+      below.length ? below.map(r => `${esc(r.fru)}: lowest ${esc(r.low)}, minimum ${esc(r.minimum)}`).join("; ") : "Every FRU class stayed at or above its minimum",
+      kmMiss.length ? `<span class="flag bad">${kmMiss.map(k => esc(k.id)).join(", ")} missed</span>` : "")}
+  </div>`;
+
+  // Owners.
+  const totO = D.owners.reduce((s, o) => s + o.hours, 0) || 1;
+  h += `<h2>GPU-hours lost, by owner</h2>
+  <div class="owners" role="img" aria-label="GPU-hours lost by owner">${D.owners.filter(o => o.hours > 0).map(o => `<div style="width:${100 * o.hours / totO}%;background:${OWNER_COLOR[o.owner]}" title="${esc(o.owner)}: ${gh(o.hours)}"></div>`).join("")}</div>
+  <div class="wide"><table><tr><th>Owner</th><th class="n">GPU-hours</th><th class="n">Share</th><th>Basis</th></tr>
+  ${D.owners.map(o => `<tr><td class="nw"><span class="legend" style="display:inline"><i style="background:${OWNER_COLOR[o.owner]}"></i></span>${esc(o.owner)}</td><td class="n">${gh(o.hours)}</td><td class="n">${esc((100 * o.hours / totO).toFixed(1))}%</td><td>${esc(OWNER_BASIS[o.owner])}</td></tr>`).join("")}
+  <tr class="tot"><td>All owners</td><td class="n">${gh(D.contract_lost)}</td><td class="n">100.0%</td><td></td></tr></table></div>
+  ${D.landlord_events.length ? `<p class="note">Landlord share: ${D.landlord_events.map(e => `rack <span data-loc="${esc(e.rack)}">${esc(e.rack)}</span> lost power at ${esc(md(e.t0))} ${esc(hhmm(e.t0))} UTC and the feed was handed back at ${esc(hhmm(e.handoff))}, ${gh(e.hours)} GPU-hours`).join("; ")}. The post-incident review gives the Landlord the same GPU-hours for this outage.</p>` : ""}`;
+
+  h += `<h2>By day</h2>
+  <div class="legend">${DAY_KEYS.map(k => `<span><i style="background:${CAUSE_COLOR[k] || "var(--c7)"}"></i>${esc(CAUSE_NAME[k] || k)} (IT Partner)</span>`).join("")}<span><i style="background:var(--ll)"></i>Landlord</span>
+  <button class="toggle" id="tbl1">Show table</button></div>
+  <div class="chart" id="c1">${dayChart()}</div>
+  <div class="wide" id="t1" hidden><table><tr><th>Day</th><th class="n">IT Partner</th><th class="n">Landlord</th><th class="n">Scheduler lost</th>${Object.keys(D.halls).map(k => `<th class="n">${hall(k)} (scheduler)</th>`).join("")}</tr>
+  ${D.days.map(d => `<tr><td>${esc(md(d.date))}</td><td class="n">${gh(Object.values(d.it_by_cause).reduce((s, v) => s + v, 0))}</td><td class="n">${gh(d.landlord)}</td><td class="n">${gh(d.sched_lost)}</td>${Object.keys(D.halls).map(k => `<td class="n">${pct(d.halls[k].pct)}</td>`).join("")}</tr>`).join("")}</table></div>`;
+
+  // Bridge.
+  h += `<h2>From the scheduler to the contracts</h2>
+  <p class="note">The scheduler and the contracts count different things: the scheduler knows when a job could not land on a node; the contracts count from the first
+  fault signal to the validated return to service, weight degraded operation, and treat a repair that did not hold as one outage. Walked node by node,
+  every GPU-hour of difference has a reason.${D.bridge.closes ? "" : ` <b>The walk does not close: ${gh(D.bridge.gap)} GPU-hours unexplained.</b>`}</p>
+  <div class="wide"><table id="bridge"><tr><th>Step</th><th class="n">GPU-hours</th></tr>
+  ${D.bridge.rows.map(r => { const end = r.key === "sched" || r.key === "contract";
+    return `<tr class="${end ? "tot" : ""}"><td>${esc(r.label)}</td><td class="n">${end ? gh(r.hours) : (r.hours >= 0 ? "+" : "−") + gh(Math.abs(r.hours))}</td></tr>`; }).join("")}</table></div>
+  <h3>What the scheduler recorded</h3>
+  <div class="wide"><table><tr><th>Drain or down reason</th><th class="n">GPU-hours</th></tr>${S.by_reason.map(r => `<tr><td>${esc(r.reason)}</td><td class="n">${gh(r.hours)}</td></tr>`).join("")}
+  <tr class="tot"><td>${esc(S.outages)} outages</td><td class="n">${gh(S.lost)}</td></tr></table></div>`;
+
+  // Causes.
+  h += `<h2>By cause</h2>
+  <div class="wide"><table><tr><th>Cause</th><th class="n">Incidents</th><th class="n">IT Partner</th><th class="n">Landlord</th><th class="n">Total</th><th class="n">Share</th><th>Worst rack</th></tr>
+  ${D.causes.map(c => `<tr><td class="nw"><span class="legend" style="display:inline"><i style="background:${CAUSE_COLOR[c.category] || "var(--c7)"}"></i></span>${esc(c.cause)}</td><td class="n">${esc(c.incidents)}</td><td class="n">${gh(c.it)}</td><td class="n">${gh(c.landlord)}</td><td class="n">${gh(c.total)}</td><td class="n">${esc(c.share.toFixed(1))}%</td>
+  <td>${c.worst_rack ? `<span data-loc="${esc(c.worst_rack)}">${esc(c.worst_rack)}</span>, ${gh(c.worst_hours)}` : "No GPUs out of service (redundant power)"}</td></tr>`).join("")}</table></div>
+  <p class="note">CSL-12, the floor for any one rack: ${pct(D.csl12.actual)}. ${esc(D.csl12.detail)}.</p>`;
+
+  // Weeks.
+  h += `<h2>By week: measured against reported</h2>
+  <div class="wide"><table><tr><th>Week</th><th class="n">Scheduler</th><th class="n">CSL-01 measured</th><th class="n">IT Partner reported</th><th class="n">IT Partner GPU-hours</th><th class="n">Landlord GPU-hours</th></tr>
+  ${D.weeks.map((w, i) => { const d = w.reported != null && w.csl01 != null ? w.reported - w.csl01 : null;
+    return `<tr><td>${i + 1}. ${esc(md(w.start))} to ${esc(md(lastDay(w.end)))}</td><td class="n">${pct(w.sched_pct)}</td><td class="n">${pct(w.csl01)}</td>
+    <td class="n">${pct(w.reported)}${d != null && Math.abs(d) >= 0.005 ? ` <span class="flag ${d > 0 ? "bad" : "warn"}">${d > 0 ? "higher" : "lower"}</span>` : ""}</td><td class="n">${gh(w.it_lost)}</td><td class="n">${gh(w.landlord_lost)}</td></tr>`; }).join("")}</table></div>
+  <p class="note">CSL-01 by week is the scorecards' own measurement for that week; the reported figure is the IT Partner's weekly self-report. A difference means the records do not reconcile, not that anyone misled.</p>`;
+
+  // Repair turnaround.
+  const maxS = Math.max(...D.stage_summary.map(r => D.stages.reduce((s, st) => s + (r.stages[st.key].median || 0), 0)));
+  h += `<h2>Repair turnaround, stage by stage</h2>
+  <p class="note">Each ticket's time from the first fault signal to the validated return to service, split at the ticket record, the acknowledgement, the technician's badge into the hall,
+  the repair note, and the last validation check. Stages run one after another and add up to the measured time; a stage with no record says so.
+  Median per cause, with the 90th percentile in parentheses.</p>
+  <div class="legend">${D.stages.map((st, j) => `<span><i style="background:${STAGE_COLOR[j]}"></i><b>${esc(st.short)}</b>: ${esc(st.name.toLowerCase())}</span>`).join("")}</div>
+  <div class="wide"><table id="stages"><tr><th>Cause</th><th class="n">Tickets</th><th>Median stages</th>${D.stages.map(st => `<th class="n">${esc(st.short)}</th>`).join("")}</tr>
+  ${D.stage_summary.map(r => { const med = Object.fromEntries(D.stages.map(st => [st.key, r.stages[st.key].median || 0]));
+    return `<tr><td class="nw">${esc(r.cause)}</td><td class="n">${esc(r.tickets)}</td><td style="min-width:180px">${stageBar(med, 100 * Object.values(med).reduce((a, b) => a + b, 0) / maxS)}</td>
+    ${D.stages.map(st => { const x = r.stages[st.key]; return `<td class="n">${x.n ? `${esc(hm(x.median))}<br><span class="note">(${esc(hm(x.p90))})</span>` : "no record"}</td>`; }).join("")}</tr>`; }).join("")}</table></div>
+
+  <h3>Restoration: measured against reported</h3>
+  <p class="note">Measured per Ticket of Record, as CSL-03 to CSL-05 score it: a repair that did not hold and its follow-up ticket are one outage. Reported is each ticket's own outage start to resolution.</p>
+  <div class="wide"><table id="restore"><tr><th>Cause</th><th class="n">Tickets of Record</th><th class="n">Tickets</th><th class="n">Measured median (P90)</th><th class="n">Reported median (P90)</th><th class="n">Longest measured</th><th class="n">Longest reported</th></tr>
+  ${D.restoration.map(r => `<tr><td>${esc(r.cause)}</td><td class="n">${esc(r.tors)}</td><td class="n">${esc(r.tickets)}${r.merged ? ` <span class="flag warn">${esc(r.merged)} merged</span>` : ""}</td>
+  <td class="n">${esc(hm(r.measured.median))} (${esc(hm(r.measured.p90))})</td><td class="n">${esc(hm(r.reported.median))} (${esc(hm(r.reported.p90))})</td>
+  <td class="n">${esc(hm(r.measured.max))}</td><td class="n">${esc(hm(r.reported.max))}</td></tr>`).join("")}</table></div>
+
+  <h3>Every ticket</h3>
+  <div class="filters"><label>Cause <select id="fcause"><option value="">All</option>${D.stage_summary.map(r => `<option value="${esc(D.causes.find(c => c.cause === r.cause)?.category || r.cause)}">${esc(r.cause)}</option>`).join("")}</select></label>
+  <label><input type="checkbox" id="fflag"> Only tickets with a missing record, a finding, or a gap of 15 minutes or more</label><span class="chips" id="fcount"></span></div>
+  <div class="wide"><table id="tickets"><thead><tr><th>Ticket</th><th>Priority</th><th>Rack</th><th>Cause</th><th>Stages</th><th class="n">Measured</th><th class="n">Reported</th><th class="n">Gap</th><th>Notes</th></tr></thead>
+  <tbody>${ticketRows(D.tickets)}</tbody></table></div>`;
+
+  // Spares and RMA.
+  h += `<h2>Spares and RMA</h2>
+  <div class="tiles">${sp.kms.map(k => tile(k.id + " " + k.name, k.actual == null ? "n/a" : esc(k.actual.toFixed(1)) + "%", `Target ${esc(k.target)}%; ${esc(k.detail)}`,
+    k.met == null ? "" : `<span class="flag ${k.met ? "ok" : "bad"}">${k.met ? "met" : "not met"}</span>`)).join("")}</div>
+  <p class="note">The Key Measurements are the scorecards' own, from the weekly cycle counts. The daily low below comes from the spares ledger, so a class can dip under its minimum between counts.</p>
+  <div class="wide"><table id="spares"><tr><th>FRU class</th><th class="n">Minimum</th><th class="n">Start</th><th class="n">End</th><th class="n">Lowest</th><th class="n">Days below</th><th class="n">Issued</th><th class="n">Received</th><th>Daily low against the minimum</th><th>Cycle counts (ledger / counted)</th></tr>
+  ${sp.rows.map(r => `<tr><td>${esc(r.fru)}</td><td class="n">${r.minimum == null ? "none set" : esc(r.minimum)}</td><td class="n">${esc(r.opening)}</td><td class="n">${esc(r.closing)}</td><td class="n">${esc(r.low)}</td>
+  <td class="n">${r.days_below == null ? "" : esc(r.days_below)}${r.days_below ? ` <span class="flag bad">below</span>` : ""}</td><td class="n">${esc(r.issued)}</td><td class="n">${esc(r.received)}</td><td>${sparkline(r)}</td>
+  <td class="nw">${r.counts.map(c => `<span${c.system !== c.counted ? ' class="flag bad"' : ""}>${esc(c.system)}/${esc(c.counted)}</span>`).join(" · ")}</td></tr>`).join("")}</table></div>
+  <h3>Failed parts to the OEM</h3>
+  <div class="wide"><table id="rma"><tr><th>FRU class</th><th class="n">Shipped</th><th class="n">Median business days</th><th class="n">Longest</th><th class="n">Within 5 business days</th></tr>
+  ${sp.rma_by_fru.map(r => `<tr><td>${esc(r.fru)}</td><td class="n">${esc(r.shipped)}</td><td class="n">${esc(r.median_days)}</td><td class="n">${esc(r.max_days)}</td><td class="n">${esc(r.within_5)} of ${esc(r.shipped)}</td></tr>`).join("")}</table></div>
+  <p class="note">Parts the tickets say were removed: ${esc(sp.removed)}; with a shipment record: ${esc(sp.removed - sp.no_rma.length)}.${sp.no_rma.length ? " Without one: " + sp.no_rma.map(x => `${esc(x.ticket)} (${esc(x.part)})`).join(", ") + "." : ""}
+  ${sp.rma.filter(r => r.open_at_end).length ? `Still on site at the month's end: ${esc(sp.rma.filter(r => r.open_at_end).length)}.` : "None was still on site at the month's end."}</p>`;
+
+  h += `<h2>How it is measured</h2><ul>
+  <li><b>Installed GPU-hours:</b> every production rack for the whole month; a Hall B rack from its validated handoff, as CSL-01 counts it. 72 GPUs a rack, 4 a compute tray.</li>
+  <li><b>Scheduler view:</b> a node counts as lost from the scheduler's drain or down state until it goes back to idle (4 GPUs a node). This is the Customer's own view: could a job land on it?</li>
+  <li><b>Contract view:</b> the IT Partner's GPU-hours are the scorecards' CSL-01 loss, unchanged. The Landlord's are each rack power loss up to the handoff (Interface Agreement FA-1, FA-3). No approved clock pause or Excused Event is in the records, so the OEM, Customer, and planned rows are zero.</li>
+  <li><b>Stages:</b> the fault signal is the engine's T0; on site is the assigned technician's first badge into the hall; the repair is the ticket's repair note; validated is the last health check for the repaired unit. The work notes name technicians, so this page shows none.</li>
+  <li><b>Spares and RMA:</b> minimums from the IT Partner SLA (spares, per hall); the ledger's balance after each transaction; RMA lag in business days, as KM-08 counts it.</li></ul>`;
+
+  document.getElementById("doc").innerHTML = h;
+
+  // Day chart hover.
+  const c1 = document.getElementById("c1"), tip = tipFor(c1);
+  c1.querySelectorAll(".hit").forEach(el => {
+    const d = D.days[+el.dataset.i];
+    el.addEventListener("mousemove", e => { const b = c1.getBoundingClientRect();
+      tip.show(`<b>${esc(mdy(d.date))}</b>` + DAY_KEYS.filter(k => d.it_by_cause[k]).map(k => `<div class="row"><span>${esc(CAUSE_NAME[k] || k)}</span><span>${gh(d.it_by_cause[k])}</span></div>`).join("") +
+        (d.landlord ? `<div class="row"><span>Landlord</span><span>${gh(d.landlord)}</span></div>` : "") +
+        `<div class="row"><span>Scheduler lost</span><span>${gh(d.sched_lost)}</span></div>` +
+        Object.keys(d.halls).map(k => `<div class="row"><span>${hall(k)} available</span><span>${pct(d.halls[k].pct)}</span></div>`).join(""), e.clientX - b.left, e.clientY - b.top); });
+    el.addEventListener("mouseleave", () => tip.hide());
+  });
+  document.getElementById("tbl1").addEventListener("click", e => {
+    const t = document.getElementById("t1"); t.hidden = !t.hidden; e.target.textContent = t.hidden ? "Show table" : "Hide table";
+  });
+  const fc = document.getElementById("fcause"), ff = document.getElementById("fflag"), cnt = document.getElementById("fcount");
+  const apply = () => {
+    let n = 0;
+    document.querySelectorAll("#tickets tbody tr").forEach(tr => {
+      const show = (!fc.value || tr.dataset.cause === fc.value) && (!ff.checked || tr.dataset.flag === "1");
+      tr.hidden = !show; n += show;
+    });
+    cnt.innerHTML = `<b>${esc(n)}</b> of ${esc(D.tickets.length)} tickets`;
+  };
+  fc.addEventListener("change", apply); ff.addEventListener("change", apply); apply();
+}
+render();
+document.getElementById("print").addEventListener("click", () => window.print());
+</script>
+</body>
+</html>

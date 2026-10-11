@@ -70,6 +70,9 @@ function render(w) {
         <td class="nw">${esc(r.mtd_txt)}</td><td>${DEFAULTS.includes(r.mtd_status) ? `<b>${esc(r.mtd_status_txt)}</b>` : esc(r.mtd_status_txt)}</td></tr>`));
   });
 
+  const av = w.availability, g1 = v => Number(v).toLocaleString("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1});
+  h += `<p class="note" id="avail-line">Availability: the scheduler could place work on <b>${esc(av.week.sched_pct.toFixed(3))}%</b> of installed GPU-hours this week (${esc(av.mtd.sched_pct.toFixed(3))}% month to date). GPU-hours lost this week: IT Partner ${esc(g1(av.week.it))}, Landlord ${esc(g1(av.week.landlord))} (month to date ${esc(g1(av.mtd.it))} and ${esc(g1(av.mtd.landlord))}). Detail on the <a href="../availability/">Availability tab</a>.</p>`;
+
   const it = w.incidents.it, ll = w.incidents.landlord;
   h += `<h2>3. Incidents</h2><p class="note">P1 incidents in full; P2 incidents summarized with every one that missed its target or was still open at the end of the week. Restore times are the SLA clock (Telemetry of Record, to Validated RTS).</p>`;
   h += `<h3>IT Partner: ${it.p1.length} P1; ${esc(it.p2_count)} P2, ${esc(it.p2_met)} restored within target</h3>`;

@@ -81,6 +81,7 @@ terms:
   - {term: RACI, type: acronym, expansion: "Responsible, accountable, consulted, informed", text: "The ownership matrix in the Interface Agreement: for each component, who does the work, who owns the outcome, who is asked, and who is told."}
   - {term: RCA, type: acronym, expansion: Root cause analysis, text: "The investigation that finds why an incident happened, not just what failed. P1 incidents owe a preliminary and a final RCA."}
   - {term: RMA, type: acronym, expansion: Return merchandise authorization, text: "The return of a failed part to the manufacturer for repair or replacement."}
+  - {term: P90, type: acronym, expansion: 90th percentile, text: "The value nine in ten cases come in at or under. The Availability tab gives it beside each median, so a long tail shows."}
   - {term: SLA, type: acronym, expansion: Service level agreement, link: false, text: "The contract schedule that sets service levels, how they are measured, and the credits for missing them. Each partner signs its own."}
   - {term: OEM, type: acronym, expansion: Original equipment manufacturer, text: "The company that built the equipment (here, the rack and system integrator), with its own warranty and support contract."}
   - {term: FRU, type: acronym, expansion: Field-replaceable unit, text: "A part a technician can swap on site, such as a compute tray, optic, power supply, or fan."}
@@ -476,7 +477,7 @@ plain:   # capitalised text that is not a code
     - {pattern: 'IB1', why: "The first part of an MLNX-OS port name (IB1/9/2 is ASIC 1, cage 9, port 2).", pages: [telemetry]}
     - {pattern: 'SITE', why: "The whole site, in the power events table (a utility event is not one device's).", pages: [telemetry]}
     - {pattern: 'L-N', why: "Line to neutral: a voltage measured between one phase and neutral (277 V on a 480 V system).", pages: [telemetry]}
-    - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements]}
+    - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements, availability]}
     - {pattern: 'MVS-C[12]|ESS-C|DCB-C-[AB]|LD-C|BMS-C|HALL-C', why: "A Hall C system in the readiness tracker (planned hall, not yet in the device directory); its page lists its commissioning.", pages: [deployments]}
     - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}
     - {pattern: 'B[1-4]', why: "Shorthand for CDU-B1 to CDU-B4 in a deployment step.", pages: [deployments]}
