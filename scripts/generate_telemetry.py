@@ -16,6 +16,12 @@ GPU telemetry), and the power layer comes last: one-minute UPS, busway, tap-off,
 manufacturers' published SNMP and Modbus point maps, shaped to agree with the racks, the meters, and every
 power record. Committed tiers go to data/telemetry/power/, the one-minute files to build/telemetry/power_minutes/.
 
+The mechanical layer comes last: every chiller, facility water pump, the loop header, every thermal wall and CRAH, in
+the point names Vertiv publishes for its iCOM controllers over BACnet, splitting the energy meters into each machine and
+shaped to agree with every mechanical record. Committed tiers go to data/telemetry/mechanical/, the one-minute files to
+build/telemetry/mechanical_minutes/. The energy meters' mechanical UPS columns follow the same thermal-wall model and the
+CDUs' own draw, so the meters are built in two passes around the CDU telemetry (energy.follow_devices).
+
 The network layer follows the power layer: every back-end InfiniBand leaf port under the UFM Telemetry and IBTA
 counter names, the leaf chassis, and the NVLink switch trays under NMX-T names, shaped to agree with every fabric
 event, optic ticket, the device directory, and the GPU telemetry. Committed tiers go to data/telemetry/network/,
@@ -31,15 +37,17 @@ import json
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from scorecard.synthetic.telemetry import GpuTelemetry, Published, write_telemetry  # noqa: E402
-from scorecard.synthetic.energy import EnergyLayer, history, write_energy  # noqa: E402
+from scorecard.synthetic.energy import EnergyLayer, follow_devices, history, write_energy  # noqa: E402
 from scorecard.synthetic.telemetry_cdu import CduTelemetry, write_cdu  # noqa: E402
 from scorecard.synthetic.telemetry_power import PowerTelemetry, write_power  # noqa: E402
 from scorecard.synthetic.telemetry_network import NetworkTelemetry, write_network  # noqa: E402
+from scorecard.synthetic.telemetry_mechanical import MechanicalTelemetry, write_mechanical  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 HEALTH = ROOT / "data" / "gpu_health"
@@ -51,6 +59,8 @@ OUT_POWER = ROOT / "data" / "telemetry" / "power"
 MINUTES_POWER = ROOT / "build" / "telemetry" / "power_minutes"
 OUT_NET = ROOT / "data" / "telemetry" / "network"
 MINUTES_NET = ROOT / "build" / "telemetry" / "network_hourly"
+OUT_MECH = ROOT / "data" / "telemetry" / "mechanical"
+MINUTES_MECH = ROOT / "build" / "telemetry" / "mechanical_minutes"
 ENERGY = ROOT / "data" / "energy"
 HISTORY = ROOT / "data" / "history"
 
@@ -67,15 +77,20 @@ def generate(dest: Path = OUT, hourly: Path | None = HOURLY) -> dict:
     man = write_telemetry(pub, dest, "data/sample + data/gpu_health", hourly)
     energy = ENERGY if Path(dest) == OUT else Path(dest).parent / "energy"
     el = EnergyLayer(SAMPLE, window["seed"], rack_hourly=Path(dest) / "rack_hourly.csv")
-    eout = el.run(report_error=el.cfg["plants"]["sample_report_error"])
-    write_energy(eout, energy, history(eout["meters"], el.start, window["seed"]), "data/sample")
-    layer = CduTelemetry(pub.tel, pub, energy, HISTORY)
-    cdus = layer.run()
-    if layer.conflicts:
-        raise SystemExit("CDU records disagree with each other: " + "; ".join(layer.conflicts))
     build = Path(hourly).parent if hourly is not None else None
-    man["cdu"] = write_cdu(layer, cdus, Path(dest).parent / "cdu", "data/sample + data/gpu_health + data/energy + GPU telemetry",
-                           build / "cdu_minutes" if build else None)
+
+    def cdu_build(edir: Path) -> SimpleNamespace:
+        layer = CduTelemetry(pub.tel, pub, edir, HISTORY)
+        cdus = layer.run()
+        if layer.conflicts:
+            raise SystemExit("CDU records disagree with each other: " + "; ".join(layer.conflicts))
+        cman = write_cdu(layer, cdus, Path(dest).parent / "cdu", "data/sample + data/gpu_health + data/energy + GPU telemetry",
+                         build / "cdu_minutes" if build else None)
+        return SimpleNamespace(dir=Path(dest).parent / "cdu", manifest=cman)
+
+    eout, cdu = follow_devices(el, el.cfg["plants"]["sample_report_error"], energy, cdu_build)
+    write_energy(eout, energy, history(eout["meters"], el.start, window["seed"]), "data/sample")
+    man["cdu"] = cdu.manifest
     power = PowerTelemetry(pub.tel, pub, energy)
     pout = power.run()
     if power.conflicts:
@@ -88,6 +103,12 @@ def generate(dest: Path = OUT, hourly: Path | None = HOURLY) -> dict:
         raise SystemExit("network records disagree with each other: " + "; ".join(net.conflicts))
     man["network"] = write_network(net, nout, Path(dest).parent / "network", "data/sample + GPU telemetry",
                                    build / "network_hourly" if build else None)
+    mech = MechanicalTelemetry(SAMPLE, window["seed"], energy, Path(dest).parent / "cdu")
+    mout = mech.run()
+    if mech.conflicts:
+        raise SystemExit("mechanical records disagree with each other: " + "; ".join(mech.conflicts[:5]))
+    man["mechanical"] = write_mechanical(mech, mout, Path(dest).parent / "mechanical", "data/sample + data/energy + CDU telemetry",
+                                         build / "mechanical_minutes" if build else None)
     return man
 
 
@@ -97,7 +118,8 @@ def hourly_current(dest: Path = OUT, hourly: Path = HOURLY) -> bool:
     pairs = [(dest / "manifest.json", "gpu_hourly", hourly),
              (dest.parent / "cdu" / "manifest.json", "minutes", hourly.parent / "cdu_minutes"),
              (dest.parent / "power" / "manifest.json", "minutes", hourly.parent / "power_minutes"),
-             (dest.parent / "network" / "manifest.json", "minutes", hourly.parent / "network_hourly")]
+             (dest.parent / "network" / "manifest.json", "minutes", hourly.parent / "network_hourly"),
+             (dest.parent / "mechanical" / "manifest.json", "minutes", hourly.parent / "mechanical_minutes")]
     for mpath, key, folder in pairs:
         man = json.loads(mpath.read_text(encoding="utf-8"))
         for name, meta in man[key].items():
@@ -117,8 +139,10 @@ def ensure_hourly(hourly: Path = HOURLY) -> Path:
         committed_cdu = json.loads((OUT_CDU / "manifest.json").read_text(encoding="utf-8"))
         committed_power = json.loads((OUT_POWER / "manifest.json").read_text(encoding="utf-8"))
         committed_net = json.loads((OUT_NET / "manifest.json").read_text(encoding="utf-8"))
+        committed_mech = json.loads((OUT_MECH / "manifest.json").read_text(encoding="utf-8"))
         if (man["gpu_hourly"] != committed["gpu_hourly"] or man["cdu"]["minutes"] != committed_cdu["minutes"]
-                or man["power"]["minutes"] != committed_power["minutes"] or man["network"]["minutes"] != committed_net["minutes"]):
+                or man["power"]["minutes"] != committed_power["minutes"] or man["network"]["minutes"] != committed_net["minutes"]
+                or man["mechanical"]["minutes"] != committed_mech["minutes"]):
             raise SystemExit("data/telemetry is out of date. Run: python scripts/generate_telemetry.py")
     return hourly
 
@@ -159,6 +183,16 @@ def main() -> int:
         print(f"  {rel:<28} {k:>6}")
     print(f"  hourly per port and tray (not committed) -> {MINUTES_NET.relative_to(ROOT)}: "
           f"{sum(m['bytes'] for m in n['minutes'].values()) / 1e6:.1f} MB")
+    mm = man["mechanical"]
+    fam = {}
+    for x in mm["devices"].values():
+        fam[x["family"]] = fam.get(x["family"], 0) + 1
+    print(f"Mechanical telemetry -> {OUT_MECH.relative_to(ROOT)}: {fam.get('chiller', 0)} chillers, {fam.get('pump', 0)} pumps, the loop, "
+          f"{fam.get('wall', 0)} thermal walls, {fam.get('crah', 0)} CRAHs")
+    for rel, k in mm["files"].items():
+        print(f"  {rel:<28} {k:>6}")
+    print(f"  one-minute readings (not committed) -> {MINUTES_MECH.relative_to(ROOT)}: "
+          f"{sum(m['bytes'] for m in mm['minutes'].values()) / 1e6:.1f} MB")
     return 0
 
 

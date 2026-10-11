@@ -6,23 +6,25 @@
 
 # Glossary: Site AUS-1
 
-Every acronym, contract code, and record ID the site's pages and documents use: 582 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
+Every acronym, contract code, and record ID the site's pages and documents use: 602 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
 
 ## Acronyms
 
 | Code | Meaning | Defined in | Used on |
 |---|---|---|---|
 | ABI | **Application binary interface.** In a source title: the Linux kernel's documented interface, here the InfiniBand counter files. | - | Telemetry |
-| ANSI | **American National Standards Institute.** Coordinates US voluntary standards, including ANSI/ASSP Z10.0. | - | IT Partner SLA, Landlord SLA, Deployments |
+| ANSI | **American National Standards Institute.** Coordinates US voluntary standards, including ANSI/ASSP Z10.0. | - | IT Partner SLA, Landlord SLA, Telemetry, Deployments |
 | API | **Application programming interface.** A way for one system to read from or send to another. | - | IT Partner SLA, Landlord SLA, Alarm Board, Incident Portal |
 | APS | **Alarm planning superintendent.** A Texas State Fire Marshal's Office license: fire alarm plans are signed by a licensed APS or sealed by a fire protection engineer. | - | Deployments |
 | ASHRAE | **American Society of Heating, Refrigerating and Air-Conditioning Engineers.** Publisher of Guideline 0 (the commissioning process behind levels L1 to L5) and the thermal guidelines for data centers. | - | Telemetry, Deployments |
 | ASIC | **Application-specific integrated circuit.** The switching chip in a network switch or NVLink switch tray; its temperature is one of the chassis readings. | - | Telemetry |
 | ASN | **Advance ship notice.** The shipper's list of what is in a delivery, used to reconcile asset tags and serial numbers at receipt. | - | IT Partner SLA, Deployments |
 | ASSP | **American Society of Safety Professionals.** Publisher of the ANSI/ASSP Z10.0 safety management standard. | - | IT Partner SLA, Landlord SLA |
+| B-ASC | **BACnet Advanced Application Specific Controller.** The BACnet device profile the chiller controller declares: it serves its own objects and answers reads and writes. | - | Telemetry |
 | BER | **Bit error rate.** Errored bits per bit sent. Raw BER is before FEC corrects them (about 1E-8 to 1E-6 on a healthy link); a failing optic pushes it up until FEC can no longer keep up. | - | IT Partner SLA, Telemetry |
 | BMC | **Baseboard management controller.** A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | BMS | **Building management system.** The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Telemetry, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
+| BV | **BACnet binary value.** A BACnet object with two states. Vertiv publishes the V1C alarms as binary values: BV 35 is Circuit 1 - High Condensing Pressure. | - | Telemetry |
 | CAB | **Change advisory board.** The Customer's board that reviews and approves the IT Partner's change records before work starts. | - | Alarm Board, Incident Portal, Post-Incident Review |
 | CAP | **Corrective action plan.** A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure. | - | IT Partner SLA, Landlord SLA, Scorecards |
 | CCTV | **Closed-circuit television.** Security cameras. | - | Deployments, Site model document |
@@ -34,7 +36,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | COP | **Coefficient of performance.** Cooling delivered per unit of power used; higher is more efficient. | - | Site model document |
 | CPM | **Critical power monitor.** Starline's busway metering module (the M70 at this site). It records each tap-off breaker opening and closing, and the busway losing its feed. | - | Telemetry |
 | CPU | **Central processing unit.** The general-purpose processor; each compute tray has two Grace CPUs. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Failure Patterns |
-| CRAH | **Computer room air handler.** A chilled-water air handler that cools a room's air, here the electrical rooms. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Energy, Deployments, Site model document |
+| CRAH | **Computer room air handler.** A chilled-water air handler that cools a room's air, here the electrical rooms. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Energy, Telemetry, Deployments, Site model document |
 | CSL | **Critical service level.** A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA and OT-CSL-01 and up in the Landlord SLA. | - | IT Partner SLA, Landlord SLA, Scorecards |
 | CSV | **Comma-separated values.** A plain table file any spreadsheet opens. | - | Telemetry |
 | DAC | **Direct attach copper.** A short copper network cable with connectors built on. | - | IT Partner SLA |
@@ -45,6 +47,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | DCO | **Data center operations.** The Customer's site operations team, which runs the Telemetry of Record and manages both partners. | - | IT Partner SLA, Landlord SLA, Scorecards |
 | DMTF | **Distributed Management Task Force.** The standards body behind Redfish, the REST API the CDUs report their telemetry through. | - | Telemetry, Overview |
 | DOM | **Digital optical monitoring.** An optic's own report of temperature, power, and signal levels; a DOM alarm warns the optic is failing. | - | Failure Patterns, Overview |
+| DX | **Direct expansion.** Cooling by a refrigerant circuit in the unit itself rather than by chilled water (CW). | - | Telemetry |
 | ECC | **Error-correcting code.** Memory that detects and corrects bit errors; rising corrected errors can warn of a failing part. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, GPU Health, Telemetry, Incident Portal |
 | EHS | **Environment.** The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Post-Incident Review, Weekly Review |
 | EMR | **Experience modification rate.** An insurer's rating of a company's injury history against its industry; 1.0 is average. | - | IT Partner SLA, Landlord SLA |
@@ -55,8 +58,10 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | EPMS | **Electrical power monitoring system.** The system that records switchgear, UPS, and meter data for the electrical plant. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Energy, Telemetry, Site model document, Incident Portal, Post-Incident Review |
 | ERCOT | **Electric Reliability Council of Texas.** The grid operator for most of Texas, including the site's utility. | - | Interface Agreement, Landlord SLA, Site model document |
 | ESD | **Electrostatic discharge.** Static electricity that can damage components; technicians follow an ESD control program. | - | IT Partner SLA |
+| FC | **Free cooling.** Cooling with outdoor air through the chiller's free-cooling coils instead of its compressors, when the air is cooler than the returning water. The V1C point Stop or Inhibit FC activation holds it off. | - | Telemetry |
 | FEC | **Forward error correction.** Extra bits on every InfiniBand link that let the receiver fix raw bit errors. Errors FEC cannot fix are counted as symbol errors. | - | Telemetry |
 | FRU | **Field-replaceable unit.** A part a technician can swap on site, such as a compute tray, optic, power supply, or fan. | - | IT Partner SLA, Landlord SLA, Scorecards, Weekly Review |
+| FW | **Facility water.** The chilled water loop from the central plant to the halls' CDUs, thermal walls, and CRAHs (20 C supply, 30 C design return). | - | Telemetry |
 | GEN | **Generator.** Standby diesel generators; the GEN paralleling bus combines them. | - | Site model document |
 | GPU | **Graphics processing unit.** The accelerator the site exists to run; 72 per NVL72 rack. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, GPU Health, Telemetry, Deployments, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | GSP | **GPU System Processor.** A processor on the GPU that runs its firmware; XID 119 is a timeout waiting for it. | - | Scorecards, Alarm Board, Failure Patterns, GPU Health, Telemetry, Incident Portal |
@@ -65,6 +70,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | HCA | **Host channel adapter.** The InfiniBand network card in a compute tray. | - | IT Partner SLA |
 | HLI | **High-level interface.** A data link from the fire alarm panel to the BMS, used for secondary monitoring. | - | IT Partner SLA, Landlord SLA, Site model document |
 | HMMA | **Half-precision matrix multiply-accumulate.** The tensor core operation that dominates AI training; DCGM_FI_PROF_PIPE_TENSOR_ACTIVE is the share of cycles it runs. | - | Telemetry |
+| HR | **Modbus holding register.** A read-write 16-bit Modbus register, used for setpoints and commands (HR 45101 is the chiller's Unit ON/OFF). | - | Telemetry |
 | HTTPS | **Hypertext Transfer Protocol Secure.** Encrypted web traffic. | - | Site model document |
 | HVAC | **Heating, ventilation, and air conditioning.** Building air systems. | - | Site model document |
 | IB | **InfiniBand.** The back-end network between compute trays and the leaf switches. The scheduler writes a lost link as 'IB link down'. | - | Telemetry, Incident Portal, Post-Incident Review |
@@ -76,7 +82,9 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | IETF | **Internet Engineering Task Force.** The standards body that publishes RFCs, including RFC 1628, the UPS-MIB. | - | Telemetry |
 | IMEX | **Internode memory exchange.** The service that lets GPUs in one NVLink domain share memory; it must be up before a rack returns to service. | - | IT Partner SLA |
 | INTEGER | **SNMP integer type.** The SNMP type of a whole-number reading; snmpget prints it before the value. | - | Telemetry |
-| IP | **Internet Protocol.** The network protocol; BACnet/IP is building automation over an IP network. | - | Site model document |
+| IP | **Internet Protocol.** The network protocol; BACnet/IP is building automation over an IP network. | - | Telemetry, Site model document |
+| IR | **Modbus input register.** A read-only 16-bit Modbus register. The V1C points list gives each chiller reading one (IR 49203 is Unit Inlet Temperature). | - | Telemetry |
+| IS | **Modbus input status.** A read-only one-bit Modbus point (a discrete input); the iCOM 3 alarms are input statuses. | - | Telemetry |
 | ISO | **International Organization for Standardization.** Publisher of international standards, such as ISO 45001 (safety management) and ISO 8601 week numbering (an ISO week runs Monday to Sunday). | - | IT Partner SLA, Landlord SLA, Energy, Overview |
 | IT | **Information technology.** Here, the data hall equipment and the IT Partner that works on it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Energy, GPU Health, Telemetry, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | L-L | **Line to line.** Voltage measured between two phases of a three-phase supply; 0 V line to line means the feed is dead. | - | Scorecards, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
@@ -87,10 +95,10 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | LPM | **Liters per minute.** Coolant flow rate. | - | Telemetry, Deployments, Site model document |
 | MFT | **NVIDIA Firmware Tools.** The vendor's command-line tools for its NICs and switches; mlxlink, one of them, prints a port's link state, optic readings, and error counters. | - | Telemetry |
 | MIB | **Management information base.** The published list of what a device answers over SNMP: each reading's object name, number (OID), type, and unit. | - | Telemetry |
-| MOP | **Method of procedure.** The step-by-step plan for planned work on live equipment: scope, window, isolation, back-out, and the alarms the work is expected to raise. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Deployments, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| MOP | **Method of procedure.** The step-by-step plan for planned work on live equipment: scope, window, isolation, back-out, and the alarms the work is expected to raise. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Telemetry, Deployments, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | MV | **Medium voltage.** Here, the 13.8 kV switchgear between the utility, the generators, and the unit substations. | - | Alarm Board, Telemetry, Incident Portal, Post-Incident Review |
 | MVA | **Megavolt-ampere.** A unit of apparent power, used to rate transformers. | - | Site model document |
-| MW | **Megawatt.** One million watts. | - | IT Partner SLA, Landlord SLA, Deployments, Site model document |
+| MW | **Megawatt.** One million watts. | - | IT Partner SLA, Landlord SLA, Telemetry, Deployments, Site model document |
 | NCCL | **Collective communications library.** The GPU vendor's library for multi-GPU communication; an NCCL all-reduce test checks a rack's bandwidth. | - | IT Partner SLA, Deployments |
 | NDA | **Non-disclosure agreement.** A confidentiality contract; vendors share some technical documents, such as BMS point maps, only under one. | - | Telemetry |
 | NDR | **Next data rate (InfiniBand, 400 Gb/s).** An InfiniBand speed generation. | - | Telemetry, Site model document |
@@ -110,18 +118,20 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | OSH | **Occupational Safety and Health (Act).** The US law that created OSHA; its General Duty Clause is OSHA-GDC. | - | IT Partner SLA, Landlord SLA |
 | OSHA | **Occupational Safety and Health Administration.** The US federal workplace safety regulator. Its standards are listed in the SLAs' safety section as OSHA-1904, OSHA-1910, and OSHA-1926. | - | IT Partner SLA, Landlord SLA, Deployments |
 | OSR | **Outage severity rating.** A public five-level scale for how badly an outage affected services, from 1 (negligible) to 5 (severe). The post-incident review records it beside the internal severity. | - | Post-Incident Review |
+| OVERRIDDEN | **BACnet status flag.** One of the four BACnet Status_Flags. It is set only when a local hand override the client cannot change is in force; a BMS write at priority 8 shows in the Priority_Array instead. | - | Telemetry |
 | PDF | **Portable Document Format.** A printable document file. | - | Failure Patterns, Energy, GPU Health, Post-Incident Review, Weekly Review |
 | PE | **Professional engineer.** A licensed engineer; in Texas a PE seals the construction documents and load calculations (the Landlord's engineer of record). | - | Deployments |
 | PF | **Power factor.** The ratio of real to apparent power; the calculation sheet converts rack kW to amps at 480 V with PF 0.99. | - | Deployments |
 | PG25 | **Propylene glycol, 25%.** The coolant in the racks' liquid loop: water with 25% propylene glycol. | - | IT Partner SLA, Landlord SLA, Telemetry, Site model document |
 | PHY | **Physical layer.** The part of a link that turns bits into light and back: the optics, lanes, and FEC. UFM reads its fields every 5 minutes. | - | Telemetry |
+| PICS | **Protocol Implementation Conformance Statement.** A BACnet device's published list of the objects, properties, and services it supports. | - | Telemetry |
 | PIR | **Post-incident review.** The written review after a major incident: timeline, causes, contributing factors, and owned, dated actions. | - | Alarm Board |
 | PLR | **Physical layer retransmission.** An XDR link feature that resends a block FEC could not correct, on top of RS-FEC. | - | Telemetry |
 | POST | **Power-on self-test.** The checks a system runs when it powers on. | - | IT Partner SLA, Deployments |
 | PPE | **Personal protective equipment.** Gloves, arc-rated clothing, face shields, and similar gear a task's hazard analysis requires. | - | IT Partner SLA, Landlord SLA |
 | PSU | **Power supply unit.** Converts power for equipment; in a rack's power shelves, each PSU is a field-replaceable unit. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Failure Patterns, Telemetry, Incident Portal, Post-Incident Review |
 | PUCT | **Public Utility Commission of Texas.** The state utility regulator, which sets the large-load interconnection rules under SB 6 (TX-SB6). | - | Deployments |
-| PUE | **Power usage effectiveness.** Total facility energy divided by IT energy over a period (ISO/IEC 30134-2:2026). 1.0 would mean every kilowatt-hour reaches the IT equipment; the rest is cooling, power path losses, and house load. Partial PUE (pPUE) measures one part of that overhead. Reported on the Energy tab. | - | Landlord SLA, Energy, Overview, Weekly Review |
+| PUE | **Power usage effectiveness.** Total facility energy divided by IT energy over a period (ISO/IEC 30134-2:2026). 1.0 would mean every kilowatt-hour reaches the IT equipment; the rest is cooling, power path losses, and house load. Partial PUE (pPUE) measures one part of that overhead. Reported on the Energy tab. | - | Landlord SLA, Energy, Telemetry, Overview, Weekly Review |
 | RACI | **Responsible, accountable, consulted, informed.** The ownership matrix in the Interface Agreement: for each component, who does the work, who owns the outcome, who is asked, and who is told. | - | Failure Patterns |
 | RAID | **Redundant array of independent disks.** Disks combined so one can fail without losing data; rebuilt after a drive swap. | - | IT Partner SLA |
 | RCA | **Root cause analysis.** The investigation that finds why an incident happened, not just what failed. P1 incidents owe a preliminary and a final RCA. | - | IT Partner SLA, Landlord SLA, Scorecards, Weekly Review |
@@ -147,6 +157,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | TDLR | **Texas Department of Licensing and Regulation.** The state agency that adopts the Texas electrical code, licenses electricians, and runs the Architectural Barriers program (TX-TABA). | - | Deployments |
 | TRIR | **Total recordable incident rate.** Recordable injuries per 200,000 hours worked, a standard safety statistic used to qualify partners. | - | IT Partner SLA, Landlord SLA |
 | TTDM | **TraceTek leak detection module.** The module that monitors the sensing cable under each CDU and reports a leak to the BMS. | - | Telemetry |
+| UDP | **User Datagram Protocol.** The IP transport BACnet/IP uses, on port 47808. | - | Telemetry |
 | UFM | **Unified Fabric Manager.** Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM. | - | Failure Patterns, Telemetry, Site model document |
 | UINT16 | **Unsigned 16-bit integer.** A Modbus value held in one register (0 to 65,535); the point map gives its scale, such as 0.1 Hz. | - | Telemetry |
 | UINT32 | **Unsigned 32-bit integer.** A Modbus value held in two registers, used for counters such as energy and engine hours. | - | Telemetry |
@@ -157,7 +168,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | UUID | **Universally unique identifier.** The GPU's own identifier, a label on every exporter series. A replaced tray brings new GPUs with new UUIDs, so their readings start new series. | - | Telemetry |
 | VDC | **Volts direct current.** DC voltage, as in the 800 VDC pilot racks. | - | IT Partner SLA, Landlord SLA, Telemetry, Site model document |
 | VESDA | **Very early smoke detection apparatus.** Aspirating smoke detection that samples room air through pipes and alarms in stages (Alert, Action, Fire 1, Fire 2). | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Deployments, Incident Portal, Post-Incident Review |
-| VFD | **Variable frequency drive.** Controls a pump or fan motor's speed. | - | Landlord SLA, Site model document |
+| VFD | **Variable frequency drive.** Controls a pump or fan motor's speed. | - | Landlord SLA, Telemetry, Site model document |
 | XDR | **Extended data rate (InfiniBand, 800 Gb/s).** An InfiniBand speed generation. | - | Telemetry, Site model document |
 | XID | **Xid error (GPU driver error code).** A numbered error the GPU driver reports, such as XID 79 (GPU has fallen off the bus). Critical XIDs start the restoration clock for a GPU fault. Every XID that applies to GB200 is listed under GPU XID codes, from NVIDIA's public Xid catalog. | - | IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, GPU Health, Telemetry, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | YAML | **YAML (a data file format).** The plain-text format the contracts and reviews are written in, so they can be tested against the data. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Incident Portal, Post-Incident Review |
@@ -396,6 +407,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | DS-SPARES | **Supplier spares and RMA system.** Measures: Stock levels, consumption, cycle counts, RMA shipments. Owner: Supplier. | IT Partner SLA, 6. Measurement and Telemetry of Record<br>Landlord SLA, 5. Measurement and Telemetry of Record | IT Partner SLA, Landlord SLA |
 | DS-UFM | **InfiniBand fabric manager.** Measures: Port state, link-down events, symbol and error counters. Owner: Customer. | IT Partner SLA, 6. Measurement and Telemetry of Record<br>Landlord SLA, 5. Measurement and Telemetry of Record | IT Partner SLA, Landlord SLA |
 | DS-UPS | **UPS network management cards (SNMPv3, Customer read-only user).** Measures: UPS mode (normal, battery, bypass), module status, load, battery state of charge, alarms. Owner: Customer. | IT Partner SLA, 6. Measurement and Telemetry of Record<br>Landlord SLA, 5. Measurement and Telemetry of Record | IT Partner SLA, Landlord SLA |
+| FW-LOOP | **Facility water loop readings.** The Telemetry tab's view of the central plant's supply and return headers (BMS plant objects): their temperatures, flow, and differential pressure. | - | Telemetry |
 
 ## Ticket states
 
@@ -426,7 +438,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | CAP-### | **Corrective action plan.** A corrective action plan drafted at the period review for each serious finding, grouped by the tickets it affects. | - | Scorecards |
 | CCF-DEP | **Landlord's Jira project for the Hall B fit-out.** Caprock's own Jira project for the hall readiness work it runs or coordinates and each rack's tap-off energization (HO-4). Read through the importer, never written. | - | Deployments |
 | CCF-DEP-#, RSS-DEP-# | **Partner Jira issue.** An issue in a partner's own Jira project (CCF-DEP: Landlord; RSS-DEP: IT Partner), as its export shows it. A Jira Done is the partner's claim. | - | Telemetry, Deployments |
-| CCF-E## | **Landlord engineer ID.** An engineer on the Landlord's staff (Caprock Critical Facilities). | - | Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
+| CCF-E## | **Landlord engineer ID.** An engineer on the Landlord's staff (Caprock Critical Facilities). | - | Scorecards, Alarm Board, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | CHG####### | **IT Partner change record.** A planned change by the IT Partner, such as a firmware update, with its window and declared alarms. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | CHX-P##### or GVX-M##### | **Facility part serial number.** The serial number of a replaced facility part: a CDU pump assembly (CHX-P) or a UPS power module (GVX-M). | - | Incident Portal, Post-Incident Review |
 | CT + 8 characters | **Compute tray serial number.** A compute tray's serial number. A part swap must show the serial change in the BMC inventory. | - | Scorecards, GPU Health, Incident Portal, Post-Incident Review, Weekly Review |
@@ -437,7 +449,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | DEP-B-XX-## | **Deployment document.** A controlled document of the Hall B rollout (procedure, test script, or report template), one per step, with its revision. | - | Deployments |
 | DWO-B-#### | **Deployment work order.** One unit of deployment work (a program step, or a rack step for one rack) built from the partner's Jira issue or the Customer's record. Complete only when done, signed by every role, and every required inspection passed. | - | Deployments |
 | E# (on-call role) | **On-call role.** An operations engineer's on-call role in the Customer's notification rota (E1 to E4). *(On: alarms.)* | - | Alarm Board |
-| EN-F# | **Energy finding.** A finding on the Energy tab: the Landlord's energy report or the chiller free-cooling log does not reconcile with the meters (Landlord SLA section 22). | - | Energy |
+| EN-F# | **Energy finding.** A finding on the Energy tab: the Landlord's energy report or the chiller free-cooling log does not reconcile with the meters (Landlord SLA section 22). | - | Energy, Telemetry |
 | F# (post-incident review) | **Post-incident review contributing factor.** A contributing factor the post-incident review found, such as an inadequate procedure or a missing alert. *(On: pir, alarms.)* | - | Alarm Board, Post-Incident Review |
 | F-### | **IT Partner finding.** A place where the IT Partner's records do not reconcile with the telemetry, from the monthly scorecard. | - | Scorecards, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | FPR-YYYY-H# | **Failure pattern review.** The review of six months of failures for patterns, with owners and fixes. | - | Failure Patterns, Overview, Weekly Review |
@@ -474,7 +486,9 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | BW-[hall]-R#-PG-[hall]#-[side] | **Busway segment.** Overhead busway feeding a row of racks. BW-A-R1-PG-A2-A is Hall A, row 1, power group A2, A side. Each rack takes power from an A and a B busway through tap-offs. | - | Scorecards, Alarm Board, Telemetry, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | C# (leak circuit) | **Leak detection circuit.** A sensing cable circuit on a leak detection module: TTDM-A/C8 is circuit 8 on Hall A's module. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | CDU-[hall]# | **Coolant distribution unit.** A CDU, named by hall and number: CDU-A3 is CDU 3 in Hall A. Each serves up to 8 racks; the Landlord owns it. | - | Landlord SLA, Scorecards, Alarm Board, Failure Patterns, GPU Health, Telemetry, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
-| CH-## | **Chiller.** One of the 11 air-cooled chillers (N+1) in the central plant. | - | Scorecards, Alarm Board, Energy, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| CH-## | **Chiller.** One of the 11 air-cooled chillers (N+1) in the central plant. | - | Scorecards, Alarm Board, Energy, Telemetry, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| CRAH-[hall]# | **Electrical-room CRAH.** A chilled-water air handler in a hall's electrical room, named by hall and number. | - | Telemetry |
+| FWP-# | **Facility water pump.** One of the 3 variable-speed facility water pumps in the central plant: two run, one stands by. | - | Telemetry |
 | GEN-# | **Standby generator.** One of the 7 diesel standby generators (N+1) on the paralleling bus. | - | Landlord SLA, Scorecards, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | HALL-A | **Data hall.** State: production; 32 racks. | IT Partner SLA, 2. Parties and Site Profile<br>Landlord SLA, 2. Parties and Leased Premises | IT Partner SLA, Landlord SLA, Scorecards, Failure Patterns, GPU Health, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | HALL-B | **Data hall.** State: deployment; 32 racks. | IT Partner SLA, 2. Parties and Site Profile<br>Landlord SLA, 2. Parties and Leased Premises | IT Partner SLA, Landlord SLA, GPU Health, Telemetry, Deployments, Incident Portal |
@@ -488,7 +502,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | TO-[rack]-[side] | **Busway tap-off.** The breaker box that takes power from the busway to one rack: TO-A07-B is rack A07's B-side tap-off. Its output terminals are the power demarcation (DM-PWR). | - | Scorecards, Alarm Board, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | TTDM-A | **Hall A leak detection module.** The leak alarm and locator module for Hall A's sensing cables. An alarm names the circuit (C1, C2, ...) and the distance along the cable. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | TTDM-B | **Hall B leak detection module.** The leak alarm and locator module for Hall B's sensing cables. | - | Alarm Board |
-| TW-[hall]# | **Thermal wall.** A chilled-water fan wall that cools a hall's air, named by hall and number. | - | Landlord SLA, Scorecards, Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
+| TW-[hall]# | **Thermal wall.** A chilled-water fan wall that cools a hall's air, named by hall and number. | - | Landlord SLA, Scorecards, Alarm Board, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | TX-# | **Utility transformer.** One of the two utility-owned 138 kV to 13.8 kV transformers. | - | Site model document |
 | UPS-[hall]# | **UPS module.** A hall UPS, named by hall and number. Hall A's four UPSs run distributed redundant (4 make 3). | - | Landlord SLA, Scorecards, Alarm Board, Telemetry, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | USS-[hall]# | **Unit substation.** Steps 13.8 kV down to 480 V for a UPS, named by hall and number. | - | Site model document |
@@ -501,15 +515,16 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 
 | Code | Meaning | Defined in | Used on |
 |---|---|---|---|
-| AFC | **Liebert AFC chiller.** The air-cooled free-cooling chiller model in the central plant. | - | Site model document |
+| AFC | **Liebert AFC chiller.** The air-cooled free-cooling chiller model in the central plant. | - | Telemetry, Site model document |
 | AP9644 | **Network management card 4.** The UPS's monitoring card (the NMC), the source of SNMP traps. | - | Telemetry, Site model document |
 | APC | **UPS brand.** Schneider Electric's UPS brand. Its PowerNet-MIB holds the battery and output-status objects the Galaxy UPS cards answer. | - | Telemetry |
 | B200 | **B200 GPU.** The Blackwell GPU in a GB200 rack; public figures put it at up to 1,200 W. Hall A runs it at that default limit. | - | Telemetry |
 | B300 | **B300 GPU.** The Blackwell Ultra GPU in a GB300 rack, up to 1,400 W by public figures. Hall B caps it at 1,200 W to fit the 132 kW rack envelope. | - | Telemetry |
 | C175-16 | **Caterpillar C175-16 generator.** The 3,000 kW diesel standby generator model; the site has 7 (N+1). | - | Telemetry, Site model document |
 | CAT | **Generator brand.** Caterpillar. The site's 7 standby generators are CAT C175-16 sets with EMCP 4.4 controllers. | - | Telemetry |
-| CW | **Liebert CW CRAH.** The perimeter air handler model for the electrical rooms. | - | Site model document |
-| CWA | **Liebert CWA thermal wall.** The chilled-water fan wall that cools the halls' air. | - | Site model document |
+| CW | **Liebert CW CRAH.** The perimeter air handler model for the electrical rooms. | - | Telemetry, Site model document |
+| CWA | **Liebert CWA thermal wall.** The chilled-water fan wall that cools the halls' air. | - | Telemetry, Site model document |
+| EBO | **EcoStruxure Building Operation.** The Landlord's BMS server software. It serves every chiller, pump, thermal wall, and CRAH controller's points as BACnet objects, and the Customer reads them from it. | - | Telemetry |
 | EMCP | **EMCP 4.4 generator controller.** The generator's control panel, read over Modbus TCP for run, load, and alarm data. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Energy, Telemetry, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | GB200 | **GB200 NVL72 rack.** A rack-scale GPU system: 72 GPUs and 36 Grace CPUs joined by NVLink, direct-to-chip liquid cooled. Hall A runs 32 of them. | - | IT Partner SLA, GPU Health, Telemetry, Site model document |
 | GB300 | **GB300 NVL72 rack.** The next generation of the NVL72 rack. Hall B is deploying 32 of them. | - | GPU Health, Telemetry, Deployments, Site model document, Overview |
@@ -520,15 +535,20 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | NVIDIA | **GPU and network vendor.** Makes the GB200 and GB300 NVL72 racks, the NVLink switches, and the InfiniBand fabric. | - | IT Partner SLA, GPU Health, Telemetry, Site model document, Overview |
 | NVL72 | **NVL72 rack.** A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours. | - | IT Partner SLA, Landlord SLA, Telemetry, Deployments, Site model document |
 | NVOS | **NVOS switch operating system.** The operating system on the Quantum-X800 switches; it streams telemetry over gNMI and names ports sw<cage>p<port>. | - | Telemetry |
+| PCW | **Liebert PCW.** Vertiv's chilled-water room cooling unit. Its iCOM 3 monitoring guide names the points used here for the thermal walls and CRAHs. | - | Telemetry |
+| PDX | **Liebert PDX.** Vertiv's direct-expansion room cooling unit; it shares the V1A monitoring guide with the PCW. | - | Telemetry |
 | PME | **Power Monitoring Expert.** The electrical power monitoring software (EPMS) that records switchgear and meter data. | - | Site model document |
 | Q3400-RA | **Quantum-X800 Q3400-RA InfiniBand switch.** The 800 Gb/s (XDR) InfiniBand switch for Hall B and the planned 800 VDC pilot hall (Hall C). | - | Telemetry, Site model document |
 | QM9700 | **Quantum-2 QM9700 InfiniBand switch.** The 400 Gb/s (NDR) InfiniBand switch in Hall A's back-end fabric. | - | Telemetry, Site model document |
 | QM9790 | **Quantum-2 QM9790 InfiniBand switch.** The unmanaged sibling of the QM9700 (same hardware, run from the fabric manager); named here only in a source title. | - | Telemetry |
+| R-513A | **R-513A refrigerant.** The low global-warming refrigerant in the AFC chillers' screw compressor circuits; its saturation curve turns condensing temperature into pressure. | - | Telemetry |
 | RAYCHEM | **TraceTek product line.** The brand line of the leak detection cable and modules. | - | Site model document |
 | STARLINE-CPM-MIB | **Starline CPM MIB.** Starline's published MIB for the M70 CPM (enterprise 35774): run and tap-off voltage, current, power, energy, and breaker state. | - | Telemetry |
 | TT5000 | **TraceTek TT5000 sensing cable.** Hydrocarbon leak sensing cable, used around the generators' diesel. | - | Site model document |
 | TTDM-128 | **TraceTek TTDM-128 leak module.** The leak alarm and locator module that reads sensing cable and reports where along it the leak is. | - | IT Partner SLA, Landlord SLA, Site model document |
 | UPS-MIB | **UPS-MIB (RFC 1628).** The IETF standard MIB every UPS card answers: input, output, bypass, and battery readings under mib-2 33. | - | Telemetry |
+| V1A | **iCOM 3 V1A application.** The Liebert iCOM 3 application of Vertiv's PDX and PCW room units; its published monitoring guide gives the chilled-water point names used for the thermal walls and CRAHs. | - | Telemetry |
+| V1C | **iCOM 3 V1C control application.** The Liebert iCOM 3 controller application the AFC chillers run. Vertiv publishes its points (names, Modbus registers, and alarm binary values) in a communication points list. | - | Telemetry |
 | VEP | **VESDA-E VEP detector.** A VESDA-E model with multiple sampling pipes. | - | Site model document |
 | VESDA-E | **VESDA-E aspirating smoke detector.** The current generation of VESDA detectors. | - | Site model document |
 | VL | **Galaxy VL UPS.** The 300 kW UPS model for mechanical loads (pumps, CDUs). | - | Telemetry, Site model document |
@@ -669,4 +689,4 @@ Every code NVIDIA's public [Xid catalog](https://docs.nvidia.com/deploy/xid-erro
 
 ## Left plain on purpose
 
-Capitalised text that is not a code (banners, emphasis) and rack positions such as A07, which the site drawings explain: A-07, A-14, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32, A4, ASIC1, B-03, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15, B16, B17, B18, B19, B20, B21, B22, B23, B24, B25, B26, B27, B28, B29, B30, B31, B32, B4, BAS-PTS007C, BAS-PTS007C-EN_06302026, BW-A-R1-PG-A1, BW-A-R1-PG-A2, BW-A-R1-PG-A2-A_20260915T1447, BW-A-R1-PG-A2-A_20260915T1853, BW-A-R1-PG-A2-B_20260915T1513, BW-A-R1-PG-A2-B_20260915T1837, BW-A-R2-PG-A2, BW-A-R2-PG-A3, BW-A-R3-PG-A3, BW-A-R3-PG-A4, BW-A-R3-PG-A5, BW-A-R4-PG-A5, BW-A-R4-PG-A6, BW-B-R1-PG-B1, BW-B-R1-PG-B2, BW-B-R2-PG-B2, BW-B-R2-PG-B2-A_20260924T1653, BW-B-R2-PG-B3, BW-B-R3-PG-B3, BW-B-R3-PG-B4, BW-B-R3-PG-B4-B_20260909T1629, BW-B-R3-PG-B4-B_20260909T1839, BW-B-R3-PG-B4-B_20260913T1725, BW-B-R3-PG-B5, BW-B-R4-PG-B5, BW-B-R4-PG-B6, BW-B-R4-PG-B6-B_20260904T1740, BY, DO, E1, EAB, EDIT, FA321205, FAN, FAN1, FAQ, FILE, GB, GEN-1_20260901T1358, GEN-1_20260924T2044, GEN-2_20260904T1625, GEN-2_20260924T2044, GEN-3_20260908T1456, GEN-3_20260924T2044, GEN-4_20260912T1654, GEN-4_20260924T2044, GEN-5_20260915T1753, GEN-5_20260924T2044, GEN-6_20260919T1645, GEN-6_20260924T2044, GEN-7_20260923T1553, GEN-7_20260924T2044, GENERATED, GET, HAND, HELP, IB1, ILLUSTRATIVE, L-N, LIVE, MB, MOCK, MUPS-A1_20260924T2045, MUPS-A2_20260924T2045, MUPS-B1_20260924T2045, MUPS-B2_20260924T2045, NETIR, NOT, NVLINK, OK, ONLY, PB, PSU1, R1, R2, R3, R4, RLW, SITE, TB, TO-A07-A_20260915T1447, TO-A07-A_20260915T1853, TO-A07-B_20260915T1513, TO-A07-B_20260915T1837, TO-B09-A_20260924T1653, TO-B18-B_20260913T1725, TO-B29-B_20260904T1740, TYPE, UPS-A1_20260913T1921, UPS-A1_20260913T2151, UPS-A1_20260924T2045, UPS-A2_20260922T2333, UPS-A2_20260923T0449, UPS-A2_20260924T2045, UPS-A3_20260924T2045, UPS-A4_20260924T2045, UPS-B1_20260924T2045, UPS-B2_20260924T2045, UPS-B3_20260923T1852, UPS-B3_20260923T2122, UPS-B3_20260924T2045, UPS-B4_20260909T1629, UPS-B4_20260909T1839, UPS-B4_20260924T2045.
+Capitalised text that is not a code (banners, emphasis) and rack positions such as A07, which the site drawings explain: A-07, A-14, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32, A4, ALARM, ASIC1, B-03, B01, B02, B03, B04, B05, B06, B07, B08, B09, B10, B11, B12, B13, B14, B15, B16, B17, B18, B19, B20, B21, B22, B23, B24, B25, B26, B27, B28, B29, B30, B31, B32, B4, BAS-PTS007C, BAS-PTS007C-EN_06302026, BW-A-R1-PG-A1, BW-A-R1-PG-A2, BW-A-R1-PG-A2-A_20260915T1447, BW-A-R1-PG-A2-A_20260915T1853, BW-A-R1-PG-A2-B_20260915T1513, BW-A-R1-PG-A2-B_20260915T1837, BW-A-R2-PG-A2, BW-A-R2-PG-A3, BW-A-R3-PG-A3, BW-A-R3-PG-A4, BW-A-R3-PG-A5, BW-A-R4-PG-A5, BW-A-R4-PG-A6, BW-B-R1-PG-B1, BW-B-R1-PG-B2, BW-B-R2-PG-B2, BW-B-R2-PG-B2-A_20260924T1653, BW-B-R2-PG-B3, BW-B-R3-PG-B3, BW-B-R3-PG-B4, BW-B-R3-PG-B4-B_20260909T1629, BW-B-R3-PG-B4-B_20260909T1839, BW-B-R3-PG-B4-B_20260913T1725, BW-B-R3-PG-B5, BW-B-R4-PG-B5, BW-B-R4-PG-B6, BW-B-R4-PG-B6-B_20260904T1740, BY, CH-01_20260924T2044, CH-02_20260924T2044, CH-03_20260913T1155, CH-03_20260913T1639, CH-03_20260913T1939, CH-03_20260919T1054, CH-03_20260924T2044, CH-04_20260924T2044, CH-05_20260916T1025, CH-05_20260916T1346, CH-05_20260924T2044, CH-06_20260908T1111, CH-06_20260908T1352, CH-06_20260908T1652, CH-06_20260924T2044, CH-07_20260924T2044, CH-08_20260901T0431, CH-08_20260901T0904, CH-08_20260924T2044, CH-09_20260924T2044, CH-10_20260911T1516, CH-10_20260911T1858, CH-10_20260911T2158, CH-10_20260924T2044, CH-11_20260924T2044, DO, E1, EAB, EDIT, FA321205, FAN, FAN1, FAQ, FILE, FW-LOOP_20260924T2044, FWP-1_20260924T2044, FWP-2_20260924T2044, FWP-3_20260924T2044, GB, GEN-1_20260901T1358, GEN-1_20260924T2044, GEN-2_20260904T1625, GEN-2_20260924T2044, GEN-3_20260908T1456, GEN-3_20260924T2044, GEN-4_20260912T1654, GEN-4_20260924T2044, GEN-5_20260915T1753, GEN-5_20260924T2044, GEN-6_20260919T1645, GEN-6_20260924T2044, GEN-7_20260923T1553, GEN-7_20260924T2044, GENERATED, GET, HAND, HELP, IB1, ILLUSTRATIVE, L-N, LIVE, LOADED, LOADING, MB, MOCK, MTN, MUPS-A1_20260924T2045, MUPS-A2_20260924T2045, MUPS-B1_20260924T2045, MUPS-B2_20260924T2045, NETIR, NOT, NVLINK, OFF, OK, ON, ONLY, PB, PSU1, R1, R2, R3, R4, RLW, SITE, STARTING, TB, TO-A07-A_20260915T1447, TO-A07-A_20260915T1853, TO-A07-B_20260915T1513, TO-A07-B_20260915T1837, TO-B09-A_20260924T1653, TO-B18-B_20260913T1725, TO-B29-B_20260904T1740, TR, TRUE, TW-A4_20260922T0918, TW-A4_20260922T1212, TW-B2_20260919T0058, TW-B2_20260920T1118, TYPE, UNLOADED, UNLOADING, UPS-A1_20260913T1921, UPS-A1_20260913T2151, UPS-A1_20260924T2045, UPS-A2_20260922T2333, UPS-A2_20260923T0449, UPS-A2_20260924T2045, UPS-A3_20260924T2045, UPS-A4_20260924T2045, UPS-B1_20260924T2045, UPS-B2_20260924T2045, UPS-B3_20260923T1852, UPS-B3_20260923T2122, UPS-B3_20260924T2045, UPS-B4_20260909T1629, UPS-B4_20260909T1839, UPS-B4_20260924T2045.

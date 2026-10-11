@@ -276,6 +276,23 @@ terms:
   - {term: AFC, type: product, title: "Liebert AFC chiller", text: "The air-cooled free-cooling chiller model in the central plant."}
   - {term: CWA, type: product, title: "Liebert CWA thermal wall", text: "The chilled-water fan wall that cools the halls' air."}
   - {term: CW, type: product, title: "Liebert CW CRAH", text: "The perimeter air handler model for the electrical rooms."}
+  - {term: EBO, type: product, title: "EcoStruxure Building Operation", text: "The Landlord's BMS server software. It serves every chiller, pump, thermal wall, and CRAH controller's points as BACnet objects, and the Customer reads them from it.", see: "telemetry/#mech-fields"}
+  - {term: V1C, type: product, title: "iCOM 3 V1C control application", text: "The Liebert iCOM 3 controller application the AFC chillers run. Vertiv publishes its points (names, Modbus registers, and alarm binary values) in a communication points list.", see: "telemetry/#mech-fields"}
+  - {term: V1A, type: product, title: "iCOM 3 V1A application", text: "The Liebert iCOM 3 application of Vertiv's PDX and PCW room units; its published monitoring guide gives the chilled-water point names used for the thermal walls and CRAHs."}
+  - {term: PCW, type: product, title: "Liebert PCW", text: "Vertiv's chilled-water room cooling unit. Its iCOM 3 monitoring guide names the points used here for the thermal walls and CRAHs."}
+  - {term: PDX, type: product, title: "Liebert PDX", text: "Vertiv's direct-expansion room cooling unit; it shares the V1A monitoring guide with the PCW."}
+  - {term: R-513A, type: product, title: "R-513A refrigerant", text: "The low global-warming refrigerant in the AFC chillers' screw compressor circuits; its saturation curve turns condensing temperature into pressure."}
+  - {term: B-ASC, type: acronym, expansion: BACnet Advanced Application Specific Controller, text: "The BACnet device profile the chiller controller declares: it serves its own objects and answers reads and writes."}
+  - {term: BV, type: acronym, expansion: BACnet binary value, text: "A BACnet object with two states. Vertiv publishes the V1C alarms as binary values: BV 35 is Circuit 1 - High Condensing Pressure.", see: "telemetry/#mech-fields"}
+  - {term: IR, type: acronym, expansion: Modbus input register, text: "A read-only 16-bit Modbus register. The V1C points list gives each chiller reading one (IR 49203 is Unit Inlet Temperature)."}
+  - {term: HR, type: acronym, expansion: Modbus holding register, text: "A read-write 16-bit Modbus register, used for setpoints and commands (HR 45101 is the chiller's Unit ON/OFF)."}
+  - {term: IS, type: acronym, expansion: Modbus input status, text: "A read-only one-bit Modbus point (a discrete input); the iCOM 3 alarms are input statuses."}
+  - {term: UDP, type: acronym, expansion: User Datagram Protocol, text: "The IP transport BACnet/IP uses, on port 47808."}
+  - {term: PICS, type: acronym, expansion: Protocol Implementation Conformance Statement, text: "A BACnet device's published list of the objects, properties, and services it supports."}
+  - {term: DX, type: acronym, expansion: Direct expansion, text: "Cooling by a refrigerant circuit in the unit itself rather than by chilled water (CW)."}
+  - {term: FW, type: acronym, expansion: Facility water, text: "The chilled water loop from the central plant to the halls' CDUs, thermal walls, and CRAHs (20 C supply, 30 C design return).", see: "telemetry/#FW-LOOP"}
+  - {term: FC, type: acronym, expansion: Free cooling, text: "Cooling with outdoor air through the chiller's free-cooling coils instead of its compressors, when the air is cooler than the returning water. The V1C point Stop or Inhibit FC activation holds it off."}
+  - {term: OVERRIDDEN, type: acronym, expansion: BACnet status flag, text: "One of the four BACnet Status_Flags. It is set only when a local hand override the client cannot change is in force; a BMS write at priority 8 shows in the Priority_Array instead.", see: "telemetry/#mech-fields"}
   - {term: VESDA-E, type: product, title: "VESDA-E aspirating smoke detector", text: "The current generation of VESDA detectors."}
   - {term: VEP, type: product, title: "VESDA-E VEP detector", text: "A VESDA-E model with multiple sampling pipes."}
 
@@ -392,6 +409,12 @@ families:
      text: "One of the 11 air-cooled chillers (N+1) in the central plant."}
   - {key: EQ-TW, label: "TW-[hall]#", pattern: 'TW-[A-C]\d', type: equipment, title: Thermal wall, example: TW-B2,
      text: "A chilled-water fan wall that cools a hall's air, named by hall and number."}
+  - {key: EQ-CRAH, label: "CRAH-[hall]#", pattern: 'CRAH-[A-C]\d', type: equipment, title: Electrical-room CRAH, example: CRAH-A1,
+     text: "A chilled-water air handler in a hall's electrical room, named by hall and number."}
+  - {key: EQ-FWP, label: "FWP-#", pattern: 'FWP-\d', type: equipment, title: Facility water pump, example: FWP-2,
+     text: "One of the 3 variable-speed facility water pumps in the central plant: two run, one stands by."}
+  - {key: FWLOOP, label: "FW-LOOP", pattern: 'FW-LOOP', type: data_source, title: Facility water loop readings, example: FW-LOOP, see: "telemetry/#FW-LOOP",
+     text: "The Telemetry tab's view of the central plant's supply and return headers (BMS plant objects): their temperatures, flow, and differential pressure."}
   - {key: EQ-VESDA, label: "VESDA-[hall]#", pattern: 'VESDA-[A-C]\d', type: equipment, title: Smoke detector, example: VESDA-B1,
      text: "An aspirating smoke detector in a hall, named by hall and number."}
   - {key: EQ-BW, label: "BW-[hall]-R#-PG-[hall]#-[side]", pattern: 'BW-[A-C]-R\d-PG-[A-C]\d-[AB]', type: equipment, title: Busway segment, example: BW-A-R1-PG-A2-A,
@@ -425,6 +448,9 @@ plain:   # capitalised text that is not a code
     - {terms: [FAN], why: "The sensor class a switch fan reports under in ENTITY-SENSOR-MIB (the field reference names it beside the reading)."}
     - {terms: [GET], why: "The HTTP method a Redfish client uses to read a resource."}
     - {terms: [HELP, TYPE], why: "Keywords of the Prometheus text format: each field's description and its metric type (gauge or counter)."}
+    - {terms: [ALARM, LOADED, LOADING, MTN, "OFF", "ON", STARTING, UNLOADED, UNLOADING], why: "Values of the V1C compressor status, set in capitals as Vertiv's points list writes them (MTN: maintenance)."}
+    - {terms: ["TRUE"], why: "A BACnet boolean value, as a client prints Event_Algorithm_Inhibit."}
+    - {terms: [TR], why: "Part of a published iCOM unit status name (TR standby), quoted as Vertiv writes it."}
     - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}
   patterns:
     - {pattern: '[A-C]-?\d{2}', why: "A rack position (A07 is Hall A, rack 7); the site drawings show where each is."}

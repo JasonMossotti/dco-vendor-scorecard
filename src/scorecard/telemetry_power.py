@@ -15,8 +15,8 @@ records, never the generator's internals, and returns how many cases it checked 
 5. modes: each UPS's output source and working power modules equal the NMC events, minute by minute.
 6. battery: charge falls only while a UPS is on battery, every discharge recovers, and each hour's seconds on
    battery equal the NMC events.
-7. mech: each mechanical UPS reads its recorded load poll at the poll's minute; each hall's mechanical UPS input
-   equals the meter every hour, and their output covers the CDUs' own draw.
+7. mech: each hall's mechanical UPS input equals the meter every hour, and their output covers the CDUs' own draw
+   (the thermal-wall fans make up the rest: the mechanical telemetry's agreements check that sum).
 8. generators: every EMCP reading on record is the generator's state, kW and percent kW at its minute; a
    generator outside a run is stopped; in a utility outage the sets carry the metered generator energy; run
    hours and fuel move only while running.
@@ -63,7 +63,6 @@ class PowerData:
     states: list[dict]
     tapoff_hourly: dict
     nmc: list[dict]
-    polls: list[dict]
     cpm: list[dict]
     epms: list[dict]
     emcp: list[dict]
@@ -121,7 +120,6 @@ def load(power_dir: str | Path, minutes_dir: str | Path, sample_dir: str | Path,
                      generator_hourly=_csv(d / "generator_hourly.csv"), states=_jsonl(d / "states.jsonl"),
                      tapoff_hourly=json.loads((Path(minutes_dir) / "tapoff_hourly.json").read_text(encoding="utf-8")),
                      nmc=sorted(_jsonl(fac / "ups_nmc_events.jsonl"), key=lambda e: (e["timestamp"], e["ups"])),
-                     polls=_jsonl(fac / "ups_status.jsonl"),
                      cpm=sorted(_jsonl(fac / "busway_cpm_events.jsonl"), key=lambda e: e["timestamp"]),
                      epms=sorted(_jsonl(fac / "epms_events.jsonl"), key=lambda e: e["timestamp"]),
                      emcp=_jsonl(fac / "emcp_readings.jsonl"),
@@ -216,7 +214,7 @@ def agreements(t: PowerData, cfg: dict[str, Any], rack_rest: dict[str, float], e
     tree_c = Check("tree", "Tap-offs add up to their runs, runs to their UPS, and each hall's UPSs to the energy meters")
     modes_c = Check("modes", "UPS output source and working power modules match the NMC events, minute by minute")
     batt_c = Check("battery", "Batteries discharge only while on battery, recover after, and match the seconds on battery")
-    mech_c = Check("mech", "Mechanical UPSs read their recorded polls, equal the meter, and cover the CDUs' draw")
+    mech_c = Check("mech", "Mechanical UPSs equal the meter and cover the CDUs' draw")
     gen_c = Check("generators", "Generators match every EMCP reading, are stopped otherwise, and carry the outage energy")
     pq_c = Check("quality", "Voltage and frequency stay inside the bands except where the records show a feed lost")
 
@@ -378,16 +376,6 @@ def agreements(t: PowerData, cfg: dict[str, Any], rack_rest: dict[str, float], e
         batt_c(int(soc[0]) == 100, f"{u}: month starts below full charge")
 
     # 7: mechanical UPSs
-    for p in t.polls:
-        u = p["ups"]
-        if not u.startswith("MUPS-") or "load_pct" not in p or u not in dev:
-            continue
-        x = t.minutes(u)
-        m = t.m_of(p["timestamp"])
-        if m >= M:
-            continue
-        want = int(round(float(p["load_pct"]) * dev[u]["rating_kw"] / 100 * 10))
-        mech_c(int(x["out_kw"][m]) == want, f"{u} {p['timestamp']}: {x['out_kw'][m] / 10} kW, poll {want / 10} kW")
     cdu_kw: dict[tuple[str, str], float] = {}
     for r in t.cdu_hourly:
         cdu_kw[(r["hall"], r["hour"])] = cdu_kw.get((r["hall"], r["hour"]), 0.0) + float(r["power_kwh"])

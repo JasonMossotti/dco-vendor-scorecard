@@ -209,7 +209,7 @@ __SITENAV__
 
   // --------------------------------------------------------------------- tree
   function tree() {
-    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li>`
+    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li>`
       + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
     h += `<div class="famsec" data-fam="gpu"><div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
     for (const hall of HALLS) {
@@ -228,7 +228,7 @@ __SITENAV__
       h += `<li><details><summary><span class="planned">${esc(H.name)}</span> <small>not in service</small></summary><ul>` + H.cdus.map(id => `<li><span class="planned" title="${esc(H.name)} is ${esc(H.state)}: no telemetry">${esc(id)} <small>${esc(H.state)}</small></span></li>`).join("") + `</ul></details></li>`;
     }
     h += `</ul><div class="sec">CDU reference</div><ul><li>${link("cdu-fields", "Redfish fields")}</li><li>${link("cdu-agreements", "Agreement with the records")}</li></ul></div>`;
-    h += powerTree() + networkTree();
+    h += powerTree() + networkTree() + mechTree();
     document.getElementById("tree").innerHTML = h;
   }
 
@@ -1742,6 +1742,335 @@ __SITENAV__
     return h;
   }
 
+  // ------------------------------------------------------------- mechanical
+  // Chillers, facility water pumps, the facility water loop, thermal walls, and electrical-room CRAHs, read over
+  // BACnet/IP from the Landlord's BMS server. Page data: B.mechanical (prepare_mechanical). Fetched: data/mechanical/<id>.json
+  // (each machine's month by hour) and data/mechanical_minutes/<id>.json (every minute of the month).
+  const M = B.mechanical;
+  const MOBJ = Object.fromEntries(Object.entries(M.objects).map(([fam, os]) => [fam, Object.fromEntries(os.map(o => [o.key, o]))]));
+  const MCH = Object.fromEntries(M.chillers.map(c => [c.id, c])), MPU = Object.fromEntries(M.pumps.map(p => [p.id, p])), MAIR = Object.fromEntries(M.air.map(a => [a.id, a]));
+  const mFam = id => MCH[id] ? "chiller" : MPU[id] ? "pump" : id === "FW-LOOP" ? "loop" : MAIR[id] ? MAIR[id].kind : null;
+  const mObjFam = fam => fam === "wall" || fam === "crah" ? "air" : fam;
+  const MHALLS = Object.keys(M.halls).filter(h => M.halls[h].state !== "planned"), MPLANNED = Object.keys(M.halls).filter(h => M.halls[h].state === "planned");
+  const UNIT = {"degrees-celsius": "°C", "kilowatts": "kW", "percent": "%", "cubic-meters-per-hour": "m³/h", "bars": "bar", "kilopascals": "kPa", "hertz": "Hz", "liters-per-second": "L/s", "watts": "W", "no-units": "", "": ""};
+  const MODE_C = {0: "#eef1f4", 1: "#3987e5", 2: "#86c9a4", 3: "#2e9e6a", 4: "#d64545", 5: "#e0a526"};
+  const mKind = k => tag({trip: "compressor trip", hold: "BMS hold", lockout: "free cooling inhibited", fan100: "fan override", fan: "fan failure", inhibit: "alarm inhibited", outage: "utility outage"}[k] || k,
+    {trip: "bad", hold: "warn", lockout: "warn", fan100: "", fan: "bad", inhibit: "warn", outage: "bad"}[k]);
+  const MEVC = {trip: "#f8d9d5", hold: "#fbeccb", lockout: "#fbeccb", fan100: "#e3e7ec", fan: "#f8d9d5", inhibit: "#fbeccb", outage: "#f8d9d5"};
+  const mEvents = id => M.events.filter(e => e.device === id || (e.device === "SITE" && (MCH[id] || id === "FW-LOOP")));
+  const mBands = (evs, n) => evs.map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : n, label: `${at(e.t)}: ${e.text}`, color: MEVC[e.kind]}));
+  const mDetail = e => `#${e.device === "SITE" ? "FW-LOOP" : e.device}/${Math.max(0, e.m - 10)}`;
+  const mFinding = f => f ? (/^EN-/.test(f.id) ? `<a href="../energy/" title="${esc(f.title)}">${tag(f.id, "bad")}</a>` : `<span title="${esc(f.title)}">${tag(f.id, "bad")}</span>`) : "";
+  const loadMech = id => getJson(`data/mechanical/${encodeURIComponent(id)}.json`);
+  const loadMechMin = id => getJson(`data/mechanical_minutes/${encodeURIComponent(id)}.json`).then(d => {
+    if (!d.decoded) {
+      d.decoded = true; d.v = {};
+      const F = MOBJ[mObjFam(d.family)];
+      for (const [k, arr] of Object.entries(d.fields)) d.v[k] = unpackSteps(arr, F[k] ? F[k].scale : 1);
+    }
+    return d;
+  });
+  function mEventsTable(evs) {
+    if (!evs.length) return `<p class="note">None this month.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Device</th><th>Event</th><th>Records</th><th></th></tr></thead><tbody>` + evs.map(e => {
+      const recs = refLinks(e.refs) + (e.finding ? `${e.refs.length ? " " : ""}${mFinding(e.finding)}` : "");
+      return `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${e.device === "SITE" ? "Site" : link(e.device, e.device)}</td><td>${mKind(e.kind)} ${esc(e.text)}</td><td>${recs}</td>`
+        + `<td><a class="b" href="${esc(mDetail(e))}">Minute detail</a></td></tr>`;
+    }).join("") + `</tbody></table></div>`;
+  }
+  const mAgreeTile = () => {
+    const agree = M.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = M.agreements.reduce((a, c) => a + c.checked, 0);
+    return `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#mech-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(M.agreements.length)} checks: the energy meters, the CDU and power telemetry, the BMS alarms, overrides, and inhibits, and the free-cooling log</div></div></div>`;
+  };
+
+  // the plant by hour: one row per chiller, coloured by how it carried its load
+  function plantMap() {
+    const W = Math.max(640, chartWidth()), L = 54, R = 6, rowH = 16, n = M.hours, pw = W - L - R, X = i => L + i / n * pw, Ht = M.chillers.length * rowH + 26;
+    let s = "";
+    M.chillers.forEach((c, j) => {
+      const y = 4 + j * rowH;
+      s += `<a href="#${esc(c.id)}"><text x="0" y="${esc(y + 12)}" style="font-weight:600">${esc(c.id)}</text></a>`;
+      let a = 0;
+      for (let i = 1; i <= n; i++) {
+        if (i < n && c.mode[i] === c.mode[a]) continue;
+        const mo = +c.mode[a];
+        s += `<rect x="${esc(X(a).toFixed(1))}" y="${esc(y)}" width="${esc(Math.max(0.6, X(i) - X(a)).toFixed(1))}" height="${esc(rowH - 3)}" fill="${esc(MODE_C[mo])}"><title>${esc(c.id)}, ${esc(hourAt(a))}${i - a > 1 ? ` to ${esc(hourAt(i - 1))}` : ""}: ${esc(M.modes[mo])}</title></rect>`;
+        a = i;
+      }
+      a = -1;
+      for (let i = 0; i <= n; i++) {
+        const on = i < n && c.inhibit[i] === "1";
+        if (on && a < 0) a = i;
+        if (!on && a >= 0) { s += `<rect x="${esc(X(a).toFixed(1))}" y="${esc(y + rowH - 6)}" width="${esc(Math.max(1, X(i) - X(a)).toFixed(1))}" height="3" fill="#7a4b00"><title>${esc(c.id)}: free cooling inhibited ${esc(hourAt(a))} to ${esc(hourAt(i - 1))}</title></rect>`; a = -1; }
+      }
+    });
+    for (let i = 0; i < n; i += 24) {
+      const lab = i % 168 === 0;
+      s += `<line x1="${esc(X(i))}" x2="${esc(X(i))}" y1="${esc(Ht - 22)}" y2="${esc(Ht - (lab ? 15 : 18))}" stroke="var(--line)"/>` + (lab ? `<text x="${esc(X(i))}" y="${esc(Ht - 4)}" text-anchor="${i ? "middle" : "start"}">${esc(md(hourIso(i)))}</text>` : "");
+    }
+    return `<div class="scroll"><svg viewBox="0 0 ${esc(W)} ${esc(Ht)}" width="${esc(W)}" height="${esc(Ht)}" role="img" aria-label="Each chiller's mode by hour">${s}</svg></div>`
+      + `<div class="legend">${Object.entries(M.modes).map(([k, v]) => `<span><i class="band" style="background:${esc(MODE_C[k])}"></i>${esc(v)}</span>`).join("")}<span><i class="band" style="background:#7a4b00;height:4px"></i>free cooling inhibited</span></div>`;
+  }
+  function mechOverview(seq) {
+    const lp = M.loop, Pl = M.plant;
+    let h = `<div class="kind">Mechanical</div><h1>Mechanical telemetry</h1><p class="sub">${esc(M.framing)} ${esc(M.chillers.length)} chillers, ${esc(M.pumps.length)} facility water pumps, the facility water loop, and every thermal wall and electrical-room CRAH, read once a minute over BACnet/IP from the Landlord's BMS server, ${esc(md(M.window.start))} to ${esc(md(M.window.end))}. The series split the hourly energy meters into each machine, and each hall's thermal walls carry the heat its CDUs do not. All names and readings are fictional.</p>`;
+    h += `<div class="hallname">Chiller plant · ${esc(M.chillers.length)} × ${esc(M.chiller_model)} · ${esc(M.refrigerant)} · N+1</div><div class="tiles">`
+      + tile("Heat rejected", `${num(lp.heat_mwh, 1)} MWh`, `peak ${num(lp.heat_peak_kw)} kW: every UPS input, the mechanical UPSs, and the CRAHs`)
+      + tile("Chillers running", `${num(lp.running_min)} to ${num(lp.running_max)}`, `staged by load, one ${num(M.chiller_kw)} kW unit per 1,300 kW of heat; the lead moves on each week`)
+      + tile("Facility water", `${num(lp.supply_avg, 1)} / ${num(lp.return_avg, 1)} °C`, `supply / return, mean; ${num(lp.flow_avg)} L/s (peak ${num(lp.flow_peak)})`)
+      + tile("Chiller and pump energy", `${num(lp.chillers_mwh, 1)} MWh`, `pumps ${num(lp.pumps_mwh, 1)} MWh; equal to the energy meters every hour`) + `</div>`;
+    h += `<h2 class="sec">The plant, by hour</h2>` + plantMap() + `<div id="mp"></div>`;
+    h += `<div class="ctiles">` + M.chillers.map(chTile).join("") + `</div>`;
+    h += `<div class="hallname">Facility water pumps · ${esc(M.pumps.length)} × VFD driven · two duty, one standby</div><div class="ctiles">` + M.pumps.map(p => `<a class="tile ctile" href="#${esc(p.id)}"><div class="k">${esc(p.id)}</div>`
+      + kv("Running", `${num(p.run_h, 1)} h`) + kv("Speed when running", `${num(p.speed_avg, 1)}%`) + kv("Flow when running", `${num(p.flow_avg, 1)} L/s`) + kv("Energy", `${num(p.mwh, 1)} MWh`) + `</a>`).join("")
+      + `<a class="tile ctile" href="#FW-LOOP"><div class="k">FW-LOOP <span>· the headers</span></div>` + kv("Supply / return", `${num(lp.supply_avg, 2)} / ${num(lp.return_avg, 2)} °C`) + kv("Flow mean", `${num(lp.flow_avg, 1)} L/s`) + kv("Differential pressure", `${num(M.limits.dp_setpoint_kpa)} kPa setpoint`) + `</a></div>`;
+    for (const hall of MHALLS) {
+      const H = M.halls[hall];
+      h += `<div class="hallname">${esc(H.name)} air · ${esc(H.walls.length)} thermal walls (N+1) and ${esc(H.crahs.length)} electrical-room CRAHs · ${esc(H.state)}</div><div class="tiles">`
+        + tile("Thermal walls carry", `${num(H.wall_load_kw)} kW`, `mean: the racks' heat the CDUs do not take, plus the CDUs' own draw and the fans`)
+        + tile("Thermal-wall fans draw", `${num(H.wall_kw, 1)} kW`, `mean, on the mechanical UPS with the CDU pumps`) + `</div><div class="ctiles">`
+        + H.walls.concat(H.crahs).map(id => airTile(MAIR[id])).join("") + `</div>`;
+    }
+    for (const hall of MPLANNED) {
+      const H = M.halls[hall];
+      h += `<div class="hallname">${esc(H.name)} · ${esc(H.state)}</div><div class="tiles"><div class="tile"><div class="k">Not in service</div><div class="v" style="font-size:16px">${esc(H.wall_count ? `${H.wall_count} thermal walls, ` : "no thermal walls, ")}${esc(H.crah_count)} CRAHs</div><div class="s">planned: no telemetry until the hall is commissioned</div></div></div>`;
+    }
+    h += mAgreeTile();
+    h += `<h2 class="sec">Events</h2><p class="note">Every alarm, BMS write, inhibit, and lockout the mechanical records hold, with what the readings show over it. Record ids open the Incident Portal; findings are the Landlord scorecard's and the PUE report's.</p>` + mEventsTable(M.events);
+    main.innerHTML = h;
+    const X = {...HX, n: M.hours, bands: mBands(M.events.filter(e => e.kind === "trip" || e.kind === "outage"), M.hours)};
+    document.getElementById("mp").innerHTML = chart({...X, title: "Outdoor air and facility water (°C)", unit: "°C", d: 1, series: [{v: Pl.outdoor, color: "var(--s4)", name: "Outdoor", w: 1}, {v: Pl.return, color: "var(--s2)", name: "Return header"}, {v: Pl.supply, color: "var(--s1)", name: "Supply header"}],
+      hlines: [{y: M.free_cooling_c[1], label: `free cooling starts below ${num(M.free_cooling_c[1])} °C`, color: "var(--ok)"}]})
+      + lg([["var(--s4)", "outdoor air (energy meters)"], ["var(--s2)", "return header"], ["var(--s1)", "supply header"], ["", "below this line the free-cooling coils take part of the load", "dash"]])
+      + chart({...X, title: "Chillers running and needed", unit: "", series: [{v: Pl.needed, color: "var(--s2)", name: "Needed"}, {v: Pl.running, color: "var(--s1)", name: "Running"}], lo: 0})
+      + chart({...X, title: "Heat rejected and chiller draw (kW)", unit: "kW", series: [{v: Pl.heat, color: "var(--s1)", name: "Heat"}, {v: Pl.chillers_kw, color: "var(--s2)", name: "Chillers"}], lo: 0});
+    Promise.all(M.air.map(a => loadMech(a.id).then(j => [a.id, j]))).then(rs => {
+      if (seq !== current) return;
+      for (const [id, j] of rs) { const el = document.getElementById("sp-" + id); if (el) el.innerHTML = spark(j.series.sup_c); }
+    }).catch(e => { if (seq === current) main.querySelectorAll(".ctile .spark").forEach(el => { el.innerHTML = `<span class="note">${esc(e && e.message ? e.message : e)}</span>`; }); });
+  }
+  function chTile(c) {
+    return `<a class="tile ctile" href="#${esc(c.id)}"><div class="k">${esc(c.id)} <span>· ${num(c.run_h)} h running</span></div>`
+      + kv("Heat per kWh", c.cop ? num(c.cop, 2) : "–") + kv("Free-cooling share", `${num(c.fc_share, 1)}%`)
+      + kv("Highest condensing", `${num(c.hp_max, 1)} bar`, c.alarm_min ? tag("trip", "bad") : "")
+      + kv("Held off by the BMS", `${num(c.off_min)} min`, c.off_min ? tag("hold", "warn") : "")
+      + kv("Free cooling inhibited", `${num(c.inhibit_h, 1)} h`, c.inhibit_h > 24 ? tag("over 24 h", "bad") : "") + `</a>`;
+  }
+  function airTile(a) {
+    return `<a class="tile ctile" href="#${esc(a.id)}"><div class="k">${esc(a.id)} <span>· ${esc(a.kind === "wall" ? "thermal wall" : "CRAH")}</span></div><div class="spark" id="sp-${esc(a.id)}" title="Supply air by hour"></div>`
+      + kv("Supply air mean / max", `${num(a.sup_avg, 1)} / ${num(a.sup_max, 1)} °C`) + kv("Fan speed mean", `${num(a.fan_avg)}%`)
+      + kv("Cooling / draw", `${num(a.load_avg_kw)} / ${num(a.kw_avg, 1)} kW`)
+      + kv("Fan alarm", `${num(a.alarm_min)} min`, a.alarm_min ? tag("fan", "bad") : "")
+      + kv("Alarm inhibited", `${num(a.inhibit_h, 1)} h`, a.inhibit_h ? tag("inhibit", "warn") : "") + `</a>`;
+  }
+
+  // ------------------------------------------------------------- one machine, by hour
+  function mHeader(id) {
+    const fam = mFam(id), a = MAIR[id];
+    const kind = fam === "chiller" ? `Chiller plant · ${M.chiller_model} · iCOM 3, V1C application`
+      : fam === "pump" ? "Chiller plant · facility water pump, VFD driven (drive to be selected)"
+      : fam === "loop" ? "Chiller plant · facility water headers" : `${M.halls[a.hall].name} · ${fam === "wall" ? "Liebert CWA thermal wall, 400 kW, six EC fans" : "Liebert CW CRAH, electrical room"} · iCOM 3`;
+    return `<div class="kind">${esc(kind)}</div><h1>${esc(id)}</h1><p class="sub">Read once a minute over BACnet/IP (ReadPropertyMultiple) from the Landlord's EBO server. `
+      + (fam === "loop" ? "" : `<a href="../devices/#${esc(encodeURIComponent(id))}">Device card ↗</a>`) + `</p>`;
+  }
+  function mechView(id, seq) {
+    const fam = mFam(id), evs = mEvents(id);
+    let h = mHeader(id);
+    if (fam === "chiller") {
+      const c = MCH[id];
+      h += `<div class="tiles">` + tile("Running", `${num(c.run_h, 1)} h`, `${num(c.fc_h, 1)} h with free cooling`) + tile("Heat removed", `${num(c.cap_mwh, 1)} MWh`, `${num(c.mwh, 1)} MWh drawn: ${num(c.cop, 2)} kWh of heat per kWh`)
+        + tile("Highest condensing pressure", `${num(c.hp_max, 1)} bar`, `trip at ${num(M.limits.hp_alarm_bar, 1)} bar`) + tile("Free cooling inhibited", `${num(c.inhibit_h, 1)} h`, `held off by the BMS ${num(c.off_min)} min; tripped ${num(c.alarm_min)} min`) + `</div>`;
+    } else if (fam === "pump") {
+      const p = MPU[id];
+      h += `<div class="tiles">` + tile("Running", `${num(p.run_h, 1)} h`, "two duty, one standby; the standby changes weekly") + tile("Speed when running", `${num(p.speed_avg, 1)}%`, `holding ${num(M.limits.dp_setpoint_kpa)} kPa across the plant`) + tile("Energy", `${num(p.mwh, 1)} MWh`, "the pumps add up to the pump meter every hour") + `</div>`;
+    } else if (fam === "loop") {
+      h += `<div class="tiles">` + tile("Supply / return", `${num(M.loop.supply_avg, 2)} / ${num(M.loop.return_avg, 2)} °C`, `supply equals the metered facility water every hour`) + tile("Flow", `${num(M.loop.flow_avg, 1)} L/s`, `the CDUs' primary flow plus the walls' and CRAHs' water`) + tile("Heat", `${num(M.loop.heat_mwh, 1)} MWh`, `flow times the header difference`) + `</div>`;
+    } else {
+      const a = MAIR[id];
+      h += `<div class="tiles">` + tile("Supply air", `${num(a.sup_avg, 2)} °C`, `max ${num(a.sup_max, 2)} °C; setpoint ${num(M.limits.supply_setpoint_c)} °C, high limit ${num(M.limits.high_supply_c)} °C`) + tile("Cooling", `${num(a.load_avg_kw, 1)} kW`, `mean; draw ${num(a.kw_avg, 2)} kW`)
+        + tile("Fans", `${num(a.fan_avg, 1)}%`, `mean speed; fewest running ${num(a.fans_min)}`) + tile("Alarm inhibited", `${num(a.inhibit_h, 1)} h`, `fan alarm ${num(a.alarm_min)} min`) + `</div>`;
+    }
+    h += `<p><a class="b" href="#${esc(id)}/${esc(evs.length ? Math.max(0, evs[0].m - 10) : HOURS * 60 - 61)}">Minute detail and raw BACnet read</a></p>`;
+    h += `<h2 class="sec">The month, by hour</h2><div class="legend"><span><i class="band" style="background:${esc(MEVC.trip)}"></i>trip, fan failure, utility outage</span><span><i class="band" style="background:${esc(MEVC.hold)}"></i>BMS hold, lockout, inhibit</span></div><div id="mc">Loading data/mechanical/${esc(id)}.json…</div>`;
+    h += `<h2 class="sec">Events</h2>` + mEventsTable(evs);
+    main.innerHTML = h;
+    loadMech(id).then(j => { if (seq !== current) return;
+      const S = j.series, n = j.hours, X = {...HX, n, bands: mBands(evs, n)};
+      let c = "";
+      if (fam === "chiller") {
+        c = chart({...X, title: "Heat removed (kWh per hour)", unit: "kWh", d: 1, series: [{v: S.cap_kwh, color: "var(--s1)", name: "Total"}, {v: S.fc_kwh, color: "var(--ok)", name: "Free cooling"}], lo: 0})
+          + lg([["var(--s1)", "total capacity"], ["var(--ok)", "of which free cooling"]])
+          + chart({...X, title: "Electrical draw (kWh per hour)", unit: "kWh", d: 1, series: [{v: S.kwh, color: "var(--s2)", name: "Draw"}], lo: 0})
+          + chart({...X, title: "Water and ambient (°C)", unit: "°C", d: 2, series: [{v: S.ambient_c, color: "var(--s4)", name: "Ambient", w: 1}, {v: S.inlet_c.map((v, i) => S.run_min[i] ? v : null), color: "var(--s2)", name: "Inlet"}, {v: S.outlet_c.map(v => v === "" ? null : v), color: "var(--s1)", name: "Outlet"}]})
+          + chart({...X, title: "Highest condensing pressure (bar)", unit: "bar", d: 1, series: [{v: S.hp_max_bar, color: "var(--s3)", name: "Condensing"}], hlines: [{y: M.limits.hp_alarm_bar, label: `trip ${num(M.limits.hp_alarm_bar)} bar`, color: "var(--bad)"}], lo: 0});
+      } else if (fam === "pump") {
+        c = chart({...X, title: "Speed (%)", unit: "%", d: 1, series: [{v: S.speed_pct, color: "var(--s1)", name: "Speed"}], lo: 0, hi: 100})
+          + chart({...X, title: "Flow (L/s)", unit: "L/s", d: 1, series: [{v: S.flow_lps, color: "var(--s2)", name: "Flow"}], lo: 0})
+          + chart({...X, title: "Energy (kWh per hour)", unit: "kWh", d: 2, series: [{v: S.kwh, color: "var(--s3)", name: "Energy"}], lo: 0});
+      } else if (fam === "loop") {
+        c = chart({...X, title: "Headers (°C)", unit: "°C", d: 2, series: [{v: S.return_c, color: "var(--s2)", name: "Return"}, {v: S.supply_c, color: "var(--s1)", name: "Supply"}]})
+          + chart({...X, title: "Loop flow (L/s)", unit: "L/s", d: 1, series: [{v: S.flow_lps, color: "var(--s1)", name: "Flow"}], lo: 0})
+          + chart({...X, title: "Plant differential pressure (kPa)", unit: "kPa", d: 1, series: [{v: S.dp_kpa, color: "var(--s3)", name: "dP"}], hlines: [{y: M.limits.dp_setpoint_kpa, label: "setpoint", color: "var(--warn)"}]})
+          + chart({...X, title: "Chillers running and needed", unit: "", series: [{v: S.chillers_needed, color: "var(--s2)", name: "Needed"}, {v: S.chillers_running, color: "var(--s1)", name: "Running"}], lo: 0});
+      } else {
+        c = chart({...X, title: "Supply and return air (°C)", unit: "°C", d: 2, series: [{v: S.ret_c, color: "var(--s2)", name: "Return"}, {v: S.sup_max_c, color: "var(--s4)", name: "Supply, hourly max", w: 1}, {v: S.sup_c, color: "var(--s1)", name: "Supply"}],
+          hlines: [{y: M.limits.high_supply_c, label: `high supply ${num(M.limits.high_supply_c)} °C`, color: "var(--bad)"}]})
+          + lg([["var(--s1)", "supply air, hourly mean"], ["var(--s4)", "supply air, hourly max"], ["var(--s2)", "return air"], ["", "High supply temperature event limit (Cfg_supHiTThrs)", "dash"]])
+          + chart({...X, title: "Fan speed (%) and fans running", unit: "", d: 1, series: [{v: S.fan_pct, color: "var(--s1)", name: "Speed %"}, {v: S.fans_min.map(v => v * 10), color: "var(--s3)", name: "Fans running × 10"}], lo: 0, hi: 100})
+          + chart({...X, title: "Cooling and draw (kWh per hour)", unit: "kWh", d: 1, series: [{v: S.load_kwh, color: "var(--s1)", name: "Cooling"}, {v: S.kwh, color: "var(--s2)", name: "Draw"}], lo: 0})
+          + chart({...X, title: "Chilled water in and out (°C)", unit: "°C", d: 2, series: [{v: S.cw_out_c, color: "var(--s2)", name: "Out"}, {v: S.cw_in_c, color: "var(--s1)", name: "In"}]});
+      }
+      document.getElementById("mc").innerHTML = c;
+    }).catch(e => { if (seq === current) document.getElementById("mc").innerHTML = errBox(e, `data/mechanical/${id}.json`); });
+  }
+
+  // ------------------------------------------------------------- one machine, by minute: #CH-08/<minute>
+  let mmCtx = null;
+  const MDEV0 = {chiller: 31000, pump: 32000, loop: 33000, wall: 34000, crah: 35000};
+  const mInstance = id => { const fam = mFam(id), m = /(\d+)$/.exec(id), hall = /-([A-C])\d$/.exec(id); return MDEV0[fam] + (hall ? 100 * (" ABC".indexOf(hall[1])) : 0) + (m ? +m[1] : 1); };
+  function mFmt(fam, o, x) {
+    if (x == null) return "–";
+    if (fam === "chiller" && o.key === "status") return `${esc(M.enums.chiller_status[x] || x)} (${esc(x)})`;
+    if (fam === "chiller" && (o.key === "cmp1" || o.key === "cmp2")) return `${esc(M.enums.compressor[x] || x)} (${esc(x)})`;
+    if (mObjFam(fam) === "air" && o.key === "status") return `${esc(M.enums.air_status[x] || x)} (${esc(x)})`;
+    if (o.type.startsWith("binary")) return x ? "active (1)" : "inactive (0)";
+    return num(x, o.scale >= 100 ? 2 : o.scale >= 10 ? 1 : 0);
+  }
+  function mechMinuteView(id, m, seq) {
+    main.innerHTML = mHeader(id) + `<p class="sub"><a href="#${esc(id)}">← The month by hour</a></p><div id="mm"><p class="note">Loading data/mechanical_minutes/${esc(id)}.json (every minute of the month)…</p></div>`;
+    loadMechMin(id).then(d => {
+      if (seq !== current) return;
+      mmCtx = {id, fam: mFam(id), d, m: Math.max(0, Math.min(d.minutes - 1, m))};
+      const n = d.minutes;
+      document.getElementById("mm").innerHTML = `<h2 class="sec">Minute detail</h2><p class="note">Any minute of the month: the readings, the hour around it, and the BACnet read a client would get at that minute. kW are one-minute averages; states are read at the minute.</p>`
+        + `<div class="ctl"><label for="mmi">Minute</label><input type="number" id="mmi" min="0" max="${esc(n - 1)}" value="${esc(mmCtx.m)}"> <span class="muted">of ${num(n - 1)}</span> <b id="mm-lab"></b></div>`
+        + `<div class="btns" id="mm-step">${[-60, -10, -1, 1, 10, 60].map(s => `<button data-s="${esc(s)}">${esc((s > 0 ? "+" : "") + s + " min")}</button>`).join("")}</div>`
+        + `<input type="range" id="mmr" min="0" max="${esc(n - 1)}" value="${esc(mmCtx.m)}" aria-label="Minute of the month">`
+        + `<div id="mm-ch"></div><h3>Readings at this minute</h3><div id="mm-tbl"></div>`
+        + `<p><button class="b" id="mcsv">Download CSV (±60 minutes, every object)</button> <span class="note" id="mcsv-note"></span></p>`
+        + `<h2 class="sec">BACnet ReadPropertyMultiple at this minute</h2><pre class="scrape" id="mm-raw" data-gl-skip></pre>`
+        + `<h2 class="sec">Events</h2>` + mEventsTable(mEvents(id));
+      mMinuteUpdate();
+    }).catch(e => { if (seq === current) document.getElementById("mm").innerHTML = errBox(e, `data/mechanical_minutes/${id}.json`); });
+  }
+  function mSetMinute(m) {
+    const ctx = mmCtx;
+    if (!ctx) return;
+    m = Math.max(0, Math.min(ctx.d.minutes - 1, Number.isNaN(m) ? 0 : m));
+    ctx.m = m;
+    const i = document.getElementById("mmi"), r = document.getElementById("mmr");
+    if (i && document.activeElement !== i) i.value = m;
+    if (r) r.value = m;
+    history.replaceState(null, "", `#${ctx.id}/${m}`);
+    mMinuteUpdate();
+  }
+  function mMinuteUpdate() {
+    const ctx = mmCtx;
+    if (!ctx) return;
+    const {id, fam, d, m} = ctx, n = d.minutes, a = Math.max(0, m - 60), b = Math.min(n - 1, m + 60), v = k => d.v[k] ? d.v[k][m] : null;
+    document.getElementById("mm-lab").textContent = minAt(m);
+    const sl = k => (d.v[k] || []).slice(a, b + 1);
+    const evm = mEvents(id).flatMap(e => [e.m].concat(e.end ? [minOf(e.end)] : [])).filter(x => x >= a && x <= b).map(x => ({i: x - a, color: "var(--bad)", label: minAt(x)}));
+    const MX = {n: b - a + 1, xlab: i => minIso(a + i).slice(11, 16), xtick: 15, xminor: 5, hover: i => minAt(a + i), H: 130, marks: [{i: m - a, color: "var(--ink)", label: minAt(m)}].concat(evm)};
+    let ch = "";
+    if (fam === "chiller") {
+      ch = chart({...MX, title: "Capacity and draw, ±60 minutes (kW)", unit: "kW", d: 1, series: [{v: sl("cap_kw"), color: "var(--s1)", name: "Total capacity"}, {v: sl("fc_kw"), color: "var(--ok)", name: "Free cooling"}, {v: sl("kw"), color: "var(--s2)", name: "Draw"}], lo: 0})
+        + lg([["var(--s1)", "Total Capacity"], ["var(--ok)", "Freecooling Capacity"], ["var(--s2)", "Instant Power Consumption"]])
+        + chart({...MX, title: "Condensing pressure (bar)", unit: "bar", d: 1, series: [{v: sl("hp1_bar"), color: "var(--s3)", name: "Circuit 1"}, {v: sl("hp2_bar"), color: "var(--s4)", name: "Circuit 2"}], lo: 0, hlines: [{y: M.limits.hp_alarm_bar, label: "high pressure trip", color: "var(--bad)"}]})
+        + chart({...MX, title: "Water and ambient (°C)", unit: "°C", d: 2, series: [{v: sl("ambient_c"), color: "var(--s4)", name: "Ambient", w: 1}, {v: sl("inlet_c"), color: "var(--s2)", name: "Inlet"}, {v: sl("outlet_c"), color: "var(--s1)", name: "Outlet"}]});
+    } else if (fam === "pump") {
+      ch = chart({...MX, title: "Speed (%) and power (kW), ±60 minutes", unit: "", d: 1, series: [{v: sl("speed_pct"), color: "var(--s1)", name: "Speed %"}, {v: sl("kw"), color: "var(--s2)", name: "kW"}], lo: 0})
+        + chart({...MX, title: "Flow (L/s)", unit: "L/s", d: 1, series: [{v: sl("flow_lps"), color: "var(--s3)", name: "Flow"}], lo: 0});
+    } else if (fam === "loop") {
+      ch = chart({...MX, title: "Headers, ±60 minutes (°C)", unit: "°C", d: 2, series: [{v: sl("return_c"), color: "var(--s2)", name: "Return"}, {v: sl("supply_c"), color: "var(--s1)", name: "Supply"}]})
+        + chart({...MX, title: "Flow (L/s) and heat (MW)", unit: "", d: 1, series: [{v: sl("flow_lps"), color: "var(--s1)", name: "Flow L/s"}, {v: sl("heat_kw").map(x => x / 1000), color: "var(--s2)", name: "Heat MW"}], lo: 0});
+    } else {
+      ch = chart({...MX, title: "Supply and return air, ±60 minutes (°C)", unit: "°C", d: 2, series: [{v: sl("ret_c"), color: "var(--s2)", name: "Return"}, {v: sl("sup_c"), color: "var(--s1)", name: "Supply"}], hlines: [{y: M.limits.high_supply_c, label: "high supply limit", color: "var(--bad)"}]})
+        + chart({...MX, title: "Fan speed (%) and fans running", unit: "", d: 0, series: [{v: sl("fan_pct"), color: "var(--s1)", name: "Speed %"}, {v: sl("fans_ok").map(x => x * 10), color: "var(--s3)", name: "Fans running × 10"}], lo: 0, hi: 100})
+        + chart({...MX, title: "Cooling and draw (kW)", unit: "kW", d: 1, series: [{v: sl("load_kw"), color: "var(--s1)", name: "Cooling"}, {v: sl("kw").map(x => x / 1000), color: "var(--s2)", name: "Draw"}], lo: 0});
+    }
+    document.getElementById("mm-ch").innerHTML = ch;
+    const O = M.objects[mObjFam(fam)];
+    document.getElementById("mm-tbl").innerHTML = `<div class="scroll"><table><thead><tr><th>Object</th><th>BACnet object</th><th>iCOM variable / register</th><th class="n">Present_Value</th><th>Units</th><th>Meaning</th></tr></thead><tbody>`
+      + O.map(o => `<tr><td>${esc(o.name)}</td><td><code>${esc(o.type)},${esc(o.instance)}</code>${o.property ? ` <span class="note">${esc(o.property)}</span>` : ""}</td><td>${o.vendor ? `<code>${esc(o.vendor)}</code>` : "–"}${o.modbus ? ` <span class="note">${esc(o.modbus)}</span>` : ""}</td><td class="n">${mFmt(fam, o, v(o.key))}</td><td>${esc(UNIT[o.units] ?? o.units)}</td><td class="note">${esc(o.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    document.getElementById("mm-raw").innerHTML = mRaw(id, fam, d, m);
+  }
+  // what a BACnet client gets back: Present_Value and Status_Flags per object; a commandable object also its
+  // Priority_Array, and an alarm object its Event_Algorithm_Inhibit
+  function mRaw(id, fam, d, m) {
+    const v = k => d.v[k] ? d.v[k][m] : null, O = M.objects[mObjFam(fam)], inst = mInstance(id), rows = [];
+    const flags = (alarm, fault) => `{${alarm ? "true" : "false"},${fault ? "true" : "false"},false,false}`;
+    for (const o of O) {
+      if (o.property) continue;
+      const x = v(o.key), bin = o.type.startsWith("binary"), pv = x == null ? "null" : bin ? (x ? "active" : "inactive") : o.type.startsWith("multi-state") ? String(x) : (Math.round(x * 1000) / 1000).toString();
+      const alarm = (o.key === "hp1_alarm" || o.key === "alarm" || o.key === "fan_alarm" || o.key === "hi_alarm") && x;
+      rows.push(`    ${esc(o.type)} #${esc(o.instance)}  <span class="c">-- ${esc(o.name)}</span>`, `    {`, `        present-value: ${esc(pv)}${o.units && !bin ? ` <span class="c">(${esc(o.units)})</span>` : ""}`, `        status-flags: ${esc(flags(alarm, fam === "pump" && o.key === "fault" && x))}`);
+      if (o.commandable) {
+        const pa = Array(16).fill("Null");
+        if (o.key === "enable" && x === 0) pa[7] = "inactive";
+        if (o.key === "cond_fan_override" && x === 1) pa[7] = "active";
+        rows.push(`        priority-array: {${esc(pa.join(","))}}`, `        relinquish-default: ${o.key === "enable" ? "active" : "inactive"}`);
+      }
+      if (o.key === "hi_alarm") rows.push(`        event-algorithm-inhibit: ${v("hi_inhibit") ? "TRUE" : "FALSE"}`);
+      rows.push(`    }`);
+    }
+    return `<span class="c"># ReadPropertyMultiple to device ${esc(inst)} (${esc(id)}, served by the EBO server), ${esc(minIso(m))}\n# Present_Value and Status_Flags {in-alarm, fault, overridden, out-of-service} of every object.\n# A BMS write at priority 8 (Manual Operator) shows in the Priority_Array;\n# OVERRIDDEN is set only by a local hand override, so it stays false.\n# Device instances are this site's EBO mapping (an assumption).</span>\n{\n  device #${esc(inst)}\n  {\n` + rows.join("\n") + `\n  }\n}`;
+  }
+  function mCsv() {
+    const ctx = mmCtx, note = document.getElementById("mcsv-note");
+    if (!ctx) return;
+    const {id, fam, d, m} = ctx, a = Math.max(0, m - 60), b = Math.min(d.minutes - 1, m + 60), keys = M.objects[mObjFam(fam)].map(o => o.key).filter(k => d.v[k]);
+    const rows = [["minute_utc", ...keys]];
+    for (let i = a; i <= b; i++) rows.push([minIso(i), ...keys.map(k => d.v[k][i] == null ? "" : d.v[k][i])]);
+    saveCsv(rows, `${id}_minutes_${a}-${b}.csv`, note);
+  }
+  main.addEventListener("input", e => { if (e.target.id === "mmr") mSetMinute(+e.target.value); });
+  main.addEventListener("change", e => { if (e.target.id === "mmi") mSetMinute(parseInt(e.target.value, 10)); });
+  main.addEventListener("click", e => {
+    const s = e.target.closest("#mm-step button");
+    if (s && mmCtx) mSetMinute(mmCtx.m + (+s.dataset.s));
+    if (e.target.closest("#mcsv")) mCsv();
+  });
+
+  function mechFields() {
+    const K = M.collection;
+    let h = `<div class="kind">Mechanical reference</div><h1>BACnet objects</h1><p class="sub">${esc(M.framing)} The Customer reads every mechanical object from the Landlord's BMS server (BACnet/IP, ANSI/ASHRAE 135-2024). Object names follow Vertiv's published iCOM 3 points lists (the V1C list for the chillers, the PCW V1A monitoring guide for the thermal walls and CRAHs); object instances are this site's mapping, except the V1C alarm binary values, whose instances Vertiv publishes. No vendor's internal tooling is implied.</p>`;
+    h += `<div class="cards">` + tile("Protocol", esc(K.protocol), esc(K.server)) + tile("Poll interval", `${num(K.poll_interval_s)} s`, "every mechanical object read once a minute") + tile("Controller profile", esc(K.controller_profile), "as the V1C points list states") + `</div>`;
+    h += `<h2 class="sec">How overrides and inhibits show</h2><ul class="note"><li>A BMS write to a commandable object (Chiller enable, Stop or Inhibit FC activation, the condenser fan override) sits in its Priority_Array at priority 8 (Manual Operator) until it is relinquished. ASHRAE 135 sets the OVERRIDDEN status flag only for a local override the client cannot change, so a priority-8 write leaves it false.</li><li>An alarm inhibit sets the alarm object's Event_Algorithm_Inhibit to TRUE: the object still reports its Present_Value, but no event notification is sent. The supply air temperature stays readable, which is how TW-B2's inhibit can be shown to have hidden nothing.</li></ul>`;
+    for (const [fam, title] of [["chiller", "Chillers (Liebert AFC, iCOM 3 V1C)"], ["pump", "Facility water pumps (generic ASHRAE objects: the drive is to be selected)"], ["loop", "Facility water loop (EBO plant objects)"], ["air", "Thermal walls and CRAHs (iCOM 3 chilled water)"]]) {
+      h += `<h2 class="sec">${esc(title)}</h2><div class="scroll"><table data-gl-skip><thead><tr><th>Object name</th><th>BACnet object</th><th>iCOM variable</th><th>Register</th><th>Units</th><th>Meaning</th></tr></thead><tbody>`
+        + M.objects[fam].map(o => `<tr><td>${esc(o.name)}${o.commandable ? ` ${tag("commandable", "")}` : ""}${o.published ? ` ${tag("published instance", "ok")}` : ""}</td><td><code>${esc(o.type)},${esc(o.instance)}</code>${o.property ? ` <span class="note">${esc(o.property)}</span>` : ""}</td><td>${o.vendor ? `<code>${esc(o.vendor)}</code>` : "–"}</td><td>${esc(o.modbus || "–")}</td><td>${esc(o.units || "–")}</td><td class="note">${esc(o.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    }
+    h += `<h2 class="sec">Enumerations</h2><div class="scroll"><table><thead><tr><th>Object</th><th>Values</th></tr></thead><tbody>`
+      + [["Unit Status (V1C, IR 49201)", M.enums.chiller_status], ["Compressor status (V1C, IR 49215 and 49218)", M.enums.compressor], ["UnitStatus (iCOM 3 chilled water, HR 280)", M.enums.air_status], ["Fan status (FanSts_OV[n]; this demo's labels)", M.enums.fan_status]]
+        .map(([k, e]) => `<tr><td>${esc(k)}</td><td class="note">${Object.entries(e).map(([n, s]) => `${esc(n)} ${esc(s)}`).join(" · ")}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + M.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function mechAgreements() {
+    const agree = M.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = M.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = `<div class="kind">Mechanical reference</div><h1>Agreement with the records</h1><p class="sub">The mechanical telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the energy meters, the CDU and power telemetry, the BMS alarms, overrides, and inhibits, the free-cooling log, and the EPMS outage record. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + M.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (M.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + M.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/mechanical_telemetry.md.</p>`;
+    main.innerHTML = h;
+  }
+  function mechTree() {
+    let h = `<div class="famsec" data-fam="mech"><div class="sec">Mechanical</div><ul><li>${link("mechanical", "Overview")}</li>`;
+    h += `<li><details open><summary>${link("mechanical", "Chiller plant")} <small>${esc(M.chillers.length)} + ${esc(M.pumps.length)}</small></summary><ul>`
+      + M.chillers.map(c => `<li>${link(c.id, c.id)}</li>`).join("") + M.pumps.map(p => `<li>${link(p.id, p.id)}</li>`).join("") + `<li>${link("FW-LOOP", "FW-LOOP")}</li></ul></details></li>`;
+    for (const hall of MHALLS) {
+      const H = M.halls[hall];
+      h += `<li><details${hall === MHALLS[0] ? " open" : ""}><summary>${link("mechanical", `${H.name} air`)} <small>${esc(H.walls.length + H.crahs.length)}</small></summary><ul>` + H.walls.concat(H.crahs).map(id => `<li>${link(id, id)}</li>`).join("") + `</ul></details></li>`;
+    }
+    for (const hall of MPLANNED) {
+      const H = M.halls[hall];
+      h += `<li><details><summary><span class="planned">${esc(H.name)} air</span> <small>not in service</small></summary><ul>` + Array.from({length: H.crah_count}, (_, i) => `CRAH-${hall.slice(-1)}${i + 1}`).map(id => `<li><span class="planned" title="${esc(H.name)} is ${esc(H.state)}: no telemetry">${esc(id)} <small>${esc(H.state)}</small></span></li>`).join("") + `</ul></details></li>`;
+    }
+    h += `</ul><div class="sec">Mechanical reference</div><ul><li>${link("mech-fields", "BACnet objects")}</li><li>${link("mech-agreements", "Agreement with the records")}</li></ul></div>`;
+    return h;
+  }
+
   // ----------------------------------------------------------------- router
   let current = 0;
   function route() {
@@ -1763,6 +2092,9 @@ __SITENAV__
     if (a === "network-fields" || a === "network-agreements") return {view: a, key: a, fam: "network"};
     if (a === "network") return {view: "network", key: "network", fam: "network"};
     const up = a.toUpperCase(), pf = famOf(up);
+    if (mFam(up)) return {view: "mech", dev: up, minute: pm, key: up, fam: "mech"};
+    if (a === "mech-fields" || a === "mech-agreements") return {view: a, key: a, fam: "mech"};
+    if (a === "mechanical") return {view: "mechanical", key: "mechanical", fam: "mech"};
     if (pf) return {view: pf, dev: up, minute: pm, key: up, fam: "power"};
     if (a === "power-fields" || a === "power-agreements") return {view: a, key: a, fam: "power"};
     if (a === "power") return {view: "power", key: "power", fam: "power"};
@@ -1770,7 +2102,7 @@ __SITENAV__
   }
   function show() {
     const seq = ++current, r = route(), fam = r.fam || "gpu";
-    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null;
+    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null; mmCtx = null;
     if (r.view === "rack") rackView(r.rack, r.hour, seq);
     else if (r.view === "gpu") gpuView(r.host, r.gpu, seq);
     else if (r.view === "fields") fields();
@@ -1791,6 +2123,10 @@ __SITENAV__
     else if (r.view === "nvlink") nvView(r.rack, r.tray, seq);
     else if (r.view === "network-fields") networkFields();
     else if (r.view === "network-agreements") networkAgreements();
+    else if (r.view === "mechanical") mechOverview(seq);
+    else if (r.view === "mech") r.minute == null ? mechView(r.dev, seq) : mechMinuteView(r.dev, r.minute, seq);
+    else if (r.view === "mech-fields") mechFields();
+    else if (r.view === "mech-agreements") mechAgreements();
     else overview(seq);
     document.querySelectorAll("#tree a").forEach(a => {
       const on = a.getAttribute("href") === "#" + r.key;

@@ -641,14 +641,11 @@ class FacilityGenerator:
         # Hourly-ish UPS status poll (every 4 hours), so normal operation is visible, not only exceptions.
         t = self.start
         while t < self.end:
-            # IT UPS load follows the racks, so it lives in the power telemetry (data/telemetry/power), not here;
-            # the draw stays so every other record keeps its values. Mechanical UPS load stays in the poll.
+            # UPS load follows what each UPS feeds (the racks; the CDUs and thermal walls), so it lives in the power
+            # telemetry (data/telemetry/power), not here; the draw stays so every other record keeps its values.
             for u in self.ups:
-                load = round(self.rng.uniform(55, 72) if u.startswith("UPS-") else self.rng.uniform(30, 45), 1)
-                row = {"timestamp": iso(t), "ups": u, "upsBasicOutputStatus": "onLine"}
-                if u.startswith("MUPS-"):
-                    row["load_pct"] = load
-                self.out["ups_status"].append(row)
+                round(self.rng.uniform(55, 72) if u.startswith("UPS-") else self.rng.uniform(30, 45), 1)
+                self.out["ups_status"].append({"timestamp": iso(t), "ups": u, "upsBasicOutputStatus": "onLine"})
             t += timedelta(hours=4)
         # Weekly self-report: the Landlord says every service level was met.
         for w in range((self.end - self.start).days // 7):

@@ -44,6 +44,9 @@ def telemetry_links() -> dict[str, str]:
             out.setdefault(x["peer_host"], f"#{x['peer_host']}/0")
         elif x["family"] == "nvlink":
             out[d] = f"#{d}"
+    for d, x in rd("mechanical").get("devices", {}).items():
+        if x["family"] != "loop":                   # the loop's headers have no device card
+            out[d] = f"#{d}"
     return out
 
 
