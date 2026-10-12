@@ -470,7 +470,7 @@ class SiteHealth:
                 n["cabled"][h] += int(r["links_cabled"])
                 n["up"][h] += int(r["links_up"])
                 n["downs"][h] += int(r["link_downs"])
-                if int(r["links_cabled"]):
+                if int(r["links_cabled"]) and r["util_avg_pct"] != "":            # empty while no cabled link is up
                     util[h].append(float(r["util_avg_pct"]))
             n["util"] = [round(sum(u) / len(u), 1) if u else None for u in util]
             trays = [sum(int(nv[r][h]["trays_reporting"]) for r in nv if nv[r][h] and racks.get(r, {}).get("hall") == hid
