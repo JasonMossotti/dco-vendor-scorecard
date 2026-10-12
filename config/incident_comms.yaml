@@ -1,0 +1,47 @@
+# Synthetic scenario for the incident comms log: data/incident_comms/ (scripts/generate_incident_comms.py).
+#
+# The sample's records hold the alarms, pages, tickets, and work orders for an incident, but not the joint bridge:
+# when it opened, who joined, and what each lead told the Incident Commander. This file scripts that log for each
+# incident the runbook replays. Each entry is the minute (UTC) something was said or done; the generator adds the
+# second from its own random stream, so nothing else in the dataset moves.
+#
+# The log is a record, like a bridge recording's transcript. It must reconcile with the PIR timeline (restoration
+# declared after the busway shows the feed closed, return to service after the scheduler shows the nodes back) and
+# with the review's communications log (every leadership update the review lists is here, at the same minute, with
+# the same words). tests/test_command.py checks both. Roles only: no individual is named.
+
+incidents:
+  INC3900001:
+    date: "2026-09-15"
+    events:
+      - {at: "15:44", kind: page_ack, party: Customer, role: On-call primary, text: "Acknowledged the Landlord's page for rack A07 (both feeds lost)."}
+      - {at: "15:47", kind: ic_declared, party: Customer, role: Incident Commander, text: "Customer Site Lead takes command. P1 under both SLAs; two parties involved (Landlord, IT Partner). Joint bridge to follow."}
+      - {at: "15:49", kind: leadership_update, party: Customer, role: Incident Commander, to: "Customer infrastructure leadership",
+         text: "P1: rack A07 (72 GPUs) without power after a breaker was opened during Landlord maintenance. Jobs being rescheduled. No safety impact. Next update 11:30."}
+      - {at: "16:01", kind: bridge_open, party: Customer, role: Incident Commander, text: "Joint bridge open for rack A07."}
+      - {at: "16:01", kind: lead_joined, party: Landlord, role: Landlord lead, text: "Landlord chief engineer on the bridge."}
+      - {at: "16:04", kind: lead_joined, party: IT Partner, role: IT Partner lead, text: "IT Partner site manager on the bridge."}
+      - {at: "16:07", kind: lead_update, party: Landlord, role: Landlord lead, text: "B-side tap-off opened in error during A-side retorque under MOP-310. B-side unit failed on reclose; spare being pulled from the Hall A store."}
+      - {at: "16:09", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "Rack A07 drained by the scheduler; jobs moved. Technician standing by for the handoff under HO-1."}
+      - {at: "16:30", kind: leadership_update, party: Customer, role: Incident Commander, to: "Customer infrastructure leadership",
+         text: "B-side breaker failed on reclose; Landlord replacing it from site spares. Estimated restoration 2:00 p.m. IT Partner standing by to validate."}
+      - {at: "16:36", kind: lead_update, party: Landlord, role: Landlord lead, text: "Replacement tap-off unit on site. Group lockout on the B-side busway section being applied."}
+      - {at: "16:38", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "No change; standing by."}
+      - {at: "17:07", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "No change; standing by. Validation plan ready: power on, NVLink acceptance, NCCL all-reduce."}
+      - {at: "17:36", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "No change; standing by."}
+      - {at: "17:41", kind: lead_update, party: Landlord, role: Landlord lead, text: "Failed unit removed; replacement being installed. Restoration estimate unchanged."}
+      - {at: "18:05", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "No change; standing by."}
+      - {at: "18:09", kind: lead_update, party: Landlord, role: Landlord lead, text: "Replacement unit installed; torque and insulation checks under way."}
+      - {at: "18:33", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "No change; standing by."}
+      - {at: "18:38", kind: lead_update, party: Landlord, role: Landlord lead, text: "Checks passed. Removing locks; ready to reclose the B-side tap-off."}
+      - {at: "19:02", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "Technician heading to Hall A for the handoff."}
+      - {at: "19:07", kind: restoration_declared, party: Landlord, role: Landlord lead, text: "Restoration declared under HO-1: B-side tap-off closed, rack A07 feed restored."}
+      - {at: "19:07", kind: leadership_update, party: Customer, role: Incident Commander, to: "Customer infrastructure leadership",
+         text: "Power restored at 2:06 p.m. IT Partner validating the rack; return to service expected within an hour."}
+      - {at: "19:11", kind: restoration_confirmed, party: Customer, role: Incident Commander, text: "Restoration confirmed from telemetry: feed in tolerance at rack A07. IT Partner clear to power on."}
+      - {at: "19:31", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "Rack powered on; rack_power_on passed. NVLink acceptance running."}
+      - {at: "19:56", kind: lead_update, party: IT Partner, role: IT Partner lead, text: "NVLink acceptance and NCCL all-reduce passed."}
+      - {at: "20:02", kind: rts_declared, party: IT Partner, role: IT Partner lead, text: "Rack A07 returned to service; all 18 nodes back in the scheduler."}
+      - {at: "20:05", kind: leadership_update, party: Customer, role: Incident Commander, to: "Customer infrastructure leadership",
+         text: "Rack A07 back in production at 3:01 p.m. Post-incident review scheduled for September 18."}
+      - {at: "20:06", kind: bridge_closed, party: Customer, role: Incident Commander, text: "Bridge closed. Joint post-incident review set for 2026-09-18."}

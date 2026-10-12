@@ -85,3 +85,23 @@ ok(rows().length > 0 && rows().every(r => !r.includes("PIR-2026-001")), "a date 
 search("f-from", ""); search("f-all", true);
 ok(rows().length > 100 && d3.getElementById("count").textContent.includes("with no review"), "records with no review can be listed too");
 ok(errors.length === 0, "no script errors in the record-type checks " + errors.join(";"));
+// The Command view: the runbook, then the A07 replay.
+const errs4 = [];
+const dom4 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/pir/#replay", virtualConsole: new (require("jsdom").VirtualConsole)().on("jsdomError", e => errs4.push(String(e))) });
+const d4 = dom4.window.document;
+const t4 = () => d4.getElementById("doc").textContent;
+ok(errs4.length === 0, "no script errors on #replay " + errs4.join(";"));
+ok(d4.getElementById("t-command").classList.contains("on"), "#replay opens the Command tab");
+ok(t4().includes("Incident Commander runbook") && t4().includes("Paging tree") && t4().includes("Status-update templates"), "runbook sections shown");
+ok(t4().includes("The Customer is Incident Commander for any P1"), "who commands is read from the Interface Agreement");
+ok([...d4.querySelectorAll("table tr")].some(r => r.textContent.startsWith("P1") && r.textContent.includes("every 30 min")), "severity matrix gives the P1 update cadence");
+ok(d4.getElementById("replay") !== null && t4().includes("Replay: Rack A07 lost both power feeds"), "replay section shown");
+const stats = [...d4.querySelectorAll(".stat .v")].map(x => x.textContent);
+ok(stats.join(",") === "14,9,5", "replay scores 14 steps, 9 met, 5 missed: " + stats);
+ok(d4.querySelectorAll("tr.why").length === 5, "every missed step says why");
+ok(t4().includes("2 h 37 min") && t4().includes("TO-A07-A still open at confirmation") && t4().includes("no decision in the comms log"), "missed checks name their evidence");
+ok(t4().includes("Bridge comms log") && t4().includes("Joint bridge open for rack A07."), "comms log shown");
+ok(d4.querySelector('a[href="#PIR-2026-001"]') !== null, "replay links to its review");
+d4.getElementById("t-example").click();
+ok(t4().includes("Replay this incident against the Incident Commander runbook") && t4().includes("9 of 14 runbook steps met"), "the review links back to the replay");
+ok(errs4.length === 0, "still no script errors on the Command view " + errs4.join(";"));

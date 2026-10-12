@@ -1,0 +1,7 @@
+{
+  "disclaimer": "Synthetic incident comms log for a portfolio demonstration: when the joint bridge opened, who joined, each lead's updates to the Incident Commander, and the Incident Commander's updates to leadership. Roles only; no person is named.",
+  "files": {
+    "INC3900001.json": 27
+  },
+  "source": "config/incident_comms.yaml and the data/sample seed"
+}
