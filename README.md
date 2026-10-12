@@ -39,7 +39,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
 | [GPU Health](#gpu-health) | Which GPUs are failing, or about to, and whose side is it on? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/gpu/) |
-| [Telemetry](#telemetry) | What is every GPU, CDU, UPS, busway, generator, and network link reading, minute by minute, and does it agree with the records? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
+| [Telemetry](#telemetry) | Does every system still have its redundant unit right now, and what is every GPU, CDU, UPS, busway, generator, chiller, and network link reading, minute by minute? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
 | [Deployments](#deployments) | Where is the Hall B rollout, and do the partners' records of it hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
@@ -217,7 +217,13 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 ## Telemetry
 
-![Telemetry: tiles per hall and every rack, every hour](docs/images/telemetry.png)
+![Telemetry opens on Site health: redundancy against the design, a tile per device family, and the hall map, at any hour](docs/images/telemetry.png)
+
+**Site health.** The tab opens on the whole site at one hour, with a replay clock over the month. Redundancy is the headline: for each of 20 systems (utility feeds 2N, generators N+1, IT UPSs 4 make 3, rack feeds 2N, CDUs and their pumps, chillers, water pumps, thermal walls and their fans, CRAHs), the units in service against the units the design needs; amber means running at N with no spare, red means below N. Under it, a tile per device family with each hall's main readings, a map of all 64 racks with their CDUs, and the conditions behind every amber or red. At the Sep 24 utility outage hour it shows 0 of 2 utility feeds and the site on generators; at Sep 15 16:00 it shows rack A07 red with both feeds lost. It shows readings and redundancy, not alarms, and there is no single health score, because one number would hide which redundancy is gone.
+
+- `src/scorecard/site_health.py` reads only what the five telemetry sections publish (their hourly tiers and recorded state changes) and the topology in `site/site.yaml`. A unit counts as out for any minute a recorded state says so, planned work included: the design is at N while a pump is out for a filter change, even though the CDU's own redundancy status reports only failures. Thresholds are in `config/site_health.yaml` (ASHRAE's recommended and A1 allowable supply air, 75% per UPS for 4 make 3).
+- It is checked against the hourly figures each section publishes, which it was not built from: bypass minutes, busway dead minutes, chiller alarm and BMS-off minutes, fans running, pump redundancy, dark racks only while both feeds are lost, and generators running whenever the utility is lost. On the sample, 72,682 of 72,682 cases agree. Report: `reports/site_health.md`.
+
 
 **What it shows.** Every GPU at the site (3,312 in 46 racks) sampled once a minute for the month, in the published format of NVIDIA's open-source DCGM exporter: temperature, memory temperature, power, energy, utilization, SM clock, memory used, tensor activity, the last XID, remapped rows, pending remaps, corrected errors, and the time spent throttled for heat or power. A heatmap of every rack by hour opens a rack's 72 GPUs at any hour, and a GPU's month by hour, with its XIDs, drains, and slowdowns marked and linked to their tickets. Around each event the page has one-minute detail for the tray's four GPUs, and shows the exporter's own text output (`/metrics`) at any of those minutes. Hall B's GB300s are capped at 1,200 W to fit the 132 kW rack envelope, so they spend much of the month held at that limit.
 
@@ -338,6 +344,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
 | GPU telemetry agreement with the records | 60,257 of 60,257 cases | 8,520,414 of 8,520,414 cases on 60 generated months |
 | CDU telemetry agreement with the records | 664,024 of 664,024 cases | 39,841,812 of 39,841,812 cases on 60 generated months |
+| Site health agreement with each section's hourly figures | 72,682 of 72,682 cases | in the telemetry run (`render_telemetry.py --robustness 60`) |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
@@ -367,7 +374,7 @@ python scripts/render_availability.py --robustness 60
 
 ## Tests and deployment
 
-- **630 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
+- **640 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).

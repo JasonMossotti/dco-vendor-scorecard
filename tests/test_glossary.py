@@ -189,9 +189,9 @@ def test_glossary_document_is_current():
     assert proc.returncode == 0, proc.stdout + proc.stderr
 
 
-def test_tab_bar_has_reference_tabs_on_the_right():
+def test_tab_bar_has_reference_tabs_on_the_top_row():
     nav = sitenav.nav_html("glossary")
-    main, ref = re.findall(r'<div class="usm-tabs[^"]*">(.*?)</div>', nav)
+    ref, main = re.findall(r'<div class="usm-tabs[^"]*">(.*?)</div>', nav)
     assert re.findall(r'data-tab="(\w+)"', ref) == ["agreements", "glossary", "devices"]
     assert "agreements" not in main
 

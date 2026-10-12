@@ -220,6 +220,7 @@ terms:
   - {term: NETA, type: acronym, expansion: InterNational Electrical Testing Association, text: "Publishes the acceptance testing specifications (ANSI/NETA ATS) that third-party testers follow for breakers, busway, and tap-offs before energization."}
   - {term: ATS, type: safety, title: "ANSI/NETA Acceptance Testing Specifications", pages: [deployments], text: "The electrical acceptance test standard (current edition ATS-2025): insulation resistance, torque, contact resistance, and an infrared scan under load, recorded on a NETA test report."}
   - {term: ATS-2025, type: safety, title: "ANSI/NETA ATS-2025", text: "The current edition of the NETA Acceptance Testing Specifications, used for the Hall B power commissioning (G1-02)."}
+  - {term: TC, type: acronym, expansion: "Technical Committee (ASHRAE)", text: "TC 9.9 is the ASHRAE committee for mission-critical facilities and data centers; it publishes the Thermal Guidelines, whose envelopes the Site health page uses for supply air."}
   - {term: ASHRAE, type: acronym, expansion: "American Society of Heating, Refrigerating and Air-Conditioning Engineers", text: "Publisher of Guideline 0 (the commissioning process behind levels L1 to L5) and the thermal guidelines for data centers."}
   - {term: TIA-942-C, type: safety, title: "ANSI/TIA-942-C (2024)", text: "The data center telecommunications infrastructure standard, used for the cabling plan, labeling, and pathways."}
   - {term: TDLR, type: acronym, expansion: Texas Department of Licensing and Regulation, text: "The state agency that adopts the Texas electrical code, licenses electricians, and runs the Architectural Barriers program (TX-TABA)."}
@@ -477,6 +478,7 @@ plain:   # capitalised text that is not a code
     - {pattern: 'IB1', why: "The first part of an MLNX-OS port name (IB1/9/2 is ASIC 1, cage 9, port 2).", pages: [telemetry]}
     - {pattern: 'SITE', why: "The whole site, in the power events table (a utility event is not one device's).", pages: [telemetry]}
     - {pattern: 'L-N', why: "Line to neutral: a voltage measured between one phase and neutral (277 V on a 480 V system).", pages: [telemetry]}
+    - {pattern: 'A1', why: "ASHRAE class A1 (an air-cooled equipment class), named with its envelope on the Site health page.", pages: [telemetry]}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements, availability]}
     - {pattern: 'MVS-C[12]|ESS-C|DCB-C-[AB]|LD-C|BMS-C|HALL-C', why: "A Hall C system in the readiness tracker (planned hall, not yet in the device directory); its page lists its commissioning.", pages: [deployments]}
     - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}

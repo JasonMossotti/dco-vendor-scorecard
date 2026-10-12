@@ -79,7 +79,7 @@ def test_every_page_has_the_tab_bar_with_its_own_tab_marked(site):
         assert html.count('<nav class="usm"') == 1, path
         on = re.findall(r'data-tab="(\w+)" class="on" aria-current="page"', html)
         assert on == [key], (path, on)
-        assert re.findall(r'data-tab="(\w+)"', html) == sitenav.KEYS, path
+        assert re.findall(r'data-tab="(\w+)"', html) == [k for k, _, _ in sitenav.REFERENCE_TABS + sitenav.TABS], path
 
 
 def _links(html):
