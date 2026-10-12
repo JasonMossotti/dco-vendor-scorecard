@@ -20,7 +20,7 @@ framing: >-
 unit_out:
   ups: "On static bypass (upsBasicOutputStatus switchedBypass). On battery is the UPS doing its job, so it counts as in service."
   utility: "MV main breaker tripped."
-  rack_feed: "Tap-off breaker open, or its busway's feeder breaker tripped."
+  rack_feed: "Tap-off breaker open, or its busway without voltage (from the feeder breaker's trip until the busway meter reads voltage in tolerance)."
   cdu_pump: "Pump Status.State Disabled or InTest, or Status.Health Critical."
   chiller: "Chiller enable held Off by the BMS, or a compressor trip (alarm) active. A free-cooling inhibit does not take a chiller out."
   wall_fan: "A fan reporting Alarm (FanSts_OV[n])."

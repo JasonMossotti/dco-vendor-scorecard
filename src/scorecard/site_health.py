@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import re
 from collections import defaultdict
 from dataclasses import dataclass
@@ -123,19 +124,26 @@ class SiteHealth:
                 out[r[key]][h] = r
         return dict(out)
 
-    def _spans(self, changes: list[tuple[int, Any]], is_out) -> np.ndarray:
-        """Minute mask: out from each change whose value is_out until the next change that is not."""
+    def _spans(self, changes: list[tuple[int, Any, float]], is_out, seconds: bool = False) -> np.ndarray:
+        """Minute mask: out from each change whose value is_out until the next change that is not. Each change is
+        (minute, value, seconds from the window start). By default a change takes effect at the minute its own tier
+        records (the first reading at or after it); with seconds, a minute counts if any second of it is out, as the
+        UPS hourly rows count bypass minutes."""
         mask = np.zeros(self.M, dtype=bool)
         since = None
-        for m, v in sorted(changes, key=lambda x: x[0]):
+        for m, v, t in sorted(changes, key=lambda x: x[2]):
+            a, b = (math.floor(t / 60), math.ceil(t / 60)) if seconds else (m, m)
             if is_out(v) and since is None:
-                since = m
+                since = a
             elif not is_out(v) and since is not None:
-                mask[max(0, since):max(0, min(self.M, m))] = True
+                mask[max(0, since):max(0, min(self.M, b))] = True
                 since = None
         if since is not None:
             mask[max(0, since):] = True
         return mask
+
+    def sec(self, iso: str) -> float:
+        return (_parse(iso) - self.start).total_seconds()
 
     def hour_any(self, mask: np.ndarray) -> np.ndarray:
         return mask.reshape(self.H, 60).any(axis=1)
@@ -150,11 +158,11 @@ class SiteHealth:
         why: dict[str, list[tuple[np.ndarray, str]]] = defaultdict(list)
         by: dict[tuple, list] = defaultdict(list)
         for e in _jsonl(self.d.power / "states.jsonl"):
-            by[("power", e["device"], e["point"])].append((e["m"], e["value"]))
+            by[("power", e["device"], e["point"])].append((e["m"], e["value"], self.sec(e["time"])))
         for e in _jsonl(self.d.mechanical / "states.jsonl"):
-            by[("mech", e["device"], e["point"])].append((e["m"], e["value"]))
+            by[("mech", e["device"], e["point"])].append((e["m"], e["value"], self.sec(e["time"])))
         for e in _jsonl(self.d.cdu / "states.jsonl"):
-            by[("cdu", e["resource"], e["property"])].append((e["m"], e["value"]))
+            by[("cdu", e["resource"], e["property"])].append((e["m"], e["value"], self.sec(e["time"])))
 
         def add(unit: str, mask: np.ndarray, text: str) -> None:
             if mask.any():
@@ -169,18 +177,21 @@ class SiteHealth:
         for u, x in self.power_dev.items():
             if x["family"] == "ups":
                 ch = by.get(("power", u, "upsBasicOutputStatus"), [])
-                add(u, self._spans(ch, lambda v: v == "switchedBypass"), "on static bypass")
+                add(u, self._spans(ch, lambda v: v == "switchedBypass", seconds=True), "on static bypass")
         # rack feeds: the tap-off breaker, or the busway's feeder breaker
         self.run_trip: dict[str, np.ndarray] = {}
         for run, x in self.power_dev.items():
             if x["family"] == "busway":
+                # dead from the feeder breaker's trip until the busway's own meter reads voltage in tolerance again
                 ch = by.get(("power", run, "Feeder breaker (EPMS)"), [])
-                self.run_trip[run] = self._spans(ch, lambda v: str(v).startswith("Breaker trip"))
+                volts = by.get(("power", run, "cpmAcInfLineToLineVoltAve"), [])
+                self.run_trip[run] = (self._spans(ch, lambda v: str(v).startswith("Breaker trip"))
+                                      | self._spans(volts, lambda v: "out of tolerance" in str(v)))
         for to, x in self.power_dev.items():
             if x["family"] == "tapoff":
                 ch = by.get(("power", to, "cpmAcBrkrCurrentStatus"), [])
                 add(f"FEED:{x['rack']}:{x['side']}", self._spans(ch, lambda v: v == "open"), f"tap-off {to} open")
-                add(f"FEED:{x['rack']}:{x['side']}", self.run_trip[x["run"]], f"busway {x['run']} feeder breaker tripped")
+                add(f"FEED:{x['rack']}:{x['side']}", self.run_trip[x["run"]], f"busway {x['run']} without voltage (feeder breaker tripped)")
         # CDU pumps
         n_pumps = 2
         for cdu, x in self.cdu_dev.items():
@@ -198,7 +209,7 @@ class SiteHealth:
             hold = self._spans(by.get(("mech", ch_id, "Chiller enable"), []), lambda v: str(v).startswith("Off"))
             trip = np.zeros(self.M, dtype=bool)
             for (src, dev, pt), chg in by.items():
-                if src == "mech" and dev == ch_id and pt != "Chiller enable" and any(v in ("active", "cleared") for _, v in chg):
+                if src == "mech" and dev == ch_id and pt != "Chiller enable" and any(v in ("active", "cleared") for _, v, _ in chg):
                     trip |= self._spans(chg, lambda v: v == "active")
             add(ch_id, hold, "held off by the BMS (planned maintenance)")
             add(ch_id, trip, "compressor trip")
@@ -467,7 +478,7 @@ class SiteHealth:
                 n["cabled"][h] += int(r["links_cabled"])
                 n["up"][h] += int(r["links_up"])
                 n["downs"][h] += int(r["link_downs"])
-                if int(r["links_cabled"]):
+                if int(r["links_cabled"]) and r["util_avg_pct"] != "":            # empty while no cabled link is up
                     util[h].append(float(r["util_avg_pct"]))
             n["util"] = [round(sum(u) / len(u), 1) if u else None for u in util]
             trays = [sum(int(nv[r][h]["trays_reporting"]) for r in nv if nv[r][h] and racks.get(r, {}).get("hall") == hid
