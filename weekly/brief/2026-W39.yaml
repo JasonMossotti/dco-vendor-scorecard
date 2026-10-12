@@ -1,0 +1,35 @@
+# Leadership brief: the judgment for one week, written by the Customer Site Lead (see 2026-W36.yaml for the rules).
+week: 2026-W39
+author: "Customer Site Lead"
+risks:
+  - risk: >-
+      Hall B supply: 6 racks planned for receipt have not arrived from the OEM, so most of next week's committed
+      handoffs cannot be met however the IT Partner performs.
+    owner: "Customer Procurement"
+    date: "2026-09-30"
+    refs: [B15, B16, B17, B18, B19, B20]
+  - risk: >-
+      The fixes from the review of last week's rack power loss are still open: the revised MOP template for
+      one-sided power work and the alert for a rack left on one feed are in progress.
+    owner: "Landlord Chief Engineer"
+    date: "2026-10-15"
+    refs: [PIR-2026-001, A1, A3]
+  - risk: >-
+      Records on both sides still do not reconcile: a work order restored before the telemetry, critical work again
+      without an approved MOP, a part swap the inventory does not confirm, and an on-site claim before badge-in.
+      All go to the monthly service review.
+    owner: "Customer Site Lead"
+    date: "2026-09-28"
+    refs: [L-006, L-007, F-009, F-010]
+decisions:
+  - decision: >-
+      Re-baseline the committed handoff dates of racks the OEM delivers late to the 10-day rack cycle from actual
+      receipt, through change control. Recommended: yes; late delivery is not the IT Partner's to recover, and the
+      measurement should stay fair.
+    by: "2026-09-30"
+    refs: [B15, B16, B17, B18, B19, B20]
+asks:
+  - ask: "New OEM delivery dates for the 6 racks not yet received."
+    of: "Customer Procurement"
+    due: "2026-09-30"
+    refs: [B15, B16, B17, B18, B19, B20]

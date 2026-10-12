@@ -327,7 +327,8 @@ def _energy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
     def span(a: datetime, b: datetime) -> dict:
         t = energy.totals([r for r in d.energy.meters if a <= parse(r["hour"]) < b])
         return {k: round(t[k], 4) if k.startswith("p") else round(t[k], 1) for k in keep}
-    return {"week": span(ws, we), "mtd": span(d.window_start, we)}
+    pue = next(t for t in d.ll_sla["energy_reporting"]["terms"] if t["id"] == "OT-EN-02")
+    return {"week": span(ws, we), "mtd": span(d.window_start, we), "target": pue["target"]}
 
 
 def _avail_line(d: WeeklyData, ws: datetime, we: datetime) -> dict:
@@ -355,7 +356,13 @@ def _deploy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
     gates = [g["gate"] for g in d.deploy["gate_status"]
              if g["total"] and all(done_by[w["id"]] for w in wos if w["gate"] == g["gate"])]
     known = [f for f in d.deploy["findings"] if f["known_at"] < b]
-    return {"hall": d.deploy["program"]["hall_name"], "total": len(wos), "to_date": sum(done_by.values()),
+    # Racks against their committed handoff dates, measured as CSL-09 measures them (first validated handoff).
+    racks = [r for r in d.deploy["racks"]["racks"] if r["committed_handoff"]]
+    due = [r for r in racks if r["committed_handoff"] < b]
+    rack_line = {"planned": len(racks), "committed": len(due),
+                 "in_production": sum(1 for r in racks if r["measured_handoff"] and r["measured_handoff"] < b),
+                 "on_time": sum(1 for r in due if r["measured_handoff"] and r["measured_handoff"] <= r["committed_handoff"])}
+    return {"hall": d.deploy["program"]["hall_name"], "total": len(wos), "to_date": sum(done_by.values()), "racks": rack_line,
             "week": sum(1 for w in wos if w["completed_at"] and a <= w["completed_at"] < b),
             "gates_closed": gates, "findings": len(known), "checks": sorted({f["check"] for f in known})}
 
@@ -382,7 +389,7 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
         pattern_actions = {"id": pr["id"], "meeting": pr["review_meeting"], "status_as_of": pr["status_as_of"],
                            "patterns": len(pr["patterns"]), "open": sum(a["status"] != "Complete" for a in acts),
                            "overdue": sum(a["status"] != "Complete" and a["due"] < _iso(we)[:10] for a in acts)}
-    return {
+    out = {
         "id": week_id(ws), "start": _iso(ws), "end": _iso(we), "prepared": _iso(we),
         "number": [s for s, _ in d.weeks].index(ws) + 1, "of": len(d.weeks),
         "partners": [
@@ -401,6 +408,22 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
         "energy": _energy_line(d, ws, we),
         "availability": _avail_line(d, ws, we),
         "deploy": _deploy_line(d, ws, we),
+    }
+    out["brief"] = leadership_brief(out)
+    return out
+
+
+def leadership_brief(w: dict[str, Any]) -> dict[str, Any]:
+    """The four headline numbers of the one-page leadership brief, read from the week's pack and never recomputed:
+    fleet availability, Hall B racks against their committed handoff dates, each partner's standing, and PUE."""
+    av, en, dp = w["availability"], w["energy"], w["deploy"]
+    return {
+        "availability": {"week": av["week"]["sched_pct"], "mtd": av["mtd"]["sched_pct"],
+                         "lost_it": av["week"]["it"], "lost_landlord": av["week"]["landlord"]},
+        "deployment": {"hall": dp["hall"], **dp["racks"], "not_received": len(w["lookahead"]["receipts_overdue"])} if dp else None,
+        "partners": [{"name": p["name"], "role": p["role"], "status": p["status"],
+                      "below": sum(r["mtd_status"] in DEFAULT for r in p["levels"]), "of": len(p["levels"])} for p in w["partners"]],
+        "pue": {"week": en["week"]["pue"], "mtd": en["mtd"]["pue"], "target": en["target"]} if en else None,
     }
 
 

@@ -1,0 +1,42 @@
+# Leadership brief: the judgment for one week, written by the Customer Site Lead (see 2026-W36.yaml for the rules).
+week: 2026-W38
+author: "Customer Site Lead"
+risks:
+  - risk: >-
+      Rack A07 lost both power feeds during planned work when the tap-off on the side meant to stay energized was
+      opened. Until the work method is fixed, any one-sided power work can repeat it.
+    owner: "Landlord Chief Engineer"
+    date: "2026-10-15"
+    refs: [PIR-2026-001, WO-41023, A07, A1]
+  - risk: >-
+      Hall B: 4 of 5 racks due this week were handed off on time, but rack B15 has not arrived from the OEM, and 5 more
+      handoffs are due next week.
+    owner: "IT Partner Site Manager"
+    date: "2026-09-26"
+    refs: [CSL-09, B15, B09, B10, B11, B12, B13]
+  - risk: >-
+      Landlord records do not reconcile: critical work without an approved MOP, a BMS override without a change
+      record, and an alarm acknowledged but never dispatched.
+    owner: "Customer Site Lead"
+    date: "2026-09-28"
+    refs: [L-004, L-005, L-008]
+decisions:
+  - decision: >-
+      Keep the interim rule for one-sided tap-off work (lock and tag the energized feed, second-person check) until the
+      revised MOP template is approved. Recommended: yes.
+    by: "2026-09-22"
+    refs: [D1, A1]
+  - decision: >-
+      Amend the handoff clause through Interface Agreement change control, as the rack A07 review recommends.
+      Recommended: yes, with the Landlord and the IT Partner both signing.
+    by: "2026-10-31"
+    refs: [A7, A07, PIR-2026-001]
+asks:
+  - ask: "A new delivery date from the OEM for rack B15."
+    of: "Customer Procurement"
+    due: "2026-09-22"
+    refs: [B15]
+  - ask: "Complete the independent investigation of the rack A07 event and classify it."
+    of: "Customer EHS"
+    due: "2026-09-29"
+    refs: [A5, A07, PIR-2026-001]

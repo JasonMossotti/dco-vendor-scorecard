@@ -29,6 +29,27 @@ tr.default td { background:#fdf0ef; } .gap { color:var(--bad); font-size:12px; }
 .met { color:var(--ok); font-weight:600; } .missed, .over { color:var(--bad); font-weight:600; } .open { color:var(--warn); font-weight:600; }
 .la { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; } .la ul { margin:4px 0 0; padding-left:18px; font-size:13px; }
 .wide { overflow-x:auto; }
+.views { display:flex; gap:4px; }
+.views button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+.views button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+.brief h1 { font-size:22px; } .brief .sub { font-size:13px; }
+.tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:14px 0 6px; }
+.tile { background:var(--panel); border-radius:8px; padding:10px 12px; border-top:3px solid var(--it); }
+.tile .lbl { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:600; }
+.tile .val { font-size:24px; font-weight:700; margin:2px 0; line-height:1.2; }
+.tile p { font-size:12px; margin:2px 0 0; color:var(--ink); }
+.tile .prow { display:flex; justify-content:space-between; gap:6px; align-items:baseline; font-size:12px; margin-top:4px; }
+.tile .prow b { font-size:18px; white-space:nowrap; }
+.brief h2 { font-size:15px; margin:18px 0 6px; } .brief table { font-size:12.5px; } .brief td.n { width:22px; color:var(--muted); }
+.brief .who { white-space:nowrap; } .brief .foot { font-size:11px; color:var(--muted); margin-top:14px; }
+@media (max-width:760px) { .tiles { grid-template-columns:repeat(2,minmax(0,1fr)); } .brief .who { white-space:normal; } }
+@media print {
+  .tiles { grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:8px 0 4px; } .brief h1 { font-size:18px; } .brief .sub { font-size:10.5px; margin-bottom:4px; }
+  .brief .tile { padding:7px 9px; } .brief .tile .val { font-size:18px; } .brief .tile p, .brief .tile .prow { font-size:10px; } .brief .tile .prow b { font-size:13px; }
+  .brief .tile .prow .note { display:none; } .brief h2 { font-size:12.5px; margin:10px 0 4px; } .brief table { font-size:10.5px; } .brief th, .brief td { padding:4px 6px; }
+  .brief .foot { font-size:9px; margin-top:8px; }
+}
+@page { size: letter; margin: 0.5in; }
 @media print { header.top { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } h2 { break-after:avoid; } tr { break-inside:avoid; } }
 </style>
 </head>
@@ -37,6 +58,7 @@ __SITENAV__
 <header class="top">
   <div><strong>Weekly Operations Review</strong></div>
   <div class="tabs" id="tabs"></div>
+  <div class="views" id="views"><button data-view="pack">Full pack</button><button data-view="brief">Leadership brief</button></div>
   <div class="tools"><button id="print">Print / save PDF</button></div>
 </header>
 <main id="doc"></main>
@@ -116,7 +138,7 @@ function render(w) {
   h += `<p class="note">Failed parts awaiting shipment to the OEM at the end of the week: ${esc(rs.rma_open)}${rs.rma_open ? ` (oldest removed ${esc(rs.rma_oldest_days)} days ago)` : ""}.</p>`;
   if (w.deploy) {
     const dp = w.deploy;
-    h += `<p class="note" id="deploy-line">Deployment (${esc(dp.hall)}): <b>${esc(dp.week)}</b> work orders completed this week, ${esc(dp.to_date)} of ${esc(dp.total)} to date; gates closed: ${esc(dp.gates_closed.join(", ") || "none")}; ${esc(dp.findings)} record${dp.findings === 1 ? "" : "s"} that do not reconcile${dp.checks.length ? " (" + esc(dp.checks.join("; ")) + ")" : ""}. Detail on the <a href="../deployments/#checks">Deployments tab</a>.</p>`;
+    h += `<p class="note" id="deploy-line">Deployment (${esc(dp.hall)}): <b>${esc(dp.week)}</b> work orders completed this week, ${esc(dp.to_date)} of ${esc(dp.total)} to date; gates closed: ${esc(dp.gates_closed.join(", ") || "none")}; ${esc(dp.findings)} record${dp.findings === 1 ? "" : "s"} that do not reconcile${dp.checks.length ? " (" + esc(dp.checks.join("; ")) + ")" : ""}. Racks: ${esc(dp.racks.in_production)} of ${esc(dp.racks.planned)} handed off to the scheduler; ${esc(dp.racks.on_time)} of ${esc(dp.racks.committed)} committed by the end of the week handed off on time. Detail on the <a href="../deployments/#checks">Deployments tab</a>.</p>`;
   }
   if (w.energy) {
     const en = w.energy, f3 = v => Number(v).toFixed(3);
@@ -141,20 +163,44 @@ function render(w) {
   return h;
 }
 
-function show(id) {
+// The one-page leadership brief: four headline numbers from the pack, then the Customer Site Lead's top risks,
+// decisions needed, and asks (weekly/brief/<week>.yaml). No codes in the headline and no credits.
+function renderBrief(w) {
+  const b = DATA.briefs[w.id];
+  let h = `<div class="brief"><h1>Leadership brief ${esc(w.id)}</h1>`;
+  h += `<p class="sub">Site AUS-1 · ${esc(w.title)} · Prepared ${esc(w.prepared_local)}${b ? ` by the ${esc(b.author)}` : ""}. The numbers are the week's operations review pack.</p>`;
+  h += `<div class="tiles">` + w.brief.tiles.map(t => t.key === "partners"
+    ? `<div class="tile" data-tile="${esc(t.key)}"><div class="lbl">${esc(t.label)}</div>${t.rows.map(r =>
+        `<div class="prow"><span>${esc(r.name)} <span class="note">(${esc(r.role)})</span></span><b class="${r.chip === "bad" ? "missed" : r.chip === "warn" ? "open" : "met"}">${esc(r.value)}</b></div>`).join("")}<p>${esc(t.text)}</p></div>`
+    : `<div class="tile" data-tile="${esc(t.key)}"><div class="lbl">${esc(t.label)}</div><div class="val">${esc(t.value)}</div><p>${esc(t.text)}</p></div>`).join("") + `</div>`;
+  if (!b) return h + `<p class="note">No risks, decisions, or asks recorded for this week.</p></div>`;
+  h += `<h2>Top risks</h2>` + table(["", "Risk", "Owner", "Date"], b.risks.map((r, i) =>
+    `<tr><td class="n">${i + 1}</td><td>${esc(r.risk)}</td><td class="who">${esc(r.owner)}</td><td class="nw">${esc(r.date)}</td></tr>`));
+  h += `<h2>Decisions needed</h2>` + table(["Decision", "By"], b.decisions.map(x => `<tr><td>${esc(x.decision)}</td><td class="nw">${esc(x.by)}</td></tr>`));
+  h += `<h2>Asks</h2>` + table(["Ask", "Of", "Due"], b.asks.map(x => `<tr><td>${esc(x.ask)}</td><td class="who">${esc(x.of)}</td><td class="nw">${esc(x.due)}</td></tr>`));
+  h += `<p class="foot">No credits are shown: the contract settles service levels and credits monthly. Synthetic data for a portfolio demonstration; all names and events are fictional.</p></div>`;
+  return h;
+}
+
+let view = "pack";
+function show(id, v) {
+  if (v) view = v;
   const w = DATA.weeks.find(x => x.id === id);
-  document.getElementById("doc").innerHTML = render(w);
+  document.getElementById("doc").innerHTML = view === "brief" ? renderBrief(w) : render(w);
+  document.getElementById("doc").dataset.week = id;
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.week === id));
-  history.replaceState(null, "", "#" + id);
+  document.querySelectorAll("#views button").forEach(b => b.classList.toggle("on", b.dataset.view === view));
+  history.replaceState(null, "", "#" + id + (view === "brief" ? "/brief" : ""));
 }
 
 document.getElementById("tabs").innerHTML = DATA.weeks.map(w =>
   `<button data-week="${esc(w.id)}">${esc(w.id.slice(5))}${DATA.notes[w.id] ? `<span class="dot" title="Meeting notes recorded"></span>` : ""}</button>`).join(" ");
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => show(b.dataset.week));
+document.querySelectorAll("#views button").forEach(b => b.onclick = () => show(document.getElementById("doc").dataset.week, b.dataset.view));
 document.getElementById("print").onclick = () => window.print();
-const wanted = location.hash.slice(1);
+const [wanted, wantView] = location.hash.slice(1).split("/");
 const noted = DATA.weeks.find(w => DATA.notes[w.id]);
-show(DATA.weeks.some(w => w.id === wanted) ? wanted : (noted || DATA.weeks[DATA.weeks.length - 1]).id);
+show(DATA.weeks.some(w => w.id === wanted) ? wanted : (noted || DATA.weeks[DATA.weeks.length - 1]).id, wantView === "brief" ? "brief" : "pack");
 </script>
 </body>
 </html>

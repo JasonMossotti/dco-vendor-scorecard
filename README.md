@@ -68,7 +68,7 @@ flowchart LR
   DATA --> HIST["History, change, energy, GPU health<br/>data/history/ · data/changes/ · data/energy/ · data/gpu_health/"]
   REP --> PAGES
   HIST --> PAGES
-  JUDG["Human judgment (YAML)<br/>pir/ · weekly/notes/ · patterns/"] --> PAGES
+  JUDG["Human judgment (YAML)<br/>pir/ · weekly/notes/ · weekly/brief/ · patterns/"] --> PAGES
   SLA --> DOCS["Contracts, glossary<br/>docs/sla/ · docs/glossary/"]
   SITE --> DWG["Drawings, locations,<br/>device directory<br/>docs/site/"]
   DOCS --> PAGES
@@ -173,7 +173,9 @@ The technical sections follow: response against targets, every alarm and event r
 - **Nothing known early.** A pack uses only what existed by the end of its week; a finding appears in the week its discrepancy was observed.
 - **The weeks reconcile with the month.** The last week's month to date equals the monthly scorecards for both partners, weekly power availability averages exactly to the monthly figure, and every finding and incident is counted exactly once, on the sample and on 20 generated months.
 
-Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_weekly.py` writes the page and [`docs/weekly/`](docs/weekly/).
+**Leadership brief.** A second view of each week, sized to print on one page for site leadership: four headline numbers in plain language (fleet availability, Hall B racks handed off on time against their committed dates, each partner's service levels below minimum, and PUE against its target), then the top three risks with owners and dates, the decisions needed, and the asks. The numbers are read from the week's pack and tested to equal it (Hall B racks also equal CSL-09 month to date); the risks, decisions, and asks are written in `weekly/brief/<week>.yaml` and tested against the facts like the notes: every reference is in that week's facts, every number appears in them, codes stay out of the text, owners are roles, and no credits are shown. Link to one with `#2026-W38/brief`.
+
+Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_weekly.py` writes the page and [`docs/weekly/`](docs/weekly/) (each week's pack and its brief).
 
 ## Failure Pattern Review
 
@@ -374,7 +376,7 @@ python scripts/render_availability.py --robustness 60
 
 ## Tests and deployment
 
-- **640 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
+- **644 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -433,6 +435,7 @@ src/scorecard/live/              Read-only collector, protocol adapters, dataset
 app/streamlit_app.py             Scorecards app (Streamlit; runs in the browser via stlite)
 pir/reviews/*.yaml               Written part of each post-incident review
 weekly/notes/*.yaml              Written part of a weekly review (decisions, asks, commentary)
+weekly/brief/*.yaml              Written part of each week's leadership brief (risks, decisions needed, asks)
 patterns/lessons.yaml            Written part of the pattern review (root causes, lessons, actions)
 config/change_alarms.yaml        Alarm map, change-type catalog, robustness plants
 config/energy.yaml               Weather, chiller plant, and meter model for the energy layer; PUE check thresholds
