@@ -124,19 +124,22 @@ class SiteHealth:
                 out[r[key]][h] = r
         return dict(out)
 
-    def _spans(self, changes: list[tuple[float, Any]], is_out) -> np.ndarray:
-        """Minute mask: out from each change whose value is_out until the next change that is not. Changes are in
-        seconds from the window start; a minute counts if any part of it is out, as the hourly tiers count minutes."""
+    def _spans(self, changes: list[tuple[int, Any, float]], is_out, seconds: bool = False) -> np.ndarray:
+        """Minute mask: out from each change whose value is_out until the next change that is not. Each change is
+        (minute, value, seconds from the window start). By default a change takes effect at the minute its own tier
+        records (the first reading at or after it); with seconds, a minute counts if any second of it is out, as the
+        UPS hourly rows count bypass minutes."""
         mask = np.zeros(self.M, dtype=bool)
         since = None
-        for t, v in sorted(changes, key=lambda x: x[0]):
+        for m, v, t in sorted(changes, key=lambda x: x[2]):
+            a, b = (math.floor(t / 60), math.ceil(t / 60)) if seconds else (m, m)
             if is_out(v) and since is None:
-                since = t
+                since = a
             elif not is_out(v) and since is not None:
-                mask[max(0, math.floor(since / 60)):max(0, min(self.M, math.ceil(t / 60)))] = True
+                mask[max(0, since):max(0, min(self.M, b))] = True
                 since = None
         if since is not None:
-            mask[max(0, math.floor(since / 60)):] = True
+            mask[max(0, since):] = True
         return mask
 
     def sec(self, iso: str) -> float:
@@ -155,11 +158,11 @@ class SiteHealth:
         why: dict[str, list[tuple[np.ndarray, str]]] = defaultdict(list)
         by: dict[tuple, list] = defaultdict(list)
         for e in _jsonl(self.d.power / "states.jsonl"):
-            by[("power", e["device"], e["point"])].append((self.sec(e["time"]), e["value"]))
+            by[("power", e["device"], e["point"])].append((e["m"], e["value"], self.sec(e["time"])))
         for e in _jsonl(self.d.mechanical / "states.jsonl"):
-            by[("mech", e["device"], e["point"])].append((self.sec(e["time"]), e["value"]))
+            by[("mech", e["device"], e["point"])].append((e["m"], e["value"], self.sec(e["time"])))
         for e in _jsonl(self.d.cdu / "states.jsonl"):
-            by[("cdu", e["resource"], e["property"])].append((self.sec(e["time"]), e["value"]))
+            by[("cdu", e["resource"], e["property"])].append((e["m"], e["value"], self.sec(e["time"])))
 
         def add(unit: str, mask: np.ndarray, text: str) -> None:
             if mask.any():
@@ -174,7 +177,7 @@ class SiteHealth:
         for u, x in self.power_dev.items():
             if x["family"] == "ups":
                 ch = by.get(("power", u, "upsBasicOutputStatus"), [])
-                add(u, self._spans(ch, lambda v: v == "switchedBypass"), "on static bypass")
+                add(u, self._spans(ch, lambda v: v == "switchedBypass", seconds=True), "on static bypass")
         # rack feeds: the tap-off breaker, or the busway's feeder breaker
         self.run_trip: dict[str, np.ndarray] = {}
         for run, x in self.power_dev.items():
@@ -206,7 +209,7 @@ class SiteHealth:
             hold = self._spans(by.get(("mech", ch_id, "Chiller enable"), []), lambda v: str(v).startswith("Off"))
             trip = np.zeros(self.M, dtype=bool)
             for (src, dev, pt), chg in by.items():
-                if src == "mech" and dev == ch_id and pt != "Chiller enable" and any(v in ("active", "cleared") for _, v in chg):
+                if src == "mech" and dev == ch_id and pt != "Chiller enable" and any(v in ("active", "cleared") for _, v, _ in chg):
                     trip |= self._spans(chg, lambda v: v == "active")
             add(ch_id, hold, "held off by the BMS (planned maintenance)")
             add(ch_id, trip, "compressor trip")

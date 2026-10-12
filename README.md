@@ -344,7 +344,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
 | GPU telemetry agreement with the records | 60,257 of 60,257 cases | 8,520,414 of 8,520,414 cases on 60 generated months |
 | CDU telemetry agreement with the records | 664,024 of 664,024 cases | 39,841,812 of 39,841,812 cases on 60 generated months |
-| Site health agreement with each section's hourly figures | 72,682 of 72,682 cases | in the telemetry run (`render_telemetry.py --robustness 60`) |
+| Site health agreement with each section's hourly figures | 72,682 of 72,682 cases | 4,359,964 of 4,359,964 cases on 60 generated months |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
