@@ -31,4 +31,27 @@ ok(t().includes("dataset ends on Sep 28"), "the last week says its look-ahead ru
 ok(t().includes("Not yet received"), "racks not received are listed");
 const dom2 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/weekly/#2026-W37" });
 ok(dom2.window.document.getElementById("doc").textContent.includes("Weekly Operations Review 2026-W37"), "a link to a week opens that week");
+ok(d.getElementById("deploy-line").textContent.includes("committed by the end of the week handed off on time"), "the deployment line counts racks against their committed dates");
+
+// The one-page leadership brief.
+const view = v => [...d.querySelectorAll("#views button")].find(b => b.dataset.view === v);
+view("brief").click();
+ok(t().includes("Leadership brief 2026-W39") && view("brief").classList.contains("on"), "the brief opens on the same week");
+ok(dom.window.location.hash === "#2026-W39/brief", "the brief is in the address");
+ok(d.querySelectorAll(".tile").length === 4, "four headline numbers");
+const tile = k => d.querySelector(`.tile[data-tile="${k}"]`).textContent;
+ok(tile("availability").includes("99.923%") && tile("availability").includes("99.918% month to date"), "availability equals the pack");
+ok(tile("deployment").includes("10 of 13") && tile("deployment").includes("6 racks not yet received"), "Hall B racks against their committed dates");
+ok(tile("partners").includes("4 of 12") && tile("partners").includes("4 of 10"), "each partner's service levels below minimum");
+ok(tile("pue").includes("1.404") && tile("pue").includes("1.35"), "PUE against its target");
+ok(!/\b(?:OT-)?CSL-\d\d|\bKM-\d\d|\bOT-EN-\d\d/.test([...d.querySelectorAll(".tile")].map(x => x.textContent).join(" ")), "no codes in the headline");
+ok(d.querySelectorAll(".brief table")[0].querySelectorAll("tr").length === 4, "the top three risks");
+ok(t().includes("Decisions needed") && t().includes("Customer Procurement"), "decisions and asks shown");
+ok(!/credit[^s]/i.test(t().replace("No credits are shown: the contract settles service levels and credits monthly.", "")), "no credits");
+tab("2026-W36").click();
+ok(t().includes("Leadership brief 2026-W36") && tile("deployment").includes("None due"), "switching weeks keeps the brief view");
+view("pack").click();
+ok(t().includes("Weekly Operations Review 2026-W36") && dom.window.location.hash === "#2026-W36", "back to the full pack");
+const dom3 = new JSDOM(html, { runScripts: "dangerously", url: "https://example.test/weekly/#2026-W38/brief" });
+ok(dom3.window.document.getElementById("doc").textContent.includes("Leadership brief 2026-W38"), "a link to a brief opens it");
 ok(errors.length === 0, "still no script errors " + errors.join(";"));

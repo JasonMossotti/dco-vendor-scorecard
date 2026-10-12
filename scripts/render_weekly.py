@@ -2,7 +2,7 @@
 """Render the Weekly Operations Review: one Markdown pack per week in docs/weekly/ and the interactive page.
 
 Usage:
-    python scripts/render_weekly.py                 # write docs/weekly/*.md
+    python scripts/render_weekly.py                 # write docs/weekly/*.md (each week's pack and its leadership brief)
     python scripts/render_weekly.py --check         # fail if docs/weekly/ is stale (CI)
     python scripts/render_weekly.py --html OUT.html # write the interactive page (scripts/build_site.py does this)
 """
@@ -25,9 +25,11 @@ from scorecard.weekly import STATUS_TEXT, WeeklyData, build_all  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 NOTES = ROOT / "weekly" / "notes"
+BRIEFS = ROOT / "weekly" / "brief"
 OUT = ROOT / "docs" / "weekly"
 CENTRAL = timezone(timedelta(hours=-5), "CDT")      # the sample month is entirely in daylight time
 CHIP = {"On track": "ok", "At risk": "warn", "Below Minimum (month to date)": "bad"}
+PLAIN_STATUS = {"On track": "On track", "At risk": "At risk", "Below Minimum (month to date)": "Below minimum this month"}
 
 
 def local(iso: str | None, with_day: bool = True) -> str:
@@ -51,6 +53,36 @@ def value(v: float | None, minimum: float) -> str:
 
 def notes() -> dict[str, dict]:
     return {p.stem: yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted(NOTES.glob("*.yaml"))}
+
+
+def briefs() -> dict[str, dict]:
+    return {p.stem: yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted(BRIEFS.glob("*.yaml"))}
+
+
+def brief_tiles(w: dict) -> list[dict]:
+    """The leadership brief's four headline numbers as plain-language tiles (no codes), shared by the page and the
+    Markdown so the two never disagree."""
+    b = w["brief"]
+    av, dp, pue = b["availability"], b["deployment"], b["pue"]
+    tiles = [{"key": "availability", "label": "Fleet availability", "value": f"{av['week']:.3f}%",
+              "text": f"of installed GPU-hours could run work this week ({av['mtd']:.3f}% month to date). GPU-hours lost this "
+                      f"week: {av['lost_it']:,.1f} to the IT Partner, {av['lost_landlord']:,.1f} to the Landlord."}]
+    if dp:
+        racks = f"{dp['in_production']} of {dp['planned']} racks in production"
+        miss = (f" {dp['not_received']} rack{'' if dp['not_received'] == 1 else 's'} not yet received from the OEM."
+                if dp["not_received"] else "")
+        tiles.append({"key": "deployment", "label": f"{dp['hall']} deployment",
+                      "value": f"{dp['on_time']} of {dp['committed']}" if dp["committed"] else "None due",
+                      "text": (f"racks committed by the end of the week were handed off on time; {racks}." if dp["committed"]
+                               else f"No rack handoff was committed yet; {racks}.") + miss})
+    tiles.append({"key": "partners", "label": "Partner standing",
+                  "rows": [{"name": p["name"].removesuffix(", LLC"), "role": p["role"], "status": PLAIN_STATUS[p["status"]],
+                            "chip": CHIP[p["status"]], "value": f"{p['below']} of {p['of']}"} for p in b["partners"]],
+                  "text": "service levels below minimum for the month to date, as the Customer measures them."})
+    if pue:
+        tiles.append({"key": "pue", "label": "Energy (PUE)", "value": f"{pue['week']:.3f}",
+                      "text": f"this week ({pue['mtd']:.3f} month to date). Target: {pue['target']:.2f} or lower over 52 weeks."})
+    return tiles
 
 
 def prepare(w: dict) -> dict:
@@ -86,6 +118,7 @@ def prepare(w: dict) -> dict:
         s["week_txt"], s["status_txt"] = value(s["week"], s["minimum"]), STATUS_TEXT[s["status"]]
     for k in w["resources"]["spares"]:
         k["actual_txt"] = value(k["actual"], 0)
+    w["brief"]["tiles"] = brief_tiles(w)
     return w
 
 
@@ -175,7 +208,9 @@ def markdown(w: dict, n: dict | None) -> str:
         dp = w["deploy"]
         L += ["", f"Deployment ({dp['hall']}): {dp['week']} work orders completed this week, {dp['to_date']} of {dp['total']} to date; "
                   f"gates closed: {', '.join(dp['gates_closed']) or 'none'}; {dp['findings']} record{'' if dp['findings'] == 1 else 's'} "
-                  f"that do not reconcile" + (f" ({'; '.join(dp['checks'])})" if dp["checks"] else "") + ". Detail on the Deployments tab."]
+                  f"that do not reconcile" + (f" ({'; '.join(dp['checks'])})" if dp["checks"] else "") + ". "
+                  f"Racks: {dp['racks']['in_production']} of {dp['racks']['planned']} handed off to the scheduler; {dp['racks']['on_time']} of "
+                  f"{dp['racks']['committed']} committed by the end of the week handed off on time. Detail on the Deployments tab."]
     e = w["ehs"]
     L += ["", "## 8. Safety (EHS)", "", f"- **Injuries this week:** {e['injuries']}"]
     L += [f"- **Event:** {x['pir']}: {x['screening']}" for x in e["events"]]
@@ -196,17 +231,46 @@ def markdown(w: dict, n: dict | None) -> str:
     return "\n".join(L)
 
 
+def markdown_brief(w: dict, b: dict | None) -> str:
+    src = f" and weekly/brief/{w['id']}.yaml" if b else ""
+    L = [f"<!-- GENERATED by scripts/render_weekly.py from the dataset{src}. Do not edit by hand. -->", "",
+         f"# Leadership brief {w['id']}", "",
+         f"**Site AUS-1 (fictional).** {w['title']}. Prepared {w['prepared_local']}. The numbers are the week's "
+         f"[operations review pack]({w['id']}.md); the risks, decisions, and asks are the Customer Site Lead's.", "",
+         "## Headline", ""]
+    for t in w["brief"]["tiles"]:
+        if t["key"] == "partners":
+            L += [f"- **{t['label']}:** " + "; ".join(f"{r['name']} ({r['role']}) **{r['value']}**" for r in t["rows"])
+                  + f" {t['text']}"]
+        else:
+            L += [f"- **{t['label']}: {t['value']}** {t['text']}"]
+    if not b:
+        return "\n".join(L + ["", "No risks, decisions, or asks recorded for this week.", ""])
+    L += ["", "## Top risks", ""]
+    L += _table(["#", "Risk", "Owner", "Date"], [[str(i), r["risk"], r["owner"], r["date"]] for i, r in enumerate(b["risks"], 1)])
+    L += ["", "## Decisions needed", ""]
+    L += _table(["Decision", "By"], [[x["decision"], x["by"]] for x in b["decisions"]])
+    L += ["", "## Asks", ""]
+    L += _table(["Ask", "Of", "Due"], [[x["ask"], x["of"], x["due"]] for x in b["asks"]])
+    L += ["", "No credits are shown: the contract settles service levels and credits monthly.", ""]
+    return "\n".join(L)
+
+
 def packs() -> list[dict]:
     return [prepare(w) for w in build_all(WeeklyData(SAMPLE))]
 
 
 def outputs() -> dict[Path, str]:
-    nt = notes()
-    return {OUT / f"{w['id']}.md": markdown(w, nt.get(w["id"])) for w in packs()}
+    nt, br = notes(), briefs()
+    out = {}
+    for w in packs():
+        out[OUT / f"{w['id']}.md"] = markdown(w, nt.get(w["id"]))
+        out[OUT / f"{w['id']}-brief.md"] = markdown_brief(w, br.get(w["id"]))
+    return out
 
 
 def html_page() -> str:
-    data = {"weeks": packs(), "notes": notes()}
+    data = {"weeks": packs(), "notes": notes(), "briefs": briefs()}
     tpl = sitenav.inject((ROOT / "templates" / "weekly.html").read_text(encoding="utf-8"), "weekly")
     return sitenav.finish(tpl.replace("__DATA__", json.dumps(data, sort_keys=True).replace("</", "<\\/")))
 

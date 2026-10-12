@@ -1,0 +1,37 @@
+# Leadership brief: the judgment for one week, written by the Customer Site Lead. The four headline numbers come from
+# the week's operations review pack (src/scorecard/weekly.py); nothing here restates them. Tests check that every
+# reference exists in that week's facts, every number appears in them, the text carries no codes, and no individual
+# is named.
+week: 2026-W36
+author: "Customer Site Lead"
+risks:                                  # the top three, most serious first
+  - risk: >-
+      The IT Partner's ticket records do not reconcile with badge and telemetry records: tickets split so the clock
+      restarts, an on-site arrival claimed before badge-in, and a ticket opened late. Until these are reviewed, the
+      IT Partner's own restoration figures cannot be taken as reported.
+    owner: "Customer Site Lead"
+    date: "2026-09-28"
+    refs: [F-001, F-002, F-003, F-004, F-005]
+  - risk: >-
+      Repairs are not holding: 8 of 12 P2 incidents were restored within 8 hours, and 6 of 19 repaired units failed
+      again within 30 days.
+    owner: "IT Partner Site Manager"
+    date: "2026-09-14"
+    refs: [CSL-04, CSL-08, F-011]
+  - risk: >-
+      Hall B's first three racks are due for handoff next week. They are the first test of the deployment schedule.
+    owner: "IT Partner Site Manager"
+    date: "2026-09-12"
+    refs: [B01, B02, B03]
+decisions:                              # decisions needed from site leadership
+  - decision: >-
+      Raise the ticket record findings with the IT Partner's account leadership now, or hold them for the monthly
+      service review. Recommended: hold them for the review, and ask for the IT Partner's account of each in writing
+      beforehand.
+    by: "2026-09-09"
+    refs: [F-001, F-002, F-003]
+asks:
+  - ask: "A written account of each ticket record finding, before the monthly service review."
+    of: "IT Partner account lead"
+    due: "2026-09-25"
+    refs: [F-001, F-002, F-003, F-004, F-005]
