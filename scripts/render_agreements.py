@@ -3,7 +3,8 @@
 
 The pages are rendered from the generated contracts in docs/sla/ (scripts/render_sla.py), so they
 can never differ from them. Every code a contract defines gets an anchor where it is defined
-(``agreements/it-partner-sla/#CSL-07``), which is where the code popups' "Defined in" links land.
+(``agreements/it-partner-sla/#CSL-07``), which is where the code popups' "Defined in" links land. The ownership
+trainer (``agreements/ownership-trainer/``) quizzes the break-fix ownership matrix (src/scorecard/trainer.py).
 
 Usage:
     python scripts/render_agreements.py --out DIR    # write DIR/index.html and one page per contract
@@ -13,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from html import escape
 from pathlib import Path
@@ -22,9 +24,12 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from scorecard import agreements as AG  # noqa: E402
 from scorecard import glossary, sitenav  # noqa: E402
+from scorecard import trainer as TR  # noqa: E402
 from scorecard.sla_model import load_interface_agreement, load_sla  # noqa: E402
 
 TEMPLATE = ROOT / "templates" / "agreements.html"
+TRAINER_BODY = ROOT / "templates" / "trainer_body.html"
+TRAINER = ("trainer", "ownership-trainer", "Ownership trainer")
 ABOUT = {
     "interface": ("landing", "Joins the two partner contracts: where each party's equipment ends, who owns each component, "
                              "how an outage is attributed to exactly one party, handoffs, and change-aware alarm notification."),
@@ -43,8 +48,11 @@ def _doc_meta(key: str) -> dict:
 
 def _doctabs(active: str | None, prefix: str) -> str:
     on = ' class="on" aria-current="page"'
-    return "".join(f'<a href="{prefix}{slug}/"{on if key == active else ""}>{escape(title)}</a>'
-                   for key, slug, title, _ in AG.DOCUMENTS)
+    tabs = [(key, slug, title) for key, slug, title, _ in AG.DOCUMENTS] + [TRAINER]
+
+    def attrs(key: str) -> str:
+        return on if key == active else ' class="quiz"' if key == "trainer" else ""
+    return "".join(f'<a href="{prefix}{slug}/"{attrs(key)}>{escape(title)}</a>' for key, slug, title in tabs)
 
 
 def _page(title: str, body: str, active: str | None, prefix: str, toc: str = "", doc_title: str = "") -> str:
@@ -78,8 +86,17 @@ def landing_page() -> str:
             'generated from the same YAML the scorecards are scored against, so the text and the scoring always agree.</p>'
             f'<div class="cards">{"".join(cards)}</div>'
             '<div class="how">Every code in these contracts and on the other pages has a dotted underline: click it to see '
-            'what it means and where it is defined. The <a href="../glossary/">Glossary</a> lists them all.</div>')
+            'what it means and where it is defined. The <a href="../glossary/">Glossary</a> lists them all.</div>'
+            '<div class="how"><b><a href="ownership-trainer/">Ownership trainer</a>:</b> a scenario quiz built from the '
+            'break-fix ownership matrix. Who does the work, who owns the outcome, and who has to alert the Customer how '
+            'fast, with the clause and the sample month\'s records after each answer.</div>')
     return _page("Agreements", body, None, "../")
+
+
+def trainer_page() -> str:
+    data = json.dumps(TR.build(), sort_keys=True).replace("</", "<\\/")
+    body = TRAINER_BODY.read_text(encoding="utf-8").replace("__TRAINER__", data)
+    return _page(TRAINER[2], body, "trainer", "../../", "", TRAINER[2])
 
 
 def write(out: Path) -> list[Path]:
@@ -90,6 +107,9 @@ def write(out: Path) -> list[Path]:
         (out / slug).mkdir(exist_ok=True)
         (out / slug / "index.html").write_text(doc_page(key), encoding="utf-8", newline="\n")
         paths.append(out / slug / "index.html")
+    (out / TRAINER[1]).mkdir(exist_ok=True)
+    (out / TRAINER[1] / "index.html").write_text(trainer_page(), encoding="utf-8", newline="\n")
+    paths.append(out / TRAINER[1] / "index.html")
     return paths
 
 

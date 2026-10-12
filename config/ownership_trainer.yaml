@@ -1,0 +1,150 @@
+# Break-fix ownership trainer (Agreements tab): one scenario per row of the Interface Agreement's ownership matrix.
+#
+# The answers are never written here. Responsible, Accountable, Consulted, and Informed come from the RACI row in
+# sla/interface_agreement.yaml; the priority comes from a criterion quoted from the owning party's SLA (tested to exist
+# there); the notification and its time come from the agreement's alarm notification rules (NT-1 for a P1, NT-2 for a
+# P2). The trainer cannot drift from the contract: a change to a RACI row changes the answer.
+#
+# Per row:
+#   component    the RACI row, exactly as the agreement names it
+#   scenario     what the technician or the Customer sees (no hint of the owner)
+#   priority     P1 to P3 under the owning party's SLA, or null when it is not an alarm (an audit or a Customer system)
+#   criterion    the priority criterion quoted from that SLA (or from the Interface Agreement)
+#   demarcation  the physical boundary that decides it, when one applies
+#   rules        attribution rules and handoffs that apply (FA-#, HO-#)
+#   match        which sample records the row applied to (Incident Portal): by category, device prefix, or record id
+#   notifier     only when the equipment's owner under the alarm terms is not the Accountable party, with the reason
+
+intro: >-
+  Who fixes it, who owns the outcome, and who has to tell the Customer how fast? Each question is built from one row of
+  the Interface Agreement's ownership matrix. After each answer you see the clause and the sample month's records where
+  that row applied.
+
+notification:
+  P1: {rule: NT-1, minutes: 5}
+  P2: {rule: NT-2, minutes: 15}
+  none: "No alarm notification is owed: the alarm terms cover critical (P1) and major (P2) alarms. The ticket or work order is the record."
+
+rows:
+  - component: "Compute tray (GPU, CPU, memory, cold plate)"
+    scenario: "A GPU in a production compute tray in rack A12 falls off the bus (XID 79) and the scheduler drains the node."
+    priority: P2
+    criterion: "Single compute tray down in production (4 GPUs)."
+    match: {categories: [tray_gpu, Firmware]}
+  - component: "NVLink switch tray and NVLink backplane"
+    scenario: "An NVLink switch tray in rack A15 stops responding and the rack's NVLink domain degrades."
+    priority: P1
+    criterion: "NVLink switch tray failure (treated as rack-wide)."
+    match: {categories: [switch_tray]}
+  - component: "Rack power shelves, PSUs, and whips from the tap-off output"
+    scenario: "One PSU in power shelf 4 of rack A17 reports a fault; the shelf still carries the load on its other PSUs."
+    priority: P3
+    criterion: "Redundant component failed with redundancy still intact (e.g., one PSU)."
+    demarcation: DM-PWR
+    rules: [FA-4]
+    match: {categories: [psu, power_shelf], ids: [WO-41043]}
+  - component: "Busway, tap-off units, and tap-off breakers"
+    scenario: "A tap-off breaker on the B-side busway of Hall B row 3 trips open; the rack it feeds stays up on its A feed."
+    priority: P2
+    criterion: "Loss of redundancy on a power or cooling path (N+1 to N, or 2N to N)."
+    demarcation: DM-PWR
+    rules: [FA-5, HO-2]
+    match: {categories: [OT-FC-PWR, Planned (MOP)], devices: ["BW-", "TO-"], ids: [INC3900001]}
+  - component: "UPS, batteries, unit substations, and switchgear"
+    scenario: "UPS-A2 reports a failed power module and keeps running with less module redundancy."
+    priority: P2
+    criterion: "Loss of redundancy on a power or cooling path (N+1 to N, or 2N to N)."
+    match: {categories: [OT-FC-UPS, UPS and batteries, Switchgear and busway], devices: ["UPS-"]}
+  - component: "Generators, paralleling controls, and fuel"
+    scenario: "During the monthly loaded exercise, GEN-4 starts but will not accept load from the load bank."
+    priority: P2
+    criterion: "A generator fails to start or accept load."
+    match: {categories: [Generators], devices: ["GEN-"]}
+  - component: "138 kV substation and utility transformers"
+    scenario: "The utility's 138 kV service sags, both 13.8 kV mains trip on undervoltage, and the generators pick up the site."
+    priority: P1
+    criterion: "A power or cooling path serving racks with no redundancy remaining."
+    demarcation: DM-UTIL
+    rules: [FA-6]
+    match: {devices: ["138 kV"]}
+    notifier: {party: "Landlord", why: "The Utility is not party to the alarm terms. The main breakers that trip are in the Landlord's switchgear (DM-UTIL), and the Landlord is measured on carrying the load (FA-6)."}
+  - component: "Rack manifold, isolation valves, quick-disconnects"
+    scenario: "Coolant drips from a quick-disconnect on the supply side of rack A06's manifold and the tray leak sensor alarms."
+    priority: P1
+    criterion: "Active coolant leak or any tray or rack manifold leak-detection alarm."
+    demarcation: DM-COOL
+    rules: [HO-3]
+    match: {categories: [leak]}
+  - component: "CDUs and the hall secondary header"
+    scenario: "CDU-B3 reports pump 2 failed; the CDU holds supply flow on its remaining pump."
+    priority: P2
+    criterion: "Loss of redundancy on a power or cooling path (N+1 to N, or 2N to N)."
+    demarcation: DM-COOL
+    rules: [FA-5]
+    match: {categories: [OT-FC-CDU, CDUs], devices: ["CDU-"]}
+  - component: "Chillers, facility water, and pumps"
+    scenario: "CH-08 trips its compressor on high condenser pressure; the plant still meets the load without a spare."
+    priority: P2
+    criterion: "Loss of redundancy on a power or cooling path (N+1 to N, or 2N to N)."
+    match: {categories: [OT-FC-CHW, Chillers], devices: ["CH-"]}
+  - component: "Thermal walls, CRAHs, and hot-aisle containment"
+    scenario: "Fan 6 in thermal wall TW-A4 fails; the wall keeps supply air in range on its other fans."
+    priority: P3
+    criterion: "A degraded component with redundancy intact."
+    demarcation: DM-AIR
+    match: {categories: [OT-FC-AIR], devices: ["TW-", "CRAH-"]}
+  - component: "Building leak detection (cable and controllers)"
+    scenario: "The leak detection cable under CDU-A4 alarms with a leak located at 13.2 m."
+    priority: P1
+    criterion: "Any building leak alarm, VESDA Action or higher, or unplanned fire protection impairment."
+    rules: [HO-3]
+    match: {categories: [OT-FC-LEAK], devices: ["TTDM-"]}
+  - component: "Fire alarm, VESDA, and pre-action suppression"
+    scenario: "VESDA-B2 in Hall B goes to Action on rising smoke obscuration."
+    priority: P1
+    criterion: "Any building leak alarm, VESDA Action or higher, or unplanned fire protection impairment."
+    match: {categories: [OT-FC-FIRE, Fire protection], devices: ["VESDA-"]}
+  - component: "BMS and EPMS operation"
+    scenario: "The BMS stops sending alarms to the Customer's real-time feed for 20 minutes after a server patch."
+    priority: P2
+    criterion: "The Landlord may not disable, filter, or delay the feeds. A feed outage over 15 minutes is a Landlord P2 and counts against OT-KM-06."
+    demarcation: DM-MON
+    match: {}
+  - component: "Customer Telemetry of Record collector and read-only taps"
+    scenario: "The Customer's telemetry collector stops polling the busway meters after its client certificate expires."
+    priority: null
+    match: {}
+  - component: "Back-end fabric optics, cables, and fiber"
+    scenario: "Link errors climb on the optic between a compute tray in rack A29 and its leaf switch, and the link flaps twice in an hour under load."
+    priority: P2
+    criterion: "Back-end fabric link down or flapping and impacting jobs."
+    match: {categories: [optic_link]}
+  - component: "Leaf and spine switches (physical replacement)"
+    scenario: "A leaf switch fails its power-on self test after a reboot; every link on it is down until the switch is replaced."
+    priority: P2
+    criterion: "Back-end fabric link down or flapping and impacting jobs."
+    match: {}
+  - component: "BMC and out-of-band management network (physical)"
+    scenario: "A compute tray in burn-in in rack B14 stops answering on the out-of-band network; its BMC needs a reseat."
+    priority: P3
+    criterion: "Fault on a non-production or burn-in tray."
+    match: {}
+  - component: "Meet-me rooms and cross-connects"
+    scenario: "A cross-connect in the meet-me room is pulled during a cable tray job and one of the site's uplinks goes dark; the others carry the traffic."
+    priority: P3
+    criterion: "A degraded component with redundancy intact."
+    demarcation: DM-NET
+    match: {}
+  - component: "Spares cage, inventory, and RMA shipments"
+    scenario: "The weekly cycle count finds the spares cage two compute trays short of the ledger."
+    priority: null
+    match: {}
+  - component: "Building perimeter, lobby, and access control system"
+    scenario: "The lobby badge readers go offline; security falls back to the paper visitor log and escorts."
+    priority: P3
+    criterion: "A degraded component with redundancy intact."
+    match: {}
+  - component: "Customer halls and cage access lists"
+    scenario: "The quarterly access review finds a technician who left last month still on the Hall A access list."
+    priority: null
+    match: {}

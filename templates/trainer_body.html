@@ -1,0 +1,117 @@
+<h1>Ownership trainer</h1>
+<p class="sub" id="tr-intro"></p>
+<div class="tr-bar">
+  <div class="tr-modes" id="tr-modes"><button type="button" data-mode="quick">Quick 10</button><button type="button" data-mode="all">Every row</button></div>
+  <div class="tr-progress" id="tr-progress"></div>
+</div>
+<div id="tr-card"></div>
+<p class="tr-foot">Your score stays in this page only: nothing is stored or sent. Scenarios are built from the
+<a href="../interface-agreement/#4-break-fix-ownership-matrix">break-fix ownership matrix</a>; the answers are read from
+the agreement itself, so a change to the contract changes the answer.</p>
+<script id="tr-data" type="application/json">__TRAINER__</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("tr-data").textContent);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const PARTIES = D.parties;
+  const NOTICE = ["IT Partner|5", "IT Partner|15", "Landlord|5", "Landlord|15", "none"];
+  const noticeText = v => v === "none" ? "No alarm notification owed" : `${v.split("|")[0]}, within ${v.split("|")[1]} minutes`;
+  const answerNotice = s => s.notifier ? `${s.notifier}|${s.minutes}` : "none";
+  const card = document.getElementById("tr-card");
+  let deck = [], at = 0, score = 0, results = [], pick = null;
+
+  document.getElementById("tr-intro").textContent = D.intro;
+
+  function start(mode) {
+    const all = D.scenarios.slice();
+    if (mode === "quick") {
+      for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
+      deck = all.slice(0, 10);
+    } else deck = all;
+    at = 0; score = 0; results = [];
+    document.querySelectorAll("#tr-modes button").forEach(b => b.classList.toggle("on", b.dataset.mode === mode));
+    ask();
+  }
+
+  function progress() {
+    document.getElementById("tr-progress").textContent = at < deck.length
+      ? `Question ${at + 1} of ${deck.length} · ${score} right so far` : `Done · ${score} of ${deck.length} right`;
+  }
+
+  const choices = (name, opts, label, multi) => `<div class="tr-q" data-q="${name}"><b>${label}</b>${multi ? ' <span class="note">(choose all that apply)</span>' : ""}<div class="tr-opts">` +
+    opts.map(o => `<button type="button" class="tr-opt" data-q="${name}" data-v="${esc(o.v)}">${esc(o.t)}</button>`).join("") + `</div></div>`;
+
+  function ask() {
+    progress();
+    if (at >= deck.length) return finish();
+    const s = deck[at];
+    pick = {R: new Set(), A: null, N: null};
+    card.innerHTML = `<section class="tr-scn"><div class="tr-k">Scenario ${at + 1}</div><p class="tr-what">${esc(s.scenario)}</p>` +
+      choices("R", PARTIES.map(p => ({v: p, t: p})), "Who is Responsible: who does the work?", true) +
+      choices("A", PARTIES.map(p => ({v: p, t: p})), "Who is Accountable: who owns the outcome?", false) +
+      choices("N", NOTICE.map(v => ({v, t: noticeText(v)})), "Who must alert the Customer, and how fast?", false) +
+      `<div class="tr-act"><button type="button" class="tr-go" id="tr-check" disabled>Check answer</button></div><div id="tr-reveal"></div></section>`;
+    card.querySelectorAll(".tr-opt").forEach(b => b.onclick = () => choose(b));
+  }
+
+  function choose(b) {
+    if (card.querySelector(".tr-scn.done")) return;
+    const q = b.dataset.q, v = b.dataset.v;
+    if (q === "R") { pick.R.has(v) ? pick.R.delete(v) : pick.R.add(v); b.classList.toggle("on"); }
+    else { pick[q] = v; card.querySelectorAll(`.tr-opt[data-q="${q}"]`).forEach(x => x.classList.toggle("on", x === b)); }
+    document.getElementById("tr-check").disabled = !(pick.R.size && pick.A && pick.N);
+    document.getElementById("tr-check").onclick = check;
+  }
+
+  const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+
+  function check() {
+    const s = deck[at];
+    const ok = {R: same([...pick.R], s.R), A: pick.A === s.A, N: pick.N === answerNotice(s)};
+    const right = ok.R && ok.A && ok.N;
+    if (right) score++;
+    results.push({s, right});
+    const scn = card.querySelector(".tr-scn");
+    scn.classList.add("done");
+    card.querySelectorAll(".tr-opt").forEach(b => {
+      const q = b.dataset.q, v = b.dataset.v;
+      const correct = q === "R" ? s.R.includes(v) : q === "A" ? s.A === v : answerNotice(s) === v;
+      b.classList.toggle("right", correct);
+      b.classList.toggle("wrong", b.classList.contains("on") && !correct);
+      b.disabled = true;
+    });
+    card.querySelectorAll(".tr-q").forEach(q => q.classList.add(ok[q.dataset.q] ? "q-ok" : "q-no"));
+    document.getElementById("tr-check").remove();
+    const row = `<div class="wide"><table class="tr-raci"><tr>${PARTIES.map(p => `<th>${esc(p)}</th>`).join("")}</tr><tr>${PARTIES.map(p => `<td>${esc(s.raci[p])}</td>`).join("")}</tr></table></div>`;
+    let h = `<div class="tr-verdict ${right ? "ok" : "no"}">${right ? "Right on all three." : "Not quite: the right answers are outlined in green."}</div>`;
+    h += `<div class="tr-clause"><h3>The clause</h3><p><b>Ownership matrix:</b> ${esc(s.component)}. <a href="../interface-agreement/#4-break-fix-ownership-matrix">Interface Agreement, section 4</a></p>${row}`;
+    h += `<p class="note">${Object.entries(D.legend).map(([k, v]) => `${esc(k)}: ${esc(v.split(":")[0])}`).join(" · ")}. ${s.C.length ? `Consulted: ${esc(s.C.join(", "))}. ` : ""}${s.I.length ? `Informed: ${esc(s.I.join(", "))}.` : ""}</p>`;
+    if (s.demarcation) h += `<p><b>Boundary:</b> <a href="../interface-agreement/#${esc(s.demarcation.id)}">${esc(s.demarcation.id)}</a> ${esc(s.demarcation.system)}: ${esc(s.demarcation.boundary)} ${esc(s.demarcation.upstream)} owns everything upstream of it, ${esc(s.demarcation.downstream)} downstream.</p>`;
+    h += s.priority
+      ? `<p><b>Priority:</b> ${esc(s.priority)} (${esc(s.criterion_source)}): "${esc(s.criterion)}"</p>`
+      : `<p><b>Priority:</b> not an alarm; this is ${s.A === "Customer" && s.R.includes("Customer") ? "the Customer's own system" : "an audit finding handled through the records"}.</p>`;
+    h += s.rule
+      ? `<p><b>Notification:</b> <a href="../interface-agreement/#${esc(s.rule)}">${esc(s.rule)}</a> ${esc(s.rule_text)} Here that is the ${esc(s.notifier)}.${s.notifier_why ? " " + esc(s.notifier_why) : ""}</p>`
+      : `<p><b>Notification:</b> ${esc(s.A === "Customer" && s.R.includes("Customer") ? "None owed: the Customer owns this system and sees the fault itself." : D.no_notice)}</p>`;
+    s.rules.forEach(r => h += `<p><b><a href="../interface-agreement/#${esc(r.id)}">${esc(r.id)}</a>:</b> ${esc(r.text)}</p>`);
+    h += `</div><div class="tr-recs"><h3>Where this row applied in the sample month</h3>`;
+    h += s.records.length
+      ? `<ul>${s.records.slice(0, 6).map(r => `<li><a href="../../tickets/#${esc(r.id)}">${esc(r.id)}</a> <span class="note">${esc(r.type)}${r.priority ? " " + esc(r.priority) : ""}, ${esc(r.partner)}</span> ${esc(r.summary)}</li>`).join("")}</ul>${s.records.length > 6 ? `<p class="note">and ${s.records.length - 6} more in the Incident Portal.</p>` : ""}`
+      : `<p class="note">No record in the sample month; the row still binds.</p>`;
+    h += `</div><div class="tr-act"><button type="button" class="tr-go" id="tr-next">${at + 1 < deck.length ? "Next question" : "See your score"}</button></div>`;
+    document.getElementById("tr-reveal").innerHTML = h;
+    document.getElementById("tr-next").onclick = () => { at++; ask(); };
+    progress();
+  }
+
+  function finish() {
+    card.innerHTML = `<section class="tr-scn tr-end"><h2>${score} of ${deck.length} right</h2><ol>${results.map(r =>
+      `<li class="${r.right ? "met" : "missed"}">${esc(r.s.component)}: ${r.right ? "right" : `Responsible ${esc(r.s.R.join(" and "))}, Accountable ${esc(r.s.A)}, ${esc(noticeText(answerNotice(r.s)))}`}</li>`).join("")}</ol>
+      <div class="tr-act"><button type="button" class="tr-go" id="tr-again">Start again</button></div></section>`;
+    document.getElementById("tr-again").onclick = () => start(deck.length === D.scenarios.length ? "all" : "quick");
+  }
+
+  document.querySelectorAll("#tr-modes button").forEach(b => b.onclick = () => start(b.dataset.mode));
+  start("quick");
+})();
+</script>
