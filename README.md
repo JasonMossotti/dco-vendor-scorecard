@@ -290,6 +290,8 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - **EHS for every partner** (OSHA 1910/1926/1904, NFPA 70E-2027, 70B, 855, 110, 72, 51B): 12 site safety rules and three violation classes; EHS credits apply only to independently confirmed violations and are never based on reported injuries or near misses.
 - **Fault attribution** walks each rack's power and cooling paths in the site model to decide which side of the demarcation an outage started on (FA-1), and starts the other partner's clock only at the handoff (FA-3).
 
+**Ownership trainer.** A scenario quiz at [`/agreements/ownership-trainer/`](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/ownership-trainer/), one scenario per row of the Interface Agreement's break-fix ownership matrix (22). An example is coolant dripping from a quick-disconnect on rack A06's manifold: who is Responsible, who is Accountable, and who has to alert the Customer how fast? After each answer it shows the RACI row, the demarcation boundary, the priority criterion quoted from the owning party's SLA, the notification rule (NT-1 within 5 minutes for a P1, NT-2 within 15 for a P2), the attribution rules and handoffs that apply, and the sample month's records where that row applied, linked to the Incident Portal. It has a Quick 10 mode and an every-row mode. `config/ownership_trainer.yaml` holds only what a technician would see; every answer is read from `sla/interface_agreement.yaml` (`src/scorecard/trainer.py`), and tests check that every sample record belongs to a row and every priority criterion exists in the contract, so the quiz cannot drift from the contract. The score stays in the page; nothing is stored.
+
 ## Glossary and code popups
 
 ![Glossary, A to Z](docs/images/glossary.png)
@@ -376,7 +378,7 @@ python scripts/render_availability.py --robustness 60
 
 ## Tests and deployment
 
-- **644 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
+- **651 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -436,6 +438,7 @@ app/streamlit_app.py             Scorecards app (Streamlit; runs in the browser 
 pir/reviews/*.yaml               Written part of each post-incident review
 weekly/notes/*.yaml              Written part of a weekly review (decisions, asks, commentary)
 weekly/brief/*.yaml              Written part of each week's leadership brief (risks, decisions needed, asks)
+config/ownership_trainer.yaml    Ownership trainer scenarios (what a technician sees; answers come from the agreement)
 patterns/lessons.yaml            Written part of the pattern review (root causes, lessons, actions)
 config/change_alarms.yaml        Alarm map, change-type catalog, robustness plants
 config/energy.yaml               Weather, chiller plant, and meter model for the energy layer; PUE check thresholds
