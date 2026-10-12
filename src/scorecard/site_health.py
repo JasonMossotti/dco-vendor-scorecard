@@ -174,13 +174,16 @@ class SiteHealth:
         self.run_trip: dict[str, np.ndarray] = {}
         for run, x in self.power_dev.items():
             if x["family"] == "busway":
+                # dead from the feeder breaker's trip until the busway's own meter reads voltage in tolerance again
                 ch = by.get(("power", run, "Feeder breaker (EPMS)"), [])
-                self.run_trip[run] = self._spans(ch, lambda v: str(v).startswith("Breaker trip"))
+                volts = by.get(("power", run, "cpmAcInfLineToLineVoltAve"), [])
+                self.run_trip[run] = (self._spans(ch, lambda v: str(v).startswith("Breaker trip"))
+                                      | self._spans(volts, lambda v: "out of tolerance" in str(v)))
         for to, x in self.power_dev.items():
             if x["family"] == "tapoff":
                 ch = by.get(("power", to, "cpmAcBrkrCurrentStatus"), [])
                 add(f"FEED:{x['rack']}:{x['side']}", self._spans(ch, lambda v: v == "open"), f"tap-off {to} open")
-                add(f"FEED:{x['rack']}:{x['side']}", self.run_trip[x["run"]], f"busway {x['run']} feeder breaker tripped")
+                add(f"FEED:{x['rack']}:{x['side']}", self.run_trip[x["run"]], f"busway {x['run']} without voltage (feeder breaker tripped)")
         # CDU pumps
         n_pumps = 2
         for cdu, x in self.cdu_dev.items():
