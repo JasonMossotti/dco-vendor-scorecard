@@ -37,8 +37,50 @@ async function until(fn, what, ms = 8000) {
   const t = () => main().textContent;
   const go = async hash => { w.location.hash = hash; await sleep(30); };
 
-  // ---- overview
+  // ---- site health (the landing page)
   ok(errors.length === 0, "no script errors on load " + errors.join(";"));
+  const S = D.site, H = S.hours;
+  ok(t().includes("Site health") && d.querySelector('#tree a[href="#site"]').classList.contains("on"), "the tab opens on Site health");
+  ok(d.getElementById("shr").value === String(H - 1) && d.getElementById("sh-lab").textContent.includes("Sep 27, 23:00 to 00:00 UTC"), "the clock starts at the month's last hour");
+  ok(d.querySelectorAll("#sh-red a.shchip").length === S.groups.length, "a chip for every redundancy group");
+  ok(d.querySelectorAll("#sh-fam a.shtile").length === 5, "a tile per device family");
+  ok(d.querySelectorAll("#sh-map .shrack").length === 64 && d.querySelectorAll("#sh-map .shcdu").length === 8, "hall map: 64 racks and 8 CDUs");
+  ok(t().includes("Hall C (800 VDC pilot)") && d.querySelector('#sh-map a[href="../deployments/#hallc"]'), "Hall C shown as planned, linked to readiness");
+  ok(d.querySelector('a[href="../alarms/"]'), "links to the Alarm Board for alarms");
+  // the utility outage hour: site on generators, every UPS on battery for seconds, generators 7 running
+  await go("#site/597");
+  ok(d.getElementById("shr").value === "597", "the hash sets the hour");
+  const util = [...d.querySelectorAll("#sh-red a.shchip")].find(a => a.title.startsWith("Utility feeds"));
+  ok(util && util.classList.contains("bad") && util.textContent.includes("0 of 2"), "utility feeds 0 of 2, red, during the outage");
+  ok(t().includes("site on generators") && t().includes("UPS-A1: on battery 11 s"), "conditions list the outage and the UPSs on battery");
+  const pw = [...d.querySelectorAll("#sh-fam a.shtile")].find(a => a.getAttribute("href") === "#power");
+  ok(pw.classList.contains("bad") && pw.textContent.includes("Generators running7"), "power tile lost, with 7 generators running");
+  // step and jump
+  d.querySelector('#sh-step button[data-s="1"]').click();
+  ok(d.getElementById("shr").value === "598" && w.location.hash === "#site/598", "+1 hour moves the clock and the link");
+  ok(!t().includes("site on generators"), "the next hour has utility back");
+  d.querySelector('#sh-step button[data-j="-1"]').click();
+  ok(d.getElementById("shr").value === "597", "previous change goes back to the outage hour");
+  // A07 outage: both feeds lost, the rack red on the hall map and linked at that hour
+  await go("#site/377");
+  const a07r = d.querySelector('#sh-map a.shrack[href="#A07/377"]');
+  ok(a07r && a07r.classList.contains("bad") && a07r.title.includes("no GPUs reporting") && a07r.title.includes("both power feeds lost"), "A07 red on the hall map during its outage");
+  const feeds = [...d.querySelectorAll("#sh-red a.shchip")].find(a => a.title.startsWith("Rack feeds, Hall A"));
+  ok(feeds && feeds.classList.contains("bad") && feeds.textContent.includes("31 of 32"), "Hall A rack feeds 31 of 32, red");
+  // a Hall B rack before it is installed, and during commissioning
+  await go("#site/130");
+  ok(d.querySelector("#sh-map span.shrack.off") && [...d.querySelectorAll("#sh-map span.shrack.off")].some(x => x.textContent === "B32"), "uninstalled Hall B racks are grey");
+  ok(d.querySelector("#sh-map a.shrack.com"), "a commissioning rack is hatched");
+  // the month strip: a click moves the clock
+  const svg = d.querySelector("#sh-strip svg[data-strip]");
+  ok(svg && svg.querySelectorAll("rect").length > 20 && svg.querySelector("line.cur"), "month strip drawn with a cursor");
+  ok(t().includes("Full redundancy all month: Generators"), "systems that held all month are listed");
+  ok(S.agreements.every(a => a.misses === 0) && d.querySelectorAll("#main table tbody tr td .tag.ok").length >= S.agreements.length, "every agreement holds and is shown");
+  ok(!/[<>]/.test([...d.querySelectorAll("#sh-cond td")].map(x => x.textContent).join("")), "condition text is escaped");
+
+  // ---- overview
+  await go("#gpus");
+  ok(errors.length === 0, "no script errors on the GPU overview " + errors.join(";"));
   ok(t().includes("GPU telemetry") && d.querySelectorAll(".tile").length === 11, "overview: five tiles per hall and the agreements tile");
   const agree = D.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = D.agreements.reduce((a, c) => a + c.checked, 0);
   ok(t().includes(`${agree.toLocaleString("en-US")} of ${tot.toLocaleString("en-US")}`), "agreements count on the overview");
@@ -127,8 +169,8 @@ async function until(fn, what, ms = 8000) {
   const C = D.cdu;
   const noBad = what => ok(!/\bundefined\b|\bNaN\b/.test(t()), `no undefined/NaN text in ${what}`);
   const fam = () => [...d.querySelectorAll("#tree ul.fam > li")].map(li => li.textContent.trim());
-  ok(fam()[0].startsWith("GPUs") && fam()[1].startsWith("CDUs") && fam()[2].startsWith("Power") && fam()[3].startsWith("Network") && fam()[4].startsWith("Mechanical") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists GPUs, CDUs, Power, Network, Mechanical and any greyed planned families: " + fam().join(" | "));
-  ok(d.querySelectorAll("#tree ul.fam a").length === 5 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
+  ok(fam()[0].startsWith("Site health") && fam()[1].startsWith("GPUs") && fam()[2].startsWith("CDUs") && fam()[3].startsWith("Power") && fam()[4].startsWith("Network") && fam()[5].startsWith("Mechanical") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists Site health, GPUs, CDUs, Power, Network, Mechanical and any greyed planned families: " + fam().join(" | "));
+  ok(d.querySelectorAll("#tree ul.fam a").length === 6 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
   ok(!d.querySelector('#tree .famsec[data-fam="gpu"]').classList.contains("off") && d.querySelector('#tree .famsec[data-fam="cdu"]').classList.contains("off"), "on a GPU view the GPU section shows and the CDU section is hidden");
   ok([...d.querySelectorAll("#tree .planned")].some(x => x.textContent.includes("CDU-C1")) && !d.querySelector('#tree a[href="#CDU-C1"]'), "Hall C CDUs are greyed, not links");
   await go("#cdus");
@@ -419,7 +461,7 @@ async function until(fn, what, ms = 8000) {
 
   // ---- error state
   await go("#A99");
-  ok(t().includes("GPU telemetry"), "an unknown rack falls back to the overview");
+  ok(t().includes("Site health"), "an unknown rack falls back to Site health");
   fs.renameSync(path.join(site, "data/gpu/A12.json"), path.join(site, "data/gpu/A12.json.bak"));
   try {
     await go("#A12");
@@ -436,7 +478,7 @@ async function until(fn, what, ms = 8000) {
   // ---- deep link and back
   const dom2 = new JSDOM(html, opts);
   await sleep(50);
-  ok(dom2.window.document.getElementById("main").textContent.includes("GPU telemetry"), "a fresh load without a hash opens the overview");
+  ok(dom2.window.document.getElementById("main").textContent.includes("Site health"), "a fresh load without a hash opens Site health");
   const dom3 = new JSDOM(html, { ...opts, url: "https://example.test/telemetry/#fields" });
   await sleep(50);
   ok(dom3.window.document.getElementById("main").textContent.includes("Field reference"), "a deep link to #fields opens it");

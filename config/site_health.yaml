@@ -1,0 +1,47 @@
+# Site health dashboard: the Telemetry tab's landing page (scripts/render_telemetry.py, src/scorecard/site_health.py).
+#
+# It shows readings and redundancy, not alarms (the Alarm Board stays the place for alarms). Everything is read from
+# the committed telemetry tiers (data/telemetry/) and the topology in site/site.yaml; nothing new is generated.
+#
+# States, per hour (the worst minute of the hour):
+#   green  normal
+#   amber  still running, but a margin or a redundant unit is gone (N+1 lost, a node drained, thermal slowdown)
+#   red    below what the design needs (fewer units than N, a rack with no power, a leak)
+# There is no composite health score: one number would hide which redundancy is gone.
+
+framing: >-
+  One page for the whole site at any hour of the month: whether each system still has its redundant unit, each
+  device family's main readings, and every rack's state on the hall map. It shows readings and redundancy, not alarms;
+  alarms are on the Alarm Board.
+
+# Redundancy is counted in units in service against the units the design needs (site/site.yaml). A unit counts as out
+# for any minute a recorded state change says so; the hour shows its worst minute. A pump or UPS out for planned work
+# counts too: the design is at N while it is out, even though the device's own redundancy status only reports failures.
+unit_out:
+  ups: "On static bypass (upsBasicOutputStatus switchedBypass). On battery is the UPS doing its job, so it counts as in service."
+  utility: "MV main breaker tripped."
+  rack_feed: "Tap-off breaker open, or its busway's feeder breaker tripped."
+  cdu_pump: "Pump Status.State Disabled or InTest, or Status.Health Critical."
+  chiller: "Chiller enable held Off by the BMS, or a compressor trip (alarm) active. A free-cooling inhibit does not take a chiller out."
+  wall_fan: "A fan reporting Alarm (FanSts_OV[n])."
+
+thresholds:                         # basis: assumption unless a source is given
+  gpu:
+    temp_amber_c: 85                # 2 C under hardware thermal slowdown (config/gpu_health.yaml slowdown_c 87)
+  cdu:
+    supply_amber_c: 27.0            # rack coolant supply; the CDUs control to about 25 C
+    supply_red_c: 30.0
+  loop:
+    supply_amber_c: 21.0            # facility water design supply 20 C (site/site.yaml)
+    supply_red_c: 23.0
+  air:
+    supply_amber_c: 27.0            # ASHRAE TC 9.9 recommended envelope, upper limit 27 C
+    supply_red_c: 32.0              # ASHRAE class A1 allowable, upper limit 32 C
+  ups:
+    load_amber_pct: 75.0            # 4 make 3: above 75% per UPS, the other three cannot take a failed UPS's load
+    load_red_pct: 100.0
+  generator:
+    fuel_amber_pct: 50.0
+
+sources:
+  - {name: "ASHRAE TC 9.9, Thermal Guidelines for Data Processing Environments, 5th edition (recommended 18 to 27 C; A1 allowable 15 to 32 C)", url: "https://www.ashrae.org/technical-resources/bookstore/datacom-series", checked: "2026-10-11"}

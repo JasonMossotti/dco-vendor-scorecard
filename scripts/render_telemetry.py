@@ -36,6 +36,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from scorecard import gpu_health as H  # noqa: E402
 from scorecard import sitenav  # noqa: E402
+from scorecard import site_health as SH  # noqa: E402
 from scorecard import site_model as S  # noqa: E402
 from scorecard import telemetry as TM  # noqa: E402
 from scorecard import telemetry_cdu as TC  # noqa: E402
@@ -159,6 +160,7 @@ def prepare(t: TM.Telemetry | None = None) -> dict:
         "power": prepare_power(),
         "network": prepare_network(),
         "mechanical": prepare_mechanical(),
+        "site": prepare_site(),
     }
 
 
@@ -1104,6 +1106,64 @@ def mechanical_markdown(f: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+# --------------------------------------------------------------------------- site health
+OUT_SITE = ROOT / "reports" / "site_health.md"
+
+
+def prepare_site(dirs: SH.Dirs | None = None) -> dict:
+    sh, data = SH.build(dirs)
+    checks = SH.agreements(sh, data)
+    out = SH.page_data(data)
+    out["agreements"] = [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks]
+    out["misses"] = [m for c in checks for m in c.misses][:20]
+    return out
+
+
+def _hours(H: int, spans: list[tuple[int, int]]) -> str:
+    return f"{sum(b - a + 1 for a, b in spans):,} h" if spans else "none"
+
+
+def site_markdown(f: dict) -> str:
+    w, H = f["window"], f["hours"]
+    hall = {x["id"]: x["name"] for x in f["halls"]}
+    L = ["# Site health", "",
+         f"Site AUS-1, {day(w['start'])} to {day(w['end'])} (the sample month). {f['framing'].strip()} Everything here is fictional.", "",
+         "  Source: data/telemetry/ (every section's hourly tier and recorded state changes), site/site.yaml  |  "
+         "Thresholds: config/site_health.yaml  |  Generator: scripts/render_telemetry.py", "",
+         "## Redundancy over the month", "",
+         "Units in service against the units the design needs; each hour counts its worst minute.", "",
+         "| System | Where | Design | Hours with no redundant unit | Hours below N |", "|---|---|---|---:|---:|"]
+    for g in f["groups"]:
+        st = SH.unrle(g["state"])
+        L.append(f"| {g['name']}{' (' + g['unit_word'] + ')' if g['unit_word'] else ''} | {hall.get(g['hall'], 'Site')} | {g['scheme']} | "
+                 f"{st.count(SH.AMBER):,} | {st.count(SH.RED):,} |")
+    L += ["", "## Each family's state", "", "| Family | Normal | Degraded | Lost |", "|---|---:|---:|---:|"]
+    for x in f["families"]:
+        st = SH.unrle(f["family_state"][x["key"]])
+        L.append(f"| {x['name']} | {st.count(SH.GREEN):,} h | {st.count(SH.AMBER):,} h | {st.count(SH.RED):,} h |")
+    L += ["", "## Conditions other than GPU racks", "",
+          "GPU rack conditions (drained nodes, thermal slowdown, missing GPUs) are on the page's hall map and in the GPU telemetry report.", "",
+          "| From | To | Family | Where | Condition |", "|---|---|---|---|---|"]
+    fam = {x["key"]: x["name"] for x in f["families"]}
+    start = G.parse(w["start"])
+    at = lambda h: (start + timedelta(hours=h)).strftime("%b ") + str((start + timedelta(hours=h)).day) + (start + timedelta(hours=h)).strftime(" %H:%M")  # noqa: E731
+    for i in f["issues"]:
+        if i["family"] == "gpu" or i["text"].startswith("Hall") and "link drops" in i["text"]:
+            continue
+        L.append(f"| {at(i['from'])} | {at(i['to'] + 1)} | {fam[i['family']]} | {hall.get(i['hall'], 'Site')} | {i['text']} |")
+    drops = [i for i in f["issues"] if "link drops" in i["text"]]
+    L += ["", f"InfiniBand link drops: {len(drops)} spans in {sum(i['to'] - i['from'] + 1 for i in drops)} hours (each on the Network page)."]
+    L += ["", "## Agreement with the hourly figures", "",
+          "The dashboard's state comes from each section's recorded state changes; these checks hold it to the hourly figures each section publishes.", "",
+          "| Check | Agrees |", "|---|---:|"]
+    for a in f["agreements"]:
+        L.append(f"| {a['title']} | {a['checked'] - a['misses']:,} of {a['checked']:,} |")
+    if f["misses"]:
+        L += ["", "Disagreements:", ""] + [f"- {m}" for m in f["misses"]]
+    L += ["", "## Sources", ""] + [f"- {s['name']}: {s['url']} (checked {s['checked']})" for s in f["sources"]]
+    return "\n".join(L) + "\n"
+
+
 def racks_json(t: TM.Telemetry) -> dict:
     """Per rack per hour, from rack_hourly.csv, plus the CDU supply per hour (the page's fleet view)."""
     hours = t.hourly[next(iter(t.hourly))]["hours"]
@@ -1223,7 +1283,7 @@ def markdown(f: dict) -> str:
 
 
 def robustness_month(k: int, keep: Path | None = None) -> dict:
-    """Every GPU, CDU, power, network, and mechanical agreement on generated month k (its own dataset, GPU Health layer,
+    """Every GPU, CDU, power, network, mechanical, and site health agreement on generated month k (its own dataset, GPU Health layer,
     telemetry, and energy meters, in a temporary folder, or in keep to look at afterwards)."""
     import contextlib
     from scorecard.sla_model import load_sla
@@ -1260,6 +1320,8 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         mech = TMS.MechanicalTelemetry(d, 2000 + k, d / "energy", d / "cdu", mcfg, energy_cfg=ecfg)
         TMS.write_mechanical(mech, mech.run(), d / "mechanical", "", d / "mech_min")
         mchecks = TMM.agreements(TMM.load(d / "mechanical", d / "mech_min", d, d / "energy", d / "cdu", d / "power"), mcfg, ecfg, S.load_site())
+        sh, shd = SH.build(SH.Dirs(d / "telemetry", d / "cdu", d / "power", d / "network", d / "mechanical", d))
+        schecks = SH.agreements(sh, shd)
     conflicts = [f"records disagree with each other: {pub.conflicts[:3]}"] * bool(pub.conflicts) \
         + [f"CDU records disagree with each other: {layer.conflicts[:3]}"] * bool(layer.conflicts) \
         + [f"power records disagree with each other: {power.conflicts[:3]}"] * bool(power.conflicts) \
@@ -1267,7 +1329,7 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         + [f"mechanical records disagree with each other: {mech.conflicts[:3]}"] * bool(mech.conflicts)
     pack = lambda cs: {c.name: [c.checked - len(c.misses), c.checked, c.misses[:3]] for c in cs}      # noqa: E731
     return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "network": pack(nchecks), "mechanical": pack(mchecks),
-            "conflicts": conflicts}
+            "site": pack(schecks), "conflicts": conflicts}
 
 
 def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
@@ -1300,7 +1362,7 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
     bad = 0
     ok = True
     for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("network", "Network", 14),
-                         ("mechanical", "Mechanical", 12)):
+                         ("mechanical", "Mechanical", 12), ("site", "Site health", 12)):
         tot: dict[str, list[int]] = {}
         for k in range(n):
             if fam not in done[k]:
@@ -1312,7 +1374,7 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
                 x[0], x[1] = x[0] + a, x[1] + b
                 for m in misses:
                     print(f"  month {k}: {fam} {name}: {m}")
-        print(f"{title} telemetry agreements on {n} generated months:")
+        print(f"{title}{'' if fam == 'site' else ' telemetry'} agreements on {n} generated months:")
         for name, (a, b) in tot.items():
             print(f"  {name:<{w}} {a:,}/{b:,}")
         ok = ok and all(a == b for a, b in tot.values())
@@ -1334,7 +1396,7 @@ def main() -> int:
         return robustness(args.robustness, args.jobs, args.resume)
     f = prepare()
     texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"]), OUT_NET: network_markdown(f["network"]),
-             OUT_MECH: mechanical_markdown(f["mechanical"])}
+             OUT_MECH: mechanical_markdown(f["mechanical"]), OUT_SITE: site_markdown(f["site"])}
     if args.check:
         stale = [p for p, text in texts.items() if not p.exists() or p.read_text(encoding="utf-8") != text]
         for p in stale:
@@ -1343,7 +1405,7 @@ def main() -> int:
     for p, text in texts.items():
         p.write_text(text, encoding="utf-8", newline="\n")
     for name, a in (("GPU", f["agreements"]), ("CDU", f["cdu"]["agreements"]), ("Power", f["power"]["agreements"]),
-                    ("Network", f["network"]["agreements"]), ("Mechanical", f["mechanical"]["agreements"])):
+                    ("Network", f["network"]["agreements"]), ("Mechanical", f["mechanical"]["agreements"]), ("Site health", f["site"]["agreements"])):
         ok = sum(x["checked"] - x["misses"] for x in a)
         print(f"{name}: {len(a)} agreements, {ok:,} of {sum(x['checked'] for x in a):,} cases agree")
     print("Wrote " + ", ".join(str(p.relative_to(ROOT)) for p in texts))

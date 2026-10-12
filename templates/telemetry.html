@@ -116,6 +116,25 @@ pre.scrape .c { color:#8fa3b5; }
 .fm a { position:relative; display:block; height:22px; line-height:22px; text-align:center; border-radius:3px; color:#fff; text-decoration:none; text-shadow:0 0 2px rgba(0,0,0,.5); font-variant-numeric:tabular-nums; }
 .fm a.lt { color:var(--ink); text-shadow:none; } .fm a.no { background:var(--none); color:var(--muted); text-shadow:none; }
 .fm a i.x { position:absolute; top:3px; right:3px; width:7px; height:7px; border-radius:50%; border:1px solid #fff; background:var(--bad); }
+.clock { position:sticky; top:0; background:#fff; z-index:4; padding:4px 0 2px; border-bottom:1px solid var(--line); }
+.clock input[type=range] { max-width:none; }
+.clock .ctl b { font-size:16px; }
+table.shred { width:auto; } table.shred td { padding:3px 8px 3px 0; } table.shred td:first-child { white-space:nowrap; padding-right:16px; }
+a.shchip { display:flex; align-items:baseline; gap:8px; min-width:150px; padding:3px 9px; border-radius:6px; text-decoration:none; color:var(--ink); border:1px solid var(--line); border-left-width:5px; line-height:1.3; }
+a.shchip b { font-size:14px; font-variant-numeric:tabular-nums; } a.shchip span { font-size:11px; color:var(--muted); }
+a.shchip.ok { border-left-color:#2e9e5b; } a.shchip.warn { border-left-color:#e0a100; background:#fdf8e8; } a.shchip.bad { border-left-color:#c62828; background:#fdf1f0; } a.shchip.off { border-left-color:var(--none); color:var(--muted); }
+.shf { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:10px; margin:8px 0 14px; }
+a.shtile { display:block; color:inherit; text-decoration:none; background:var(--panel); border-radius:8px; padding:8px 12px; border-top:4px solid #2e9e5b; }
+a.shtile:hover { outline:1px solid var(--it); } a.shtile.warn { border-top-color:#e0a100; } a.shtile.bad { border-top-color:#c62828; }
+a.shtile .k { font-weight:700; margin-bottom:4px; } a.shtile table { font-size:12px; } a.shtile td, a.shtile th { padding:1px 6px 1px 0; border:0; }
+a.shtile ul { margin:6px 0 0; padding-left:16px; font-size:12px; } a.shtile li.warn { color:var(--warn); } a.shtile li.bad { color:var(--bad); }
+.shmap { display:flex; flex-wrap:wrap; gap:8px 28px; } .shhall { flex:1 1 420px; max-width:640px; }
+.shgrid { display:grid; gap:3px; font-size:12px; }
+.shgrid a, .shgrid span { display:block; height:26px; line-height:26px; text-align:center; border-radius:3px; text-decoration:none; font-variant-numeric:tabular-nums; }
+.shrack.ok { background:#2e9e5b; color:#fff; } .shrack.warn { background:#e0a100; color:#1e2933; } .shrack.bad { background:#c62828; color:#fff; } .shrack.off { background:var(--none); color:var(--muted); }
+.shrack.com.ok { background:repeating-linear-gradient(135deg,#2e9e5b 0 5px,#5fb985 5px 10px); }
+.shcdu { border:1px solid var(--line); color:var(--ink); background:#fff; border-left:5px solid #2e9e5b; font-weight:600; } .shcdu.warn { border-left-color:#e0a100; } .shcdu.bad { border-left-color:#c62828; background:#fdf1f0; }
+.legend i.shc { background:repeating-linear-gradient(135deg,#2e9e5b 0 4px,#5fb985 4px 8px); }
 @media (max-width:860px) { .wrap { grid-template-columns:1fr; } nav.tree { position:static; max-height:40vh; } main { padding:16px 14px; } .tiles { grid-template-columns:repeat(2,1fr); } }
 @media print { nav.tree, header.top { display:none; } .wrap { display:block; } .tip { display:none !important; } }
 </style>
@@ -209,8 +228,11 @@ __SITENAV__
 
   // --------------------------------------------------------------------- tree
   function tree() {
-    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li>`
+    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#site" data-fam="site">Site health</a></li><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li>`
       + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
+    h += `<div class="famsec" data-fam="site"><div class="sec">Site health</div><ul><li>${link("site", "The whole site, by hour")}</li>`
+      + SH.halls.map(x => `<li><details open><summary>${esc(x.name)}</summary><ul class="racks">` + Object.keys(SHR).filter(k => SHR[k].hall === x.id).map(k => `<li>${link(k, k)}</li>`).join("") + `</ul></details></li>`).join("")
+      + `</ul><div class="sec">Elsewhere</div><ul><li><a href="../alarms/">Alarm Board ↗</a></li><li><a href="../availability/">Availability ↗</a></li></ul></div>`;
     h += `<div class="famsec" data-fam="gpu"><div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
     for (const hall of HALLS) {
       const H = B.halls[hall], rs = B.racks.filter(r => r.hall === hall);
@@ -2071,6 +2093,179 @@ __SITENAV__
     return h;
   }
 
+  // ------------------------------------------------------------- site health
+  const SH = B.site, SHH = SH.hours;
+  const SHG = SH.groups.map(g => ({...g, avail: unrle(g.avail), total: unrle(g.total), need: unrle(g.need), state: unrle(g.state)}));
+  const SHR = Object.fromEntries(Object.entries(SH.racks).map(([k, x]) => [k, {...x, state: unrle(x.state), why: unrle(x.why)}]));
+  const SHF = Object.fromEntries(Object.entries(SH.family_state).map(([k, v]) => [k, unrle(v)]));
+  const SHHALL = Object.fromEntries(Object.entries(SH.hall_state).map(([h, x]) => [h, Object.fromEntries(Object.entries(x).map(([k, v]) => [k, unrle(v)]))]));
+  const SHS = unrle(SH.site_state);
+  const SHRD = Object.fromEntries(Object.entries(SH.readings).map(([f, d]) => [f, Object.fromEntries(Object.entries(d).map(([s, x]) => [s, Object.fromEntries(Object.entries(x).map(([k, v]) => [k, unrle(v)]))]))]));
+  const stCls = {"-1": "off", 0: "ok", 1: "warn", 2: "bad"}, stTxt = {"-1": "not in service", 0: "normal", 1: "degraded", 2: "lost"};
+  const stCol = {"-1": "#d9dee4", 0: "#2e9e5b", 1: "#e0a100", 2: "#c62828"};
+  const shChanges = [...new Set(SH.issues.flatMap(i => [i.from, i.to + 1]))].filter(h => h > 0 && h < SHH).sort((a, b) => a - b);
+  let shHour = SHH - 1, shTimer = null;
+  const shAt = h => SH.issues.filter(i => i.from <= h && h <= i.to);
+  const shLink = (id, h) => SHR[id] ? `${id}/${h}` : id;
+  const hallName = id => (SH.halls.find(x => x.id === id) || {name: "Site"}).name;
+  const stTag = s => tag(stTxt[s], stCls[s]);
+
+  function siteView(hour, seq) {
+    if (shTimer) { clearInterval(shTimer); shTimer = null; }
+    shHour = hour == null || Number.isNaN(hour) ? SHH - 1 : Math.max(0, Math.min(SHH - 1, hour));
+    let h = `<div class="kind">Telemetry</div><h1>Site health</h1><p class="sub">${esc(SH.framing)} Each hour shows its worst minute. Everything is read from the five telemetry sections below; all names and readings are fictional.</p>`;
+    h += `<div class="clock"><div class="ctl"><label for="shr">Hour</label><b id="sh-lab"></b><span id="sh-site"></span></div>`
+      + `<input type="range" id="shr" min="0" max="${esc(SHH - 1)}" value="${esc(shHour)}" aria-label="Hour of the month">`
+      + `<div class="btns" id="sh-step"><button data-s="-24">−1 day</button><button data-s="-1">−1 hour</button><button data-s="1">+1 hour</button><button data-s="24">+1 day</button>`
+      + `<button data-j="-1" title="The previous hour a condition began or ended">◀ Previous change</button><button data-j="1" title="The next hour a condition begins or ends">Next change ▶</button><button id="sh-play">Play</button>`
+      + `<a class="b" href="../alarms/">Alarm Board ↗</a></div></div>`;
+    h += `<h2 class="sec">Redundancy</h2><p class="note">Units in service against the units the design needs (site/site.yaml). Amber: running at N, with no redundant unit; red: below N. A unit out for planned work counts too. Click a system for its devices.</p><div class="scroll" id="sh-red"></div>`;
+    h += `<h2 class="sec">Device families</h2><div class="shf" id="sh-fam"></div>`;
+    h += `<h2 class="sec">Hall map</h2><p class="note">Every rack at this hour, with its row's CDU. Hover for what is behind a colour; click a rack to open it at this hour.</p><div class="shmap" id="sh-map"></div>`
+      + `<div class="legend"><span><i class="band" style="background:${esc(stCol[0])}"></i>normal</span><span><i class="band" style="background:${esc(stCol[1])}"></i>degraded</span><span><i class="band" style="background:${esc(stCol[2])}"></i>lost</span><span><i class="band shc"></i>commissioning (Hall B rack not yet handed over)</span><span><i class="band" style="background:${esc(stCol[-1])}"></i>not installed</span></div>`;
+    h += `<h2 class="sec">Conditions at this hour</h2><div id="sh-cond"></div>`;
+    h += `<h2 class="sec">The month</h2><p class="note">Each row by hour; the line marks the hour shown. Click anywhere to go to that hour. Systems that held full redundancy all month are listed under the chart.</p><div id="sh-strip"></div>`;
+    h += `<h2 class="sec">How states are set</h2>` + shRules();
+    main.innerHTML = h;
+    const r = document.getElementById("shr");
+    r.addEventListener("input", () => shSet(+r.value));
+    document.getElementById("sh-step").addEventListener("click", e => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      if (b.id === "sh-play") return shPlay(b);
+      if (b.dataset.s) shSet(shHour + +b.dataset.s);
+      if (b.dataset.j) {
+        const n = +b.dataset.j > 0 ? shChanges.find(x => x > shHour) : [...shChanges].reverse().find(x => x < shHour);
+        if (n != null) shSet(n);
+      }
+    });
+    document.getElementById("sh-strip").innerHTML = shStrip();
+    document.getElementById("sh-strip").addEventListener("click", e => {
+      const svg = e.target.closest("svg[data-strip]");
+      if (!svg) return;
+      const box = svg.getBoundingClientRect(), L = +svg.dataset.l, W = +svg.dataset.w, x = (e.clientX - box.left) * W / box.width;
+      if (x >= L) shSet(Math.floor((x - L) / (W - L - 6) * SHH));
+    });
+    shUpdate();
+  }
+  function shPlay(btn) {
+    if (shTimer) { clearInterval(shTimer); shTimer = null; btn.textContent = "Play"; return; }
+    if (shHour >= SHH - 1) shSet(0);
+    btn.textContent = "Pause";
+    shTimer = setInterval(() => { if (shHour >= SHH - 1 || !document.getElementById("shr")) { clearInterval(shTimer); shTimer = null; btn.textContent = "Play"; return; } shSet(shHour + 1); }, 180);
+  }
+  function shSet(h) {
+    shHour = Math.max(0, Math.min(SHH - 1, h));
+    const r = document.getElementById("shr");
+    if (r) r.value = shHour;
+    try { history.replaceState(null, "", `#site/${shHour}`); } catch (e) { /* file:// */ }
+    shUpdate();
+  }
+  function shUpdate() {
+    const h = shHour, s = SHS[h], n = shAt(h);
+    document.getElementById("sh-lab").textContent = `${md(hourIso(h))}, ${hourIso(h).slice(11, 16)} to ${hourIso(h + 1).slice(11, 16)} UTC`;
+    document.getElementById("sh-site").innerHTML = s === 0 ? tag("Site normal", "ok") : tag(`Site ${stTxt[s]}: ${n.length} condition${n.length === 1 ? "" : "s"}`, stCls[s]);
+    document.getElementById("sh-red").innerHTML = shRedundancy(h);
+    document.getElementById("sh-fam").innerHTML = SH.families.map(f => shFamily(f, h)).join("");
+    document.getElementById("sh-map").innerHTML = SH.halls.map(x => shHall(x, h)).join("")
+      + SH.planned.map(p => `<div class="shhall"><div class="hallname">${esc(p.name)}</div><p class="note">${esc(p.state === "planned" ? "Planned: not in service, no telemetry yet." : p.state)} <a href="../deployments/#hallc">Readiness ↗</a></p></div>`).join("");
+    document.getElementById("sh-cond").innerHTML = n.length ? `<table><thead><tr><th>State</th><th>Family</th><th>Where</th><th>Condition</th><th>Since</th><th>Until</th></tr></thead><tbody>`
+      + n.map(i => `<tr><td>${stTag(i.state)}</td><td>${esc((SH.families.find(f => f.key === i.family) || {}).name)}</td><td>${esc(i.hall ? hallName(i.hall) : "Site")}</td><td><a href="#${esc(shLink(i.link, h))}">${esc(i.text)}</a></td><td class="n">${esc(hourAt(i.from))}</td><td class="n">${esc(hourAt(i.to + 1))}</td></tr>`).join("") + `</tbody></table>`
+      : `<p>Nothing degraded or lost at this hour: every system has its redundant unit and every reading is inside its thresholds.</p>`;
+    document.querySelectorAll("#sh-strip line.cur").forEach(l => { const W = +l.closest("svg").dataset.w, L = +l.closest("svg").dataset.l, x = L + (h + 0.5) / SHH * (W - L - 6); l.setAttribute("x1", x); l.setAttribute("x2", x); });
+  }
+  function shRedundancy(h) {
+    const cols = [null, ...SH.halls.map(x => x.id)], rows = [];
+    for (const g of SHG) if (!rows.includes(g.name)) rows.push(g.name);
+    let t = `<table class="shred"><thead><tr><th>System</th>${cols.map(c => `<th>${esc(c ? hallName(c) : "Site")}</th>`).join("")}</tr></thead><tbody>`;
+    for (const name of rows) {
+      t += `<tr><td>${esc(name)}</td>` + cols.map(c => {
+        const g = SHG.find(x => x.name === name && x.hall === c);
+        if (!g) return `<td></td>`;
+        const s = g.state[h], unit = g.unit_word ? ` ${g.unit_word}` : "";
+        const title = `${name}${c ? ", " + hallName(c) : ""}: ${g.avail[h]} of ${g.total[h]}${unit}; design ${g.scheme}. ${stTxt[s]}`;
+        return `<td><a class="shchip ${esc(stCls[s])}" href="#${esc(g.link)}" title="${esc(title)}"><b>${s === -1 ? "–" : `${esc(g.avail[h])} of ${esc(g.total[h])}`}</b><span>${esc(g.scheme)}${g.unit_word ? ` · ${esc(g.unit_word.replace(/^\w+ /, ""))}` : ""}</span></a></td>`;
+      }).join("") + `</tr>`;
+    }
+    return t + `</tbody></table>`;
+  }
+  const fmt = (v, d = 0, u = "") => v == null ? "–" : `${num(v, d)}${u}`;
+  const shRows = {
+    gpu: [["Racks in service", (r, h) => fmt(r.racks[h])], ["GPUs reporting", (r, h) => fmt(r.gpus[h])], ["Mean utilization", (r, h) => fmt(r.util[h], 1, "%")],
+          ["GPU power", (r, h) => fmt(r.kw[h], 0, " kW")], ["Peak GPU temperature", (r, h) => fmt(r.temp[h], 0, " °C")], ["Nodes drained", (r, h) => fmt(r.drained[h])], ["Racks in thermal slowdown", (r, h) => fmt(r.slow[h])]],
+    cdu: [["Warmest coolant supply", (r, h) => fmt(r.supply[h], 1, " °C")], ["Coolant flow", (r, h) => fmt(r.flow[h], 0, " L/min")], ["Heat removed", (r, h) => fmt(r.heat_kw[h], 0, " kW")], ["CDUs with a leak", (r, h) => fmt(r.leaks[h])]],
+    power: [["IT load (UPS output)", (r, h) => fmt(r.it_kw[h], 0, " kW")], ["Highest IT UPS load", (r, h) => fmt(r.load_max[h], 1, "%")], ["UPSs on battery", (r, h) => fmt(r.battery[h])], ["Lowest battery charge", (r, h) => fmt(r.soc_min[h], 0, "%")]],
+    network: [["Links cabled", (r, h) => fmt(r.cabled[h])], ["Links up all hour", (r, h) => fmt(r.up[h])], ["Link drops", (r, h) => fmt(r.downs[h])], ["Mean rail utilization", (r, h) => fmt(r.util[h], 1, "%")], ["NVLink trays reporting", (r, h) => `${fmt(r.trays[h])} of ${fmt(r.trays_total[h])}`]],
+    mechanical: [["Warmest supply air", (r, h) => fmt(r.air_max[h], 1, " °C")]],
+  };
+  const shSite = {
+    power: [["Generators running", (r, h) => `${fmt(r.gens_running[h])}`], ["Lowest generator fuel", (r, h) => fmt(r.fuel_min[h], 0, "%")]],
+    mechanical: [["Facility water supply / return", (r, h) => `${fmt(r.supply[h], 1)} / ${fmt(r.ret[h], 1)} °C`], ["Chillers running / needed", (r, h) => `${fmt(r.running[h])} / ${fmt(r.needed[h])}`], ["Chillers available", (r, h) => fmt(r.available[h])], ["Water pumps running", (r, h) => fmt(r.pumps[h])]],
+  };
+  function shFamily(f, h) {
+    const s = SHF[f.key][h], R = SHRD[f.key], halls = SH.halls.map(x => x.id).filter(x => R[x]);
+    let t = `<a class="shtile ${esc(stCls[s])}" href="#${esc(f.link)}"><div class="k">${esc(f.name)} ${stTag(s)}</div><table>`;
+    if (shSite[f.key] && R.site) t += shSite[f.key].map(([k, fn]) => `<tr><td>${esc(k)}</td><td class="n" colspan="${esc(halls.length)}">${fn(R.site, h)}</td></tr>`).join("");
+    if (halls.length) t += `<tr><th></th>${halls.map(x => `<th class="n">${esc(hallName(x))}</th>`).join("")}</tr>` + (shRows[f.key] || []).map(([k, fn]) => `<tr><td>${esc(k)}</td>${halls.map(x => `<td class="n">${fn(R[x], h)}</td>`).join("")}</tr>`).join("");
+    const n = shAt(h).filter(i => i.family === f.key);
+    t += `</table>` + (n.length ? `<ul>${n.slice(0, 4).map(i => `<li class="${esc(stCls[i.state])}">${esc(i.text)}</li>`).join("")}${n.length > 4 ? `<li>${esc(n.length - 4)} more below</li>` : ""}</ul>` : "");
+    return t + `</a>`;
+  }
+  function shHall(x, h) {
+    const st = SHHALL[x.id];
+    let t = `<div class="shhall"><div class="hallname">${esc(x.name)} ${Object.entries(st).filter(([, v]) => v[h] > 0).map(([k, v]) => tag(`${(SH.families.find(f => f.key === k) || {}).name} ${stTxt[v[h]]}`, stCls[v[h]])).join(" ")}</div><div class="shgrid" style="grid-template-columns:76px repeat(${esc(x.per_row)},1fr)">`;
+    for (let row = 1; row <= x.rows; row++) {
+      const cdu = x.cdus[row - 1], cs = Math.max(0, ...shAt(h).filter(i => i.link === cdu).map(i => i.state));
+      t += `<a class="shcdu ${esc(stCls[cs])}" href="#${esc(cdu)}" title="${esc(cdu)}: row ${esc(row)}'s CDU, ${esc(stTxt[cs])}">${esc(cdu)}</a>`;
+      for (let p = 1; p <= x.per_row; p++) {
+        const id = Object.keys(SHR).find(k => SHR[k].hall === x.id && SHR[k].row === row && SHR[k].pos === p), r = SHR[id], s = r.state[h], w = r.why[h];
+        const com = s !== -1 && (r.handoff == null || h < r.handoff);
+        const title = `${id}: ${s === -1 ? "not installed yet" : stTxt[s]}${w ? "; " + w : ""}`;
+        t += s === -1 ? `<span class="shrack off" title="${esc(title)}">${esc(id)}</span>`
+          : `<a class="shrack ${esc(stCls[s])}${com ? " com" : ""}" href="#${esc(id)}/${esc(h)}" title="${esc(title)}">${esc(id)}</a>`;
+      }
+    }
+    return t + `</div></div>`;
+  }
+  function shStrip() {
+    const W = Math.max(640, chartWidth()), L = 190, R = 6, rowH = 15, pw = W - L - R, X = i => L + i / SHH * pw;
+    const rows = [["Site (worst)", SHS, null]].concat(SH.families.map(f => [f.name, SHF[f.key], f.link]));
+    const moved = SHG.filter(g => g.state.some(s => s > 0)), held = SHG.filter(g => !g.state.some(s => s > 0));
+    moved.forEach(g => rows.push([`${g.name}${g.hall ? " · " + hallName(g.hall) : ""}`, g.state, g.link]));
+    const Ht = rows.length * rowH + 26;
+    let s = "";
+    rows.forEach(([name, v, lk], j) => {
+      const y = 4 + j * rowH;
+      s += lk ? `<a href="#${esc(lk)}"><text x="0" y="${esc(y + 11)}">${esc(name)}</text></a>` : `<text x="0" y="${esc(y + 11)}" style="font-weight:600">${esc(name)}</text>`;
+      let a = 0;
+      for (let i = 1; i <= SHH; i++) {
+        if (i < SHH && v[i] === v[a]) continue;
+        if (v[a] > 0) s += `<rect x="${esc(X(a).toFixed(1))}" y="${esc(y)}" width="${esc(Math.max(1.2, X(i) - X(a)).toFixed(1))}" height="${esc(rowH - 4)}" fill="${esc(stCol[v[a]])}"><title>${esc(name)}, ${esc(hourAt(a))}${i - a > 1 ? ` to ${esc(hourAt(i))}` : ""}: ${esc(stTxt[v[a]])}</title></rect>`;
+        a = i;
+      }
+      s += `<line x1="${esc(L)}" x2="${esc(W - R)}" y1="${esc(y + rowH - 3.5)}" y2="${esc(y + rowH - 3.5)}" stroke="var(--grid)"/>`;
+    });
+    for (let i = 0; i < SHH; i += 24) {
+      const lab = i % 168 === 0;
+      s += `<line x1="${esc(X(i))}" x2="${esc(X(i))}" y1="${esc(Ht - 22)}" y2="${esc(Ht - (lab ? 15 : 18))}" stroke="var(--line)"/>` + (lab ? `<text x="${esc(X(i))}" y="${esc(Ht - 4)}" text-anchor="middle">${esc(md(hourIso(i)))}</text>` : "");
+    }
+    s += `<line class="cur" x1="0" x2="0" y1="0" y2="${esc(Ht - 22)}" stroke="var(--ink)" stroke-width="1.5"/>`;
+    return `<div class="scroll"><svg data-strip="1" data-l="${esc(L)}" data-w="${esc(W)}" viewBox="0 0 ${esc(W)} ${esc(Ht)}" width="${esc(W)}" height="${esc(Ht)}" role="img" aria-label="Each family's and system's state by hour" style="cursor:pointer">${s}</svg></div>`
+      + `<p class="note">Full redundancy all month: ${held.map(g => `${esc(g.name)}${g.hall ? " (" + esc(hallName(g.hall)) + ")" : ""} ${esc(g.scheme)}`).join(", ")}.</p>`;
+  }
+  function shRules() {
+    const T = SH.thresholds;
+    const rows = [["GPUs (a rack)", `Lost: no GPUs reporting, or both power feeds lost. Degraded: GPUs missing for the hour, a node drained, hardware thermal slowdown, a GPU at ${T.gpu.temp_amber_c} °C or more, one feed lost, or an NVLink tray not reporting.`],
+      ["CDUs", `Lost: a leak detector reads Critical, or coolant supply at ${T.cdu.supply_red_c} °C. Degraded: a pump out (no spare pump), or supply at ${T.cdu.supply_amber_c} °C.`],
+      ["Power", `Lost: below N (both utility feeds, or a rack's two feeds), or a UPS at ${T.ups.load_red_pct}% load. Degraded: a UPS on bypass or battery, a power module out, a UPS above ${T.ups.load_amber_pct}% load (three could not carry a fourth's), generator fuel under ${T.generator.fuel_amber_pct}%.`],
+      ["Network", "Degraded: an InfiniBand link drop in the hall (rail-optimized: a dropped link takes one GPU off its rail; there is no second link to fail over to). Leaf uplinks to the spine are not modeled, so they show no redundancy."],
+      ["Mechanical", `Lost: fewer chillers available than the load needs, facility water supply at ${T.loop.supply_red_c} °C, supply air at ${T.air.supply_red_c} °C (ASHRAE A1 allowable). Degraded: a chiller or wall fan out, facility water at ${T.loop.supply_amber_c} °C, supply air at ${T.air.supply_amber_c} °C (ASHRAE recommended).`]];
+    return `<table><tbody>${rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</tbody></table>`
+      + `<h3>When a unit counts as out</h3><ul>${Object.entries(SH.unit_out).map(([k, v]) => `<li><b>${esc(k.replace("_", " "))}</b>: ${esc(v)}</li>`).join("")}</ul>`
+      + `<p class="note">There is no composite health score: one number would hide which redundancy is gone. Thresholds are in config/site_health.yaml.</p><h3>Agreement with each section's hourly figures</h3><p class="note">The states above come from each section's recorded state changes; these checks hold them to the hourly figures the sections publish.</p><table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>${SH.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${a.misses ? tag(`${num(a.checked - a.misses)} of ${num(a.checked)}`, "bad") : tag(`${num(a.checked)} of ${num(a.checked)}`, "ok")}</td></tr>`).join("")}</tbody></table>`
+      + `<h3>Sources</h3><ul>${SH.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("")}</ul>`;
+  }
+
   // ----------------------------------------------------------------- router
   let current = 0;
   function route() {
@@ -2098,12 +2293,15 @@ __SITENAV__
     if (pf) return {view: pf, dev: up, minute: pm, key: up, fam: "power"};
     if (a === "power-fields" || a === "power-agreements") return {view: a, key: a, fam: "power"};
     if (a === "power") return {view: "power", key: "power", fam: "power"};
-    return {view: "gpus", key: "gpus"};
+    if (a === "gpus") return {view: "gpus", key: "gpus"};
+    return {view: "site", key: "site", fam: "site", hour: b == null ? null : parseInt(b, 10)};
   }
   function show() {
     const seq = ++current, r = route(), fam = r.fam || "gpu";
     CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null; mmCtx = null;
-    if (r.view === "rack") rackView(r.rack, r.hour, seq);
+    if (shTimer && r.view !== "site") { clearInterval(shTimer); shTimer = null; }
+    if (r.view === "site") siteView(r.hour, seq);
+    else if (r.view === "rack") rackView(r.rack, r.hour, seq);
     else if (r.view === "gpu") gpuView(r.host, r.gpu, seq);
     else if (r.view === "fields") fields();
     else if (r.view === "agreements") agreements();
@@ -2135,7 +2333,7 @@ __SITENAV__
     });
     document.querySelectorAll("#tree a[data-fam]").forEach(a => a.classList.toggle("on", a.dataset.fam === fam));
     document.querySelectorAll("#tree .famsec").forEach(s => s.classList.toggle("off", s.dataset.fam !== fam));
-    if ((r.view !== "rack" || r.hour == null) && (r.view !== "cdu" || r.minute == null) && r.minute == null) main.scrollIntoView && window.scrollY > 200 && window.scrollTo(0, 0);
+    if ((r.view !== "rack" || r.hour == null) && (r.view !== "cdu" || r.minute == null) && r.minute == null && r.view !== "site") main.scrollIntoView && window.scrollY > 200 && window.scrollTo(0, 0);
   }
   tree();
   window.addEventListener("hashchange", show);

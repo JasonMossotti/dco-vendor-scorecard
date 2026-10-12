@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 REPO = "https://github.com/JasonMossotti/dco-vendor-scorecard"
 
-# (key, label, path from the site root); the reference tabs sit on the right of the bar
+# (key, label, path from the site root); the working tabs fill the second row, the reference tabs sit top right
 TABS = [
     ("overview", "Overview", ""),
     ("scorecards", "Scorecards", "app/"),
@@ -48,22 +48,20 @@ KEYS = [k for k, _, _ in TABS + REFERENCE_TABS]
 
 CSS = """
 .usm { background:#1e2933; color:#fff; font:14px/1.4 "Inter","Segoe UI",Helvetica,Arial,sans-serif; }
-.usm-in { display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; padding:0 20px; }
-.usm-brand { display:flex; align-items:baseline; gap:10px; padding:10px 0; color:#fff; text-decoration:none; white-space:nowrap; }
+.usm-in { display:flex; flex-wrap:wrap; align-items:center; gap:0 14px; padding:0 20px; }
+.usm-brand { display:flex; align-items:baseline; gap:10px; padding:8px 0; margin-right:auto; color:#fff; text-decoration:none; white-space:nowrap; }
 .usm-brand b { font-size:16px; font-weight:700; letter-spacing:.01em; }
 .usm-brand span { font-size:12px; color:#aab6c3; }
-.usm-tabs { display:flex; flex-wrap:wrap; gap:2px; flex:1; }
-.usm-ref { flex:none; }
-.usm-tabs a { color:#cdd6df; text-decoration:none; padding:12px 10px 10px; border-bottom:3px solid transparent; white-space:nowrap; }
+.usm-tabs { display:flex; flex-wrap:wrap; gap:2px; }
+.usm-tabs a { color:#cdd6df; text-decoration:none; padding:10px 12px 8px; border-bottom:3px solid transparent; white-space:nowrap; }
 .usm-tabs a:hover { color:#fff; background:rgba(255,255,255,.06); }
 .usm-tabs a.on { color:#fff; font-weight:600; border-bottom-color:#5b9cff; }
+.usm-ref a { padding:8px 10px 6px; font-size:13px; }
+.usm-main { background:#26323d; border-top:1px solid #34414d; padding:0 14px; }
 .usm-src { color:#aab6c3; font-size:12px; text-decoration:none; white-space:nowrap; }
 .usm-src:hover { color:#fff; }
-@media (max-width:2100px) { .usm-brand span { display:none; } .usm-tabs a { padding:12px 8px 10px; } }
-@media (max-width:1760px) { .usm-src { display:none; } .usm-tabs a { padding:12px 6px 10px; } .usm-in { gap:4px 10px; } }
-@media (max-width:1560px) { .usm-tabs a { padding:12px 4px 10px; font-size:13px; } .usm-brand b { font-size:15px; } }
-@media (max-width:1400px) { .usm-tabs a { padding:12px 3px 10px; font-size:12px; } .usm-tabs { gap:0; } .usm-brand b { font-size:14px; } .usm-in { padding:0 12px; } }
-@media (max-width:700px) { .usm-in { padding:0 10px; gap:0 12px; } .usm-tabs a { padding:8px 8px 6px; font-size:13px; } .usm-src { display:none; } }
+@media (max-width:1240px) { .usm-tabs a { padding:10px 8px 8px; } .usm-main { padding:0 8px; } }
+@media (max-width:700px) { .usm-in { padding:0 10px; gap:0 12px; } .usm-brand span, .usm-src { display:none; } .usm-tabs a { padding:8px 8px 6px; font-size:13px; } .usm-main { padding:0 2px; } }
 @media print { .usm { display:none !important; } }
 """
 
@@ -77,11 +75,12 @@ def nav_html(active: str, prefix: str = "../") -> str:
     links = lambda tabs: "".join(
         f'<a href="{escape(prefix + path if path else root)}" data-tab="{key}"{on if key == active else ""}>{escape(label)}</a>'
         for key, label, path in tabs)
+    # Two rows: the brand with the reference tabs, then the working tabs across the full width.
     return (f'<nav class="usm" aria-label="Site"><div class="usm-in">'
             f'<a class="usm-brand" href="{escape(root)}"><b>Unified Site Management</b><span>Site AUS-1 · fictional</span></a>'
-            f'<div class="usm-tabs">{links(TABS)}</div>'
             f'<div class="usm-tabs usm-ref">{links(REFERENCE_TABS)}</div>'
-            f'<a class="usm-src" href="{REPO}">Source on GitHub</a></div></nav>')
+            f'<a class="usm-src" href="{REPO}">Source on GitHub</a></div>'
+            f'<div class="usm-tabs usm-main">{links(TABS)}</div></nav>')
 
 
 _POPUP_MARK = re.compile(r"<!--GLOSSARY_POPUPS (\{.*?\})-->")
