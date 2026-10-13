@@ -99,7 +99,7 @@ def test_index_covers_every_record_in_the_portal(ds):
     assert set(idx) == set(ids())
     for ref, f in idx.items():
         assert f["title"] and f["date"] and f["metrics"], ref
-        assert f["kind"] in ("rack_power", "event", "chg", "mop", "pm")
+        assert f["kind"] in ("rack_power", "event", "chg", "mop", "pm", "sir")
         assert f["impact"]["gpus"] >= 0 and f["osr_suggested"]["level"] in OSR
 
 
@@ -136,7 +136,8 @@ def test_every_record_names_devices_the_directory_knows(ds):
     data = D.load()
     idx = build_index(ds)
     named = [ref for ref, f in idx.items() if f["devices"]]
-    assert len(named) >= len(idx) - 6        # the utility service and the leak-detection module are not devices
+    gear = [ref for ref, f in idx.items() if f["kind"] != "sir"]     # security incidents are about doors, not devices
+    assert len(named) >= len(gear) - 6       # the utility service and the leak-detection module are not devices
     for ref, f in idx.items():
         for n in f["devices"]:
             assert D.lookup(data, n), f"{ref} names {n}, which is not in the device directory"

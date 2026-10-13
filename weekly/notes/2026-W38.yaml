@@ -4,7 +4,7 @@
 week: 2026-W38
 meeting: "2026-09-21"
 chair: "Customer Site Lead"
-attendees: ["Customer Site Lead", "Customer EHS", "IT Partner Site Manager (Ridgeline Site Services)", "Landlord Chief Engineer (Caprock Critical Facilities)"]
+attendees: ["Customer Site Lead", "Customer EHS", "IT Partner Site Manager (Ridgeline Site Services)", "Landlord Chief Engineer (Caprock Critical Facilities)", "Security Partner site manager (Llano Gate Protective Services)"]
 commentary:
   IT Partner: >-
     Both P1s this week were restored within target, and the rack A07 validation after the Landlord's handoff
@@ -15,6 +15,10 @@ commentary:
     The rack A07 outage (WO-41023) is reviewed in PIR-2026-001 and is behind most of this week's change: OT-CSL-01
     and OT-CSL-07 fell below Minimum month to date. Three new Landlord findings (L-004, L-005, L-008) go to the
     monthly service review.
+  Security Partner: >-
+    A door held alarm at the receiving dock inner door was closed in the dispatch log with no guard badged at the
+    door's reader (S-003). SEC-CSL-06 stays below Minimum month to date: a compute tray shipped last week with a
+    drive serial that has no certificate of destruction. Both go to the monthly service review.
 decisions:
   - id: D1
     owner: "Customer Site Lead"

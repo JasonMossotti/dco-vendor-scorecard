@@ -1,0 +1,33 @@
+{
+  "disclaimer": "Synthetic data for a portfolio demonstration. All sites, people, and events are fictional.",
+  "files": {
+    "access_reviews.csv": 4,
+    "camera_events.jsonl": 18,
+    "cameras.json": 72,
+    "chain_of_custody.csv": 215,
+    "destruction_certificates.csv": 215,
+    "dispatch_log.json": 27,
+    "door_alarms.jsonl": 27,
+    "ground_truth/security_planted.json": 4,
+    "guard_badges.csv": 277,
+    "guards.csv": 32,
+    "leavers.csv": 5,
+    "post_log.csv": 252,
+    "retention_audit.csv": 112,
+    "self_reported_weekly.json": 4,
+    "tour_scans.csv": 2688,
+    "tray_drives.csv": 216,
+    "visitor_badges.csv": 88,
+    "visits.csv": 44
+  },
+  "generator": "scorecard.synthetic.security",
+  "note": "Derived from the dataset beside it with its own random stream; ground_truth/ is the answer key and the engine never reads it.",
+  "seed": 2026,
+  "source_dataset": "data/sample",
+  "window": {
+    "end": "2026-09-28T00:00:00Z",
+    "seed": 2026,
+    "start": "2026-08-31T00:00:00Z",
+    "weeks": 4
+  }
+}

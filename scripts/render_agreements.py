@@ -31,12 +31,14 @@ TEMPLATE = ROOT / "templates" / "agreements.html"
 TRAINER_BODY = ROOT / "templates" / "trainer_body.html"
 TRAINER = ("trainer", "ownership-trainer", "Ownership trainer")
 ABOUT = {
-    "interface": ("landing", "Joins the two partner contracts: where each party's equipment ends, who owns each component, "
+    "interface": ("landing", "Joins the three partner contracts: where each party's equipment ends, who owns each component, "
                              "how an outage is attributed to exactly one party, handoffs, and change-aware alarm notification."),
     "it": ("it", "What the IT Partner owes for the data hall work: priorities, ticket and clock rules, service levels and "
                  "credits, return-to-service validation, staffing, safety, spares."),
     "landlord": ("landlord", "What the Landlord owes for the building, power, cooling, and CDUs: alarm priorities, work order "
                              "rules, service levels and credits against rent, maintenance, safety."),
+    "security": ("security", "What the Security Partner owes for the Customer halls: guard posts, door alarm response, visitor "
+                             "escorts, cameras, leaver badges, and destroying drives on site before a part ships."),
 }
 
 

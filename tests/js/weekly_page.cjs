@@ -12,7 +12,7 @@ ok(errors.length === 0, "no script errors " + errors.join(";"));
 ok(d.querySelectorAll("#tabs button").length === 4, "one tab per week");
 ok(t().includes("Weekly Operations Review 2026-W38"), "opens on the week with meeting notes");
 ok(tab("2026-W38").classList.contains("on") && tab("2026-W38").querySelector(".dot"), "that tab is selected and marked as having notes");
-ok(t().includes("Below Minimum (month to date)") && d.querySelectorAll(".chip").length === 2, "a status chip for each partner");
+ok(t().includes("Below Minimum (month to date)") && d.querySelectorAll(".chip").length === 3, "a status chip for each partner");
 ok(d.querySelectorAll("tr.default").length > 0, "rows below Minimum month to date are shaded");
 ok(t().includes("overstated by"), "overstated self-reports are flagged");
 ok(t().includes("PIR-2026-001") && d.querySelector('a[href="../pir/"]'), "the A07 outage links to its review");

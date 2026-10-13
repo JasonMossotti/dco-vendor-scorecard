@@ -28,9 +28,11 @@ def run_app(monkeypatch, **kw) -> FakeStreamlit:
 
 def test_app_opens_on_the_site_summary(monkeypatch):
     fake = run_app(monkeypatch)
-    assert any("two partners" in t for t in fake.texts("title"))
+    assert any("three partners" in t for t in fake.texts("title"))
     subs = " ".join(fake.texts("subheader"))
-    assert "Both partners, measured" in subs and "What attribution changed" in subs
+    assert "Every partner, measured" in subs and "What attribution changed" in subs
+    site = next(x for k, x in fake.drawn if k == "dataframe")
+    assert "Security Partner" in str(site), "the site summary has a Security Partner column"
     md = " ".join(fake.texts("markdown"))
     assert "went dark" in md and "FA-3" in md, "the cross-partner outage is explained"
 
@@ -42,6 +44,17 @@ def test_landlord_view(monkeypatch):
     md = " ".join(fake.texts("markdown"))
     assert "credits against rent" in md and "8 of 8" in md
     assert "$" not in md.replace("\\$", ""), "every dollar sign is escaped (a pair renders as math)"
+
+
+def test_security_view(monkeypatch):
+    fake = run_app(monkeypatch, overrides={"View": "Security Partner (Llano Gate)"})
+    assert any("Security Partner SLA Scorecard" in t for t in fake.texts("title"))
+    assert len(fake.texts("dataframe")) >= 3
+    md = " ".join(fake.texts("markdown"))
+    assert "every post staffed" in md and "4 of 4" in md and "SEC-CSL-03" in md
+    assert "$" not in md.replace("\\$", ""), "every dollar sign is escaped (a pair renders as math)"
+    exp = " ".join(fake.texts("expander"))
+    assert "S-001" in exp and "S1" in exp
 
 
 def test_app_renders_with_committed_sample(monkeypatch):
@@ -65,7 +78,7 @@ def test_app_navigation_is_on_the_page_not_in_a_sidebar(monkeypatch):
     fake = run_app(monkeypatch)
     assert fake.sidebar_used == [], f"nothing is drawn in the sidebar: {fake.sidebar_used}"
     seg = [p for k, p in fake.drawn if k == "segmented_control"]
-    assert seg == [("View", ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)"])]
+    assert seg == [("View", ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)", "Security Partner (Llano Gate)"])]
 
 
 def test_view_survives_being_clicked_off(monkeypatch):
@@ -102,7 +115,7 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
         assert not any("/live/" in n for n in names), "the live collector is not shipped to the browser" and "src/scorecard/app_support.py" in names
         assert not any(n.startswith(("tests/", "reports/")) for n in names)
         # Of the docs, only the generated contracts ship: the code lookup names the clause that defines a code.
-        assert {n for n in names if n.startswith("docs/")} == {f"docs/sla/{d}.md" for d in ("INTERFACE_AGREEMENT", "IT_PARTNER_SLA", "LANDLORD_SLA")}
+        assert {n for n in names if n.startswith("docs/")} == {f"docs/sla/{d}.md" for d in ("INTERFACE_AGREEMENT", "IT_PARTNER_SLA", "LANDLORD_SLA", "SECURITY_SLA")}
         assert "config/glossary.yaml" in names
         z.extractall(home)
     (home / "streamlit_app.py").write_bytes((site / "streamlit_app.py").read_bytes())
@@ -114,7 +127,7 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     fake = FakeStreamlit()
     monkeypatch.setitem(sys.modules, "streamlit", fake)
     runpy.run_path(str(home / "streamlit_app.py"), run_name="__main__")
-    assert any("two partners" in t for t in fake.texts("title"))
+    assert any("three partners" in t for t in fake.texts("title"))
     import scorecard
     assert str(home) in scorecard.__file__
     from scorecard import app_support

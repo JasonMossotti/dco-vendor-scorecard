@@ -1,0 +1,68 @@
+[
+  {
+    "id": "S-001",
+    "observed_at": "2026-09-02T12:00:00Z",
+    "severity": "S1",
+    "sla_refs": [
+      "SEC-CSL-01",
+      "SEC-CSL-07"
+    ],
+    "summary": "The post log reports Hall A entrance staffed by LGP-011 for the day shift starting 2026-09-02 12:00 UTC, but no guard badged in at the post reader during the shift.",
+    "tickets": [
+      "POST-HA 2026-09-02 12:00 UTC"
+    ],
+    "title": "Post reported staffed with no guard badged in",
+    "type": "post_reported_unstaffed",
+    "unit": "Hall A entrance"
+  },
+  {
+    "id": "S-002",
+    "observed_at": "2026-09-10T13:17:38Z",
+    "severity": "S1",
+    "sla_refs": [
+      "SEC-CSL-06",
+      "SEC-CSL-07"
+    ],
+    "summary": "Compute tray CTSXQ9HJ60 (INC3100476) shipped at 2026-09-10 13:17 UTC. Its Redfish inventory lists drive E1S46F6ZGWWD in bay 5, but there is no destruction certificate and no chain-of-custody handover.",
+    "tickets": [
+      "INC3100476",
+      "E1S46F6ZGWWD"
+    ],
+    "title": "Storage media shipped without a destruction certificate",
+    "type": "media_shipped_without_destruction",
+    "unit": "Tray CTSXQ9HJ60"
+  },
+  {
+    "id": "S-003",
+    "observed_at": "2026-09-16T14:56:11Z",
+    "severity": "S1",
+    "sla_refs": [
+      "SEC-CSL-02",
+      "SEC-CSL-07"
+    ],
+    "summary": "Door held open at DOCK-INNER (P2) at 2026-09-16 14:56 UTC. The dispatch log closed SIR-00016 at 2026-09-16 15:05 UTC as 'Door checked and secured', but no guard badged the door's reader between the alarm and the close.",
+    "tickets": [
+      "SIR-00016",
+      "ACS-00016"
+    ],
+    "title": "Door alarm closed with no guard at the door",
+    "type": "door_alarm_closed_no_response",
+    "unit": "DOCK-INNER"
+  },
+  {
+    "id": "S-004",
+    "observed_at": "2026-09-23T12:20:23Z",
+    "severity": "S1",
+    "sla_refs": [
+      "SEC-CSL-03",
+      "SEC-CSL-07"
+    ],
+    "summary": "Visitor V-3038 (Network carrier, VIS-0038) badged into HALL-A at 2026-09-23 12:20 UTC with RSS-006 (IT Partner) named as escort, but the escort did not badge in within 2 minutes; the escort's nearest badge-in to HALL-A was 2026-09-23 12:50 UTC.",
+    "tickets": [
+      "VIS-0038"
+    ],
+    "title": "Visitor entered a hall without the escort",
+    "type": "visitor_without_escort",
+    "unit": "HALL-A"
+  }
+]

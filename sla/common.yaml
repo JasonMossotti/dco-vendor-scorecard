@@ -17,7 +17,7 @@
 # =============================================================================
 
 schema_version: "1.0"
-common_version: "1.3.0"
+common_version: "1.4.0"
 
 parties:
   customer:
@@ -34,6 +34,11 @@ parties:
     fictional: true
     description: "Strategic site operations partner performing day-to-day data hall IT work."
     role: "Separate services agreement and IT Partner SLA (Schedule B)."
+  security_partner:
+    name: "Llano Gate Protective Services, LLC"
+    fictional: true
+    description: "Contract security for the Customer's halls: guard posts and patrols, door alarm response, visitor sign-in and escort monitoring, CCTV operation, and on-site media destruction."
+    role: "Separate security services agreement and Security Partner SLA (Schedule D). Runs the Customer's security policy on the Customer's own systems."
   utility:
     name: "Serving utility (ERCOT region)"
     description: "Owns the 138 kV substation and transformers; delivers power at 13.8 kV to the Landlord."
@@ -221,9 +226,34 @@ measurement:
       precedence: 3
     - id: "DS-BADGE"
       name: "Access control system"
-      measures: "Technician and engineer presence by hall and equipment room, time on site, staffing fill."
+      measures: "Technician, engineer, and guard presence by hall, post, and equipment room; time on site; staffing fill; door forced and door held alarms; visitor badge entries."
       owner: "Customer"
       precedence: 1
+    - id: "DS-VMS"
+      name: "Video management system (camera health and recorder retention, Customer-owned)"
+      measures: "Camera recording state by minute, recorder storage and the age of the oldest recording. No video leaves the system for measurement."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-GUARD"
+      name: "Security Partner post log, guard tour, and dispatch system"
+      measures: "Posts reported staffed, guard tour checkpoint scans, door alarm dispatch and closure, Supplier-recorded timestamps."
+      owner: "Security Partner"
+      precedence: 3
+    - id: "DS-VISIT"
+      name: "Visitor management system"
+      measures: "Visitor sign-in and sign-out, the named escort, and the visitor badge issued."
+      owner: "Security Partner"
+      precedence: 3
+    - id: "DS-IDM"
+      name: "Customer identity feed (separations from each party's HR system)"
+      measures: "Time each person left a party's employment or the Site assignment; badge deactivation time from the access control system."
+      owner: "Customer"
+      precedence: 1
+    - id: "DS-COC"
+      name: "Chain-of-custody and media destruction log"
+      measures: "Storage media handed over at removal, destroyed on site, and certified by serial number."
+      owner: "Security Partner"
+      precedence: 3
     - id: "DS-CAB"
       name: "Customer change management system"
       measures: "Approved changes and maintenance windows."

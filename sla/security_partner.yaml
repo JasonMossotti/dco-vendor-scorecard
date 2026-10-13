@@ -1,0 +1,448 @@
+# =============================================================================
+# Security Partner SLA: Site Security Services (SLA as Code)
+# -----------------------------------------------------------------------------
+# Llano Gate Protective Services' service levels as the Customer's security
+# contractor: guard posts and patrols in the Customer's halls, door alarm
+# response, visitor sign-in and escort monitoring, CCTV operation and
+# retention, badge removal for people who leave, and on-site destruction of
+# storage media. Extends common.yaml (add-only), so the common terms, including
+# security and chain of custody and EHS, bind the Security Partner exactly as
+# they bind the other partners. The human-readable SLA
+# (docs/sla/SECURITY_SLA.md) is GENERATED from this file and common.yaml by
+# scripts/render_sla.py.
+#
+# The Customer owns security policy and the systems (access control, video,
+# identity feed); the Security Partner runs them. The Landlord keeps the
+# building perimeter and lobby (Interface Agreement, DM-SEC).
+#
+# MOCK DOCUMENT FOR PORTFOLIO DEMONSTRATION ONLY. All parties, sites, figures,
+# and commercial terms are fictional and illustrative. Not legal advice. Not
+# based on any real company's internal information or agreements.
+# =============================================================================
+
+extends: common.yaml
+
+partner_type: security
+
+document:
+  id: SLA-LGP-AUS1-001
+  title: 'Service Level Agreement: Site Security Services'
+  subtitle: Schedule D (Security Service Levels) to the Security Services Agreement
+  version: 1.0.0
+  effective_date: '2026-10-05'
+  term_months: 36
+  status: MOCK / ILLUSTRATIVE
+  disclaimer: This is a fictional, illustrative security services level agreement created for a portfolio demonstration.
+    All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from
+    any real organization's internal documents or contracts.
+  timezone: UTC
+  negotiation_note: Security contractors usually report their own post coverage and alarm response. Here every
+    service level is measured from the Customer's own systems (access control, video, identity feed), and the Security
+    Partner's post log, dispatch log, visitor log, and destruction certificates are reconciled against them.
+
+parties:
+  supplier:
+    name: Llano Gate Protective Services, LLC
+    fictional: true
+    description: Contract security company (the Security Partner).
+    role: Staffs the Customer hall guard posts and patrols, monitors and responds to door alarms, runs visitor sign-in
+      and escort monitoring, operates the video system, removes badges for people who leave, and destroys storage media
+      on site.
+
+commercial:
+  currency: USD
+  monthly_charges: 186000
+  charges_basis: Monthly fee for five guard posts, patrols, the security console, and media destruction (illustrative).
+  at_risk_pct: 12
+  pool_pct: 200
+  max_allocation_per_csl_pct: 40
+  measurement_period: calendar month
+  scorecard_period: ISO week (Monday 00:00 UTC to Sunday 23:59 UTC)
+  credit_application: Credits are applied against the next month's invoice.
+  doubling:
+    consecutive_minimum_defaults: 3
+    multiplier: 2
+    note: Doubled credits are not eligible for Earnback.
+  earnback:
+    enabled: true
+    rule: Supplier earns back a Service Level Credit for a Critical Service Level if it meets or exceeds the Expected
+      Service Level for that same Critical Service Level in each of the 3 Measurement Periods immediately following
+      the default.
+    following_periods_required: 3
+    ineligible_when:
+      - The credit was doubled under the repeat-default rule.
+      - The default involved a confirmed Record Integrity finding (AGG-INTEGRITY).
+      - The default involved a security or chain-of-custody failure (AGG-SECURITY).
+  credits_sole_remedy: false
+  credits_note: Service Level Credits reflect the reduced value of the services. They are not a penalty and do not limit
+    the Customer's other rights, including chronic failure rights and EHS Credits.
+
+scope:
+  in_scope:
+    - id: SEC-POST
+      name: Guard posts and patrols
+      description: The Hall A and Hall B entrance posts, the security console, the receiving dock post (day shift), and
+        a roving patrol of the Customer halls with tour checkpoints.
+    - id: SEC-ALARM
+      name: Door alarm monitoring and response
+      description: Watching the access control system for door forced and door held alarms on the Customer's doors,
+        acknowledging them at the console, and sending a guard to the door.
+    - id: SEC-VISIT
+      name: Visitor sign-in and escort monitoring
+      description: Signing visitors in against a Customer-approved request, issuing visitor badges, and confirming an
+        escort badges in with each visitor.
+    - id: SEC-VIDEO
+      name: Video system operation
+      description: Watching camera health on the Customer's video system, raising faults, and confirming each recorder
+        keeps 90 days of video. The Security Partner views video only for an incident and never exports it.
+    - id: SEC-ACCESS
+      name: Badge administration
+      description: Issuing and removing badges on the Customer's access control system under Customer approval, removing
+        the badges of people who leave, and preparing the quarterly access review.
+    - id: SEC-MEDIA
+      name: Media destruction
+      description: Receiving storage media from the IT Partner under chain of custody, destroying it on site, and issuing
+        a certificate per serial number before the part it came from leaves the Site.
+  out_of_scope:
+    - The building perimeter, lobby, and base building access control (Landlord, DM-SEC).
+    - Security policy, access approvals, and the access control, video, and identity systems themselves (Customer).
+    - Removing failed parts and their media from the racks (IT Partner, HO-5).
+
+priority_rules:
+  authority: The Customer has final authority over priority. The access control and video systems set the initial
+    priority. The Supplier may request a change but may not downgrade an event without written Customer approval.
+  escalation_on_risk: The Supplier must notify the Customer Incident Commander as soon as it believes any target
+    is at risk, and no later than 50% of the target time elapsed.
+
+priorities:
+  - id: P1
+    name: Critical
+    criteria:
+      - Door forced at a Customer hall, mantrap, or cage.
+      - Confirmed tailgating or an unbadged person in a Customer hall.
+      - Storage media unaccounted for at any point in chain of custody.
+      - Every camera covering a Customer hall entrance offline.
+    examples:
+      - Door forced alarm on the Hall B mantrap inner door.
+      - A drive serial missing from the destruction log for a tray waiting to ship.
+    acknowledge_min: 1
+    engaged_on_site_min: 3
+    containment_min: 15
+    restore_min: 60
+    update_cadence_min: 30
+    escalation: Immediate page to the Customer Incident Commander; Security Partner site manager engaged.
+  - id: P2
+    name: High
+    criteria:
+      - Door held open past its allowed time at a Customer hall or the receiving dock.
+      - A visitor in a Customer hall without an escort.
+      - A camera covering a Customer hall door offline.
+    examples:
+      - Door held alarm on the Hall A receiving door during a delivery.
+      - Camera CAM-B-04 offline over the Hall B entrance.
+    acknowledge_min: 2
+    engaged_on_site_min: 5
+    containment_min: null
+    restore_min: 240
+    update_cadence_min: 60
+    escalation: Security Partner shift supervisor; Customer on-call informed.
+  - id: P3
+    name: Medium
+    criteria:
+      - A camera offline that covers no Customer hall door.
+      - A guard tour checkpoint missed.
+      - A badge reader fault with the door secured.
+    examples:
+      - Camera CAM-A-11 over the Hall A spares aisle offline.
+    acknowledge_min: 15
+    engaged_on_site_min: 30
+    containment_min: null
+    restore_min: 1440
+    update_cadence_min: 1440
+    escalation: Reviewed in the daily standup.
+  - id: P4
+    name: Low
+    criteria:
+      - Badge requests, visitor pre-registration, and access review preparation.
+    examples:
+      - Pre-register three OEM engineers for a Hall B visit.
+    acknowledge_min: 240
+    engaged_on_site_min: null
+    containment_min: null
+    restore_min: 7200
+    update_cadence_min: null
+    escalation: Tracked in the weekly operations review.
+
+performance_categories:
+  - id: CAT-SEC-COVER
+    name: Coverage and Response
+  - id: CAT-SEC-ACCESS
+    name: Access Control and Visitors
+  - id: CAT-SEC-CUSTODY
+    name: Video and Chain of Custody
+  - id: CAT-SEC-INTEGRITY
+    name: Record Integrity
+
+critical_service_levels:
+  - id: SEC-CSL-01
+    name: Guard Post Coverage
+    category: CAT-SEC-COVER
+    description: Share of committed post-minutes with the assigned guard badged in at the post reader.
+    numerator: Post-minutes with a guard badged in at the post
+    denominator: Committed post-minutes
+    unit: '%'
+    direction: higher_is_better
+    expected: 99.5
+    minimum: 98.0
+    data_sources:
+      - DS-BADGE
+      - DS-GUARD
+    credit_allocation_pct: 30
+  - id: SEC-CSL-02
+    name: Door Alarm Response
+    category: CAT-SEC-COVER
+    description: Door forced and door held alarms with a guard badged at the alarmed door within the priority's on-site
+      target (3 minutes for P1, 5 minutes for P2).
+    numerator: Door alarms with a guard at the door within target
+    denominator: Door forced and door held alarms
+    unit: '%'
+    direction: higher_is_better
+    expected: 98.0
+    minimum: 95.0
+    data_sources:
+      - DS-BADGE
+      - DS-GUARD
+    credit_allocation_pct: 30
+  - id: SEC-CSL-03
+    name: Visitor Escort Compliance
+    category: CAT-SEC-ACCESS
+    description: Visitor entries into a Customer hall with the named escort badged into the same hall within 2 minutes
+      of the visitor.
+    numerator: Visitor hall entries with the escort badged in within 2 minutes
+    denominator: Visitor hall entries
+    unit: '%'
+    direction: higher_is_better
+    expected: 100.0
+    minimum: 99.0
+    data_sources:
+      - DS-BADGE
+      - DS-VISIT
+    small_sample_rule:
+      below_events: 100
+      max_misses_before_minimum_default: 0
+    credit_allocation_pct: 25
+  - id: SEC-CSL-04
+    name: Camera Availability
+    category: CAT-SEC-CUSTODY
+    description: Share of camera-minutes recording on the Customer's video system.
+    numerator: Camera-minutes recording
+    denominator: Camera-minutes
+    unit: '%'
+    direction: higher_is_better
+    expected: 99.9
+    minimum: 99.5
+    data_sources:
+      - DS-VMS
+    credit_allocation_pct: 20
+  - id: SEC-CSL-05
+    name: Leaver Badges Removed Within 24 Hours
+    category: CAT-SEC-ACCESS
+    description: People who left a party's employment or the Site assignment whose badges were deactivated within
+      24 hours of the separation time in the identity feed.
+    numerator: Leavers deactivated within 24 hours
+    denominator: Leavers
+    unit: '%'
+    direction: higher_is_better
+    expected: 100.0
+    minimum: 98.0
+    data_sources:
+      - DS-IDM
+      - DS-BADGE
+    small_sample_rule:
+      below_events: 50
+      max_misses_before_minimum_default: 0
+    credit_allocation_pct: 25
+  - id: SEC-CSL-06
+    name: Media Destroyed On Site Before Shipment
+    category: CAT-SEC-CUSTODY
+    description: Storage media serials from parts that left the Site with a destruction certificate dated before the
+      part shipped.
+    numerator: Media serials certified destroyed before the part shipped
+    denominator: Media serials in shipped parts
+    unit: '%'
+    direction: higher_is_better
+    expected: 100.0
+    minimum: 99.9
+    data_sources:
+      - DS-COC
+      - DS-SPARES
+      - DS-REDFISH
+    small_sample_rule:
+      below_events: 1000
+      max_misses_before_minimum_default: 0
+    credit_allocation_pct: 30
+  - id: SEC-CSL-07
+    name: Security Record Integrity
+    category: CAT-SEC-INTEGRITY
+    description: Share of the Security Partner's records (posts reported staffed, door alarms closed, visitor escorts
+      named, media certified) that reconcile with the Customer's systems.
+    numerator: Records that reconcile
+    denominator: Records checked
+    unit: '%'
+    direction: higher_is_better
+    expected: 99.0
+    minimum: 97.0
+    data_sources:
+      - DS-BADGE
+      - DS-GUARD
+      - DS-VISIT
+      - DS-COC
+    credit_allocation_pct: 25
+
+key_measurements:
+  - id: SEC-KM-01
+    name: Recorder Retention at 90 Days (daily audit)
+    unit: '%'
+    direction: higher_is_better
+    target: 100.0
+    data_sources:
+      - DS-VMS
+  - id: SEC-KM-02
+    name: Door Alarms Acknowledged at the Console Within Target (1 min P1, 2 min P2)
+    unit: '%'
+    direction: higher_is_better
+    target: 98.0
+    data_sources:
+      - DS-BADGE
+  - id: SEC-KM-03
+    name: Guard Tour Checkpoints Scanned On Time
+    unit: '%'
+    direction: higher_is_better
+    target: 98.0
+    data_sources:
+      - DS-GUARD
+  - id: SEC-KM-04
+    name: Quarterly Access Review Completed by Its Due Date
+    unit: '%'
+    direction: higher_is_better
+    target: 100.0
+    data_sources:
+      - DS-BADGE
+      - DS-IDM
+
+posts:
+  principle: A post is staffed only when the assigned guard is badged in at the post reader. A post log entry, a radio
+    call, or a relief arriving late does not count.
+  shifts:
+    - {id: day, name: 'Day (07:00 to 19:00 local)', start_local: '07:00', hours: 12}
+    - {id: night, name: 'Night (19:00 to 07:00 local)', start_local: '19:00', hours: 12}
+  list:
+    - {id: POST-HA, name: Hall A entrance, reader: 'Post: Hall A entrance', shifts: [day, night]}
+    - {id: POST-HB, name: Hall B entrance, reader: 'Post: Hall B entrance', shifts: [day, night]}
+    - {id: POST-SOC, name: Security console, reader: 'Post: Security console', shifts: [day, night]}
+    - {id: POST-DOCK, name: Receiving dock, reader: 'Post: Receiving dock', shifts: [day]}
+    - {id: POST-PATROL, name: Roving patrol, reader: 'Post: Patrol start', shifts: [day, night]}
+  tours: Each patrol shift scans every checkpoint once every 2 hours; a scan more than 15 minutes late counts as missed.
+  qualifications:
+    - Texas Department of Public Safety Private Security Program registration, current for every guard
+    - Site security orientation and the Customer's escort and media handling procedures
+    - CPR and first aid for at least one guard on every shift
+
+door_alarms:
+  principle: The access control system raises the alarm and records the console acknowledgement; the guard's badge
+    at the alarmed door is the evidence of response. A dispatch log entry is narrative, never evidence.
+  held_open_allowed_seconds: 60
+  rules:
+    - A door forced alarm on a Customer door is P1; a door held alarm is P2.
+    - The guard badges the alarmed door's reader on arrival, so the response time is measured, not typed.
+    - An alarm closed in the dispatch log with no guard badge at the door within the target is a Record Integrity
+      finding as well as a response miss.
+
+visitors:
+  rules:
+    - Every visitor is pre-registered under a Customer-approved request naming the escort.
+    - The escort badges into the hall with the visitor, within 2 minutes, and leaves with or after the visitor.
+    - Visitor badges open only the hall doors on the request and expire at sign-out or at the end of the day.
+
+video:
+  retention_days: 90
+  rules:
+    - Every camera records continuously; motion-only recording does not count as recording.
+    - Each recorder keeps at least 90 days of video. The daily audit reads the oldest recording on each recorder.
+    - Video is viewed only for an incident under a Customer-approved request and never leaves the video system.
+    - No video is used to measure these service levels; the video system's health and retention records are.
+
+access_reviews:
+  leaver_deactivation_hours: 24
+  quarterly_review: The Security Partner prepares, and the Customer approves, a review of every active badge against each
+    party's roster at the end of each quarter; badges not on a roster are removed the same day.
+
+media_destruction:
+  standard: NIST SP 800-88 Rev. 2 (Destroy), under the Customer's media sanitization standard
+  rules:
+    - The IT Partner removes every storage drive from a failed part before the part leaves the rack area and hands
+      the drives to the Security Partner under chain of custody (Interface Agreement HO-5).
+    - The Security Partner destroys each drive on site by shredding, witnessed by a second person, and issues a
+      certificate per serial number.
+    - No part that held storage media ships until every one of its drive serials has a certificate.
+
+chronic_failure:
+  triggers:
+    - id: CF-1
+      rule: A Minimum Service Level Default on the same CSL in 3 consecutive Measurement Periods.
+    - id: CF-2
+      rule: A Minimum Service Level Default on the same CSL in any 4 of 6 rolling Measurement Periods.
+    - id: CF-3
+      rule: Total Service Level Credits over 50% of the cumulative At-Risk Amount in any rolling 6 Measurement Periods.
+    - id: CF-4
+      rule: Any confirmed deliberate falsification of records, or any storage media leaving the Site intact.
+  customer_rights:
+    - Terminate the affected services or the entire agreement for cause, without termination charges.
+    - Require a Supplier executive-sponsored recovery plan within 10 business days.
+    - 'Step-in: the Customer or a third party may perform the affected services at the Supplier''s cost during recovery.'
+  termination_assistance: The Supplier provides up to 90 days of transition assistance at the then-current service
+    levels, including post orders, tour routes, and all records.
+
+breach_severity:
+  finding_types:
+    - id: post_reported_unstaffed
+      name: Post reported staffed with no guard badged in
+      base_level: S2
+      aggravators:
+        - AGG-INTEGRITY
+      sla_refs:
+        - SEC-CSL-01
+        - SEC-CSL-07
+      action: Recount the post as unstaffed. Audit the post log against post reader badges for the period and confirm
+        relief procedures.
+    - id: door_alarm_closed_no_response
+      name: Door alarm closed with no guard at the door
+      base_level: S2
+      aggravators:
+        - AGG-INTEGRITY
+        - AGG-SECURITY
+      sla_refs:
+        - SEC-CSL-02
+        - SEC-CSL-07
+      action: Recount the alarm as not responded. Review the door with the Customer and retrain on badging the door
+        reader on arrival.
+    - id: visitor_without_escort
+      name: Visitor entered a hall without the escort
+      base_level: S2
+      aggravators:
+        - AGG-SECURITY
+      sla_refs:
+        - SEC-CSL-03
+        - SEC-CSL-07
+      action: Review the video for the visit under a Customer-approved request. Suspend the escort's escort privilege
+        pending review.
+    - id: media_shipped_without_destruction
+      name: Storage media shipped without a destruction certificate
+      base_level: S1
+      aggravators:
+        - AGG-SECURITY
+      sla_refs:
+        - SEC-CSL-06
+        - SEC-CSL-07
+      action: Contact the carrier and the OEM to recover the drive. Stop all RMA shipments until every waiting part is
+        reconciled against the destruction log.

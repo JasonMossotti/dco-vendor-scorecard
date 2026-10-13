@@ -18,7 +18,7 @@ function answer(s, right) {
 }
 
 ok(errors.length === 0, "no script errors " + errors.join(";"));
-ok(D.scenarios.length === 22, "one scenario per row of the ownership matrix");
+ok(D.scenarios.length === 27, "one scenario per row of the ownership matrix");
 ok(d.querySelector(".doctabs a.on").textContent === "Ownership trainer", "its tab is marked");
 ok(d.getElementById("tr-progress").textContent.startsWith("Question 1 of 10"), "opens on a quick round of 10");
 ok(d.getElementById("tr-check").disabled, "cannot check before answering all three");
@@ -27,7 +27,7 @@ answer(s, true);
 ok(d.querySelector(".tr-verdict.ok"), "a right answer is marked right");
 ok(d.getElementById("tr-progress").textContent.includes("1 right"), "and scored");
 ok(d.querySelector(".tr-clause").textContent.includes(s.component) && d.querySelector('.tr-clause a[href="../interface-agreement/#4-break-fix-ownership-matrix"]'), "the clause is shown with a link to the matrix");
-ok(d.querySelectorAll(".tr-raci td").length === 5, "the full RACI row");
+ok(d.querySelectorAll(".tr-raci td").length === 6, "the full RACI row");
 d.getElementById("tr-next").click();
 s = scn();
 answer(s, false);
@@ -39,8 +39,8 @@ ok(d.querySelector(".tr-end h2").textContent === "9 of 10 right" && d.querySelec
 const seen = new Set();
 // Every row, in order: the leak at the manifold and the utility outage.
 [...d.querySelectorAll("#tr-modes button")].find(b => b.dataset.mode === "all").click();
-ok(d.getElementById("tr-progress").textContent.startsWith("Question 1 of 22"), "every row mode has 22 questions");
-for (let i = 0; i < 22; i++) {
+ok(d.getElementById("tr-progress").textContent.startsWith("Question 1 of 27"), "every row mode has 27 questions");
+for (let i = 0; i < 27; i++) {
   s = scn(); seen.add(s.n);
   if (s.component.startsWith("Rack manifold")) {
     answer(s, true);
@@ -56,6 +56,6 @@ for (let i = 0; i < 22; i++) {
   } else answer(s, true);
   d.getElementById("tr-next").click();
 }
-ok(seen.size === 22 && d.querySelector(".tr-end h2").textContent === "22 of 22 right", "every row once");
+ok(seen.size === 27 && d.querySelector(".tr-end h2").textContent === "27 of 27 right", "every row once");
 ok(!/localStorage|sessionStorage|fetch\(/.test(html), "nothing is stored or sent");
 ok(errors.length === 0, "still no script errors " + errors.join(";"));

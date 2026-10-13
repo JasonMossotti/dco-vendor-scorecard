@@ -95,6 +95,8 @@ def generate_month(seed: int, root: Path = ROOT, start: date | None = None) -> P
         start = today - timedelta(days=today.weekday()) - timedelta(weeks=cfg["weeks"])
     out = Path(tempfile.mkdtemp(prefix=f"month_{seed}_"))
     write_dataset(SiteGenerator(load_sla(), cfg, start=start, seed=seed).run(), out)
+    from scorecard.synthetic.security import generate
+    generate(out, out / "security", "generated")       # the security layer, on its own stream
     return out
 
 
@@ -306,7 +308,8 @@ def attribution_display_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
             for r in sc["attribution"]]
 
 
-def site_rows(it_sc: dict[str, Any], ll_sc: dict[str, Any], it_ev, ll_ev) -> list[dict[str, Any]]:
+def site_rows(it_sc: dict[str, Any], ll_sc: dict[str, Any], it_ev, ll_ev, sec_sc: dict[str, Any] | None = None,
+              sec_ev=None) -> list[dict[str, Any]]:
     rows = [{"Measure": "Self-report", "IT Partner": "Every SLA met or minor exceptions", "Landlord": "Every SLA met"},
             {"Measure": "Minimum defaults (measured)", "IT Partner": str(it_sc["totals"]["defaults"]), "Landlord": str(len(ll_sc["defaults"]))},
             {"Measure": "Credits payable", "IT Partner": f"${it_sc['credits']['payable']:,.0f}",
@@ -317,7 +320,64 @@ def site_rows(it_sc: dict[str, Any], ll_sc: dict[str, Any], it_ev, ll_ev) -> lis
         rows.append({"Measure": "Engine self-check",
                      "IT Partner": f"{it_ev.detected} of {it_ev.planted}, {len(it_ev.false_positives)} false positives",
                      "Landlord": f"{ll_ev.detected} of {ll_ev.planted}, {len(ll_ev.false_positives)} false positives"})
+    if sec_sc is not None:
+        sec = ["Every SLA met, every post staffed", str(len(sec_sc["defaults"])), f"${sec_sc['credits']['payable']:,.0f}",
+               f"{sec_sc['findings']} ({sec_sc['s1']})"]
+        if sec_ev is not None and len(rows) > 4:
+            sec.append(f"{sec_ev.detected} of {sec_ev.planted}, {len(sec_ev.false_positives)} false positives")
+        for r, v in zip(rows, sec):
+            r["Security Partner"] = v
     return rows
+
+
+# --------------------------------------------------------------------------- #
+# Security Partner view
+# --------------------------------------------------------------------------- #
+def security_dir(data_dir: str | Path) -> Path | None:
+    from scorecard import tickets
+    return tickets.security_dir(Path(data_dir))
+
+
+@lru_cache(maxsize=12)
+def _security_cached(data_dir: str):
+    from scorecard.engine.evaluate import evaluate_security
+    from scorecard.engine.security import build_security_scorecard, run_security
+    from scorecard.sla_model import PARTNER_FILES
+    from scorecard.synthetic.security import KEY
+    sec = security_dir(data_dir)
+    sla = load_sla(PARTNER_FILES["security"])
+    result = run_security(sla, data_dir, sec)
+    sc = build_security_scorecard(sla, result)
+    ev = evaluate_security(result.findings, sec) if (sec / KEY).exists() else None   # read only after the engine has finished
+    return result, sc, ev
+
+
+def run_security_pipeline(data_dir: str | Path):
+    """(Security result, Security scorecard, evaluation or None); None when the dataset has no security layer."""
+    return _security_cached(str(data_dir)) if security_dir(data_dir) else None
+
+
+def security_headline(sc: dict[str, Any]) -> str:
+    d = sc["defaults"]
+    return (f"The Security Partner's weekly reports claimed every service level was met and every post staffed. Measured "
+            f"from the Customer's access control, video, and identity systems: **{len(d)} Minimum defaults**"
+            + (f" ({', '.join(d)})" if d else "")
+            + f", **{sc['s1']} S1 findings**, and **\\${sc['credits']['payable']:,.0f}** in service credits.")
+
+
+def security_csl_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"ID": r["id"], "Service level": r["name"], "Expected": _threshold(r["direction"], r["expected"]),
+             "Minimum": _threshold(r["direction"], r["minimum"]), "Measured": _pct(r["actual"], 3),
+             "Security Partner reported": _pct(r["vendor_reported"]), "Status": _LL_STATUS[r["status"]],
+             "Credit": f"${r['credit']:,.0f}" if r["credit"] else "",
+             "Basis": r["detail"] + (f". {r['note']}" if r["note"] and r["status"] != "met_expected" else "")} for r in sc["csl"]]
+
+
+def security_vs_reported_rows(sc: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"Service level": f"{r['id']} {r['name']}", "Security Partner reported (%)": _round(r["vendor_reported"], 3),
+             "Measured (%)": _round(r["actual"], 3),
+             "Gap (pts)": None if r["actual"] is None or r["vendor_reported"] is None else round(r["actual"] - r["vendor_reported"], 3)}
+            for r in sc["csl"]]
 
 
 def crossing_outages(ll_sc: dict[str, Any], it_result) -> list[str]:

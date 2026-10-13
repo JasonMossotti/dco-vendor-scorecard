@@ -36,7 +36,7 @@ CONTRACT = load_sla(ROOT / "sla" / "it_partner.yaml")
 # --------------------------------------------------------------------------- #
 # Controls: which partner, and which dataset (the site's tab bar sits above the app)
 # --------------------------------------------------------------------------- #
-VIEWS = ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)"]
+VIEWS = ["Site summary", "IT Partner (Ridgeline)", "Landlord (Caprock)", "Security Partner (Llano Gate)"]
 GENERATE = "Generate a new random month"
 datasets = A.available_datasets(ROOT)
 choices = list(datasets) + [GENERATE]
@@ -105,6 +105,9 @@ facility = A.has_facility(data_dir)
 if facility:
     with st.spinner("Reconciling the Landlord's records against facility telemetry..."):
         ll_result, ll_sc, ll_ev, it_plain = A.run_landlord_pipeline(data_dir)
+security = A.run_security_pipeline(data_dir)
+if security:
+    sec_result, sec_sc, sec_ev = security
 WINDOW = f"{sc['window']['start']:%b %d} to {sc['window']['end']:%b %d, %Y}"
 FOOT = "Synthetic data for a portfolio demonstration; all names and events are fictional."
 
@@ -237,13 +240,14 @@ def render_it(result, sc, ev) -> None:
 
 
 def render_site() -> None:
-    st.title("Site AUS-1: two partners, one set of telemetry")
+    st.title("Site AUS-1: three partners, one set of records")
     st.caption(f"{WINDOW} · {FOOT}")
-    st.markdown("The Customer leases the halls from a Landlord that runs the building, power, and cooling, and contracts an "
-                "IT Partner for the data hall work. Each is measured against its own SLA from the Customer's Telemetry of "
-                "Record. Outages that cross the boundary between them are attributed under the Interface Agreement.")
-    st.subheader("Both partners, measured")
-    st.dataframe(pd.DataFrame(A.site_rows(sc, ll_sc, ev, ll_ev)), hide_index=True)
+    st.markdown("The Customer leases the halls from a Landlord that runs the building, power, and cooling, contracts an "
+                "IT Partner for the data hall work, and contracts a Security Partner for the guards, door alarms, visitors, "
+                "and media destruction in its halls. Each is measured against its own SLA from the Customer's own systems. "
+                "Outages that cross the boundary between them are attributed under the Interface Agreement.")
+    st.subheader("Every partner, measured")
+    st.dataframe(pd.DataFrame(A.site_rows(sc, ll_sc, ev, ll_ev, *(security[1:] if security else (None, None)))), hide_index=True)
     st.subheader("Outages that crossed the demarcation")
     crossing = A.crossing_outages(ll_sc, result)
     for line in crossing or ["No outage crossed the demarcation in this window."]:
@@ -253,7 +257,7 @@ def render_site() -> None:
     st.dataframe(pd.DataFrame(A.attribution_change_rows(sc, it_plain)), hide_index=True)
     st.markdown("Without attribution, the IT Partner would be charged for hours the Landlord's equipment kept the rack dark. "
                 "With it, each party is charged only for its own side of the demarcation.")
-    st.caption("Use IT Partner and Landlord above for each partner's full scorecard.")
+    st.caption("Use the partner views above for each partner's full scorecard.")
 
 
 def render_landlord() -> None:
@@ -313,11 +317,65 @@ and VESDA controllers, the BMS, and badge entries), not from the Landlord's own 
 """)
 
 
+def render_security() -> None:
+    st.title("Security Partner SLA Scorecard")
+    st.caption(f"{sec_sc['supplier']} · {WINDOW} · {FOOT}")
+    tabs = st.tabs(["Overview", "Service levels", "Findings", "About"])
+    with tabs[0]:
+        st.markdown(A.security_headline(sec_sc))
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Minimum defaults", len(sec_sc["defaults"]))
+        c2.metric("Service credits", f"${sec_sc['credits']['payable']:,.0f}")
+        c3.metric("S1 findings", sec_sc["s1"])
+        c4.metric("Discrepancies found", sec_sc["findings"])
+        st.subheader("Security Partner reported vs. measured from the Customer's systems")
+        st.dataframe(pd.DataFrame(A.security_vs_reported_rows(sec_sc)), hide_index=True)
+        if sec_ev is not None:
+            st.subheader("Engine self-check")
+            st.markdown(f"The data generator planted **{sec_ev.planted}** security discrepancies in an answer key the engine "
+                        f"cannot read. The engine found **{sec_ev.detected} of {sec_ev.planted}** with "
+                        f"**{len(sec_ev.false_positives)} false positive{'s' if len(sec_ev.false_positives) != 1 else ''}**.")
+    with tabs[1]:
+        st.subheader("Critical Service Levels (credit-bearing)")
+        st.dataframe(pd.DataFrame(A.security_csl_rows(sec_sc)), hide_index=True)
+        cr = sec_sc["credits"]
+        st.markdown(f"**Credits:** \\${cr['payable']:,.0f} payable" + (" (the monthly cap applied)." if cr["capped"] else "."))
+        st.subheader("Key Measurements")
+        st.dataframe(pd.DataFrame(A.landlord_km_rows(sec_sc)), hide_index=True)
+    with tabs[2]:
+        st.markdown("Each finding is a place where the Security Partner's post log, dispatch log, visitor log, or destruction "
+                    "certificates do not reconcile with the Customer's access control system, Redfish inventory, or the RMA "
+                    "shipments. A finding starts a review; it is not by itself proof of intent.")
+        for f in sec_result.findings:
+            with st.expander(f"{f.id} · {f.severity} {f.severity_name} · {f.title} · {f.unit or ''}"):
+                st.markdown(A.link_tickets(f.summary, data_dir))
+                if A.portal_line(f.tickets, data_dir):
+                    st.markdown(A.portal_line(f.tickets, data_dir))
+                st.dataframe(pd.DataFrame(A.evidence_rows(f)), hide_index=True)
+                st.markdown(f"**Recommended action:** {f.recommended_action}")
+                st.markdown(f"**SLA references:** {A.explain_refs(f.sla_refs)}")
+    with tabs[3]:
+        st.markdown(f"""
+**What this is.** The contract security company for the Customer's halls in the same fictional site. It runs the
+Customer's security policy on the Customer's own systems: guard posts, door alarm response, visitor sign-in and escorts,
+camera health, badge removal for leavers, and destroying drives on site before a failed part ships. Its SLA is measured
+from the access control system, the video system's health records, and the identity feed, not from its own logs.
+
+**Read more:** [Security SLA]({REPO}/blob/main/docs/sla/SECURITY_SLA.md) ·
+[Interface Agreement]({REPO}/blob/main/docs/sla/INTERFACE_AGREEMENT.md) ·
+[Security discrepancy report]({REPO}/blob/main/reports/security_discrepancy_report.md)
+""")
+
+
 if view == "IT Partner (Ridgeline)" or not facility:
     if not facility and view != "IT Partner (Ridgeline)":
         st.info("This dataset has no facility data, so only the IT Partner view is available.")
     render_it(result, sc, ev)
 elif view == "Landlord (Caprock)":
     render_landlord()
+elif view == "Security Partner (Llano Gate)" and security:
+    render_security()
 else:
+    if view == "Security Partner (Llano Gate)":
+        st.info("This dataset has no security records, so the Security Partner view is not available.")
     render_site()

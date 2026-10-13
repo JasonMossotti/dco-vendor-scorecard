@@ -432,6 +432,15 @@ def _record_review(ds: Dataset, r: dict[str, Any]) -> dict[str, Any]:
         inv = [x for x in r["timeline"] if x["source"].endswith("redfish_inventory_changes.jsonl")]
         if inv:
             work_lo, work_hi = _t(inv[0]["t"]), _t(inv[-1]["t"])
+    elif t == "sir":   # a door alarm: the access control system's alarm, the guard's badge at the door, the dispatch close
+        m = r["measured"] or {}
+        if m.get("arrived"):
+            rows.append(_metric("Alarm to guard badged at the door (on-site target)", ws, _t(m["arrived"]), m["target_min"]))
+        else:
+            rows.append(None)
+        if we:
+            rows.append(_metric("Alarm to dispatch log closed", ws, we, None,
+                                "" if m.get("arrived") else "No guard badged the door before the close."))
     else:   # PM task
         rows.append(_metric("Due window", ws, _t(n["due_end"])))
         if n.get("completed_at"):
@@ -450,12 +459,13 @@ def _record_review(ds: Dataset, r: dict[str, Any]) -> dict[str, Any]:
     gpus = 4 * len(nodes)
     hours = ((we - ws).total_seconds() / 3600) if (gpus and we) else 0.0
     osr = 1 if gpus == 0 else 2 if gpus <= GPUS_PER_RACK else 3
-    lane = "Landlord" if r["partner"] == "Landlord" else "Customer" if t in ("chg", "mop") else "IT Partner"
+    lane = r["partner"] if r["partner"] in ("Landlord", "Security Partner") else "Customer" if t in ("chg", "mop") else "IT Partner"
+    label = {"pm": "Due window", "sir": "Alarm to close"}.get(t, "Approved window")
     return {
         "kind": t, "start": r["start"], "end": r["end"],
-        "labels": {"duration": "Due window" if t == "pm" else "Approved window", "gpus": "GPUs out of service",
+        "labels": {"duration": label, "gpus": "GPUs out of service",
                    "split": "GPU-hours: Landlord / IT Partner", "offline": "GPUs out of service"},
-        "phases": [[lane, r["start"], r["end"], "Due window" if t == "pm" else "Approved window"]] if r["end"] else [],
+        "phases": [[lane, r["start"], r["end"], label]] if r["end"] else [],
         "marks": [[r["start"], "Opens"]] + ([[r["end"], "Closes"]] if r["end"] else []) + ([[overrun["closed"], "Equipment closed"]] if overrun else []),
         "ref": r["id"], "ticket": None, "work_order": None,
         "mops": [r["id"]] if t == "mop" else sorted(x for x in r["related"] if x.startswith("MOP-")),
@@ -474,7 +484,7 @@ def _record_review(ds: Dataset, r: dict[str, Any]) -> dict[str, Any]:
 
 
 def build_index(ds: Dataset, records: list[dict[str, Any]] | None = None, devices: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Every record in the Incident Portal (incidents, changes, work orders, MOPs, PM tasks) with the facts to
+    """Every record in the Incident Portal (incidents, changes, work orders, MOPs, PM tasks, door alarms) with the facts to
     start a review from it, plus what the PIR search matches on: related record numbers, the devices the record
     names, and the devices one connection away from them (``scorecard.devices``)."""
     from scorecard import devices as D

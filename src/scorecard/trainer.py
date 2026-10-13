@@ -19,9 +19,11 @@ from scorecard.sla_model import load_interface_agreement, load_sla
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config" / "ownership_trainer.yaml"
-PARTY = {"customer": "Customer", "landlord": "Landlord", "it_partner": "IT Partner", "oem": "OEM", "utility": "Utility"}
-SLA_FILES = {"IT Partner": ROOT / "sla" / "it_partner.yaml", "Landlord": ROOT / "sla" / "ot_partner.yaml"}
-SLA_NAME = {"IT Partner": "IT Partner SLA", "Landlord": "Landlord SLA"}
+PARTY = {"customer": "Customer", "landlord": "Landlord", "it_partner": "IT Partner", "security_partner": "Security Partner",
+         "oem": "OEM", "utility": "Utility"}
+SLA_FILES = {"IT Partner": ROOT / "sla" / "it_partner.yaml", "Landlord": ROOT / "sla" / "ot_partner.yaml",
+             "Security Partner": ROOT / "sla" / "security_partner.yaml"}
+SLA_NAME = {"IT Partner": "IT Partner SLA", "Landlord": "Landlord SLA", "Security Partner": "Security SLA"}
 
 
 def load_config() -> dict[str, Any]:

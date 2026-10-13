@@ -9,19 +9,19 @@
 
 > Portfolio demonstration. All data, parties, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on internal information from, any real company.
 
-![Unified Site Management: both partners' headline results and a card for every function](docs/images/overview.png)
+![Unified Site Management: every partner's headline results and a card for every function](docs/images/overview.png)
 
 ## In 30 seconds
 
-At a partner-operated site, partners do the hands-on work and the Customer's site lead owns the outcome. The fictional Site AUS-1 in Central Texas has two partners: a **Landlord** (Caprock Critical Facilities) that runs the building, power, cooling, and CDUs, and an **IT Partner** (Ridgeline Site Services) that does the data hall work. Both report that every SLA was met. This project rebuilds every incident from the equipment's own telemetry and finds otherwise:
+At a partner-operated site, partners do the hands-on work and the Customer's site lead owns the outcome. The fictional Site AUS-1 in Central Texas has three partners: a **Landlord** (Caprock Critical Facilities) that runs the building, power, cooling, and CDUs, an **IT Partner** (Ridgeline Site Services) that does the data hall work, and a **Security Partner** (Llano Gate Protective Services) that staffs the guard posts and answers the door alarms, visitors, and media destruction in the Customer halls. All three report that every SLA was met. This project rebuilds every incident from the equipment's own telemetry and finds otherwise:
 
-| | IT Partner (Ridgeline) | Landlord (Caprock) |
-|---|---|---|
-| Self-report | Every SLA met or minor exceptions | Every SLA met |
-| Measured Minimum Service Level Defaults | **4** (CSL-07, 08, 09, 11) | **4** (OT-CSL-01, 06, 07, 08) |
-| Credits | **$188,700** payable (inside the $222,000 cap) | **$106,200** against rent |
-| Findings (records that do not reconcile with telemetry) | 18 (14 S1) | 8 (7 S1) |
-| Engine self-check on planted discrepancies | 17 of 17; **1,020 of 1,020** across 60 unseen months, 0 false positives | 8 of 8; **480 of 480** across 60 unseen months, 0 false positives |
+| | IT Partner (Ridgeline) | Landlord (Caprock) | Security Partner (Llano Gate) |
+|---|---|---|---|
+| Self-report | Every SLA met or minor exceptions | Every SLA met | Every SLA met, every post staffed |
+| Measured Minimum Service Level Defaults | **4** (CSL-07, 08, 09, 11) | **4** (OT-CSL-01, 06, 07, 08) | **2** (SEC-CSL-03, 06) |
+| Credits | **$188,700** payable (inside the $222,000 cap) | **$106,200** against rent | **$12,276** |
+| Findings (records that do not reconcile with telemetry) | 18 (14 S1) | 8 (7 S1) | 4 (4 S1) |
+| Engine self-check on planted discrepancies | 17 of 17; **1,020 of 1,020** across 60 unseen months, 0 false positives | 8 of 8; **480 of 480** across 60 unseen months, 0 false positives | 4 of 4; **240 of 240** across 60 unseen months, 0 false positives |
 
 One outage crosses the boundary between them: during planned work on rack A07's A-side power, the Landlord opens the B-side tap-off by mistake and the rack goes dark for 3.4 hours. The Customer's telemetry attributes it to the Landlord under the Interface Agreement, so it stays off the IT Partner's scorecard (scored without attribution, the IT Partner would show 5 defaults and $222,000). That one event is followed through every page below.
 
@@ -82,7 +82,7 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 
 ![Overview page](docs/images/overview.png)
 
-**What it shows.** The landing page: both partners' self-report beside the measured result, then one card per function with its headline numbers (120 alarms this month, 11 expected from change work, 4 outside declared impact; 119 partner records, 27 that do not reconcile) and a button into each. A tab bar at the top of every page reaches every function.
+**What it shows.** The landing page: each partner's self-report beside the measured result, then one card per function with its headline numbers (120 alarms this month, 11 expected from change work, 4 outside declared impact; 146 partner records, 29 that do not reconcile) and a button into each. A tab bar at the top of every page reaches every function.
 
 **How it works.** `scripts/render_hub.py` fills `templates/hub.html` by computing every number with the same data and code as the page it links to, and `tests/test_hub.py` checks they agree, so the overview can never disagree with a report. The tab bar is defined once in `src/scorecard/sitenav.py` and injected into every page by `scripts/build_site.py`, which also links every ticket number on a page to its record in the Incident Portal.
 
@@ -90,7 +90,7 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 
 ![IT Partner scorecard: vendor reported vs. measured from telemetry](docs/images/scorecards.png)
 
-**What it shows.** The interactive scorecard app with three views: a **site summary** (both partners side by side, the outage that crossed the demarcation, and what attribution changed), the **IT Partner** scorecard, and the **Landlord** scorecard. Each shows service levels reported vs. measured, credits, the severity log, corrective action plans, and every finding with its evidence. A dataset picker switches between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), and a brand-new random month generated on the spot.
+**What it shows.** The interactive scorecard app with four views: a **site summary** (every partner side by side, the outage that crossed the demarcation, and what attribution changed), the **IT Partner** scorecard, the **Landlord** scorecard, and the **Security Partner** scorecard. Each shows service levels reported vs. measured, credits, the severity log, corrective action plans, and every finding with its evidence. A dataset picker switches between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), and a brand-new random month generated on the spot.
 
 <img src="docs/images/finding.png" alt="A finding with its evidence: a repeat failure logged as a new ticket to restart the clock" width="860">
 
@@ -101,6 +101,8 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 - `src/scorecard/app_support.py` runs the same pipeline the command line runs: generator, engines, `build_scorecard(sla, result)`. The scorecard is a pure function of the contract and the data, so a contract amendment is a one-line YAML change and the effect on breaches and credits shows on the next run.
 - Service levels are measured from telemetry in `src/scorecard/kpi.py`, using the contract's ticket handling rules (`src/scorecard/measurement.py`, TR-1 to TR-7). Credits, the monthly cap, and the S1 to S4 severity index come from `src/scorecard/sla_model.py`.
 - The app is tested in CI against a fake Streamlit (`tests/fake_streamlit.py`) that records every element it renders.
+
+**The Security Partner.** Llano Gate guards the Customer halls under its own [Security SLA](docs/sla/SECURITY_SLA.md): guard post coverage, door alarm response (a guard badged at the door within 3 minutes for a forced door, 5 for a held one), visitor escorts, camera availability, leaver badges off within 24 hours, every drive in a failed compute tray destroyed on site (NIST SP 800-88 Destroy) before the tray ships, and record integrity. The measurements never use video or a guard's word: the evidence is the Customer's own access control system (a guard's badge at the post or the alarmed door, the escort's badge before the visitor's), camera health and recorder retention, the identity feed of leavers, the trays' Redfish drive inventory, and the RMA shipments. Its records are generated on their own random stream (`src/scorecard/synthetic/security.py`) from the guard and visitor badges the site already had, and `scripts/run_security.py` plants four discrepancies a month: a post reported staffed with no guard badged in, a door alarm closed with no guard at the door, a visitor in a hall without the escort, and a drive shipped with no destruction certificate. Dispatch records (SIR) appear in the Incident Portal, the Interface Agreement gains five ownership rows and a demarcation point (DM-SEC), and the weekly pack carries a third partner.
 
 ## Availability and repair turnaround
 
@@ -278,7 +280,7 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 ![The Interface Agreement rendered with its contents](docs/images/agreements.png)
 
-**What it shows.** The three contracts behind the site, with contents and print to PDF: the [IT Partner SLA](docs/sla/IT_PARTNER_SLA.md), the [Landlord SLA](docs/sla/LANDLORD_SLA.md), and the [Interface Agreement](docs/sla/INTERFACE_AGREEMENT.md) that joins them (demarcation points, one break-fix ownership matrix with exactly one Accountable party per component, fault attribution, joint incident command, handoffs, change coordination, Customer data access, and change-aware alarm notification).
+**What it shows.** The four contracts behind the site, with contents and print to PDF: the [IT Partner SLA](docs/sla/IT_PARTNER_SLA.md), the [Landlord SLA](docs/sla/LANDLORD_SLA.md), the [Security SLA](docs/sla/SECURITY_SLA.md), and the [Interface Agreement](docs/sla/INTERFACE_AGREEMENT.md) that joins them (demarcation points, one break-fix ownership matrix with exactly one Accountable party per component, fault attribution, joint incident command, handoffs, change coordination, Customer data access, and change-aware alarm notification).
 
 **How it works.** The contracts are YAML, and the documents, the generator, the engines, the scorecards, and the glossary all read the same files, so the text and the scoring cannot drift apart. Shared terms live in `sla/common.yaml`; each partner file (`it_partner.yaml`, `ot_partner.yaml`) extends them, and a key set in both is an error, so a partner contract can add terms but never override a common one. `scripts/render_sla.py` validates the YAML and renders the Markdown; `scripts/render_agreements.py` renders the pages. Highlights of the design:
 
@@ -291,7 +293,7 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - **EHS for every partner** (OSHA 1910/1926/1904, NFPA 70E-2027, 70B, 855, 110, 72, 51B): 12 site safety rules and three violation classes; EHS credits apply only to independently confirmed violations and are never based on reported injuries or near misses.
 - **Fault attribution** walks each rack's power and cooling paths in the site model to decide which side of the demarcation an outage started on (FA-1), and starts the other partner's clock only at the handoff (FA-3).
 
-**Ownership trainer.** A scenario quiz at [`/agreements/ownership-trainer/`](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/ownership-trainer/), one scenario per row of the Interface Agreement's break-fix ownership matrix (22). An example is coolant dripping from a quick-disconnect on rack A06's manifold: who is Responsible, who is Accountable, and who has to alert the Customer how fast? After each answer it shows the RACI row, the demarcation boundary, the priority criterion quoted from the owning party's SLA, the notification rule (NT-1 within 5 minutes for a P1, NT-2 within 15 for a P2), the attribution rules and handoffs that apply, and the sample month's records where that row applied, linked to the Incident Portal. It has a Quick 10 mode and an every-row mode. `config/ownership_trainer.yaml` holds only what a technician would see; every answer is read from `sla/interface_agreement.yaml` (`src/scorecard/trainer.py`), and tests check that every sample record belongs to a row and every priority criterion exists in the contract, so the quiz cannot drift from the contract. The score stays in the page; nothing is stored.
+**Ownership trainer.** A scenario quiz at [`/agreements/ownership-trainer/`](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/ownership-trainer/), one scenario per row of the Interface Agreement's break-fix ownership matrix (27). An example is coolant dripping from a quick-disconnect on rack A06's manifold: who is Responsible, who is Accountable, and who has to alert the Customer how fast? After each answer it shows the RACI row, the demarcation boundary, the priority criterion quoted from the owning party's SLA, the notification rule (NT-1 within 5 minutes for a P1, NT-2 within 15 for a P2), the attribution rules and handoffs that apply, and the sample month's records where that row applied, linked to the Incident Portal. It has a Quick 10 mode and an every-row mode. `config/ownership_trainer.yaml` holds only what a technician would see; every answer is read from `sla/interface_agreement.yaml` (`src/scorecard/trainer.py`), and tests check that every sample record belongs to a row and every priority criterion exists in the contract, so the quiz cannot drift from the contract. The score stays in the page; nothing is stored.
 
 ## Glossary and code popups
 
@@ -330,7 +332,7 @@ The site is code too. [`site/site.yaml`](site/site.yaml) lists every product wit
 
 **Two views of the same month.** `scripts/generate_data.py` simulates the site for four weeks and writes what the **equipment and Customer systems** recorded (GPU XID events, BMC inventory and alarms, fabric events, CDU, UPS, busway, generator, BMS, leak and VESDA telemetry, scheduler states, validation checks, badge access) and what the **partners** reported (tickets, work orders, maintenance records, rosters, spares ledger, deployment milestones, weekly self-reports). It then plants realistic discrepancies, such as a ticket claiming a part swap the BMC inventory never saw, a technician "on site" before badging into the hall, or a generator test recorded as "Pass at 40% load" while the controller shows it ran unloaded, and writes an answer key. Every file is described in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md).
 
-**One engine per partner.** `scripts/run_engine.py` (IT Partner, `src/scorecard/engine/`) and `scripts/run_landlord.py` (Landlord, `src/scorecard/engine/landlord.py`) read the data through a connector layer (`src/scorecard/connectors.py`, one interface per source), rebuild every incident from telemetry alone using the contract's ticket handling rules, and report each place the partner's records do not reconcile, with the exact evidence, an S1 to S4 severity, and the corrective action the SLA defines. **The engines cannot read the answer key:** the connector blocks it, and a test deletes the answer key and confirms the findings do not change. Reports: [IT scorecard](reports/scorecard.md), [IT discrepancies](reports/discrepancy_report.md), [Landlord scorecard](reports/landlord_scorecard.md), [Landlord discrepancies](reports/landlord_discrepancy_report.md), [attribution](reports/attribution_report.md), [site summary](reports/site_summary.md).
+**One engine per partner.** `scripts/run_engine.py` (IT Partner, `src/scorecard/engine/`), `scripts/run_landlord.py` (Landlord, `src/scorecard/engine/landlord.py`), and `scripts/run_security.py` (Security Partner, `src/scorecard/engine/security.py`) read the data (the first two through a connector layer, `src/scorecard/connectors.py`, one interface per source), rebuild every incident from telemetry alone using the contract's ticket handling rules, and report each place the partner's records do not reconcile, with the exact evidence, an S1 to S4 severity, and the corrective action the SLA defines. **The engines cannot read the answer key:** the connector blocks it, and for each engine a test deletes the answer key and confirms the findings do not change. Reports: [IT scorecard](reports/scorecard.md), [IT discrepancies](reports/discrepancy_report.md), [Landlord scorecard](reports/landlord_scorecard.md), [Landlord discrepancies](reports/landlord_discrepancy_report.md), [Security scorecard](reports/security_scorecard.md), [Security discrepancies](reports/security_discrepancy_report.md), [attribution](reports/attribution_report.md), [site summary](reports/site_summary.md).
 
 A finding means the records do not reconcile, not that someone lied. It starts a review.
 
@@ -342,6 +344,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 |---|---|---|
 | IT Partner discrepancy engine | 17 of 17 | 1,020 of 1,020, 0 false positives |
 | Landlord engine | 8 of 8 | 480 of 480, 0 false positives |
+| Security Partner engine | 4 of 4 | 240 of 240 (60 per plant), 0 false positives |
 | Facility evidence | | 60 of 60 |
 | Failure patterns | 3 found, 0 other flags | optic lot 60/60, CDU drift 60/60, reseat 41/60, decoys 0/60 |
 | Change-aware alarms | 120 alarms, 11 expected, 4 flags (all MOP-310) | every case 60/60, decoys 0/60 |
@@ -358,6 +361,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 ```bash
 python scripts/run_engine.py --robustness 60
 python scripts/run_landlord.py --robustness 60
+python scripts/run_security.py --robustness 60
 python scripts/render_patterns.py --robustness 60
 python scripts/render_alarms.py --robustness 60
 python scripts/render_energy.py --robustness 60
@@ -390,6 +394,7 @@ python scripts/render_availability.py --robustness 60
 pip install -r requirements-live.txt     # everything, including the live collector's tests
 python scripts/render_sla.py && python scripts/render_site.py && python scripts/generate_data.py \
   && python scripts/run_engine.py && python scripts/build_scorecard.py && python scripts/run_landlord.py \
+  && python scripts/generate_security.py && python scripts/run_security.py \
   && python scripts/render_pir.py && python scripts/render_weekly.py \
   && python scripts/generate_history.py && python scripts/render_patterns.py \
   && python scripts/generate_changes.py && python scripts/render_alarms.py && python scripts/render_glossary.py
@@ -407,6 +412,7 @@ streamlit run app/streamlit_app.py          # the Scorecards app on its own
 sla/common.yaml                  Terms shared by every partner SLA (add-only merge)
 sla/it_partner.yaml              IT Partner SLA: service levels, credits, finding types
 sla/ot_partner.yaml              Landlord SLA: power, cooling, maintenance, response, credits against rent
+sla/security_partner.yaml        Security SLA: guard posts, door alarms, visitors, cameras, leavers, media destruction
 sla/interface_agreement.yaml     Demarcation, ownership matrix, fault attribution, joint operations, data access, alarm notification
 site/site.yaml                   Single source of truth for the site: equipment, topology, monitoring
 site/details.yaml                Equipment detail sheets: parts, sources, and alarm-text mappings
@@ -416,11 +422,11 @@ src/scorecard/detail_drawings.py Equipment detail sheets (SVG)
 src/scorecard/locations.py       Where each item is drawn (docs/site/locations.json) for location pins
 src/scorecard/devices.py         Device directory: every named device and its connections (docs/site/devices.json)
 config/synthetic.yaml            Generator settings: fault rates, partner behavior, planted discrepancies
-src/scorecard/synthetic/         Synthetic site data generator (sample, history, and change layers)
+src/scorecard/synthetic/         Synthetic site data generator (sample, history, change, and security layers)
 src/scorecard/sla_model.py       Load, validate, credit math, severity classification
 src/scorecard/measurement.py     Ticket handling rules as the reference implementation
 src/scorecard/connectors.py      Data access layer (one interface per source; answer key blocked)
-src/scorecard/engine/            IT Partner discrepancy engine; landlord.py: Landlord engine and attribution
+src/scorecard/engine/            IT Partner discrepancy engine; landlord.py: Landlord engine and attribution; security.py: Security Partner engine
 src/scorecard/kpi.py             Service level measurement from telemetry, for any period
 src/scorecard/builder.py         Scorecard: SLA results, reported vs. measured, credits, severity log, CAPs
 src/scorecard/pir.py             Post-incident review facts and timeline (also used by the Incident Portal)
@@ -447,12 +453,14 @@ config/energy.yaml               Weather, chiller plant, and meter model for the
 config/gpu_health.yaml           GPU health layer: watches per XID, thresholds, plants
 config/glossary.yaml             Code meanings: contract paths, acronyms, record families
 config/deployments.yaml          Deployment standard work: gates, steps, sign-off roles, inspections, authority profiles
+config/security.yaml             Security layer: guards, doors, cameras, tours, visitors, leavers, media
 config/deployments_data.yaml     Synthetic deployment record settings and planted records
 config/jira_fields.yaml          Jira field map: project keys, custom field ids, CSV headers, status categories
 scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, energy, gpu_health, deployments, tickets, glossary, agreements, devices)
 scripts/generate_*.py            Synthetic data: sample, history, change layer, energy meters, GPU health, deployment record
 scripts/run_engine.py            IT Partner engine -> reports/
 scripts/run_landlord.py          Landlord engine -> Landlord and attribution reports
+scripts/run_security.py          Security Partner engine -> Security reports
 scripts/build_scorecard.py       Scorecard -> reports/
 scripts/build_site.py            The static GitHub Pages site
 scripts/collect.py               Read-only live collector

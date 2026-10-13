@@ -1,0 +1,18 @@
+{"camera": "CAM-S-06", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-2", "timestamp": "2026-09-03T22:29:23Z"}
+{"camera": "CAM-S-06", "event": "Recording resumed", "reason": "", "recorder": "NVR-2", "timestamp": "2026-09-03T23:29:00Z"}
+{"camera": "CAM-S-01", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-1", "timestamp": "2026-09-06T22:53:01Z"}
+{"camera": "CAM-S-01", "event": "Recording resumed", "reason": "", "recorder": "NVR-1", "timestamp": "2026-09-06T23:24:40Z"}
+{"camera": "CAM-A-18", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-2", "timestamp": "2026-09-07T16:15:40Z"}
+{"camera": "CAM-A-18", "event": "Recording resumed", "reason": "", "recorder": "NVR-2", "timestamp": "2026-09-07T17:25:18Z"}
+{"camera": "CAM-C-16", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-4", "timestamp": "2026-09-08T22:15:19Z"}
+{"camera": "CAM-C-16", "event": "Recording resumed", "reason": "", "recorder": "NVR-4", "timestamp": "2026-09-08T22:56:00Z"}
+{"camera": "CAM-A-19", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-3", "timestamp": "2026-09-14T16:59:28Z"}
+{"camera": "CAM-A-19", "event": "Recording resumed", "reason": "", "recorder": "NVR-3", "timestamp": "2026-09-14T17:48:50Z"}
+{"camera": "CAM-B-10", "event": "Recording stopped", "reason": "Camera reboot", "recorder": "NVR-4", "timestamp": "2026-09-17T02:17:31Z"}
+{"camera": "CAM-B-10", "event": "Recording resumed", "reason": "", "recorder": "NVR-4", "timestamp": "2026-09-17T02:28:26Z"}
+{"camera": "CAM-A-21", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-1", "timestamp": "2026-09-19T06:10:32Z"}
+{"camera": "CAM-A-21", "event": "Recording resumed", "reason": "", "recorder": "NVR-1", "timestamp": "2026-09-19T07:17:36Z"}
+{"camera": "CAM-D-01", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-3", "timestamp": "2026-09-25T04:17:59Z"}
+{"camera": "CAM-D-01", "event": "Recording resumed", "reason": "", "recorder": "NVR-3", "timestamp": "2026-09-25T04:58:23Z"}
+{"camera": "CAM-B-17", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-3", "timestamp": "2026-09-27T06:58:35Z"}
+{"camera": "CAM-B-17", "event": "Recording resumed", "reason": "", "recorder": "NVR-3", "timestamp": "2026-09-27T07:28:09Z"}

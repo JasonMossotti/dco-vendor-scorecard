@@ -1,0 +1,78 @@
+# Security layer for the synthetic site: data/security/ (scripts/generate_security.py).
+#
+# What the Customer's own security systems hold for the Customer halls, and what the Security Partner records beside
+# them. The access control system (DS-BADGE) raises door alarms and records every guard, visitor, and post badge; the
+# video system (DS-VMS) records camera health and recorder retention; the identity feed (DS-IDM) records separations.
+# The Security Partner keeps the post log, guard tours, dispatch log, visitor log, and chain-of-custody log.
+#
+# Everything is generated on its own random stream ({seed}:security) from a finished dataset, which it reads and never
+# writes. Escorts are drawn from the IT Partner's and the Landlord's existing hall badge-ins, and drive serials from the
+# compute trays in the RMA shipments, so the new records line up with the old ones.
+
+guards: 32                 # LGP-001.. : rostered by post and shift; ids only, no names
+guard_badge_base: 61000    # badge ids B61001..
+
+# Customer doors on the access control system. A guard responding to an alarm badges the door's own reader.
+doors:
+  - {id: HALL-A, name: "Hall A entrance", hall: A}
+  - {id: HALL-B, name: "Hall B entrance", hall: B}
+  - {id: HALL-A-EXIT-N, name: "Hall A north emergency exit", hall: A}
+  - {id: HALL-B-EXIT-N, name: "Hall B north emergency exit", hall: B}
+  - {id: SPARES-CAGE, name: "Spares cage", hall: A}
+  - {id: DOCK-INNER, name: "Receiving dock inner door", hall: B}
+
+door_alarms:
+  held_per_day: 0.9          # door held past 60 seconds: carts, deliveries
+  forced_per_month: 2        # mostly emergency exits pushed without an alarm (a technician, a false trip)
+  held_doors: [HALL-A, HALL-B, SPARES-CAGE, DOCK-INNER]
+  forced_doors: [HALL-A-EXIT-N, HALL-B-EXIT-N]
+  response_min: {P1: [1.0, 2.8], P2: [1.2, 4.6]}     # guard badge at the door after the alarm
+  ack_s: {P1: [8, 50], P2: [10, 100]}                # console acknowledgement
+  late_ack_rate: 0.03
+  dispositions:
+    held: ["Door secured; propped by a technician moving a cart", "Door secured; delivery in progress, escort present",
+           "Door secured; closer slow, work order raised with the Landlord", "Door secured; no one present on arrival"]
+    forced: ["Exit used by a technician leaving the hall; no entry; door secured", "False trip on the door contact; door secured"]
+
+# Cameras covering the Customer halls, on four recorders.
+cameras:
+  recorders: [NVR-1, NVR-2, NVR-3, NVR-4]
+  areas:
+    - {prefix: CAM-A, count: 22, where: "Hall A", doors: [1, 2, 3]}
+    - {prefix: CAM-B, count: 22, where: "Hall B", doors: [1, 2, 3]}
+    - {prefix: CAM-S, count: 6, where: "Spares cage", doors: [1]}
+    - {prefix: CAM-D, count: 6, where: "Receiving dock", doors: [1, 2]}
+    - {prefix: CAM-C, count: 16, where: "Corridors to the hall doors", doors: []}
+  outages_per_month: 9
+  outage_min: [6, 70]
+  retention_days: [93, 104]   # oldest recording each day on a healthy recorder
+  disk_rebuilds_per_month: 0.5  # a recorder rebuilding an array keeps less video for a few days
+
+tours:
+  checkpoints: ["Hall A north", "Hall A south", "Hall A spares aisle", "Hall B north", "Hall B south",
+                "Hall B deployment area", "Receiving dock", "Corridor east"]
+  every_h: 2
+  late_after_min: 15
+  scan_jitter_min: [0, 12]
+  late_rate: 0.006
+
+visitors:
+  per_week: 11
+  companies: ["OEM field engineering", "Network carrier", "Fire protection inspector", "Customer audit", "Logistics carrier"]
+  escort_window_s: [10, 100]  # visitor badges in after the escort
+  stay_min: [40, 240]
+
+leavers:
+  per_month: 5               # people leaving a party's employment or the Site assignment, all parties
+  deactivate_h: [0.3, 9.0]
+
+media:
+  drives_per_tray: 8         # E1.S bays in a compute tray
+  handover_h: [0.5, 6.0]     # IT Partner to Security Partner, after removal
+  destroy_h: [2.0, 30.0]     # destroyed and certified, after handover
+  ship_margin_h: 2.0         # every certificate before the part ships, with at least this margin
+
+# Quarterly access reviews: due 10 business days after the quarter ends.
+access_reviews:
+  due_after_quarter_days: 14
+  completed_before_due_days: [1, 6]

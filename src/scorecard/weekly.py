@@ -1,4 +1,4 @@
-"""Facts for the Weekly Operations Review: one pack per week for the joint review with both partners.
+"""Facts for the Weekly Operations Review: one pack per week for the joint review with the partners.
 
 Everything here is computed from the dataset by the same engines as the monthly scorecards. The pack for a
 week is prepared at that week's end and uses only what was knowable then:
@@ -26,6 +26,7 @@ from scorecard.builder import _csl_rows, _vendor_value
 from scorecard.connectors import FileConnector
 from scorecard.engine import run_engine
 from scorecard.engine.landlord import measure_landlord, run_landlord
+from scorecard.engine.security import measure_security, run_security
 from scorecard.kpi import build_incidents, measure_period
 from scorecard.sla_model import PARTNER_FILES, evaluate_csl, load_sla
 
@@ -80,6 +81,10 @@ class WeeklyData:
         self.it = run_engine(self.it_sla, conn)
         self.it_incidents = build_incidents(self.it.context, self.it.findings)
         self.ll = run_landlord(self.ll_sla, conn)
+        from scorecard.tickets import security_dir
+        sec = security_dir(self.data_dir)
+        self.sec_sla = load_sla(PARTNER_FILES["security"])
+        self.sec = run_security(self.sec_sla, self.data_dir, sec) if sec else None
         ctx = self.it.context
         self.window_start, self.window_end = ctx.window_start, ctx.window_end
         self.weeks = [(w["week_start"], w["week_end"]) for w in ctx.vendor_weekly]
@@ -173,6 +178,23 @@ def _ll_levels(d: WeeklyData, ws: datetime, we: datetime, known: list) -> list[d
                      "expected": c["expected"], "minimum": c["minimum"],
                      "week": w, "week_status": status(c["id"], w), "week_detail": week[c["id"]]["detail"],
                      "reported": reported.get(c["id"]), "mtd": m, "mtd_status": status(c["id"], m)})
+    return rows
+
+
+def _sec_levels(d: WeeklyData, ws: datetime, we: datetime, known: list) -> list[dict]:
+    week = measure_security(d.sec, ws, we, known)
+    mtd = measure_security(d.sec, d.window_start, we, known)
+    reported = next((w["results"] for w in d.sec.context.weekly if w["week_start"] == _iso(ws)), {})
+
+    def status(cid, x):
+        return "no_events" if x["actual"] is None else evaluate_csl(d.sec_sla, cid, x["actual"], x["events"], x["misses"]).status
+    rows = []
+    for c in d.sec_sla["critical_service_levels"]:
+        w, m = week[c["id"]], mtd[c["id"]]
+        rows.append({"id": c["id"], "name": c["name"], "unit": c["unit"], "direction": c["direction"],
+                     "expected": c["expected"], "minimum": c["minimum"],
+                     "week": w["actual"], "week_status": status(c["id"], w), "week_detail": w["detail"],
+                     "reported": reported.get(c["id"]), "mtd": m["actual"], "mtd_status": status(c["id"], m)})
     return rows
 
 
@@ -372,13 +394,16 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
     we = next(e for s, e in d.weeks if s == ws)
     it_known = [f for f in d.it.findings if knowable_at(f) and knowable_at(f) < we]
     ll_known = [f for f in d.ll.findings if knowable_at(f) and knowable_at(f) < we]
+    sec_known = [f for f in d.sec.findings if knowable_at(f) and knowable_at(f) < we] if d.sec else []
     it_rows, ll_rows = _it_levels(d, ws, we, it_known), _ll_levels(d, ws, we, ll_known)
-    for r in it_rows + ll_rows:
+    sec_rows = _sec_levels(d, ws, we, sec_known) if d.sec else []
+    for r in it_rows + ll_rows + sec_rows:
         r["gap"] = _gap(r)
     it_status, it_why = _status(it_rows)
     ll_status, ll_why = _status(ll_rows)
     new = ([_finding_row(f, "IT Partner") for f in it_known if knowable_at(f) >= ws]
-           + [_finding_row(f, "Landlord") for f in ll_known if knowable_at(f) >= ws])
+           + [_finding_row(f, "Landlord") for f in ll_known if knowable_at(f) >= ws]
+           + [_finding_row(f, "Security Partner") for f in sec_known if knowable_at(f) >= ws])
     sev = {"S1": 0, "S2": 1, "S3": 2, "S4": 3}
     new.sort(key=lambda r: (sev.get(r["severity"], 9), r["known"]))
     actions = _actions(d, we)
@@ -397,9 +422,10 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
              "reasons": it_why, "levels": it_rows},
             {"name": d.ll_sla["parties"]["supplier"]["name"], "role": "Landlord", "status": ll_status,
              "reasons": ll_why, "levels": ll_rows},
-        ],
+        ] + ([{"name": d.sec_sla["parties"]["supplier"]["name"], "role": "Security Partner", "status": _status(sec_rows)[0],
+               "reasons": _status(sec_rows)[1], "levels": sec_rows}] if d.sec else []),
         "incidents": {"it": _it_incidents(d, ws, we), "landlord": _ll_incidents(d, ws, we)},
-        "findings": {"new": new, "awaiting_monthly_review": len(it_known) + len(ll_known)},
+        "findings": {"new": new, "awaiting_monthly_review": len(it_known) + len(ll_known) + len(sec_known)},
         "actions": actions,
         "pattern_actions": pattern_actions,
         "lookahead": _lookahead(d, we),

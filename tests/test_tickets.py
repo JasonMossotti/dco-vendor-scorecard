@@ -58,7 +58,8 @@ def _names():
 def test_every_partner_record_is_in_the_portal_once(portal):
     want = {"inc": [t["number"] for t in _js("vendor/tickets.json")], "chg": [c["change_id"] for c in _js("customer/cab_changes.json")],
             "wo": [w["wo"] for w in _js("landlord/work_orders.json")], "mop": [m["mop_id"] for m in _js("customer/landlord_mop_approvals.json")],
-            "pm": [p["task_id"] for p in csv.DictReader((SAMPLE / "landlord" / "pm_records.csv").open(encoding="utf-8"))]}
+            "pm": [p["task_id"] for p in csv.DictReader((SAMPLE / "landlord" / "pm_records.csv").open(encoding="utf-8"))],
+            "sir": [d["sir"] for d in json.loads((ROOT / "data" / "security" / "dispatch_log.json").read_text(encoding="utf-8"))]}
     got = [r["id"] for r in portal["records"]]
     assert len(got) == len(set(got)) == sum(len(v) for v in want.values())
     for t, refs in want.items():
@@ -107,11 +108,16 @@ def test_measurement_is_the_scorecards(by_id):
 def test_findings_and_alarms_are_on_their_records(by_id):
     it = json.loads((REPORTS / "findings.json").read_text(encoding="utf-8"))["findings"]
     ll = json.loads((REPORTS / "landlord_findings.json").read_text(encoding="utf-8"))
+    sec = json.loads((REPORTS / "security_findings.json").read_text(encoding="utf-8"))
     for f in it + ll:
         for ref in f["tickets"]:
             assert f["id"] in [x["id"] for x in by_id[ref]["findings"]], (f["id"], ref)
+    sec_refs = [(f["id"], ref) for f in sec for ref in f["tickets"] if ref in by_id]   # posts, visits, and trays are not portal records
+    for fid, ref in sec_refs:
+        assert fid in [x["id"] for x in by_id[ref]["findings"]], (fid, ref)
+    assert {fid for fid, _ in sec_refs} == {"S-002", "S-003"}, "the dispatch record and the RMA's ticket carry their findings"
     n = sum(len(r["findings"]) for r in by_id.values())
-    assert n == sum(len(f["tickets"]) for f in it + ll)
+    assert n == sum(len(f["tickets"]) for f in it + ll) + len(sec_refs)
     from scorecard import alarms as AL
     for a in AL.run_check(SAMPLE, ROOT / "data" / "changes")["alarms"]:
         for ref in {(a.ticket or {}).get("id"), a.change} - {None, ""}:

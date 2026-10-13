@@ -1,0 +1,265 @@
+<!--
+  GENERATED FILE. DO NOT EDIT BY HAND.
+  Source: sla/{{ src.partner }} + sla/{{ src.common }}  |  Generator: scripts/render_sla.py
+  Edit the YAML and re-run: python scripts/render_sla.py
+-->
+
+# {{ d.title }}
+
+**{{ d.subtitle }}**
+
+> **{{ d.status }}.** {{ d.disclaimer }}
+
+| Document ID | Version | Effective date | Term | Timezone |
+|---|---|---|---|---|
+| {{ d.id }} | {{ d.version }} | {{ d.effective_date }} | {{ d.term_months }} months | {{ d.timezone }} |
+
+## Contents
+
+1. [Purpose and Structure](#1-purpose-and-structure)
+2. [Parties and Site](#2-parties-and-site)
+3. [Scope and Ownership](#3-scope-and-ownership)
+4. [Alarm Priority Matrix](#4-alarm-priority-matrix)
+5. [Measurement and Telemetry of Record](#5-measurement-and-telemetry-of-record)
+6. [Guard Posts and Patrols](#6-guard-posts-and-patrols)
+7. [Door Alarms](#7-door-alarms)
+8. [Visitors and Escorts](#8-visitors-and-escorts)
+9. [Video System](#9-video-system)
+10. [Badge Administration and Access Reviews](#10-badge-administration-and-access-reviews)
+11. [Media Destruction](#11-media-destruction)
+12. [Critical Service Levels](#12-critical-service-levels)
+13. [Key Measurements](#13-key-measurements)
+14. [Service Level Credits and Earnback](#14-service-level-credits-and-earnback)
+15. [Chronic Failure](#15-chronic-failure)
+16. [Excused Events](#16-excused-events)
+17. [Root Cause Analysis and Corrective Action](#17-root-cause-analysis-and-corrective-action)
+18. [Governance and Reporting Cadence](#18-governance-and-reporting-cadence)
+19. [Change Management](#19-change-management)
+20. [Security and Chain of Custody](#20-security-and-chain-of-custody)
+21. [Environmental, Health, and Safety](#21-environmental-health-and-safety)
+22. [SLA Change Control and Continuous Improvement](#22-sla-change-control-and-continuous-improvement)
+- [Appendix A: Internal Breach Severity Index](#appendix-a-internal-breach-severity-index)
+- [Appendix B: Worked Examples](#appendix-b-worked-examples)
+
+---
+
+## 1. Purpose and Structure
+
+This Schedule defines the service levels {{ p.supplier.name }} ("Security Partner", and the "Supplier" for the purposes of the common terms in this Schedule) must meet in securing the Customer halls at {{ s.name }}, how performance is measured, and what happens when service levels are missed.
+
+{{ d.negotiation_note }}
+
+Each service level has an **Expected** level (missing it triggers root cause analysis) and a **Minimum** level (missing it triggers a Service Level Credit). Three principles shape this Schedule:
+
+1. **The Customer owns the policy and the systems; the Security Partner runs them.** Access approvals, the access control system, the video system, and the identity feed are the Customer's. The Security Partner operates them under the Customer's security policy.
+2. **A badge is evidence; a log entry is a claim.** A post is staffed when a guard badges in at the post, a door alarm is answered when a guard badges the alarmed door, and an escort is present when the escort badges into the hall.
+3. **No storage media leaves the Site intact.** Every drive from a failed part is destroyed on site and certified by serial number before the part ships.
+
+## 2. Parties and Site
+
+| Party | Name | Role |
+|---|---|---|
+| Customer | {{ p.customer.name }} | {{ p.customer.role }} |
+| Security Partner | {{ p.supplier.name }}{% if p.supplier.fictional %} *(fictional)*{% endif %} | {{ p.supplier.role }} |
+| IT Partner | {{ p.it_partner.name }}{% if p.it_partner.fictional %} *(fictional)*{% endif %} | {{ p.it_partner.role }} |
+| Landlord | {{ p.landlord.name }}{% if p.landlord.fictional %} *(fictional)*{% endif %} | {{ p.landlord.role }} |
+
+**Site:** {{ s.name }}. **Charges basis:** {{ c.charges_basis }}
+
+## 3. Scope and Ownership
+
+### 3.1 Security Partner services
+
+| ID | Service | Description |
+|---|---|---|
+{% for x in sla.scope.in_scope -%}
+| {{ x.id }} | {{ x.name }} | {{ x.description }} |
+{% endfor %}
+
+### 3.2 Not Security Partner scope
+
+{% for x in sla.scope.out_of_scope -%}
+- {{ x }}
+{% endfor %}
+
+### 3.3 Break-fix ownership matrix
+
+{% include "partials/ownership.md.j2" %}
+
+## 4. Alarm Priority Matrix
+
+"Engaged on-site" means a guard badged at the alarmed door's reader, or at the location of the event. {{ sla.priority_rules.authority }} {{ sla.priority_rules.escalation_on_risk }}
+
+| Priority | Acknowledge | Engaged on-site | Containment | Restore | Updates every |
+|---|---|---|---|---|---|
+{% for pr in sla.priorities -%}
+| **{{ pr.id }} {{ pr.name }}** | {{ pr.acknowledge_min | dur }} | {{ pr.engaged_on_site_min | dur }} | {{ pr.containment_min | dur }} | {{ pr.restore_min | dur }} | {{ pr.update_cadence_min | dur }} |
+{% endfor %}
+
+{% for pr in sla.priorities %}
+### {{ pr.id }}: {{ pr.name }}
+
+**Criteria:**
+{% for c in pr.criteria %}
+- {{ c }}
+{%- endfor %}
+
+**Examples:** {{ pr.examples | join(" ") }}
+
+**Escalation:** {{ pr.escalation }}
+{% endfor %}
+
+{% include "partials/measurement.md.j2" %}
+## 6. Guard Posts and Patrols
+
+{{ sla.posts.principle }}
+
+| Shift | Hours |
+|---|---|
+{% for sh in sla.posts.shifts -%}
+| {{ sh.name }} | {{ sh.hours }} |
+{% endfor %}
+
+| Post | Name | Post reader | Shifts |
+|---|---|---|---|
+{% for x in sla.posts.list -%}
+| {{ x.id }} | {{ x.name }} | {{ x.reader }} | {{ x.shifts | join(", ") }} |
+{% endfor %}
+
+**Tours:** {{ sla.posts.tours }}
+
+**Required qualifications:**
+
+{% for q in sla.posts.qualifications -%}
+- {{ q }}
+{% endfor %}
+
+## 7. Door Alarms
+
+{{ sla.door_alarms.principle }} A door may be held open for {{ sla.door_alarms.held_open_allowed_seconds }} seconds before the access control system raises a door held alarm.
+
+{% for r in sla.door_alarms.rules -%}
+- {{ r }}
+{% endfor %}
+
+## 8. Visitors and Escorts
+
+{% for r in sla.visitors.rules -%}
+- {{ r }}
+{% endfor %}
+
+## 9. Video System
+
+**Retention:** {{ sla.video.retention_days }} days on every recorder.
+
+{% for r in sla.video.rules -%}
+- {{ r }}
+{% endfor %}
+
+## 10. Badge Administration and Access Reviews
+
+- **Leavers:** the badge of every person who leaves a party's employment or the Site assignment is deactivated within {{ sla.access_reviews.leaver_deactivation_hours }} hours of the separation time in the Customer's identity feed (SEC-CSL-05).
+- **Quarterly review:** {{ sla.access_reviews.quarterly_review }}
+
+## 11. Media Destruction
+
+**Standard:** {{ sla.media_destruction.standard }}.
+
+{% for r in sla.media_destruction.rules -%}
+- {{ r }}
+{% endfor %}
+
+## 12. Critical Service Levels
+
+Critical Service Levels are measured each {{ c.measurement_period }} and tracked each {{ c.scorecard_period }}. A result worse than **Minimum** is a Minimum Service Level Default and earns the credit described in Section 14.
+
+| ID | Service level | Category | Expected | Minimum | Credit allocation |
+|---|---|---|:-:|:-:|:-:|
+{% for x in sla.critical_service_levels -%}
+| {{ x.id }} | {{ x.name }} | {{ categories[x.category] }} | {{ x | target(x.expected) }} | {{ x | target(x.minimum) }} | {{ x.credit_allocation_pct }}% |
+{% endfor -%}
+| | **Total allocation** | | | | **{{ total_alloc }}%** (pool limit {{ c.pool_pct }}%) |
+
+{% for x in sla.critical_service_levels %}
+### {{ x.id }}: {{ x.name }}
+
+{{ x.description }}
+
+- **Formula:** ({{ x.numerator }}) ÷ ({{ x.denominator }}) × 100
+- **Expected:** {{ x | target(x.expected) }}. **Minimum:** {{ x | target(x.minimum) }}.
+- **Telemetry:** {{ x.data_sources | join(", ") }}
+{%- if x.get('small_sample_rule') %}
+- **Small-sample rule:** When there are fewer than {{ x.small_sample_rule.below_events }} qualifying events in the period, {% if x.small_sample_rule.max_misses_before_minimum_default == 0 %}any miss{% elif x.small_sample_rule.max_misses_before_minimum_default == 1 %}more than 1 miss{% else %}more than {{ x.small_sample_rule.max_misses_before_minimum_default }} misses{% endif %} is a Minimum Service Level Default regardless of the percentage.
+{%- endif %}
+{% endfor %}
+
+## 13. Key Measurements
+
+Key Measurements carry no credits. Any miss requires a root cause analysis and corrective action plan (Section 17), and repeated misses may lead the Customer to promote the measurement to a Critical Service Level (Section 22).
+
+| ID | Key measurement | Target | Telemetry |
+|---|---|:-:|---|
+{% for k in sla.key_measurements -%}
+| {{ k.id }} | {{ k.name }} | {{ k | target(k.target) }} | {{ k.data_sources | join(", ") }} |
+{% endfor %}
+
+## 14. Service Level Credits and Earnback
+
+- **At-Risk Amount:** {{ c.at_risk_pct }}% of monthly charges (illustratively ${{ "{:,.0f}".format(c.monthly_charges) }}/month, so **${{ "{:,.0f}".format(at_risk) }}** at risk each month).
+- **Pool:** Credit allocations across all Critical Service Levels total {{ total_alloc }}% of the At-Risk Amount (pool limit {{ c.pool_pct }}%), with no single CSL above {{ c.max_allocation_per_csl_pct }}%.
+- **Credit formula:** Credit = At-Risk Amount × CSL allocation %.
+- **Monthly cap:** Total credits in a Measurement Period never exceed the At-Risk Amount.
+- **Repeat defaults:** A Minimum Service Level Default on the same CSL for {{ c.doubling.consecutive_minimum_defaults }} consecutive periods earns {{ c.doubling.multiplier }}× the credit. {{ c.doubling.note }}
+- **Earnback:** {{ c.earnback.rule }} Earnback is not available when:
+{%- for x in c.earnback.ineligible_when %}
+  - {{ x }}
+{%- endfor %}
+- **Application:** {{ c.credit_application }}
+- **EHS Credits:** handled separately under Section 21; outside this monthly cap and never earned back.
+- **Nature of credits:** {{ c.credits_note }}
+
+See Appendix B.1 for worked credit examples.
+
+## 15. Chronic Failure
+
+Any of the following is a Chronic Failure:
+
+{% for t in sla.chronic_failure.triggers -%}
+- **{{ t.id }}:** {{ t.rule }}
+{% endfor %}
+On a Chronic Failure, the Customer may:
+
+{% for r in sla.chronic_failure.customer_rights -%}
+- {{ r }}
+{% endfor %}
+**Termination assistance:** {{ sla.chronic_failure.termination_assistance }}
+
+{% include "partials/process.md.j2" %}
+## 19. Change Management
+
+{% for r in sla.change_management.rules -%}
+- {{ r }}
+{% endfor %}
+Changes to door schedules, reader groups, and camera recording settings are changes to the Customer's systems and follow the Customer's change process. Coordination across parties follows the Interface Agreement.
+
+{% include "partials/security_ehs.md.j2" %}
+{% include "partials/change_control_severity.md.j2" %}
+## Appendix B: Worked Examples
+
+*These examples are computed by `src/scorecard/sla_model.py` from this SLA's own parameters every time the document is generated, so the document and the scoring engine always agree.*
+
+### B.1 Service Level Credits
+
+{% for ex in credit_examples %}
+**{{ ex.title }}.** {{ ex.result.explanation }}. **Credit: ${{ "{:,.0f}".format(ex.result.credit) }}.** Earnback eligible: {{ "Yes" if ex.result.earnback_eligible else "No" }}.
+{% endfor %}
+
+**Small-sample rule.** SEC-CSL-03 with {{ small_sample.events }} visitor hall entries in the month, fewer than {{ small_sample.below }}, and {{ small_sample.misses }} entry without the escort: measured {{ "%.1f" | format(small_sample.actual) }}%. Under the small-sample rule any miss is {{ small_sample.status }}, whatever the percentage, so a quiet month cannot hide an unescorted visitor.
+
+**Monthly cap.** A severe month with Minimum defaults on SEC-CSL-01, SEC-CSL-02, SEC-CSL-03, SEC-CSL-06, and SEC-CSL-07: uncapped credits total ${{ "{:,.0f}".format(cap_example.uncapped) }} ({{ cap_example.pct_of_ara }}% of the At-Risk Amount). The cap limits the payable credit to **${{ "{:,.0f}".format(cap_example.payable) }}**.
+
+{% include "partials/ehs_example.md.j2" %}
+
+---
+
+*Generated from `sla/{{ src.partner }}` and the common terms in `sla/{{ src.common }}` (schema {{ sla.schema_version }}, SLA version {{ d.version }}, common terms version {{ src.common_version }}). {{ d.disclaimer }}*

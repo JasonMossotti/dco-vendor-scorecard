@@ -6,13 +6,13 @@
 
 # Interface Agreement: Site AUS-1
 
-**Joined to the Data Center Lease (Schedule C) and the IT Partner Services Agreement (Schedule B)**
+**Joined to the Data Center Lease (Schedule C), the IT Partner Services Agreement (Schedule B), and the Security Services Agreement (Schedule D)**
 
 > **MOCK / ILLUSTRATIVE.** This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.
 
 | Document ID | Version | Effective date |
 |---|---|---|
-| IA-AUS1-001 | 1.1.0 | 2026-10-06 |
+| IA-AUS1-001 | 1.2.0 | 2026-10-13 |
 
 ## Contents
 
@@ -31,7 +31,7 @@
 
 ## 1. Purpose and Principles
 
-This agreement joins the Landlord SLA and the IT Partner SLA. It says where each party's equipment ends, who owns each component, how an outage is attributed to exactly one party, and how the parties work together during incidents and changes. Where it conflicts with a partner SLA on any of these points, this agreement governs.
+This agreement joins the Landlord SLA, the IT Partner SLA, and the Security Partner SLA. It says where each party's equipment ends, who owns each component, how an outage is attributed to exactly one party, and how the parties work together during incidents and changes. Where it conflicts with a partner SLA on any of these points, this agreement governs.
 
 - Every component has exactly one Accountable party.
 - Boundaries are physical points a technician can see and touch, so ownership is never a matter of opinion.
@@ -46,6 +46,7 @@ This agreement joins the Landlord SLA and the IT Partner SLA. It says where each
 | Customer | Customer | Owns site outcomes; directs the IT partner; operates the Telemetry of Record; holds the Landlord to its SLA. |
 | Landlord | Caprock Critical Facilities, LLC *(fictional)* | Separate lease and Landlord SLA (Schedule C). Bound by the common terms, including EHS. |
 | IT Partner | Ridgeline Site Services, LLC *(fictional)* | Separate services agreement and IT Partner SLA (Schedule B). |
+| Security Partner | Llano Gate Protective Services, LLC *(fictional)* | Separate security services agreement and Security Partner SLA (Schedule D). Runs the Customer's security policy on the Customer's own systems. |
 | OEM | OEM / System Integrator | Separate contract. Named here only to define ownership boundaries. |
 | Utility | Serving utility (ERCOT region) | Contracts with the Landlord. Named here only to define ownership boundaries. |
 
@@ -59,35 +60,41 @@ This agreement joins the Landlord SLA and the IT Partner SLA. It says where each
 | DM-UTIL | Utility service | 13.8 kV main breakers in the Landlord's switchgear. | Serving utility (ERCOT region) | Caprock Critical Facilities, LLC | Utility revenue metering; main breaker status in the EPMS. |
 | DM-NET | Network | Meet-me room cross-connect panel. | Caprock Critical Facilities, LLC | Ridgeline Site Services, LLC | Cross-connect records; optical power at the IT side of the panel. |
 | DM-MON | Monitoring | The read-only interfaces listed under Customer data access. | Caprock Critical Facilities, LLC | Customer | Feed availability measured by the Customer collector (OT-KM-06). |
+| DM-SEC | Physical security | The Customer hall entrance doors: the Landlord secures the perimeter, lobby, and corridors up to each door; the Security Partner covers the door and everything inside it. | Caprock Critical Facilities, LLC | Llano Gate Protective Services, LLC | Landlord lobby badge reader events; Customer access control system events at each hall door (door alarms, guard post readers). |
 
 ## 4. Break-Fix Ownership Matrix
 
 **R** = Responsible: performs the work; **A** = Accountable: owns the outcome and approves; **C** = Consulted; **I** = Informed. Every component has exactly one Accountable party.
 
-| Component | Customer | IT Partner | Landlord | OEM | Utility |
-|---|:-:|:-:|:-:|:-:|:-:|
-| Compute tray (GPU, CPU, memory, cold plate) | A | R | - | C | - |
-| NVLink switch tray and NVLink backplane | A | R | - | C | - |
-| Rack power shelves, PSUs, and whips from the tap-off output | A | R | C | C | - |
-| Busway, tap-off units, and tap-off breakers | I | C | A/R | - | - |
-| UPS, batteries, unit substations, and switchgear | I | I | A/R | - | - |
-| Generators, paralleling controls, and fuel | I | - | A/R | - | - |
-| 138 kV substation and utility transformers | - | - | C | - | A/R |
-| Rack manifold, isolation valves, quick-disconnects | A | R | C | C | - |
-| CDUs and the hall secondary header | I | C | A/R | - | - |
-| Chillers, facility water, and pumps | I | - | A/R | - | - |
-| Thermal walls, CRAHs, and hot-aisle containment | I | C | A/R | - | - |
-| Building leak detection (cable and controllers) | I | C | A/R | - | - |
-| Fire alarm, VESDA, and pre-action suppression | I | I | A/R | - | - |
-| BMS and EPMS operation | C | - | A/R | - | - |
-| Customer Telemetry of Record collector and read-only taps | A/R | I | C | - | - |
-| Back-end fabric optics, cables, and fiber | A | R | - | C | - |
-| Leaf and spine switches (physical replacement) | A | R | - | C | - |
-| BMC and out-of-band management network (physical) | A | R | - | C | - |
-| Meet-me rooms and cross-connects | C | C | A/R | - | - |
-| Spares cage, inventory, and RMA shipments | A | R | - | C | - |
-| Building perimeter, lobby, and access control system | C | I | A/R | - | - |
-| Customer halls and cage access lists | A | R | R | - | - |
+| Component | Customer | IT Partner | Landlord | OEM | Utility | Security Partner |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| Compute tray (GPU, CPU, memory, cold plate) | A | R | - | C | - | - |
+| NVLink switch tray and NVLink backplane | A | R | - | C | - | - |
+| Rack power shelves, PSUs, and whips from the tap-off output | A | R | C | C | - | - |
+| Busway, tap-off units, and tap-off breakers | I | C | A/R | - | - | - |
+| UPS, batteries, unit substations, and switchgear | I | I | A/R | - | - | - |
+| Generators, paralleling controls, and fuel | I | - | A/R | - | - | - |
+| 138 kV substation and utility transformers | - | - | C | - | A/R | - |
+| Rack manifold, isolation valves, quick-disconnects | A | R | C | C | - | - |
+| CDUs and the hall secondary header | I | C | A/R | - | - | - |
+| Chillers, facility water, and pumps | I | - | A/R | - | - | - |
+| Thermal walls, CRAHs, and hot-aisle containment | I | C | A/R | - | - | - |
+| Building leak detection (cable and controllers) | I | C | A/R | - | - | - |
+| Fire alarm, VESDA, and pre-action suppression | I | I | A/R | - | - | - |
+| BMS and EPMS operation | C | - | A/R | - | - | - |
+| Customer Telemetry of Record collector and read-only taps | A/R | I | C | - | - | - |
+| Back-end fabric optics, cables, and fiber | A | R | - | C | - | - |
+| Leaf and spine switches (physical replacement) | A | R | - | C | - | - |
+| BMC and out-of-band management network (physical) | A | R | - | C | - | - |
+| Meet-me rooms and cross-connects | C | C | A/R | - | - | - |
+| Spares cage, inventory, and RMA shipments | A | R | - | C | - | C |
+| Building perimeter, lobby, and access control system | C | I | A/R | - | - | C |
+| Customer halls and cage access lists | A | R | R | - | - | R |
+| Guard posts and patrols in the Customer halls | A | I | I | - | - | R |
+| Customer hall door alarms (forced and held) and guard response | A | I | I | - | - | R |
+| Visitor sign-in, visitor badges, and escorts in the Customer halls | A | C | C | I | - | R |
+| Cameras and video recorders covering the Customer halls | A | - | C | - | - | R |
+| Storage media destruction from failed parts | A | C | - | I | - | R |
 
 ## 5. Fault Attribution
 
@@ -106,12 +113,13 @@ When the Telemetry of Record shows rack capacity lost, the Customer walks that r
 
 ## 6. Joint Incident Command
 
-- **Commander:** The Customer is Incident Commander for any P1 under either SLA and for any event involving more than one party.
+- **Commander:** The Customer is Incident Commander for any P1 under any partner SLA and for any event involving more than one party.
 - Landlord lead: facility status, isolation, and restoration.
 - IT Partner lead: rack protection, controlled shutdowns, and return-to-service validation.
+- Security Partner lead: guard posts, door control, escorts, and chain of custody for any media involved.
 - Customer Incident Commander: priorities, decisions, and all communications to Customer leadership.
 
-- **Bridge:** A joint bridge opens within 15 minutes of a multi-party P1. Each lead updates the Incident Commander at the stricter of the two SLAs' update cadences.
+- **Bridge:** A joint bridge opens within 15 minutes of a multi-party P1. Each lead updates the Incident Commander at the strictest of the involved partners' SLA update cadences.
 - **Post-incident review:** A joint post-incident review within 5 business days produces one timeline from the Telemetry of Record, the attribution decision, and actions tracked in each party's corrective action process.
 
 ## 7. Handoffs
@@ -122,6 +130,7 @@ When the Telemetry of Record shows rack capacity lost, the Customer walks that r
 | HO-2 | De-energizing a tap-off for rack work | The IT Partner requests it under an approved change; the Landlord isolates under group lockout with both parties' locks applied (EHS-R2). |
 | HO-3 | Leak at a rack | The IT Partner isolates at the rack manifold valves; the Landlord isolates at the header if the leak is upstream of the valves; both follow the spill procedure (EHS-R5). |
 | HO-4 | New rack energization | The Landlord energizes the tap-off and opens the isolation valves only after the IT Partner confirms the rack is set, leak-tested, and ready; the time is recorded as the deployment milestone handoff. |
+| HO-5 | Storage media from a failed part | The IT Partner removes every drive from a failed part in the rack area and hands the drives to the Security Partner under chain of custody, by serial number; the Security Partner destroys them on site and certifies each serial before the part may ship. |
 
 ## 8. Change Coordination
 
@@ -162,7 +171,7 @@ Planned work causes alarms the parties can predict. Each change therefore declar
 
 | ID | Trigger | Within | Channels | Owed by |
 |---|---|---|---|---|
-| NT-1 | Critical alarm (P1 under either partner SLA) not expected under a declared change | 5 min | Page to the Customer Incident Commander plus email or SMS | The party that owns the equipment |
+| NT-1 | Critical alarm (P1 under any partner SLA) not expected under a declared change | 5 min | Page to the Customer Incident Commander plus email or SMS | The party that owns the equipment |
 | NT-2 | Major alarm (P2) not expected under a declared change | 15 min | Two of email, SMS, and the Customer alarm feed | The party that owns the equipment |
 | NT-3 | Any out-of-scope or out-of-window alarm on change work | 5 min | Two of email, SMS, and the Customer alarm feed; a page as well if the alarm is critical | The party doing the change, whoever owns the equipment |
 
@@ -184,4 +193,4 @@ Key measures report and trigger corrective action; they carry no service credit.
 
 ---
 
-*Generated from `sla/interface_agreement.yaml` (version 1.1.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/interface_agreement.yaml` (version 1.2.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
