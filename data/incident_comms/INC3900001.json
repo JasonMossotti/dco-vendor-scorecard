@@ -1,0 +1,195 @@
+[
+ {
+  "kind": "page_ack",
+  "party": "Customer",
+  "role": "On-call primary",
+  "t": "2026-09-15T15:44:10Z",
+  "text": "Acknowledged the Landlord's page for rack A07 (both feeds lost)."
+ },
+ {
+  "kind": "ic_declared",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T15:47:55Z",
+  "text": "Customer Site Lead takes command. P1 under both SLAs; two parties involved (Landlord, IT Partner). Joint bridge to follow."
+ },
+ {
+  "kind": "leadership_update",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T15:49:52Z",
+  "text": "P1: rack A07 (72 GPUs) without power after a breaker was opened during Landlord maintenance. Jobs being rescheduled. No safety impact. Next update 11:30.",
+  "to": "Customer infrastructure leadership"
+ },
+ {
+  "kind": "bridge_open",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T16:01:12Z",
+  "text": "Joint bridge open for rack A07."
+ },
+ {
+  "kind": "lead_joined",
+  "party": "Landlord",
+  "role": "Landlord lead",
+  "t": "2026-09-15T16:01:50Z",
+  "text": "Landlord chief engineer on the bridge."
+ },
+ {
+  "kind": "lead_joined",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T16:04:32Z",
+  "text": "IT Partner site manager on the bridge."
+ },
+ {
+  "kind": "lead_update",
+  "party": "Landlord",
+  "role": "Landlord lead",
+  "t": "2026-09-15T16:07:53Z",
+  "text": "B-side tap-off opened in error during A-side retorque under MOP-310. B-side unit failed on reclose; spare being pulled from the Hall A store."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T16:09:43Z",
+  "text": "Rack A07 drained by the scheduler; jobs moved. Technician standing by for the handoff under HO-1."
+ },
+ {
+  "kind": "leadership_update",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T16:30:58Z",
+  "text": "B-side breaker failed on reclose; Landlord replacing it from site spares. Estimated restoration 2:00 p.m. IT Partner standing by to validate.",
+  "to": "Customer infrastructure leadership"
+ },
+ {
+  "kind": "lead_update",
+  "party": "Landlord",
+  "role": "Landlord lead",
+  "t": "2026-09-15T16:36:25Z",
+  "text": "Replacement tap-off unit on site. Group lockout on the B-side busway section being applied."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T16:38:38Z",
+  "text": "No change; standing by."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T17:07:01Z",
+  "text": "No change; standing by. Validation plan ready: power on, NVLink acceptance, NCCL all-reduce."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T17:36:14Z",
+  "text": "No change; standing by."
+ },
+ {
+  "kind": "lead_update",
+  "party": "Landlord",
+  "role": "Landlord lead",
+  "t": "2026-09-15T17:41:02Z",
+  "text": "Failed unit removed; replacement being installed. Restoration estimate unchanged."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T18:05:24Z",
+  "text": "No change; standing by."
+ },
+ {
+  "kind": "lead_update",
+  "party": "Landlord",
+  "role": "Landlord lead",
+  "t": "2026-09-15T18:09:40Z",
+  "text": "Replacement unit installed; torque and insulation checks under way."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T18:33:54Z",
+  "text": "No change; standing by."
+ },
+ {
+  "kind": "lead_update",
+  "party": "Landlord",
+  "role": "Landlord lead",
+  "t": "2026-09-15T18:38:26Z",
+  "text": "Checks passed. Removing locks; ready to reclose the B-side tap-off."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T19:02:53Z",
+  "text": "Technician heading to Hall A for the handoff."
+ },
+ {
+  "kind": "restoration_declared",
+  "party": "Landlord",
+  "role": "Landlord lead",
+  "t": "2026-09-15T19:07:35Z",
+  "text": "Restoration declared under HO-1: B-side tap-off closed, rack A07 feed restored."
+ },
+ {
+  "kind": "leadership_update",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T19:07:49Z",
+  "text": "Power restored at 2:06 p.m. IT Partner validating the rack; return to service expected within an hour.",
+  "to": "Customer infrastructure leadership"
+ },
+ {
+  "kind": "restoration_confirmed",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T19:11:33Z",
+  "text": "Restoration confirmed from telemetry: feed in tolerance at rack A07. IT Partner clear to power on."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T19:31:01Z",
+  "text": "Rack powered on; rack_power_on passed. NVLink acceptance running."
+ },
+ {
+  "kind": "lead_update",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T19:56:47Z",
+  "text": "NVLink acceptance and NCCL all-reduce passed."
+ },
+ {
+  "kind": "rts_declared",
+  "party": "IT Partner",
+  "role": "IT Partner lead",
+  "t": "2026-09-15T20:02:09Z",
+  "text": "Rack A07 returned to service; all 18 nodes back in the scheduler."
+ },
+ {
+  "kind": "leadership_update",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T20:05:41Z",
+  "text": "Rack A07 back in production at 3:01 p.m. Post-incident review scheduled for September 18.",
+  "to": "Customer infrastructure leadership"
+ },
+ {
+  "kind": "bridge_closed",
+  "party": "Customer",
+  "role": "Incident Commander",
+  "t": "2026-09-15T20:06:02Z",
+  "text": "Bridge closed. Joint post-incident review set for 2026-09-18."
+ }
+]

@@ -21,12 +21,12 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | ASN | **Advance ship notice.** The shipper's list of what is in a delivery, used to reconcile asset tags and serial numbers at receipt. | - | IT Partner SLA, Deployments |
 | ASSP | **American Society of Safety Professionals.** Publisher of the ANSI/ASSP Z10.0 safety management standard. | - | IT Partner SLA, Landlord SLA |
 | B-ASC | **BACnet Advanced Application Specific Controller.** The BACnet device profile the chiller controller declares: it serves its own objects and answers reads and writes. | - | Telemetry |
-| BER | **Bit error rate.** Errored bits per bit sent. Raw BER is before FEC corrects them (about 1E-8 to 1E-6 on a healthy link); a failing optic pushes it up until FEC can no longer keep up. | - | IT Partner SLA, Telemetry |
+| BER | **Bit error rate.** Errored bits per bit sent. Raw BER is before FEC corrects them (about 1E-8 to 1E-6 on a healthy link); a failing optic pushes it up until FEC can no longer keep up. | - | IT Partner SLA, Telemetry, Post-Incident Review |
 | BMC | **Baseboard management controller.** A small management computer in each tray and switch that reports inventory, health, and sensors (through Redfish), independent of the main system. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | BMS | **Building management system.** The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Energy, Telemetry, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
 | BV | **BACnet binary value.** A BACnet object with two states. Vertiv publishes the V1C alarms as binary values: BV 35 is Circuit 1 - High Condensing Pressure. | - | Telemetry |
 | CAB | **Change advisory board.** The Customer's board that reviews and approves the IT Partner's change records before work starts. | - | Alarm Board, Incident Portal, Post-Incident Review |
-| CAP | **Corrective action plan.** A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure. | - | IT Partner SLA, Landlord SLA, Scorecards |
+| CAP | **Corrective action plan.** A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure. | - | IT Partner SLA, Landlord SLA, Scorecards, Post-Incident Review |
 | CCTV | **Closed-circuit television.** Security cameras. | - | Deployments, Site model document |
 | CDT | **Central Daylight Time.** US Central time in summer, UTC minus 5 hours: the site's local time. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | CDU | **Coolant distribution unit.** Moves coolant between the facility water loop and the racks' liquid loop, and controls its temperature, flow, and pressure. The Landlord owns the CDUs; each serves up to 8 racks. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Alarm Board, Failure Patterns, Energy, GPU Health, Telemetry, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review |
@@ -44,7 +44,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | DC | **Direct current.** Electric current in one direction, as from batteries. | - | IT Partner SLA, Landlord SLA, Telemetry, Deployments |
 | DCGM | **Data Center GPU Manager.** The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM. | - | IT Partner SLA, Landlord SLA, Failure Patterns, GPU Health, Telemetry, Overview |
 | DCIM | **Data center infrastructure management.** Software that tracks power, capacity, and assets across the facility. | - | Site model document |
-| DCO | **Data center operations.** The Customer's site operations team, which runs the Telemetry of Record and manages both partners. | - | IT Partner SLA, Landlord SLA, Scorecards |
+| DCO | **Data center operations.** The Customer's site operations team, which runs the Telemetry of Record and manages both partners. | - | IT Partner SLA, Landlord SLA, Scorecards, Post-Incident Review |
 | DMTF | **Distributed Management Task Force.** The standards body behind Redfish, the REST API the CDUs report their telemetry through. | - | Telemetry, Overview |
 | DOM | **Digital optical monitoring.** An optic's own report of temperature, power, and signal levels; a DOM alarm warns the optic is failing. | - | Failure Patterns, Overview |
 | DX | **Direct expansion.** Cooling by a refrigerant circuit in the unit itself rather than by chilled water (CW). | - | Telemetry |
@@ -99,7 +99,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | MV | **Medium voltage.** Here, the 13.8 kV switchgear between the utility, the generators, and the unit substations. | - | Alarm Board, Telemetry, Incident Portal, Post-Incident Review |
 | MVA | **Megavolt-ampere.** A unit of apparent power, used to rate transformers. | - | Site model document |
 | MW | **Megawatt.** One million watts. | - | IT Partner SLA, Landlord SLA, Telemetry, Deployments, Site model document |
-| NCCL | **Collective communications library.** The GPU vendor's library for multi-GPU communication; an NCCL all-reduce test checks a rack's bandwidth. | - | IT Partner SLA, Deployments |
+| NCCL | **Collective communications library.** The GPU vendor's library for multi-GPU communication; an NCCL all-reduce test checks a rack's bandwidth. | - | IT Partner SLA, Deployments, Post-Incident Review |
 | NDA | **Non-disclosure agreement.** A confidentiality contract; vendors share some technical documents, such as BMS point maps, only under one. | - | Telemetry |
 | NDR | **Next data rate (InfiniBand, 400 Gb/s).** An InfiniBand speed generation. | - | Telemetry, Site model document |
 | NETA | **InterNational Electrical Testing Association.** Publishes the acceptance testing specifications (ANSI/NETA ATS) that third-party testers follow for breakers, busway, and tap-offs before energization. | - | Deployments |
@@ -135,7 +135,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | PUE | **Power usage effectiveness.** Total facility energy divided by IT energy over a period (ISO/IEC 30134-2:2026). 1.0 would mean every kilowatt-hour reaches the IT equipment; the rest is cooling, power path losses, and house load. Partial PUE (pPUE) measures one part of that overhead. Reported on the Energy tab. | - | Landlord SLA, Energy, Telemetry, Overview, Weekly Review |
 | RACI | **Responsible, accountable, consulted, informed.** The ownership matrix in the Interface Agreement: for each component, who does the work, who owns the outcome, who is asked, and who is told. | - | Failure Patterns |
 | RAID | **Redundant array of independent disks.** Disks combined so one can fail without losing data; rebuilt after a drive swap. | - | IT Partner SLA |
-| RCA | **Root cause analysis.** The investigation that finds why an incident happened, not just what failed. P1 incidents owe a preliminary and a final RCA. | - | IT Partner SLA, Landlord SLA, Scorecards, Weekly Review |
+| RCA | **Root cause analysis.** The investigation that finds why an incident happened, not just what failed. P1 incidents owe a preliminary and a final RCA. | - | IT Partner SLA, Landlord SLA, Scorecards, Post-Incident Review, Weekly Review |
 | REST | **Representational state transfer.** A common style of web API. | - | Site model document |
 | RFC | **Request for Comments.** An IETF standards document. RFC 1628 defines the UPS-MIB. | - | Telemetry |
 | RMA | **Return merchandise authorization.** The return of a failed part to the manufacturer for repair or replacement. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Failure Patterns, Availability, Overview, Incident Portal, Post-Incident Review, Weekly Review |
@@ -148,7 +148,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | SCADA | **Supervisory control and data acquisition.** Industrial control and monitoring; here, the utility's own system for its substation. | - | Telemetry, Site model document |
 | SLA | **Service level agreement.** The contract schedule that sets service levels, how they are measured, and the credits for missing them. Each partner signs its own. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Scorecards, Alarm Board, Failure Patterns, Energy, Availability, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | SM | **Streaming multiprocessor.** The GPU's compute units. Its clock (DCGM_FI_DEV_SM_CLOCK) drops when the GPU throttles for heat or power. | - | Telemetry |
-| SMS | **Short message service.** Text messaging, one of the notification channels. | - | Interface Agreement, Alarm Board |
+| SMS | **Short message service.** Text messaging, one of the notification channels. | - | Interface Agreement, Alarm Board, Post-Incident Review |
 | SMTP | **Simple Mail Transfer Protocol.** The protocol for sending email; an SMTP relay is the minimum email channel for notifications. | - | Alarm Board |
 | SN | **Serial number.** The manufacturer's unique number for a part; a part swap must show a serial change in inventory. | - | Incident Portal, Post-Incident Review |
 | SNMP | **Simple Network Management Protocol.** A standard protocol for reading equipment status and receiving alarms (traps). | - | Alarm Board, Telemetry, Site model document |
@@ -284,7 +284,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 
 | Code | Meaning | Defined in | Used on |
 |---|---|---|---|
-| NT-1 | **Critical alarm (P1 under either partner SLA) not expected under a declared change.** Within 5 minutes, by Page to the Customer Incident Commander plus email or SMS (at least 2 channels). Owed by: The party that owns the equipment. | Interface Agreement, 10. Change-Aware Alarm Notification | Interface Agreement, Alarm Board |
+| NT-1 | **Critical alarm (P1 under either partner SLA) not expected under a declared change.** Within 5 minutes, by Page to the Customer Incident Commander plus email or SMS (at least 2 channels). Owed by: The party that owns the equipment. | Interface Agreement, 10. Change-Aware Alarm Notification | Interface Agreement, Alarm Board, Post-Incident Review |
 | NT-2 | **Major alarm (P2) not expected under a declared change.** Within 15 minutes, by Two of email, SMS, and the Customer alarm feed (at least 2 channels). Owed by: The party that owns the equipment. | Interface Agreement, 10. Change-Aware Alarm Notification | Interface Agreement, Alarm Board |
 | NT-3 | **Any out-of-scope or out-of-window alarm on change work.** Within 5 minutes, by Two of email, SMS, and the Customer alarm feed; a page as well if the alarm is critical (at least 2 channels). Owed by: The party doing the change, whoever owns the equipment. | Interface Agreement, 10. Change-Aware Alarm Notification | Interface Agreement, Alarm Board |
 
@@ -542,7 +542,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | MVSST | **Medium-voltage solid-state transformer.** Converts 13.8 kV directly to 800 VDC for the planned 800 VDC racks. | - | Deployments, Site model document |
 | NMC4 | **Network management card 4.** The SNMPv3 and Modbus TCP card in each Galaxy UPS. The power telemetry polls it once a minute; its event log is the record of mode changes. | - | Telemetry |
 | NVIDIA | **GPU and network vendor.** Makes the GB200 and GB300 NVL72 racks, the NVLink switches, and the InfiniBand fabric. | - | IT Partner SLA, GPU Health, Telemetry, Site model document, Overview |
-| NVL72 | **NVL72 rack.** A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours. | - | IT Partner SLA, Landlord SLA, Telemetry, Deployments, Site model document |
+| NVL72 | **NVL72 rack.** A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours. | - | IT Partner SLA, Landlord SLA, Telemetry, Deployments, Site model document, Post-Incident Review |
 | NVOS | **NVOS switch operating system.** The operating system on the Quantum-X800 switches; it streams telemetry over gNMI and names ports sw<cage>p<port>. | - | Telemetry |
 | PCW | **Liebert PCW.** Vertiv's chilled-water room cooling unit. Its iCOM 3 monitoring guide names the points used here for the thermal walls and CRAHs. | - | Telemetry |
 | PDX | **Liebert PDX.** Vertiv's direct-expansion room cooling unit; it shares the V1A monitoring guide with the PCW. | - | Telemetry |

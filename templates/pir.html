@@ -44,6 +44,11 @@ textarea { min-height:70px; resize:vertical; }
 .pill.near { border-style:dashed; }
 .saved { font-size:12px; color:var(--ok); }
 .sign { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; } .sign div { border-top:1px solid var(--ink); padding-top:6px; font-size:13px; min-height:60px; }
+.steps { margin:0; padding-left:22px; } .steps li { margin:4px 0; } .steps .due { color:var(--muted); font-size:12px; white-space:nowrap; }
+.tree { list-style:none; margin:0; padding:0; } .tree li { display:flex; gap:12px; padding:6px 0; border-bottom:1px solid var(--line); } .tree .at { min-width:64px; font-weight:700; }
+pre.tpl { white-space:pre-wrap; font:13px/1.45 ui-monospace,Consolas,monospace; background:#fffef6; border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin:6px 0; }
+tr.step td { background:var(--panel); font-weight:600; } tr.why td { font-size:12px; color:var(--ink); background:#fdf3f2; }
+.crit { margin:0; padding-left:16px; font-size:12px; }
 @media print { header.top, .autofill, .addrow { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } h2 { break-after:avoid; } tr { break-inside:avoid; } }
 </style>
 </head>
@@ -51,7 +56,7 @@ textarea { min-height:70px; resize:vertical; }
 __SITENAV__
 <header class="top">
   <div><strong>Post-Incident Review</strong></div>
-  <div class="tabs"><button id="t-list">Reviews</button> <button id="t-example" class="on">Review</button> <button id="t-blank">Blank form</button></div>
+  <div class="tabs"><button id="t-list">Reviews</button> <button id="t-example" class="on">Review</button> <button id="t-blank">Blank form</button> <button id="t-command">Command</button></div>
   <div class="tools">
     <label style="font-size:13px;"><input type="checkbox" id="plainonly"> Plain-language view</label>
     <button id="print">Print / save PDF</button><button id="md">Export Markdown</button>
@@ -138,6 +143,8 @@ function render(f, a, edit) {
   if (f) {
     h += `<h2>Response against targets</h2><table><tr><th>Measure</th><th>From (UTC)</th><th>To (UTC)</th><th>Elapsed</th><th>Target</th><th>Result</th></tr>` +
       f.metrics.map(m => `<tr><td>${esc(m.measure)}${m.note ? `<br><span class="note">${esc(m.note)}</span>` : ""}</td><td class="num">${esc(m.from.slice(11, 19))}</td><td class="num">${esc(m.to.slice(11, 19))}</td><td class="num">${esc(m.elapsed)}</td><td>${m.target ? esc(m.target) + " min" : "—"}</td><td>${m.met === null ? "—" : m.met ? "<span class='met'>Met</span>" : "<span class='missed'>Missed</span>"}</td></tr>`).join("") + `</table>`;
+    const rp = !edit && DATA.command.replays.find(r => r.review === a.id);
+    if (rp) h += `<p class="note">Incident command: ${esc(rp.summary.met)} of ${esc(rp.summary.steps)} runbook steps met. <a href="#replay">Replay this incident against the Incident Commander runbook</a>.</p>`;
     h += `<h2>Alarm and event timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored. ${esc(DATA.badge_note)}</p><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Event</th><th>Source</th></tr>` +
       f.timeline.map(r => `<tr><td class="num">${esc(r.t.slice(11, 19))}</td><td class="num">${esc(r.local)}</td><td><span class="tag ${partyCls(r.party)}">${esc(r.party)}</span></td><td>${esc(r.event)}${r.record ? `<details><summary>record</summary><code class="rec">${esc(r.record)}</code></details>` : ""}</td><td><code>${esc(r.source)}</code></td></tr>`).join("") + `</table>`;
     h += `<h2>Attribution (Interface Agreement)</h2><div class="box"><b>Owner: ${esc(f.attribution.owner)}</b>${f.attribution.rules.length ? " · rules " + esc(f.attribution.rules.join(", ")) : ""}<br>${esc(f.attribution.evidence)}${f.handoff ? `<br>Under FA-3 the IT Partner's clock started at the Landlord's handoff, ${esc(f.handoff.slice(11, 19))}Z.` : ""}</div>`;
@@ -295,6 +302,38 @@ function renderList() {
     `<p class="note">A ticket number matches the review's own record and every record related to it. A device name matches the devices the record names; with connected devices, also anything one connection away in the device directory (a tray's leaf switch, a rack's tap-offs and CDU).</p>`;
 }
 
+// The Command view: the Customer's Incident Commander runbook, then the replay of past incidents against it.
+const hm = m => m == null ? "—" : m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? " " + String(m % 60).padStart(2, "0") + " min" : ""}` : `${m} min`;
+const result = met => met == null ? "—" : met ? `<span class="met">Met</span>` : `<span class="missed">Missed</span>`;
+function renderCommand() {
+  const C = DATA.command, rb = C.runbook, sv = rb.severity;
+  let h = `<h1>Incident Commander runbook</h1><p class="sub">${esc(rb.intro)}</p>`;
+  h += `<div class="box"><b>Who commands.</b> ${esc(rb.commander)}<br>${rb.roles.map(esc).join("<br>")}<br><b>Bridge.</b> ${esc(rb.bridge_rule)}</div>`;
+  h += `<p class="note">The runbook is the Customer's. A missed step is a process finding for the post-incident review, not an SLA default, and carries no credit.</p>`;
+  h += `<h2>Severity and command</h2><p class="note">Each SLA's priority with the stricter of the two clocks, and how the Customer commands at that priority.</p><div style="overflow-x:auto"><table><tr><th>Priority</th><th>IT Partner SLA</th><th>Landlord SLA</th><th>Acknowledge</th><th>On site</th><th>Restore</th><th>Updates</th><th>Command</th></tr>` +
+    sv.priorities.map(p => `<tr><td><b>${esc(p.id)}</b></td>` + ["IT Partner", "Landlord"].map(k => `<td><b>${esc(p.names[k])}</b><ul class="crit">${p.criteria[k].map(c => `<li>${esc(c)}</li>`).join("")}</ul></td>`).join("") +
+      `<td class="num">${esc(hm(p.acknowledge_min))}</td><td class="num">${esc(hm(p.engaged_on_site_min))}</td><td class="num">${esc(hm(p.restore_min))}</td><td class="num">${esc(p.update_cadence_min ? "every " + hm(p.update_cadence_min) : "—")}</td><td>${esc(p.command)}</td></tr>`).join("") + `</table></div>`;
+  h += `<p class="note">The Customer's internal severity (not shared with the partners) sets how far a breach is escalated.</p><div style="overflow-x:auto"><table><tr><th>Internal</th><th>Escalation</th></tr>` +
+    sv.internal.map(x => `<tr><td class="num"><b>${esc(x.id)}</b> ${esc(x.name)}</td><td>${esc(x.escalation)}</td></tr>`).join("") + `</table></div>`;
+  h += `<h2>Paging tree for a critical alarm</h2><ul class="tree">` + rb.paging.levels.map(l => `<li><span class="at">${l.min ? "+" + esc(l.min) + " min" : "At once"}</span><span><b>${esc(l.who)}</b><br><span class="note">${esc(l.via)}</span></span></li>`).join("") + `</ul>` +
+    `<p class="note">On-call by shift (${esc(rb.paging.timezone)}): ` + rb.paging.shifts.map(x => `${esc(x.label)} ${esc(x.days.join(", "))} ${esc(x.start)} to ${esc(x.end)}: ${esc(x.primary)}, then ${esc(x.secondary)}`).join("; ") + `. Roles only; the contacts live in the paging platform.</p>`;
+  h += `<h2>The steps</h2>` + rb.phases.map(ph => `<h3 style="font-size:14px;margin:14px 0 4px">${esc(ph.name)}</h3><ol class="steps">` +
+    rb.steps.filter(s => s.phase === ph.id).map(s => `<li>${esc(s.text)} <span class="due">Clock: ${esc(s.due)}</span></li>`).join("") + `</ol>`).join("");
+  h += `<div class="box" style="border-color:var(--it);background:#eef4fc;margin-top:12px"><b>Restoration handoff (${esc(rb.handoff.id)}).</b> ${esc(rb.handoff.rule)}<br><b>Afterwards.</b> ${esc(rb.post_incident)}</div>`;
+  h += `<h2>Status-update templates</h2><div class="plain">` + rb.templates.map(t => `<div class="card"><h3>${esc(t.name)}</h3><span class="note">${esc(t.when)}</span><pre class="tpl">${esc(t.body)}</pre><ul class="crit">${t.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>`).join("") + `</div>`;
+  C.replays.forEach(r => {
+    h += `<h2 id="replay">Replay: ${esc(r.title)}</h2><p class="note">${esc(r.ref)} held against the runbook from the alarms, the busway, the scheduler, the partners' page log, and the bridge's comms log. The review is <a href="#${esc(r.review)}">${esc(r.review)}</a>.</p>`;
+    h += `<div class="strip"><div class="stat"><div class="v">${esc(r.summary.steps)}</div><div class="l">Steps</div></div><div class="stat"><div class="v met">${esc(r.summary.met)}</div><div class="l">Met</div></div><div class="stat"><div class="v missed">${esc(r.summary.missed)}</div><div class="l">Missed: process findings</div></div></div>`;
+    h += `<div style="overflow-x:auto;margin-top:12px"><table><tr><th>Check</th><th>From (UTC)</th><th>At (UTC)</th><th>Elapsed</th><th>Target</th><th>Result</th></tr>` +
+      r.steps.map((s, i) => `<tr class="step"><td colspan="5">${esc(i + 1)}. ${esc(s.text)}</td><td>${result(s.met)}</td></tr>` +
+        s.checks.map(c => `<tr><td>${esc(c.label)}${c.detail ? `<br><span class="note">${esc(c.detail)}</span>` : ""}</td><td class="num">${esc(c.from ? (c.from.length > 10 ? c.from.slice(11, 19) : c.from) : "—")}</td><td class="num">${esc(c.at ? (c.at.length > 10 ? c.at.slice(11, 19) : c.at) : "none")}</td><td class="num">${esc(c.elapsed || "—")}</td><td class="num">${c.target == null ? "—" : c.minutes == null && c.elapsed ? esc(c.target) + " business days" : esc(c.target) + " min"}</td><td>${result(c.met)}</td></tr>`).join("") +
+        (s.note ? `<tr class="why"><td colspan="6"><b>Why:</b> ${esc(s.note)}</td></tr>` : "")).join("") + `</table></div>`;
+    h += `<div class="tech"><h2>Bridge comms log</h2><p class="note">The joint bridge as recorded: who joined, each lead's updates to the Incident Commander, and the Incident Commander's updates to leadership. Times in UTC and Central (CDT).</p><div style="overflow-x:auto"><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Who</th><th>Said</th></tr>` +
+      r.log.map(e => `<tr><td class="num">${esc(e.t.slice(11, 19))}</td><td class="num">${esc(e.local)}</td><td><span class="tag ${partyCls(e.party)}">${esc(e.party)}</span></td><td>${esc(e.role)}${e.to ? `<br><span class="note">to ${esc(e.to)}</span>` : ""}</td><td>${esc(e.text)}</td></tr>`).join("") + `</table></div></div>`;
+  });
+  return h;
+}
+
 function show() {
   const doc = document.getElementById("doc");
   if (mode === "list") {
@@ -303,6 +342,10 @@ function show() {
     doc.querySelectorAll(".filters input[type=checkbox]").forEach(el => el.addEventListener("change", search));
     document.getElementById("f-clear").onclick = () => { doc.querySelectorAll(".filters input").forEach(el => el.type === "checkbox" ? el.checked = false : el.value = ""); search(); };
     search();
+  } else if (mode === "command") {
+    doc.innerHTML = renderCommand();
+    const rp = document.getElementById("replay");
+    if (location.hash === "#replay" && rp && rp.scrollIntoView) rp.scrollIntoView();
   } else if (mode === "example") doc.innerHTML = render(DATA.index[BY_ID[current].ref], BY_ID[current], false);
   else {
     const f = DATA.index[draftRef];
@@ -347,18 +390,19 @@ function download(text, name, type) {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click();
 }
 
-function setMode(m, opt) {   // #reviews, #PIR-2026-001 (or #example), #blank, #new=<record>
+function setMode(m, opt) {   // #reviews, #PIR-2026-001 (or #example), #blank, #new=<record>, #command, #replay
   mode = m;
   if (m === "example" && opt) current = opt;
   if (m === "blank") draftRef = opt || "";
-  ["list", "example", "blank"].forEach(k => document.getElementById("t-" + k).classList.toggle("on", k === m));
-  const hash = m === "list" ? "#reviews" : m === "example" ? (current === DATA.reviews[0].id ? "#example" : "#" + current) : draftRef ? "#new=" + draftRef : "#blank";
+  ["list", "example", "blank", "command"].forEach(k => document.getElementById("t-" + k).classList.toggle("on", k === m));
+  const hash = m === "command" ? (opt === "replay" ? "#replay" : "#command") : m === "list" ? "#reviews" : m === "example" ? (current === DATA.reviews[0].id ? "#example" : "#" + current) : draftRef ? "#new=" + draftRef : "#blank";
   if (location.hash !== hash) history.replaceState(null, "", hash);
   show();
 }
 function route() {
   const h = decodeURIComponent(location.hash.slice(1));
   if (h === "reviews") setMode("list");
+  else if (h === "command" || h === "replay") setMode("command", h);
   else if (h === "blank") setMode("blank");
   else if (h.startsWith("new=")) setMode("blank", h.slice(4).toUpperCase());
   else if (BY_ID[h]) setMode("example", h);
@@ -367,9 +411,10 @@ function route() {
 document.getElementById("t-list").onclick = () => setMode("list");
 document.getElementById("t-example").onclick = () => setMode("example");
 document.getElementById("t-blank").onclick = () => setMode("blank", draftRef);
+document.getElementById("t-command").onclick = () => { setMode("command"); window.scrollTo(0, 0); };
 document.getElementById("plainonly").onchange = e => document.body.classList.toggle("plainonly", e.target.checked);
 document.getElementById("print").onclick = () => window.print();
-document.getElementById("md").onclick = () => download(toMarkdown(), (mode === "example" ? current : draftRef ? "PIR-DRAFT-" + draftRef : "PIR-draft") + ".md", "text/markdown");
+document.getElementById("md").onclick = () => download(toMarkdown(), (mode === "command" ? "incident-command" : mode === "example" ? current : draftRef ? "PIR-DRAFT-" + draftRef : "PIR-draft") + ".md", "text/markdown");
 window.addEventListener("hashchange", route);
 route();
 </script>

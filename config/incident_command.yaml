@@ -1,0 +1,86 @@
+# Incident Commander runbook: the Customer's, not either partner's.
+#
+# Judgment written by people, like the SLAs. The clocks that come from the contracts are read from them
+# (src/scorecard/command.py): the bridge's 15 minutes and the post-incident review's 5 business days from the
+# Interface Agreement, the leads' update cadence from the stricter of the two SLAs, the partners' page from NT-1, and
+# the paging tree from config/customer_notifications.yaml. What is set here is the Customer's own practice.
+#
+# A missed step is a process finding for the post-incident review. It is not an SLA default, and it carries no credit.
+
+intro: >-
+  How the Customer runs an incident that involves more than one party: who commands, how fast the bridge opens, who
+  is told what and when, and how restoration is handed from the Landlord to the IT Partner. Each step names its clock.
+  The replay holds the A07 power loss against these steps, from the alarms, pages, and the bridge's comms log.
+
+# The Customer's own clocks (minutes). The contract's clocks are read from the agreements.
+clocks:
+  page_ack_min: 5            # on-call primary acknowledges the first partner page (escalates to secondary at 15)
+  declare_min: 10            # Incident Commander takes command, from detection
+  first_leadership_min: 15   # first notice to Customer leadership, from detection
+  lead_join_min: 5           # each lead on the bridge, from the bridge opening
+  leadership_cadence_min: 60 # Incident Commander to leadership while the bridge is open
+  milestone_update_min: 15   # leadership told of restoration and of return to service
+  restoration_declare_min: 5 # Landlord declares restoration on the bridge after the feed is back
+
+# What command looks like at each priority. Priorities and their clocks come from the SLAs.
+command:
+  P1: "Incident Commander takes command. Joint bridge when more than one party is involved. Leadership updated every 60 minutes and at each milestone."
+  P2: "On-call primary owns the event and pages the Incident Commander if redundancy is lost on both paths or a second party is involved."
+  P3: "On-call primary tracks it in the daily standup; no bridge."
+  P4: "Planned work and requests; tracked in the weekly operations review."
+
+phases:
+  - {id: first15, name: "First 15 minutes"}
+  - {id: during, name: "While the bridge is open"}
+  - {id: restore, name: "Restoration and close"}
+
+steps:
+  - {id: pages, phase: first15, text: "Each party that owns alarming equipment pages the Incident Commander (NT-1). The page is automatic; a call does not count."}
+  - {id: page_ack, phase: first15, text: "On-call primary acknowledges the first page, or the paging tree escalates to the secondary."}
+  - {id: declare, phase: first15, text: "Incident Commander takes command: names the priority under each SLA and the parties involved."}
+  - {id: first_leadership, phase: first15, text: "First notice to Customer leadership, using the leadership template, with the time of the next update."}
+  - {id: bridge, phase: first15, text: "Open the joint bridge (Interface Agreement, incident command)."}
+  - {id: leads_join, phase: first15, text: "The Landlord lead and the IT Partner lead join the bridge."}
+  - {id: lead_cadence, phase: during, text: "Each lead updates the Incident Commander at the stricter of the two SLAs' P1 update cadences, until that lead's part is done."}
+  - {id: leadership_cadence, phase: during, text: "Incident Commander updates leadership on the cadence until the bridge closes."}
+  - {id: change_windows, phase: during, text: "Before an approved change window on the affected equipment expires, decide on the bridge to extend it or to close the work."}
+  - {id: restoration_declared, phase: restore, text: "The Landlord declares restoration on the bridge once the feed is back (HO-1)."}
+  - {id: restoration_confirmed, phase: restore, text: "The Customer confirms restoration from telemetry before the IT Partner powers on: every feed to the rack closed and in tolerance (HO-1)."}
+  - {id: milestone_updates, phase: restore, text: "Leadership told of restoration and of return to service."}
+  - {id: bridge_close, phase: restore, text: "Close the bridge only after return to service and after every change on the affected equipment is closed."}
+  - {id: pir, phase: restore, text: "Joint post-incident review held (Interface Agreement, incident command)."}
+
+templates:
+  - id: leadership
+    name: "Incident Commander to Customer leadership"
+    when: "First notice within 15 minutes, then every 60 minutes and at each milestone"
+    body: "{priority}: {what is down} ({racks and GPUs}) after {cause, if known}. {customer impact}. {safety}. {who is working it and the estimate}. Next update {time}."
+    rules:
+      - "Plain words: no ticket numbers, codes, or blame. Say what the Customer has lost, not what broke."
+      - "Always give the next update time, and keep it."
+  - id: landlord
+    name: "Landlord lead to the Incident Commander"
+    when: "Every 30 minutes on the bridge, and at restoration"
+    body: "Facility status: {system and state}. Isolation: {what is locked out}. Next action: {action} by {time}. Restoration estimate: {time}. Risks: {redundancy remaining}."
+    rules:
+      - "Say what is isolated and under whose locks (EHS-R2)."
+      - "Declare restoration on the bridge, not only in the work order (HO-1)."
+  - id: it_partner
+    name: "IT Partner lead to the Incident Commander"
+    when: "Every 30 minutes on the bridge, and at return to service"
+    body: "Racks affected: {racks}. Protection: {drained or shut down}. Validation: {checks run and results}. Return to service estimate: {time}."
+    rules:
+      - "Do not power on until the Customer confirms restoration from telemetry (HO-1)."
+      - "Name each return-to-service check as it passes."
+
+# Why each missed step was missed, written after the replay. tests/test_command.py checks that every missed step
+# has a note, that no met step has one, and that each time and factor the note gives is in the facts.
+replays:
+  INC3900001:
+    review: PIR-2026-001
+    notes:
+      bridge: "The Incident Commander took command at 15:47Z but held the bridge until 16:01Z to set up the call. The leads were already working; the bridge opened late, not the response."
+      lead_cadence: "The Landlord lead gave no update between 16:36Z and 17:41Z, while the failed tap-off unit was being removed. The IT Partner lead kept to 30 minutes throughout."
+      leadership_cadence: "Leadership heard nothing between 16:30Z and 19:07Z, the longest part of the outage. The 11:30 update gave 2:00 p.m. as the estimate and no next update time."
+      change_windows: "MOP-310's window closed at 17:16Z during the incident and nobody raised it on the bridge, so the A-side work stayed open past its approval (factor F5)."
+      restoration_confirmed: "Restoration was confirmed at 19:11Z with only the B-side tap-off closed; the A-side closed at 19:22Z. The handoff rule does not say both feeds must be back (factor F6)."
