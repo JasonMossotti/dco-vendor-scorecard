@@ -160,7 +160,7 @@ rows:
     demarcation: DM-SEC
     match: {categories: [Door forced, Door held]}
   - component: "Visitor sign-in, visitor badges, and escorts in the Customer halls"
-    scenario: "An OEM field engineer badges into Hall A while the technician named as escort is still at the receiving dock."
+    scenario: "A visiting field engineer badges into Hall A while the technician named as escort is still at the receiving dock."
     priority: P2
     criterion: "A visitor in a Customer hall without an escort."
     match: {}
@@ -170,7 +170,7 @@ rows:
     criterion: "A camera covering a Customer hall door offline."
     match: {}
   - component: "Storage media destruction from failed parts"
-    scenario: "A failed compute tray is boxed for return to the OEM, and the destruction log lists only 7 of its 8 drive serials."
+    scenario: "A failed compute tray is boxed for return to the manufacturer, and the destruction log lists only 7 of its 8 drive serials."
     priority: P1
     criterion: "Storage media unaccounted for at any point in chain of custody."
     rules: [HO-5]

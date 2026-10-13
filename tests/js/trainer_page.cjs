@@ -27,7 +27,7 @@ answer(s, true);
 ok(d.querySelector(".tr-verdict.ok"), "a right answer is marked right");
 ok(d.getElementById("tr-progress").textContent.includes("1 right"), "and scored");
 ok(d.querySelector(".tr-clause").textContent.includes(s.component) && d.querySelector('.tr-clause a[href="../interface-agreement/#4-break-fix-ownership-matrix"]'), "the clause is shown with a link to the matrix");
-ok(d.querySelectorAll(".tr-raci td").length === 5, "the full RACI row");
+ok(d.querySelectorAll(".tr-raci td").length === 6, "the full RACI row");
 d.getElementById("tr-next").click();
 s = scn();
 answer(s, false);

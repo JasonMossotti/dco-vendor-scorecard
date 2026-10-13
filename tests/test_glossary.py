@@ -86,7 +86,7 @@ def test_contract_meanings_quote_the_yaml(gl):
     tr1 = {x["id"]: x["rule"] for x in it["ticket_handling"]["stability"]["rules"]}["TR-1"]
     tr1_ll = {x["id"]: x["rule"] for x in ot["ticket_handling"]["stability"]["rules"]}["TR-1"]
     assert [x.text for x in gl.exact["TR-1"].senses] == [tr1, tr1_ll], "each partner SLA's own wording"
-    assert gl.exact["S1"].senses[0].docs == ["it", "landlord"], "identical terms merge"
+    assert gl.exact["S1"].senses[0].docs == ["it", "landlord", "security"], "identical terms merge"
     assert gl.exact["T0"].senses[0].title == "Fault Detection Time", "abbreviations come from the definitions"
 
 

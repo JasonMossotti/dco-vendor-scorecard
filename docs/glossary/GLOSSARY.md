@@ -130,7 +130,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | PICS | **Protocol Implementation Conformance Statement.** A BACnet device's published list of the objects, properties, and services it supports. | - | Telemetry |
 | PIR | **Post-incident review.** The written review after a major incident: timeline, causes, contributing factors, and owned, dated actions. | - | Alarm Board |
 | PLR | **Physical layer retransmission.** An XDR link feature that resends a block FEC could not correct, on top of RS-FEC. | - | Telemetry |
-| POST | **Power-on self-test.** The checks a system runs when it powers on. | - | IT Partner SLA, Security SLA, Scorecards, Deployments, Weekly Review |
+| POST | **Power-on self-test.** The checks a system runs when it powers on. | - | IT Partner SLA, Deployments |
 | PPE | **Personal protective equipment.** Gloves, arc-rated clothing, face shields, and similar gear a task's hazard analysis requires. | - | IT Partner SLA, Landlord SLA, Security SLA |
 | PSU | **Power supply unit.** Converts power for equipment; in a rack's power shelves, each PSU is a field-replaceable unit. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Security SLA, Alarm Board, Failure Patterns, Availability, Telemetry, Incident Portal, Post-Incident Review |
 | PUCT | **Public Utility Commission of Texas.** The state utility regulator, which sets the large-load interconnection rules under SB 6 (TX-SB6). | - | Deployments |
@@ -505,7 +505,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | PIR-YYYY-### | **Post-incident review.** A completed post-incident review. | - | Alarm Board, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | PM-#### | **Preventive maintenance record.** A scheduled maintenance task on facility equipment, such as a generator's monthly loaded exercise. | - | Scorecards, Alarm Board, Energy, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | PO-C-#### | **Pilot spares purchase order.** A purchase order line for the Hall C pilot spares; each receipt names the order it delivers against. *(On: deployments.)* | - | Deployments |
-| POST-... | **Guard post.** A guard post in the Security Partner SLA: Hall A and Hall B entrances, the security console, the receiving dock, and the roving patrol. Staffed means a guard badged in at the post reader. | - | IT Partner SLA, Security SLA, Scorecards, Deployments, Weekly Review |
+| POST-... | **Guard post.** A guard post in the Security Partner SLA: Hall A and Hall B entrances, the security console, the receiving dock, and the roving patrol. Staffed means a guard badged in at the post reader. | - | Security SLA, Scorecards, Weekly Review |
 | PS or PU + 8 characters | **Power shelf or PSU serial number.** A power shelf's (PS) or power supply's (PU) serial number. | - | Incident Portal, Post-Incident Review |
 | Q# (weekly review) | **Weekly review ask.** An ask of one party from the weekly operations review, with a due date. *(On: weekly.)* | - | Weekly Review |
 | R#-## | **Hall C readiness item.** An item of the Customer's readiness for a new hall: R0 commissioning accepted, R1 spares and logistics, R2 security and access, R3 people and process, R4 first compute (config/readiness.yaml). *(On: deployments.)* | - | Deployments |

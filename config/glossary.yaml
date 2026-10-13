@@ -339,7 +339,7 @@ families:
      text: "A visitor badge. It opens only the hall doors on the visit request and expires at sign-out."}
   - {key: LGP, label: "LGP-###", pattern: 'LGP-\d{3}', type: record, title: Security Partner guard ID, example: LGP-011,
      text: "A guard on the Security Partner's roster (Llano Gate Protective Services)."}
-  - {key: POST, label: "POST-...", pattern: 'POST-(?:HA|HB|SOC|DOCK|PATROL)', type: record, title: Guard post, example: POST-HA,
+  - {key: POST-N, label: "POST-...", pattern: 'POST-(?:HA|HB|SOC|DOCK|PATROL)', type: record, title: Guard post, example: POST-HA,
      text: "A guard post in the Security Partner SLA: Hall A and Hall B entrances, the security console, the receiving dock, and the roving patrol. Staffed means a guard badged in at the post reader."}
   - {key: DOOR, label: "Customer door", pattern: 'HALL-[AB]-EXIT-N|SPARES-CAGE|DOCK-INNER', type: record, title: Customer door on the access control system, example: DOCK-INNER,
      text: "A Customer door the Security Partner watches: hall emergency exits (door forced alarms are P1), the spares cage, and the receiving dock's inner door. A guard answering an alarm badges the door's own reader."}
