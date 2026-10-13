@@ -122,3 +122,30 @@ def evaluate_landlord(findings: list[Finding], data_dir: str | Path) -> Evaluati
     fps = [f for i, f in enumerate(findings) if i not in matched]
     return Evaluation(planted=len(planted), detected=len(planted) - len(missed), by_type=by_type,
                       missed=missed, false_positives=fps)
+
+
+SECURITY_KEYS = {"post_reported_unstaffed": ("post", "shift_start"), "door_alarm_closed_no_response": ("alarm_id",),
+                 "visitor_without_escort": ("visit_id",), "media_shipped_without_destruction": ("drive_serial",)}
+
+
+def evaluate_security(findings: list[Finding], sec_dir: str | Path) -> Evaluation:
+    """Score the security engine against its answer key (read only here, after the engine ran)."""
+    from scorecard.synthetic.security import KEY, iso
+    planted = json.loads((Path(sec_dir) / KEY).read_text(encoding="utf-8"))
+    norm = lambda v: iso(v) if hasattr(v, "astimezone") else v
+    by_type: dict[str, dict[str, int]] = {}
+    matched: set[int] = set()
+    missed = []
+    for p in planted:
+        bt = by_type.setdefault(p["type"], {"planted": 0, "detected": 0})
+        bt["planted"] += 1
+        keys = SECURITY_KEYS[p["type"]]
+        hit = next((i for i, f in enumerate(findings) if i not in matched and f.type == p["type"]
+                    and all(norm(f.keys.get(k)) == p[k] for k in keys)), None)
+        if hit is None:
+            missed.append(p)
+        else:
+            bt["detected"] += 1
+            matched.add(hit)
+    fps = [f for i, f in enumerate(findings) if i not in matched]
+    return Evaluation(planted=len(planted), detected=len(planted) - len(missed), by_type=by_type, missed=missed, false_positives=fps)

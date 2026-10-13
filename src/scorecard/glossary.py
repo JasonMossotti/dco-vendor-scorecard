@@ -35,7 +35,8 @@ from .sla_model import load_interface_agreement, load_sla
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config" / "glossary.yaml"
 XID_CATALOG = ROOT / "config" / "xid_catalog.yaml"
-CONTRACT_FILES = {"interface": None, "it": "sla/it_partner.yaml", "landlord": "sla/ot_partner.yaml"}
+CONTRACT_FILES = {"interface": None, "it": "sla/it_partner.yaml", "landlord": "sla/ot_partner.yaml",
+                  "security": "sla/security_partner.yaml"}
 DIRECTION = {"higher_is_better": "at least", "lower_is_better": "at most"}
 
 # A code-like token: hyphenated capitals and digits (CSL-07, BW-A-R1-PG-A2-A), capitals with digits
@@ -100,7 +101,8 @@ def config(path: Path = CONFIG) -> dict[str, Any]:
 def _contracts(root: Path = ROOT) -> dict[str, dict[str, Any]]:
     return {"interface": load_interface_agreement(root / "sla" / "interface_agreement.yaml"),
             "it": load_sla(root / CONTRACT_FILES["it"]),
-            "landlord": load_sla(root / CONTRACT_FILES["landlord"])}
+            "landlord": load_sla(root / CONTRACT_FILES["landlord"]),
+            "security": load_sla(root / CONTRACT_FILES["security"])}
 
 
 def _get(d: Any, path: str) -> list[dict[str, Any]]:

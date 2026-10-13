@@ -1,0 +1,165 @@
+{
+  "credits": {
+    "capped": false,
+    "items": [
+      {
+        "credit": 5580.0,
+        "csl": "SEC-CSL-03",
+        "explanation": "At-Risk Amount $22,320 (12% of $186,000) \u00d7 25% allocation = $5,580"
+      },
+      {
+        "credit": 6696.0,
+        "csl": "SEC-CSL-06",
+        "explanation": "At-Risk Amount $22,320 (12% of $186,000) \u00d7 30% allocation = $6,696"
+      }
+    ],
+    "payable": 12276.0,
+    "uncapped": 12276.0
+  },
+  "csl": [
+    {
+      "actual": 99.53257275132275,
+      "credit": 0.0,
+      "detail": "252 post-shifts; 848 of 181,440 post-minutes with no guard badged in at the post",
+      "direction": "higher_is_better",
+      "expected": 99.5,
+      "id": "SEC-CSL-01",
+      "minimum": 98.0,
+      "name": "Guard Post Coverage",
+      "note": "",
+      "status": "met_expected",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 96.29629629629629,
+      "credit": 0.0,
+      "detail": "26 of 27 door alarms with a guard badged at the door in time (3 min P1, 5 min P2)",
+      "direction": "higher_is_better",
+      "expected": 98.0,
+      "id": "SEC-CSL-02",
+      "minimum": 95.0,
+      "name": "Door Alarm Response",
+      "note": "",
+      "status": "below_expected",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 97.72727272727273,
+      "credit": 5580.0,
+      "detail": "43 of 44 visitor hall entries with the escort badged in within 2 minutes",
+      "direction": "higher_is_better",
+      "expected": 100.0,
+      "id": "SEC-CSL-03",
+      "minimum": 99.0,
+      "name": "Visitor Escort Compliance",
+      "note": "Small-sample rule: 1 misses exceeds allowance of 0.",
+      "status": "below_minimum",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 99.98625923170194,
+      "credit": 0.0,
+      "detail": "72 cameras; 399 camera-minutes not recording",
+      "direction": "higher_is_better",
+      "expected": 99.9,
+      "id": "SEC-CSL-04",
+      "minimum": 99.5,
+      "name": "Camera Availability",
+      "note": "",
+      "status": "met_expected",
+      "vendor_reported": 99.99
+    },
+    {
+      "actual": 100.0,
+      "credit": 0.0,
+      "detail": "5 of 5 leavers' badges deactivated within 24 hours",
+      "direction": "higher_is_better",
+      "expected": 100.0,
+      "id": "SEC-CSL-05",
+      "minimum": 98.0,
+      "name": "Leaver Badges Removed Within 24 Hours",
+      "note": "Small-sample rule: 5 events, 0 misses.",
+      "status": "met_expected",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 99.43181818181819,
+      "credit": 6696.0,
+      "detail": "175 of 176 drive serials in 22 shipped compute trays certified destroyed before shipment",
+      "direction": "higher_is_better",
+      "expected": 100.0,
+      "id": "SEC-CSL-06",
+      "minimum": 99.9,
+      "name": "Media Destroyed On Site Before Shipment",
+      "note": "Small-sample rule: 1 misses exceeds allowance of 0.",
+      "status": "below_minimum",
+      "vendor_reported": 100.0
+    },
+    {
+      "actual": 99.19839679358718,
+      "credit": 0.0,
+      "detail": "495 of 499 post log, dispatch, visitor, and media records reconcile",
+      "direction": "higher_is_better",
+      "expected": 99.0,
+      "id": "SEC-CSL-07",
+      "minimum": 97.0,
+      "name": "Security Record Integrity",
+      "note": "",
+      "status": "met_expected",
+      "vendor_reported": 100.0
+    }
+  ],
+  "defaults": [
+    "SEC-CSL-03",
+    "SEC-CSL-06"
+  ],
+  "findings": 4,
+  "km": [
+    {
+      "actual": 98.21428571428571,
+      "detail": "110 of 112 daily recorder audits held at least 90 days",
+      "direction": "higher_is_better",
+      "id": "SEC-KM-01",
+      "met": false,
+      "name": "Recorder Retention at 90 Days (daily audit)",
+      "target": 100.0,
+      "unit": "%"
+    },
+    {
+      "actual": 92.5925925925926,
+      "detail": "25 of 27 door alarms acknowledged at the console in time",
+      "direction": "higher_is_better",
+      "id": "SEC-KM-02",
+      "met": false,
+      "name": "Door Alarms Acknowledged at the Console Within Target (1 min P1, 2 min P2)",
+      "target": 98.0,
+      "unit": "%"
+    },
+    {
+      "actual": 99.36755952380952,
+      "detail": "2671 of 2688 tour checkpoints scanned on time",
+      "direction": "higher_is_better",
+      "id": "SEC-KM-03",
+      "met": true,
+      "name": "Guard Tour Checkpoints Scanned On Time",
+      "target": 98.0,
+      "unit": "%"
+    },
+    {
+      "actual": null,
+      "detail": "No quarterly access review due in the window",
+      "direction": "higher_is_better",
+      "id": "SEC-KM-04",
+      "met": null,
+      "name": "Quarterly Access Review Completed by Its Due Date",
+      "target": 100.0,
+      "unit": "%"
+    }
+  ],
+  "s1": 4,
+  "supplier": "Llano Gate Protective Services, LLC",
+  "window": {
+    "end": "2026-09-28T00:00:00Z",
+    "start": "2026-08-31T00:00:00Z"
+  }
+}

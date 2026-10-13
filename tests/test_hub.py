@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 PAGES = {"": "overview", "app/": "scorecards", "availability/": "availability", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns", "energy/": "energy", "gpu/": "gpu", "telemetry/": "telemetry",
          "agreements/": "agreements", "agreements/interface-agreement/": "agreements", "agreements/it-partner-sla/": "agreements",
-         "agreements/landlord-sla/": "agreements", "glossary/": "glossary"}
+         "agreements/landlord-sla/": "agreements", "agreements/security-sla/": "agreements", "glossary/": "glossary"}
 
 
 @pytest.fixture(scope="module")
@@ -42,6 +42,7 @@ def test_overview_matches_the_headline_results(facts):
     assert (facts["ll"]["defaults"], facts["ll"]["credits"]) == (4, 106200)
     assert (facts["it"]["detected"], facts["it"]["planted"]) == (17, 17)
     assert (facts["ll"]["detected"], facts["ll"]["planted"]) == (8, 8)
+    assert (facts["sec"]["defaults"], facts["sec"]["credits"], facts["sec"]["detected"], facts["sec"]["planted"]) == (2, 12276, 4, 4)
     al = facts["alarms"]
     assert (al["total"], al["expected"], al["flagged"], al["flag_changes"]) == (120, 11, 4, ["MOP-310"])
     assert facts["patterns"]["found"] == 3 and facts["pir"]["id"] == "PIR-2026-001"
@@ -53,12 +54,15 @@ def test_overview_matches_the_headline_results(facts):
 
 
 def test_overview_agrees_with_the_app_table(facts):
-    """The Overview and the app's 'Both partners, measured' table are one set of numbers."""
+    """The Overview and the app's 'Every partner, measured' table are one set of numbers."""
     from scorecard import app_support as A
     from scorecard.sla_model import load_sla
     _, sc, ev = A.run_pipeline(load_sla(ROOT / "sla" / "it_partner.yaml"), ROOT / "data" / "sample")
     _, ll_sc, ll_ev, _ = A.run_landlord_pipeline(ROOT / "data" / "sample")
-    rows = {r["Measure"]: r for r in A.site_rows(sc, ll_sc, ev, ll_ev)}
+    _, sec_sc, sec_ev = A.run_security_pipeline(ROOT / "data" / "sample")
+    rows = {r["Measure"]: r for r in A.site_rows(sc, ll_sc, ev, ll_ev, sec_sc, sec_ev)}
+    assert rows["Credits payable"]["Security Partner"] == f"${facts['sec']['credits']:,.0f}"
+    assert rows["Findings (S1)"]["Security Partner"].startswith(f"{facts['sec']['findings']} (")
     assert rows["Minimum defaults (measured)"]["IT Partner"] == str(facts["it"]["defaults"])
     assert rows["Credits payable"]["IT Partner"] == f"${facts['it']['credits']:,.0f}"
     assert rows["Credits payable"]["Landlord"].startswith(f"${facts['ll']['credits']:,.0f}")

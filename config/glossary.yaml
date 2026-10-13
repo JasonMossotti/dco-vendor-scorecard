@@ -71,7 +71,7 @@ contract_terms:
 terms:
   # --- Acronyms: operations and contracts
   - {term: CAP, type: acronym, expansion: Corrective action plan, text: "A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure."}
-  - {term: CSL, type: acronym, expansion: Critical service level, text: "A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA and OT-CSL-01 and up in the Landlord SLA."}
+  - {term: CSL, type: acronym, expansion: Critical service level, text: "A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA, OT-CSL-01 and up in the Landlord SLA, and SEC-CSL-01 and up in the Security SLA."}
   - {term: DCO, type: acronym, expansion: Data center operations, text: "The Customer's site operations team, which runs the Telemetry of Record and manages both partners."}
   - {term: EHS, type: acronym, expansion: Environment, health, and safety, text: "The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits."}
   - {term: CAB, type: acronym, expansion: Change advisory board, text: "The Customer's board that reviews and approves the IT Partner's change records before work starts."}
@@ -104,7 +104,11 @@ terms:
   - {term: OSR, type: acronym, expansion: Outage severity rating, text: "A public five-level scale for how badly an outage affected services, from 1 (negligible) to 5 (severe). The post-incident review records it beside the internal severity."}
   - {term: ASN, type: acronym, expansion: Advance ship notice, text: "The shipper's list of what is in a delivery, used to reconcile asset tags and serial numbers at receipt."}
   - {term: SN, type: acronym, expansion: Serial number, text: "The manufacturer's unique number for a part; a part swap must show a serial change in inventory."}
-  - {term: CCTV, type: acronym, expansion: Closed-circuit television, text: "Security cameras."}
+  - {term: CCTV, type: acronym, expansion: Closed-circuit television, text: "Security cameras. At AUS-1 the Customer's video system records the Customer halls; the Security Partner watches camera health and retention (SEC-CSL-04, SEC-KM-01)."}
+  - {term: CPR, type: acronym, expansion: Cardiopulmonary resuscitation, link: false, text: "At least one guard on every shift is trained in CPR and first aid (Security SLA)."}
+  - {term: NIST, type: acronym, expansion: National Institute of Standards and Technology, text: "The US standards body. Its SP 800-88 Rev. 2 sets how storage media is sanitized; the Security SLA requires its Destroy method on site."}
+  - {term: SP, type: acronym, expansion: Special Publication, text: "A NIST Special Publication, such as SP 800-88 (media sanitization)."}
+  - {term: E1, type: product, title: "E1.S drive", text: "A small, hot-swappable NVMe drive form factor (EDSFF). Each compute tray at AUS-1 holds 8; every one is destroyed on site before a failed tray ships."}
   - {term: SMS, type: acronym, expansion: Short message service, link: false, text: "Text messaging, one of the notification channels."}
   - {term: SMTP, type: acronym, expansion: Simple Mail Transfer Protocol, text: "The protocol for sending email; an SMTP relay is the minimum email channel for notifications."}
   - {term: UTC, type: acronym, expansion: Coordinated Universal Time, link: false, text: "The time standard every record is stamped in. The site is in US Central time (UTC minus 5 in summer)."}
@@ -321,6 +325,28 @@ families:
      text: "A place where the IT Partner's records do not reconcile with the telemetry, from the monthly scorecard.", see: "app/"}
   - {key: L-N, label: "L-###", pattern: 'L-\d{3}', type: record, title: Landlord finding, example: L-001,
      text: "A place where the Landlord's work orders or maintenance records do not reconcile with the telemetry, from the monthly scorecard.", see: "app/"}
+  - {key: S-N, label: "S-###", pattern: 'S-\d{3}', type: record, title: Security Partner finding, example: S-001,
+     text: "A place where the Security Partner's post log, dispatch log, visitor log, or destruction certificates do not reconcile with the Customer's access control system, Redfish inventory, or the RMA shipments.", see: "app/"}
+  - {key: SIR, label: "SIR-#####", pattern: 'SIR-\d{5}', type: record, title: Security incident report, example: SIR-00016,
+     text: "The Security Partner's dispatch record for a door alarm: who was sent, when they arrived, and how it was closed. A claim; the guard's badge at the door is the evidence.", see: "tickets/"}
+  - {key: ACS-N, label: "ACS-#####", pattern: 'ACS-\d{5}', type: record, title: Door alarm (access control system), example: ACS-00016,
+     text: "A door forced or door held alarm raised by the Customer's access control system, with the console acknowledgement time."}
+  - {key: VIS, label: "VIS-####", pattern: 'VIS-\d{4}', type: record, title: Visit, example: VIS-0038,
+     text: "One visitor's sign-in under a Customer-approved request (VR-####), with the named escort and the visitor badge (V-####)."}
+  - {key: VR, label: "VR-####", pattern: 'VR-\d{4}', type: record, title: Visit request, example: VR-2038,
+     text: "A Customer-approved request for a visitor, naming the hall and the escort."}
+  - {key: VB, label: "V-####", pattern: 'V-\d{4}', type: record, title: Visitor badge, example: V-3038,
+     text: "A visitor badge. It opens only the hall doors on the visit request and expires at sign-out."}
+  - {key: LGP, label: "LGP-###", pattern: 'LGP-\d{3}', type: record, title: Security Partner guard ID, example: LGP-011,
+     text: "A guard on the Security Partner's roster (Llano Gate Protective Services)."}
+  - {key: POST, label: "POST-...", pattern: 'POST-(?:HA|HB|SOC|DOCK|PATROL)', type: record, title: Guard post, example: POST-HA,
+     text: "A guard post in the Security Partner SLA: Hall A and Hall B entrances, the security console, the receiving dock, and the roving patrol. Staffed means a guard badged in at the post reader."}
+  - {key: DOOR, label: "Customer door", pattern: 'HALL-[AB]-EXIT-N|SPARES-CAGE|DOCK-INNER', type: record, title: Customer door on the access control system, example: DOCK-INNER,
+     text: "A Customer door the Security Partner watches: hall emergency exits (door forced alarms are P1), the spares cage, and the receiving dock's inner door. A guard answering an alarm badges the door's own reader."}
+  - {key: CAM, label: "CAM-X-##", pattern: 'CAM-[A-Z]-\d{2}', type: record, title: Camera, example: CAM-B-04,
+     text: "A camera on the Customer's video system covering the Customer halls. The video system records whether it is recording; no video is used for measurement."}
+  - {key: SER-E1S, label: "E1S + 9 characters", pattern: 'E1S[A-Z0-9]{9}', type: record, title: Drive serial number, example: E1S46F6ZGWWD,
+     text: "A storage drive's serial number from the compute tray's Redfish inventory. It needs a certificate of destruction before the tray ships."}
   - {key: PIR-ID, label: "PIR-YYYY-###", pattern: 'PIR-\d{4}-\d{3}', type: record, title: Post-incident review, example: PIR-2026-001,
      text: "A completed post-incident review.", see: "pir/"}
   - {key: EN-F, label: "EN-F#", pattern: 'EN-F\d', type: record, title: Energy finding, example: EN-F1, see: "energy/",

@@ -100,7 +100,8 @@ def bundle_members(root: Path) -> list[Path]:
                                                    root / "site" / "details.yaml"]   # the lookup panel draws the detail sheets
     # The code lookup: the glossary and the generated contracts it points into.
     files += [root / "config" / "glossary.yaml", root / "config" / "xid_catalog.yaml", root / "config" / "telemetry.yaml"] + sorted((root / "docs" / "sla").glob("*.md"))
-    for ds in ("sample", "latest"):
+    files += [root / "config" / "security.yaml"]   # the security layer for a generated month
+    for ds in ("sample", "latest", "security"):
         d = root / "data" / ds
         if d.exists():
             files += [p for p in d.rglob("*") if p.is_file()]

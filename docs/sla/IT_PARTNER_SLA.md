@@ -135,34 +135,39 @@ Each rack contains 72 GPUs and 36 CPUs across 18 compute trays (4 GPUs per tray)
 
 ### 4.3 Break-fix ownership matrix
 
-Exhibit from the Interface Agreement (IA-AUS1-001, version 1.1.0), which governs demarcation, fault attribution, and joint operations between the parties.
+Exhibit from the Interface Agreement (IA-AUS1-001, version 1.2.0), which governs demarcation, fault attribution, and joint operations between the parties.
 
 **R** = Responsible: performs the work; **A** = Accountable: owns the outcome and approves; **C** = Consulted; **I** = Informed.
 
-| Component | Customer | IT Partner | Landlord | OEM | Utility |
-|---|:-:|:-:|:-:|:-:|:-:|
-| Compute tray (GPU, CPU, memory, cold plate) | A | R | - | C | - |
-| NVLink switch tray and NVLink backplane | A | R | - | C | - |
-| Rack power shelves, PSUs, and whips from the tap-off output | A | R | C | C | - |
-| Busway, tap-off units, and tap-off breakers | I | C | A/R | - | - |
-| UPS, batteries, unit substations, and switchgear | I | I | A/R | - | - |
-| Generators, paralleling controls, and fuel | I | - | A/R | - | - |
-| 138 kV substation and utility transformers | - | - | C | - | A/R |
-| Rack manifold, isolation valves, quick-disconnects | A | R | C | C | - |
-| CDUs and the hall secondary header | I | C | A/R | - | - |
-| Chillers, facility water, and pumps | I | - | A/R | - | - |
-| Thermal walls, CRAHs, and hot-aisle containment | I | C | A/R | - | - |
-| Building leak detection (cable and controllers) | I | C | A/R | - | - |
-| Fire alarm, VESDA, and pre-action suppression | I | I | A/R | - | - |
-| BMS and EPMS operation | C | - | A/R | - | - |
-| Customer Telemetry of Record collector and read-only taps | A/R | I | C | - | - |
-| Back-end fabric optics, cables, and fiber | A | R | - | C | - |
-| Leaf and spine switches (physical replacement) | A | R | - | C | - |
-| BMC and out-of-band management network (physical) | A | R | - | C | - |
-| Meet-me rooms and cross-connects | C | C | A/R | - | - |
-| Spares cage, inventory, and RMA shipments | A | R | - | C | - |
-| Building perimeter, lobby, and access control system | C | I | A/R | - | - |
-| Customer halls and cage access lists | A | R | R | - | - |
+| Component | Customer | IT Partner | Landlord | OEM | Utility | Security Partner |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| Compute tray (GPU, CPU, memory, cold plate) | A | R | - | C | - | - |
+| NVLink switch tray and NVLink backplane | A | R | - | C | - | - |
+| Rack power shelves, PSUs, and whips from the tap-off output | A | R | C | C | - | - |
+| Busway, tap-off units, and tap-off breakers | I | C | A/R | - | - | - |
+| UPS, batteries, unit substations, and switchgear | I | I | A/R | - | - | - |
+| Generators, paralleling controls, and fuel | I | - | A/R | - | - | - |
+| 138 kV substation and utility transformers | - | - | C | - | A/R | - |
+| Rack manifold, isolation valves, quick-disconnects | A | R | C | C | - | - |
+| CDUs and the hall secondary header | I | C | A/R | - | - | - |
+| Chillers, facility water, and pumps | I | - | A/R | - | - | - |
+| Thermal walls, CRAHs, and hot-aisle containment | I | C | A/R | - | - | - |
+| Building leak detection (cable and controllers) | I | C | A/R | - | - | - |
+| Fire alarm, VESDA, and pre-action suppression | I | I | A/R | - | - | - |
+| BMS and EPMS operation | C | - | A/R | - | - | - |
+| Customer Telemetry of Record collector and read-only taps | A/R | I | C | - | - | - |
+| Back-end fabric optics, cables, and fiber | A | R | - | C | - | - |
+| Leaf and spine switches (physical replacement) | A | R | - | C | - | - |
+| BMC and out-of-band management network (physical) | A | R | - | C | - | - |
+| Meet-me rooms and cross-connects | C | C | A/R | - | - | - |
+| Spares cage, inventory, and RMA shipments | A | R | - | C | - | C |
+| Building perimeter, lobby, and access control system | C | I | A/R | - | - | C |
+| Customer halls and cage access lists | A | R | R | - | - | R |
+| Guard posts and patrols in the Customer halls | A | I | I | - | - | R |
+| Customer hall door alarms (forced and held) and guard response | A | I | I | - | - | R |
+| Visitor sign-in, visitor badges, and escorts in the Customer halls | A | C | C | I | - | R |
+| Cameras and video recorders covering the Customer halls | A | - | C | - | - | R |
+| Storage media destruction from failed parts | A | C | - | I | - | R |
 
 ## 5. Incident Priority Matrix
 
@@ -264,7 +269,12 @@ Precedence 1 is most authoritative. When sources disagree, the higher-precedence
 | DS-LEAK | Leak detection (TraceTek TTDM-128 via Modbus gateway, Customer read-only) | Leak alarms with distance along the cable, cable breaks, circuit faults. | Customer | 1 |
 | DS-FIRE | Fire alarm and aspirating smoke detection (VESDA via HLI, secondary monitoring) | VESDA Alert, Action, Fire 1, and Fire 2; detector faults; fire system impairments. The fire panel remains the life-safety system of record. | Landlord | 2 |
 | DS-CMMS | Landlord maintenance management system | Work orders, preventive maintenance schedule and completion, method of procedure (MOP) references, Landlord-recorded timestamps. | Landlord | 3 |
-| DS-BADGE | Access control system | Technician and engineer presence by hall and equipment room, time on site, staffing fill. | Customer | 1 |
+| DS-BADGE | Access control system | Technician, engineer, and guard presence by hall, post, and equipment room; time on site; staffing fill; door forced and door held alarms; visitor badge entries. | Customer | 1 |
+| DS-VMS | Video management system (camera health and recorder retention, Customer-owned) | Camera recording state by minute, recorder storage and the age of the oldest recording. No video leaves the system for measurement. | Customer | 1 |
+| DS-GUARD | Security Partner post log, guard tour, and dispatch system | Posts reported staffed, guard tour checkpoint scans, door alarm dispatch and closure, Supplier-recorded timestamps. | Security Partner | 3 |
+| DS-VISIT | Visitor management system | Visitor sign-in and sign-out, the named escort, and the visitor badge issued. | Security Partner | 3 |
+| DS-IDM | Customer identity feed (separations from each party's HR system) | Time each person left a party's employment or the Site assignment; badge deactivation time from the access control system. | Customer | 1 |
+| DS-COC | Chain-of-custody and media destruction log | Storage media handed over at removal, destroyed on site, and certified by serial number. | Security Partner | 3 |
 | DS-CAB | Customer change management system | Approved changes and maintenance windows. | Customer | 1 |
 | DS-ITSM | Supplier ticketing system | Ticket lifecycle, work notes, parts used, priority, Supplier-recorded timestamps. | Supplier | 3 |
 | DS-SPARES | Supplier spares and RMA system | Stock levels, consumption, cycle counts, RMA shipments. | Supplier | 3 |
@@ -1130,4 +1140,4 @@ Total EHS Credits: **$46,250**, payable in addition to any Service Level Credits
 
 ---
 
-*Generated from `sla/it_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.3.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/it_partner.yaml` and the common terms in `sla/common.yaml` (schema 1.0, SLA version 1.0.0, common terms version 1.4.0). This is a fictional, illustrative service level agreement created for a portfolio demonstration. All parties, sites, quantities, prices, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*

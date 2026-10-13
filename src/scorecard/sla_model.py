@@ -26,7 +26,8 @@ SLA_DIR = Path(__file__).resolve().parents[2] / "sla"
 DEFAULT_SLA_PATH = SLA_DIR / "it_partner.yaml"
 PROVENANCE_KEYS = ("extends", "common_version")   # describe the files, not the contract
 IA_PATH = SLA_DIR / "interface_agreement.yaml"
-PARTNER_FILES = {"it": SLA_DIR / "it_partner.yaml", "landlord": SLA_DIR / "ot_partner.yaml"}
+PARTNER_FILES = {"it": SLA_DIR / "it_partner.yaml", "landlord": SLA_DIR / "ot_partner.yaml",
+                 "security": SLA_DIR / "security_partner.yaml"}
 
 HIGHER = "higher_is_better"
 LOWER = "lower_is_better"

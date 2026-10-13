@@ -1,17 +1,20 @@
 """The Incident Portal: every partner ticket, change, work order, MOP, and PM task, read the way the
 Customer's read-only records access would deliver them (common terms, measurement: Records access).
 
-Portfolio demo; all data fictional. Five record types from three systems:
+Portfolio demo; all data fictional. Six record types from four systems:
 
 * ``INC``  IT Partner incidents, from the IT Partner's ticketing system (a ServiceNow-style record).
 * ``CHG``  IT Partner changes approved by the Customer CAB, from the Customer's change management system.
 * ``WO``   Landlord work orders, from the Landlord's maintenance management system (a Maximo-style record).
 * ``MOP``  Landlord methods of procedure approved by the Customer change board.
 * ``PM``   Landlord preventive maintenance tasks, from the same maintenance management system.
+* ``SIR``  Security Partner incident reports for door alarms, from its dispatch log, beside the Customer's access
+           control system (the alarm, the console acknowledgement, and the guard's badge at the door).
 
 Each record carries the partner's own fields exactly as stored ("as recorded"), a timeline built the way
 the post-incident review builds one (``scorecard.pir.build_review``), the alarms the alarm board ties to it,
-the Customer's own measurement (``reports/scorecard.json`` and ``reports/landlord_scorecard.json``), and the
+the Customer's own measurement (``reports/scorecard.json``, ``reports/landlord_scorecard.json``, and
+``reports/security_findings.json``), and the
 findings that name it. People are shown by their person ID, never by name. The portal only reads.
 """
 
@@ -28,12 +31,13 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = ROOT / "data" / "sample"
 CHANGES = ROOT / "data" / "changes"
+SECURITY = ROOT / "data" / "security"
 REPORTS = ROOT / "reports"
 UTC = timezone.utc
 LOCAL = timezone(timedelta(hours=-5), "CDT")
 
 # The record numbers the portal opens; every page links them to tickets/#<number>.
-ID_PATTERN = r"INC\d{7}|CHG\d{7}|WO-\d{5}|MOP-\d{3}|PM-\d{4}"
+ID_PATTERN = r"INC\d{7}|CHG\d{7}|WO-\d{5}|MOP-\d{3}|PM-\d{4}|SIR-\d{5}"
 ID_RE = re.compile(rf"\b(?:{ID_PATTERN})\b")
 
 TYPES = {   # key: (label, plural, partner, system of record)
@@ -42,9 +46,10 @@ TYPES = {   # key: (label, plural, partner, system of record)
     "wo": ("Work order", "Work orders", "Landlord", "Landlord maintenance management system (Maximo-style work order)"),
     "mop": ("Method of procedure", "Methods of procedure (Landlord changes)", "Landlord", "Customer change management system (Landlord MOP approval)"),
     "pm": ("Maintenance task", "Preventive maintenance tasks", "Landlord", "Landlord maintenance management system (preventive maintenance record)"),
+    "sir": ("Security incident", "Security incidents (door alarms)", "Security Partner", "Security Partner dispatch log (door alarm response record)"),
 }
 SOURCE = {"inc": "vendor/tickets.json", "chg": "customer/cab_changes.json", "wo": "landlord/work_orders.json",
-          "mop": "customer/landlord_mop_approvals.json", "pm": "landlord/pm_records.csv"}
+          "mop": "customer/landlord_mop_approvals.json", "pm": "landlord/pm_records.csv", "sir": "security/dispatch_log.json"}
 
 
 def _t(s: str) -> datetime:
@@ -86,10 +91,21 @@ class Redactor:
         return v
 
 
+def security_dir(data_dir: Path) -> Path | None:
+    """The security layer beside a dataset: data/security for the sample, <month>/security for a generated month."""
+    data_dir = Path(data_dir)
+    for d in (data_dir / "security", SECURITY if data_dir.resolve() == SAMPLE.resolve() else None):
+        if d and (d / "dispatch_log.json").exists():
+            return d
+    return None
+
+
 def _read(data_dir: Path) -> dict[str, Any]:
     js = lambda f: json.loads((data_dir / f).read_text(encoding="utf-8"))
+    sec = security_dir(data_dir)
     return {"inc": js(SOURCE["inc"]), "chg": js(SOURCE["chg"]), "wo": js(SOURCE["wo"]), "mop": js(SOURCE["mop"]),
-            "pm": list(csv.DictReader((data_dir / SOURCE["pm"]).open(encoding="utf-8")))}
+            "pm": list(csv.DictReader((data_dir / SOURCE["pm"]).open(encoding="utf-8"))),
+            "sir": json.loads((sec / "dispatch_log.json").read_text(encoding="utf-8")) if sec else [], "sec": sec}
 
 
 def ids(data_dir: Path = SAMPLE) -> list[str]:
@@ -101,7 +117,7 @@ def ids(data_dir: Path = SAMPLE) -> list[str]:
 def _ids(data_dir: str) -> frozenset[str]:
     r = _read(Path(data_dir))
     return frozenset([x["number"] for x in r["inc"]] + [x["change_id"] for x in r["chg"]] + [x["wo"] for x in r["wo"]]
-                     + [x["mop_id"] for x in r["mop"]] + [x["task_id"] for x in r["pm"]])
+                     + [x["mop_id"] for x in r["mop"]] + [x["task_id"] for x in r["pm"]] + [x["sir"] for x in r["sir"]])
 
 
 def _measures(reports: Path) -> tuple[dict, dict, list, dict]:
@@ -118,6 +134,10 @@ def _measures(reports: Path) -> tuple[dict, dict, list, dict]:
                  "refs": f["tickets"], "sla_refs": f["sla_refs"]} for f in it_find]
     findings += [{"id": f["id"], "partner": "Landlord", "severity": f["severity"], "title": f["title"], "summary": f["summary"],
                   "refs": f["tickets"], "sla_refs": f["sla_refs"]} for f in ll_find]
+    if (reports / "security_findings.json").exists():
+        sec_find = json.loads((reports / "security_findings.json").read_text(encoding="utf-8"))
+        findings += [{"id": f["id"], "partner": "Security Partner", "severity": f["severity"], "title": f["title"], "summary": f["summary"],
+                      "refs": f["tickets"], "sla_refs": f["sla_refs"]} for f in sec_find]
     return by_ticket, by_wo, findings, sc
 
 
@@ -177,6 +197,14 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
         r = base(mp["mop_id"], "mop", mp["window_start"], mp["window_end"], state="Approved", summary=mp["title"],
                  device=", ".join(mp["assets"]), location=", ".join(mp["assets"]), category="Landlord change")
         r["native"] = dict(mp)
+    sec = _security(raw["sec"]) if raw["sec"] else None
+    for x in raw["sir"]:
+        a = sec["alarms"][x["alarm_id"]]
+        door = sec["doors"].get(x["door"], {})
+        r = base(x["sir"], "sir", a["timestamp"], x["closed"] or None, state="Closed" if x["closed"] else "Open", priority=x["priority"],
+                 summary=f"{a['event']} at {door.get('name', x['door'])}: {x['disposition']}", device=x["door"],
+                 location=door.get("name", x["door"]), hall=f"HALL-{door['hall']}" if door else "", assigned=x["dispatched"], category=x["type"])
+        r["native"] = dict(x)
     for p in raw["pm"]:
         r = base(p["task_id"], "pm", p["due_start"], p["completed_at"] or p["due_end"], state="Complete" if p["completed_at"] else "Open",
                  summary=f"{p['task']}: {p['asset']}", device=p["asset"], location=p["asset"], hall=_hall(p["asset"]),
@@ -249,6 +277,31 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
             for p in raw["pm"]:
                 if p.get("mop_ref") == ref and p["completed_at"]:
                     tl.append(_row(p["completed_at"], "Landlord", SOURCE["pm"], f"{p['task_id']} completed by {p['engineer']}: {p['result']}", p))
+        elif t == "sir":
+            n = r["native"]
+            a = sec["alarms"][n["alarm_id"]]
+            tl = [_row(a["timestamp"], "Customer", "security/door_alarms.jsonl", f"Access control alarm {a['alarm_id']}: {a['event']} at {n['door']} ({a['priority']})", a)]
+            if a["console_ack_at"]:
+                tl.append(_row(a["console_ack_at"], "Security Partner", "security/door_alarms.jsonl", f"Alarm acknowledged at the security console"))
+            tl.append(_row(n["opened"], "Security Partner", SOURCE[t], f"{ref} opened; {n['dispatched']} dispatched to {n['door']}"))
+            if n["on_scene"]:
+                tl.append(_row(n["on_scene"], "Security Partner", SOURCE[t], f"{ref}: guard on scene (dispatch log)"))
+            if a["cleared_at"]:
+                tl.append(_row(a["cleared_at"], "Customer", "security/door_alarms.jsonl", f"Door {n['door']} closed; alarm cleared"))
+            lo, hi = _t(a["timestamp"]), _t(n["closed"]) if n["closed"] else _t(a["timestamp"]) + timedelta(hours=1)
+            badges = [b for b in sec["badges"] if b["reader"] == n["door"] and lo <= _t(b["timestamp"]) <= hi]
+            for b in badges:
+                tl.append(_row(b["timestamp"], "Security Partner", "security/guard_badges.csv", f"{b['guard_id']} badged {b['direction']} at {n['door']}", b))
+            if not badges:
+                tl.append(_row(n["closed"] or a["timestamp"], "Customer", "security/guard_badges.csv", f"No guard badge at {n['door']} between the alarm and the close"))
+            if n["closed"]:
+                tl.append(_row(n["closed"], "Security Partner", SOURCE[t], f"{ref} closed: {n['disposition']}"))
+            target = sec["on_site"][a["priority"]]
+            first = min((_t(b["timestamp"]) for b in badges), default=None)
+            mins = (first - lo).total_seconds() / 60 if first else None
+            r["measured"] = {"kind": "Security", "t0": a["timestamp"], "arrived": _iso(first) if first else None,
+                             "measured_min": round(mins, 1) if mins is not None else None, "measured": _hm(mins) if mins is not None else "",
+                             "target_min": target, "within_target": mins is not None and mins <= target}
         else:   # PM
             n = r["native"]
             tl = [_row(n["due_start"], "Landlord", SOURCE[t], f"{ref} due window opens: {n['task']} ({n['asset']})", n),
@@ -270,6 +323,8 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
             tl.append(_row(m["t0"], "Customer", "reports/scorecard.json", f"Measured T0 (first telemetry evidence of the fault), ticket of record {m['ticket_of_record']}"))
             tl.append(_row(m["rts"], "Customer", "reports/scorecard.json", f"Measured validated return to service: {m['measured']} after T0"))
             r["markers"] = [[m["t0"], "Measured T0"], [m["rts"], "Measured RTS"]]
+        elif m and m["kind"] == "Security":
+            r["markers"] = [[m["t0"], "Alarm"]] + ([[m["arrived"], "Guard at the door"]] if m["arrived"] else [])
         elif m and m["kind"] == "Landlord":
             tl.append(_row(m["t0"], "Customer", "reports/landlord_scorecard.json", f"Measured start of the facility event: {m['event']}"))
             if m["restored"]:
@@ -294,8 +349,26 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
                        "types": ["inc"], "records": counts["inc"]},
                       {"partner": "Landlord", "system": "Maintenance management system (Maximo-style)", "access": "Read-only API account",
                        "types": ["wo", "pm"], "records": counts["wo"] + counts["pm"]},
+                      {"partner": "Security Partner", "system": "Dispatch log", "access": "Read-only API account",
+                       "types": ["sir"], "records": counts["sir"]},
                       {"partner": "Customer", "system": "Change management (CAB)", "access": "Customer system",
                        "types": ["chg", "mop"], "records": counts["chg"] + counts["mop"]}]}
+
+
+def _security(sec: Path) -> dict[str, Any]:
+    """The Customer's access control records for the door alarms, and the doors and on-site targets they are held to."""
+    import yaml
+
+    from scorecard.sla_model import PARTNER_FILES, load_sla
+    alarms = {a["alarm_id"]: a for a in (json.loads(x) for x in (sec / "door_alarms.jsonl").read_text(encoding="utf-8").splitlines() if x.strip())}
+    badges = list(csv.DictReader((sec / "guard_badges.csv").open(encoding="utf-8")))
+    cfg = yaml.safe_load((ROOT / "config" / "security.yaml").read_text(encoding="utf-8"))
+    prio = {p["id"]: p["engaged_on_site_min"] for p in load_sla(PARTNER_FILES["security"])["priorities"]}
+    return {"alarms": alarms, "badges": badges, "doors": {d["id"]: d for d in cfg["doors"]}, "on_site": prio}
+
+
+def _iso(t: datetime) -> str:
+    return t.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _hall(where: str) -> str:

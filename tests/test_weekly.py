@@ -11,6 +11,7 @@ import yaml
 
 from scorecard.builder import build_scorecard
 from scorecard.engine.landlord import build_landlord_scorecard
+from scorecard.engine.security import build_security_scorecard
 from scorecard.weekly import WeeklyData, build_all, knowable_at
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,7 +44,7 @@ def test_weeks_cover_the_window_without_gaps(data, weeks):
 
 def test_every_finding_is_raised_exactly_once_in_the_week_it_was_observed(data, weeks):
     raised = [f["id"] for w in weeks for f in w["findings"]["new"]]
-    every = {f.id: f for f in data.it.findings + data.ll.findings}
+    every = {f.id: f for f in data.it.findings + data.ll.findings + data.sec.findings}
     assert sorted(raised) == sorted(every)
     for w in weeks:
         for f in w["findings"]["new"]:
@@ -62,7 +63,12 @@ def test_corroborating_evidence_never_delays_a_finding(data):
 def test_month_to_date_at_the_last_week_matches_the_monthly_scorecards(data, weeks):
     it_month = {r["id"]: r for r in build_scorecard(data.it_sla, data.it)["csl"]}
     ll_month = {r["id"]: r for r in build_landlord_scorecard(data.ll_sla, data.ll)["csl"]}
-    it_last, ll_last = weeks[-1]["partners"]
+    it_last, ll_last, sec_last = weeks[-1]["partners"]
+    sec_month = {r["id"]: r for r in build_security_scorecard(data.sec_sla, data.sec)["csl"]}
+    for r in sec_last["levels"]:
+        want = sec_month[r["id"]]["status"]
+        assert r["mtd_status"] == ("no_events" if want == "not_applicable" else want), r["id"]
+        assert r["mtd"] == pytest.approx(sec_month[r["id"]]["actual"]), r["id"]
     for r in it_last["levels"]:
         assert r["mtd_status"] == it_month[r["id"]]["status"], r["id"]
         assert r["mtd"] == pytest.approx(it_month[r["id"]]["actual"]), r["id"]
@@ -123,11 +129,11 @@ def test_notes_only_reference_what_the_week_contains(weeks, notes):
         w = by[wid]
         facts = repr(w)
         text = yaml.safe_dump(n)
-        for ref in set(re.findall(r"\b(?:F|L)-\d{3}\b|\bA\d\b|\bMOP-\d{3}\b|\bWO-\d{5}\b|\bPIR-\d{4}-\d{3}\b|\b[AB]\d{2}\b|\bPM-\d{4}\b", text)):
+        for ref in set(re.findall(r"\b(?:F|L|S)-\d{3}\b|\bA\d\b|\bMOP-\d{3}\b|\bWO-\d{5}\b|\bPIR-\d{4}-\d{3}\b|\b[AB]\d{2}\b|\bPM-\d{4}\b", text)):
             assert ref in facts, f"{wid} notes mention {ref}, which is not in that week's facts"
         for role, comment in n["commentary"].items():
             partner = next(p for p in w["partners"] if p["role"] == role)
-            for csl in re.findall(r"\b(?:OT-)?CSL-\d{2}\b", comment):
+            for csl in re.findall(r"\b(?:OT-|SEC-)?CSL-\d{2}\b", comment):
                 assert any(r.startswith(csl + " ") for r in partner["reasons"]), f"{csl} is not below Minimum or at risk for {role}"
         for p in n["priorities"]:                   # a priority's service level must be one flagged for that partner
             partner = next(x for x in w["partners"] if x["role"] == p["to"])

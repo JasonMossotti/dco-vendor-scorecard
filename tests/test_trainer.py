@@ -64,7 +64,7 @@ def test_notification_follows_the_alarm_terms(data):
 
 def test_scenarios_do_not_give_away_the_owner(data):
     for s in data["scenarios"]:
-        assert not any(p in s["scenario"] for p in ("IT Partner", "Landlord", "OEM")), s["scenario"]
+        assert not any(p in s["scenario"] for p in ("IT Partner", "Landlord", "OEM", "Security Partner")), s["scenario"]
 
 
 def test_every_sample_record_belongs_to_a_row(data, records):

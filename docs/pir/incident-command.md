@@ -4,13 +4,14 @@
 
 How the Customer runs an incident that involves more than one party: who commands, how fast the bridge opens, who is told what and when, and how restoration is handed from the Landlord to the IT Partner. Each step names its clock. The replay holds the A07 power loss against these steps, from the alarms, pages, and the bridge's comms log.
 
-**Who commands.** The Customer is Incident Commander for any P1 under either SLA and for any event involving more than one party.
+**Who commands.** The Customer is Incident Commander for any P1 under any partner SLA and for any event involving more than one party.
 
 - Landlord lead: facility status, isolation, and restoration.
 - IT Partner lead: rack protection, controlled shutdowns, and return-to-service validation.
+- Security Partner lead: guard posts, door control, escorts, and chain of custody for any media involved.
 - Customer Incident Commander: priorities, decisions, and all communications to Customer leadership.
 
-**Bridge.** A joint bridge opens within 15 minutes of a multi-party P1. Each lead updates the Incident Commander at the stricter of the two SLAs' update cadences.
+**Bridge.** A joint bridge opens within 15 minutes of a multi-party P1. Each lead updates the Incident Commander at the strictest of the involved partners' SLA update cadences.
 
 *The runbook is the Customer's. A missed step is a process finding for the post-incident review, not an SLA default, and carries no credit.*
 

@@ -25,6 +25,7 @@ DOCUMENTS = [
     ("interface", "interface-agreement", "Interface Agreement", "docs/sla/INTERFACE_AGREEMENT.md"),
     ("it", "it-partner-sla", "IT Partner SLA", "docs/sla/IT_PARTNER_SLA.md"),
     ("landlord", "landlord-sla", "Landlord SLA", "docs/sla/LANDLORD_SLA.md"),
+    ("security", "security-sla", "Security SLA", "docs/sla/SECURITY_SLA.md"),
 ]
 DOC_KEYS = [d[0] for d in DOCUMENTS]
 DOC_SLUG = {d[0]: d[1] for d in DOCUMENTS}

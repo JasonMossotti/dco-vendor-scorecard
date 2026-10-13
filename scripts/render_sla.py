@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the site's contracts: the IT Partner SLA, the Landlord SLA, and the Interface Agreement.
+"""Render the site's contracts: the IT Partner SLA, the Landlord SLA, the Security Partner SLA, and the Interface Agreement.
 
 Usage:
     python scripts/render_sla.py            # validate + write docs/sla/*.md
@@ -35,6 +35,7 @@ from scorecard.sla_model import (  # noqa: E402
     compute_credit,
     compute_ehs_credits,
     evaluate_csl,
+    get_csl,
     load_interface_agreement,
     load_sla,
     sla_sources,
@@ -42,12 +43,15 @@ from scorecard.sla_model import (  # noqa: E402
 
 SLA_PATH = ROOT / "sla" / "it_partner.yaml"
 OT_PATH = ROOT / "sla" / "ot_partner.yaml"
+SEC_PATH = ROOT / "sla" / "security_partner.yaml"
 IA_PATH = ROOT / "sla" / "interface_agreement.yaml"
 DOC_DIR = ROOT / "docs" / "sla"
 IT_NUM = {"measurement": 6, "credits": 14, "excused": 16, "rca": 17, "governance": 18, "security": 21, "ehs": 22,
           "change_control": 24, "ehs_example": "B.4"}
 OT_NUM = {"measurement": 5, "credits": 12, "excused": 14, "rca": 15, "governance": 16, "security": 19, "ehs": 20,
           "change_control": 23, "ehs_example": "B.2"}
+SEC_NUM = {"measurement": 5, "credits": 14, "excused": 16, "rca": 17, "governance": 18, "security": 20, "ehs": 21,
+           "change_control": 22, "ehs_example": "B.2"}
 TEMPLATE_DIR = ROOT / "templates"
 
 
@@ -193,6 +197,24 @@ def landlord_context(sla: dict) -> dict:
     return ctx
 
 
+def security_context(sla: dict) -> dict:
+    ctx = base_context(sla)
+    ctx["num"] = SEC_NUM
+    ctx["credit_examples"] = [
+        {"title": "Single default: SEC-CSL-04 (camera availability) misses Minimum once",
+         "result": compute_credit(sla, "SEC-CSL-04", 1)},
+        {"title": "Integrity-aggravated default: SEC-CSL-07 (record integrity) misses Minimum after posts were logged staffed with no guard badged in",
+         "result": compute_credit(sla, "SEC-CSL-07", 1, aggravators=["AGG-INTEGRITY"])},
+    ]
+    res = evaluate_csl(sla, "SEC-CSL-03", 100 * 43 / 44, events=44, misses=1)
+    ctx["small_sample"] = {"events": 44, "misses": 1, "actual": res.actual, "below": get_csl(sla, "SEC-CSL-03")["small_sample_rule"]["below_events"],
+                           "status": "a Minimum Service Level Default" if res.is_minimum_default else res.status}
+    bad = [compute_credit(sla, cid, 1) for cid in ("SEC-CSL-01", "SEC-CSL-02", "SEC-CSL-03", "SEC-CSL-06", "SEC-CSL-07")]
+    uncapped, payable, _ = cap_monthly_credits(sla, bad)
+    ctx["cap_example"] = {"uncapped": uncapped, "payable": payable, "pct_of_ara": round(uncapped / ctx["at_risk"] * 100)}
+    return ctx
+
+
 def build_context(sla: dict) -> dict:
     site = sla["site"]
     tray = site["per_rack"]["gpus_per_compute_tray"]
@@ -309,6 +331,11 @@ def render_landlord(sla_path: Path = OT_PATH) -> str:
     return _tidy(_env().get_template("landlord.md.j2").render(src=sla_sources(sla_path), **landlord_context(sla)))
 
 
+def render_security(sla_path: Path = SEC_PATH) -> str:
+    sla = load_sla(sla_path)
+    return _tidy(_env().get_template("security.md.j2").render(src=sla_sources(sla_path), **security_context(sla)))
+
+
 def render_interface(ia_path: Path = IA_PATH) -> str:
     ia = load_interface_agreement(ia_path)
     common = load_sla(SLA_PATH)            # party names and EHS references come from the common terms
@@ -318,7 +345,7 @@ def render_interface(ia_path: Path = IA_PATH) -> str:
 
 def outputs() -> dict[Path, str]:
     return {DOC_DIR / "IT_PARTNER_SLA.md": render(), DOC_DIR / "LANDLORD_SLA.md": render_landlord(),
-            DOC_DIR / "INTERFACE_AGREEMENT.md": render_interface()}
+            DOC_DIR / "SECURITY_SLA.md": render_security(), DOC_DIR / "INTERFACE_AGREEMENT.md": render_interface()}
 
 
 def main() -> int:

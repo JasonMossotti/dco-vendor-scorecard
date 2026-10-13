@@ -6,7 +6,7 @@
 <title>Incident Portal · Site AUS-1</title>
 <style>
 __SITENAV_CSS__
-:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --panel:#f5f7f9; --bg:#eef1f4; --ll:#b45309; --it:#1f5fbf; --cu:#4b5563;
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --panel:#f5f7f9; --bg:#eef1f4; --ll:#b45309; --it:#1f5fbf; --cu:#4b5563; --sec:#6d28d9;
   --ok:#1d7a46; --bad:#b42318; --warn:#e07b00; --hl:#fff3b0; }
 * { box-sizing:border-box; }
 body { margin:0; font:13px/1.45 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); }
@@ -14,7 +14,7 @@ header.top { background:#fff; color:var(--ink); border-bottom:1px solid var(--li
 header.top strong { font-size:16px; } header.top a { color:var(--it); }
 .feeds { display:flex; flex-wrap:wrap; gap:8px; }
 .feed { border:1px solid var(--line); border-left:4px solid var(--it); border-radius:6px; padding:3px 10px; font-size:12px; background:#fff; }
-.feed.Landlord { border-left-color:var(--ll); } .feed.Customer { border-left-color:var(--cu); } .feed b { font-variant-numeric:tabular-nums; }
+.feed.Landlord { border-left-color:var(--ll); } .feed.Customer { border-left-color:var(--cu); } .feed.Security { border-left-color:var(--sec); } .feed b { font-variant-numeric:tabular-nums; }
 main { margin:12px auto; max-width:1700px; padding:0 12px; display:grid; grid-template-columns:minmax(0, 11fr) minmax(0, 9fr); gap:12px; align-items:start; }
 @media (max-width:1200px) { main { grid-template-columns:1fr; } }
 section.view { background:#fff; border-radius:8px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
@@ -31,12 +31,12 @@ h1 { font-size:20px; margin:0 0 2px; } h2 { font-size:15px; margin:18px 0 8px; p
 .wide { overflow-x:auto; }
 table { width:100%; border-collapse:collapse; } th, td { text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
 th { background:var(--panel); font-weight:600; white-space:nowrap; } td.nw { white-space:nowrap; } td.sum { min-width:180px; }
-td.num { white-space:nowrap; border-left:4px solid var(--it); } td.num.Landlord { border-left-color:var(--ll); } td.dev { word-break:break-word; min-width:90px; }
+td.num { white-space:nowrap; border-left:4px solid var(--it); } td.num.Landlord { border-left-color:var(--ll); } td.num.Security { border-left-color:var(--sec); } td.dev { word-break:break-word; min-width:90px; }
 @media (max-width:1560px) and (min-width:1201px) { .c-type { display:none; } }
 .utc { display:block; color:var(--muted); font-size:11px; } .src { display:block; color:var(--muted); font-size:11px; font-family:ui-monospace,Consolas,monospace; }
 #list tr.row { cursor:pointer; } #list tr.row:hover td { background:#f2f6fc; } #list tr.row.sel td { background:var(--hl); }
 .badge { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; font-weight:600; color:#fff; white-space:nowrap; }
-.badge.Landlord { background:var(--ll); } .badge.IT { background:var(--it); } .badge.Customer { background:var(--cu); }
+.badge.Landlord { background:var(--ll); } .badge.IT { background:var(--it); } .badge.Customer { background:var(--cu); } .badge.Security { background:var(--sec); }
 .badge.S1 { background:var(--bad); } .badge.S2 { background:var(--warn); } .badge.S3, .badge.S4 { background:#8a96a3; }
 .pill { display:inline-block; padding:0 6px; border:1px solid var(--line); border-radius:9px; font-size:11px; white-space:nowrap; color:var(--muted); }
 .pill.P1 { border-color:var(--bad); color:var(--bad); font-weight:700; } .pill.P2 { border-color:var(--warn); color:#a35500; }
@@ -68,7 +68,7 @@ a.tk-link { color:var(--it); }
 <body>
 __SITENAV__
 <header class="top">
-  <div><strong>Incident Portal</strong> <span class="note">read-only view of both partners' records</span></div>
+  <div><strong>Incident Portal</strong> <span class="note">read-only view of every partner's records</span></div>
   <div class="feeds" id="feeds"></div>
 </header>
 <main>
@@ -92,7 +92,7 @@ __SITENAV__
         <input id="f-q" type="search" placeholder="number, device, serial, person ID, note text"></div></div>
       <button type="button" id="f-reset">Clear filters</button>
     </div>
-    <div class="count"><span id="count"></span><span>Number colour: <span class="badge IT">IT Partner</span> <span class="badge Landlord">Landlord</span>. Click a row to open it; every ticket has its own link.</span></div>
+    <div class="count"><span id="count"></span><span>Number colour: <span class="badge IT">IT Partner</span> <span class="badge Landlord">Landlord</span> <span class="badge Security">Security Partner</span>. Click a row to open it; every ticket has its own link.</span></div>
     <div class="wide"><table id="list"></table></div>
   </section>
   <section class="view" id="detail"><div class="empty">Select a ticket to see its record, timeline, and what the Customer's data says.</div></section>
@@ -115,7 +115,7 @@ const ms = s => new Date(s).getTime(), HOUR = 3600e3, OFF = -5 * HOUR;   // site
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const loc = s => { if (!s) return ""; const d = new Date(ms(s) + OFF); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`; };
 const locDate = s => new Date(ms(s) + OFF).toISOString().slice(0, 10);
-const partyCls = p => p === "IT Partner" ? "IT" : esc(p);
+const partyCls = p => p === "IT Partner" ? "IT" : p === "Security Partner" ? "Security" : esc(p);
 const badge = p => `<span class="badge ${partyCls(p)}">${esc(p)}</span>`;
 const PRI = {P1: 1, P2: 2, P3: 3, P4: 4};
 
@@ -144,13 +144,13 @@ function options(id, list, all) {
 }
 const uniq = (f, sort) => [...new Set(R.map(f).filter(Boolean))].sort(sort);
 options("f-type", Object.entries(D.types).map(([k, t]) => [k, `${t.plural} · ${D.counts[k]}`]), `All ticket types · ${R.length}`);
-options("f-partner", [["IT Partner", "IT Partner"], ["Landlord", "Landlord"]], "Both partners");
+options("f-partner", [["IT Partner", "IT Partner"], ["Landlord", "Landlord"], ["Security Partner", "Security Partner"]], "All partners");
 options("f-priority", [...uniq(r => r.priority).map(p => [p, p]), ["-", "None (planned work)"]], "Any priority");
 options("f-state", uniq(r => r.state).map(s => [s, s]), "Any state");
 options("f-hall", [...uniq(r => r.hall).map(h => [h, h.replace("HALL-", "Hall ")]), ["-", "Outside the halls"]], "Every hall");
 options("f-category", uniq(r => r.category).map(c => [c, c]), "Any category");
 $("f-in").innerHTML = Object.entries(FIELDS).map(([k, [l]]) => `<option value="${k}">${esc(l)}</option>`).join("");
-$("feeds").innerHTML = D.feeds.map(f => `<span class="feed ${esc(f.partner)}" title="${esc(f.access)}">${esc(f.partner)}: ${esc(f.system)} · <b>${esc(f.records)}</b> records</span>`).join("");
+$("feeds").innerHTML = D.feeds.map(f => `<span class="feed ${partyCls(f.partner)}" title="${esc(f.access)}">${esc(f.partner)}: ${esc(f.system)} · <b>${esc(f.records)}</b> records</span>`).join("");
 $("period").textContent = `Sample month ${D.window.start.slice(0, 10)} to ${D.window.end.slice(0, 10)}. Records as the read-only feeds deliver them; times in CDT. Synthetic data; all names, devices, and events are fictional.`;
 
 const F = () => ({type: $("f-type").value, partner: $("f-partner").value, priority: $("f-priority").value, state: $("f-state").value,
@@ -175,7 +175,8 @@ const SORT = {new: (a, b) => ms(b.start) - ms(a.start), old: (a, b) => ms(a.star
 let SEL = null;
 function measuredCell(r) {
   const m = r.measured;
-  if (!m || m.measured_min == null) return "";
+  if (!m || (m.measured_min == null && m.kind !== "Security")) return "";
+  if (m.kind === "Security") return m.arrived ? esc(m.measured) + (m.within_target ? "" : ' <span class="flag" title="Past the on-site target">late</span>') : '<span class="flag">no guard</span>';
   if (m.kind === "IT") return `<span title="${esc(m.merged.length ? "Ticket of Record " + m.ticket_of_record + " (merged tickets)" : m.reported + " reported in the ticket")}">${esc(m.measured)}</span>${m.within_target ? "" : ' <span class="flag" title="Past the restore target">late</span>'}`;
   return esc(m.measured);
 }
@@ -200,10 +201,10 @@ function swimlane(r) {
   let t0 = Math.min(...ts), t1 = Math.max(...ts);
   if (t1 - t0 < 30 * 60e3) { t0 -= 15 * 60e3; t1 += 15 * 60e3; }
   const W = 720, L = 74, x = v => L + (W - L - 30) * (ms(v) - t0) / (t1 - t0);
-  const lanes = ["Landlord", "IT Partner", "Customer"], y = p => 34 + lanes.indexOf(p) * 36;
-  const color = {Landlord: "#b45309", "IT Partner": "#1f5fbf", Customer: "#4b5563"};
-  let s = `<svg viewBox="0 0 ${W} 170" width="100%" role="img" aria-label="Timeline by party">`;
-  lanes.forEach(p => s += `<text x="4" y="${y(p) + 4}" font-size="11" fill="#5b6774">${p}</text><line x1="${L}" x2="${W - 30}" y1="${y(p)}" y2="${y(p)}" stroke="#d5dbe2"/>`);
+  const lanes = ["Landlord", "IT Partner", "Security Partner", "Customer"], y = p => 34 + lanes.indexOf(p) * 36;
+  const color = {Landlord: "#b45309", "IT Partner": "#1f5fbf", "Security Partner": "#6d28d9", Customer: "#4b5563"};
+  let s = `<svg viewBox="0 0 ${W} 206" width="100%" role="img" aria-label="Timeline by party">`;
+  lanes.forEach(p => s += `<text x="4" y="${y(p) + 4}" font-size="11" fill="#5b6774">${p === "Security Partner" ? "Security" : p}</text><line x1="${L}" x2="${W - 30}" y1="${y(p)}" y2="${y(p)}" stroke="#d5dbe2"/>`);
   if (r.end) {
     const lane = r.partner, a = x(r.start), b = Math.max(a + 2, x(r.end));
     s += `<rect x="${a}" y="${y(lane) - 9}" width="${b - a}" height="18" fill="${color[lane]}" opacity=".8"/>` +
@@ -217,8 +218,8 @@ function swimlane(r) {
   }
   rows.forEach(e => s += `<circle cx="${x(e.t)}" cy="${y(e.party)}" r="3" fill="#1e2933"><title>${esc(loc(e.t) + " CDT · " + e.event)}</title></circle>`);
   (r.markers || []).forEach(([v, lbl], i) => {
-    s += `<line x1="${x(v)}" x2="${x(v)}" y1="16" y2="${136 + (i % 2) * 12}" stroke="#1e2933" stroke-dasharray="3 3"/>` +
-         `<text x="${x(v)}" y="${148 + (i % 2) * 12}" font-size="11" text-anchor="${x(v) > W - 120 ? "end" : x(v) < L + 60 ? "start" : "middle"}">${esc(lbl)} ${esc(loc(v))}</text>`;
+    s += `<line x1="${x(v)}" x2="${x(v)}" y1="16" y2="${172 + (i % 2) * 12}" stroke="#1e2933" stroke-dasharray="3 3"/>` +
+         `<text x="${x(v)}" y="${184 + (i % 2) * 12}" font-size="11" text-anchor="${x(v) > W - 120 ? "end" : x(v) < L + 60 ? "start" : "middle"}">${esc(lbl)} ${esc(loc(v))}</text>`;
   });
   return s + "</svg>";
 }
@@ -238,6 +239,13 @@ function measurement(r) {
         [m.validated ? "Yes" : "No", "Return-to-service validated"]].map(([v, l]) => `<div class="stat"><div class="v${l.startsWith("Against") ? late ? " missed" : " met" : ""}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</div>` +
       `<p class="note">Fault class ${esc(m.fault_class)}. Ticket of Record ${esc(m.ticket_of_record)}${m.merged.length ? ` merges ${m.merged.map(esc).join(", ")} into one restoration clock (TR-1, TR-2); the reported time of each ticket does not apply` : ""}. ` +
       `${r.findings.length ? "This record does not reconcile with telemetry; see the findings below." : "This record reconciles with telemetry."}</p></div>`;
+  }
+  if (m.kind === "Security") {
+    return `<h2>What the Customer's data says</h2><div class="card ${m.within_target && !r.findings.length ? "ok" : "bad"}"><div class="strip">${[
+      [m.arrived ? m.measured : "None", "Guard badged at the door after the alarm"], [m.target_min + " min", `${esc(r.priority)} on-site target`],
+      [m.within_target ? "Met" : "Missed", "Against the target (badge)"]].map(([v, l]) => `<div class="stat"><div class="v${l.startsWith("Against") ? m.within_target ? " met" : " missed" : ""}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</div>` +
+      `<p class="note">Measured from the Customer's access control system: the alarm, and the first guard badge at the alarmed door's reader. The dispatch log's on-scene time is the Security Partner's claim. ` +
+      `${r.findings.length ? "This record does not reconcile with the access control system; see the findings below." : "This record reconciles with the access control system."}</p></div>`;
   }
   return `<h2>What the Customer's data says</h2><div class="card ${m.agrees ? "ok" : "bad"}"><div class="strip">${[[m.measured || "open", "Measured: event start to restore"],
       [m.owner, "Owner by telemetry"], [m.claimed_owner || "—", "Work order says"], [m.agrees ? "Agrees" : "Differs", "Attribution"], [m.rule, "Interface Agreement rule"]]

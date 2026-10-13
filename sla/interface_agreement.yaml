@@ -16,9 +16,9 @@
 document:
   id: "IA-AUS1-001"
   title: "Interface Agreement: Site AUS-1"
-  subtitle: "Joined to the Data Center Lease (Schedule C) and the IT Partner Services Agreement (Schedule B)"
-  version: "1.1.0"
-  effective_date: "2026-10-06"
+  subtitle: "Joined to the Data Center Lease (Schedule C), the IT Partner Services Agreement (Schedule B), and the Security Services Agreement (Schedule D)"
+  version: "1.2.0"
+  effective_date: "2026-10-13"
   status: "MOCK / ILLUSTRATIVE"
   disclaimer: >-
     This is a fictional, illustrative interface agreement created for a
@@ -26,7 +26,7 @@ document:
     not legal advice and is not derived from any real organization's internal
     documents or contracts.
 
-parties: ["customer", "landlord", "it_partner", "oem", "utility"]
+parties: ["customer", "landlord", "it_partner", "security_partner", "oem", "utility"]
 
 principles:
   - "Every component has exactly one Accountable party."
@@ -72,36 +72,47 @@ demarcations:
     upstream: "landlord"
     downstream: "customer"
     evidence: "Feed availability measured by the Customer collector (OT-KM-06)."
+  - id: "DM-SEC"
+    system: "Physical security"
+    boundary: "The Customer hall entrance doors: the Landlord secures the perimeter, lobby, and corridors up to each door; the Security Partner covers the door and everything inside it."
+    upstream: "landlord"
+    downstream: "security_partner"
+    evidence: "Landlord lobby badge reader events; Customer access control system events at each hall door (door alarms, guard post readers)."
 
 raci_legend:
   R: "Responsible: performs the work"
   A: "Accountable: owns the outcome and approves"
   C: "Consulted"
   I: "Informed"
-raci_parties: ["Customer", "IT Partner", "Landlord", "OEM", "Utility"]
+raci_parties: ["Customer", "IT Partner", "Landlord", "OEM", "Utility", "Security Partner"]
 raci:
-  - {component: "Compute tray (GPU, CPU, memory, cold plate)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
-  - {component: "NVLink switch tray and NVLink backplane", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
-  - {component: "Rack power shelves, PSUs, and whips from the tap-off output", Customer: "A", IT Partner: "R", Landlord: "C", OEM: "C", Utility: "-"}
-  - {component: "Busway, tap-off units, and tap-off breakers", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "UPS, batteries, unit substations, and switchgear", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Generators, paralleling controls, and fuel", Customer: "I", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "138 kV substation and utility transformers", Customer: "-", IT Partner: "-", Landlord: "C", OEM: "-", Utility: "A/R"}
-  - {component: "Rack manifold, isolation valves, quick-disconnects", Customer: "A", IT Partner: "R", Landlord: "C", OEM: "C", Utility: "-"}
-  - {component: "CDUs and the hall secondary header", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Chillers, facility water, and pumps", Customer: "I", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Thermal walls, CRAHs, and hot-aisle containment", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Building leak detection (cable and controllers)", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Fire alarm, VESDA, and pre-action suppression", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "BMS and EPMS operation", Customer: "C", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Customer Telemetry of Record collector and read-only taps", Customer: "A/R", IT Partner: "I", Landlord: "C", OEM: "-", Utility: "-"}
-  - {component: "Back-end fabric optics, cables, and fiber", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
-  - {component: "Leaf and spine switches (physical replacement)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
-  - {component: "BMC and out-of-band management network (physical)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
-  - {component: "Meet-me rooms and cross-connects", Customer: "C", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Spares cage, inventory, and RMA shipments", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-"}
-  - {component: "Building perimeter, lobby, and access control system", Customer: "C", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-"}
-  - {component: "Customer halls and cage access lists", Customer: "A", IT Partner: "R", Landlord: "R", OEM: "-", Utility: "-"}
+  - {component: "Compute tray (GPU, CPU, memory, cold plate)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "NVLink switch tray and NVLink backplane", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "Rack power shelves, PSUs, and whips from the tap-off output", Customer: "A", IT Partner: "R", Landlord: "C", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "Busway, tap-off units, and tap-off breakers", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "UPS, batteries, unit substations, and switchgear", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Generators, paralleling controls, and fuel", Customer: "I", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "138 kV substation and utility transformers", Customer: "-", IT Partner: "-", Landlord: "C", OEM: "-", Utility: "A/R", Security Partner: "-"}
+  - {component: "Rack manifold, isolation valves, quick-disconnects", Customer: "A", IT Partner: "R", Landlord: "C", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "CDUs and the hall secondary header", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Chillers, facility water, and pumps", Customer: "I", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Thermal walls, CRAHs, and hot-aisle containment", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Building leak detection (cable and controllers)", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Fire alarm, VESDA, and pre-action suppression", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "BMS and EPMS operation", Customer: "C", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Customer Telemetry of Record collector and read-only taps", Customer: "A/R", IT Partner: "I", Landlord: "C", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Back-end fabric optics, cables, and fiber", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "Leaf and spine switches (physical replacement)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "BMC and out-of-band management network (physical)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "Meet-me rooms and cross-connects", Customer: "C", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Spares cage, inventory, and RMA shipments", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "C"}
+  - {component: "Building perimeter, lobby, and access control system", Customer: "C", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "C"}
+  - {component: "Customer halls and cage access lists", Customer: "A", IT Partner: "R", Landlord: "R", OEM: "-", Utility: "-", Security Partner: "R"}
+  - {component: "Guard posts and patrols in the Customer halls", Customer: "A", IT Partner: "I", Landlord: "I", OEM: "-", Utility: "-", Security Partner: "R"}
+  - {component: "Customer hall door alarms (forced and held) and guard response", Customer: "A", IT Partner: "I", Landlord: "I", OEM: "-", Utility: "-", Security Partner: "R"}
+  - {component: "Visitor sign-in, visitor badges, and escorts in the Customer halls", Customer: "A", IT Partner: "C", Landlord: "C", OEM: "I", Utility: "-", Security Partner: "R"}
+  - {component: "Cameras and video recorders covering the Customer halls", Customer: "A", IT Partner: "-", Landlord: "C", OEM: "-", Utility: "-", Security Partner: "R"}
+  - {component: "Storage media destruction from failed parts", Customer: "A", IT Partner: "C", Landlord: "-", OEM: "I", Utility: "-", Security Partner: "R"}
 
 fault_attribution:
   principle: >-
@@ -125,12 +136,13 @@ fault_attribution:
   disputes: "The Customer determines attribution from the Telemetry of Record within 2 business days. A party may appeal to the monthly service review with evidence; attribution is never decided from ticket or work order text alone."
 
 incident_command:
-  commander: "The Customer is Incident Commander for any P1 under either SLA and for any event involving more than one party."
+  commander: "The Customer is Incident Commander for any P1 under any partner SLA and for any event involving more than one party."
   roles:
     - "Landlord lead: facility status, isolation, and restoration."
     - "IT Partner lead: rack protection, controlled shutdowns, and return-to-service validation."
+    - "Security Partner lead: guard posts, door control, escorts, and chain of custody for any media involved."
     - "Customer Incident Commander: priorities, decisions, and all communications to Customer leadership."
-  bridge: "A joint bridge opens within 15 minutes of a multi-party P1. Each lead updates the Incident Commander at the stricter of the two SLAs' update cadences."
+  bridge: "A joint bridge opens within 15 minutes of a multi-party P1. Each lead updates the Incident Commander at the strictest of the involved partners' SLA update cadences."
   post_incident: "A joint post-incident review within 5 business days produces one timeline from the Telemetry of Record, the attribution decision, and actions tracked in each party's corrective action process."
 
 handoffs:
@@ -146,6 +158,9 @@ handoffs:
   - id: "HO-4"
     name: "New rack energization"
     rule: "The Landlord energizes the tap-off and opens the isolation valves only after the IT Partner confirms the rack is set, leak-tested, and ready; the time is recorded as the deployment milestone handoff."
+  - id: "HO-5"
+    name: "Storage media from a failed part"
+    rule: "The IT Partner removes every drive from a failed part in the rack area and hands the drives to the Security Partner under chain of custody, by serial number; the Security Partner destroys them on site and certifies each serial before the part may ship."
 
 change_coordination:
   - "Any change touching a demarcation point needs a joint method of procedure approved by the Customer and both parties."
@@ -170,7 +185,7 @@ alarm_notification:
     - "An out-of-scope or out-of-window alarm means the records do not reconcile with the approved change; it is not by itself a finding against anyone."
   notifications:
     - id: "NT-1"
-      trigger: "Critical alarm (P1 under either partner SLA) not expected under a declared change"
+      trigger: "Critical alarm (P1 under any partner SLA) not expected under a declared change"
       within_min: 5
       channels: "Page to the Customer Incident Commander plus email or SMS"
       channels_min: 2

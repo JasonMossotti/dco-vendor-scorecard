@@ -24,6 +24,8 @@ jobs:
         run: python scripts/render_site.py --check
       - name: Check Landlord reports are current
         run: python scripts/run_landlord.py --check
+      - name: Check Security Partner reports are current
+        run: python scripts/run_security.py --check
       - name: Check the post-incident review is current
         run: python scripts/render_pir.py --check
       - name: Weekly review packs are current
