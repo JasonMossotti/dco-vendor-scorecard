@@ -39,6 +39,14 @@ Sample month Aug 31, 2026 to Sep 27, 2026 (UTC). Synthetic data; all names ficti
 | Degraded links count at 25% under the contract; the scheduler kept the node in service | +46.4 |
 | **GPU-hours lost under the contracts (all owners)** | **1,524.9** |
 
+Beside the bridge, not in either total: GPU-hours idle on storage. The scheduler kept these nodes in service while their running jobs waited on storage I/O behind a flapping storage fabric uplink (reports/storage_telemetry.md).
+
+| From | Uplink | Minutes | Racks | Nodes | GPU-hours idle |
+|---|---|---|---|---|---|
+| 2026-09-19T00:55:00Z | eth-b1-1 swp64 | 22 | B02, B03, B05, B08 | 72 | 107.5 |
+| 2026-09-20T18:35:00Z | eth-a3-2 swp61 | 34 | A21, A22, A23, A24 | 72 | 164.1 |
+| **2 storage stalls** |  |  |  |  | **271.6** |
+
 ## By cause
 
 | Cause | Incidents | IT Partner | Landlord | Total | Share | Worst rack |

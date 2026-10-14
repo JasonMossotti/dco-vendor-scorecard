@@ -40,7 +40,7 @@ CONFIG = ROOT / "config" / "site_health.yaml"
 OFF, GREEN, AMBER, RED = -1, 0, 1, 2
 STATE_NAME = {OFF: "not in service", GREEN: "normal", AMBER: "degraded", RED: "lost"}
 FAMILIES = [("gpu", "GPUs", "gpus"), ("cdu", "CDUs", "cdus"), ("power", "Power", "power"), ("network", "Network", "network"),
-            ("mechanical", "Mechanical", "mechanical"), ("mgmt", "Management network", "management")]
+            ("mechanical", "Mechanical", "mechanical"), ("mgmt", "Management network", "management"), ("storage", "Storage", "storage")]
 GPUS_PER_RACK = 72
 
 
@@ -85,11 +85,12 @@ class Dirs:
     mechanical: Path
     sample: Path
     mgmt: Path | None = None
+    storage: Path | None = None
 
     @classmethod
     def committed(cls, root: Path = ROOT) -> "Dirs":
         t = root / "data" / "telemetry"
-        return cls(t / "gpu", t / "cdu", t / "power", t / "network", t / "mechanical", root / "data" / "sample", t / "mgmt")
+        return cls(t / "gpu", t / "cdu", t / "power", t / "network", t / "mechanical", root / "data" / "sample", t / "mgmt", t / "storage")
 
 
 class SiteHealth:
@@ -111,6 +112,7 @@ class SiteHealth:
         self.rack_rows = _csv(dirs.gpu / "rack_hourly.csv")
         self._load_states()
         self._load_mgmt()
+        self._load_storage()
         self._racks()
 
     # ------------------------------------------------------------------ helpers
@@ -246,6 +248,29 @@ class SiteHealth:
                 if down.any():
                     self.out[s] = down
                     self.out_why[s].append((down, "down (no SNMP answer, its rack-switch ports dark)"))
+
+    def _load_storage(self) -> None:
+        """The storage clusters and their fabric (src/scorecard/telemetry_storage.py): each node's minutes online and drive
+        bays, replayed from its event logs, and every fabric port from the trap log."""
+        self.sg = None
+        if not self.d.storage or not (self.d.storage / "manifest.json").exists() or self.mg is None:
+            return
+        from . import telemetry_storage as TS
+        self.sg = TS.load(self.d.storage, self.d.sample, self.d.mgmt)
+        self.sg_online = TS.node_online(self.sg)
+        self.sg_bays, _, _ = TS.replay_bays(self.sg)
+        self.sg_links = TS.replay_links(self.sg)
+        self.sg_flaps = TS.flaps(self.sg, yaml.safe_load((ROOT / "config" / "telemetry_storage.yaml").read_text(encoding="utf-8")), self.sg_links)
+        for n, on in self.sg_online.items():
+            off = ~on
+            if off.any():
+                self.out[n] = off
+                self.out_why[n].append((off, "offline"))
+
+    def sg_degraded(self, node: str) -> np.ndarray:
+        """A storage node counts against its cluster's protection while it is offline or holds a drive that is failed,
+        pulled, or rebuilding."""
+        return ~self.sg_online[node] | (self.sg_bays[node] != 0).any(0)
 
     def why(self, unit: str, h: int) -> str:
         """Why a unit is out during hour h (each recorded reason that overlaps the hour)."""
@@ -420,7 +445,7 @@ class SiteHealth:
         group("fwpumps", "Facility water pumps", f"N+{hr['pump_redundancy']}", None, "mechanical", pumps, len(pumps) - hr["pump_redundancy"], "mechanical")
 
         # ---- family readings, by hour
-        R: dict[str, Any] = {"gpu": {}, "cdu": {}, "power": {}, "network": {}, "mechanical": {}, "mgmt": {}}
+        R: dict[str, Any] = {"gpu": {}, "cdu": {}, "power": {}, "network": {}, "mechanical": {}, "mgmt": {}, "storage": {}}
         for hall in self.halls:
             hid = hall["id"]
             rk = [r for r, x in racks.items() if x["hall"] == hid]
@@ -541,6 +566,11 @@ class SiteHealth:
         if self.mg is not None:
             self._mgmt(groups, R, issue)
 
+        # ---- storage: each cluster's protection (Storage); the storage fabric's spine and storage leaf pairs and its
+        #      flapping and down uplinks (Network, North-South)
+        if self.sg is not None:
+            self._storage(groups, R, issue)
+
         # ---- family states by hour, and the issue spans
         fam_state = {f: [GREEN] * H for f, _, _ in FAMILIES}
         hall_state = {hid: {f: [GREEN] * H for f, _, _ in FAMILIES} for hid in self.hall_ids}
@@ -628,6 +658,68 @@ class SiteHealth:
             R["mgmt"][hid] = r
         for h in np.flatnonzero(self.hour_any(self.mg_unpolled)).tolist():
             issue(h, "mgmt", None, AMBER, "Telemetry of Record poller restarted: no BMC polled", "management")
+
+    def _storage(self, groups: list[dict], R: dict[str, Any], issue) -> None:
+        t, H = self.sg, self.H
+        devs = t.manifest["devices"]
+        node_rows = self.hourly(t.node_hourly, "node")
+        for cname, cl in sorted(t.manifest["clusters"].items()):
+            hid, tol, nodes = cl["hall"], int(cl["tolerates"]), cl["nodes"]
+            if hid not in self.hall_ids:
+                continue
+            deg = {n: self.sg_degraded(n) for n in nodes}
+            worst = self.hour_max(sum(d.astype(int) for d in deg.values()))
+            avail = [tol - int(v) for v in worst]
+            state = [RED if a < 0 else AMBER if a < tol else GREEN for a in avail]
+            ec = cl["erasure_coding"]
+            groups.append({"key": f"stg-{hid}", "name": "Storage cluster", "cluster": cname, "scheme": f"erasure coding {ec[0]}+{ec[1]}", "hall": hid,
+                           "family": "storage", "link": "storage", "units": nodes, "unit_word": "more nodes it could lose",
+                           "need": [0] * H, "avail": avail, "total": [tol] * H, "state": state})
+            for h in range(H):
+                if state[h] > GREEN:
+                    sl = slice(h * 60, (h + 1) * 60)
+                    why = []
+                    for n in nodes:
+                        if not deg[n][sl].any():
+                            continue
+                        if not self.sg_online[n][sl].all():
+                            why.append(f"{n} offline")
+                        for b in np.flatnonzero((self.sg_bays[n][:, sl] != 0).any(1)).tolist():
+                            st = int(self.sg_bays[n][b, sl].max())
+                            why.append(f"{n} Bay{b + 1:02d} {({1: 'failed', 2: 'pulled', 3: 'rebuilding'}).get(st, 'not OK')}")
+                    issue(h, "storage", hid, state[h], f"{cname}: protection {avail[h]} of {tol} ({'; '.join(why)})", "storage")
+            for role, word in (("spine", "Storage fabric spines"), ("storage_leaf", "Storage leaves")):
+                sws = sorted(s for s, x in devs.items() if x["family"] == role and x["hall"] == hid)
+                dark = {s: np.logical_and.reduce([self.sg_links[(s, i)] == 0 for i in devs[s]["ports"]]) for s in sws}
+                cnt = self.hour_max(sum(d.astype(int) for d in dark.values()))
+                av = [len(sws) - int(v) for v in cnt]
+                groups.append({"key": f"{role}-{hid}", "name": word, "scheme": f"N+{len(sws) - 1}", "hall": hid, "family": "network",
+                               "link": sws[0], "units": sws, "unit_word": "", "need": [1] * H, "avail": av, "total": [len(sws)] * H,
+                               "state": [RED if a < 1 else AMBER if a < len(sws) else GREEN for a in av]})
+            r = {k: [0] * H for k in ("nodes", "online", "drives_out", "read_gbps")}
+            for n in nodes:
+                for h, row in enumerate(node_rows[n]):
+                    r["nodes"][h] += 1
+                    r["online"][h] += int(int(row["online_min"]) == 60)
+                    r["drives_out"][h] += int(row["drives_failed"]) + int(row["drives_absent"]) + int(row["drives_rebuilding"])
+                    r["read_gbps"][h] += float(row["read_gb"]) / 3600
+            r["read_gbps"] = [round(v, 1) for v in r["read_gbps"]]
+            r["protection"] = avail
+            r["tolerates"] = [tol] * H
+            R["storage"][hid] = r
+        flap_at = set()
+        for f in self.sg_flaps:
+            x = devs[f["switch"]]
+            for h in range(f["a"] // 60, min(H, (f["b"] - 1) // 60 + 1)):
+                flap_at.add((f["switch"], f["ifName"], h))
+                issue(h, "network", x["hall"], AMBER, f"{f['switch']} {f['ifName']} flapping: storage clients behind it stall", f["switch"])
+        for (sw, ifn), v in self.sg_links.items():
+            x = devs[sw]
+            if x["family"] == "spine" or x["ports"][ifn][0] != "uplink" or v.all():
+                continue
+            for h in np.flatnonzero(self.hour_any(v == 0)).tolist():
+                if (sw, ifn, h) not in flap_at:
+                    issue(h, "network", x["hall"], AMBER, f"{sw}: uplink {ifn} down ({len([p for p in x['ports'].values() if p[0] == 'uplink']) - 1} others carry it)", sw)
 
     def _issue_spans(self, issues: list[tuple]) -> list[dict]:
         """Identical conditions in consecutive hours merge into one span (the page filters by hour)."""
@@ -751,6 +843,16 @@ def agreements(sh: SiteHealth, data: dict[str, Any]) -> list[Check]:
             down = sh.hour_any(sh.mg_rep[s]["up"] == 0)
             for h in range(H):
                 c(bool(down[h]) == (int(rows[h]["up_min"]) < 60), f"{s} hour {h}: dashboard {'down' if down[h] else 'up'}, up {rows[h]['up_min']} min")
+        checks.append(c)
+
+    if sh.sg is not None:
+        c = Check("storage_protection", "A storage cluster's protection on the dashboard equals the lowest its hourly row reports")
+        rows = sh.hourly(sh.sg.cluster_hourly, "cluster")
+        for g in data["groups"]:
+            if g["key"].startswith("stg-"):
+                cname = g["cluster"]
+                for h in range(H):
+                    c(g["avail"][h] == int(rows[cname][h]["protection_min"]), f"{cname} hour {h}: dashboard {g['avail'][h]}, hourly row {rows[cname][h]['protection_min']}")
         checks.append(c)
 
     c = Check("readings", "Each hall's GPU power and UPS output add up from the hourly rows")

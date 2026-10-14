@@ -14,6 +14,9 @@ nothing new, so no headline number moves. Four views:
 4. Spares and RMA: on-hand stock against the minimums, cycle counts, and failed parts shipped to the OEM,
    reconciled with the parts the tickets say were removed.
 
+Beside the bridge, not in it: GPU-hours idle on storage (the storage telemetry, src/scorecard/telemetry_storage.py).
+The scheduler kept those nodes in service while their jobs waited on I/O, so neither total counts them.
+
 A finding means records do not reconcile, not that anyone misled.
 """
 
@@ -501,6 +504,21 @@ class Rollup:
                 "kms": kms, "days": n_days}
 
 
+def storage_idle(data_dir: Path = SAMPLE) -> dict[str, Any] | None:
+    """GPU-hours running jobs waited on storage behind a flapping storage fabric uplink (None without storage telemetry)."""
+    tel = ROOT / "data" / "telemetry" if Path(data_dir).resolve() == SAMPLE.resolve() else Path(data_dir)
+    if not (tel / "storage" / "manifest.json").exists() or not (tel / "mgmt" / "manifest.json").exists():
+        return None
+    import yaml
+    from scorecard import telemetry_storage as TS
+    t = TS.load(tel / "storage", data_dir, tel / "mgmt")
+    cfg = yaml.safe_load((ROOT / "config" / "telemetry_storage.yaml").read_text(encoding="utf-8"))
+    eps = sorted(TS.stall_hours(t, cfg), key=lambda x: x["a"])
+    return {"gpu_hours": round(sum(x["gpu_hours"] for x in eps), 1),
+            "episodes": [{"from": t.iso(x["a"]), "minutes": x["b"] - x["a"], "uplink": f"{x['switch']} {x['ifName']}", "racks": x["racks"],
+                          "nodes": x["nodes"], "gpu_hours": x["gpu_hours"]} for x in eps]}
+
+
 def build(data_dir: Path = SAMPLE) -> dict[str, Any]:
     """Everything the Availability tab, the report, the Overview tile, and the weekly line need."""
     R = Rollup(data_dir)
@@ -530,6 +548,7 @@ def build(data_dir: Path = SAMPLE) -> dict[str, Any]:
         "owners": [{"owner": k, "hours": round(owner[k], 1)} for k in OWNERS],
         "contract_lost": round(sum(owner.values()), 1),
         "bridge": R.bridge(),
+        "storage_idle": storage_idle(data_dir),
         "causes": R.by_cause(),
         "landlord_events": [{"rack": x["rack"], "t0": _iso(x["t0"]), "handoff": _iso(x["handoff"]),
                              "hours": round(_hrs(max(x["t0"], R.start), min(x["handoff"], R.end)) * R.sla["site"]["per_rack"]["gpus"], 1)}

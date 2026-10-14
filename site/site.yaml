@@ -284,6 +284,19 @@ products:
     manufacturer: "To be selected"
     model: "48-port serial console server"
     interfaces: ["SNMPv3", "SSH to each serial port", "Session log export"]
+  sn5600_fabric:
+    category: ethernet_switch
+    manufacturer: "NVIDIA"
+    model: "Spectrum SN5600 (storage and in-band Ethernet fabric)"
+    ports: "64 x 800 GbE OSFP (split to 200 or 400 GbE)"
+    interfaces: ["SNMPv3 (IF-MIB, traps)", "Serial console", "Cumulus Linux NVUE"]
+    sources:
+      - "https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html"
+  storage_node:
+    category: storage_node
+    manufacturer: "To be selected"
+    model: "All-flash NVMe storage node (2U, 24 drive bays, 2 x 400 GbE)"
+    interfaces: ["Redfish (Drive, Storage)", "SNMPv3", "Storage cluster REST API"]
 
 # -----------------------------------------------------------------------------
 # Halls. Racks are numbered A01..A32 in row order; each row holds 8 racks and
@@ -336,6 +349,16 @@ halls:
       aggregation_count: 2            # N+1: every rack switch uplinks to both
       console_product: console_48
       console_per_row: 1
+    storage:                          # basis: assumption (counts and wiring; see config/telemetry_storage.yaml)
+      node_product: storage_node
+      racks: 2                        # STG-<hall>1 and STG-<hall>2
+      nodes_per_rack: 8
+      drives_per_node: 24
+      erasure_coding: [8, 2]          # 8 data + 2 parity, spread across nodes: the cluster serves with two nodes out
+      fabric_product: sn5600_fabric
+      leaf_pairs_per_row: 1           # eth-<hall><row>-1 and -2: every compute tray has one 200 GbE storage port to each
+      storage_leaves: 2               # eth-<hall>-st1 and -st2: every storage node has one 400 GbE port to each
+      spines: 2                       # eth-<hall>-sp1 and -sp2: every leaf has two uplinks to each
   - id: "HALL-B"
     letter: "B"
     name: "Hall B"
@@ -380,6 +403,16 @@ halls:
       aggregation_count: 2            # N+1: every rack switch uplinks to both
       console_product: console_48
       console_per_row: 1
+    storage:                          # basis: assumption (counts and wiring; see config/telemetry_storage.yaml)
+      node_product: storage_node
+      racks: 2                        # STG-<hall>1 and STG-<hall>2
+      nodes_per_rack: 8
+      drives_per_node: 24
+      erasure_coding: [8, 2]          # 8 data + 2 parity, spread across nodes: the cluster serves with two nodes out
+      fabric_product: sn5600_fabric
+      leaf_pairs_per_row: 1           # eth-<hall><row>-1 and -2: every compute tray has one 200 GbE storage port to each
+      storage_leaves: 2               # eth-<hall>-st1 and -st2: every storage node has one 400 GbE port to each
+      spines: 2                       # eth-<hall>-sp1 and -sp2: every leaf has two uplinks to each
   - id: "HALL-C"
     letter: "C"
     name: "Hall C (800 VDC pilot)"
@@ -489,6 +522,8 @@ monitoring:
     - {class: "Compute racks", products: [gb200_nvl72, gb300_nvl72], protocol: "Redfish", system: "TOR", customer_tap: "direct"}
     - {class: "BMCs (compute trays, NVLink switch trays, power shelves)", products: [gb200_nvl72, gb300_nvl72], protocol: "Redfish service root, polled each minute", system: "TOR", customer_tap: "direct (over the OOB network)"}
     - {class: "Management switches and console servers", products: [sn2201, sn5600, console_48], protocol: "SNMPv3 and traps; console session logs", system: "OOB", customer_tap: "direct (read-only SNMPv3 user)"}
+    - {class: "Storage nodes and drives", products: [storage_node], protocol: "Redfish Drive resources, polled each minute; the cluster's own event log", system: "TOR", customer_tap: "direct (read-only)"}
+    - {class: "Storage and in-band Ethernet fabric", products: [sn5600_fabric], protocol: "SNMPv3 and traps", system: "TOR", customer_tap: "direct (read-only SNMPv3 user)"}
     - {class: "InfiniBand fabric", products: [quantum2_qm9700, quantum_x800_q3400], protocol: "UFM REST / events", system: "UFM", customer_tap: "UFM event export"}
 
 # -----------------------------------------------------------------------------

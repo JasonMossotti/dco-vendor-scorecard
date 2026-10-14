@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from . import site_model as S
+from . import storage_fabric as SF
 from .synthetic.generator import SiteGenerator as Generator
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -44,12 +45,14 @@ KIND_LABEL = {
     "pump": "Facility water pump", "cdu": "Coolant distribution unit", "tw": "Thermal wall", "crah": "Air handler",
     "vesda": "Smoke detector", "leak": "Leak detection module",
     "mgmt": "Management switch", "agg": "Management aggregation switch", "console": "Console server",
+    "stg_rack": "Storage rack", "stg_node": "Storage node", "eth_leaf": "Storage fabric leaf switch", "eth_spine": "Storage fabric spine switch",
 }
 # Sections of the Devices page, in order, and the kinds in each
 GROUPS = [
     ("racks", "Racks and what is inside them", ["rack", "compute_tray", "switch_tray", "power_shelf"]),
     ("fabric", "InfiniBand fabric", ["leaf"]),
     ("management", "Management network", ["mgmt", "agg", "console"]),
+    ("storage", "Storage and its Ethernet fabric", ["stg_rack", "stg_node", "eth_leaf", "eth_spine"]),
     ("power", "Power", ["tx", "mv", "gen", "uss", "ups", "mups", "mvsst", "group", "busway", "tapoff"]),
     ("cooling", "Cooling", ["cdu", "tw", "crah", "chiller", "pump"]),
     ("safety", "Smoke and leak detection", ["vesda", "leak"]),
@@ -70,6 +73,7 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
     # the management switches' port maps (read here, not at import: the app bundle carries devices.json, not the config)
     MP = __import__("yaml").safe_load((ROOT / "config" / "telemetry_mgmt.yaml").read_text(encoding="utf-8"))["ports"]
     dev: dict[str, dict[str, Any]] = {}
+    FAB = SF.build(site, it_site["per_rack"]["compute_trays"])
 
     def add(name: str, kind: str, text: str, conn: list[list[str]], loc: str = "", title: str = "", **extra: Any) -> None:
         if name in dev:
@@ -137,6 +141,9 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
             if mg and it and i <= it["racks"]:
                 conn += [["Management", f"{rid.lower()}-mgmt1", "out of band: every BMC and power shelf controller in the rack"],
                          ["Management", f"{rid.lower()}-mgmt2", "in band: NVLink switch tray eth0 and the trays' host management ports"]]
+            if it and i <= it["racks"] and f"{rid.lower()}-ct01" in FAB["trays"]:
+                pair = [sw for sw, _ in FAB["trays"][f"{rid.lower()}-ct01"]]
+                conn.append(["Storage fabric", pair[0], f"and {pair[1]}: every tray's two 200 GbE storage ports, one to each"])
             add(rid, "rack", desc(rid), conn, title=f"Rack {rid}")
             if not (it and i <= it["racks"]):
                 continue
@@ -156,6 +163,8 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
                 if mg:
                     conn += [["Management", m1, f"port {MP['mgmt1']['compute_bmc'] + n - 1}: BMC"],
                              ["Management", m2, f"port {MP['mgmt2']['compute_host'] + n - 1}: host management port"]]
+                for k, (sw, ifn) in enumerate(FAB["trays"].get(trays[n - 1], [])):
+                    conn.append(["Storage fabric", sw, f"port {ifn}: 200 GbE, BlueField-3 DPU port p{k}"])
                 add(trays[n - 1], "compute_tray",
                     f"Compute tray {n} in rack {rid} ({rp['model']}): {per['gpus_per_compute_tray']} GPUs. One InfiniBand "
                     f"NIC per rail to the leaf switches, and NVLink to every switch tray in the rack.",
@@ -272,6 +281,56 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
                 add(con, "console", f"{S.product(site, mg['console_product'])['model'].capitalize()} for {short} row {row}: a serial "
                     "line to every management and leaf switch console in the row, for when the network itself is the problem. "
                     "Its session log records who opened which port and what the device printed.", conn, loc=f"{con}|{hid}", title=con)
+
+        # ---- storage cluster and its Ethernet fabric (site/site.yaml halls[].storage; see storage_fabric)
+        fh = FAB["halls"].get(hid) if it else None
+        if fh:
+            st = h["storage"]
+            nm = S.product(site, st["node_product"])["model"]
+            fm = S.product(site, st["fabric_product"])["model"]
+            ec = fh["erasure_coding"]
+            for rk in fh["racks"]:
+                ns = [n for n in fh["nodes"] if FAB["nodes"][n]["rack"] == rk]
+                add(rk, "stg_rack", f"Storage rack {rk} in {short}: {len(ns)} storage nodes of the hall's cluster {fh['cluster']}.",
+                    [["Where", "", f"{short}, storage row"], ["Contains", ns[0], f"to {ns[-1]}: {len(ns)} storage nodes"],
+                     ["Storage fabric", fh["storage_leaves"][0], f"and {fh['storage_leaves'][1]}: the storage leaf pair"]],
+                    loc=f"{rk}|{hid}", title=f"Storage rack {rk}")
+            for n in fh["nodes"]:
+                e = FAB["nodes"][n]
+                add(n, "stg_node", f"{nm} in {e['rack']}, node {e['index']} of {len(fh['nodes'])} in {fh['cluster']}: "
+                    f"{e['drives']} NVMe drives. Data is spread {ec[0]}+{ec[1]} across the nodes, so the cluster keeps serving "
+                    f"with {ec[1]} nodes out.",
+                    [["In rack", e["rack"], f"node {(e['index'] - 1) % st['nodes_per_rack'] + 1} of {st['nodes_per_rack']}"]] +
+                    [["Storage fabric", sw, f"port {ifn}: 400 GbE, node port p{k}"] for k, (sw, ifn) in enumerate(e["ports"])] +
+                    [["Cluster", "", f"{fh['cluster']}: {len(fh['nodes'])} nodes in {' and '.join(fh['racks'])}, erasure coding {ec[0]}+{ec[1]}"]],
+                    loc=f"{n}|{hid}", title=n)
+            for sw in [x for row in sorted(fh["row_leaves"]) for x in fh["row_leaves"][row]] + fh["storage_leaves"]:
+                e = FAB["switches"][sw]
+                ps = sorted(e["ports"].items(), key=lambda kv: SF.sort_key(kv[0]))
+                down = [(p_, x) for p_, x in ps if x["kind"] in ("tray", "node")]
+                up = [(p_, x) for p_, x in ps if x["kind"] == "uplink"]
+                peer = [x for x in e["pair"] if x != sw][0]
+                if e["role"] == "row_leaf":
+                    rr = sorted({x["peer"][:3].upper() for _, x in down})
+                    conn = [["Where", "", f"{short}, row {e['row']}"],
+                            [f"Ports {down[0][0]} to {down[-1][0]}", down[0][1]["peer"], f"to {down[-1][1]['peer']}: one 200 GbE storage port "
+                             f"of every compute tray in racks {rr[0]} to {rr[-1]}"]]
+                    text = (f"{fm} for {short} row {e['row']}, half of the row's leaf pair: every compute tray in the row has one storage "
+                            f"port here and one on {peer}, so the row keeps its storage with one of them down.")
+                else:
+                    conn = [["Where", "", f"{short}, storage row"],
+                            [f"Ports {down[0][0]} to {down[-1][0]}", down[0][1]["peer"], f"to {down[-1][1]['peer']}: one 400 GbE port of every storage node"]]
+                    text = (f"{fm} for {short}, half of the storage leaf pair: every node of {fh['cluster']} has one port here and one on {peer}.")
+                conn += [[f"Uplink {p_}", x["peer"], f"port {x['peer_port']}, 800 GbE"] for p_, x in up]
+                conn.append(["Peer", peer, "the other half of the pair"])
+                add(sw, "eth_leaf", text, conn, loc=f"{sw}|{hid}", title=sw)
+            for sp in fh["spines"]:
+                e = FAB["switches"][sp]
+                ps = sorted(e["ports"].items(), key=lambda kv: SF.sort_key(kv[0]))
+                conn = [[f"Ports {p_}", x["peer"], f"port {x['peer_port']}, 800 GbE"] for p_, x in ps]
+                conn.append(["Peer", [x for x in fh["spines"] if x != sp][0], "the other spine: every leaf has two uplinks to each"])
+                add(sp, "eth_spine", f"{fm} for {short}, half of the spine pair: joins the row leaves to the storage leaves. Every "
+                    "leaf has two uplinks to each spine, so the fabric carries on with one spine down.", conn, loc=f"{sp}|{hid}", title=sp)
 
         # ---- power distribution
         for s in segs:
@@ -445,7 +504,8 @@ def subset(data: dict[str, Any], names: set[str]) -> dict[str, dict[str, Any]]:
 # --------------------------------------------------------------------------- #
 # Reconciling the directory with the data
 # --------------------------------------------------------------------------- #
-NOT_DEVICES = {"AUS-1", "HALL-A", "HALL-B", "HALL-C", "OPS-MAIN"}   # the site, halls, and the NOC: places, not devices
+NOT_DEVICES = {"AUS-1", "HALL-A", "HALL-B", "HALL-C", "OPS-MAIN",   # the site, halls, and the NOC: places, not devices
+               "PFS-A", "PFS-B"}   # storage clusters: each is its 16 storage nodes, listed one by one
 
 
 def name_coverage(data: dict[str, Any], texts: list[str]) -> tuple[int, list[str]]:

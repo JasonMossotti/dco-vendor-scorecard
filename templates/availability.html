@@ -190,6 +190,12 @@ function render() {
   <div class="wide"><table id="bridge"><tr><th>Step</th><th class="n">GPU-hours</th></tr>
   ${D.bridge.rows.map(r => { const end = r.key === "sched" || r.key === "contract";
     return `<tr class="${end ? "tot" : ""}"><td>${esc(r.label)}</td><td class="n">${end ? gh(r.hours) : (r.hours >= 0 ? "+" : "−") + gh(Math.abs(r.hours))}</td></tr>`; }).join("")}</table></div>
+  ${D.storage_idle ? `<h3>Beside the bridge: GPU-hours idle on storage</h3>
+  <p class="note">Not in either total. The scheduler kept these nodes in service while their running jobs waited on storage I/O behind a flapping storage fabric uplink,
+  so their GPUs were healthy and idle. The <a href="../telemetry/#storage">storage telemetry</a> measures the time from the clients' side.</p>
+  <div class="wide"><table id="storage-idle"><tr><th>From (UTC)</th><th>Uplink</th><th class="n">Minutes</th><th>Racks</th><th class="n">Nodes</th><th class="n">GPU-hours idle</th></tr>
+  ${D.storage_idle.episodes.map(e => `<tr><td class="nw">${esc(e.from.slice(0, 16).replace("T", " "))}</td><td><a href="../telemetry/#${esc(e.uplink.split(" ")[0])}">${esc(e.uplink)}</a></td><td class="n">${esc(e.minutes)}</td><td>${esc(e.racks.join(", "))}</td><td class="n">${esc(e.nodes)}</td><td class="n">${gh(e.gpu_hours)}</td></tr>`).join("")}
+  <tr class="tot"><td colspan="5">${esc(D.storage_idle.episodes.length)} storage stalls</td><td class="n">${gh(D.storage_idle.gpu_hours)}</td></tr></table></div>` : ""}
   <h3>What the scheduler recorded</h3>
   <div class="wide"><table><tr><th>Drain or down reason</th><th class="n">GPU-hours</th></tr>${S.by_reason.map(r => `<tr><td>${esc(r.reason)}</td><td class="n">${gh(r.hours)}</td></tr>`).join("")}
   <tr class="tot"><td>${esc(S.outages)} outages</td><td class="n">${gh(S.lost)}</td></tr></table></div>`;

@@ -36,6 +36,13 @@ nav.tree ul.fam .planned { border-style:dashed; color:var(--muted); }
 nav.tree .planned { color:var(--muted); cursor:default; } nav.tree .planned small { font-size:11px; margin-left:4px; }
 nav.tree li > .planned { display:block; padding:3px 12px; }
 nav.tree .famsec.off { display:none; }
+nav.tree .dir { font-size:12px; font-weight:700; color:var(--ink); margin:14px 12px 0; padding-top:8px; border-top:1px solid var(--line); }
+nav.tree .dir:first-child { border-top:0; padding-top:0; }
+.dirbar { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 14px; }
+.dirbar a { display:block; border:1px solid var(--line); border-radius:6px; padding:8px 12px; color:var(--ink); text-decoration:none; background:var(--card, #fff); }
+.dirbar a b { display:block; font-size:15px; } .dirbar a span { font-size:12px; color:var(--muted); }
+.dirbar a.on { border-color:#2a78d6; box-shadow:inset 0 -3px 0 #2a78d6; }
+@media (max-width:600px) { .dirbar { grid-template-columns:1fr; } }
 main { background:var(--bg); padding:22px 28px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); min-width:0; }
 h1 { font-size:24px; margin:0 0 2px; }
 .kind { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
@@ -228,7 +235,7 @@ __SITENAV__
 
   // --------------------------------------------------------------------- tree
   function tree() {
-    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#site" data-fam="site">Site health</a></li><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li><li><a href="#management" data-fam="mgmt">Management network</a></li>`
+    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#site" data-fam="site">Site health</a></li><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li><li><a href="#storage" data-fam="storage">Storage</a></li>`
       + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
     h += `<div class="famsec" data-fam="site"><div class="sec">Site health</div><ul><li>${link("site", "The whole site, by hour")}</li>`
       + SH.halls.map(x => `<li><details open><summary>${esc(x.name)}</summary><ul class="racks">` + Object.keys(SHR).filter(k => SHR[k].hall === x.id).map(k => `<li>${link(k, k)}</li>`).join("") + `</ul></details></li>`).join("")
@@ -250,7 +257,7 @@ __SITENAV__
       h += `<li><details><summary><span class="planned">${esc(H.name)}</span> <small>not in service</small></summary><ul>` + H.cdus.map(id => `<li><span class="planned" title="${esc(H.name)} is ${esc(H.state)}: no telemetry">${esc(id)} <small>${esc(H.state)}</small></span></li>`).join("") + `</ul></details></li>`;
     }
     h += `</ul><div class="sec">CDU reference</div><ul><li>${link("cdu-fields", "Redfish fields")}</li><li>${link("cdu-agreements", "Agreement with the records")}</li></ul></div>`;
-    h += powerTree() + networkTree() + mechTree() + mgmtTree();
+    h += powerTree() + networkTree() + mechTree() + storageTree();
     document.getElementById("tree").innerHTML = h;
   }
 
@@ -1481,7 +1488,7 @@ __SITENAV__
     return h + `</div>`;
   }
   function networkOverview(seq) {
-    let h = `<div class="kind">Network</div><h1>Network telemetry</h1><p class="sub">${esc(N.framing)} Every back-end InfiniBand leaf port read once a minute through the fabric manager's telemetry endpoint (UFM Telemetry, Prometheus), the tray end of each link through node_exporter, each leaf's chassis over SNMP (Quantum-2) or gNMI (Quantum-X800), and each NVL72 rack's nine NVLink switch trays through NMX-T, ${esc(md(N.window.start))} to ${esc(md(N.window.end))}. Rail-optimized: each tray has one link per rail, to that rail's leaf for its rack pair. All names, GUIDs, serials, and readings are fictional.</p>`;
+    let h = dirBar("ew") + `<div class="kind">Network · East-West</div><h1>Network telemetry</h1><p class="sub">${esc(N.framing)} Every back-end InfiniBand leaf port read once a minute through the fabric manager's telemetry endpoint (UFM Telemetry, Prometheus), the tray end of each link through node_exporter, each leaf's chassis over SNMP (Quantum-2) or gNMI (Quantum-X800), and each NVL72 rack's nine NVLink switch trays through NMX-T, ${esc(md(N.window.start))} to ${esc(md(N.window.end))}. Rail-optimized: each tray has one link per rail, to that rail's leaf for its rack pair. All names, GUIDs, serials, and readings are fictional.</p>`;
     for (const hall of NHALLS) {
       const H = N.halls[hall];
       h += `<div class="hallname">${esc(H.name)} · ${esc(H.leaves)} × ${esc(H.model)} · ${esc(H.gbps)}G · ${esc(H.state)}</div><div class="tiles">`
@@ -1752,16 +1759,16 @@ __SITENAV__
     main.innerHTML = h;
   }
   function networkTree() {
-    let h = `<div class="famsec" data-fam="network"><div class="sec">Network</div><ul><li>${link("network", "Overview")}</li>`;
+    let h = `<div class="famsec" data-fam="network"><div class="dir">East-West · GPU to GPU</div><div class="sec">Back-end InfiniBand and NVLink</div><ul><li>${link("network", "Overview")}</li>`;
     for (const hall of NHALLS) {
       const H = N.halls[hall], lv = N.leaves.filter(x => x.hall === hall);
       const pairs = [...new Set(lv.map(x => x.id.slice(0, -3)))];
-      h += `<li><details${hall === NHALLS[0] ? " open" : ""}><summary>${link("network", `${H.name} leaves`)} <small>${esc(lv.length)}</small></summary><ul class="leaves">`
+      h += `<li><details><summary>${link("network", `${H.name} leaves`)} <small>${esc(lv.length)}</small></summary><ul class="leaves">`
         + pairs.map(pr => `<li class="pr" title="${esc(NLEAF[pr + "-r0"] ? NLEAF[pr + "-r0"].racks.join(" and ") : "")}">${esc(pr.slice(5))}</li>` + [0, 1, 2, 3].map(r => NLEAF[`${pr}-r${r}`] ? `<li>${link(`${pr}-r${r}`, "r" + r)}</li>` : "<li></li>").join("")).join("") + `</ul></details></li>`;
     }
     h += `<li><details><summary>${link("nvlink-" + N.nvlink[0].rack, "NVLink")} <small>${esc(N.nvlink.length)} racks</small></summary><ul class="racks">` + N.nvlink.map(x => `<li>${link("nvlink-" + x.rack, x.rack)}</li>`).join("") + `</ul></details></li>`;
-    h += `</ul><div class="sec">Network reference</div><ul><li>${link("network-fields", "Counters and fields")}</li><li>${link("network-agreements", "Agreement with the records")}</li></ul></div>`;
-    return h;
+    h += `</ul><div class="sec">East-West reference</div><ul><li>${link("network-fields", "Counters and fields")}</li><li>${link("network-agreements", "Agreement with the records")}</li></ul>`;
+    return h + `<div class="dir">North-South · in and out of the racks</div>` + fabricTree() + mgmtTree() + `</div>`;
   }
 
   // ------------------------------------------------------------- mechanical
@@ -2136,7 +2143,7 @@ __SITENAV__
   };
   function mgmtOverview(seq) {
     const K = G.kinds, nsw = G.switches.filter(s => s.family === "rack").length, nagg = G.switches.filter(s => s.family === "agg").length, ncon = G.switches.filter(s => s.family === "console").length;
-    let h = `<div class="kind">Management network</div><h1>Management network telemetry</h1><p class="sub">${esc(G.framing)} Every BMC's Redfish service root polled once a minute by the Telemetry of Record, every management switch and console server read over SNMPv3 with its traps, and the IT Partner's console sessions, ${esc(md(G.window.start))} to ${esc(md(G.window.end))}. This network is how the Customer reads every BMC and how the IT Partner works on a rack without walking to it, so a span with no answers is a span with no evidence. All names and readings are fictional.</p>`;
+    let h = dirBar("ns") + `<div class="kind">Network · North-South</div><h1>Management network telemetry</h1><p class="sub">${esc(G.framing)} Every BMC's Redfish service root polled once a minute by the Telemetry of Record, every management switch and console server read over SNMPv3 with its traps, and the IT Partner's console sessions, ${esc(md(G.window.start))} to ${esc(md(G.window.end))}. This network is how the Customer reads every BMC and how the IT Partner works on a rack without walking to it, so a span with no answers is a span with no evidence. All names and readings are fictional.</p>`;
     h += `<div class="tiles">` + tile("BMC endpoints", num(Object.values(K).reduce((a, b) => a + b, 0)), Object.entries(K).map(([k, n]) => `${num(n)} ${esc(G.kind_names[k].replace(/^[A-Z](?=[a-z])/, c => c.toLowerCase()))}`).join(", "))
       + tile("Management switches", num(nsw), `two per rack (out of band and in band), uplinked to ${esc(nagg)} aggregation switches (a pair per hall); ${esc(ncon)} console servers, one per row`)
       + GHALLS.map(k => tile(`${G.halls[k].name} polls answered`, `${num(G.halls[k].answered_pct, 3)}%`, `${num(G.halls[k].failed)} failed of ${num(G.halls[k].polls)} while in service`)).join("")
@@ -2298,14 +2305,244 @@ __SITENAV__
     main.innerHTML = h;
   }
   function mgmtTree() {
-    let h = `<div class="famsec" data-fam="mgmt"><div class="sec">Management network</div><ul><li>${link("management", "Overview")}</li>`;
+    let h = `<div class="sec">Management network</div><ul><li>${link("management", "Overview")}</li>`;
     for (const k of GHALLS) {
       const H = G.halls[k];
-      h += `<li><details${k === GHALLS[0] ? " open" : ""}><summary>${link("management", H.name)} <small>${esc(H.racks)} racks</small></summary><ul class="racks">`
+      h += `<li><details><summary>${link("management", H.name)} <small>${esc(H.racks)} racks</small></summary><ul class="racks">`
         + G.racks.filter(r => r.hall === k).map(r => `<li>${link(`mgmt-${r.rack}`, r.rack)}</li>`).join("") + `</ul><ul>` + H.aggs.concat(H.consoles).map(s => `<li>${link(s, s)}</li>`).join("") + `</ul></details></li>`;
     }
-    h += `</ul><div class="sec">Management reference</div><ul><li>${link("mgmt-fields", "What is read")}</li><li>${link("mgmt-agreements", "Agreement with the records")}</li></ul></div>`;
+    h += `<li>${link("mgmt-fields", "What is read")}</li><li>${link("mgmt-agreements", "Agreement with the records")}</li></ul>`;
     return h;
+  }
+
+  // -------------------------------------------------------- storage and its fabric
+  const SG = B.storage;
+  const SGN = Object.fromEntries(SG.nodes.map(n => [n.id, n])), SGS = Object.fromEntries(SG.switches.map(s => [s.id, s]));
+  const SGCL = Object.keys(SG.clusters);
+  const SGRK = {};
+  for (const n of SG.nodes) (SGRK[n.rack] = SGRK[n.rack] || []).push(n.id);
+  const BAYC = {0: ["OK", "#2e9e5b"], 1: ["failed", "#c62828"], 2: ["empty (drive pulled)", "#e0a100"], 3: ["rebuilding", "#3f7fd0"], 4: ["predicted to fail or warning", "#f2c14e"]};
+  const SGROLE = {row_leaf: "Row leaf", storage_leaf: "Storage leaf", spine: "Spine"};
+  const sgKind = k => tag({drive: "drive failed", swap: "drive pulled", rebuild: "rebuild", warning: "warning", node: "node reboot", flap: "flapping uplink", uplink: "uplink down", port: "port blip"}[k] || k,
+    {drive: "bad", swap: "", rebuild: "", warning: "warn", node: "", flap: "bad", uplink: "warn", port: ""}[k]);
+  const sgDev = id => SGN[id] || SGS[id] ? link(id, id) : RACK[id] ? link(id, id) : esc(id);
+  const sgRefs = refs => (refs || []).map(r => /^INC35/.test(r) ? `<a href="#storage-tickets" title="Storage ticket ${esc(r)}">${esc(r)}</a>` : esc(r)).join(", ");
+  const sgFinding = id => { const f = SG.findings.find(x => x.id === id); return f ? `<span title="${esc(f.title)}">${tag(f.id, "bad")}</span>` : ""; };
+  const sgFindingBox = f => `<div class="finding">${tag(f.id, "bad")} <b>${esc(f.title)}</b><br>${esc(f.summary)}<br><span class="note">Owner: ${esc(f.owner)}. ${esc(f.contract)}.</span>`
+    + `<ul class="note">${f.lines.map(l => `<li>${esc(l)}</li>`).join("")}</ul>${f.refs.length ? `Records: ${sgRefs(f.refs)}` : ""}</div>`;
+  const loadSg = d => getJson(`data/storage/${encodeURIComponent(d)}.json`);
+  const sgAgree = () => [SG.agreements.reduce((a, c) => a + c.checked - c.misses, 0), SG.agreements.reduce((a, c) => a + c.checked, 0)];
+  function sgEventsTable(evs) {
+    if (!evs.length) return `<p class="note">None this month.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Device</th><th>Event</th><th>Records</th></tr></thead><tbody>` + evs.map(e => {
+      const recs = sgRefs(e.refs) + (e.finding ? `${e.refs.length ? " " : ""}${sgFinding(e.finding)}` : "");
+      return `<tr><td class="n">${esc(at(e.t))}</td><td>${sgDev(e.device)}</td><td>${sgKind(e.kind)} ${esc(e.text)}</td><td>${recs}</td></tr>`;
+    }).join("") + `</tbody></table></div>`;
+  }
+  function sgEpisodes(eps) {
+    if (!eps.length) return `<p class="note">No flapping uplinks this month.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>From (UTC)</th><th class="n">Minutes</th><th>Uplink</th><th class="n">linkDowns</th><th>Racks whose flows hashed to it</th><th class="n">Nodes stalled</th><th class="n">GPU-hours idle</th><th>Records</th></tr></thead><tbody>`
+      + eps.map(e => { const f = SG.findings.find(x => x.kind === "fabric_stall" && x.devices[0] === e.switch && x.from === e.from);
+        return `<tr><td class="n">${esc(at(e.from))}</td><td class="n">${num(e.minutes)}</td><td>${link(e.switch, e.switch)} ${esc(e.ifName)}</td><td class="n">${num(e.downs)}</td><td>${e.racks.map(r => link(r, r)).join(", ")}</td><td class="n">${num(e.nodes)}</td><td class="n">${num(e.gpu_hours, 1)}</td><td>${sgRefs(e.refs)}${f ? ` ${sgFinding(f.id)}` : ""}</td></tr>`; }).join("")
+      + `</tbody></table></div>`;
+  }
+  function storageOverview(seq) {
+    const [agree, tot] = sgAgree(), nsw = SG.switches.length;
+    let h = `<div class="kind">Storage</div><h1>Storage and storage fabric telemetry</h1><p class="sub">${esc(SG.framing)} Every storage node's drive bays read over Redfish once a minute, every switch of the storage and in-band Ethernet fabric read over SNMPv3 with its traps, the clients' I/O stalls from the Customer's job telemetry, and the IT Partner's drive and optic tickets with the custody log, ${esc(md(SG.window.start))} to ${esc(md(SG.window.end))}. A storage fault idles GPUs that are healthy: the scheduler keeps the nodes in service while their jobs wait on I/O, so neither the scheduler's availability nor CSL-01 counts the time. All names and readings are fictional; no storage product is named.</p>`;
+    h += `<div class="tiles">` + SGCL.map(k => { const c = SG.clusters[k]; return tile(`${c.hall_name}: ${k}`, `${num(c.capacity_tb / 1000, 2)} PB`, `${num(c.nodes.length)} nodes, ${num(c.drives)} drives, erasure coding ${esc(c.ec[0])}+${esc(c.ec[1])}; ${num(c.used_tb[c.used_tb.length - 1] / 1000, 2)} PB used at month end`); }).join("")
+      + tile("Fabric switches", num(nsw), `a leaf pair per row for the compute trays, a storage leaf pair and a spine pair per hall, all SN5600`)
+      + tile("GPU-hours idle on storage", num(SG.idle_gpu_hours, 1), `running jobs waiting on I/O behind a flapping uplink; not in CSL-01 or the scheduler's availability`)
+      + `<div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#storage-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(SG.agreements.length)} checks: drives, nodes, protection, rebuilds, ports, traffic, the compute trays' host ports, and the stalls</div></div></div>`;
+    h += `<h2 class="sec">Findings</h2><p class="note">Records that do not reconcile with what the storage and its fabric reported. A failed drive or a flapping link is not a finding by itself; it becomes one when a ticket or the custody log says something the telemetry contradicts. Each is a case to look into, not a claim that anyone misled.</p>`
+      + (SG.findings.filter(f => f.kind !== "fabric_stall").map(sgFindingBox).join("") || `<p>None this month.</p>`)
+      + (SG.findings.some(f => f.kind === "fabric_stall") ? `<p class="note">The storage fabric's finding is under ${link("north-south", "Network, North-South")}.</p>` : "");
+    h += `<h2 class="sec">Clusters</h2><div class="scroll"><table><thead><tr><th>Cluster</th><th>Hall</th><th class="n">Nodes</th><th class="n">Drives</th><th class="n">Reads, average</th><th class="n">Reads, peak hour</th><th class="n">Lowest protection</th><th class="n">Hours below full</th><th class="n">GPU-hours idle</th></tr></thead><tbody>`
+      + SGCL.map(k => { const c = SG.clusters[k]; return `<tr><td>${esc(k)}</td><td>${esc(c.hall_name)}</td><td class="n">${num(c.nodes.length)}</td><td class="n">${num(c.drives)}</td><td class="n">${num(c.read_avg, 1)} GB/s</td><td class="n">${num(c.read_peak, 1)} GB/s</td><td class="n">${num(c.prot_min)} of ${num(c.tolerates)}</td><td class="n">${num(c.hours_below_full)}</td><td class="n">${num(c.idle_gpu_hours, 1)}</td></tr>`; }).join("")
+      + `</tbody></table></div><p class="note">Protection is how many more storage nodes the cluster could lose and keep serving: erasure coding ${esc(SG.clusters[SGCL[0]].ec.join("+"))} tolerates ${esc(SG.clusters[SGCL[0]].tolerates)}, less every node that is offline or holds a failed, pulled, or rebuilding drive.</p><div id="sg-ch"></div>`;
+    h += `<h2 class="sec">Client stalls</h2><p class="note">GPU-hours the running jobs waited on storage behind a flapping fabric uplink: the stalled nodes' GPUs times the minutes they waited. The fabric itself is under ${link("north-south", "Network, North-South")}.</p>` + sgEpisodes(SG.episodes);
+    for (const k of SGCL) {
+      const c = SG.clusters[k];
+      h += `<div class="hallname">${esc(c.hall_name)} · ${esc(k)} · racks ${c.racks.map(r => link(r, r)).join(", ")} · storage leaves ${c.storage_leaves.map(s => link(s, s)).join(" + ")} · spines ${c.spines.map(s => link(s, s)).join(" + ")}</div>`
+        + `<div class="scroll"><table><thead><tr><th>Node</th><th>Rack</th><th class="n">Online</th><th class="n">Drives OK at end</th><th class="n">Failed</th><th class="n">Pulled</th><th class="n">Rebuilding</th><th class="n">Swaps</th><th class="n">Used</th></tr></thead><tbody>`
+        + SG.nodes.filter(n => n.cluster === k).map(n => `<tr><td>${link(n.id, n.id)}</td><td>${link(n.rack, n.rack)}</td><td class="n">${num(n.online_h, 1)} h</td><td class="n">${num(n.ok)} of ${num(n.drives)}</td><td class="n">${num(n.failed)}</td><td class="n">${num(n.absent)}</td><td class="n">${num(n.rebuilding)}</td><td class="n">${num(n.swaps)}</td><td class="n">${num(n.used_tb, 1)} TB</td></tr>`).join("")
+        + `</tbody></table></div>`;
+    }
+    h += `<h2 class="sec">Events</h2><p class="note">Every drive failure, pull, rebuild, and warning, and every storage node reboot, with the record that explains it.</p>` + sgEventsTable(SG.events.filter(e => SGN[e.device]));
+    main.innerHTML = h;
+    document.getElementById("sg-ch").innerHTML = SGCL.map(k => { const c = SG.clusters[k];
+      return chart({...HX, n: SG.hours, title: `${k}: reads and writes, GB/s (hourly average)`, unit: " GB/s", d: 1, lo: 0, series: [{v: c.read_gbps, color: "var(--s1)", name: "Read"}, {v: c.write_gbps, color: "var(--s3)", name: "Write"}]})
+        + chart({...HX, n: SG.hours, H: 110, title: `${k}: protection (more nodes it could lose), lowest in the hour`, unit: "", lo: 0, hi: c.tolerates, series: [{v: c.protection, color: "var(--s2)", name: "Protection"}]}); }).join("")
+      + lg([["var(--s1)", "read"], ["var(--s3)", "write"], ["var(--s2)", "protection"]]);
+  }
+  function sgSwTable(ss) {
+    return `<div class="scroll"><table><thead><tr><th>Switch</th><th>Role</th><th>Hall</th><th>Ports</th><th>Uplinks up (h)</th><th class="n">linkDown traps</th><th class="n">Input errors</th></tr></thead><tbody>`
+      + ss.map(s => { const k = s.kinds, ports = [[k.tray, "trays"], [k.node, "storage nodes"], [k.uplink, "uplinks"], [k.downlink, "leaf downlinks"]].filter(x => x[0]).map(([n, t]) => `${num(n)} ${esc(t)}`).join(", ");
+        const ups = Object.entries(s.uplinks).map(([i, v]) => `${esc(i)} ${num(v, 1)}`).join(", ");
+        return `<tr><td>${link(s.id, s.id)}</td><td>${esc(SGROLE[s.role])}${s.row ? ` row ${esc(s.row)}` : ""}</td><td>${esc(hallName(s.hall))}</td><td>${ports}</td><td>${ups || "–"}</td><td class="n">${num(s.downs)}</td><td class="n">${num(s.errors)}</td></tr>`; }).join("")
+      + `</tbody></table></div>`;
+  }
+  function sgBayStates(bays, H) {      // each bay's state by hour (worst in the hour), from its Redfish events
+    const rank = {0: 0, 4: 1, 3: 2, 2: 3, 1: 4};
+    return bays.map(b => {
+      const v = new Array(H).fill(0);
+      let st = 0, last = 0;
+      const put = (a, z, s) => { for (let i = Math.max(0, a); i < Math.min(H, z); i++) if (rank[s] > rank[v[i]]) v[i] = s; };
+      for (const e of b.events) {
+        const h = Math.max(0, hourOf(e.timestamp));
+        put(last, h + 1, st);
+        st = {Failed: 1, Removed: 2, Inserted: 3, RebuildComplete: 0, PredictedFailure: 4, Warning: 4, Cleared: 0}[e.event] ?? st;
+        if (st) put(h, h + 1, st);
+        last = h;
+      }
+      put(last, H, st);
+      return v;
+    });
+  }
+  function sgBayGrid(d) {
+    const H = d.hours, st = sgBayStates(d.bays, H), W = Math.max(640, chartWidth()), L = 60, rowH = 12, pw = W - L - 6, X = i => L + i / H * pw, Ht = d.bays.length * rowH + 22;
+    let s = "";
+    d.bays.forEach((b, j) => {
+      const v = st[j], y = 2 + j * rowH;
+      s += `<text x="0" y="${esc(y + 9)}" style="font-size:10px">${esc(b.bay)}</text>`;
+      let a = 0;
+      for (let i = 1; i <= H; i++) {
+        if (i < H && v[i] === v[a]) continue;
+        s += `<rect x="${esc(X(a).toFixed(1))}" y="${esc(y)}" width="${esc(Math.max(0.8, X(i) - X(a)).toFixed(1))}" height="${esc(rowH - 3)}" fill="${esc(BAYC[v[a]][1])}"><title>${esc(b.bay)}, ${esc(hourAt(a))}${i - a > 1 ? ` for ${esc(i - a)} h` : ""}: ${esc(BAYC[v[a]][0])}</title></rect>`;
+        a = i;
+      }
+    });
+    for (let i = 0; i < H; i += 168) s += `<text x="${esc(X(i))}" y="${esc(Ht - 4)}" text-anchor="${i ? "middle" : "start"}">${esc(dayLab(i))}</text>`;
+    return `<svg viewBox="0 0 ${esc(W)} ${esc(Ht)}" width="${esc(W)}" height="${esc(Ht)}" role="img" aria-label="Each drive bay's state by hour">${s}</svg>`
+      + `<div class="legend">${[0, 4, 1, 2, 3].map(k => `<span><i class="band" style="background:${esc(BAYC[k][1])}"></i>${esc(BAYC[k][0])}</span>`).join("")}</div>`;
+  }
+  function sgNodeView(id, seq) {
+    const n = SGN[id], c = SG.clusters[n.cluster], fs = SG.findings.filter(f => f.devices.includes(id));
+    let h = `<div class="kind">Storage · ${esc(c.hall_name)} · ${esc(n.cluster)}</div><h1>${esc(id)}</h1><p class="sub">All-flash storage node in rack ${link(n.rack, n.rack)}: ${esc(n.drives)} NVMe drives (${esc(SG.drive.model)}), one 400 GbE port to each storage leaf (${n.ports.map(([s, p]) => `${link(s, s)} ${esc(p)}`).join(", ")}). One of ${esc(c.nodes.length)} nodes the cluster spreads its erasure coding over. ${link("storage", "All storage")}</p>`;
+    h += `<div class="tiles">` + tile("Online", `${num(n.online_h, 1)} h`, `of ${num(SG.hours)}`) + tile("Drives OK at month end", `${num(n.ok)} of ${num(n.drives)}`, `${num(n.failed)} failed, ${num(n.absent)} pulled, ${num(n.rebuilding)} rebuilding`)
+      + tile("Drive swaps", num(n.swaps), "drives pulled and replaced this month") + tile("Used", `${num(n.used_tb, 1)} TB`, `of ${num(n.drives * SG.drive.capacity_tb, 1)} TB raw`) + `</div>` + fs.map(sgFindingBox).join("");
+    h += `<div id="sg-n"><p class="note">Loading data/storage/${esc(id)}.json…</p></div>`;
+    h += `<h2 class="sec">Events</h2>` + sgEventsTable(SG.events.filter(e => e.device === id));
+    main.innerHTML = h;
+    loadSg(id).then(d => {
+      if (seq !== current) return;
+      const Y = d.hourly, gbs = a => a.map(v => +(v / 3600).toFixed(2)), mv = d.bays.filter(b => b.serial_start !== b.serial_end);
+      let x = `<h2 class="sec">Drive bays</h2><p class="note">Each bay's state by hour, from its Redfish Drive resource (StatusIndicator and Operations). Hover a band for the hour.</p>` + sgBayGrid(d);
+      x += `<h2 class="sec">Drives that changed</h2>` + (mv.length ? `<div class="scroll"><table data-gl-skip><thead><tr><th>Bay</th><th>Serial at start</th><th>Serial at end</th><th>Redfish events</th></tr></thead><tbody>`
+        + mv.map(b => `<tr><td>${esc(b.bay)}</td><td><code>${esc(b.serial_start)}</code></td><td><code>${esc(b.serial_end)}</code></td><td class="note">${b.events.map(e => `${esc(at(e.timestamp))} ${esc(e.event)}${e.percent != null ? ` ${esc(e.percent)}%` : ""}${e.indicator ? ` (${esc(e.indicator)})` : ""}`).join("<br>")}</td></tr>`).join("") + `</tbody></table></div>` : `<p class="note">No drive changed this month.</p>`);
+      x += chart({...HX, n: d.hours, title: "Reads and writes, GB/s (hourly average)", unit: " GB/s", d: 2, lo: 0, series: [{v: gbs(Y.read_gb), color: "var(--s1)", name: "Read"}, {v: gbs(Y.write_gb), color: "var(--s3)", name: "Write"}]})
+        + chart({...HX, n: d.hours, H: 110, title: "Minutes online in the hour", unit: " min", lo: 0, hi: 60, series: [{v: Y.online_min, color: "var(--s2)", name: "Online"}]})
+        + chart({...HX, n: d.hours, H: 110, title: "Drives not OK (fewest OK in the hour)", unit: "", lo: 0, series: [{v: Y.drives_failed, color: "#c62828", name: "Failed"}, {v: Y.drives_absent, color: "#e0a100", name: "Pulled"}, {v: Y.drives_rebuilding, color: "#3f7fd0", name: "Rebuilding"}]});
+      x += `<h2 class="sec">Ports</h2>` + sgPorts(d);
+      document.getElementById("sg-n").innerHTML = x;
+    }).catch(e => { if (seq === current) document.getElementById("sg-n").innerHTML = errBox(e, `data/storage/${id}.json`); });
+  }
+  function sgPorts(d) {
+    const ks = Object.keys(d.ports).sort((a, b) => a.localeCompare(b, "en", {numeric: true}));
+    if (!ks.length) return `<p class="note">No ports polled here.</p>`;
+    const S = ["var(--s1)", "var(--s3)", "var(--s2)", "var(--s4)"];
+    return `<div class="scroll"><table><thead><tr><th>Port</th><th class="n">Up</th><th class="n">In</th><th class="n">Out</th><th class="n">Input errors</th></tr></thead><tbody>`
+      + ks.map(k => { const p = d.ports[k], sum = a => a.reduce((x, y) => x + y, 0);
+        return `<tr><td>${esc(k)}</td><td class="n">${num(sum(p.up_s) / 3600, 1)} h</td><td class="n">${num(sum(p.in_octets) / 1e12, 1)} TB</td><td class="n">${num(sum(p.out_octets) / 1e12, 1)} TB</td><td class="n">${num(sum(p.in_errors))}</td></tr>`; }).join("") + `</tbody></table></div>`
+      + chart({...HX, n: d.hours, title: "Received, GB/s per port (hourly average)", unit: " GB/s", d: 1, lo: 0, series: ks.slice(0, 4).map((k, i) => ({v: d.ports[k].in_octets.map(v => +(v / 3600 / 1e9).toFixed(2)), color: S[i], name: k}))})
+      + chart({...HX, n: d.hours, H: 110, title: "Minutes up in the hour", unit: " min", lo: 0, hi: 60, series: ks.slice(0, 4).map((k, i) => ({v: d.ports[k].up_s.map(v => Math.round(v / 60)), color: S[i], name: k}))})
+      + lg(ks.slice(0, 4).map((k, i) => [S[i], k]));
+  }
+  function sgSwView(id, seq) {
+    const s = SGS[id], fs = SG.findings.filter(f => f.devices.includes(id)), eps = SG.episodes.filter(e => e.switch === id);
+    const what = s.role === "row_leaf" ? `Half of row ${esc(s.row)}'s storage leaf pair: one 200 GbE port to every compute tray of the row (its BlueField-3 DPU), the other port to ${(s.pair || []).filter(x => x !== id).map(x => link(x, x)).join("")}. A tray keeps its storage with either leaf down.`
+      : s.role === "storage_leaf" ? `Half of the storage leaf pair: one 400 GbE port to every storage node of ${esc(hallName(s.hall))}; each node's other port is on ${(s.pair || []).filter(x => x !== id).map(x => link(x, x)).join("")}.`
+      : `Half of ${esc(hallName(s.hall))}'s spine pair: two 800 GbE downlinks to every leaf of the hall (${s.peers.map(x => link(x, x)).join(", ")}).`;
+    let h = `<div class="kind">Network · North-South · ${esc(hallName(s.hall))}</div><h1>${esc(id)}</h1><p class="sub">${what} ${link("north-south", "All North-South")}</p>`;
+    h += `<div class="tiles">` + tile("Role", esc(SGROLE[s.role]), s.row ? `row ${esc(s.row)}` : esc(hallName(s.hall))) + tile("linkDown traps", num(s.downs), "sent by this switch this month") + tile("Input errors", num(s.errors), "ifInErrors on the polled ports")
+      + (Object.keys(s.uplinks).length ? tile("Uplinks up", Object.values(s.uplinks).map(v => num(v, 1)).join(" · "), Object.keys(s.uplinks).map(esc).join(", ") + " (hours)") : "") + `</div>` + fs.map(sgFindingBox).join("");
+    if (eps.length) h += `<h2 class="sec">Client stalls</h2>` + sgEpisodes(eps);
+    h += `<div id="sg-s"><p class="note">Loading data/storage/${esc(id)}.json…</p></div>`;
+    h += `<h2 class="sec">Events</h2>` + sgEventsTable(SG.events.filter(e => e.device === id));
+    main.innerHTML = h;
+    loadSg(id).then(d => {
+      if (seq !== current) return;
+      let x = "";
+      if (d.trays) x += `<h2 class="sec">Compute tray ports</h2>` + chart({...HX, n: d.hours, title: "Tray ports cabled, and up on average over the hour", unit: "", d: 1, lo: 0, series: [{v: d.trays.tray_ports, color: "var(--s2)", name: "Cabled"}, {v: d.trays.tray_port_min.map(v => +(v / 60).toFixed(1)), color: "var(--s1)", name: "Up (average)"}]})
+        + chart({...HX, n: d.hours, H: 120, title: "Tray traffic, GB/s (hourly average)", unit: " GB/s", d: 1, lo: 0, series: [{v: d.trays.in_octets.map(v => +(v / 3600 / 1e9).toFixed(2)), color: "var(--s1)", name: "From trays"}, {v: d.trays.out_octets.map(v => +(v / 3600 / 1e9).toFixed(2)), color: "var(--s3)", name: "To trays"}]});
+      if (Object.keys(d.ports).length) x += `<h2 class="sec">${s.role === "storage_leaf" ? "Node ports and uplinks" : "Uplinks"}</h2>` + sgPorts(d);
+      else x += `<h2 class="sec">Downlinks</h2><p class="note">Each leaf's uplinks are polled at the leaf; open a leaf for its traffic.</p>`;
+      x += `<h2 class="sec">Traps</h2>` + (d.traps.length ? `<div class="scroll"><table data-gl-skip><thead><tr><th>When (UTC)</th><th>Trap</th><th>Port</th></tr></thead><tbody>` + d.traps.slice(0, 300).map(e => `<tr><td>${esc(e.timestamp.replace("T", " "))}</td><td>${esc(e.trap)}</td><td>${esc(e.ifName)}</td></tr>`).join("") + `</tbody></table></div>${d.traps.length > 300 ? `<p class="note">First 300 of ${num(d.traps.length)}.</p>` : ""}` : `<p class="note">No traps this month.</p>`);
+      document.getElementById("sg-s").innerHTML = x;
+    }).catch(e => { if (seq === current) document.getElementById("sg-s").innerHTML = errBox(e, `data/storage/${id}.json`); });
+  }
+  function sgRackView(rk) {
+    const ns = SGRK[rk], c = SG.clusters[SGN[ns[0]].cluster];
+    let h = `<div class="kind">Storage · ${esc(c.hall_name)}</div><h1>Storage rack ${esc(rk)}</h1><p class="sub">${esc(ns.length)} storage nodes of ${esc(SGN[ns[0]].cluster)}. ${link("storage", "All storage")}</p>`;
+    h += `<div class="scroll"><table><thead><tr><th>Node</th><th class="n">Online</th><th class="n">Drives OK at end</th><th class="n">Swaps</th><th class="n">Used</th></tr></thead><tbody>`
+      + ns.map(id => { const n = SGN[id]; return `<tr><td>${link(id, id)}</td><td class="n">${num(n.online_h, 1)} h</td><td class="n">${num(n.ok)} of ${num(n.drives)}</td><td class="n">${num(n.swaps)}</td><td class="n">${num(n.used_tb, 1)} TB</td></tr>`; }).join("") + `</tbody></table></div>`;
+    main.innerHTML = h;
+  }
+  function storageTickets() {
+    let h = `<div class="kind">Storage reference</div><h1>Storage tickets and custody</h1><p class="sub">The IT Partner's drive and optic tickets for the storage and its fabric, and the custody log of every pulled drive handed to the Security Partner for media destruction. These records are this layer's own; the Incident Portal does not carry them.</p>`;
+    h += `<div class="scroll"><table><thead><tr><th>Number</th><th>Item</th><th>Opened (UTC)</th><th>Resolved</th><th>Description</th><th>Customer impact</th><th></th></tr></thead><tbody>`
+      + SG.tickets.map(k => { const f = SG.findings.filter(x => x.refs.includes(k.number));
+        return `<tr id="tk-${esc(k.number)}"><td>${esc(k.number)}</td><td>${sgDev(k.configuration_item.split(" ")[0])} ${esc(k.configuration_item.split(" ").slice(1).join(" "))}</td><td class="n">${esc(at(k.opened_at))}</td><td class="n">${k.resolved_at ? esc(at(k.resolved_at)) : "open"}</td><td>${esc(k.short_description)}</td><td class="note">${esc(k.customer_impact)}</td><td>${f.map(x => sgFinding(x.id)).join(" ")}</td></tr>`; }).join("")
+      + `</tbody></table></div>`;
+    h += `<h2 class="sec">Chain of custody</h2><p class="note">Every pulled drive should appear here within ${esc(SG.checks.custody_h)} hours of the pull. HO-5 sets no hour; past it, the drive is treated as missing.</p><div class="scroll"><table data-gl-skip><thead><tr><th>Drive</th><th>From</th><th>Ticket</th><th>Handed over (UTC)</th></tr></thead><tbody>`
+      + SG.custody.map(c => `<tr><td><code>${esc(c.drive_serial)}</code></td><td>${link(c.node, c.node)} ${esc(c.bay)}</td><td>${esc(c.ticket)}</td><td class="n">${esc(at(c.handed_over_at))}</td></tr>`).join("") + `</tbody></table></div>`;
+    main.innerHTML = h;
+  }
+  function storageFields() {
+    const K = SG.collection;
+    let h = `<div class="kind">Storage reference</div><h1>What is read</h1><p class="sub">${esc(SG.framing)} The names are the published ones: the DMTF Redfish Drive schema and IF-MIB (RFC 2863). The fabric follows NVIDIA's GB200 SuperPOD reference architecture; port maps and the storage nodes are this site's assumptions (no storage product is named). No vendor's internal tooling is implied.</p>`;
+    h += `<div class="cards">` + tile("Redfish", `${num(K.redfish.poll_s)} s`, `${esc(K.redfish.path)}: ${esc(K.redfish.note)}`) + tile("SNMP", `${num(K.snmp.poll_s)} s`, `${esc(K.snmp.version)}; ${esc(K.snmp.traps)}`) + tile("Clients", "I/O wait", `${esc(K.clients.source)}: ${esc(K.clients.note)}`) + `</div>`;
+    h += `<div class="scroll"><table data-gl-skip><thead><tr><th>Field</th><th>Source</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>` + SG.fields.map(f => `<tr><td><code>${esc(f.name)}</code></td><td>${esc(f.source)}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + SG.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function storageAgreements() {
+    const [agree, tot] = sgAgree();
+    let h = `<div class="kind">Storage reference</div><h1>Agreement with the records</h1><p class="sub">The storage telemetry is synthetic, so it is shaped never to contradict itself or the other records: drive events against the inventory, node outages against the cluster's protection, rebuilds against their rate, port states against the traps, bytes at both ends of every link, each compute tray's storage ports against its host management port, and every client stall against a flapping uplink. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + SG.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (SG.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + SG.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks, and the four planted findings, run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/storage_telemetry.md.</p>`;
+    main.innerHTML = h;
+  }
+  function storageTree() {
+    let h = `<div class="famsec" data-fam="storage"><div class="sec">Storage</div><ul><li>${link("storage", "Overview")}</li>`;
+    for (const k of SGCL) {
+      const c = SG.clusters[k];
+      h += `<li><details${k === SGCL[0] ? " open" : ""}><summary>${link("storage", `${c.hall_name} · ${k}`)} <small>${esc(c.nodes.length)} nodes</small></summary>`
+        + c.racks.map(r => `<ul><li>${link(r, r)}</li></ul><ul class="racks">` + SGRK[r].map(n => `<li>${link(n, n.slice(-3))}</li>`).join("") + `</ul>`).join("") + `</details></li>`;
+    }
+    h += `</ul><div class="sec">Elsewhere</div><ul><li>${link("north-south", "Storage fabric (Network, North-South)")}</li></ul><div class="sec">Storage reference</div><ul><li>${link("storage-tickets", "Tickets and custody")}</li><li>${link("storage-fields", "What is read")}</li><li>${link("storage-agreements", "Agreement with the records")}</li></ul></div>`;
+    return h;
+  }
+  function fabricTree() {
+    let h = `<div class="sec">Storage and in-band Ethernet</div><ul><li>${link("north-south", "Overview")}</li>`;
+    for (const k of SGCL) {
+      const c = SG.clusters[k];
+      h += `<li><details><summary>${link("north-south", c.hall_name)} <small>${esc(c.spines.length + c.storage_leaves.length + c.row_leaves.length)} switches</small></summary><ul>`
+        + c.spines.concat(c.storage_leaves, c.row_leaves).map(s => `<li>${link(s, s)}</li>`).join("") + `</ul></details></li>`;
+    }
+    return h + `</ul>`;
+  }
+  // The Network family's two directions, at the top of every network overview
+  function dirBar(on) {
+    return `<div class="dirbar"><a href="#network" class="${on === "ew" ? "on" : ""}"><b>East-West</b><span>GPU to GPU inside the cluster: the back-end InfiniBand fabric and NVLink</span></a>`
+      + `<a href="#north-south" class="${on === "ns" ? "on" : ""}"><b>North-South</b><span>In and out of the racks: the storage and in-band Ethernet fabric and the management network</span></a></div>`;
+  }
+  function northSouth(seq) {
+    const [agree, tot] = sgAgree(), fab = SG.findings.filter(f => f.kind === "fabric_stall"), ev = SG.events.filter(e => SGS[e.device]);
+    const gAgree = G.agreements.reduce((a, c) => a + c.checked - c.misses, 0), gTot = G.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = dirBar("ns") + `<div class="kind">Network · North-South</div><h1>North-South traffic</h1><p class="sub">Traffic in and out of the racks rather than between GPUs: every compute tray's storage and in-band Ethernet ports (two 200 GbE on its BlueField-3 DPU), the storage clusters behind them (read over RoCE; ECMP spreads each leaf's flows across its four uplinks), and the management network that reaches every BMC. Each hall has a leaf pair per row, a storage leaf pair, and a spine pair, all SN5600, as in NVIDIA's GB200 SuperPOD reference architecture; port maps are this site's assumptions. All names and readings are fictional.</p>`;
+    h += `<div class="tiles">` + tile("Fabric switches", num(SG.switches.length), `${num(SG.switches.filter(s => s.role === "row_leaf").length)} row leaves, ${num(SG.switches.filter(s => s.role === "storage_leaf").length)} storage leaves, ${num(SG.switches.filter(s => s.role === "spine").length)} spines`)
+      + tile("Flapping uplinks", num(SG.episodes.length), "runs of linkDowns that stalled the storage clients behind them")
+      + tile("GPU-hours idle on storage", num(SG.idle_gpu_hours, 1), "running jobs waiting on I/O; not in CSL-01 or the scheduler's availability")
+      + `<div class="tile"><div class="k">Management network</div><div class="v"><a href="#management">${num(gAgree)} of ${num(gTot)}</a></div><div class="s">cases agree; ${esc(G.findings.length)} findings. Open the management network</div></div>`
+      + `<div class="tile"><div class="k">Storage agreement</div><div class="v"><a href="#storage-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(SG.agreements.length)} checks, the fabric's ports, traffic, and the trays' storage ports among them</div></div></div>`;
+    h += `<h2 class="sec">Findings</h2><p class="note">A flapping link is not a finding by itself; it becomes one when the record of it says something the telemetry contradicts. Each is a case to look into, not a claim that anyone misled.</p>`
+      + (fab.length ? fab.map(sgFindingBox).join("") : `<p>None this month.</p>`);
+    h += `<h2 class="sec">Client stalls</h2><p class="note">A flapping uplink (at least ${esc(SG.checks.flap_downs)} linkDowns within ${esc(SG.checks.flap_window_min)} minutes) re-hashes the flows through it again and again; the running jobs behind it wait on storage while their GPUs sit idle.</p>` + sgEpisodes(SG.episodes);
+    h += `<h2 class="sec">Storage and in-band Ethernet switches</h2>` + sgSwTable(SG.switches);
+    h += `<h2 class="sec">Fabric events</h2>` + sgEventsTable(ev);
+    h += `<h2 class="sec">Elsewhere</h2><ul><li>${link("storage", "The storage clusters, their nodes and drives")}</li><li>${link("management", "The management network: every BMC, management switch, and console server")}</li></ul>`;
+    main.innerHTML = h;
   }
 
   // ------------------------------------------------------------- site health
@@ -2328,7 +2565,7 @@ __SITENAV__
   function siteView(hour, seq) {
     if (shTimer) { clearInterval(shTimer); shTimer = null; }
     shHour = hour == null || Number.isNaN(hour) ? SHH - 1 : Math.max(0, Math.min(SHH - 1, hour));
-    let h = `<div class="kind">Telemetry</div><h1>Site health</h1><p class="sub">${esc(SH.framing)} Each hour shows its worst minute. Everything is read from the six telemetry sections below; all names and readings are fictional.</p>`;
+    let h = `<div class="kind">Telemetry</div><h1>Site health</h1><p class="sub">${esc(SH.framing)} Each hour shows its worst minute. Everything is read from the seven telemetry sections below; all names and readings are fictional.</p>`;
     h += `<div class="clock"><div class="ctl"><label for="shr">Hour</label><b id="sh-lab"></b><span id="sh-site"></span></div>`
       + `<input type="range" id="shr" min="0" max="${esc(SHH - 1)}" value="${esc(shHour)}" aria-label="Hour of the month">`
       + `<div class="btns" id="sh-step"><button data-s="-24">−1 day</button><button data-s="-1">−1 hour</button><button data-s="1">+1 hour</button><button data-s="24">+1 day</button>`
@@ -2413,6 +2650,7 @@ __SITENAV__
     network: [["Links cabled", (r, h) => fmt(r.cabled[h])], ["Links up all hour", (r, h) => fmt(r.up[h])], ["Link drops", (r, h) => fmt(r.downs[h])], ["Mean rail utilization", (r, h) => fmt(r.util[h], 1, "%")], ["NVLink trays reporting", (r, h) => `${fmt(r.trays[h])} of ${fmt(r.trays_total[h])}`]],
     mechanical: [["Warmest supply air", (r, h) => fmt(r.air_max[h], 1, " °C")]],
     mgmt: [["BMCs answering (worst minute)", (r, h) => `${fmt(r.answering[h])} of ${fmt(r.bmcs[h])}`], ["Failed polls", (r, h) => fmt(r.failed[h])], ["Management switches down", (r, h) => `${fmt(r.switches_down[h])} of ${fmt(r.switches[h])}`]],
+    storage: [["Protection (more nodes it could lose)", (r, h) => `${fmt(r.protection[h])} of ${fmt(r.tolerates[h])}`], ["Storage nodes online all hour", (r, h) => `${fmt(r.online[h])} of ${fmt(r.nodes[h])}`], ["Drives failed, pulled, or rebuilding", (r, h) => fmt(r.drives_out[h])], ["Reads", (r, h) => fmt(r.read_gbps[h], 1, " GB/s")]],
   };
   const shSite = {
     power: [["Generators running", (r, h) => `${fmt(r.gens_running[h])}`], ["Lowest generator fuel", (r, h) => fmt(r.fuel_min[h], 0, "%")]],
@@ -2474,8 +2712,9 @@ __SITENAV__
     const rows = [["GPUs (a rack)", `Lost: no GPUs reporting, or both power feeds lost. Degraded: GPUs missing for the hour, a node drained, hardware thermal slowdown, a GPU at ${T.gpu.temp_amber_c} °C or more, one feed lost, or an NVLink tray not reporting.`],
       ["CDUs", `Lost: a leak detector reads Critical, or coolant supply at ${T.cdu.supply_red_c} °C. Degraded: a pump out (no spare pump), or supply at ${T.cdu.supply_amber_c} °C.`],
       ["Power", `Lost: below N (both utility feeds, or a rack's two feeds), or a UPS at ${T.ups.load_red_pct}% load. Degraded: a UPS on bypass or battery, a power module out, a UPS above ${T.ups.load_amber_pct}% load (three could not carry a fourth's), generator fuel under ${T.generator.fuel_amber_pct}%.`],
-      ["Network", "Degraded: an InfiniBand link drop in the hall (rail-optimized: a dropped link takes one GPU off its rail; there is no second link to fail over to). Leaf uplinks to the spine are not modeled, so they show no redundancy."],
+      ["Network", `East-West: degraded by an InfiniBand link drop in the hall (rail-optimized: a dropped link takes one GPU off its rail; there is no second link to fail over to); the InfiniBand leaf uplinks are not modeled. North-South: lost with both of a hall's storage spines or storage leaves down; degraded by a storage fabric uplink flapping (${SG.checks.flap_downs} or more linkDowns within ${SG.checks.flap_window_min} minutes; the clients behind it stall) or down.`],
       ["Management network", `Lost: both of a hall's management aggregation switches down. Degraded: one aggregation switch down (no redundant unit), a rack management switch down (its rack's BMCs or in-band management unreachable), an uplink down, a BMC not answering for more than ${G.checks.gap_min} minutes, or the Telemetry of Record's poller restarting.`],
+      ["Storage", `Lost: a storage cluster below N (more storage nodes out than its erasure coding tolerates). Degraded: a storage node offline or holding a failed, pulled, or rebuilding drive (the cluster could lose one node fewer).`],
       ["Mechanical", `Lost: fewer chillers available than the load needs, facility water supply at ${T.loop.supply_red_c} °C, supply air at ${T.air.supply_red_c} °C (ASHRAE A1 allowable). Degraded: a chiller or wall fan out, facility water at ${T.loop.supply_amber_c} °C, supply air at ${T.air.supply_amber_c} °C (ASHRAE recommended).`]];
     return `<table><tbody>${rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</tbody></table>`
       + `<h3>When a unit counts as out</h3><ul>${Object.entries(SH.unit_out).map(([k, v]) => `<li><b>${esc(k.replace("_", " "))}</b>: ${esc(v)}</li>`).join("")}</ul>`
@@ -2503,10 +2742,16 @@ __SITENAV__
     if (trayRack(a)) return {view: "nvlink", rack: trayRack(a), tray: a, key: "nvlink-" + trayRack(a), fam: "network"};
     if (a === "network-fields" || a === "network-agreements") return {view: a, key: a, fam: "network"};
     if (a === "network") return {view: "network", key: "network", fam: "network"};
-    if (a === "management") return {view: "management", key: "management", fam: "mgmt"};
-    if (a === "mgmt-fields" || a === "mgmt-agreements") return {view: a, key: a, fam: "mgmt"};
-    if (gRackOf(a)) return {view: "mgmtRack", rack: gRackOf(a), minute: pm, key: "mgmt-" + gRackOf(a), fam: "mgmt"};
-    if (GSW[a.toLowerCase()] && GSW[a.toLowerCase()].family !== "rack") return {view: "mgmtSw", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "mgmt"};
+    if (a === "management") return {view: "management", key: "management", fam: "network"};
+    if (a === "mgmt-fields" || a === "mgmt-agreements") return {view: a, key: a, fam: "network"};
+    if (gRackOf(a)) return {view: "mgmtRack", rack: gRackOf(a), minute: pm, key: "mgmt-" + gRackOf(a), fam: "network"};
+    if (GSW[a.toLowerCase()] && GSW[a.toLowerCase()].family !== "rack") return {view: "mgmtSw", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "network"};
+    if (a === "storage") return {view: "storage", key: "storage", fam: "storage"};
+    if (a === "storage-fields" || a === "storage-agreements" || a === "storage-tickets") return {view: a, key: a, fam: "storage"};
+    if (SGN[a.toLowerCase()]) return {view: "sgNode", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "storage"};
+    if (SGS[a.toLowerCase()]) return {view: "sgSw", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "network"};
+    if (a === "north-south") return {view: "north-south", key: "north-south", fam: "network"};
+    if (SGRK[a.toUpperCase()]) return {view: "sgRack", dev: a.toUpperCase(), key: a.toUpperCase(), fam: "storage"};
     const up = a.toUpperCase(), pf = famOf(up);
     if (mFam(up)) return {view: "mech", dev: up, minute: pm, key: up, fam: "mech"};
     if (a === "mech-fields" || a === "mech-agreements") return {view: a, key: a, fam: "mech"};
@@ -2551,6 +2796,14 @@ __SITENAV__
     else if (r.view === "mgmtSw") mgmtSwView(r.dev);
     else if (r.view === "mgmt-fields") mgmtFields();
     else if (r.view === "mgmt-agreements") mgmtAgreements();
+    else if (r.view === "storage") storageOverview(seq);
+    else if (r.view === "north-south") northSouth(seq);
+    else if (r.view === "sgNode") sgNodeView(r.dev, seq);
+    else if (r.view === "sgSw") sgSwView(r.dev, seq);
+    else if (r.view === "sgRack") sgRackView(r.dev);
+    else if (r.view === "storage-tickets") storageTickets();
+    else if (r.view === "storage-fields") storageFields();
+    else if (r.view === "storage-agreements") storageAgreements();
     else overview(seq);
     document.querySelectorAll("#tree a").forEach(a => {
       const on = a.getAttribute("href") === "#" + r.key;

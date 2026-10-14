@@ -1,0 +1,6 @@
+{"event": "offline", "node": "stg-a1-n08", "reason": "Reboot for firmware update", "timestamp": "2026-08-31T07:07:56Z"}
+{"event": "online", "node": "stg-a1-n08", "reason": "Rejoined the cluster", "timestamp": "2026-08-31T07:17:37Z"}
+{"event": "offline", "node": "stg-a2-n02", "reason": "Reboot for firmware update", "timestamp": "2026-09-19T10:57:23Z"}
+{"event": "online", "node": "stg-a2-n02", "reason": "Rejoined the cluster", "timestamp": "2026-09-19T11:09:54Z"}
+{"event": "offline", "node": "stg-b2-n06", "reason": "Reboot for firmware update", "timestamp": "2026-09-27T07:58:44Z"}
+{"event": "online", "node": "stg-b2-n06", "reason": "Rejoined the cluster", "timestamp": "2026-09-27T08:16:43Z"}

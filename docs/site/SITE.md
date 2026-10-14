@@ -154,6 +154,8 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 | Management switch | NVIDIA Spectrum SN2201 1G management switch | 128 |  | SNMPv3 (IF-MIB, ENTITY-SENSOR-MIB, traps); Serial console; Cumulus Linux NVUE |
 | Management aggregation switch | NVIDIA Spectrum SN5600 (management aggregation) | 4 |  | SNMPv3 (IF-MIB, ENTITY-SENSOR-MIB, traps); Serial console |
 | Console server | 48-port serial console server (to be selected) | 8 |  | SNMPv3; SSH to each serial port; Session log export |
+| Ethernet switch (storage fabric) | NVIDIA Spectrum SN5600 (storage and in-band Ethernet fabric) | 24 |  | SNMPv3 (IF-MIB, traps); Serial console; Cumulus Linux NVUE |
+| Storage node | All-flash NVMe storage node (2U, 24 drive bays, 2 x 400 GbE) (to be selected) | 32 |  | Redfish (Drive, Storage); SNMPv3; Storage cluster REST API |
 
 Busway counts are A and B tracks per row segment. Every count comes from the site model, so a change to `site/site.yaml` updates this table and the drawings together.
 
@@ -226,6 +228,8 @@ The Landlord runs EcoStruxure day to day. Under the Interface Agreement, the Cus
 | Compute racks | Redfish | Customer Telemetry of Record collector | direct |
 | BMCs (compute trays, NVLink switch trays, power shelves) | Redfish service root, polled each minute | Customer Telemetry of Record collector | direct (over the OOB network) |
 | Management switches and console servers | SNMPv3 and traps; console session logs | Management network (out of band and in band) | direct (read-only SNMPv3 user) |
+| Storage nodes and drives | Redfish Drive resources, polled each minute; the cluster's own event log | Customer Telemetry of Record collector | direct (read-only) |
+| Storage and in-band Ethernet fabric | SNMPv3 and traps | Customer Telemetry of Record collector | direct (read-only SNMPv3 user) |
 | InfiniBand fabric | UFM REST / events | NVIDIA UFM | UFM event export |
 
 ## Engineering assumptions
@@ -269,3 +273,4 @@ Product facts in `site/site.yaml` were checked against these manufacturer and tr
 - NVIDIA Spectrum SN2201 1G management switch: <https://docs.nvidia.com/networking/display/sn2201switchesum/introduction>
 - NVIDIA Spectrum SN2201 1G management switch: <https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html>
 - NVIDIA Spectrum SN5600 (management aggregation): <https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html>
+- NVIDIA Spectrum SN5600 (storage and in-band Ethernet fabric): <https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html>

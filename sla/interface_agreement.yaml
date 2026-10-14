@@ -104,6 +104,7 @@ raci:
   - {component: "Back-end fabric optics, cables, and fiber", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
   - {component: "Leaf and spine switches (physical replacement)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
   - {component: "BMC and out-of-band management network (physical)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
+  - {component: "Storage nodes and drives (physical)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "C"}
   - {component: "Meet-me rooms and cross-connects", Customer: "C", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
   - {component: "Spares cage, inventory, and RMA shipments", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "C"}
   - {component: "Building perimeter, lobby, and access control system", Customer: "C", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "C"}

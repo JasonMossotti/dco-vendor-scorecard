@@ -31,7 +31,8 @@ from scorecard.sla_model import load_sla  # noqa: E402
 OUT_DIR = ROOT / "docs" / "site"
 CATEGORY_LABELS = {"ups": "UPS", "cdu": "CDU", "crah": "CRAH", "ib_switch": "InfiniBand switch",
                    "solid_state_transformer": "Solid-state transformer", "mgmt_switch": "Management switch",
-                   "mgmt_aggregation": "Management aggregation switch"}
+                   "mgmt_aggregation": "Management aggregation switch",
+                   "ethernet_switch": "Ethernet switch (storage fabric)", "storage_node": "Storage node"}
 
 
 def _table(headers: list[str], rows: list[list[object]]) -> str:
@@ -98,6 +99,11 @@ def render_markdown(site: dict, sheet_list: list[tuple[str, str, str, str]]) -> 
             counts[mg["rack_switch_product"]] = counts.get(mg["rack_switch_product"], 0) + S.rack_count(h) * mg["rack_switches"]
             counts[mg["aggregation_product"]] = counts.get(mg["aggregation_product"], 0) + mg["aggregation_count"]
             counts[mg["console_product"]] = counts.get(mg["console_product"], 0) + h["rows"] * mg["console_per_row"]
+        st = h.get("storage")
+        if st:
+            counts[st["node_product"]] = counts.get(st["node_product"], 0) + st["racks"] * st["nodes_per_rack"]
+            counts[st["fabric_product"]] = (counts.get(st["fabric_product"], 0) + h["rows"] * 2 * st["leaf_pairs_per_row"]
+                                            + st["storage_leaves"] + st["spines"])
     ups_like = sum(1 for e in S.equipment(site) if e["id"].startswith(("UPS-", "MUPS-")))
     counts["galaxy_li_ion"] = f"{ups_like} (one per UPS)"
     counts["notifier_facp"] = 1

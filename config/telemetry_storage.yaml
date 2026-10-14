@@ -1,0 +1,101 @@
+# Storage and storage fabric telemetry for Site AUS-1 (synthetic; portfolio demo). PR B of the monitoring gaps plan.
+#
+# A storage fault idles GPUs that are healthy: the scheduler keeps the nodes in service while their jobs wait on I/O,
+# so neither the scheduler's availability nor the IT Partner's CSL-01 sees the time. This layer measures it from the
+# clients' side and names the owner. Drive swaps are the most common break-fix ticket at a real site, and every pulled
+# drive is storage media that must reach the Security Partner (Security SLA, media destruction).
+#
+# What exists (site/site.yaml, halls[].storage; basis: assumption, no product is named):
+#   * Per hall, a storage cluster of 16 all-flash NVMe storage nodes in two storage racks (STG-A1, STG-A2), 8 nodes
+#     each, 24 drives a node. Erasure coding 8+2 across the nodes: the cluster keeps serving with two nodes out.
+#   * The "storage and in-band Ethernet fabric" of NVIDIA's GB200 SuperPOD reference architecture, on SN5600 switches:
+#       eth-<hall><row>-1 and -2  a leaf pair per row (one scalable unit of 8 racks). Every compute tray has two
+#                                 200 GbE storage ports on its BlueField-3 DPU, one to each leaf of its row's pair;
+#       eth-<hall>-st1 and -st2   the storage leaf pair: every storage node has one 400 GbE port to each;
+#       eth-<hall>-sp1 and -sp2   the spine pair: every leaf has two 800 GbE uplinks to each spine.
+#     A client reaches the cluster over either leaf of its pair and any uplink (ECMP). One port, one uplink, or one
+#     switch down is carried by the rest. A link that flaps (goes down and up again and again) is worse than one that is
+#     down: every flap re-hashes the flows through it and the storage clients' I/O times out and retries.
+# Port maps are this site's assumptions (basis: assumption), not NVIDIA's.
+#
+# How it is read: the Telemetry of Record polls every storage node's Redfish Drive resources once a minute and reads
+# the cluster's event log; it polls every fabric switch over SNMPv3 (IF-MIB) and receives its traps (linkDown, linkUp).
+# The Customer's job telemetry records, per node, the minutes its jobs waited on storage I/O.
+# Read by src/scorecard/synthetic/telemetry_storage.py (the data) and src/scorecard/telemetry_storage.py (checks).
+
+framing: "Synthetic storage and fabric telemetry under the published Redfish Drive and IF-MIB names."
+sources:
+  - {name: "NVIDIA DGX SuperPOD GB200 reference architecture: network fabrics (storage and in-band Ethernet fabric on SN5600; compute trays at 4 x 200 GbE on BlueField-3, two ports for storage; a storage leaf pair per scalable unit)", url: "https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html", checked: "2026-10-14"}
+  - {name: "DMTF Redfish Drive schema (Status, StatusIndicator: OK, Fail, Rebuild, PredictiveFailureAnalysis; Operations; SerialNumber; FailurePredicted)", url: "https://redfish.dmtf.org/schemas/v1/Drive.v1_2_8.json", checked: "2026-10-14"}
+  - {name: "Lenovo XClarity: GET Drive instance (an example Redfish Drive with Status, SerialNumber, FailurePredicted, PredictedMediaLifeLeftPercent)", url: "https://pubs.lenovo.com/tsm/get_driver_instance", checked: "2026-10-14"}
+  - {name: "RFC 2863, The Interfaces Group MIB (ifOperStatus, ifHCInOctets, ifInErrors, linkDown and linkUp)", url: "https://www.rfc-editor.org/rfc/rfc2863", checked: "2026-10-14"}
+
+collection:
+  redfish: {poll_s: 60, path: "/redfish/v1/Systems/1/Storage/1/Drives/<bay>", note: "every drive bay of every storage node, once a minute"}
+  snmp: {version: "SNMPv3 (authPriv, read-only user)", poll_s: 60, traps: "SNMPv2 notifications to the Telemetry of Record"}
+  clients: {source: "Customer job telemetry", note: "minutes each compute node's jobs spent waiting on storage I/O"}
+
+# What the Telemetry of Record reads, under the published names (the page's field list)
+fields:
+  - {name: "Status.Health, Status.State", source: "Redfish Drive", unit: "OK, Warning, Critical; Enabled, Disabled", help: "The drive's health and whether it is in use"}
+  - {name: "StatusIndicator", source: "Redfish Drive", unit: "OK, Fail, Rebuild, PredictiveFailureAnalysis", help: "What the bay's LED shows: a failed drive, a drive being rebuilt, or one predicted to fail"}
+  - {name: "Operations[].OperationName, PercentageComplete", source: "Redfish Drive", unit: "Rebuild, percent", help: "A rebuild in progress and how far it has got"}
+  - {name: "SerialNumber", source: "Redfish Drive", unit: "text", help: "The drive in the bay; a new serial is a swap"}
+  - {name: "FailurePredicted", source: "Redfish Drive", unit: "true or false", help: "The drive's own prediction that it will fail (a planned swap)"}
+  - {name: "ifOperStatus", source: "IF-MIB 1.3.6.1.2.1.2.2.1.8", unit: "up(1), down(2)", help: "Each fabric port's state, polled once a minute"}
+  - {name: "ifHCInOctets, ifHCOutOctets", source: "IF-MIB 1.3.6.1.2.1.31.1.1.1.6 and .10", unit: "octets (Counter64)", help: "Bytes through each storage node port and each leaf uplink; the page shows GB/s"}
+  - {name: "ifInErrors", source: "IF-MIB 1.3.6.1.2.1.2.2.1.14", unit: "packets", help: "Received packets with errors; a failing optic shows here before it flaps"}
+  - {name: "linkDown, linkUp", source: "IF-MIB notifications 1.3.6.1.6.3.1.1.5.3 and .4", unit: "trap", help: "Sent by the switch when a port goes down or comes up"}
+  - {name: "I/O wait", source: "Customer job telemetry", unit: "minutes per node", help: "Minutes a node's running job waited on storage; the GPUs are healthy and idle"}
+
+# Port maps (basis: assumption). Cumulus Linux names; an 800 GbE port split four ways is swpNs0 to swpNs3.
+ports:
+  row_leaf: {split: 4, uplinks: {sp1: [61, 62], sp2: [63, 64]}}   # tray n of the k-th rack in the row: lane (k-1)*18 + n
+  storage_leaf: {split: 2, uplinks: {sp1: [61, 62], sp2: [63, 64]}}  # storage node i: lane i
+  spine: {per_leaf: 2}             # leaf j of the hall (row leaves first, then the storage pair) on swp 2j-1 and 2j
+
+drive:
+  capacity_tb: 30.72
+  model: "NVMe SSD 30.72 TB (U.2)"
+  rebuild_tb_per_h: [5.0, 7.0]     # rebuild rate into a replacement drive (basis: assumption)
+  used_fraction: [0.52, 0.68]      # of each drive, at the start of the month; grows with writes
+
+load:                              # cluster throughput per in-service compute rack, GB/s (basis: assumption)
+  read_per_rack: [1.6, 2.6]
+  write_per_rack: [0.4, 0.9]
+  idle_floor: 2.0                  # GB/s the cluster serves with no compute racks (snapshots, scrubbing)
+
+# What happens in a month, and how long (basis: assumption unless a record sets it)
+behaviour:
+  drive_failures: [4, 7]           # drives that fail across both halls
+  predictive_swaps: [1, 3]         # drives swapped on FailurePredicted before they fail
+  transient_warnings: [2, 4]       # a drive Warning that clears on its own (no swap, no ticket)
+  ticket_after_min: [6, 40]        # the IT Partner's ticket after the drive's alert
+  swap_after_h: [2, 30]            # the swap after the ticket
+  custody_after_h: [0.2, 3.0]      # the pulled drive handed to the Security Partner after the swap
+  close_after_rebuild_min: [5, 60] # the ticket resolved after the replacement's rebuild completes
+  node_reboots: [1, 3]             # a storage node rebooted for firmware (decoy: the cluster keeps serving)
+  node_reboot_min: [8, 20]
+  uplink_downs: [1, 3]             # one uplink down cleanly and replaced with a ticket (decoy: ECMP carries it)
+  uplink_down_min: [20, 120]
+  port_blips: [3, 6]               # one tray or node port down and up once (decoy)
+  port_blip_min: [1, 6]
+  reported_flap: 0.5               # chance a month also has a flap whose ticket states the impact (decoy)
+
+flap:                              # a flapping uplink: many short downs; storage clients behind it stall
+  minutes: [18, 45]
+  downs: [9, 20]
+  racks_hashed: [3, 5]             # racks of the row whose flows hash to the flapping link
+
+planted:
+  fabric_stall: true               # a flapping row leaf uplink; the optic ticket says "Customer impact: none"
+  custody_gap: true                # a pulled drive with no custody handover
+  closed_before_rebuild_min: [20, 90]   # a drive ticket resolved this long before the rebuild completed
+  wrong_bay: true                  # the ticket names one bay; the serial changed in the next one
+
+checks:
+  flap_downs: 5                    # a port with this many linkDowns within flap_window_min is flapping
+  flap_window_min: 15
+  stall_grace_min: 2               # a stall may start or end this far from the flapping window
+  impact_tolerance: 0.1            # a ticket's stated GPU-hours match the measured stall within 10%
+  custody_h: 24                    # a pulled drive handed over within this (HO-5 sets no hour; past it, the drive is missing)

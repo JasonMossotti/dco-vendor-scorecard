@@ -83,6 +83,13 @@ def markdown(f: dict) -> str:
           "", "## Scheduler to contracts", "", "| Step | GPU-hours |", "|---|---|"]
     for r in f["bridge"]["rows"]:
         L.append(f"| {r['label']} | {r['hours']:+,.1f} |" if r["key"] not in ("sched", "contract") else f"| **{r['label']}** | **{r['hours']:,.1f}** |")
+    si = f.get("storage_idle")
+    if si:
+        L += ["", "Beside the bridge, not in either total: GPU-hours idle on storage. The scheduler kept these nodes in service while their "
+              "running jobs waited on storage I/O behind a flapping storage fabric uplink (reports/storage_telemetry.md).", "",
+              "| From | Uplink | Minutes | Racks | Nodes | GPU-hours idle |", "|---|---|---|---|---|---|"]
+        L += [f"| {e['from']} | {e['uplink']} | {e['minutes']} | {', '.join(e['racks'])} | {e['nodes']} | {e['gpu_hours']:,.1f} |" for e in si["episodes"]]
+        L.append(f"| **{len(si['episodes'])} storage stalls** |  |  |  |  | **{si['gpu_hours']:,.1f}** |")
     L += ["", "## By cause", "", "| Cause | Incidents | IT Partner | Landlord | Total | Share | Worst rack |", "|---|---|---|---|---|---|---|"]
     for c in f["causes"]:
         L.append(f"| {c['cause']} | {c['incidents']} | {c['it']:,.1f} | {c['landlord']:,.1f} | {c['total']:,.1f} | {c['share']:.1f}% | "
