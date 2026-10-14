@@ -129,7 +129,7 @@ def test_devices_page_is_published(site):
     html = (site / "devices" / "index.html").read_text(encoding="utf-8")
     assert 'data-tab="devices"' in html and 'id="dev-data"' in html and 'id="loc-data"' in html
     gl = json.loads(re.search(r'<script id="gl-data" type="application/json">(.*?)</script>', html, re.S).group(1).replace("<\\/", "</"))
-    assert len(gl["dev"]) < 20, "the page's own copy of the directory is not scanned for code popups"
+    assert len(gl["dev"]) < 30, "the page's own copy of the directory is not scanned for code popups"
 
 
 def _node(script, *args):

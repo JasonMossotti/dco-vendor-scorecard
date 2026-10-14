@@ -147,6 +147,13 @@ terms:
   - {term: HLI, type: acronym, expansion: High-level interface, text: "A data link from the fire alarm panel to the BMS, used for secondary monitoring."}
   - {term: NMC, type: acronym, expansion: Network management card, text: "The UPS's monitoring card, which sends SNMP traps and answers polls."}
   - {term: SNMP, type: acronym, expansion: Simple Network Management Protocol, text: "A standard protocol for reading equipment status and receiving alarms (traps)."}
+  - {term: TOR, type: acronym, expansion: Telemetry of Record, text: "The Customer's own collection system: the readings contracts are measured against. On the management network it polls every BMC's Redfish service root once a minute.", see: "telemetry/#mgmt-fields"}
+  - {term: HTTP, type: acronym, expansion: Hypertext Transfer Protocol, text: "The web protocol Redfish runs over (HTTPS in practice): a client sends GET to a resource and the BMC answers with a status code and JSON."}
+  - {term: SSH, type: acronym, expansion: Secure Shell, text: "An encrypted remote login; console servers offer SSH to each serial port so a technician can reach a switch console from anywhere."}
+  - {term: NVUE, type: acronym, expansion: NVIDIA User Experience, text: "The command line and API of Cumulus Linux, the operating system on the management switches."}
+  - {term: QSFP28, type: acronym, expansion: Quad Small Form-factor Pluggable 28, text: "The 100 GbE optic or cable port; the SN2201 management switch has four, used here for its two uplinks."}
+  - {term: DGX, type: product, title: "NVIDIA DGX", text: "NVIDIA's own line of AI systems; the DGX SuperPOD reference architecture is NVIDIA's published design for a full cluster, including its management networks."}
+  - {term: DSP0266, type: acronym, expansion: DMTF Redfish Specification, text: "The document number of the Redfish specification, which defines the service root /redfish/v1/ every BMC serves."}
   - {term: RTU, type: acronym, expansion: Remote terminal unit, text: "Modbus RTU is Modbus over a serial line such as RS-485."}
   - {term: PG25, type: acronym, expansion: "Propylene glycol, 25%", text: "The coolant in the racks' liquid loop: water with 25% propylene glycol."}
   - {term: GEN, type: acronym, expansion: Generator, text: "Standby diesel generators; the GEN paralleling bus combines them."}
@@ -197,6 +204,7 @@ terms:
   - {term: MFT, type: acronym, expansion: NVIDIA Firmware Tools, text: "The vendor's command-line tools for its NICs and switches; mlxlink, one of them, prints a port's link state, optic readings, and error counters."}
   - {term: CMIS, type: acronym, expansion: Common Management Interface Specification, text: "The standard memory map an OSFP optic publishes its temperature, voltage, and per-lane transmit and receive power through."}
   - {term: ENTITY-SENSOR-MIB, type: acronym, expansion: Entity sensor MIB (RFC 3433), text: "The standard SNMP MIB for a device's sensors (temperatures, fan speeds, power); the QM9700 switches answer it."}
+  - {term: IF-MIB, type: acronym, expansion: Interfaces group MIB (RFC 2863), text: "The standard SNMP MIB for a device's ports: ifOperStatus says whether each port is up, and the linkDown and linkUp traps report each change as it happens.", see: "telemetry/#mgmt-fields"}
   - {term: ENTITY-MIB, type: acronym, expansion: Entity MIB (RFC 6933), text: "The standard SNMP MIB that lists a device's parts (chassis, fans, power supplies) that ENTITY-SENSOR-MIB readings attach to."}
   - {term: MLNX-OS, type: product, title: "MLNX-OS switch operating system", text: "The operating system on the QM9700 InfiniBand switches; it names ports ib 1/<cage>/<port>."}
   - {term: NVOS, type: product, title: "NVOS switch operating system", text: "The operating system on the Quantum-X800 switches; it streams telemetry over gNMI and names ports sw<cage>p<port>."}
@@ -247,6 +255,8 @@ terms:
   - {term: B200, type: product, title: "B200 GPU", text: "The Blackwell GPU in a GB200 rack; public figures put it at up to 1,200 W. Hall A runs it at that default limit."}
   - {term: B300, type: product, title: "B300 GPU", text: "The Blackwell Ultra GPU in a GB300 rack, up to 1,400 W by public figures. Hall B caps it at 1,200 W to fit the 132 kW rack envelope."}
   - {term: NVL72, type: product, title: "NVL72 rack", text: "A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours."}
+  - {term: SN2201, type: product, title: "Spectrum SN2201 1G management switch", text: "The 48-port 1 GbE management switch; each rack has two (rack-mgmt1 out of band, rack-mgmt2 in band), the switch NVIDIA's GB200 reference architecture uses for the out-of-band network.", see: "telemetry/#management"}
+  - {term: SN5600, type: product, title: "Spectrum SN5600 switch", text: "The Ethernet switch each hall's management aggregation pair runs on; every rack management switch uplinks to both.", see: "telemetry/#management"}
   - {term: QM9700, type: product, title: "Quantum-2 QM9700 InfiniBand switch", text: "The 400 Gb/s (NDR) InfiniBand switch in Hall A's back-end fabric."}
   - {term: Q3400-RA, type: product, title: "Quantum-X800 Q3400-RA InfiniBand switch", text: "The 800 Gb/s (XDR) InfiniBand switch for Hall B and the planned 800 VDC pilot hall (Hall C)."}
   - {term: C175-16, type: product, title: "Caterpillar C175-16 generator", text: "The 3,000 kW diesel standby generator model; the site has 7 (N+1)."}
@@ -351,6 +361,8 @@ families:
      text: "A completed post-incident review.", see: "pir/"}
   - {key: EN-F, label: "EN-F#", pattern: 'EN-F\d', type: record, title: Energy finding, example: EN-F1, see: "energy/",
      text: "A finding on the Energy tab: the Landlord's energy report or the chiller free-cooling log does not reconcile with the meters (Landlord SLA section 22)."}
+  - {key: MP-N, label: "MP-#", pattern: 'MP-\d{1,2}', type: record, title: Management network finding, example: MP-1, see: "telemetry/#management",
+     text: "A finding on the Telemetry tab's management network section: a record that does not reconcile with what the BMCs, management switches, or console servers showed (an outage with no ticket, a check that passed while its BMC was silent, BMCs answering after M4, a console port labelled the wrong way round)."}
   - {key: GH-F, label: "GH-F#", pattern: 'GH-F\d', type: record, title: GPU health finding, example: GH-F1, see: "gpu/",
      text: "A finding on the GPU Health tab: a GPU to replace before it fails, a node returned to service with a row remap pending, or thermal slowdown walked to the party whose side of the cooling demarcation caused it."}
   - {key: FPR, label: "FPR-YYYY-H#", pattern: 'FPR-\d{4}-H[12]', type: record, title: Failure pattern review, example: FPR-2026-H1,
@@ -474,6 +486,12 @@ families:
      text: "An NVLink switch tray by its name: a15-nvsw3 is switch tray 3 of 9 in rack A15. Together the 9 trays join the rack's 72 GPUs into one NVLink domain."}
   - {key: EQ-PSHELF, label: "[rack]_PowerShelf_#", pattern: '[A-C]\d{2}_PowerShelf_\d', type: equipment, title: Power shelf, example: A06_PowerShelf_1,
      text: "A rack power shelf by its Redfish name: A06_PowerShelf_1 is shelf 1 of 8 in rack A06. Shelves turn the rack's AC feeds into DC for the busbar."}
+  - {key: EQ-MGMT, label: "[rack]-mgmt#", pattern: '[a-c]\d{2}-mgmt[12]', type: equipment, title: Rack management switch, example: a07-mgmt1,
+     text: "One of a rack's two 1 GbE management switches: a07-mgmt1 is rack A07's out-of-band switch (every BMC and power shelf controller in the rack), a07-mgmt2 its in-band switch (the NVLink switch trays' eth0 and the trays' host management ports)."}
+  - {key: EQ-AGG, label: "oob-agg-[hall]#", pattern: 'oob-agg-[a-c]\d', type: equipment, title: Management aggregation switch, example: oob-agg-a1,
+     text: "Half of a hall's management aggregation pair: every rack management switch has one uplink to each, so the hall keeps its management network with one down."}
+  - {key: EQ-CON, label: "con-[hall]#", pattern: 'con-[a-c]\d', type: equipment, title: Console server, example: con-a1,
+     text: "A row's serial console server: con-a1 is Hall A row 1. It reaches every management and leaf switch console in the row, and its session log records each session."}
   - {key: EQ-LEAF, label: "leaf-[hall]##-r# port ##", pattern: 'leaf-[a-c]\d{2}-r\d(?: port \d{1,3}|:swp\d{1,3})?', type: equipment,
      title: InfiniBand leaf switch, example: leaf-a07-r1 port 18,
      text: "A leaf switch of the rail-optimized InfiniBand fabric, and optionally one port: leaf-a07-r1 is leaf 7 of Hall A on rail 1. Leaf numbers count rack pairs (leaf 7 serves racks A13 and A14): ports 1 to 18 go to the first rack's trays, 19 to 36 to the second's. UFM writes a port as leaf-a07-r1:swp18."}
@@ -490,6 +508,7 @@ plain:   # capitalised text that is not a code
     - {terms: [GET], why: "The HTTP method a Redfish client uses to read a resource."}
     - {terms: [HELP, TYPE], why: "Keywords of the Prometheus text format: each field's description and its metric type (gauge or counter)."}
     - {terms: [ALARM, LOADED, LOADING, MTN, "OFF", "ON", STARTING, UNLOADED, UNLOADING], why: "Values of the V1C compressor status, set in capitals as Vertiv's points list writes them (MTN: maintenance)."}
+    - {terms: [STRING, INTEGER], why: "SNMP value types, as a client prints a reading (IF-MIB::ifName.5 = STRING: swp5)."}
     - {terms: ["TRUE"], why: "A BACnet boolean value, as a client prints Event_Algorithm_Inhibit."}
     - {terms: [TR], why: "Part of a published iCOM unit status name (TR standby), quoted as Vertiv writes it."}
     - {terms: [NVLINK, RLW, NETIR], why: "Words inside NVIDIA's XID names (NVLINK: RLW Error, NVLINK: NETIR Error); the XID code's popup explains the error."}

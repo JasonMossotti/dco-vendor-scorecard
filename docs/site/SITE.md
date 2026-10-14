@@ -151,6 +151,9 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 | Leak cable | Chemelex (nVent RAYCHEM TraceTek) TT5000 hydrocarbon sensing cable (generator diesel) | 7 circuits (one per fuel tank) |  | Monitored by TTDM-128 |
 | InfiniBand switch | NVIDIA Quantum-2 QM9700 NDR InfiniBand switch | set in fabric design |  | UFM; SNMP; gNMI |
 | InfiniBand switch | NVIDIA Quantum-X800 Q3400-RA XDR InfiniBand switch | set in fabric design |  | UFM; gNMI |
+| Management switch | NVIDIA Spectrum SN2201 1G management switch | 128 |  | SNMPv3 (IF-MIB, ENTITY-SENSOR-MIB, traps); Serial console; Cumulus Linux NVUE |
+| Management aggregation switch | NVIDIA Spectrum SN5600 (management aggregation) | 4 |  | SNMPv3 (IF-MIB, ENTITY-SENSOR-MIB, traps); Serial console |
+| Console server | 48-port serial console server (to be selected) | 8 |  | SNMPv3; SSH to each serial port; Session log export |
 
 Busway counts are A and B tracks per row segment. Every count comes from the site model, so a change to `site/site.yaml` updates this table and the drawings together.
 
@@ -206,6 +209,7 @@ The Landlord runs EcoStruxure day to day. Under the Interface Agreement, the Cus
 | Notifier fire alarm control panel | Fire alarm system of record (life safety) | Caprock Critical Facilities, LLC |
 | NVIDIA UFM | InfiniBand fabric management | Ridgeline Site Services, LLC |
 | NVIDIA NMX | NVLink domain management (per rack) | Ridgeline Site Services, LLC |
+| Management network (out of band and in band) | BMC, switch-tray, and switch management; console servers | Customer |
 | Customer Telemetry of Record collector | Independent, read-only aggregation of every source; basis for SLA measurement | Customer |
 
 | Device class | Protocol | Day-to-day system | Customer tap |
@@ -220,6 +224,8 @@ The Landlord runs EcoStruxure day to day. Under the Interface Agreement, the Cus
 | Leak detection | Modbus TCP (via gateway) | EcoStruxure Building Operation | direct (read-only) |
 | Aspirating smoke | Modbus HLI | EcoStruxure Building Operation | BMS feed (fire panel is the system of record) |
 | Compute racks | Redfish | Customer Telemetry of Record collector | direct |
+| BMCs (compute trays, NVLink switch trays, power shelves) | Redfish service root, polled each minute | Customer Telemetry of Record collector | direct (over the OOB network) |
+| Management switches and console servers | SNMPv3 and traps; console session logs | Management network (out of band and in band) | direct (read-only SNMPv3 user) |
 | InfiniBand fabric | UFM REST / events | NVIDIA UFM | UFM event export |
 
 ## Engineering assumptions
@@ -260,3 +266,6 @@ Product facts in `site/site.yaml` were checked against these manufacturer and tr
 - Chemelex (nVent RAYCHEM TraceTek) TT5000 hydrocarbon sensing cable (generator diesel): <https://go.nvent.com/rs/760-EGW-100/images/RaychemTraceTek-AR-H53147-SensingAppGuide-EN.pdf>
 - NVIDIA Quantum-2 QM9700 NDR InfiniBand switch: <https://networking-docs.nvidia.com/cablevalidationtool/2.0.1/installation-notes>
 - NVIDIA Quantum-X800 Q3400-RA XDR InfiniBand switch: <https://networking-docs.nvidia.com/cablevalidationtool/2.0.1/installation-notes>
+- NVIDIA Spectrum SN2201 1G management switch: <https://docs.nvidia.com/networking/display/sn2201switchesum/introduction>
+- NVIDIA Spectrum SN2201 1G management switch: <https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html>
+- NVIDIA Spectrum SN5600 (management aggregation): <https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html>

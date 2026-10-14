@@ -101,6 +101,7 @@ def bundle_members(root: Path) -> list[Path]:
     # The code lookup: the glossary and the generated contracts it points into.
     files += [root / "config" / "glossary.yaml", root / "config" / "xid_catalog.yaml", root / "config" / "telemetry.yaml"] + sorted((root / "docs" / "sla").glob("*.md"))
     files += [root / "config" / "security.yaml"]   # the security layer for a generated month
+    files += [root / "config" / "telemetry_mgmt.yaml"]   # the management switches' port maps (the device directory)
     for ds in ("sample", "latest", "security"):
         d = root / "data" / ds
         if d.exists():

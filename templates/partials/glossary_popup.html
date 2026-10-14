@@ -110,7 +110,7 @@ a.tk-link:hover { background:#e8f0fc; }
     linkTickets(root);
     if (root.nodeType === 1 && root.closest(SKIP)) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode: n => !/[A-Z]|[a-c]\d\d-/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+      acceptNode: n => !/[A-Z]|[a-c]\d\d-|oob-agg-|con-[a-c]\d/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
     });
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);

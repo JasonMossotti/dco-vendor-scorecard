@@ -31,7 +31,7 @@ def hours(state, s):
 def test_every_agreement_holds(built):
     sh, data = built
     checks = SH.agreements(sh, data)
-    assert len(checks) == 8
+    assert len(checks) == 9
     assert all(c.checked for c in checks), [c.name for c in checks if not c.checked]
     assert [m for c in checks for m in c.misses] == []
 

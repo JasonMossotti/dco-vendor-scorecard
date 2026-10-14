@@ -263,6 +263,27 @@ products:
     interfaces: ["UFM", "gNMI"]
     sources:
       - "https://networking-docs.nvidia.com/cablevalidationtool/2.0.1/installation-notes"
+  sn2201:
+    category: mgmt_switch
+    manufacturer: "NVIDIA"
+    model: "Spectrum SN2201 1G management switch"
+    ports: "48 x 1GBASE-T, 4 x 100 GbE QSFP28"
+    interfaces: ["SNMPv3 (IF-MIB, ENTITY-SENSOR-MIB, traps)", "Serial console", "Cumulus Linux NVUE"]
+    sources:
+      - "https://docs.nvidia.com/networking/display/sn2201switchesum/introduction"
+      - "https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html"
+  sn5600:
+    category: mgmt_aggregation
+    manufacturer: "NVIDIA"
+    model: "Spectrum SN5600 (management aggregation)"
+    interfaces: ["SNMPv3 (IF-MIB, ENTITY-SENSOR-MIB, traps)", "Serial console"]
+    sources:
+      - "https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html"
+  console_48:
+    category: console_server
+    manufacturer: "To be selected"
+    model: "48-port serial console server"
+    interfaces: ["SNMPv3", "SSH to each serial port", "Session log export"]
 
 # -----------------------------------------------------------------------------
 # Halls. Racks are numbered A01..A32 in row order; each row holds 8 racks and
@@ -308,6 +329,13 @@ halls:
     fire_life_safety:
       vesda_detectors: 2              # hall + electrical room
       leak_circuits: 8                # one per row manifold, one under each CDU
+    management:                       # basis: assumption (counts and wiring; see config/telemetry_mgmt.yaml)
+      rack_switch_product: sn2201
+      rack_switches: 2                # <rack>-mgmt1 out of band (BMCs), <rack>-mgmt2 in band (NVLink switch eth0, host management)
+      aggregation_product: sn5600
+      aggregation_count: 2            # N+1: every rack switch uplinks to both
+      console_product: console_48
+      console_per_row: 1
   - id: "HALL-B"
     letter: "B"
     name: "Hall B"
@@ -345,6 +373,13 @@ halls:
     fire_life_safety:
       vesda_detectors: 2
       leak_circuits: 8
+    management:                       # basis: assumption (counts and wiring; see config/telemetry_mgmt.yaml)
+      rack_switch_product: sn2201
+      rack_switches: 2                # <rack>-mgmt1 out of band (BMCs), <rack>-mgmt2 in band (NVLink switch eth0, host management)
+      aggregation_product: sn5600
+      aggregation_count: 2            # N+1: every rack switch uplinks to both
+      console_product: console_48
+      console_per_row: 1
   - id: "HALL-C"
     letter: "C"
     name: "Hall C (800 VDC pilot)"
@@ -433,6 +468,10 @@ monitoring:
       name: "NVIDIA NMX"
       role: "NVLink domain management (per rack)"
       operator: it_partner
+    - id: "OOB"
+      name: "Management network (out of band and in band)"
+      role: "BMC, switch-tray, and switch management; console servers"
+      operator: customer
     - id: "TOR"
       name: "Customer Telemetry of Record collector"
       role: "Independent, read-only aggregation of every source; basis for SLA measurement"
@@ -448,6 +487,8 @@ monitoring:
     - {class: "Leak detection", products: [tracetek_ttdm128], protocol: "Modbus TCP (via gateway)", system: "EBO", customer_tap: "direct (read-only)"}
     - {class: "Aspirating smoke", products: [vesda_e_vep], protocol: "Modbus HLI", system: "EBO", customer_tap: "BMS feed (fire panel is the system of record)"}
     - {class: "Compute racks", products: [gb200_nvl72, gb300_nvl72], protocol: "Redfish", system: "TOR", customer_tap: "direct"}
+    - {class: "BMCs (compute trays, NVLink switch trays, power shelves)", products: [gb200_nvl72, gb300_nvl72], protocol: "Redfish service root, polled each minute", system: "TOR", customer_tap: "direct (over the OOB network)"}
+    - {class: "Management switches and console servers", products: [sn2201, sn5600, console_48], protocol: "SNMPv3 and traps; console session logs", system: "OOB", customer_tap: "direct (read-only SNMPv3 user)"}
     - {class: "InfiniBand fabric", products: [quantum2_qm9700, quantum_x800_q3400], protocol: "UFM REST / events", system: "UFM", customer_tap: "UFM event export"}
 
 # -----------------------------------------------------------------------------

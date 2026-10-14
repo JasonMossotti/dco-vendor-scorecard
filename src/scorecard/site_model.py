@@ -88,6 +88,8 @@ def validate_site(site: dict[str, Any]) -> None:
             need_product(p.get(k), f"{hid}.power.{k}")
         for k in ("cdu_product", "thermal_wall_product", "electrical_room_crah_product"):
             need_product(c.get(k), f"{hid}.cooling.{k}")
+        for k in ("rack_switch_product", "aggregation_product", "console_product"):
+            need_product(hall.get("management", {}).get(k), f"{hid}.management.{k}")
         if p["architecture"] == "distributed_redundant":
             groups = p["groups"]
             if sum(g["racks"] for g in groups) != rack_count(hall):
