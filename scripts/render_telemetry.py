@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Render the Telemetry tab (site health, GPUs, CDUs, power, network, mechanical, and the management network) and its
-reports: reports/gpu_telemetry.md, cdu_telemetry.md, power_telemetry.md, network_telemetry.md, mechanical_telemetry.md,
-management_telemetry.md, and site_health.md.
+"""Render the Telemetry tab (site health, GPUs, CDUs, power, network, mechanical, the management network, and storage)
+and its reports: reports/gpu_telemetry.md, cdu_telemetry.md, power_telemetry.md, network_telemetry.md,
+mechanical_telemetry.md, management_telemetry.md, storage_telemetry.md, and site_health.md.
 
 Reads the committed GPU telemetry (data/telemetry/gpu/), the per-GPU hourly tier (built into
 build/telemetry/gpu_hourly/ by scripts/generate_telemetry.py if missing), and the records it must agree
@@ -9,7 +9,7 @@ with (data/gpu_health/, data/sample/). Synthetic data in the published format of
 exporter; no vendor's internal tooling is implied.
 
 Usage:
-    python scripts/render_telemetry.py                    # write the seven reports
+    python scripts/render_telemetry.py                    # write the eight reports
     python scripts/render_telemetry.py --check            # exit 1 if a report is out of date
     python scripts/render_telemetry.py --robustness 60    # every agreement on 60 generated months
     python scripts/render_telemetry.py --robustness 60 --jobs 4 --resume build/robustness/telemetry
@@ -46,6 +46,7 @@ from scorecard import telemetry_mechanical as TMM  # noqa: E402
 from scorecard import telemetry_mgmt as TG  # noqa: E402
 from scorecard import telemetry_network as TN  # noqa: E402
 from scorecard import telemetry_power as TP  # noqa: E402
+from scorecard import telemetry_storage as TST  # noqa: E402
 from scorecard import xid as X  # noqa: E402
 from scorecard.synthetic import gpu_health as G  # noqa: E402
 from scorecard.synthetic import telemetry as T  # noqa: E402
@@ -54,6 +55,7 @@ from scorecard.synthetic import telemetry_mechanical as TMS  # noqa: E402
 from scorecard.synthetic import telemetry_mgmt as TGS  # noqa: E402
 from scorecard.synthetic import telemetry_network as TNS  # noqa: E402
 from scorecard.synthetic import telemetry_power as TPS  # noqa: E402
+from scorecard.synthetic import telemetry_storage as TSS  # noqa: E402
 
 DATA = ROOT / "data" / "telemetry" / "gpu"
 HEALTH = ROOT / "data" / "gpu_health"
@@ -165,6 +167,7 @@ def prepare(t: TM.Telemetry | None = None) -> dict:
         "network": prepare_network(),
         "mechanical": prepare_mechanical(),
         "mgmt": prepare_mgmt(),
+        "storage": prepare_storage(),
         "site": prepare_site(),
     }
 
@@ -1248,6 +1251,194 @@ def mgmt_markdown(f: dict) -> str:
     return "\n".join(L) + "\n"
 
 
+# --------------------------------------------------------------------------- storage and its fabric
+DATA_STORAGE = ROOT / "data" / "telemetry" / "storage"
+OUT_STORAGE = ROOT / "reports" / "storage_telemetry.md"
+ROLE_NAME = {"row_leaf": "Row leaf", "storage_leaf": "Storage leaf", "spine": "Spine"}
+
+
+def load_storage() -> TST.StorageData:
+    return TST.load(DATA_STORAGE, SAMPLE, DATA_MGMT)
+
+
+def prepare_storage(t: TST.StorageData | None = None) -> dict:
+    cfg = TSS.load_config()
+    t = t or load_storage()
+    checks = TST.agreements(t, cfg)
+    fs = TST.findings(t, cfg)
+    events = TST.events(t, cfg, fs)
+    devs = t.manifest["devices"]
+    H = t.H
+    num = lambda v: float(v)   # noqa: E731
+    by_cl: dict[str, list[dict]] = {}
+    for r in t.cluster_hourly:
+        by_cl.setdefault(r["cluster"], []).append(r)
+    by_node: dict[str, list[dict]] = {}
+    for r in t.node_hourly:
+        by_node.setdefault(r["node"], []).append(r)
+    swaps: dict[str, int] = {}
+    for e in t.drive_events:
+        if e["event"] == "Removed":
+            swaps[e["node"]] = swaps.get(e["node"], 0) + 1
+    stalls = TST.stall_hours(t, cfg)
+    tk_loc: dict[str, list[str]] = {}
+    for k in t.tickets:
+        tk_loc.setdefault(k["configuration_item"], []).append(k["number"])
+    clusters = {}
+    for name, cl in sorted(t.manifest["clusters"].items()):
+        rows = by_cl[name]
+        cap = sum(devs[n]["drives"] for n in cl["nodes"]) * t.manifest["drive"]["capacity_tb"]
+        rd = [round(num(r["read_gb"]) / 3600, 2) for r in rows]
+        wr = [round(num(r["write_gb"]) / 3600, 2) for r in rows]
+        prot = [int(r["protection_min"]) for r in rows]
+        idle = sum(x["gpu_hours"] for x in stalls if x["hall"] == cl["hall"])
+        clusters[name] = {"hall": cl["hall"], "hall_name": HALL_NAME.get(cl["hall"], cl["hall"]), "nodes": cl["nodes"], "racks": cl["racks"],
+                          "ec": cl["erasure_coding"], "tolerates": cl["tolerates"], "spines": cl["spines"], "storage_leaves": cl["storage_leaves"],
+                          "row_leaves": [x for k in sorted(cl["row_leaves"], key=int) for x in cl["row_leaves"][k]],
+                          "drives": sum(devs[n]["drives"] for n in cl["nodes"]), "capacity_tb": round(cap, 1),
+                          "used_tb": [round(num(r["used_tb"]), 1) for r in rows], "read_gbps": rd, "write_gbps": wr, "protection": prot,
+                          "nodes_online": [int(r["nodes_online"]) for r in rows], "read_avg": round(sum(rd) / len(rd), 1), "read_peak": max(rd),
+                          "prot_min": min(prot), "hours_below_full": sum(1 for x in prot if x < cl["tolerates"]), "idle_gpu_hours": round(idle, 1)}
+    nodes = []
+    for n in t.devices("node"):
+        x, rows = devs[n], by_node[n]
+        last = rows[-1]
+        nodes.append({"id": n, "hall": x["hall"], "cluster": x["cluster"], "rack": x["rack"], "drives": x["drives"], "ports": x["ports"],
+                      "online_h": round(sum(int(r["online_min"]) for r in rows) / 60, 1), "used_tb": round(num(last["used_tb"]), 1),
+                      "ok": int(last["drives_ok"]), "failed": int(last["drives_failed"]), "absent": int(last["drives_absent"]),
+                      "rebuilding": int(last["drives_rebuilding"]), "swaps": swaps.get(n, 0),
+                      "read_tb": round(sum(num(r["read_gb"]) for r in rows) / 1000, 1)})
+    up_h: dict[tuple[str, str], float] = {}
+    err: dict[str, int] = {}
+    for r in t.port_hourly:
+        k = (r["switch"], r["ifName"])
+        up_h[k] = up_h.get(k, 0) + int(r["up_s"]) / 3600
+        err[r["switch"]] = err.get(r["switch"], 0) + int(r["in_errors"])
+    downs: dict[str, int] = {}
+    for e in t.traps:
+        if e["trap"] == "linkDown":
+            downs[e["switch"]] = downs.get(e["switch"], 0) + 1
+    switches = []
+    for sw in t.devices("row_leaf", "storage_leaf", "spine"):
+        x = devs[sw]
+        kinds: dict[str, int] = {}
+        for p in x["ports"].values():
+            kinds[p[0]] = kinds.get(p[0], 0) + 1
+        ups = {i: round(up_h.get((sw, i), H), 1) for i, p in x["ports"].items() if p[0] == "uplink"}
+        switches.append({"id": sw, "role": x["family"], "hall": x["hall"], "row": x["row"], "pair": x.get("pair"), "kinds": kinds,
+                         "uplinks": ups, "downs": downs.get(sw, 0), "errors": err.get(sw, 0), "not_in_service": len(x["down_at_start"]),
+                         "peers": sorted({p[1] for p in x["ports"].values() if p[0] in ("uplink", "downlink")})})
+    episodes = [{"switch": x["switch"], "ifName": x["ifName"], "hall": x["hall"], "row": x["row"], "from": t.iso(x["a"]), "to": t.iso(x["b"]),
+                 "minutes": x["b"] - x["a"], "downs": x["downs"], "racks": x["racks"], "nodes": x["nodes"], "gpu_hours": x["gpu_hours"],
+                 "refs": [n for n in tk_loc.get(f"{x['switch']} {x['ifName']}", [])
+                          if x["a"] - 60 <= t.m_of(next(k for k in t.tickets if k["number"] == n)["opened_at"]) <= x["b"] + 120]}
+                for x in sorted(stalls, key=lambda x: x["a"])]
+    return {"framing": cfg["framing"], "sources": cfg["sources"], "collection": cfg["collection"], "fields": cfg["fields"],
+            "ports": cfg["ports"], "checks": cfg["checks"], "drive": t.manifest["drive"], "window": t.manifest["window"], "hours": H,
+            "clusters": clusters, "nodes": nodes, "switches": switches, "episodes": episodes,
+            "idle_gpu_hours": round(sum(x["gpu_hours"] for x in stalls), 1),
+            "tickets": [{k: x.get(k) for k in ("number", "category", "configuration_item", "opened_at", "resolved_at", "state", "customer_impact",
+                                                "short_description")} for x in t.tickets],
+            "custody": t.custody, "events": events, "findings": fs,
+            "agreements": [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks],
+            "misses": [m for c in checks for m in c.misses][:20]}
+
+
+def storage_json(t: TST.StorageData, dev: str) -> dict:
+    """One storage node or fabric switch by hour (what its view charts), with its traps and, for a node, its bays."""
+    devs = t.manifest["devices"]
+    x = devs[dev]
+    out: dict = {"id": dev, "start": t.manifest["window"]["start"], "hours": t.H}
+    num = lambda v: float(v) if "." in v else int(v)    # noqa: E731
+    if x["family"] == "node":
+        rows = [r for r in t.node_hourly if r["node"] == dev]
+        out["hourly"] = {c: [num(r[c]) for r in rows] for c in ("online_min", "read_gb", "write_gb", "used_tb", "drives_ok", "drives_failed",
+                                                                 "drives_absent", "drives_rebuilding")}
+        ev: dict[str, list[dict]] = {}
+        for e in t.drive_events:
+            if e["node"] == dev:
+                ev.setdefault(e["bay"], []).append({k: e[k] for k in ("timestamp", "event", "serial", "health", "state", "indicator", "percent")})
+        out["bays"] = [{"bay": r["bay"], "serial_start": r["serial_start"], "serial_end": r["serial_end"], "events": ev.get(r["bay"], [])}
+                       for r in t.inventory if r["node"] == dev]
+        ports = {tuple(p) for p in x["ports"]}
+    else:
+        ports = {(dev, i) for i, p in x["ports"].items() if p[0] in ("uplink", "node")}
+        if x["family"] == "row_leaf":
+            rows = [r for r in t.leaf_hourly if r["switch"] == dev]
+            out["trays"] = {c: [int(r[c]) for r in rows] for c in ("tray_ports", "tray_ports_up", "tray_port_min", "in_octets", "out_octets")}
+        out["traps"] = [e for e in t.traps if e["switch"] == dev]
+    pr: dict[str, dict[str, list[int]]] = {}
+    for r in t.port_hourly:
+        if (r["switch"], r["ifName"]) in ports:
+            d = pr.setdefault(f"{r['switch']} {r['ifName']}", {"up_s": [], "in_octets": [], "out_octets": [], "in_errors": []})
+            for c in d:
+                d[c].append(int(r[c]))
+    out["ports"] = pr
+    return out
+
+
+def storage_markdown(f: dict) -> str:
+    w = f["window"]
+    L = ["# Storage and storage fabric telemetry (Site AUS-1, synthetic)", "",
+         f"{f['framing']} Window {day(w['start'])} to {day(w['end'])}: every storage node's drive bays read over Redfish once a minute, every "
+         "switch of the storage and in-band Ethernet fabric read over SNMPv3 with its traps, the clients' I/O stalls from the Customer's job "
+         "telemetry, and the IT Partner's drive and optic tickets with the custody log. All names and readings are fictional; no vendor's "
+         "storage product or internal tooling is implied.", "",
+         "Generator: scripts/generate_telemetry.py, scripts/render_telemetry.py", "",
+         "A storage fault idles GPUs that are healthy: the scheduler keeps the nodes in service while their jobs wait on I/O, so neither the "
+         "scheduler's availability nor CSL-01 counts the time. This report measures it from the clients' side and names the owner.", "",
+         "## Clusters", "", "| Cluster | Hall | Nodes | Drives | Raw capacity | Used at month end | Reads, average | Lowest protection | "
+         "Hours below full protection | GPU-hours idle on storage |", "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for k, c in f["clusters"].items():
+        L.append(f"| {k} | {c['hall_name']} | {len(c['nodes'])} | {c['drives']} | {c['capacity_tb']:,.0f} TB | {c['used_tb'][-1]:,.0f} TB | "
+                 f"{c['read_avg']:,.1f} GB/s | {c['prot_min']} of {c['tolerates']} | {c['hours_below_full']} | {c['idle_gpu_hours']:,.1f} |")
+    L += ["", "## Client stalls", "", "Flapping uplinks and the running jobs that waited on storage behind them.", "",
+          "| From | Minutes | Uplink | Downs | Racks | Nodes | GPU-hours idle | Records |", "|---|---:|---|---:|---|---:|---:|---|"]
+    for e in f["episodes"]:
+        L.append(f"| {e['from']} | {e['minutes']} | {e['switch']} {e['ifName']} | {e['downs']} | {', '.join(e['racks'])} | {e['nodes']} | "
+                 f"{e['gpu_hours']:.1f} | {', '.join(e['refs'])} |")
+    if not f["episodes"]:
+        L.append("| none |  |  |  |  |  |  |  |")
+    L += ["", "## Storage nodes", "", "| Node | Cluster | Rack | Online h | Drives OK at end | Failed | Missing | Rebuilding | Swaps | Used TB |",
+          "|---|---|---|---:|---:|---:|---:|---:|---:|---:|"]
+    for n in f["nodes"]:
+        L.append(f"| {n['id']} | {n['cluster']} | {n['rack']} | {n['online_h']} | {n['ok']} | {n['failed']} | {n['absent']} | {n['rebuilding']} | "
+                 f"{n['swaps']} | {n['used_tb']:,.1f} |")
+    L += ["", "## Fabric switches", "", "| Switch | Role | Hall | Ports (trays, nodes, uplinks, downlinks) | Uplinks up (h) | linkDown traps | Input errors |",
+          "|---|---|---|---|---|---:|---:|"]
+    for s in f["switches"]:
+        k = s["kinds"]
+        ups = ", ".join(f"{i} {h}" for i, h in s["uplinks"].items())
+        L.append(f"| {s['id']} | {ROLE_NAME[s['role']]} | {HALL_NAME.get(s['hall'], s['hall'])} | {k.get('tray', 0)}, {k.get('node', 0)}, "
+                 f"{k.get('uplink', 0)}, {k.get('downlink', 0)} | {ups} | {s['downs']} | {s['errors']:,} |")
+    L += ["", "## Findings", "", "Records that do not reconcile; each is a case to look into, not a claim that anyone misled.", ""]
+    for x in f["findings"]:
+        L += [f"### {x['id']}: {x['title']}", "", x["summary"], "", f"Owner: {x['owner']}. Contract: {x['contract']}.", ""]
+        L += [f"- {ln}" for ln in x["lines"]] + [""]
+    if not f["findings"]:
+        L += ["None.", ""]
+    L += ["## Events", "", "| When | Device | What | Records |", "|---|---|---|---|"]
+    for e in f["events"]:
+        refs = list(e["refs"]) + ([e["finding"]] if e.get("finding") else [])
+        L.append(f"| {e['t']} | {e['device']} | {e['text']} | {', '.join(refs)} |")
+    L += ["", "## Tickets", "", "| Number | Category | Item | Opened | Resolved | Customer impact |", "|---|---|---|---|---|---|"]
+    for k in f["tickets"]:
+        L.append(f"| {k['number']} | {k['category']} | {k['configuration_item']} | {k['opened_at']} | {k['resolved_at'] or 'open'} | {k['customer_impact']} |")
+    L += ["", "## Chain of custody", "", "| Drive | From | Ticket | Handed to the Security Partner |", "|---|---|---|---|"]
+    for c in f["custody"]:
+        L.append(f"| {c['drive_serial']} | {c['node']} {c['bay']} | {c['ticket']} | {c['handed_over_at']} |")
+    L += ["", "## What is read", "", "| Field | Source | Unit | Meaning |", "|---|---|---|---|"]
+    for x in f["fields"]:
+        L.append(f"| `{x['name']}` | {x['source']} | {x['unit']} | {x['help']} |")
+    L += ["", "## Agreement with the records", "", "| Check | Agrees |", "|---|---:|"]
+    for a in f["agreements"]:
+        L.append(f"| {a['title']} | {a['checked'] - a['misses']:,} of {a['checked']:,} |")
+    if f["misses"]:
+        L += ["", "Disagreements:", ""] + [f"- {m}" for m in f["misses"]]
+    L += ["", "## Sources", ""] + [f"- {s['name']}: {s['url']} (checked {s['checked']})" for s in f["sources"]]
+    return "\n".join(L) + "\n"
+
+
 # --------------------------------------------------------------------------- site health
 OUT_SITE = ROOT / "reports" / "site_health.md"
 
@@ -1394,6 +1585,12 @@ def write_site(out: Path) -> None:
     for r in sorted({x["rack"] for x in gt.manifest["devices"].values() if x["family"] == "bmc"}):
         (data / "mgmt" / f"{r}.json").write_text(json.dumps(mgmt_json(gt, r), separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
     shutil.copytree(DATA_MGMT / "windows", data / "mgmt" / "windows")
+    st = load_storage()
+    if (data / "storage").exists():
+        shutil.rmtree(data / "storage")
+    (data / "storage").mkdir(parents=True)
+    for d in st.devices("node", "row_leaf", "storage_leaf", "spine"):
+        (data / "storage" / f"{d}.json").write_text(json.dumps(storage_json(st, d), separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
 
 
 def markdown(f: dict) -> str:
@@ -1432,7 +1629,7 @@ def markdown(f: dict) -> str:
 
 
 def robustness_month(k: int, keep: Path | None = None) -> dict:
-    """Every GPU, CDU, power, network, mechanical, management, and site health agreement on generated month k (its own dataset, GPU Health layer,
+    """Every GPU, CDU, power, network, mechanical, management, storage, and site health agreement on generated month k (its own dataset, GPU Health layer,
     telemetry, and energy meters, in a temporary folder, or in keep to look at afterwards)."""
     import contextlib
     from scorecard.sla_model import load_sla
@@ -1442,7 +1639,7 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
     syn = yaml.safe_load((ROOT / "config" / "synthetic.yaml").read_text(encoding="utf-8"))
     from scorecard import devices as DV
     cfg, hcfg, ccfg, ecfg, pcfg = T.load_config(), G.load_config(), TCS.load_config(), energy_config(), TPS.load_config()
-    ncfg, mcfg, gcfg = TNS.load_config(), TMS.load_config(), TGS.load_config()
+    ncfg, mcfg, gcfg, scfg = TNS.load_config(), TMS.load_config(), TGS.load_config(), TSS.load_config()
     with (contextlib.nullcontext(str(keep)) if keep else tempfile.TemporaryDirectory()) as tmp:
         d = Path(tmp)
         write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
@@ -1474,7 +1671,12 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         gt = TG.load(d / "mgmt", d)
         gchecks, gfs = TG.agreements(gt, gcfg), TG.findings(gt, gcfg)
         gscore = TG.score(gfs, json.loads((d / "mgmt" / "answer_key.json").read_text(encoding="utf-8")))
-        sh, shd = SH.build(SH.Dirs(d / "telemetry", d / "cdu", d / "power", d / "network", d / "mechanical", d, d / "mgmt"))
+        sg = TSS.StorageTelemetry(d, 2000 + k, d / "mgmt", scfg)
+        TSS.write_storage(sg, sg.run(), d / "storage")
+        stt = TST.load(d / "storage", d, d / "mgmt")
+        stchecks, stfs = TST.agreements(stt, scfg), TST.findings(stt, scfg)
+        stscore = TST.score(stfs, json.loads((d / "storage" / "answer_key.json").read_text(encoding="utf-8")))
+        sh, shd = SH.build(SH.Dirs(d / "telemetry", d / "cdu", d / "power", d / "network", d / "mechanical", d, d / "mgmt", d / "storage"))
         schecks = SH.agreements(sh, shd)
     conflicts = [f"records disagree with each other: {pub.conflicts[:3]}"] * bool(pub.conflicts) \
         + [f"CDU records disagree with each other: {layer.conflicts[:3]}"] * bool(layer.conflicts) \
@@ -1483,7 +1685,8 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         + [f"mechanical records disagree with each other: {mech.conflicts[:3]}"] * bool(mech.conflicts)
     pack = lambda cs: {c.name: [c.checked - len(c.misses), c.checked, c.misses[:3]] for c in cs}      # noqa: E731
     return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "network": pack(nchecks), "mechanical": pack(mchecks),
-            "mgmt": pack(gchecks), "mgmt_findings": gscore, "site": pack(schecks), "conflicts": conflicts}
+            "mgmt": pack(gchecks), "mgmt_findings": gscore, "storage": pack(stchecks), "storage_findings": stscore, "site": pack(schecks),
+            "conflicts": conflicts}
 
 
 def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
@@ -1516,7 +1719,7 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
     bad = 0
     ok = True
     for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("network", "Network", 14),
-                         ("mechanical", "Mechanical", 12), ("mgmt", "Management", 12), ("site", "Site health", 12)):
+                         ("mechanical", "Mechanical", 12), ("mgmt", "Management", 12), ("storage", "Storage", 12), ("site", "Site health", 12)):
         tot: dict[str, list[int]] = {}
         for k in range(n):
             if fam not in done[k]:
@@ -1532,12 +1735,13 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
         for name, (a, b) in tot.items():
             print(f"  {name:<{w}} {a:,}/{b:,}")
         ok = ok and all(a == b for a, b in tot.values())
-    sc = {"planted": 0, "found": 0, "false_positives": 0}
-    for k in range(n):
-        for key in sc:
-            sc[key] += done[k].get("mgmt_findings", {}).get(key, 0)
-    print(f"Management findings on {n} generated months: {sc['found']} of {sc['planted']} planted found, {sc['false_positives']} false positives")
-    ok = ok and sc["found"] == sc["planted"] and sc["false_positives"] == 0
+    for fam, title in (("mgmt_findings", "Management"), ("storage_findings", "Storage")):
+        sc = {"planted": 0, "found": 0, "false_positives": 0}
+        for k in range(n):
+            for key in sc:
+                sc[key] += done[k].get(fam, {}).get(key, 0)
+        print(f"{title} findings on {n} generated months: {sc['found']} of {sc['planted']} planted found, {sc['false_positives']} false positives")
+        ok = ok and sc["found"] == sc["planted"] and sc["false_positives"] == 0
     for k in range(n):
         for c in done[k]["conflicts"]:
             bad += 1
@@ -1556,7 +1760,8 @@ def main() -> int:
         return robustness(args.robustness, args.jobs, args.resume)
     f = prepare()
     texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"]), OUT_NET: network_markdown(f["network"]),
-             OUT_MECH: mechanical_markdown(f["mechanical"]), OUT_MGMT: mgmt_markdown(f["mgmt"]), OUT_SITE: site_markdown(f["site"])}
+             OUT_MECH: mechanical_markdown(f["mechanical"]), OUT_MGMT: mgmt_markdown(f["mgmt"]), OUT_STORAGE: storage_markdown(f["storage"]),
+             OUT_SITE: site_markdown(f["site"])}
     if args.check:
         stale = [p for p, text in texts.items() if not p.exists() or p.read_text(encoding="utf-8") != text]
         for p in stale:
@@ -1566,11 +1771,14 @@ def main() -> int:
         p.write_text(text, encoding="utf-8", newline="\n")
     for name, a in (("GPU", f["agreements"]), ("CDU", f["cdu"]["agreements"]), ("Power", f["power"]["agreements"]),
                     ("Network", f["network"]["agreements"]), ("Mechanical", f["mechanical"]["agreements"]),
-                    ("Management", f["mgmt"]["agreements"]), ("Site health", f["site"]["agreements"])):
+                    ("Management", f["mgmt"]["agreements"]), ("Storage", f["storage"]["agreements"]), ("Site health", f["site"]["agreements"])):
         ok = sum(x["checked"] - x["misses"] for x in a)
         print(f"{name}: {len(a)} agreements, {ok:,} of {sum(x['checked'] for x in a):,} cases agree")
     sc = TG.score(f["mgmt"]["findings"], json.loads((DATA_MGMT / "answer_key.json").read_text(encoding="utf-8")))
     print(f"Management findings: {len(f['mgmt']['findings'])}, {sc['found']} of {sc['planted']} planted, {sc['false_positives']} false positives")
+    sc = TST.score(f["storage"]["findings"], json.loads((DATA_STORAGE / "answer_key.json").read_text(encoding="utf-8")))
+    print(f"Storage findings: {len(f['storage']['findings'])}, {sc['found']} of {sc['planted']} planted, {sc['false_positives']} false positives; "
+          f"{f['storage']['idle_gpu_hours']:,.1f} GPU-hours idle on storage")
     print("Wrote " + ", ".join(str(p.relative_to(ROOT)) for p in texts))
     return 0
 

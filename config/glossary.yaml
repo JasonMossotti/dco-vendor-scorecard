@@ -152,6 +152,10 @@ terms:
   - {term: SSH, type: acronym, expansion: Secure Shell, text: "An encrypted remote login; console servers offer SSH to each serial port so a technician can reach a switch console from anywhere."}
   - {term: NVUE, type: acronym, expansion: NVIDIA User Experience, text: "The command line and API of Cumulus Linux, the operating system on the management switches."}
   - {term: QSFP28, type: acronym, expansion: Quad Small Form-factor Pluggable 28, text: "The 100 GbE optic or cable port; the SN2201 management switch has four, used here for its two uplinks."}
+  - {term: SSD, type: acronym, expansion: Solid-state drive, text: "A drive built on flash memory. Every storage node holds 24 NVMe SSDs of 30.72 TB."}
+  - {term: LED, type: acronym, expansion: Light-emitting diode, text: "The drive bay's status light; Redfish StatusIndicator reports what it shows (Fail, Rebuild, PredictiveFailureAnalysis), so a technician pulls the right drive."}
+  - {term: DPU, type: acronym, expansion: Data processing unit, text: "A network card with its own processors. Each compute tray's BlueField-3 DPU carries its two 200 GbE storage ports, one to each leaf of its row's storage leaf pair.", see: "telemetry/#storage"}
+  - {term: ECMP, type: acronym, expansion: Equal-cost multipath, text: "Spreading flows across every uplink of equal cost. Each storage fabric leaf has four uplinks; one down is carried by the other three, but a link that flaps re-hashes the flows through it again and again.", see: "telemetry/#storage"}
   - {term: DGX, type: product, title: "NVIDIA DGX", text: "NVIDIA's own line of AI systems; the DGX SuperPOD reference architecture is NVIDIA's published design for a full cluster, including its management networks."}
   - {term: DSP0266, type: acronym, expansion: DMTF Redfish Specification, text: "The document number of the Redfish specification, which defines the service root /redfish/v1/ every BMC serves."}
   - {term: RTU, type: acronym, expansion: Remote terminal unit, text: "Modbus RTU is Modbus over a serial line such as RS-485."}
@@ -256,7 +260,7 @@ terms:
   - {term: B300, type: product, title: "B300 GPU", text: "The Blackwell Ultra GPU in a GB300 rack, up to 1,400 W by public figures. Hall B caps it at 1,200 W to fit the 132 kW rack envelope."}
   - {term: NVL72, type: product, title: "NVL72 rack", text: "A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours."}
   - {term: SN2201, type: product, title: "Spectrum SN2201 1G management switch", text: "The 48-port 1 GbE management switch; each rack has two (rack-mgmt1 out of band, rack-mgmt2 in band), the switch NVIDIA's GB200 reference architecture uses for the out-of-band network.", see: "telemetry/#management"}
-  - {term: SN5600, type: product, title: "Spectrum SN5600 switch", text: "The Ethernet switch each hall's management aggregation pair runs on; every rack management switch uplinks to both.", see: "telemetry/#management"}
+  - {term: SN5600, type: product, title: "Spectrum SN5600 switch", text: "The Ethernet switch each hall's management aggregation pair runs on (every rack management switch uplinks to both), and every switch of the storage and in-band Ethernet fabric: a leaf pair per row, a storage leaf pair and a spine pair per hall.", see: "telemetry/#management"}
   - {term: QM9700, type: product, title: "Quantum-2 QM9700 InfiniBand switch", text: "The 400 Gb/s (NDR) InfiniBand switch in Hall A's back-end fabric."}
   - {term: Q3400-RA, type: product, title: "Quantum-X800 Q3400-RA InfiniBand switch", text: "The 800 Gb/s (XDR) InfiniBand switch for Hall B and the planned 800 VDC pilot hall (Hall C)."}
   - {term: C175-16, type: product, title: "Caterpillar C175-16 generator", text: "The 3,000 kW diesel standby generator model; the site has 7 (N+1)."}
@@ -363,6 +367,8 @@ families:
      text: "A finding on the Energy tab: the Landlord's energy report or the chiller free-cooling log does not reconcile with the meters (Landlord SLA section 22)."}
   - {key: MP-N, label: "MP-#", pattern: 'MP-\d{1,2}', type: record, title: Management network finding, example: MP-1, see: "telemetry/#management",
      text: "A finding on the Telemetry tab's management network section: a record that does not reconcile with what the BMCs, management switches, or console servers showed (an outage with no ticket, a check that passed while its BMC was silent, BMCs answering after M4, a console port labelled the wrong way round)."}
+  - {key: SP-N, label: "SP-#", pattern: 'SP-\d{1,2}', type: record, title: Storage finding, example: SP-1, see: "telemetry/#storage",
+     text: "A finding on the Telemetry tab's storage section: a record that does not reconcile with what the storage nodes or the storage fabric showed (a drive ticket naming the wrong bay, a ticket resolved before the rebuild finished, a pulled drive with no custody handover, a flapping uplink whose ticket says there was no customer impact)."}
   - {key: GH-F, label: "GH-F#", pattern: 'GH-F\d', type: record, title: GPU health finding, example: GH-F1, see: "gpu/",
      text: "A finding on the GPU Health tab: a GPU to replace before it fails, a node returned to service with a row remap pending, or thermal slowdown walked to the party whose side of the cooling demarcation caused it."}
   - {key: FPR, label: "FPR-YYYY-H#", pattern: 'FPR-\d{4}-H[12]', type: record, title: Failure pattern review, example: FPR-2026-H1,
@@ -379,6 +385,10 @@ families:
      text: "An access badge; badge-ins and badge-outs at the hall doors are the evidence for on-site times."}
   - {key: LOT, label: "LOT-####", pattern: 'LOT-\d{4}', type: record, title: Manufacturing lot, example: LOT-2544,
      text: "A batch of parts made together; a bad lot fails more often than the others."}
+  - {key: SER-NV, label: "NV + 10 characters", pattern: 'NV[A-Z0-9]{10}', type: record, title: Storage node drive serial number, example: NVWJNT8QR85V, see: "telemetry/#storage-tickets",
+     text: "An NVMe drive's serial number from a storage node's Redfish Drive resource. A swap shows as a new serial in the bay, and the pulled drive must reach the Security Partner under chain of custody (HO-5)."}
+  - {key: EQ-PFS, label: "PFS-[hall]", pattern: 'PFS-[A-C]', type: equipment, title: Storage cluster, example: PFS-A, see: "telemetry/#storage",
+     text: "A hall's parallel file system: 16 all-flash storage nodes in two storage racks, erasure coding 8+2, so it keeps serving with two nodes out."}
   - {key: SER-CT, label: "CT + 8 characters", pattern: 'CT[A-Z0-9]{8}', type: record, title: Compute tray serial number, example: CT3PQ9DACL,
      text: "A compute tray's serial number. A part swap must show the serial change in the BMC inventory."}
   - {key: SER-NS, label: "NS + 8 characters", pattern: 'NS[A-Z0-9]{8}', type: record, title: NVLink switch tray serial number, example: NS82PHK3SG,
@@ -446,6 +456,8 @@ families:
   - {key: ONCALL, label: "E# (on-call role)", pattern: 'E\d', type: record, title: On-call role, example: E1,
      pages: [alarms], text: "An operations engineer's on-call role in the Customer's notification rota (E1 to E4)."}
   # --- Equipment tags (from the site model's naming)
+  - {key: EQ-STG, label: "STG-[hall]#", pattern: 'STG-[A-C]\d', type: equipment, title: Storage rack, example: STG-A1, see: "telemetry/#storage",
+     text: "One of a hall's two storage racks: eight all-flash storage nodes of the hall's storage cluster (PFS-A or PFS-B), 24 NVMe drives each."}
   - {key: EQ-CDU, label: "CDU-[hall]#", pattern: 'CDU-[A-C]\d', type: equipment, title: Coolant distribution unit, example: CDU-A3,
      text: "A CDU, named by hall and number: CDU-A3 is CDU 3 in Hall A. Each serves up to 8 racks; the Landlord owns it."}
   - {key: EQ-UPS, label: "UPS-[hall]#", pattern: 'UPS-[A-C]\d', type: equipment, title: UPS module, example: UPS-A1,

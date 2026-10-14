@@ -32,6 +32,12 @@ Units in service against the units the design needs; each hour counts its worst 
 | Facility water pumps | Site | N+1 | 0 | 0 |
 | Management aggregation | Hall A | N+1 | 0 | 0 |
 | Management aggregation | Hall B | N+1 | 0 | 0 |
+| Storage cluster (more nodes it could lose) | Hall A | erasure coding 8+2 | 72 | 0 |
+| Storage fabric spines | Hall A | N+1 | 0 | 0 |
+| Storage leaves | Hall A | N+1 | 0 | 0 |
+| Storage cluster (more nodes it could lose) | Hall B | erasure coding 8+2 | 9 | 0 |
+| Storage fabric spines | Hall B | N+1 | 0 | 0 |
+| Storage leaves | Hall B | N+1 | 0 | 0 |
 
 ## Each family's state
 
@@ -40,9 +46,10 @@ Units in service against the units the design needs; each hour counts its worst 
 | GPUs | 143 h | 526 h | 3 h |
 | CDUs | 648 h | 18 h | 6 h |
 | Power | 651 h | 15 h | 6 h |
-| Network | 657 h | 15 h | 0 h |
+| Network | 648 h | 24 h | 0 h |
 | Mechanical | 646 h | 26 h | 0 h |
 | Management network | 607 h | 65 h | 0 h |
+| Storage | 591 h | 81 h | 0 h |
 
 ## Conditions other than GPU racks
 
@@ -50,14 +57,25 @@ GPU rack conditions (drained nodes, thermal slowdown, missing GPUs) are on the p
 
 | From | To | Family | Where | Condition |
 |---|---|---|---|---|
+| Aug 31 07:00 | Aug 31 08:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n08 offline) |
+| Sep 1 00:00 | Sep 1 03:00 | Storage | Hall B | PFS-B: protection 1 of 2 (stg-b1-n01 Bay24 failed) |
+| Sep 1 03:00 | Sep 1 07:00 | Storage | Hall B | PFS-B: protection 1 of 2 (stg-b1-n01 Bay24 rebuilding) |
 | Sep 1 05:00 | Sep 1 10:00 | Mechanical | Site | Chillers: 10 of 11, no redundant unit (CH-08 compressor trip) |
 | Sep 1 08:00 | Sep 1 09:00 | Management network | Hall A | a31-ct11: BMC not answering |
+| Sep 2 13:00 | Sep 2 17:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a2-n01 Bay17 rebuilding) |
+| Sep 3 14:00 | Sep 4 20:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n08 Bay08 failed) |
 | Sep 4 01:00 | Sep 4 02:00 | Management network | Hall A | a05-ct18: BMC not answering |
 | Sep 4 19:00 | Sep 4 20:00 | CDUs | Hall B | CDU-B3: pump 2 isolated for planned work, no spare pump |
 | Sep 4 20:00 | Sep 4 22:00 | Management network | Hall A | a03-ct14: BMC not answering |
+| Sep 4 20:00 | Sep 5 00:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n08 Bay08 rebuilding) |
 | Sep 5 00:00 | Sep 5 02:00 | Management network | Hall A | a29-ct03: BMC not answering |
+| Sep 5 06:00 | Sep 5 14:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n05 Bay23 failed) |
+| Sep 5 08:00 | Sep 5 09:00 | Network | Hall B | eth-b-st2: uplink swp61 down (3 others carry it) |
+| Sep 5 14:00 | Sep 5 18:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n05 Bay23 rebuilding) |
 | Sep 6 02:00 | Sep 6 09:00 | CDUs | Hall B | CDU-B3: pump 2 failed, no spare pump |
 | Sep 6 13:00 | Sep 6 14:00 | Management network | Hall A | a09-ct10: BMC not answering |
+| Sep 6 14:00 | Sep 6 19:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n01 Bay20 rebuilding) |
+| Sep 7 01:00 | Sep 7 03:00 | Network | Hall B | eth-b2-1: uplink swp64 down (3 others carry it) |
 | Sep 7 03:00 | Sep 7 04:00 | Management network | Hall A | a22-ct07: BMC not answering |
 | Sep 7 07:00 | Sep 7 09:00 | Management network | Hall A | A03_PowerShelf_3: BMC not answering |
 | Sep 8 13:00 | Sep 8 15:00 | CDUs | Hall B | CDU-B4: pump 2 isolated for planned work, no spare pump |
@@ -77,11 +95,17 @@ GPU rack conditions (drained nodes, thermal slowdown, missing GPUs) are on the p
 | Sep 15 20:00 | Sep 15 22:00 | Management network | Hall A | a14-ct14: BMC not answering |
 | Sep 16 02:00 | Sep 16 03:00 | Management network | Hall A | a23-ct04: BMC not answering |
 | Sep 16 10:00 | Sep 16 15:00 | Mechanical | Site | Chillers: 10 of 11, no redundant unit (CH-05 compressor trip) |
+| Sep 17 06:00 | Sep 17 08:00 | Network | Hall B | eth-b3-2: uplink swp62 down (3 others carry it) |
 | Sep 17 11:00 | Sep 17 12:00 | Management network | Hall A | A23_PowerShelf_7: BMC not answering |
+| Sep 17 11:00 | Sep 17 21:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n07 Bay16 failed) |
 | Sep 17 14:00 | Sep 17 15:00 | Management network | Hall A | a03-ct02: BMC not answering |
+| Sep 17 21:00 | Sep 18 01:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a1-n07 Bay16 rebuilding) |
 | Sep 18 12:00 | Sep 18 14:00 | Management network | Hall A | a19-mgmt1: uplink swp50 down (no redundant uplink) |
 | Sep 18 17:00 | Sep 18 20:00 | CDUs | Hall A | CDU-A4: leak detected (Under CDU-A4) |
+| Sep 19 00:00 | Sep 19 02:00 | Network | Hall B | eth-b1-1 swp64 flapping: storage clients behind it stall |
+| Sep 19 10:00 | Sep 19 12:00 | Storage | Hall A | PFS-A: protection 1 of 2 (stg-a2-n02 offline) |
 | Sep 20 08:00 | Sep 20 11:00 | Management network | Hall B | b12-mgmt2: uplink swp49 down (no redundant uplink) |
+| Sep 20 18:00 | Sep 20 20:00 | Network | Hall A | eth-a3-2 swp61 flapping: storage clients behind it stall |
 | Sep 20 19:00 | Sep 20 20:00 | CDUs | Hall A | CDU-A3: pump 2 isolated for planned work, no spare pump |
 | Sep 22 01:00 | Sep 22 03:00 | Management network | Hall A | a22-ct02: BMC not answering |
 | Sep 22 09:00 | Sep 22 13:00 | Mechanical | Hall A | TW-A4: fan 6 failed, 5 of 6 fans |
@@ -111,6 +135,7 @@ GPU rack conditions (drained nodes, thermal slowdown, missing GPUs) are on the p
 | Sep 25 08:00 | Sep 25 10:00 | Management network | Hall A | a15-nvsw3: BMC not answering |
 | Sep 25 09:00 | Sep 25 10:00 | Network | Hall A | A15: 1 NVLink tray not reporting |
 | Sep 26 01:00 | Sep 26 02:00 | Management network | Hall A | a20-ct07: BMC not answering |
+| Sep 27 07:00 | Sep 27 09:00 | Storage | Hall B | PFS-B: protection 1 of 2 (stg-b2-n06 offline) |
 | Sep 27 11:00 | Sep 27 12:00 | Management network | Site | Telemetry of Record poller restarted: no BMC polled |
 
 InfiniBand link drops: 13 spans in 14 hours (each on the Network page).
@@ -129,6 +154,7 @@ The dashboard's state comes from each section's recorded state changes; these ch
 | A rack shows no GPUs reporting only in hours it lost both feeds, and in every hour it had none all hour | 26,301 of 26,301 |
 | Every hour the utility feeds are lost, every generator runs | 1 of 1 |
 | A management switch counts as down in exactly the hours its hourly row reports fewer than 60 minutes up | 88,704 of 88,704 |
+| A storage cluster's protection on the dashboard equals the lowest its hourly row reports | 1,344 of 1,344 |
 | Each hall's GPU power and UPS output add up from the hourly rows | 1,344 of 1,344 |
 
 ## Sources

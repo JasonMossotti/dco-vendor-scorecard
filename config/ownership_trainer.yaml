@@ -129,6 +129,11 @@ rows:
     priority: P3
     criterion: "Fault on a non-production or burn-in tray."
     match: {}
+  - component: "Storage nodes and drives (physical)"
+    scenario: "A storage node in Hall A reports an NVMe drive failed (StatusIndicator Fail); the cluster keeps serving on erasure coding while the drive waits for a swap."
+    priority: P3
+    criterion: "Redundant component failed with redundancy still intact (e.g., one PSU)."
+    match: {}
   - component: "Meet-me rooms and cross-connects"
     scenario: "A cross-connect in the meet-me room is pulled during a cable tray job and one of the site's uplinks goes dark; the others carry the traffic."
     priority: P3

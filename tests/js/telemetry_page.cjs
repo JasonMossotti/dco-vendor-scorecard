@@ -1,6 +1,6 @@
 // node tests/js/telemetry_page.cjs <site>/index.html <site>
 // <site> is the folder scripts/render_telemetry.py write_site() wrote: index.html plus data/ (racks.json, gpu/, windows/, cdu/, cdu_minutes/,
-// power/, power/windows/, power_minutes/, network/, network/windows/, mechanical/, mechanical/windows/, mechanical_minutes/, mgmt/, mgmt/windows/).
+// power/, power/windows/, power_minutes/, network/, network/windows/, mechanical/, mechanical/windows/, mechanical_minutes/, mgmt/, mgmt/windows/, storage/).
 const { JSDOM, VirtualConsole } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
@@ -43,7 +43,7 @@ async function until(fn, what, ms = 8000) {
   ok(t().includes("Site health") && d.querySelector('#tree a[href="#site"]').classList.contains("on"), "the tab opens on Site health");
   ok(d.getElementById("shr").value === String(H - 1) && d.getElementById("sh-lab").textContent.includes("Sep 27, 23:00 to 00:00 UTC"), "the clock starts at the month's last hour");
   ok(d.querySelectorAll("#sh-red a.shchip").length === S.groups.length, "a chip for every redundancy group");
-  ok(d.querySelectorAll("#sh-fam a.shtile").length === 6, "a tile per device family");
+  ok(d.querySelectorAll("#sh-fam a.shtile").length === 7, "a tile per device family");
   ok(d.querySelectorAll("#sh-map .shrack").length === 64 && d.querySelectorAll("#sh-map .shcdu").length === 8, "hall map: 64 racks and 8 CDUs");
   ok(t().includes("Hall C (800 VDC pilot)") && d.querySelector('#sh-map a[href="../deployments/#hallc"]'), "Hall C shown as planned, linked to readiness");
   ok(d.querySelector('a[href="../alarms/"]'), "links to the Alarm Board for alarms");
@@ -169,7 +169,7 @@ async function until(fn, what, ms = 8000) {
   const C = D.cdu;
   const noBad = what => ok(!/\bundefined\b|\bNaN\b/.test(t()), `no undefined/NaN text in ${what}`);
   const fam = () => [...d.querySelectorAll("#tree ul.fam > li")].map(li => li.textContent.trim());
-  ok(fam()[0].startsWith("Site health") && fam()[1].startsWith("GPUs") && fam()[2].startsWith("CDUs") && fam()[3].startsWith("Power") && fam()[4].startsWith("Network") && fam()[5].startsWith("Mechanical") && fam()[6].startsWith("Management network") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists Site health, GPUs, CDUs, Power, Network, Mechanical, Management network and any greyed planned families: " + fam().join(" | "));
+  ok(fam()[0].startsWith("Site health") && fam()[1].startsWith("GPUs") && fam()[2].startsWith("CDUs") && fam()[3].startsWith("Power") && fam()[4].startsWith("Network") && fam()[5].startsWith("Mechanical") && fam()[6].startsWith("Storage") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists Site health, GPUs, CDUs, Power, Network, Mechanical, Storage and any greyed planned families: " + fam().join(" | "));
   ok(d.querySelectorAll("#tree ul.fam a").length === 7 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
   ok(!d.querySelector('#tree .famsec[data-fam="gpu"]').classList.contains("off") && d.querySelector('#tree .famsec[data-fam="cdu"]').classList.contains("off"), "on a GPU view the GPU section shows and the CDU section is hidden");
   ok([...d.querySelectorAll("#tree .planned")].some(x => x.textContent.includes("CDU-C1")) && !d.querySelector('#tree a[href="#CDU-C1"]'), "Hall C CDUs are greyed, not links");
@@ -499,6 +499,56 @@ async function until(fn, what, ms = 8000) {
     ok(t().includes("Could not load data/mgmt/A05.json") && errors.length === 0, "a missing rack management file shows a message, not an exception");
   } finally {
     fs.renameSync(path.join(site, "data/mgmt/A05.json.bak"), path.join(site, "data/mgmt/A05.json"));
+  }
+
+  // ---- storage and its fabric
+  const Sx = D.storage, stall = Sx.findings.find(f => f.kind === "fabric_stall"), wrong = Sx.findings.find(f => f.kind === "wrong_bay");
+  ok(Sx.findings.length === 4 && ["fabric_stall", "custody_gap", "closed_before_rebuild", "wrong_bay"].every(k => Sx.findings.some(f => f.kind === k)), "storage data carries the four findings");
+  await go("#storage");
+  ok(t().includes("Storage and storage fabric telemetry") && Sx.findings.filter(f => f.kind !== "fabric_stall").every(f => t().includes(f.title)) && d.querySelectorAll("#sg-ch svg").length === 4, "#storage: findings and a throughput and protection chart per cluster");
+  ok(d.querySelector('#tree a[data-fam="storage"]').classList.contains("on") && !d.querySelector('#tree .famsec[data-fam="storage"]').classList.contains("off") && d.querySelector('#tree .famsec[data-fam="network"]').classList.contains("off"), "tree highlights Storage and shows only its section");
+  ok([...d.querySelectorAll("#main a")].some(a => a.getAttribute("href") === "#storage-tickets") && ![...d.querySelectorAll("#main a")].some(a => /tickets\/#INC35/.test(a.getAttribute("href"))), "storage tickets link to the storage tickets view, not the Incident Portal");
+  noBad("#storage");
+  await go(`#${wrong.devices[0]}`);
+  await until(() => d.querySelector("#sg-n svg"), "storage node bays");
+  ok(t().includes(wrong.title) && d.querySelectorAll("#sg-n svg text").length >= 24 && t().includes(wrong.ticket_bay) && t().includes(wrong.changed_bay), "storage node: the wrong-bay finding, a row per bay, and both bays named");
+  ok([...d.querySelectorAll("#sg-n tbody tr")].some(tr => tr.textContent.includes(wrong.changed_bay) && tr.textContent.includes("Removed")), "the bay whose serial changed lists its Redfish events");
+  noBad("#storage node");
+  await go("#storage");
+  ok(!t().includes(stall.summary) && [...d.querySelectorAll("#main a")].some(a => a.getAttribute("href") === "#north-south"), "#storage leaves the fabric finding to Network, North-South");
+  await go("#north-south");
+  ok(t().includes("North-South traffic") && t().includes(stall.title) && d.querySelector(".dirbar a.on").getAttribute("href") === "#north-south" && d.querySelectorAll("#main a[href^='#eth-']").length >= Sx.switches.length, "#north-south: the fabric finding, every fabric switch, North-South marked");
+  ok(d.querySelector('#tree a[data-fam="network"]').classList.contains("on") && d.querySelector('#tree a[href="#north-south"]').classList.contains("on") && d.querySelector('#tree .famsec[data-fam="network"] a[href="#management"]'), "the Network section holds the fabric and the management network");
+  noBad("#north-south");
+  await go("#network");
+  ok(d.querySelector(".dirbar a.on").getAttribute("href") === "#network", "#network is East-West");
+  await go(`#${stall.devices[0]}`);
+  await until(() => d.querySelector("#sg-s svg"), "row leaf charts");
+  ok(t().includes(stall.title) && t().includes("Compute tray ports") && t().includes("linkDown"), "row leaf: the stall finding, its tray ports, and its traps");
+  noBad("#row leaf");
+  const sp = Sx.switches.find(s => s.role === "spine");
+  await go(`#${sp.id}`);
+  await until(() => t().includes("Downlinks"), "spine view");
+  ok(sp.peers.every(p => d.querySelector(`#main a[href="#${p}"]`)), "spine: links to every leaf it carries");
+  await go("#STG-A1");
+  ok(d.querySelectorAll("#main tbody tr").length === 8, "storage rack: its eight nodes");
+  await go("#storage-tickets");
+  ok(d.querySelectorAll("#main table")[0].querySelectorAll("tbody tr").length === Sx.tickets.length && d.querySelectorAll("#main table")[1].querySelectorAll("tbody tr").length === Sx.custody.length, "#storage-tickets: every ticket and every custody handover");
+  await go("#storage-fields");
+  ok(Sx.fields.every(f => t().includes(f.name)) && Sx.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#storage-fields lists every field and source");
+  await go("#storage-agreements");
+  ok(d.querySelectorAll("tbody tr").length === Sx.agreements.length && Sx.agreements.every(a => t().includes(a.title)), "#storage-agreements shows every check");
+  const ep = Sx.episodes.find(e => e.switch === stall.devices[0]);
+  await go(`#site/${Math.floor((Date.parse(ep.from) - Date.parse(D.window.start)) / 3600000)}`);
+  const stt = [...d.querySelectorAll("#sh-fam a.shtile")].find(a => a.getAttribute("href") === "#network");
+  ok(stt && stt.classList.contains("warn") && stt.textContent.includes("flapping"), "site health: the network tile degraded while the storage fabric uplink flapped");
+  fs.renameSync(path.join(site, "data/storage/stg-a1-n01.json"), path.join(site, "data/storage/stg-a1-n01.json.bak"));
+  try {
+    await go("#stg-a1-n01");
+    await until(() => t().includes("Could not load"), "storage error message");
+    ok(t().includes("Could not load data/storage/stg-a1-n01.json") && errors.length === 0, "a missing storage node file shows a message, not an exception");
+  } finally {
+    fs.renameSync(path.join(site, "data/storage/stg-a1-n01.json.bak"), path.join(site, "data/storage/stg-a1-n01.json"));
   }
 
   // ---- error state

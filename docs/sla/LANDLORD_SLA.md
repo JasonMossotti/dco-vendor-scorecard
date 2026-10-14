@@ -115,6 +115,7 @@ Exhibit from the Interface Agreement (IA-AUS1-001, version 1.2.0), which governs
 | Back-end fabric optics, cables, and fiber | A | R | - | C | - | - |
 | Leaf and spine switches (physical replacement) | A | R | - | C | - | - |
 | BMC and out-of-band management network (physical) | A | R | - | C | - | - |
+| Storage nodes and drives (physical) | A | R | - | C | - | C |
 | Meet-me rooms and cross-connects | C | C | A/R | - | - | - |
 | Spares cage, inventory, and RMA shipments | A | R | - | C | - | C |
 | Building perimeter, lobby, and access control system | C | I | A/R | - | - | C |

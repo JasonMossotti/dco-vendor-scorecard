@@ -6,7 +6,7 @@
 
 # Glossary: Site AUS-1
 
-Every acronym, contract code, and record ID the site's pages and documents use: 665 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
+Every acronym, contract code, and record ID the site's pages and documents use: 673 entries. Contract codes quote the contract that defines them. On the live site, each code on every page opens this meaning in a popup, and the Glossary tab lists them alphabetically and by type. Synthetic site; all names are fictional.
 
 ## Acronyms
 
@@ -14,7 +14,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 |---|---|---|---|
 | ABI | **Application binary interface.** In a source title: the Linux kernel's documented interface, here the InfiniBand counter files. | - | Telemetry |
 | ANSI | **American National Standards Institute.** Coordinates US voluntary standards, including ANSI/ASSP Z10.0. | - | IT Partner SLA, Landlord SLA, Security SLA, Telemetry, Deployments |
-| API | **Application programming interface.** A way for one system to read from or send to another. | - | IT Partner SLA, Landlord SLA, Security SLA, Alarm Board, Incident Portal |
+| API | **Application programming interface.** A way for one system to read from or send to another. | - | IT Partner SLA, Landlord SLA, Security SLA, Alarm Board, Site model document, Incident Portal |
 | APS | **Alarm planning superintendent.** A Texas State Fire Marshal's Office license: fire alarm plans are signed by a licensed APS or sealed by a fire protection engineer. | - | Deployments |
 | ASHRAE | **American Society of Heating, Refrigerating and Air-Conditioning Engineers.** Publisher of Guideline 0 (the commissioning process behind levels L1 to L5) and the thermal guidelines for data centers. | - | Telemetry, Deployments |
 | ASIC | **Application-specific integrated circuit.** The switching chip in a network switch or NVLink switch tray; its temperature is one of the chassis readings. | - | Telemetry |
@@ -48,9 +48,11 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | DCO | **Data center operations.** The Customer's site operations team, which runs the Telemetry of Record and manages both partners. | - | IT Partner SLA, Landlord SLA, Security SLA, Scorecards, Post-Incident Review |
 | DMTF | **Distributed Management Task Force.** The standards body behind Redfish, the REST API the CDUs report their telemetry through. | - | Telemetry, Overview |
 | DOM | **Digital optical monitoring.** An optic's own report of temperature, power, and signal levels; a DOM alarm warns the optic is failing. | - | Failure Patterns, Overview |
+| DPU | **Data processing unit.** A network card with its own processors. Each compute tray's BlueField-3 DPU carries its two 200 GbE storage ports, one to each leaf of its row's storage leaf pair. | - | Telemetry |
 | DSP0266 | **DMTF Redfish Specification.** The document number of the Redfish specification, which defines the service root /redfish/v1/ every BMC serves. | - | Telemetry |
 | DX | **Direct expansion.** Cooling by a refrigerant circuit in the unit itself rather than by chilled water (CW). | - | Telemetry |
 | ECC | **Error-correcting code.** Memory that detects and corrects bit errors; rising corrected errors can warn of a failing part. | - | IT Partner SLA, Landlord SLA, Security SLA, Scorecards, Alarm Board, Failure Patterns, GPU Health, Telemetry, Incident Portal |
+| ECMP | **Equal-cost multipath.** Spreading flows across every uplink of equal cost. Each storage fabric leaf has four uplinks; one down is carried by the other three, but a link that flaps re-hashes the flows through it again and again. | - | Telemetry |
 | EHS | **Environment.** The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Security SLA, Post-Incident Review, Weekly Review |
 | EMR | **Experience modification rate.** An insurer's rating of a company's injury history against its industry; 1.0 is average. | - | IT Partner SLA, Landlord SLA, Security SLA |
 | ENTITY-MIB | **Entity MIB (RFC 6933).** The standard SNMP MIB that lists a device's parts (chassis, fans, power supplies) that ENTITY-SENSOR-MIB readings attach to. | - | Telemetry |
@@ -95,6 +97,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | L1 | **Line 1.** The first phase of a three-phase supply; L2 and L3 are the other two. | - | Telemetry, Deployments |
 | L2 | **Line 2.** The second phase of a three-phase supply. | - | Telemetry, Deployments |
 | L3 | **Line 3.** The third phase of a three-phase supply. | - | Telemetry, Deployments |
+| LED | **Light-emitting diode.** The drive bay's status light; Redfish StatusIndicator reports what it shows (Fail, Rebuild, PredictiveFailureAnalysis), so a technician pulls the right drive. | - | Telemetry |
 | LLC | **Limited liability company.** A US company form; both partners are fictional LLCs. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Security SLA, Scorecards, Energy, Site model document, Overview, Weekly Review |
 | LPM | **Liters per minute.** Coolant flow rate. | - | Telemetry, Deployments, Site model document |
 | MFT | **NVIDIA Firmware Tools.** The vendor's command-line tools for its NICs and switches; mlxlink, one of them, prints a port's link state, optic readings, and error counters. | - | Telemetry |
@@ -157,10 +160,11 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | SM | **Streaming multiprocessor.** The GPU's compute units. Its clock (DCGM_FI_DEV_SM_CLOCK) drops when the GPU throttles for heat or power. | - | Telemetry |
 | SMS | **Short message service.** Text messaging, one of the notification channels. | - | Interface Agreement, Alarm Board, Post-Incident Review |
 | SMTP | **Simple Mail Transfer Protocol.** The protocol for sending email; an SMTP relay is the minimum email channel for notifications. | - | Alarm Board |
-| SN | **Serial number.** The manufacturer's unique number for a part; a part swap must show a serial change in inventory. | - | Incident Portal, Post-Incident Review |
+| SN | **Serial number.** The manufacturer's unique number for a part; a part swap must show a serial change in inventory. | - | Telemetry, Incident Portal, Post-Incident Review |
 | SNMP | **Simple Network Management Protocol.** A standard protocol for reading equipment status and receiving alarms (traps). | - | Alarm Board, Telemetry, Site model document |
 | SNR | **Signal-to-noise ratio.** How far the optical signal stands above the noise at the receiver, in dB. Low SNR at normal receive power points at the switch-side optic. | - | Telemetry |
 | SP | **Special Publication.** A NIST Special Publication, such as SP 800-88 (media sanitization). | - | Security SLA |
+| SSD | **Solid-state drive.** A drive built on flash memory. Every storage node holds 24 NVMe SSDs of 30.72 TB. | - | Telemetry |
 | SSH | **Secure Shell.** An encrypted remote login; console servers offer SSH to each serial port so a technician can reach a switch console from anywhere. | - | Site model document |
 | TAC | **Texas Administrative Code.** The state's compiled agency rules; 16 TAC chapter 73 holds the electrical rules that adopt the NEC. | - | Deployments |
 | TC | **Technical Committee (ASHRAE).** TC 9.9 is the ASHRAE committee for mission-critical facilities and data centers; it publishes the Thermal Guidelines, whose envelopes the Site health page uses for supply air. | - | Telemetry |
@@ -189,7 +193,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 
 | Code | Meaning | Defined in | Used on |
 |---|---|---|---|
-| CSL-01 | **Supplier-Attributable GPU Availability.** Share of installed production GPU-hours not lost to Supplier-Attributable Unavailability, using Capacity-Weighted GPU-Hours so degraded operation and reopened repairs count. Racks count as installed from Validated Handoff. Expected 99.5%; minimum 99%. | IT Partner SLA, 10. Critical Service Levels | IT Partner SLA, Scorecards, Availability, GPU Health, Overview, Weekly Review |
+| CSL-01 | **Supplier-Attributable GPU Availability.** Share of installed production GPU-hours not lost to Supplier-Attributable Unavailability, using Capacity-Weighted GPU-Hours so degraded operation and reopened repairs count. Racks count as installed from Validated Handoff. Expected 99.5%; minimum 99%. | IT Partner SLA, 10. Critical Service Levels | IT Partner SLA, Scorecards, Availability, GPU Health, Telemetry, Overview, Weekly Review |
 | CSL-02 | **P1 Engaged On-Site Within 15 Minutes.** Share of P1 incidents where a qualified technician was Engaged On-Site within the target. Expected 100%; minimum 95%. | IT Partner SLA, 10. Critical Service Levels | IT Partner SLA, Scorecards, Incident Portal, Weekly Review |
 | CSL-03 | **P1 Restoration Within 4 Hours.** Share of P1 incidents reaching Validated RTS within 240 minutes of T0. Expected 95%; minimum 90%. | IT Partner SLA, 10. Critical Service Levels | IT Partner SLA, Scorecards, Availability, Incident Portal, Weekly Review |
 | CSL-04 | **P2 Restoration Within 8 Hours.** Share of P2 incidents reaching Validated RTS within 480 minutes of T0. Expected 95%; minimum 90%. | IT Partner SLA, 10. Critical Service Levels | IT Partner SLA, Scorecards, Incident Portal, Weekly Review |
@@ -285,7 +289,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | HO-2 | **De-energizing a tap-off for rack work.** The IT Partner requests it under an approved change; the Landlord isolates under group lockout with both parties' locks applied (EHS-R2). | Interface Agreement, 7. Handoffs | Interface Agreement, Post-Incident Review |
 | HO-3 | **Leak at a rack.** The IT Partner isolates at the rack manifold valves; the Landlord isolates at the header if the leak is upstream of the valves; both follow the spill procedure (EHS-R5). | Interface Agreement, 7. Handoffs | Interface Agreement |
 | HO-4 | **New rack energization.** The Landlord energizes the tap-off and opens the isolation valves only after the IT Partner confirms the rack is set, leak-tested, and ready; the time is recorded as the deployment milestone handoff. | Interface Agreement, 7. Handoffs | Interface Agreement, Alarm Board, Deployments, Incident Portal, Post-Incident Review, Weekly Review |
-| HO-5 | **Storage media from a failed part.** The IT Partner removes every drive from a failed part in the rack area and hands the drives to the Security Partner under chain of custody, by serial number; the Security Partner destroys them on site and certifies each serial before the part may ship. | Interface Agreement, 7. Handoffs | Interface Agreement, Security SLA |
+| HO-5 | **Storage media from a failed part.** The IT Partner removes every drive from a failed part in the rack area and hands the drives to the Security Partner under chain of custody, by serial number; the Security Partner destroys them on site and certifies each serial before the part may ship. | Interface Agreement, 7. Handoffs | Interface Agreement, Security SLA, Telemetry |
 | R-HO4 | **Tap-off energization (Interface Agreement HO-4).** The Landlord energizes the rack's tap-off and opens its isolation valves only after the IT Partner confirms the rack is set and leak-tested (M3). A rack step between M3 and M4. | - | Deployments |
 | RA-1 | **Records access: Read-only account.** The Supplier issues one read-only API service account for each system that holds Site records (ticketing or maintenance management, and spares and RMA), scoped to the Customer's records. No write credentials are issued, and the Customer never changes a Supplier record. | IT Partner SLA, 6. Measurement and Telemetry of Record<br>Landlord SLA, 5. Measurement and Telemetry of Record<br>Security SLA, 5. Measurement and Telemetry of Record | IT Partner SLA, Landlord SLA, Security SLA, Overview |
 | RA-2 | **Records access: Content.** Every ticket, work order, and preventive maintenance record for the Site, with its full history: state and priority changes, all timestamps, work notes, assignee, parts with removed and installed serial numbers, and linked change or MOP references. | IT Partner SLA, 6. Measurement and Telemetry of Record<br>Landlord SLA, 5. Measurement and Telemetry of Record<br>Security SLA, 5. Measurement and Telemetry of Record | IT Partner SLA, Landlord SLA, Security SLA |
@@ -507,6 +511,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | MOP-### | **Method of procedure (change record).** An approved plan for planned work on live equipment, with its window and the alarms it declares it will cause. The Alarm Board checks every alarm against it. | - | Alarm Board, Telemetry, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | MP-# | **Management network finding.** A finding on the Telemetry tab's management network section: a record that does not reconcile with what the BMCs, management switches, or console servers showed (an outage with no ticket, a check that passed while its BMC was silent, BMCs answering after M4, a console port labelled the wrong way round). | - | Telemetry |
 | NS + 8 characters | **NVLink switch tray serial number.** An NVLink switch tray's serial number. | - | Telemetry, Incident Portal, Post-Incident Review |
+| NV + 10 characters | **Storage node drive serial number.** An NVMe drive's serial number from a storage node's Redfish Drive resource. A swap shows as a new serial in the bay, and the pulled drive must reach the Security Partner under chain of custody (HO-5). | - | Telemetry |
 | OP + 8 characters | **Optic serial number.** A network optic's serial number. | - | Incident Portal, Post-Incident Review |
 | P# (failure pattern review) | **Failure pattern number.** On the Failure Pattern Review, P1, P2, and P3 also number the patterns found. In the action tables, the Priority column uses the SLA priorities. *(On: patterns.)* | - | Failure Patterns |
 | PA# | **Failure pattern action.** An owned, dated action from the failure pattern review. | - | Failure Patterns |
@@ -528,6 +533,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | SLA-CCF-AUS1-001 | **Service Level Agreement: Data Center Lease Services.** Schedule C (Landlord Service Levels) to the Data Center Lease. Version 1.0.0, effective 2026-10-05. | Landlord SLA,  | Landlord SLA |
 | SLA-LGP-AUS1-001 | **Service Level Agreement: Site Security Services.** Schedule D (Security Service Levels) to the Security Services Agreement. Version 1.0.0, effective 2026-10-05. | Security SLA,  | Security SLA |
 | SLA-RSS-AUS1-001 | **Service Level Agreement: Partner-Operated GPU Site Operations.** Schedule B (Service Levels) to the Master Services Agreement. Version 1.0.0, effective 2026-10-05. | IT Partner SLA,  | IT Partner SLA |
+| SP-# | **Storage finding.** A finding on the Telemetry tab's storage section: a record that does not reconcile with what the storage nodes or the storage fabric showed (a drive ticket naming the wrong bay, a ticket resolved before the rebuild finished, a pulled drive with no custody handover, a flapping uplink whose ticket says there was no customer impact). | - | Telemetry |
 | V-#### | **Visitor badge.** A visitor badge. It opens only the hall doors on the visit request and expires at sign-out. | - | Scorecards, Weekly Review |
 | VIS-#### | **Visit.** One visitor's sign-in under a Customer-approved request (VR-####), with the named escort and the visitor badge (V-####). | - | Scorecards, Weekly Review |
 | VR-#### | **Visit request.** A Customer-approved request for a visitor, naming the hall and the escort. | - | Scorecards |
@@ -555,8 +561,10 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | MV-B | **Medium-voltage bus B.** The other 13.8 kV switchgear bus. The B feeds of the halls trace back to it. | - | Landlord SLA, Alarm Board, Energy, Telemetry, Site model document, Incident Portal, Post-Incident Review |
 | oob-agg-[hall]# | **Management aggregation switch.** Half of a hall's management aggregation pair: every rack management switch has one uplink to each, so the hall keeps its management network with one down. | - | Telemetry |
 | OPS-MAIN | **Main operations entrance badge reader.** The door every shift badges through; the staffing check counts badge-ins here. | - | Scorecards |
+| PFS-[hall] | **Storage cluster.** A hall's parallel file system: 16 all-flash storage nodes in two storage racks, erasure coding 8+2, so it keeps serving with two nodes out. | - | Telemetry |
 | PG-[hall]# | **Power group.** A group of racks fed by one pair of A and B busways; the calculation sheet checks each group's load against its busway and UPS. | - | Deployments |
 | Rack [hall]## | **Rack.** One NVL72 rack: 18 compute trays, 9 NVLink switch trays, and 8 power shelves, fed by an A and a B tap-off. Rack A07 is Hall A, rack 7 (row 1, position 7). | - | Scorecards, Alarm Board, Failure Patterns, Availability, Telemetry, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
+| STG-[hall]# | **Storage rack.** One of a hall's two storage racks: eight all-flash storage nodes of the hall's storage cluster (PFS-A or PFS-B), 24 NVMe drives each. | - | Telemetry |
 | TO-[rack]-[side] | **Busway tap-off.** The breaker box that takes power from the busway to one rack: TO-A07-B is rack A07's B-side tap-off. Its output terminals are the power demarcation (DM-PWR). | - | Scorecards, Alarm Board, Telemetry, Incident Portal, Post-Incident Review, Weekly Review |
 | TTDM-A | **Hall A leak detection module.** The leak alarm and locator module for Hall A's sensing cables. An alarm names the circuit (C1, C2, ...) and the distance along the cable. | - | Alarm Board, Incident Portal, Post-Incident Review, Weekly Review |
 | TTDM-B | **Hall B leak detection module.** The leak alarm and locator module for Hall B's sensing cables. | - | Alarm Board |
@@ -605,7 +613,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | R-513A | **R-513A refrigerant.** The low global-warming refrigerant in the AFC chillers' screw compressor circuits; its saturation curve turns condensing temperature into pressure. | - | Telemetry |
 | RAYCHEM | **TraceTek product line.** The brand line of the leak detection cable and modules. | - | Deployments, Site model document |
 | SN2201 | **Spectrum SN2201 1G management switch.** The 48-port 1 GbE management switch; each rack has two (rack-mgmt1 out of band, rack-mgmt2 in band), the switch NVIDIA's GB200 reference architecture uses for the out-of-band network. | - | Telemetry, Site model document |
-| SN5600 | **Spectrum SN5600 switch.** The Ethernet switch each hall's management aggregation pair runs on; every rack management switch uplinks to both. | - | Telemetry, Site model document |
+| SN5600 | **Spectrum SN5600 switch.** The Ethernet switch each hall's management aggregation pair runs on (every rack management switch uplinks to both), and every switch of the storage and in-band Ethernet fabric: a leaf pair per row, a storage leaf pair and a spine pair per hall. | - | Telemetry, Site model document |
 | STARLINE-CPM-MIB | **Starline CPM MIB.** Starline's published MIB for the M70 CPM (enterprise 35774): run and tap-off voltage, current, power, energy, and breaker state. | - | Telemetry |
 | TT5000 | **TraceTek TT5000 sensing cable.** Hydrocarbon leak sensing cable, used around the generators' diesel. | - | Site model document |
 | TTDM-128 | **TraceTek TTDM-128 leak module.** The leak alarm and locator module that reads sensing cable and reports where along it the leak is. | - | IT Partner SLA, Landlord SLA, Security SLA, Deployments, Site model document |

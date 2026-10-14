@@ -1,0 +1,151 @@
+{
+ "decoys": [
+  {
+   "from": "2026-08-31T07:08:00Z",
+   "kind": "node_reboot",
+   "minutes": 10,
+   "node": "stg-a1-n08"
+  },
+  {
+   "from": "2026-09-19T10:58:00Z",
+   "kind": "node_reboot",
+   "minutes": 12,
+   "node": "stg-a2-n02"
+  },
+  {
+   "from": "2026-09-27T07:59:00Z",
+   "kind": "node_reboot",
+   "minutes": 18,
+   "node": "stg-b2-n06"
+  },
+  {
+   "bay": "Bay24",
+   "kind": "transient_warning",
+   "node": "stg-a2-n05"
+  },
+  {
+   "bay": "Bay22",
+   "kind": "transient_warning",
+   "node": "stg-b2-n03"
+  },
+  {
+   "bay": "Bay15",
+   "kind": "transient_warning",
+   "node": "stg-a2-n03"
+  },
+  {
+   "bay": "Bay05",
+   "kind": "transient_warning",
+   "node": "stg-a1-n03"
+  },
+  {
+   "bay": "Bay23",
+   "kind": "failed_swap",
+   "node": "stg-a1-n05",
+   "ticket": "INC3500004"
+  },
+  {
+   "bay": "Bay20",
+   "kind": "predicted_swap",
+   "node": "stg-a1-n01",
+   "ticket": "INC3500006"
+  },
+  {
+   "bay": "Bay17",
+   "kind": "predicted_swap",
+   "node": "stg-a2-n01",
+   "ticket": "INC3500002"
+  },
+  {
+   "from": "2026-09-07T01:02:00Z",
+   "ifName": "swp64",
+   "kind": "uplink_down",
+   "minutes": 91,
+   "switch": "eth-b2-1"
+  },
+  {
+   "from": "2026-09-17T06:34:00Z",
+   "ifName": "swp62",
+   "kind": "uplink_down",
+   "minutes": 82,
+   "switch": "eth-b3-2"
+  },
+  {
+   "from": "2026-09-05T08:22:00Z",
+   "ifName": "swp61",
+   "kind": "uplink_down",
+   "minutes": 36,
+   "switch": "eth-b-st2"
+  },
+  {
+   "from": "2026-09-02T18:47:00Z",
+   "ifName": "swp3s1",
+   "kind": "port_blip",
+   "minutes": 3,
+   "switch": "eth-b-st1"
+  },
+  {
+   "from": "2026-09-01T16:41:00Z",
+   "ifName": "swp11s3",
+   "kind": "port_blip",
+   "minutes": 2,
+   "switch": "eth-a4-2"
+  },
+  {
+   "from": "2026-09-25T11:58:00Z",
+   "ifName": "swp36s3",
+   "kind": "port_blip",
+   "minutes": 2,
+   "switch": "eth-a2-2"
+  },
+  {
+   "gpu_hours": 107.5,
+   "ifName": "swp64",
+   "kind": "reported_flap",
+   "switch": "eth-b1-1",
+   "ticket": "INC3500010"
+  }
+ ],
+ "planted": [
+  {
+   "changed_bay": "Bay24",
+   "kind": "wrong_bay",
+   "node": "stg-b1-n01",
+   "ticket": "INC3500001",
+   "ticket_bay": "Bay23"
+  },
+  {
+   "bay": "Bay08",
+   "kind": "closed_before_rebuild",
+   "minutes_early": 50,
+   "node": "stg-a1-n08",
+   "rebuild_complete": "2026-09-04T23:43:00Z",
+   "resolved_at": "2026-09-04T22:52:36Z",
+   "serial": "NVF2GG6O8PEY",
+   "ticket": "INC3500003"
+  },
+  {
+   "bay": "Bay16",
+   "kind": "custody_gap",
+   "node": "stg-a1-n07",
+   "removed_at": "2026-09-17T21:53:00Z",
+   "serial": "NV9CH0U50QYC",
+   "ticket": "INC3500009"
+  },
+  {
+   "from": "2026-09-20T18:35:00Z",
+   "gpu_hours": 164.1,
+   "ifName": "swp61",
+   "kind": "fabric_stall",
+   "racks": [
+    "A21",
+    "A22",
+    "A23",
+    "A24"
+   ],
+   "switch": "eth-a3-2",
+   "ticket": "INC3500011",
+   "to": "2026-09-20T19:09:00Z"
+  }
+ ]
+}

@@ -15,6 +15,7 @@ ok(t().includes("Availability and repair turnaround") && d.querySelectorAll(".ti
 ok(t().includes(D.sched.pct.toFixed(3) + "%") && t().includes(D.csl01.actual.toFixed(3) + "%"), "scheduler and CSL-01 availability shown");
 ok(D.owners.every(o => t().includes(o.owner)) && t().includes("1,524.9"), "every owner and the contracts' total");
 ok(d.querySelectorAll("#bridge tr").length === D.bridge.rows.length + 1 && D.bridge.closes && !t().includes("does not close"), "the bridge lists every step and closes");
+ok(D.storage_idle && D.storage_idle.gpu_hours > 0 && d.querySelectorAll("#storage-idle tr").length === D.storage_idle.episodes.length + 2 && d.querySelector('#storage-idle a[href^="../telemetry/#eth-"]'), "GPU-hours idle on storage sit beside the bridge, each stall linked to its leaf");
 ok(d.querySelectorAll("#c1 .hit").length === D.days.length, "a hover target per day");
 hover(d.querySelector("#c1 .hit[data-i='15']"), "mousemove");
 const tip = d.querySelector("#c1 .tip");

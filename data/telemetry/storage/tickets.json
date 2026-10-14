@@ -1,0 +1,483 @@
+[
+ {
+  "acknowledged_at": "2026-09-01T01:40:07Z",
+  "assigned_to": "RSS-022",
+  "category": "storage_drive",
+  "close_code": "Hardware replaced",
+  "configuration_item": "stg-b1-n01 Bay23",
+  "customer_impact": "None: PFS-B kept serving (erasure coding 8+2)",
+  "hall": "HALL-B",
+  "number": "INC3500001",
+  "opened_at": "2026-09-01T01:25:41Z",
+  "parts_used": [
+   {
+    "installed_serial": "NV9K6GXTAEID",
+    "location": "stg-b1-n01 Bay23",
+    "part": "NVMe SSD 30.72 TB (U.2)",
+    "removed_serial": "NVWJNT8QR85V"
+   }
+  ],
+  "priority": "P4",
+  "rack": "STG-B1",
+  "resolved_at": "2026-09-01T07:03:21Z",
+  "short_description": "NVMe drive failed: stg-b1-n01 Bay23",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-01T01:40:07Z",
+    "author": "RSS-022",
+    "text": "Acknowledged. Assigned to RSS-022."
+   },
+   {
+    "at": "2026-09-01T03:25:21Z",
+    "author": "RSS-022",
+    "text": "On site at STG-B1."
+   },
+   {
+    "at": "2026-09-01T03:47:23Z",
+    "author": "RSS-022",
+    "text": "Replaced the drive in stg-b1-n01 Bay23. Removed SN NVWJNT8QR85V, installed SN NV9K6GXTAEID. Rebuild started."
+   },
+   {
+    "at": "2026-09-01T07:03:21Z",
+    "author": "RSS-022",
+    "text": "Rebuild complete; drive Status OK. Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-02T02:36:14Z",
+  "assigned_to": "RSS-028",
+  "category": "storage_drive",
+  "close_code": "Hardware replaced",
+  "configuration_item": "stg-a2-n01 Bay17",
+  "customer_impact": "None: PFS-A kept serving (erasure coding 8+2)",
+  "hall": "HALL-A",
+  "number": "INC3500002",
+  "opened_at": "2026-09-02T02:27:39Z",
+  "parts_used": [
+   {
+    "installed_serial": "NVGS6669FT6P",
+    "location": "stg-a2-n01 Bay17",
+    "part": "NVMe SSD 30.72 TB (U.2)",
+    "removed_serial": "NVQ2NQY56RMK"
+   }
+  ],
+  "priority": "P4",
+  "rack": "STG-A2",
+  "resolved_at": "2026-09-02T17:10:06Z",
+  "short_description": "NVMe drive predicted to fail (FailurePredicted): stg-a2-n01 Bay17",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-02T02:36:14Z",
+    "author": "RSS-028",
+    "text": "Acknowledged. Assigned to RSS-028."
+   },
+   {
+    "at": "2026-09-02T12:31:00Z",
+    "author": "RSS-028",
+    "text": "On site at STG-A2."
+   },
+   {
+    "at": "2026-09-02T13:07:22Z",
+    "author": "RSS-028",
+    "text": "Replaced the drive in stg-a2-n01 Bay17. Removed SN NVQ2NQY56RMK, installed SN NVGS6669FT6P. Rebuild started."
+   },
+   {
+    "at": "2026-09-02T17:10:06Z",
+    "author": "RSS-028",
+    "text": "Rebuild complete; drive Status OK. Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-03T15:18:43Z",
+  "assigned_to": "RSS-022",
+  "category": "storage_drive",
+  "close_code": "Hardware replaced",
+  "configuration_item": "stg-a1-n08 Bay08",
+  "customer_impact": "None: PFS-A kept serving (erasure coding 8+2)",
+  "hall": "HALL-A",
+  "number": "INC3500003",
+  "opened_at": "2026-09-03T15:10:00Z",
+  "parts_used": [
+   {
+    "installed_serial": "NVF2GG6O8PEY",
+    "location": "stg-a1-n08 Bay08",
+    "part": "NVMe SSD 30.72 TB (U.2)",
+    "removed_serial": "NVIDY5GP23UT"
+   }
+  ],
+  "priority": "P4",
+  "rack": "STG-A1",
+  "resolved_at": "2026-09-04T22:52:36Z",
+  "short_description": "NVMe drive failed: stg-a1-n08 Bay08",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-03T15:18:43Z",
+    "author": "RSS-022",
+    "text": "Acknowledged. Assigned to RSS-022."
+   },
+   {
+    "at": "2026-09-04T20:36:28Z",
+    "author": "RSS-022",
+    "text": "On site at STG-A1."
+   },
+   {
+    "at": "2026-09-04T20:55:40Z",
+    "author": "RSS-022",
+    "text": "Replaced the drive in stg-a1-n08 Bay08. Removed SN NVIDY5GP23UT, installed SN NVF2GG6O8PEY. Rebuild started."
+   },
+   {
+    "at": "2026-09-04T22:52:36Z",
+    "author": "RSS-022",
+    "text": "Rebuild complete; drive Status OK. Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-05T07:33:29Z",
+  "assigned_to": "RSS-006",
+  "category": "storage_drive",
+  "close_code": "Hardware replaced",
+  "configuration_item": "stg-a1-n05 Bay23",
+  "customer_impact": "None: PFS-A kept serving (erasure coding 8+2)",
+  "hall": "HALL-A",
+  "number": "INC3500004",
+  "opened_at": "2026-09-05T07:18:35Z",
+  "parts_used": [
+   {
+    "installed_serial": "NVQ9M4BLFB35",
+    "location": "stg-a1-n05 Bay23",
+    "part": "NVMe SSD 30.72 TB (U.2)",
+    "removed_serial": "NVDIGJMPAYJA"
+   }
+  ],
+  "priority": "P4",
+  "rack": "STG-A1",
+  "resolved_at": "2026-09-05T18:26:48Z",
+  "short_description": "NVMe drive failed: stg-a1-n05 Bay23",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-05T07:33:29Z",
+    "author": "RSS-006",
+    "text": "Acknowledged. Assigned to RSS-006."
+   },
+   {
+    "at": "2026-09-05T13:55:04Z",
+    "author": "RSS-006",
+    "text": "On site at STG-A1."
+   },
+   {
+    "at": "2026-09-05T14:33:20Z",
+    "author": "RSS-006",
+    "text": "Replaced the drive in stg-a1-n05 Bay23. Removed SN NVDIGJMPAYJA, installed SN NVQ9M4BLFB35. Rebuild started."
+   },
+   {
+    "at": "2026-09-05T18:26:48Z",
+    "author": "RSS-006",
+    "text": "Rebuild complete; drive Status OK. Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-05T08:31:53Z",
+  "assigned_to": "RSS-013",
+  "category": "fabric_optic",
+  "close_code": "Hardware replaced",
+  "configuration_item": "eth-b-st2 swp61",
+  "customer_impact": "None (redundant uplinks)",
+  "hall": "HALL-B",
+  "number": "INC3500005",
+  "opened_at": "2026-09-05T08:24:27Z",
+  "parts_used": [
+   {
+    "installed_serial": "OSJ7QH6T8WQ0",
+    "location": "eth-b-st2 swp61",
+    "part": "800G OSFP optic",
+    "removed_serial": "OS8T754P0BGI"
+   }
+  ],
+  "priority": "P3",
+  "rack": null,
+  "resolved_at": "2026-09-05T09:27:48Z",
+  "short_description": "Uplink errors and link down: eth-b-st2 swp61 to eth-b-sp1 swp19",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-05T08:31:53Z",
+    "author": "RSS-013",
+    "text": "Acknowledged. Assigned to RSS-013."
+   },
+   {
+    "at": "2026-09-05T08:57:00Z",
+    "author": "RSS-013",
+    "text": "Replaced the optic in eth-b-st2 swp61. Removed SN OS8T754P0BGI, installed SN OSJ7QH6T8WQ0."
+   },
+   {
+    "at": "2026-09-05T09:27:48Z",
+    "author": "RSS-013",
+    "text": "Link stable, errors cleared. Customer impact: None (redundant uplinks). Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-05T21:59:56Z",
+  "assigned_to": "RSS-007",
+  "category": "storage_drive",
+  "close_code": "Hardware replaced",
+  "configuration_item": "stg-a1-n01 Bay20",
+  "customer_impact": "None: PFS-A kept serving (erasure coding 8+2)",
+  "hall": "HALL-A",
+  "number": "INC3500006",
+  "opened_at": "2026-09-05T21:48:57Z",
+  "parts_used": [
+   {
+    "installed_serial": "NV71UZPWE3I6",
+    "location": "stg-a1-n01 Bay20",
+    "part": "NVMe SSD 30.72 TB (U.2)",
+    "removed_serial": "NV3K6IUSS5J5"
+   }
+  ],
+  "priority": "P4",
+  "rack": "STG-A1",
+  "resolved_at": "2026-09-06T18:13:04Z",
+  "short_description": "NVMe drive predicted to fail (FailurePredicted): stg-a1-n01 Bay20",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-05T21:59:56Z",
+    "author": "RSS-007",
+    "text": "Acknowledged. Assigned to RSS-007."
+   },
+   {
+    "at": "2026-09-06T14:31:38Z",
+    "author": "RSS-007",
+    "text": "On site at STG-A1."
+   },
+   {
+    "at": "2026-09-06T14:52:46Z",
+    "author": "RSS-007",
+    "text": "Replaced the drive in stg-a1-n01 Bay20. Removed SN NV3K6IUSS5J5, installed SN NV71UZPWE3I6. Rebuild started."
+   },
+   {
+    "at": "2026-09-06T18:13:04Z",
+    "author": "RSS-007",
+    "text": "Rebuild complete; drive Status OK. Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-07T01:12:17Z",
+  "assigned_to": "RSS-022",
+  "category": "fabric_optic",
+  "close_code": "Hardware replaced",
+  "configuration_item": "eth-b2-1 swp64",
+  "customer_impact": "None (redundant uplinks)",
+  "hall": "HALL-B",
+  "number": "INC3500007",
+  "opened_at": "2026-09-07T01:07:00Z",
+  "parts_used": [
+   {
+    "installed_serial": "OS7BFIEOR65A",
+    "location": "eth-b2-1 swp64",
+    "part": "800G OSFP optic",
+    "removed_serial": "OSF2IKMHNEFT"
+   }
+  ],
+  "priority": "P3",
+  "rack": null,
+  "resolved_at": "2026-09-07T03:11:43Z",
+  "short_description": "Uplink errors and link down: eth-b2-1 swp64 to eth-b-sp2 swp6",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-07T01:12:17Z",
+    "author": "RSS-022",
+    "text": "Acknowledged. Assigned to RSS-022."
+   },
+   {
+    "at": "2026-09-07T02:32:00Z",
+    "author": "RSS-022",
+    "text": "Replaced the optic in eth-b2-1 swp64. Removed SN OSF2IKMHNEFT, installed SN OS7BFIEOR65A."
+   },
+   {
+    "at": "2026-09-07T03:11:43Z",
+    "author": "RSS-022",
+    "text": "Link stable, errors cleared. Customer impact: None (redundant uplinks). Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-17T06:43:32Z",
+  "assigned_to": "RSS-002",
+  "category": "fabric_optic",
+  "close_code": "Hardware replaced",
+  "configuration_item": "eth-b3-2 swp62",
+  "customer_impact": "None (redundant uplinks)",
+  "hall": "HALL-B",
+  "number": "INC3500008",
+  "opened_at": "2026-09-17T06:38:24Z",
+  "parts_used": [
+   {
+    "installed_serial": "OSET99825F8M",
+    "location": "eth-b3-2 swp62",
+    "part": "800G OSFP optic",
+    "removed_serial": "OS9CO1LX1C2J"
+   }
+  ],
+  "priority": "P3",
+  "rack": null,
+  "resolved_at": "2026-09-17T08:16:29Z",
+  "short_description": "Uplink errors and link down: eth-b3-2 swp62 to eth-b-sp1 swp12",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-17T06:43:32Z",
+    "author": "RSS-002",
+    "text": "Acknowledged. Assigned to RSS-002."
+   },
+   {
+    "at": "2026-09-17T07:55:00Z",
+    "author": "RSS-002",
+    "text": "Replaced the optic in eth-b3-2 swp62. Removed SN OS9CO1LX1C2J, installed SN OSET99825F8M."
+   },
+   {
+    "at": "2026-09-17T08:16:29Z",
+    "author": "RSS-002",
+    "text": "Link stable, errors cleared. Customer impact: None (redundant uplinks). Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-17T11:52:55Z",
+  "assigned_to": "RSS-023",
+  "category": "storage_drive",
+  "close_code": "Hardware replaced",
+  "configuration_item": "stg-a1-n07 Bay16",
+  "customer_impact": "None: PFS-A kept serving (erasure coding 8+2)",
+  "hall": "HALL-A",
+  "number": "INC3500009",
+  "opened_at": "2026-09-17T11:42:37Z",
+  "parts_used": [
+   {
+    "installed_serial": "NVMZ6HCCTEQJ",
+    "location": "stg-a1-n07 Bay16",
+    "part": "NVMe SSD 30.72 TB (U.2)",
+    "removed_serial": "NV9CH0U50QYC"
+   }
+  ],
+  "priority": "P4",
+  "rack": "STG-A1",
+  "resolved_at": "2026-09-18T01:08:19Z",
+  "short_description": "NVMe drive failed: stg-a1-n07 Bay16",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-17T11:52:55Z",
+    "author": "RSS-023",
+    "text": "Acknowledged. Assigned to RSS-023."
+   },
+   {
+    "at": "2026-09-17T21:22:22Z",
+    "author": "RSS-023",
+    "text": "On site at STG-A1."
+   },
+   {
+    "at": "2026-09-17T21:56:40Z",
+    "author": "RSS-023",
+    "text": "Replaced the drive in stg-a1-n07 Bay16. Removed SN NV9CH0U50QYC, installed SN NVMZ6HCCTEQJ. Rebuild started."
+   },
+   {
+    "at": "2026-09-18T01:08:19Z",
+    "author": "RSS-023",
+    "text": "Rebuild complete; drive Status OK. Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-19T01:03:58Z",
+  "assigned_to": "RSS-022",
+  "category": "fabric_optic",
+  "close_code": "Hardware replaced",
+  "configuration_item": "eth-b1-1 swp64",
+  "customer_impact": "I/O stalls on racks B02, B03, B05, B08 for 22 min; 107.5 GPU-hours idle",
+  "hall": "HALL-B",
+  "number": "INC3500010",
+  "opened_at": "2026-09-19T00:59:14Z",
+  "parts_used": [
+   {
+    "installed_serial": "OSYHIO4VCWYR",
+    "location": "eth-b1-1 swp64",
+    "part": "800G OSFP optic",
+    "removed_serial": "OSG7L7BTBI89"
+   }
+  ],
+  "priority": "P3",
+  "rack": null,
+  "resolved_at": "2026-09-19T01:28:00Z",
+  "short_description": "Uplink errors and link down: eth-b1-1 swp64 to eth-b-sp2 swp2",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-19T01:03:58Z",
+    "author": "RSS-022",
+    "text": "Acknowledged. Assigned to RSS-022."
+   },
+   {
+    "at": "2026-09-19T01:16:00Z",
+    "author": "RSS-022",
+    "text": "Replaced the optic in eth-b1-1 swp64. Removed SN OSG7L7BTBI89, installed SN OSYHIO4VCWYR."
+   },
+   {
+    "at": "2026-09-19T01:28:00Z",
+    "author": "RSS-022",
+    "text": "Link stable, errors cleared. Customer impact: I/O stalls on racks B02, B03, B05, B08 for 22 min; 107.5 GPU-hours idle. Resolved."
+   }
+  ]
+ },
+ {
+  "acknowledged_at": "2026-09-20T18:45:28Z",
+  "assigned_to": "RSS-020",
+  "category": "fabric_optic",
+  "close_code": "Hardware replaced",
+  "configuration_item": "eth-a3-2 swp61",
+  "customer_impact": "None (redundant uplinks)",
+  "hall": "HALL-A",
+  "number": "INC3500011",
+  "opened_at": "2026-09-20T18:38:57Z",
+  "parts_used": [
+   {
+    "installed_serial": "OS4OB2ZMYIM3",
+    "location": "eth-a3-2 swp61",
+    "part": "800G OSFP optic",
+    "removed_serial": "OS623OIKCKSX"
+   }
+  ],
+  "priority": "P3",
+  "rack": null,
+  "resolved_at": "2026-09-20T19:22:26Z",
+  "short_description": "Uplink errors and link down: eth-a3-2 swp61 to eth-a-sp1 swp11",
+  "state": "Closed",
+  "work_notes": [
+   {
+    "at": "2026-09-20T18:45:28Z",
+    "author": "RSS-020",
+    "text": "Acknowledged. Assigned to RSS-020."
+   },
+   {
+    "at": "2026-09-20T19:08:00Z",
+    "author": "RSS-020",
+    "text": "Replaced the optic in eth-a3-2 swp61. Removed SN OS623OIKCKSX, installed SN OS4OB2ZMYIM3."
+   },
+   {
+    "at": "2026-09-20T19:22:26Z",
+    "author": "RSS-020",
+    "text": "Link stable, errors cleared. Customer impact: None (redundant uplinks). Resolved."
+   }
+  ]
+ }
+]

@@ -91,7 +91,8 @@ def test_ownership_matrix_covers_the_site_model(ia):
                 "pump": "pumps", "thermal_wall": "Thermal walls", "crah": "CRAHs", "leak_detection": "leak detection",
                 "leak_cable": "leak detection", "smoke_detection": "VESDA", "fire_panel": "Fire alarm",
                 "ib_switch": "Leaf and spine", "solid_state_transformer": "switchgear", "mgmt_switch": "out-of-band management",
-                "mgmt_aggregation": "out-of-band management", "console_server": "out-of-band management"}
+                "mgmt_aggregation": "out-of-band management", "console_server": "out-of-band management",
+                "ethernet_switch": "Leaf and spine", "storage_node": "Storage nodes and drives"}
     components = " | ".join(r["component"] for r in ia["raci"])
     for key, prod in site["products"].items():
         assert keywords[prod["category"]].lower() in components.lower(), (key, prod["category"])

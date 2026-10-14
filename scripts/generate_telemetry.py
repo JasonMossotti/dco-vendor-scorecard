@@ -32,6 +32,11 @@ management switches' IF-MIB counters and SNMP traps, and the console servers' se
 Redfish event, inventory change, NMX event, rack power loss, and Hall B handover. All of it is committed, in
 data/telemetry/mgmt/ (own random stream).
 
+The storage layer follows the management layer: every storage node's drive bays under the Redfish Drive names, the
+storage and in-band Ethernet fabric's IF-MIB counters and traps, the clients' I/O stalls, and the IT Partner's drive and
+optic tickets and custody handovers. A compute tray's storage ports follow the tray's host management port. All of it
+is committed, in data/telemetry/storage/ (own random stream).
+
 Usage:
     python scripts/generate_telemetry.py
 """
@@ -54,6 +59,7 @@ from scorecard.synthetic.telemetry_power import PowerTelemetry, write_power  # n
 from scorecard.synthetic.telemetry_network import NetworkTelemetry, write_network  # noqa: E402
 from scorecard.synthetic.telemetry_mechanical import MechanicalTelemetry, write_mechanical  # noqa: E402
 from scorecard.synthetic.telemetry_mgmt import MgmtTelemetry, write_mgmt  # noqa: E402
+from scorecard.synthetic.telemetry_storage import StorageTelemetry, write_storage  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 HEALTH = ROOT / "data" / "gpu_health"
@@ -68,6 +74,7 @@ MINUTES_NET = ROOT / "build" / "telemetry" / "network_hourly"
 OUT_MECH = ROOT / "data" / "telemetry" / "mechanical"
 MINUTES_MECH = ROOT / "build" / "telemetry" / "mechanical_minutes"
 OUT_MGMT = ROOT / "data" / "telemetry" / "mgmt"
+OUT_STORAGE = ROOT / "data" / "telemetry" / "storage"
 ENERGY = ROOT / "data" / "energy"
 HISTORY = ROOT / "data" / "history"
 
@@ -118,6 +125,8 @@ def generate(dest: Path = OUT, hourly: Path | None = HOURLY) -> dict:
                                          build / "mechanical_minutes" if build else None)
     mg = MgmtTelemetry(SAMPLE, window["seed"])
     man["mgmt"] = write_mgmt(mg, mg.run(), Path(dest).parent / "mgmt", "data/sample + site/site.yaml")
+    sg = StorageTelemetry(SAMPLE, window["seed"], Path(dest).parent / "mgmt")
+    man["storage"] = write_storage(sg, sg.run(), Path(dest).parent / "storage", "data/sample + data/telemetry/mgmt + site/site.yaml")
     return man
 
 
@@ -211,6 +220,9 @@ def main() -> int:
     for rel, k in mg["files"].items():
         print(f"  {rel:<28} {k:>6}")
     print(f"  minute windows: {len(mg['windows'])}")
+    st = man["storage"]
+    print(f"Storage telemetry -> {OUT_STORAGE.relative_to(ROOT)}: {st['nodes']} storage nodes, {st['drives']} drives, {st['switches']} fabric "
+          f"switches, {st['drive_events']} drive events, {st['tickets']} tickets, {st['stalls']} client stalls")
     return 0
 
 

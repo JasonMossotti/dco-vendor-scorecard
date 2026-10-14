@@ -24,6 +24,7 @@ unit_out:
   cdu_pump: "Pump Status.State Disabled or InTest, or Status.Health Critical."
   chiller: "Chiller enable held Off by the BMS, or a compressor trip (alarm) active. A free-cooling inhibit does not take a chiller out."
   wall_fan: "A fan reporting Alarm (FanSts_OV[n])."
+  storage_node: "Offline in the cluster's event log, or holding a drive whose Redfish StatusIndicator is Fail, whose bay is empty, or whose Operations show a Rebuild."
 
 thresholds:                         # basis: assumption unless a source is given
   gpu:
