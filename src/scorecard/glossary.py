@@ -44,9 +44,11 @@ DIRECTION = {"higher_is_better": "at least", "lower_is_better": "at most"}
 # Underscores join words in controlled codes (IN_PROGRESS, CUST_HOLD). A plural "s" may follow (CDUs).
 _EDGE_L, _EDGE_R = r"(?<![A-Za-z0-9_-])", r"(?=s?(?![A-Za-z0-9_-]))"
 TOKEN = re.compile(_EDGE_L + r"(?:[A-Z][A-Z0-9_]*(?:-[A-Z0-9_]+)+|[A-Z]+[0-9][A-Z0-9_]*|[A-Z][A-Z0-9_]*[A-Z][A-Z0-9_]*)" + _EDGE_R)
-# Device names TOKEN cannot see: host-style names in lower case (leaf-a07-r1 port 18, a13-ct18, a15-nvsw3),
+# Device names TOKEN cannot see: host-style names in lower case (leaf-a07-r1 port 18, a13-ct18, a15-nvsw3, a07-mgmt1,
+# oob-agg-a1, con-a1),
 # Redfish names (A06_PowerShelf_1), and a rack written with its word (Rack A07; a bare A07 stays plain).
-DEVICE_NAME = re.compile(r"(?<![A-Za-z0-9_-])(?:leaf-[a-c]\d{2}-r\d(?: port \d{1,3}|:swp\d{1,3})?|[a-c]\d{2}-(?:ct\d{2}|nvsw\d)"
+DEVICE_NAME = re.compile(r"(?<![A-Za-z0-9_-])(?:leaf-[a-c]\d{2}-r\d(?: port \d{1,3}|:swp\d{1,3})?|[a-c]\d{2}-(?:ct\d{2}|nvsw\d|mgmt[12])"
+                         r"|oob-agg-[a-c]\d|con-[a-c]\d"
                          r"|[A-C]\d{2}_PowerShelf_\d|[Rr]ack [A-C]\d{2})(?![A-Za-z0-9_-])")
 # A GPU XID code written with its number (XID 79): one code, not the acronym and a number.
 XID_CODE = re.compile(r"(?<![A-Za-z0-9_-])XID \d{1,3}(?![A-Za-z0-9_-])")

@@ -1,0 +1,2 @@
+{"detail": "Redfish poller restarted (process exit)", "event": "poller stopped", "timestamp": "2026-09-27T11:55:00Z"}
+{"detail": "polling resumed", "event": "poller started", "timestamp": "2026-09-27T12:00:00Z"}

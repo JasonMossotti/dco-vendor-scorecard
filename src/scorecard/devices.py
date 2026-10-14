@@ -43,11 +43,13 @@ KIND_LABEL = {
     "mv": "Medium-voltage switchgear", "tx": "Utility transformer", "gen": "Generator", "chiller": "Chiller",
     "pump": "Facility water pump", "cdu": "Coolant distribution unit", "tw": "Thermal wall", "crah": "Air handler",
     "vesda": "Smoke detector", "leak": "Leak detection module",
+    "mgmt": "Management switch", "agg": "Management aggregation switch", "console": "Console server",
 }
 # Sections of the Devices page, in order, and the kinds in each
 GROUPS = [
     ("racks", "Racks and what is inside them", ["rack", "compute_tray", "switch_tray", "power_shelf"]),
     ("fabric", "InfiniBand fabric", ["leaf"]),
+    ("management", "Management network", ["mgmt", "agg", "console"]),
     ("power", "Power", ["tx", "mv", "gen", "uss", "ups", "mups", "mvsst", "group", "busway", "tapoff"]),
     ("cooling", "Cooling", ["cdu", "tw", "crah", "chiller", "pump"]),
     ("safety", "Smoke and leak detection", ["vesda", "leak"]),
@@ -65,6 +67,8 @@ def _span(names: list[str]) -> str:
 def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, dict[str, Any]]) -> dict[str, Any]:
     """Every device entry. ``it_site`` is the IT Partner SLA's ``site`` section (racks per hall and what is in
     each rack); ``loc_entries`` the location entries (``locations.build(site)["entries"]``) for descriptions."""
+    # the management switches' port maps (read here, not at import: the app bundle carries devices.json, not the config)
+    MP = __import__("yaml").safe_load((ROOT / "config" / "telemetry_mgmt.yaml").read_text(encoding="utf-8"))["ports"]
     dev: dict[str, dict[str, Any]] = {}
 
     def add(name: str, kind: str, text: str, conn: list[list[str]], loc: str = "", title: str = "", **extra: Any) -> None:
@@ -101,6 +105,7 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
         it = it_halls.get(hid)
         rows = h["rows"]
         leaves: dict[str, dict[str, Any]] = {}
+        mg = h.get("management") if it else None
 
         # ---- racks, and inside them (where the IT Partner SLA lists the hall's racks)
         for r in racks:
@@ -129,6 +134,9 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
                           f"{per['power_shelves']} power shelves"]]
             if it:
                 conn.append(["Leak detection", f"TTDM-{L}", f"circuit C{r['row']} along the row {r['row']} manifold"])
+            if mg and it and i <= it["racks"]:
+                conn += [["Management", f"{rid.lower()}-mgmt1", "out of band: every BMC and power shelf controller in the rack"],
+                         ["Management", f"{rid.lower()}-mgmt2", "in band: NVLink switch tray eth0 and the trays' host management ports"]]
             add(rid, "rack", desc(rid), conn, title=f"Rack {rid}")
             if not (it and i <= it["racks"]):
                 continue
@@ -136,6 +144,7 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
             nvsw = [f"{rid.lower()}-nvsw{n}" for n in range(1, per["nvlink_switch_trays"] + 1)]
             trays = [f"{rid.lower()}-ct{n:02d}" for n in range(1, per["compute_trays"] + 1)]
             half = per["power_shelves"] // 2
+            m1, m2 = f"{rid.lower()}-mgmt1", f"{rid.lower()}-mgmt2"
             for n in range(1, per["compute_trays"] + 1):
                 links = [Generator.link_for({"rack": rid, "index": i}, n, rail) for rail in range(RAILS)]
                 conn = [["In rack", rid, f"compute tray {n} of {per['compute_trays']}"]]
@@ -144,6 +153,9 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
                     leaves.setdefault(lk["switch"], {"rail": rail, "ports": {}})["ports"][lk["port"]] = [lk["host"], lk["hca"]]
                 conn += [["NVLink", nvsw[0], f"to {nvsw[-1]}: all {len(nvsw)} switch trays, through the rack's NVLink spine"],
                          ["Power", shelves[0], f"to {shelves[-1]}, through the rack busbar"]]
+                if mg:
+                    conn += [["Management", m1, f"port {MP['mgmt1']['compute_bmc'] + n - 1}: BMC"],
+                             ["Management", m2, f"port {MP['mgmt2']['compute_host'] + n - 1}: host management port"]]
                 add(trays[n - 1], "compute_tray",
                     f"Compute tray {n} in rack {rid} ({rp['model']}): {per['gpus_per_compute_tray']} GPUs. One InfiniBand "
                     f"NIC per rail to the leaf switches, and NVLink to every switch tray in the rack.",
@@ -152,7 +164,9 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
                 add(name, "switch_tray", f"NVLink switch tray {n} of {len(nvsw)} in rack {rid}: joins the rack's "
                     f"{per['compute_trays']} compute trays into one NVLink domain of {per['gpus']} GPUs.",
                     [["In rack", rid, f"switch tray {n}"], ["NVLink", trays[0], f"to {trays[-1]}: every compute tray"],
-                     ["Power", shelves[0], f"to {shelves[-1]}, through the rack busbar"]], loc=name)
+                     ["Power", shelves[0], f"to {shelves[-1]}, through the rack busbar"]] +
+                    ([["Management", m1, f"port {MP['mgmt1']['switch_bmc'] + n - 1}: BMC"],
+                      ["Management", m2, f"port {MP['mgmt2']['switch_eth0'] + n - 1}: eth0, the interface NMX uses"]] if mg else []), loc=name)
             for n, name in enumerate(shelves, 1):
                 side = "A" if n <= half else "B"
                 feed = [["Fed by", f"TO-{rid}-{side}", f"the rack's {side} feed (shelves {1 if side == 'A' else half + 1} to "
@@ -160,7 +174,23 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
                 add(name, "power_shelf", f"Power shelf {n} of {per['power_shelves']} in rack {rid}: converts the rack's AC "
                     "feed to the DC busbar that powers the trays.",
                     [["In rack", rid, f"power shelf {n}"]] + feed +
-                    [["Feeds", trays[0], f"to {trays[-1]} and the switch trays, through the busbar"]], loc=name)
+                    [["Feeds", trays[0], f"to {trays[-1]} and the switch trays, through the busbar"]] +
+                    ([["Management", m1, f"port {MP['mgmt1']['power_shelf'] + n - 1}: shelf controller"]] if mg else []), loc=name)
+
+        # ---- where each management switch and leaf console lands: one console server per row (see management below)
+        cons_of: dict[str, tuple[str, int]] = {}
+        if mg:
+            leaf_rack = {n: sorted({h_[0][:3].upper() for h_ in lf["ports"].values()})[0] for n, lf in leaves.items()}
+            row_of = {r["rack"]: r["row"] for r in racks}
+            for row in range(1, rows + 1):
+                con = f"con-{L.lower()}{row}"
+                rr = [r["rack"] for r in racks if r["row"] == row and it and r["index"] <= it["racks"]]
+                for k, rid in enumerate(rr):
+                    cons_of[f"{rid.lower()}-mgmt1"], cons_of[f"{rid.lower()}-mgmt2"] = (con, 2 * k + 1), (con, 2 * k + 2)
+                for k, n in enumerate(sorted(x for x in leaves if row_of[leaf_rack[x]] == row)):
+                    cons_of[n] = (con, 2 * len(rr) + 1 + k)
+            for k in range(mg["aggregation_count"]):
+                cons_of[f"oob-agg-{L.lower()}{k + 1}"] = (f"con-{L.lower()}1", MP["console"] - mg["aggregation_count"] + k + 1)
 
         # ---- leaf switches: two racks per leaf and rail, ports 1 to 36 down, the rest up
         for name in sorted(leaves):
@@ -174,9 +204,74 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
             conn.append([f"Ports above {max(ports)}", "", f"uplinks to the spine plane for rail {lf['rail']} "
                          "(the spine switches are not in the sample data)"])
             served = sorted({h_[0][:3].upper() for h_ in ports.values()})
+            if mg:
+                conn += [["Management", f"{served[0].lower()}-mgmt1", f"port {MP['mgmt1']['leaf_mgmt'] + lf['rail']}: mgmt0"],
+                         ["Console", cons_of[name][0], f"port {cons_of[name][1]}"]]
             add(name, "leaf", f"{fabric} leaf switch in {short} on rail {lf['rail']}, serving racks {' and '.join(served)}. "
                 f"Leaf numbers count rack pairs: leaf {int(name.split('-')[1][1:])} serves racks {' and '.join(served)}.",
                 conn, loc=f"{name}|{served[0]}")
+
+        # ---- management network: two switches per rack, an aggregation pair, a console server per row
+        if mg:
+            mp = S.product(site, mg["rack_switch_product"])["model"]
+            aggs = [f"oob-agg-{L.lower()}{k + 1}" for k in range(mg["aggregation_count"])]
+            leaf_at: dict[str, list[str]] = {}
+            for n in sorted(leaves):
+                leaf_at.setdefault(sorted({h_[0][:3].upper() for h_ in leaves[n]["ports"].values()})[0], []).append(n)
+            for r in racks:
+                rid = r["rack"]
+                if not (it and r["index"] <= it["racks"]):
+                    continue
+                host, m1, m2 = f"{rid.lower()}-ct", f"{rid.lower()}-mgmt1", f"{rid.lower()}-mgmt2"
+                ct, sw, ps = per["compute_trays"], per["nvlink_switch_trays"], per["power_shelves"]
+                up = [[f"Uplink swp{u}", a, "to the hall's management aggregation pair"] for u, a in zip(MP["uplinks"], aggs)]
+                p1 = MP["mgmt1"]
+                conn = [["In rack", rid, "management switch 1 of 2, out of band"],
+                        [f"Ports {p1['compute_bmc']} to {p1['compute_bmc'] + ct - 1}", f"{host}01", f"to {host}{ct:02d}: compute tray BMCs"],
+                        [f"Ports {p1['switch_bmc']} to {p1['switch_bmc'] + sw - 1}", f"{rid.lower()}-nvsw1", f"to {rid.lower()}-nvsw{sw}: switch tray BMCs"],
+                        [f"Ports {p1['power_shelf']} to {p1['power_shelf'] + ps - 1}", f"{rid}_PowerShelf_1", f"to {rid}_PowerShelf_{ps}: shelf controllers"]]
+                lv = leaf_at.get(rid, [])
+                if lv:
+                    conn.append([f"Ports {p1['leaf_mgmt']} to {p1['leaf_mgmt'] + len(lv) - 1}", lv[0], f"to {lv[-1]}: leaf switch mgmt0 ports"])
+                conn += up + [["Console", cons_of[m1][0], f"port {cons_of[m1][1]}"]]
+                add(m1, "mgmt", f"{mp} in rack {rid}, out of band: the network the Telemetry of Record polls every BMC over, "
+                    f"and the IT Partner's remote access to the rack. If it stops, the rack's BMC evidence stops with it.",
+                    conn, loc=f"{m1}|{rid}", title=m1)
+                p2 = MP["mgmt2"]
+                add(m2, "mgmt", f"{mp} in rack {rid}, in band: the NVLink switch trays' management interfaces (which NMX uses) "
+                    "and the compute trays' host management ports.",
+                    [["In rack", rid, "management switch 2 of 2, in band"],
+                     [f"Ports {p2['switch_eth0']} to {p2['switch_eth0'] + sw - 1}", f"{rid.lower()}-nvsw1", f"to {rid.lower()}-nvsw{sw}: eth0"],
+                     [f"Ports {p2['compute_host']} to {p2['compute_host'] + ct - 1}", f"{host}01", f"to {host}{ct:02d}: host management ports"]]
+                    + up + [["Console", cons_of[m2][0], f"port {cons_of[m2][1]}"]], loc=f"{m2}|{rid}", title=m2)
+            ap = S.product(site, mg["aggregation_product"])["model"]
+            for k, a in enumerate(aggs):
+                conn = []
+                for row in range(1, rows + 1):
+                    rr = [r["rack"] for r in racks if r["row"] == row and r["index"] <= it["racks"]]
+                    if rr:
+                        conn.append([f"Row {row}", f"{rr[0].lower()}-mgmt1", f"to {rr[-1].lower()}-mgmt1 and each rack's mgmt2: "
+                                     f"uplink swp{MP['uplinks'][k]} of every rack switch"])
+                conn += [["Peer", x, "the other half of the pair: either carries every rack"] for x in aggs if x != a]
+                conn.append(["Console", cons_of[a][0], f"port {cons_of[a][1]}"])
+                add(a, "agg", f"{ap} for {short}, half of the hall's management aggregation pair: every rack switch has an uplink "
+                    f"to each, so the hall keeps its management network with one of them down (N+1).", conn, loc=f"{a}|{hid}", title=a)
+            for row in range(1, rows + 1):
+                con = f"con-{L.lower()}{row}"
+                mine = sorted((p_, n) for n, (c_, p_) in cons_of.items() if c_ == con)
+                rr = [n for _, n in mine if n.endswith("-mgmt1") or n.endswith("-mgmt2")]
+                lv = [n for _, n in mine if n.startswith("leaf-")]
+                ag = [(p_, n) for p_, n in mine if n.startswith("oob-agg-")]
+                conn = [["Where", "", f"{short}, row {row}"]]
+                if rr:
+                    conn.append([f"Ports 1 to {len(rr)}", rr[0], f"to {rr[-1]}: the row's management switches, mgmt1 and mgmt2 of each rack"])
+                if lv:
+                    conn.append([f"Ports {len(rr) + 1} to {len(rr) + len(lv)}", lv[0], f"to {lv[-1]}: the row's leaf switches"])
+                conn += [[f"Port {p_}", n, "console"] for p_, n in ag]
+                conn.append(["Network", aggs[0], "its own Ethernet port, on the aggregation pair"])
+                add(con, "console", f"{S.product(site, mg['console_product'])['model'].capitalize()} for {short} row {row}: a serial "
+                    "line to every management and leaf switch console in the row, for when the network itself is the problem. "
+                    "Its session log records who opened which port and what the device printed.", conn, loc=f"{con}|{hid}", title=con)
 
         # ---- power distribution
         for s in segs:

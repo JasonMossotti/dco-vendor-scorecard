@@ -1,6 +1,6 @@
 // node tests/js/telemetry_page.cjs <site>/index.html <site>
 // <site> is the folder scripts/render_telemetry.py write_site() wrote: index.html plus data/ (racks.json, gpu/, windows/, cdu/, cdu_minutes/,
-// power/, power/windows/, power_minutes/, network/, network/windows/, mechanical/, mechanical/windows/, mechanical_minutes/).
+// power/, power/windows/, power_minutes/, network/, network/windows/, mechanical/, mechanical/windows/, mechanical_minutes/, mgmt/, mgmt/windows/).
 const { JSDOM, VirtualConsole } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
@@ -43,7 +43,7 @@ async function until(fn, what, ms = 8000) {
   ok(t().includes("Site health") && d.querySelector('#tree a[href="#site"]').classList.contains("on"), "the tab opens on Site health");
   ok(d.getElementById("shr").value === String(H - 1) && d.getElementById("sh-lab").textContent.includes("Sep 27, 23:00 to 00:00 UTC"), "the clock starts at the month's last hour");
   ok(d.querySelectorAll("#sh-red a.shchip").length === S.groups.length, "a chip for every redundancy group");
-  ok(d.querySelectorAll("#sh-fam a.shtile").length === 5, "a tile per device family");
+  ok(d.querySelectorAll("#sh-fam a.shtile").length === 6, "a tile per device family");
   ok(d.querySelectorAll("#sh-map .shrack").length === 64 && d.querySelectorAll("#sh-map .shcdu").length === 8, "hall map: 64 racks and 8 CDUs");
   ok(t().includes("Hall C (800 VDC pilot)") && d.querySelector('#sh-map a[href="../deployments/#hallc"]'), "Hall C shown as planned, linked to readiness");
   ok(d.querySelector('a[href="../alarms/"]'), "links to the Alarm Board for alarms");
@@ -169,8 +169,8 @@ async function until(fn, what, ms = 8000) {
   const C = D.cdu;
   const noBad = what => ok(!/\bundefined\b|\bNaN\b/.test(t()), `no undefined/NaN text in ${what}`);
   const fam = () => [...d.querySelectorAll("#tree ul.fam > li")].map(li => li.textContent.trim());
-  ok(fam()[0].startsWith("Site health") && fam()[1].startsWith("GPUs") && fam()[2].startsWith("CDUs") && fam()[3].startsWith("Power") && fam()[4].startsWith("Network") && fam()[5].startsWith("Mechanical") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists Site health, GPUs, CDUs, Power, Network, Mechanical and any greyed planned families: " + fam().join(" | "));
-  ok(d.querySelectorAll("#tree ul.fam a").length === 6 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
+  ok(fam()[0].startsWith("Site health") && fam()[1].startsWith("GPUs") && fam()[2].startsWith("CDUs") && fam()[3].startsWith("Power") && fam()[4].startsWith("Network") && fam()[5].startsWith("Mechanical") && fam()[6].startsWith("Management network") && C.planned.every(p => fam().some(x => x.startsWith(p) && x.includes("planned"))), "family selector lists Site health, GPUs, CDUs, Power, Network, Mechanical, Management network and any greyed planned families: " + fam().join(" | "));
+  ok(d.querySelectorAll("#tree ul.fam a").length === 7 && d.querySelectorAll("#tree ul.fam .planned").length === C.planned.length && !d.querySelector("#tree ul.fam .planned a"), "planned families are not links");
   ok(!d.querySelector('#tree .famsec[data-fam="gpu"]').classList.contains("off") && d.querySelector('#tree .famsec[data-fam="cdu"]').classList.contains("off"), "on a GPU view the GPU section shows and the CDU section is hidden");
   ok([...d.querySelectorAll("#tree .planned")].some(x => x.textContent.includes("CDU-C1")) && !d.querySelector('#tree a[href="#CDU-C1"]'), "Hall C CDUs are greyed, not links");
   await go("#cdus");
@@ -457,6 +457,48 @@ async function until(fn, what, ms = 8000) {
     ok(t().includes("Could not load data/mechanical_minutes/CH-05.json") && errors.length === 0, "a missing chiller minute file shows a message, not an exception");
   } finally {
     fs.renameSync(path.join(site, "data/mechanical_minutes/CH-05.json.bak"), path.join(site, "data/mechanical_minutes/CH-05.json"));
+  }
+
+  // ---- management network
+  const Gx = D.mgmt, gmin = iso => Math.round((Date.parse(iso) - Date.parse(Gx.window.start)) / 60000);
+  const gOut = Gx.findings.find(f => f.kind === "unticketed_outage"), swap = Gx.findings.find(f => f.kind === "console_swap");
+  ok(Gx.findings.length === 4 && ["unticketed_outage", "validation_gap", "late_bmc", "console_swap"].every(k => Gx.findings.some(f => f.kind === k)), "four management findings, one of each kind");
+  await go("#management");
+  await until(() => d.querySelectorAll("#gm-ch svg").length === 2, "management charts");
+  ok(t().includes("Management network telemetry") && d.querySelectorAll("#main .finding").length === 4 && d.querySelector('#tree a[href="#management"]').classList.contains("on"), "management overview: the four findings; tree highlights Management");
+  ok(d.querySelectorAll('#main table a[href^="#mgmt-"]').length >= 64 && t().includes("Console sessions") && t().includes("does not match the label"), "a row per rack, the session log, and the mismatched prompt flagged");
+  const gAgree = Gx.agreements.reduce((a, c) => a + c.checked - c.misses, 0);
+  ok(t().includes(`${gAgree.toLocaleString("en-US")} of`) && Gx.agreements.every(c => c.misses === 0), "management agreements on the overview, none missed");
+  noBad("#management");
+  await go("#a27-mgmt1");
+  await until(() => d.querySelectorAll("#gm-r svg").length === 4, "A27 management charts");
+  ok(t().includes("Rack A27 management") && d.querySelectorAll("#gm-r svg").length === 4 && t().includes(gOut.title) && t().includes("swp49") && t().includes("con-a4"), "a27-mgmt1 opens rack A27: four charts, its finding, the port map with uplinks and console");
+  noBad("#mgmt-A27");
+  await go(`#mgmt-A27/${gmin(gOut.from) + 30}`);
+  await until(() => d.getElementById("gm-raw") && d.getElementById("gm-raw").textContent.includes("GET /redfish/v1/"), "A27 minute detail");
+  ok(d.getElementById("gm-raw").textContent.includes("Timeout: No Response from a27-mgmt1") && d.getElementById("gm-raw").textContent.includes("poll failed") && d.querySelectorAll("#gm-grid g[data-ep]").length === 35, "minute detail during the outage: 35 BMC rows, the switch silent, the poll failed");
+  const gr = d.getElementById("gmm");
+  gr.value = "0"; gr.dispatchEvent(new w.Event("input"));
+  ok(d.getElementById("gm-raw").textContent.includes("200 OK") && d.getElementById("gm-raw").textContent.includes("ifOperStatus"), "before the outage the BMC answers and the switch reports its ports");
+  noBad("#mgmt-A27 minute");
+  await go("#con-b2");
+  ok(t().includes(swap.title) && [...d.querySelectorAll("#main tbody tr")].some(tr => tr.textContent.includes("does not match")), "con-b2: the swap finding and the mismatched port");
+  await go("#oob-agg-a1");
+  ok(d.querySelectorAll("#main tbody tr").length === 64 && t().includes("a32-mgmt2"), "oob-agg-a1: a port per Hall A rack switch");
+  await go("#mgmt-fields");
+  ok(Gx.fields.every(f => t().includes(f.name)) && Gx.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#mgmt-fields lists every field and source");
+  await go("#mgmt-agreements");
+  ok(d.querySelectorAll("tbody tr").length === Gx.agreements.length && Gx.agreements.every(a => t().includes(a.title)), "#mgmt-agreements shows every check");
+  await go(`#site/${Math.floor(gmin(gOut.from) / 60) + 2}`);
+  const mt = [...d.querySelectorAll("#sh-fam a.shtile")].find(a => a.getAttribute("href") === "#management");
+  ok(mt && mt.classList.contains("warn") && mt.textContent.includes("a27-mgmt1 down"), "site health: the management tile degraded during the A27 switch outage");
+  fs.renameSync(path.join(site, "data/mgmt/A05.json"), path.join(site, "data/mgmt/A05.json.bak"));
+  try {
+    await go("#mgmt-A05");
+    await until(() => t().includes("Could not load"), "management error message");
+    ok(t().includes("Could not load data/mgmt/A05.json") && errors.length === 0, "a missing rack management file shows a message, not an exception");
+  } finally {
+    fs.renameSync(path.join(site, "data/mgmt/A05.json.bak"), path.join(site, "data/mgmt/A05.json"));
   }
 
   // ---- error state

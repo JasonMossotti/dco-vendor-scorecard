@@ -27,6 +27,11 @@ counter names, the leaf chassis, and the NVLink switch trays under NMX-T names, 
 event, optic ticket, the device directory, and the GPU telemetry. Committed tiers go to data/telemetry/network/,
 the per-port and per-tray hourly files to build/telemetry/network_hourly/.
 
+The management network layer reads only the sample: every BMC's answers to the Telemetry of Record's Redfish polls, the
+management switches' IF-MIB counters and SNMP traps, and the console servers' session logs, shaped to agree with every
+Redfish event, inventory change, NMX event, rack power loss, and Hall B handover. All of it is committed, in
+data/telemetry/mgmt/ (own random stream).
+
 Usage:
     python scripts/generate_telemetry.py
 """
@@ -48,6 +53,7 @@ from scorecard.synthetic.telemetry_cdu import CduTelemetry, write_cdu  # noqa: E
 from scorecard.synthetic.telemetry_power import PowerTelemetry, write_power  # noqa: E402
 from scorecard.synthetic.telemetry_network import NetworkTelemetry, write_network  # noqa: E402
 from scorecard.synthetic.telemetry_mechanical import MechanicalTelemetry, write_mechanical  # noqa: E402
+from scorecard.synthetic.telemetry_mgmt import MgmtTelemetry, write_mgmt  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 HEALTH = ROOT / "data" / "gpu_health"
@@ -61,6 +67,7 @@ OUT_NET = ROOT / "data" / "telemetry" / "network"
 MINUTES_NET = ROOT / "build" / "telemetry" / "network_hourly"
 OUT_MECH = ROOT / "data" / "telemetry" / "mechanical"
 MINUTES_MECH = ROOT / "build" / "telemetry" / "mechanical_minutes"
+OUT_MGMT = ROOT / "data" / "telemetry" / "mgmt"
 ENERGY = ROOT / "data" / "energy"
 HISTORY = ROOT / "data" / "history"
 
@@ -109,6 +116,8 @@ def generate(dest: Path = OUT, hourly: Path | None = HOURLY) -> dict:
         raise SystemExit("mechanical records disagree with each other: " + "; ".join(mech.conflicts[:5]))
     man["mechanical"] = write_mechanical(mech, mout, Path(dest).parent / "mechanical", "data/sample + data/energy + CDU telemetry",
                                          build / "mechanical_minutes" if build else None)
+    mg = MgmtTelemetry(SAMPLE, window["seed"])
+    man["mgmt"] = write_mgmt(mg, mg.run(), Path(dest).parent / "mgmt", "data/sample + site/site.yaml")
     return man
 
 
@@ -193,6 +202,15 @@ def main() -> int:
         print(f"  {rel:<28} {k:>6}")
     print(f"  one-minute readings (not committed) -> {MINUTES_MECH.relative_to(ROOT)}: "
           f"{sum(m['bytes'] for m in mm['minutes'].values()) / 1e6:.1f} MB")
+    mg = man["mgmt"]
+    fam = {}
+    for x in mg["devices"].values():
+        fam[x["family"]] = fam.get(x["family"], 0) + 1
+    print(f"Management network telemetry -> {OUT_MGMT.relative_to(ROOT)}: {fam.get('bmc', 0):,} BMCs, {fam.get('rack', 0)} rack switches, "
+          f"{fam.get('agg', 0)} aggregation switches, {fam.get('console', 0)} console servers")
+    for rel, k in mg["files"].items():
+        print(f"  {rel:<28} {k:>6}")
+    print(f"  minute windows: {len(mg['windows'])}")
     return 0
 
 

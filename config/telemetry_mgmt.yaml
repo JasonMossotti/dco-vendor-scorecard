@@ -1,0 +1,103 @@
+# Management network telemetry for Site AUS-1 (synthetic; portfolio demo). PR A of the monitoring gaps plan.
+#
+# The management plane is how the Customer's Telemetry of Record reaches every BMC, and how the IT Partner works on a
+# rack without walking to it. The IT Partner SLA measures its clocks and serial swaps through the BMC ("BMC reports
+# power redundancy restored"; "confirmed by a serial change in BMC inventory"), so when this network is down, those
+# measurements cannot be taken. The Interface Agreement RACI makes the IT Partner Responsible for "BMC and
+# out-of-band management network (physical)".
+#
+# What exists (site/site.yaml, halls[].management):
+#   * Two 1 GbE management switches in every NVL72 rack (NVIDIA Spectrum SN2201, the 1G management switch NVIDIA's
+#     GB200 SuperPOD reference architecture uses for the out-of-band network; 48 x 1GBASE-T, 4 x 100 GbE QSFP28):
+#       <rack>-mgmt1, out of band: every compute tray BMC, every NVLink switch tray BMC, every power shelf
+#                     controller, and the management ports of the leaf switches placed at the rack;
+#       <rack>-mgmt2, in band: every NVLink switch tray's management interface (eth0 on the COMe, which NMX uses)
+#                     and every compute tray's 1 GbE host management port.
+#     Both uplink to the hall's management aggregation pair (swp49 to the first, swp50 to the second).
+#   * A management aggregation pair per hall (NVIDIA Spectrum SN5600, carrying the OOB segment as the reference
+#     architecture describes): either one carries every rack (N+1).
+#   * One 48-port serial console server per row (the console ports of the row's management switches and leaves).
+# Port maps and the console wiring are this site's assumptions (basis: assumption), not NVIDIA's.
+#
+# How it is read: the Telemetry of Record polls every BMC's Redfish service root once a minute (a timeout is a failed
+# poll), and every management switch and console server over SNMPv3 (IF-MIB, ENTITY-SENSOR-MIB) once a minute, and it
+# receives their SNMP traps (linkDown, linkUp, coldStart). The IT Partner's console sessions are logged by the console
+# servers.
+# Read by src/scorecard/synthetic/telemetry_mgmt.py (the data) and src/scorecard/telemetry_mgmt.py (agreements, findings).
+
+framing: "Synthetic management network telemetry under the published Redfish, IF-MIB, ENTITY-SENSOR-MIB, and SNMPv2 trap names."
+sources:
+  - {name: "NVIDIA DGX SuperPOD GB200 reference architecture: network fabrics (OOB network on SN2201; in-band aggregation on SN5600)", url: "https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html", checked: "2026-10-14"}
+  - {name: "NVIDIA SN2201 1G management switch user manual (48 x 1GBASE-T, 4 x 100 GbE QSFP28, console and management ports, Cumulus Linux)", url: "https://docs.nvidia.com/networking/display/sn2201switchesum/introduction", checked: "2026-10-14"}
+  - {name: "NVIDIA Mission Control: GB200 rack verification checklist (BMC connectivity tested for each compute tray and switch)", url: "https://docs.nvidia.com/mission-control/docs/rack-bring-up-install/2.2.0/config-for-provisioning/gb200-rack-verification-checklist.html", checked: "2026-10-14"}
+  - {name: "DMTF DSP0266 Redfish Specification (the service root /redfish/v1/)", url: "https://www.dmtf.org/standards/redfish", checked: "2026-10-14"}
+  - {name: "RFC 2863, The Interfaces Group MIB (ifOperStatus, ifName, ifHCInOctets, linkDown and linkUp)", url: "https://www.rfc-editor.org/rfc/rfc2863", checked: "2026-10-14"}
+  - {name: "RFC 3418, Management Information Base for SNMP (sysUpTime, coldStart)", url: "https://www.rfc-editor.org/rfc/rfc3418", checked: "2026-10-14"}
+  - {name: "RFC 3433, Entity Sensor MIB (entPhySensorValue)", url: "https://www.rfc-editor.org/rfc/rfc3433", checked: "2026-10-14"}
+
+collection:
+  redfish: {poll_s: 60, timeout_s: 10, path: "/redfish/v1/", note: "the service root, once a minute per BMC; a timeout or an error is a failed poll"}
+  snmp: {version: "SNMPv3 (authPriv, read-only user)", poll_s: 60, traps: "SNMPv2 notifications to the Telemetry of Record"}
+  console: {log: "session log exported by each console server", note: "who opened which port, when, and the prompt the device printed"}
+
+# What the Telemetry of Record reads, under the published names (the page's field list)
+fields:
+  - {name: "GET /redfish/v1/", source: "Redfish (DSP0266)", unit: "answered or not", help: "The service root of each BMC, once a minute; an answer within the timeout is a good poll, a timeout or error a failed one"}
+  - {name: "ifOperStatus", source: "IF-MIB 1.3.6.1.2.1.2.2.1.8", unit: "up(1), down(2)", help: "Each switch port's operational state, polled once a minute"}
+  - {name: "ifName", source: "IF-MIB 1.3.6.1.2.1.31.1.1.1.1", unit: "text", help: "The port's name as the switch gives it (swp1 to swp52 on Cumulus Linux)"}
+  - {name: "ifHCInOctets, ifHCOutOctets", source: "IF-MIB 1.3.6.1.2.1.31.1.1.1.6 and .10", unit: "octets (Counter64)", help: "Bytes in and out of each uplink; the page shows the switch's management traffic in kbit/s"}
+  - {name: "sysUpTime", source: "SNMPv2-MIB 1.3.6.1.2.1.1.3", unit: "hundredths of a second", help: "Time since the switch's agent started; it falls back to zero when the switch reboots"}
+  - {name: "entPhySensorValue", source: "ENTITY-SENSOR-MIB 1.3.6.1.2.1.99.1.1.1.4", unit: "degrees C (celsius sensor)", help: "The switch's ASIC temperature"}
+  - {name: "linkDown, linkUp", source: "IF-MIB notifications 1.3.6.1.6.3.1.1.5.3 and .4", unit: "trap", help: "Sent by the switch when a port goes down or comes up, with its ifIndex and ifName"}
+  - {name: "coldStart", source: "SNMPv2-MIB notification 1.3.6.1.6.3.1.1.5.1", unit: "trap", help: "Sent by the switch when it boots"}
+  - {name: "Console session log", source: "console server", unit: "opened, closed, user, prompt", help: "Who opened which serial port and when, and the login prompt the device printed"}
+
+# The rack switches' port maps (basis: assumption). Ports are Cumulus Linux names swp1 to swp52.
+ports:
+  mgmt1:
+    compute_bmc: 1          # compute tray n BMC on swp n (1 to 18)
+    switch_bmc: 19          # NVLink switch tray n BMC on swp 18 + n (19 to 27)
+    power_shelf: 28         # power shelf n controller on swp 27 + n (28 to 35)
+    leaf_mgmt: 37           # the leaf switches placed at this rack: mgmt0 on swp 37 to 40, by rail
+  mgmt2:
+    switch_eth0: 1          # NVLink switch tray n eth0 (COMe) on swp n (1 to 9)
+    compute_host: 11        # compute tray n host management port on swp 10 + n (11 to 28)
+  uplinks: [49, 50]         # to the hall's aggregation pair, first and second
+  console: 48               # console server ports per row
+
+switch:
+  temp_c: [34, 41]          # SN2201 ASIC sensor range over a day (basis: assumption; air-cooled 1U in the rack)
+  temp_noise_c: 0.6
+  poll_bytes: 2200          # bytes exchanged per Redfish service-root poll, both ways (basis: assumption)
+  snmp_bytes: 9000          # per switch per minute: the SNMP walk itself
+
+# What makes an endpoint stop answering, and how long (basis: assumption unless a record sets it)
+behaviour:
+  bmc_boot_min: [2, 4]              # after the rack's power returns, before the BMC answers
+  switch_boot_min: [3, 5]           # an SN2201 after power returns
+  swap_out_min: [12, 35]            # a tray or shelf out of the rack before its replacement's BMC answers
+  reseat_out_min: [3, 8]            # a reseat pulls the tray for a few minutes
+  hallb_first_before_m4_h: [2, 10]  # a Hall B rack's BMCs first answer this long before M4 is reported complete
+  short_resets: [4, 9]              # BMC self-resets a month (each 2 to 9 minutes, below the gap threshold)
+  short_reset_min: [2, 9]
+  long_hangs: [1, 2]                # a BMC that stops answering for longer, with no partner action inside (observation)
+  long_hang_min: [30, 150]
+  collector_restarts: [1, 3]        # the Telemetry of Record's own poller restarting: every endpoint at once
+  collector_restart_min: [2, 5]
+  uplink_flaps: [1, 2]              # one uplink of one rack switch down; the other carries it
+  uplink_flap_min: [15, 90]
+  console_audits: [8, 14]           # IT Partner console sessions on Hall A switches (weekly configuration backups)
+
+# Planted discrepancies (one each a month, own random stream). Each is a case where the records do not reconcile,
+# not a claim that anyone misled.
+planted:
+  unticketed_outage_h: [6, 22]      # an OOB switch down for this long; no ticket; a console session just before it returns
+  validation_gap_after_min: [20, 90]  # a power shelf controller stops answering mid-check and stays down this long after
+  late_bmc: {trays: [2, 4], after_m4_h: [8, 40]}   # Hall B BMCs first answering after M4 was reported complete
+  console_swap: true                # two adjacent console ports labeled the wrong way round
+
+checks:
+  gap_min: 15                       # a single endpoint not answering for longer than this is a gap worth a line
+  outage_ticket_min: 30             # a rack-wide loss with the rack powered, this long, needs an IT Partner ticket
+  ticket_window_h: 2                # a ticket opened within this of the outage counts
+  power_match_min: 1                # endpoints stop within this of the scheduler's first NotResponding for the rack

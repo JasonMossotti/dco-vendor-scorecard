@@ -1,6 +1,6 @@
 """Site health: the whole site at any hour of the month, from the committed telemetry (the Telemetry tab's landing page).
 
-Reads only what the five telemetry sections already publish (data/telemetry/: the hourly tiers and each section's
+Reads only what the six telemetry sections already publish (data/telemetry/: the hourly tiers and each section's
 recorded state changes), the scheduler's node states (when a Hall B rack was handed over), and the topology in
 site/site.yaml. Nothing new is generated and nothing is judged: there are no findings here.
 
@@ -40,7 +40,7 @@ CONFIG = ROOT / "config" / "site_health.yaml"
 OFF, GREEN, AMBER, RED = -1, 0, 1, 2
 STATE_NAME = {OFF: "not in service", GREEN: "normal", AMBER: "degraded", RED: "lost"}
 FAMILIES = [("gpu", "GPUs", "gpus"), ("cdu", "CDUs", "cdus"), ("power", "Power", "power"), ("network", "Network", "network"),
-            ("mechanical", "Mechanical", "mechanical")]
+            ("mechanical", "Mechanical", "mechanical"), ("mgmt", "Management network", "management")]
 GPUS_PER_RACK = 72
 
 
@@ -84,11 +84,12 @@ class Dirs:
     network: Path
     mechanical: Path
     sample: Path
+    mgmt: Path | None = None
 
     @classmethod
     def committed(cls, root: Path = ROOT) -> "Dirs":
         t = root / "data" / "telemetry"
-        return cls(t / "gpu", t / "cdu", t / "power", t / "network", t / "mechanical", root / "data" / "sample")
+        return cls(t / "gpu", t / "cdu", t / "power", t / "network", t / "mechanical", root / "data" / "sample", t / "mgmt")
 
 
 class SiteHealth:
@@ -109,6 +110,7 @@ class SiteHealth:
         self.cdu_dev = json.loads((dirs.cdu / "manifest.json").read_text(encoding="utf-8"))["cdus"]
         self.rack_rows = _csv(dirs.gpu / "rack_hourly.csv")
         self._load_states()
+        self._load_mgmt()
         self._racks()
 
     # ------------------------------------------------------------------ helpers
@@ -226,6 +228,24 @@ class SiteHealth:
                 note = next((e.get("note") for e in _jsonl(self.d.cdu / "states.jsonl") if e["resource"] == res and e.get("note")), "")
                 self.leak[cdu].append((self._spans(chg, lambda v: v == "Critical"), note))
         self.out, self.out_why = out, why
+
+    def _load_mgmt(self) -> None:
+        """The management network, replayed from its trap log (src/scorecard/telemetry_mgmt.py): each switch's minutes up
+        and ports, the rack power losses, and the collector's own restarts. An aggregation switch is out while it is down."""
+        self.mg = None
+        if not self.d.mgmt or not (self.d.mgmt / "manifest.json").exists():
+            return
+        from . import telemetry_mgmt as TG
+        self.mg = TG.load(self.d.mgmt, self.d.sample)
+        self.mg_rep = TG.replay_ports(self.mg)
+        self.mg_loss = TG.power_losses(self.mg)
+        self.mg_unpolled = TG.unpolled(self.mg)
+        for s, o in self.mg_rep.items():
+            if self.mg.manifest["devices"][s]["family"] == "agg":
+                down = o["up"] == 0
+                if down.any():
+                    self.out[s] = down
+                    self.out_why[s].append((down, "down (no SNMP answer, its rack-switch ports dark)"))
 
     def why(self, unit: str, h: int) -> str:
         """Why a unit is out during hour h (each recorded reason that overlaps the hour)."""
@@ -400,7 +420,7 @@ class SiteHealth:
         group("fwpumps", "Facility water pumps", f"N+{hr['pump_redundancy']}", None, "mechanical", pumps, len(pumps) - hr["pump_redundancy"], "mechanical")
 
         # ---- family readings, by hour
-        R: dict[str, Any] = {"gpu": {}, "cdu": {}, "power": {}, "network": {}, "mechanical": {}}
+        R: dict[str, Any] = {"gpu": {}, "cdu": {}, "power": {}, "network": {}, "mechanical": {}, "mgmt": {}}
         for hall in self.halls:
             hid = hall["id"]
             rk = [r for r, x in racks.items() if x["hall"] == hid]
@@ -517,6 +537,10 @@ class SiteHealth:
                         issue(h, "mechanical", hid, RED if v >= thr["air"]["supply_red_c"] else AMBER, f"{w}: supply air {v:.1f} C", w)
             R["mechanical"][hid] = a
 
+        # ---- management network: the aggregation pair, rack switches, uplinks, the collector, BMC gaps
+        if self.mg is not None:
+            self._mgmt(groups, R, issue)
+
         # ---- family states by hour, and the issue spans
         fam_state = {f: [GREEN] * H for f, _, _ in FAMILIES}
         hall_state = {hid: {f: [GREEN] * H for f, _, _ in FAMILIES} for hid in self.hall_ids}
@@ -536,6 +560,74 @@ class SiteHealth:
                 "families": [{"key": k, "name": n, "link": l} for k, n, l in FAMILIES],
                 "groups": groups, "racks": racks, "readings": R, "family_state": fam_state, "hall_state": hall_state,
                 "site_state": site_state, "issues": spans}
+
+    def _mgmt(self, groups: list[dict], R: dict[str, Any], issue) -> None:
+        mg, rep, H = self.mg, self.mg_rep, self.H
+        devs = mg.manifest["devices"]
+        cfg = yaml.safe_load((ROOT / "config" / "telemetry_mgmt.yaml").read_text(encoding="utf-8"))
+        R["mgmt"] = {}
+        bmc = self.hourly(mg.bmc_hourly, "rack")
+        for hall in self.halls:
+            hid = hall["id"]
+            aggs = sorted(s for s, x in devs.items() if x["family"] == "agg" and x["hall"] == hid)
+            if not aggs:
+                continue
+            cnt = np.zeros(self.M, dtype=int)
+            for a in aggs:
+                cnt += self.unit_out(a)
+            avail = [len(aggs) - int(v) for v in self.hour_max(cnt)]
+            state = [RED if a < 1 else AMBER if a < len(aggs) else GREEN for a in avail]
+            groups.append({"key": f"oob-{hid}", "name": "Management aggregation", "scheme": f"N+{len(aggs) - 1}", "hall": hid, "family": "mgmt",
+                           "link": "management", "units": aggs, "unit_word": "", "need": [1] * H, "avail": avail, "total": [len(aggs)] * H, "state": state})
+            for h in range(H):
+                if state[h] > GREEN:
+                    downs = [a for a in aggs if self.unit_out(a)[h * 60:(h + 1) * 60].any()]
+                    issue(h, "mgmt", hid, state[h], f"Management aggregation ({self.hall_name(hid)}): {avail[h]} of {len(aggs)}, "
+                          f"{'below N' if state[h] == RED else 'no redundant unit'} ({'; '.join(f'{a} {self.why(a, h)}' for a in downs)})", downs[0] if downs else "management")
+            racks = sorted({x["rack"] for x in devs.values() if x["family"] == "bmc" and x["hall"] == hid})
+            sws = sorted(s for s, x in devs.items() if x["family"] == "rack" and x["hall"] == hid)
+            r = {k: [0] * H for k in ("bmcs", "answering", "failed", "switches", "switches_down")}
+            for rid in racks:
+                for h, row in enumerate(bmc.get(rid, [None] * H)):
+                    if row and int(row["endpoints"]):
+                        r["bmcs"][h] += int(row["endpoints"])
+                        r["answering"][h] += int(row["answering_min"]) if row["answering_min"] != "" else 0
+                        r["failed"][h] += int(row["failed_polls"])
+            for s in sws:
+                o, rid = rep[s], devs[s]["rack"]
+                booted = np.maximum.accumulate(o["up"]).astype(bool) if devs[s]["down_at_start"] is None else np.ones(self.M, dtype=bool)
+                ins, dn = self.hour_any(booted), self.hour_any(o["dark"] & booted)
+                lost = np.zeros(self.M, dtype=bool)
+                if rid in self.mg_loss:
+                    a, b = self.mg_loss[rid]
+                    lost[a:b + 15] = True
+                own = self.hour_any(o["dark"] & ~lost)
+                for h in range(H):
+                    r["switches"][h] += int(ins[h])
+                    r["switches_down"][h] += int(dn[h])
+                    if own[h]:
+                        n = sum(1 for x in devs.values() if x["family"] == "bmc" and x["rack"] == rid)
+                        what = f"its {n} BMCs unreachable" if devs[s]["role"] == "oob" else "in-band management (NVLink tray eth0, host ports) unreachable"
+                        issue(h, "mgmt", hid, AMBER, f"{s} down: rack {rid}, {what}", s)
+                for p in (49, 50):
+                    if p in o["ports"]:
+                        flap = self.hour_any((o["ports"][p] == 0) & (o["up"] == 1) & booted)
+                        for h in np.flatnonzero(flap).tolist():
+                            issue(h, "mgmt", hid, AMBER, f"{s}: uplink swp{p} down (no redundant uplink)", s)
+            for g in mg.gaps:
+                n = g["endpoint"]
+                if devs[n]["hall"] != hid or (g["minutes"] or 0) <= cfg["checks"]["gap_min"]:
+                    continue
+                a = mg.m_of(g["from"])
+                b = mg.m_of(g["to"]) if g["to"] else self.M
+                sw, rid = devs[n]["switch"], devs[n]["rack"]
+                if rep[sw]["dark"][a:b].any() or (rid in self.mg_loss and self.mg_loss[rid][0] - 2 <= a <= self.mg_loss[rid][1]):
+                    continue
+                for h in range(a // 60, min(H, (b - 1) // 60 + 1)):
+                    issue(h, "mgmt", hid, AMBER, f"{n}: BMC not answering", f"mgmt-{rid}")
+            R["mgmt"][hid] = r
+        for h in np.flatnonzero(self.hour_any(self.mg_unpolled)).tolist():
+            issue(h, "mgmt", None, AMBER, "Telemetry of Record poller restarted: no BMC polled", "management")
 
     def _issue_spans(self, issues: list[tuple]) -> list[dict]:
         """Identical conditions in consecutive hours merge into one span (the page filters by hour)."""
@@ -650,6 +742,16 @@ def agreements(sh: SiteHealth, data: dict[str, Any]) -> list[Check]:
         if util["avail"][h] < util["total"][h]:
             c(all(int(gen[g][h]["run_min"]) > 0 for g in gen), f"hour {h}: utility lost, generators running {[g for g in gen if int(gen[g][h]['run_min']) > 0]}")
     checks.append(c)
+
+    if sh.mg is not None:
+        c = Check("mgmt_switches", "A management switch counts as down in exactly the hours its hourly row reports fewer than 60 minutes up")
+        for s, rows in sh.hourly(sh.mg.switch_hourly, "switch").items():
+            if s not in sh.mg_rep:
+                continue
+            down = sh.hour_any(sh.mg_rep[s]["up"] == 0)
+            for h in range(H):
+                c(bool(down[h]) == (int(rows[h]["up_min"]) < 60), f"{s} hour {h}: dashboard {'down' if down[h] else 'up'}, up {rows[h]['up_min']} min")
+        checks.append(c)
 
     c = Check("readings", "Each hall's GPU power and UPS output add up from the hourly rows")
     for hid in sh.hall_ids:

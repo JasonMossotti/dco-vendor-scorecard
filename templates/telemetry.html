@@ -228,7 +228,7 @@ __SITENAV__
 
   // --------------------------------------------------------------------- tree
   function tree() {
-    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#site" data-fam="site">Site health</a></li><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li>`
+    let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#site" data-fam="site">Site health</a></li><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li><li><a href="#management" data-fam="mgmt">Management network</a></li>`
       + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
     h += `<div class="famsec" data-fam="site"><div class="sec">Site health</div><ul><li>${link("site", "The whole site, by hour")}</li>`
       + SH.halls.map(x => `<li><details open><summary>${esc(x.name)}</summary><ul class="racks">` + Object.keys(SHR).filter(k => SHR[k].hall === x.id).map(k => `<li>${link(k, k)}</li>`).join("") + `</ul></details></li>`).join("")
@@ -250,7 +250,7 @@ __SITENAV__
       h += `<li><details><summary><span class="planned">${esc(H.name)}</span> <small>not in service</small></summary><ul>` + H.cdus.map(id => `<li><span class="planned" title="${esc(H.name)} is ${esc(H.state)}: no telemetry">${esc(id)} <small>${esc(H.state)}</small></span></li>`).join("") + `</ul></details></li>`;
     }
     h += `</ul><div class="sec">CDU reference</div><ul><li>${link("cdu-fields", "Redfish fields")}</li><li>${link("cdu-agreements", "Agreement with the records")}</li></ul></div>`;
-    h += powerTree() + networkTree() + mechTree();
+    h += powerTree() + networkTree() + mechTree() + mgmtTree();
     document.getElementById("tree").innerHTML = h;
   }
 
@@ -2093,6 +2093,221 @@ __SITENAV__
     return h;
   }
 
+  // -------------------------------------------------------- management network
+  const G = B.mgmt;
+  const GRACK = Object.fromEntries(G.racks.map(r => [r.rack, r])), GSW = Object.fromEntries(G.switches.map(s => [s.id, s]));
+  const GHALLS = Object.keys(G.halls);
+  const GWIN = {};
+  for (const w of G.windows) (GWIN[w.rack] = GWIN[w.rack] || []).push(w);
+  const GST = {"-1": ["not in the rack yet", "#eef1f4"], 0: ["answered", "#2e9e5b"], 1: ["no answer, port up", "#c62828"], 2: ["no answer, port down", "#e0a100"], 3: ["not polled", "#c9d3df"], 4: ["no answer, its switch down", "#6d1b1b"]};
+  const gKind = k => tag({failed: "failed tray", swap: "replacement", reseat: "reseat", hang: "no answer", power: "rack power", switch: "switch down", uplink: "uplink", collector: "poller restart", late: "after M4"}[k] || k,
+    {failed: "bad", swap: "", reseat: "", hang: "warn", power: "it", switch: "bad", uplink: "warn", collector: "", late: "bad"}[k]);
+  const GEVC = {failed: "#f8d9d5", swap: "#e3e7ec", reseat: "#e3e7ec", hang: "#fbeccb", power: "#dde8fb", switch: "#f8d9d5", uplink: "#fbeccb", collector: "#e3e7ec", late: "#f8d9d5"};
+  const gRackOf = id => { const m = /^(?:mgmt-([ab]\d\d)|([ab]\d\d)-mgmt[12])$/i.exec(id || ""); const r = m && (m[1] || m[2]).toUpperCase(); return r && GRACK[r] ? r : null; };
+  const gDev = id => GSW[id] ? link(GSW[id].family === "rack" ? `mgmt-${GSW[id].rack}` : id, id) : GRACK[id] ? link(`mgmt-${id}`, id) : id === "TOR" ? "Telemetry of Record" : link(`mgmt-${(id.match(/^([a-c]\d\d)/i) || [, ""])[1].toUpperCase()}`, id);
+  const gFinding = f => `<span title="${esc(f.title)}">${tag(f.id, "bad")}</span>`;
+  const gWinFor = e => (GWIN[e.rack] || []).find(w => { const a = minOf(w.from); return a <= e.m && e.m < a + w.minutes; });
+  const loadMg = r => getJson(`data/mgmt/${encodeURIComponent(r)}.json`);
+  const loadMgWin = w => getJson("data/" + w.file.split("/").map(encodeURIComponent).join("/")).then(d => {
+    if (!d.decoded) {
+      d.decoded = true;
+      d.ep = Object.fromEntries(Object.entries(d.endpoints).map(([k, v]) => [k, unrle(v)]));
+      d.pt = Object.fromEntries(Object.entries(d.ports).map(([s, x]) => [s, Object.fromEntries(Object.entries(x).map(([p, v]) => [p, unrle(v)]))]));
+      d.up = Object.fromEntries(Object.entries(d.switch_up).map(([s, v]) => [s, unrle(v)]));
+    }
+    return d;
+  });
+  let gmCtx = null;
+  function gFindingBox(f) {
+    return `<div class="finding">${tag(f.id, "bad")} <b>${esc(f.title)}</b><br>${esc(f.summary)}<br><span class="note">Owner: ${esc(f.owner)}. ${esc(f.contract)}.</span>`
+      + `<ul class="note">${f.lines.map(l => `<li>${esc(l)}</li>`).join("")}</ul>${f.refs.length ? `Records: ${refLinks(f.refs)}` : ""}</div>`;
+  }
+  function gEventsTable(evs) {
+    if (!evs.length) return `<p class="note">None this month.</p>`;
+    return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Device</th><th>Event</th><th>Records</th><th></th></tr></thead><tbody>` + evs.map(e => {
+      const w = gWinFor(e), recs = refLinks(e.refs) + (e.finding ? `${e.refs.length ? " " : ""}${gFinding(e.finding)}` : "");
+      return `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${gDev(e.device)}</td><td>${gKind(e.kind)} ${esc(e.text)}</td><td>${recs}</td>`
+        + `<td>${w ? `<a class="b" href="#mgmt-${esc(e.rack)}/${esc(Math.max(0, e.m - 10))}">Minute detail</a>` : ""}</td></tr>`;
+    }).join("") + `</tbody></table></div>`;
+  }
+  const gAgreeTile = () => {
+    const agree = G.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = G.agreements.reduce((a, c) => a + c.checked, 0);
+    return `<div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#mgmt-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(G.agreements.length)} checks: Redfish events, serial changes, NMX, rack power losses, the Hall B handover, and the trap log</div></div>`;
+  };
+  function mgmtOverview(seq) {
+    const K = G.kinds, nsw = G.switches.filter(s => s.family === "rack").length, nagg = G.switches.filter(s => s.family === "agg").length, ncon = G.switches.filter(s => s.family === "console").length;
+    let h = `<div class="kind">Management network</div><h1>Management network telemetry</h1><p class="sub">${esc(G.framing)} Every BMC's Redfish service root polled once a minute by the Telemetry of Record, every management switch and console server read over SNMPv3 with its traps, and the IT Partner's console sessions, ${esc(md(G.window.start))} to ${esc(md(G.window.end))}. This network is how the Customer reads every BMC and how the IT Partner works on a rack without walking to it, so a span with no answers is a span with no evidence. All names and readings are fictional.</p>`;
+    h += `<div class="tiles">` + tile("BMC endpoints", num(Object.values(K).reduce((a, b) => a + b, 0)), Object.entries(K).map(([k, n]) => `${num(n)} ${esc(G.kind_names[k].replace(/^[A-Z](?=[a-z])/, c => c.toLowerCase()))}`).join(", "))
+      + tile("Management switches", num(nsw), `two per rack (out of band and in band), uplinked to ${esc(nagg)} aggregation switches (a pair per hall); ${esc(ncon)} console servers, one per row`)
+      + GHALLS.map(k => tile(`${G.halls[k].name} polls answered`, `${num(G.halls[k].answered_pct, 3)}%`, `${num(G.halls[k].failed)} failed of ${num(G.halls[k].polls)} while in service`)).join("")
+      + gAgreeTile() + `</div>`;
+    h += `<h2 class="sec">Findings</h2><p class="note">Records that do not reconcile with what the management network saw. A gap in the answers is not a finding by itself; it becomes one when a record claims something the gap makes impossible. Each is a case to look into, not a claim that anyone misled.</p>`
+      + (G.findings.length ? G.findings.map(gFindingBox).join("") : `<p>None this month.</p>`);
+    h += `<h2 class="sec">BMCs answering, by hour</h2><div id="gm-ch"></div>`;
+    for (const k of GHALLS) {
+      const H = G.halls[k], rs = G.racks.filter(r => r.hall === k);
+      h += `<div class="hallname">${esc(H.name)} · ${esc(H.racks)} racks · ${esc(H.switches)} × ${esc(H.product.toUpperCase())} · aggregation ${H.aggs.map(a => link(a, a)).join(" + ")} · consoles ${H.consoles.map(c => link(c, c)).join(", ")}</div>`
+        + `<div class="scroll"><table><thead><tr><th>Rack</th><th>In service from</th><th class="n">Polls answered</th><th class="n">Failed polls</th><th class="n">Gaps over ${esc(G.checks.gap_min)} min</th><th class="n">Out-of-band switch up</th><th class="n">In-band switch up</th></tr></thead><tbody>`
+        + rs.map(r => `<tr><td>${link(`mgmt-${r.rack}`, r.rack)}</td><td>${r.in_service_from ? esc(at(r.in_service_from)) : r.never ? "not this month" : "start of month"}</td><td class="n">${r.answered_pct == null ? "–" : `${num(r.answered_pct, 3)}%`}</td><td class="n">${num(r.failed)}</td><td class="n">${num(r.gaps)}</td><td class="n">${num(r.mgmt1_up_h, 1)} h</td><td class="n">${num(r.mgmt2_up_h, 1)} h</td></tr>`).join("")
+        + `</tbody></table></div>`;
+    }
+    h += `<h2 class="sec">Events</h2><p class="note">Every BMC that stopped answering for longer than ${esc(G.checks.gap_min)} minutes, every switch outage and uplink drop, and every poller restart, with the record that explains it. Short BMC self-resets are counted in the failed polls, not listed.</p>` + gEventsTable(G.events);
+    h += `<h2 class="sec">Console sessions</h2><p class="note">The console servers' session log: who opened which serial port, and the login prompt the device on the line printed.</p>` + gSessions(G.sessions);
+    main.innerHTML = h;
+    document.getElementById("gm-ch").innerHTML = GHALLS.map(k => chart({...HX, n: G.hours, title: `${G.halls[k].name}: BMCs answering at the worst minute of each hour, and in service`, unit: "", lo: 0,
+      bands: G.events.filter(e => e.kind === "switch" && GRACK[e.rack] && GRACK[e.rack].hall === k).map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : G.hours, label: `${at(e.t)}: ${e.text}`, color: GEVC.switch})),
+      series: [{v: G.halls[k].in_service, color: "var(--s2)", name: "In service"}, {v: G.halls[k].answering, color: "var(--s1)", name: "Answering"}]})).join("")
+      + lg([["var(--s2)", "BMCs in service (Hall B grows as racks are built)"], ["var(--s1)", "answering at the hour's worst minute"], [GEVC.switch, "a rack's out-of-band switch down", "band"]]);
+  }
+  function gSessions(ss) {
+    if (!ss.length) return `<p class="note">No sessions.</p>`;
+    return `<div class="scroll"><table data-gl-skip><thead><tr><th>Opened (UTC)</th><th>Closed</th><th>Console port</th><th>Port label</th><th>Prompt on the line</th></tr></thead><tbody>`
+      + ss.map(s => { const host = s.prompt.split(" ")[0], bad = host !== s.label;
+        return `<tr><td class="n">${esc(at(s.opened_at))}</td><td class="n">${esc(s.closed_at.slice(11, 16))}</td><td>${link(s.console, s.console)} port ${esc(s.port)}</td><td>${esc(s.label)}</td><td><code>${esc(s.prompt)}</code>${bad ? ` ${tag("does not match the label", "bad")}` : ""}</td></tr>`; }).join("") + `</tbody></table></div>`;
+  }
+  function gPortMap(rack) {
+    const P = G.ports, K = G.kinds, s1 = GSW[`${rack.toLowerCase()}-mgmt1`], s2 = GSW[`${rack.toLowerCase()}-mgmt2`], r = rack.toLowerCase();
+    const n = {compute: GRACK[rack].kinds.compute, switch: GRACK[rack].kinds.switch, shelf: GRACK[rack].kinds.shelf};
+    const span = (a, k) => `swp${a} to swp${a + k - 1}`;
+    const rows = [[s1.id, span(P.mgmt1.compute_bmc, n.compute), `compute tray BMCs ${r}-ct01 to ${r}-ct${String(n.compute).padStart(2, "0")}`],
+      [s1.id, span(P.mgmt1.switch_bmc, n.switch), `NVLink switch tray BMCs ${r}-nvsw1 to ${r}-nvsw${n.switch}`],
+      [s1.id, span(P.mgmt1.power_shelf, n.shelf), `power shelf controllers ${rack}_PowerShelf_1 to ${rack}_PowerShelf_${n.shelf}`]];
+    if (s1.leaves.length) rows.push([s1.id, span(P.mgmt1.leaf_mgmt, s1.leaves.length), `leaf switch mgmt0: ${s1.leaves.join(", ")}`]);
+    const tail = s => [[s.id, `swp${P.uplinks[0]}, swp${P.uplinks[1]}`, `uplinks to ${G.halls[s.hall].aggs.join(" and ")}`], [s.id, "console", s.console ? `${s.console[0]} port ${s.console[1]}` : "–"]];
+    rows.push(...tail(s1), [s2.id, span(P.mgmt2.switch_eth0, n.switch), "NVLink switch tray eth0 (the COMe; NMX reads the trays here)"], [s2.id, span(P.mgmt2.compute_host, n.compute), "compute tray host management ports"], ...tail(s2));
+    return `<div class="scroll"><table data-gl-skip><thead><tr><th>Switch</th><th>Ports</th><th>What is on them</th></tr></thead><tbody>${rows.map(x => `<tr><td>${esc(x[0])}</td><td>${esc(x[1])}</td><td>${esc(x[2])}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  function mgmtRackView(rack, minute, seq) {
+    const r = GRACK[rack], evs = G.events.filter(e => e.rack === rack), fs = G.findings.filter(f => f.devices.some(d => d === rack || gRackOf(d) === rack || (d.slice(0, 3).toUpperCase() === rack)));
+    let h = `<div class="kind">Management network · ${esc(G.halls[r.hall].name)}</div><h1>Rack ${esc(rack)} management</h1><p class="sub">${esc(r.endpoints)} BMC endpoints on ${link(`${rack.toLowerCase()}-mgmt1`, `${rack.toLowerCase()}-mgmt1`)} (out of band); NVLink tray and host management on ${esc(rack.toLowerCase())}-mgmt2 (in band). ${link(rack, "GPU telemetry for this rack")} · ${link("management", "All racks")}</p>`;
+    h += fs.map(gFindingBox).join("");
+    h += `<div class="tiles">` + tile("Polls answered", r.answered_pct == null ? "–" : `${num(r.answered_pct, 3)}%`, `${num(r.failed)} failed of ${num(r.polls)}`)
+      + tile("In service from", r.in_service_from ? esc(at(r.in_service_from)) : r.never ? "not this month" : "start of month", GRACK[rack].hall === "HALL-B" ? "first BMC answer on the out-of-band network" : "Hall A: in production")
+      + tile("Out-of-band switch up", `${num(r.mgmt1_up_h, 1)} h`, `in-band switch ${num(r.mgmt2_up_h, 1)} h`) + tile("Gaps", num(r.gaps), `BMCs not answering for longer than ${esc(G.checks.gap_min)} minutes`) + `</div>`;
+    h += `<div id="gm-r">${chart({...HX, n: G.hours, title: "Loading the rack's hourly rows", unit: "", series: []})}</div>`;
+    h += `<h2 class="sec">Events</h2>` + gEventsTable(evs) + `<div id="gm-w"></div>`;
+    h += `<h2 class="sec">Port map</h2><p class="note">This site's wiring (basis: assumption): the same in every NVL72 rack.</p>` + gPortMap(rack);
+    main.innerHTML = h;
+    loadMg(rack).then(j => {
+      if (seq !== current) return;
+      const bands = evs.map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : G.hours, label: `${at(e.t)}: ${e.text}`, color: GEVC[e.kind]}));
+      const X = {...HX, n: j.hours, bands}, s1 = j.switches[`${rack.toLowerCase()}-mgmt1`], s2 = j.switches[`${rack.toLowerCase()}-mgmt2`];
+      document.getElementById("gm-r").innerHTML = chart({...X, title: "BMCs answering (worst minute of the hour) and in service", unit: "", lo: 0, series: [{v: j.bmc.endpoints, color: "var(--s2)", name: "In service"}, {v: j.bmc.answering_min, color: "var(--s1)", name: "Answering"}]})
+        + chart({...X, title: "Failed polls per hour", unit: "", lo: 0, series: [{v: j.bmc.failed_polls, color: "var(--bad)", name: "Failed polls"}]})
+        + chart({...X, title: "Ports up (fewest in the hour), not counting uplinks", unit: "", lo: 0, series: [{v: s1.ports_up_min, color: "var(--s1)", name: "mgmt1"}, {v: s2.ports_up_min, color: "var(--s3)", name: "mgmt2"}]})
+        + chart({...X, title: "Management traffic (kbit/s) and ASIC temperature (°C), out-of-band switch", unit: "", d: 1, series: [{v: s1.kbps, color: "var(--s1)", name: "kbit/s"}, {v: s1.temp_c, color: "var(--s4)", name: "°C"}]})
+        + lg(Object.entries({switch: "switch down", power: "rack power lost", hang: "a BMC not answering", swap: "tray or shelf out for a replacement or reseat", uplink: "an uplink down"}).map(([k, v]) => [GEVC[k], v, "band"]));
+    }).catch(e => { if (seq === current) document.getElementById("gm-r").innerHTML = errBox(e, `data/mgmt/${rack}.json`); });
+    const w = minute != null ? (GWIN[rack] || []).find(x => { const a = minOf(x.from); return a <= minute && minute < a + x.minutes; }) : null;
+    if (w) gOpenWindow(w, minute - minOf(w.from), seq);
+  }
+  function gOpenWindow(w, c, seq) {
+    const box = document.getElementById("gm-w");
+    box.innerHTML = `<h2 class="sec">Minute detail</h2><p class="note">Loading…</p>`;
+    loadMgWin(w).then(d => {
+      if (seq !== current) return;
+      const eps = Object.keys(d.ep).sort((a, b) => a.localeCompare(b, "en", {numeric: true}));
+      gmCtx = {w, d, eps, c: Math.max(0, Math.min(d.minutes - 1, c)), sel: eps.find(n => d.ep[n].some(v => v > 0)) || eps[0]};
+      box.innerHTML = `<h2 class="sec">Minute detail</h2><p class="note">${esc(w.device)}, ${esc(at(d.from))} for ${esc(d.minutes)} minutes: each row is one BMC's poll result, minute by minute. Click a row for its raw reads.</p>`
+        + `<div class="ctl"><label for="gmm">Minute</label><b id="gmm-lab"></b></div><input type="range" id="gmm" min="0" max="${esc(d.minutes - 1)}" value="${esc(gmCtx.c)}" aria-label="Minute within the window">`
+        + `<div class="scroll" id="gm-grid"></div><div class="legend">${Object.entries(GST).map(([k, [t, col]]) => `<span><i class="band" style="background:${esc(col)}"></i>${esc(t)}</span>`).join("")}</div>`
+        + `<h3>Raw reads at this minute</h3><pre class="scrape" id="gm-raw" data-gl-skip></pre>`;
+      document.getElementById("gmm").addEventListener("input", e => { gmCtx.c = +e.target.value; gUpdate(); });
+      document.getElementById("gm-grid").addEventListener("click", e => { const g = e.target.closest("[data-ep]"); if (g) { gmCtx.sel = g.dataset.ep; gUpdate(); } });
+      gUpdate();
+    }).catch(e => { if (seq === current) box.innerHTML = errBox(e, "data/" + w.file); });
+  }
+  function gGrid() {
+    const {d, eps, c, sel, w} = gmCtx, n = d.minutes, W = Math.max(640, chartWidth()), L = 130, rowH = 12, pw = W - L - 6, X = i => L + i / n * pw, Ht = eps.length * rowH + 22;
+    const up1 = d.up[`${w.rack.toLowerCase()}-mgmt1`], step = n > 600 ? 120 : 60;
+    let s = "";
+    eps.forEach((ep, j) => {
+      const v = d.ep[ep].map((x, i) => (x === 1 || x === 2) && !up1[i] ? 4 : x), y = 2 + j * rowH;
+      s += `<g data-ep="${esc(ep)}" style="cursor:pointer"><text x="0" y="${esc(y + 9)}" style="font-size:10px;${ep === sel ? "font-weight:700;fill:var(--ink)" : ""}">${esc(ep)}</text>`;
+      let a = 0;
+      for (let i = 1; i <= n; i++) {
+        if (i < n && v[i] === v[a]) continue;
+        s += `<rect x="${esc(X(a).toFixed(1))}" y="${esc(y)}" width="${esc(Math.max(0.8, X(i) - X(a)).toFixed(1))}" height="${esc(rowH - 3)}" fill="${esc(GST[v[a]][1])}"><title>${esc(ep)}, ${esc(minAt(minOf(d.from) + a))}${i - a > 1 ? ` for ${esc(i - a)} min` : ""}: ${esc(GST[v[a]][0])}</title></rect>`;
+        a = i;
+      }
+      s += `</g>`;
+    });
+    for (let i = 0; i < n; i += step) s += `<text x="${esc(X(i))}" y="${esc(Ht - 4)}" text-anchor="${i ? "middle" : "start"}">${esc(minIso(minOf(d.from) + i).slice(11, 16))}</text>`;
+    s += `<line x1="${esc(X(c + 0.5))}" x2="${esc(X(c + 0.5))}" y1="0" y2="${esc(Ht - 16)}" stroke="var(--ink)" stroke-width="1.2"/>`;
+    return `<svg viewBox="0 0 ${esc(W)} ${esc(Ht)}" width="${esc(W)}" height="${esc(Ht)}" role="img" aria-label="Each BMC's poll result by minute">${s}</svg>`;
+  }
+  function gUpdate() {
+    const {d, c, sel, w} = gmCtx, m = minOf(d.from) + c, ts = minIso(m).replace(".000Z", "Z");
+    document.getElementById("gmm-lab").textContent = minAt(m);
+    document.getElementById("gm-grid").innerHTML = gGrid();
+    const sw1 = `${w.rack.toLowerCase()}-mgmt1`, sw2 = `${w.rack.toLowerCase()}-mgmt2`, st = d.ep[sel][c], port = (GDEV(sel) || {}).port;
+    const up1 = d.up[sw1][c], polled = st !== 3;
+    let t = `# ${ts}  Telemetry of Record -> ${sel} BMC\nGET /redfish/v1/  (timeout ${G.collection.redfish.timeout_s} s)\n`;
+    t += st === 0 ? `HTTP/1.1 200 OK\n{"@odata.id": "/redfish/v1/", "@odata.type": "#ServiceRoot.v1_15_0.ServiceRoot", "Id": "RootService", "Name": "Root Service", "Chassis": {"@odata.id": "/redfish/v1/Chassis"}}\n`
+      : st === -1 ? `(not polled: the part is not in the rack yet)\n` : !polled ? `(not polled: the Telemetry of Record's poller was restarting)\n` : `no response within ${G.collection.redfish.timeout_s} s: poll failed\n`;
+    t += `\n# ${ts}  SNMPv3 GET ${sw1}\n`;
+    if (!up1) t += `Timeout: No Response from ${sw1}\n`;
+    else {
+      const pp = d.pt[sw1];
+      if (port != null && pp[port]) t += `IF-MIB::ifName.${port} = STRING: swp${port}\nIF-MIB::ifOperStatus.${port} = INTEGER: ${pp[port][c] ? "up(1)" : "down(2)"}\n`;
+      for (const u of G.ports.uplinks) if (pp[u]) t += `IF-MIB::ifOperStatus.${u} = INTEGER: ${pp[u][c] ? "up(1)" : "down(2)"}  (uplink swp${u})\n`;
+      t += `IF-MIB ports up: ${Object.entries(pp).filter(([p]) => !G.ports.uplinks.includes(+p)).reduce((a, [, v]) => a + v[c], 0)} of ${Object.keys(pp).length - G.ports.uplinks.length}\n`;
+    }
+    t += `\n# ${ts}  SNMPv3 GET ${sw2}\n` + (d.up[sw2][c] ? `IF-MIB ports up: ${Object.entries(d.pt[sw2]).filter(([p]) => !G.ports.uplinks.includes(+p)).reduce((a, [, v]) => a + v[c], 0)} of ${Object.keys(d.pt[sw2]).length - G.ports.uplinks.length}\n` : `Timeout: No Response from ${sw2}\n`);
+    document.getElementById("gm-raw").textContent = t;
+  }
+  const GDEV = n => {     // a BMC's out-of-band port, from the port map
+    const m = /^([a-c]\d\d)-(ct|nvsw)(\d+)$/.exec(n), p = G.ports.mgmt1;
+    if (m) return {port: m[2] === "ct" ? p.compute_bmc + +m[3] - 1 : p.switch_bmc + +m[3] - 1};
+    const s = /^[A-C]\d\d_PowerShelf_(\d+)$/.exec(n);
+    return s ? {port: p.power_shelf + +s[1] - 1} : null;
+  };
+  function mgmtSwView(id) {
+    const s = GSW[id], H = G.halls[s.hall];
+    let h = `<div class="kind">Management network · ${esc(H.name)}</div><h1>${esc(id)}</h1>`;
+    if (s.family === "agg") {
+      const racks = G.racks.filter(r => r.hall === s.hall);
+      h += `<p class="sub">Half of ${esc(H.name)}'s management aggregation pair (${esc((H.agg_product || "").toUpperCase())}). Every rack management switch has one uplink here and one to its partner, so the hall keeps its management network with either down. Up ${num(s.up_h, 1)} h of ${num(G.hours)}; ASIC up to ${num(s.temp_max, 1)} °C.</p>`;
+      const k = +id.slice(-1), up = G.ports.uplinks[k - 1];
+      h += `<div class="scroll"><table data-gl-skip><thead><tr><th>Port</th><th>Rack switch (its uplink)</th><th>Rack</th></tr></thead><tbody>`
+        + racks.flatMap((r, i) => [1, 2].map(j => `<tr><td>swp${esc(2 * i + j)}</td><td>${link(`mgmt-${r.rack}`, `${r.rack.toLowerCase()}-mgmt${j}`)} swp${esc(up)}</td><td>${link(`mgmt-${r.rack}`, r.rack)}</td></tr>`)).join("") + `</tbody></table></div>`;
+    } else {
+      const map = G.console_ports[id] || {}, ss = G.sessions.filter(x => x.console === id), fs = G.findings.filter(f => f.devices[0] === id);
+      h += `<p class="sub">${esc(H.name)}'s row ${esc(id.slice(-1))} console server: a serial line to every management and leaf switch console in the row. Its port map is the label each line carries; its session log shows what actually answered.</p>` + fs.map(gFindingBox).join("");
+      h += `<div class="scroll"><table data-gl-skip><thead><tr><th>Port</th><th>Label</th><th class="n">Sessions</th><th>Last prompt seen</th></tr></thead><tbody>`
+        + Object.entries(map).sort((a, b) => +a[0] - +b[0]).map(([p, lab]) => { const x = ss.filter(q => +q.port === +p), last = x.length ? x[x.length - 1].prompt : "", bad = last && last.split(" ")[0] !== lab;
+          return `<tr><td>${esc(p)}</td><td>${esc(lab)}</td><td class="n">${num(x.length)}</td><td>${last ? `<code>${esc(last)}</code>` : "–"}${bad ? ` ${tag("does not match", "bad")}` : ""}</td></tr>`; }).join("") + `</tbody></table></div>`;
+      h += `<h2 class="sec">Sessions</h2>` + gSessions(ss);
+    }
+    main.innerHTML = h;
+  }
+  function mgmtFields() {
+    const K = G.collection;
+    let h = `<div class="kind">Management network reference</div><h1>What is read</h1><p class="sub">${esc(G.framing)} The names are the published ones: the Redfish service root (DMTF DSP0266), IF-MIB (RFC 2863), SNMPv2-MIB (RFC 3418), and ENTITY-SENSOR-MIB (RFC 3433). Port maps and the console wiring are this site's assumptions, not NVIDIA's. No vendor's internal tooling is implied.</p>`;
+    h += `<div class="cards">` + tile("Redfish", `${num(K.redfish.poll_s)} s`, `${esc(K.redfish.path)}, ${esc(K.redfish.timeout_s)} s timeout: ${esc(K.redfish.note)}`) + tile("SNMP", `${num(K.snmp.poll_s)} s`, `${esc(K.snmp.version)}; ${esc(K.snmp.traps)}`) + tile("Console", "session log", esc(K.console.note)) + `</div>`;
+    h += `<div class="scroll"><table data-gl-skip><thead><tr><th>Field</th><th>Source</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>` + G.fields.map(f => `<tr><td><code>${esc(f.name)}</code></td><td>${esc(f.source)}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + G.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function mgmtAgreements() {
+    const agree = G.agreements.reduce((a, c) => a + c.checked - c.misses, 0), tot = G.agreements.reduce((a, c) => a + c.checked, 0);
+    let h = `<div class="kind">Management network reference</div><h1>Agreement with the records</h1><p class="sub">The management telemetry is synthetic, so it is shaped never to contradict the records the other pages show: the Redfish events and serial changes the Telemetry of Record logged, the NMX events, the scheduler's rack power losses, the IT Partner's reseat notes, and the Hall B milestones. Each check reads only what the telemetry publishes and the existing records. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + G.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (G.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + G.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks, and the four planted findings, run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/management_telemetry.md.</p>`;
+    main.innerHTML = h;
+  }
+  function mgmtTree() {
+    let h = `<div class="famsec" data-fam="mgmt"><div class="sec">Management network</div><ul><li>${link("management", "Overview")}</li>`;
+    for (const k of GHALLS) {
+      const H = G.halls[k];
+      h += `<li><details${k === GHALLS[0] ? " open" : ""}><summary>${link("management", H.name)} <small>${esc(H.racks)} racks</small></summary><ul class="racks">`
+        + G.racks.filter(r => r.hall === k).map(r => `<li>${link(`mgmt-${r.rack}`, r.rack)}</li>`).join("") + `</ul><ul>` + H.aggs.concat(H.consoles).map(s => `<li>${link(s, s)}</li>`).join("") + `</ul></details></li>`;
+    }
+    h += `</ul><div class="sec">Management reference</div><ul><li>${link("mgmt-fields", "What is read")}</li><li>${link("mgmt-agreements", "Agreement with the records")}</li></ul></div>`;
+    return h;
+  }
+
   // ------------------------------------------------------------- site health
   const SH = B.site, SHH = SH.hours;
   const SHG = SH.groups.map(g => ({...g, avail: unrle(g.avail), total: unrle(g.total), need: unrle(g.need), state: unrle(g.state)}));
@@ -2113,7 +2328,7 @@ __SITENAV__
   function siteView(hour, seq) {
     if (shTimer) { clearInterval(shTimer); shTimer = null; }
     shHour = hour == null || Number.isNaN(hour) ? SHH - 1 : Math.max(0, Math.min(SHH - 1, hour));
-    let h = `<div class="kind">Telemetry</div><h1>Site health</h1><p class="sub">${esc(SH.framing)} Each hour shows its worst minute. Everything is read from the five telemetry sections below; all names and readings are fictional.</p>`;
+    let h = `<div class="kind">Telemetry</div><h1>Site health</h1><p class="sub">${esc(SH.framing)} Each hour shows its worst minute. Everything is read from the six telemetry sections below; all names and readings are fictional.</p>`;
     h += `<div class="clock"><div class="ctl"><label for="shr">Hour</label><b id="sh-lab"></b><span id="sh-site"></span></div>`
       + `<input type="range" id="shr" min="0" max="${esc(SHH - 1)}" value="${esc(shHour)}" aria-label="Hour of the month">`
       + `<div class="btns" id="sh-step"><button data-s="-24">−1 day</button><button data-s="-1">−1 hour</button><button data-s="1">+1 hour</button><button data-s="24">+1 day</button>`
@@ -2197,6 +2412,7 @@ __SITENAV__
     power: [["IT load (UPS output)", (r, h) => fmt(r.it_kw[h], 0, " kW")], ["Highest IT UPS load", (r, h) => fmt(r.load_max[h], 1, "%")], ["UPSs on battery", (r, h) => fmt(r.battery[h])], ["Lowest battery charge", (r, h) => fmt(r.soc_min[h], 0, "%")]],
     network: [["Links cabled", (r, h) => fmt(r.cabled[h])], ["Links up all hour", (r, h) => fmt(r.up[h])], ["Link drops", (r, h) => fmt(r.downs[h])], ["Mean rail utilization", (r, h) => fmt(r.util[h], 1, "%")], ["NVLink trays reporting", (r, h) => `${fmt(r.trays[h])} of ${fmt(r.trays_total[h])}`]],
     mechanical: [["Warmest supply air", (r, h) => fmt(r.air_max[h], 1, " °C")]],
+    mgmt: [["BMCs answering (worst minute)", (r, h) => `${fmt(r.answering[h])} of ${fmt(r.bmcs[h])}`], ["Failed polls", (r, h) => fmt(r.failed[h])], ["Management switches down", (r, h) => `${fmt(r.switches_down[h])} of ${fmt(r.switches[h])}`]],
   };
   const shSite = {
     power: [["Generators running", (r, h) => `${fmt(r.gens_running[h])}`], ["Lowest generator fuel", (r, h) => fmt(r.fuel_min[h], 0, "%")]],
@@ -2259,6 +2475,7 @@ __SITENAV__
       ["CDUs", `Lost: a leak detector reads Critical, or coolant supply at ${T.cdu.supply_red_c} °C. Degraded: a pump out (no spare pump), or supply at ${T.cdu.supply_amber_c} °C.`],
       ["Power", `Lost: below N (both utility feeds, or a rack's two feeds), or a UPS at ${T.ups.load_red_pct}% load. Degraded: a UPS on bypass or battery, a power module out, a UPS above ${T.ups.load_amber_pct}% load (three could not carry a fourth's), generator fuel under ${T.generator.fuel_amber_pct}%.`],
       ["Network", "Degraded: an InfiniBand link drop in the hall (rail-optimized: a dropped link takes one GPU off its rail; there is no second link to fail over to). Leaf uplinks to the spine are not modeled, so they show no redundancy."],
+      ["Management network", `Lost: both of a hall's management aggregation switches down. Degraded: one aggregation switch down (no redundant unit), a rack management switch down (its rack's BMCs or in-band management unreachable), an uplink down, a BMC not answering for more than ${G.checks.gap_min} minutes, or the Telemetry of Record's poller restarting.`],
       ["Mechanical", `Lost: fewer chillers available than the load needs, facility water supply at ${T.loop.supply_red_c} °C, supply air at ${T.air.supply_red_c} °C (ASHRAE A1 allowable). Degraded: a chiller or wall fan out, facility water at ${T.loop.supply_amber_c} °C, supply air at ${T.air.supply_amber_c} °C (ASHRAE recommended).`]];
     return `<table><tbody>${rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</tbody></table>`
       + `<h3>When a unit counts as out</h3><ul>${Object.entries(SH.unit_out).map(([k, v]) => `<li><b>${esc(k.replace("_", " "))}</b>: ${esc(v)}</li>`).join("")}</ul>`
@@ -2286,6 +2503,10 @@ __SITENAV__
     if (trayRack(a)) return {view: "nvlink", rack: trayRack(a), tray: a, key: "nvlink-" + trayRack(a), fam: "network"};
     if (a === "network-fields" || a === "network-agreements") return {view: a, key: a, fam: "network"};
     if (a === "network") return {view: "network", key: "network", fam: "network"};
+    if (a === "management") return {view: "management", key: "management", fam: "mgmt"};
+    if (a === "mgmt-fields" || a === "mgmt-agreements") return {view: a, key: a, fam: "mgmt"};
+    if (gRackOf(a)) return {view: "mgmtRack", rack: gRackOf(a), minute: pm, key: "mgmt-" + gRackOf(a), fam: "mgmt"};
+    if (GSW[a.toLowerCase()] && GSW[a.toLowerCase()].family !== "rack") return {view: "mgmtSw", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "mgmt"};
     const up = a.toUpperCase(), pf = famOf(up);
     if (mFam(up)) return {view: "mech", dev: up, minute: pm, key: up, fam: "mech"};
     if (a === "mech-fields" || a === "mech-agreements") return {view: a, key: a, fam: "mech"};
@@ -2298,7 +2519,7 @@ __SITENAV__
   }
   function show() {
     const seq = ++current, r = route(), fam = r.fam || "gpu";
-    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null; mmCtx = null;
+    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null; mmCtx = null; gmCtx = null;
     if (shTimer && r.view !== "site") { clearInterval(shTimer); shTimer = null; }
     if (r.view === "site") siteView(r.hour, seq);
     else if (r.view === "rack") rackView(r.rack, r.hour, seq);
@@ -2325,6 +2546,11 @@ __SITENAV__
     else if (r.view === "mech") r.minute == null ? mechView(r.dev, seq) : mechMinuteView(r.dev, r.minute, seq);
     else if (r.view === "mech-fields") mechFields();
     else if (r.view === "mech-agreements") mechAgreements();
+    else if (r.view === "management") mgmtOverview(seq);
+    else if (r.view === "mgmtRack") mgmtRackView(r.rack, r.minute, seq);
+    else if (r.view === "mgmtSw") mgmtSwView(r.dev);
+    else if (r.view === "mgmt-fields") mgmtFields();
+    else if (r.view === "mgmt-agreements") mgmtAgreements();
     else overview(seq);
     document.querySelectorAll("#tree a").forEach(a => {
       const on = a.getAttribute("href") === "#" + r.key;

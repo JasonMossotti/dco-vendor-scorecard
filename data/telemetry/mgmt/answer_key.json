@@ -1,0 +1,136 @@
+{
+ "decoys": [
+  {
+   "endpoint": "b06-ct12",
+   "from": "2026-09-23T21:39:00Z",
+   "kind": "reset",
+   "minutes": 6
+  },
+  {
+   "endpoint": "a27-ct16",
+   "from": "2026-09-10T12:10:00Z",
+   "kind": "reset",
+   "minutes": 8
+  },
+  {
+   "endpoint": "b07-ct17",
+   "from": "2026-09-18T20:24:00Z",
+   "kind": "reset",
+   "minutes": 6
+  },
+  {
+   "endpoint": "a10-ct08",
+   "from": "2026-09-10T00:22:00Z",
+   "kind": "reset",
+   "minutes": 6
+  },
+  {
+   "endpoint": "A11_PowerShelf_4",
+   "from": "2026-09-06T16:22:00Z",
+   "kind": "reset",
+   "minutes": 3
+  },
+  {
+   "endpoint": "b06-ct07",
+   "from": "2026-09-21T12:18:00Z",
+   "kind": "reset",
+   "minutes": 7
+  },
+  {
+   "endpoint": "b06-ct11",
+   "from": "2026-09-22T18:18:00Z",
+   "kind": "reset",
+   "minutes": 9
+  },
+  {
+   "endpoint": "a21-ct11",
+   "from": "2026-09-06T14:35:00Z",
+   "kind": "reset",
+   "minutes": 6
+  },
+  {
+   "endpoint": "b09-ct05",
+   "from": "2026-09-26T16:27:00Z",
+   "kind": "reset",
+   "minutes": 3
+  },
+  {
+   "endpoint": "a09-ct14",
+   "from": "2026-09-24T01:36:00Z",
+   "kind": "hang",
+   "minutes": 117
+  },
+  {
+   "endpoint": "a21-ct09",
+   "from": "2026-09-10T15:52:00Z",
+   "kind": "hang",
+   "minutes": 114
+  },
+  {
+   "from": "2026-09-27T11:55:00Z",
+   "kind": "collector",
+   "minutes": 5
+  },
+  {
+   "from": "2026-09-18T12:24:00Z",
+   "kind": "uplink",
+   "minutes": 85,
+   "switch": "a19-mgmt1",
+   "uplink": "swp50"
+  },
+  {
+   "from": "2026-09-20T08:58:00Z",
+   "kind": "uplink",
+   "minutes": 70,
+   "switch": "b12-mgmt2",
+   "uplink": "swp49"
+  }
+ ],
+ "planted": [
+  {
+   "endpoints": 35,
+   "from": "2026-09-14T09:58:00Z",
+   "kind": "unticketed_outage",
+   "rack": "A27",
+   "switch": "a27-mgmt1",
+   "to": "2026-09-15T05:54:00Z"
+  },
+  {
+   "check": "psu_redundancy",
+   "completed_at": "2026-09-07T07:59:21Z",
+   "endpoint": "A03_PowerShelf_3",
+   "from": "2026-09-07T07:56:00Z",
+   "kind": "validation_gap",
+   "started_at": "2026-09-07T07:54:21Z",
+   "target": "/redfish/v1/Chassis/A03_PowerShelf_3/PowerSubsystem/PowerSupplies/3",
+   "to": "2026-09-07T08:57:00Z"
+  },
+  {
+   "endpoints": [
+    "b05-ct02",
+    "b05-ct07",
+    "b05-ct10"
+   ],
+   "first_answer": {
+    "b05-ct02": "2026-09-10T07:05:00Z",
+    "b05-ct07": "2026-09-10T07:05:00Z",
+    "b05-ct10": "2026-09-10T07:07:00Z"
+   },
+   "kind": "late_bmc",
+   "m4": "2026-09-09T21:02:38Z",
+   "rack": "B05"
+  },
+  {
+   "console": "con-b2",
+   "kind": "console_swap",
+   "labelled": {
+    "3": "b10-mgmt2",
+    "4": "b10-mgmt1"
+   },
+   "ports": [
+    3,
+    4
+   ]
+  }
+ ]
+}
