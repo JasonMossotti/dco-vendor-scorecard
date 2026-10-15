@@ -1,0 +1,12 @@
+certificate,serial,class,disposed_at,reason,method,recycler,witness
+EW-00498,MS0LMVBBE8,Management switch,2026-07-28T03:59:38Z,Beyond economical repair,Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00499,CTZ4MII9L4,Compute tray,2026-05-24T19:22:06Z,Beyond economical repair,Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00500,OP0PJ5UIHB,800G OSFP optic,2026-07-01T13:16:15Z,Beyond economical repair,Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00501,OPJN6D796J,800G OSFP optic,2026-06-08T06:02:14Z,Beyond economical repair,Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00502,OP6LVKU7W8,800G OSFP optic,2026-07-19T17:51:45Z,Beyond economical repair,Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00503,CTEYF5QNXX,Compute tray,2026-05-07T00:54:26Z,Beyond economical repair,Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00504,MSK4Z3UMGF,Management switch,2026-08-02T17:53:02Z,Replaced at a09-mgmt2 (failed fan tray),Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00505,IBZPKYRPAO,InfiniBand leaf switch,2026-07-30T20:54:50Z,Replaced at leaf-b03-r1 (failed fan tray),Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00506,IBCBY273CQ,InfiniBand leaf switch,2026-08-20T18:12:30Z,Replaced at leaf-b13-r3 (failed fan tray),Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00507,MSYBHPOMN8,Management switch,2026-08-27T09:17:10Z,Replaced at a12-mgmt2 (failed fan tray),Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner
+EW-00508,IB9IPQFQRY,InfiniBand leaf switch,2026-08-14T02:14:52Z,Replaced at leaf-a10-r0 (failed fan tray),Shredded and recycled,Pecan Valley Electronics Recycling (fictional),Security Partner

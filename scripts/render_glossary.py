@@ -51,6 +51,7 @@ PLACES = {
     "reports/availability.md": ("Availability", "availability/"),
     "reports/gpu_health.md": ("GPU Health", "gpu/"),
     "reports/gpu_telemetry.md": ("Telemetry", "telemetry/"),
+    "reports/asset_register.md": ("Asset Register", "devices/#assets"),
     "docs/deployments/DEPLOYMENT_PLAN.md": ("Deployments", "deployments/"),
     "docs/site/SITE.md": ("Site model document", ""),
 }
@@ -145,7 +146,7 @@ def page_key(src: str) -> str:
         return "site"
     return {"Alarm Board": "alarms", "Failure Patterns": "patterns", "Post-Incident Review": "pir",
             "Weekly Review": "weekly", "Scorecards": "scorecards", "Energy": "energy", "GPU Health": "gpu", "Telemetry": "telemetry",
-            "Deployments": "deployments", "Availability": "availability"}[PLACES[src][0] if src in PLACES else
+            "Deployments": "deployments", "Availability": "availability", "Asset Register": "devices"}[PLACES[src][0] if src in PLACES else
                                                                   ("Post-Incident Review" if "/pir/" in src else "Weekly Review")]
 
 

@@ -173,7 +173,8 @@ def test_every_page_links_the_numbers_it_shows(site):
         if not m:
             continue
         gl = json.loads(m.group(1).replace("<\\/", "</"))
-        text = html[:m.start()] + html[m.end():]
+        # a page's own data (data-gl-skip) is not scanned; its views link ticket numbers themselves
+        text = sitenav._SKIP_DATA.sub(" ", html[:m.start()] + html[m.end():])
         assert set(gl["tk"]) == set(T.ID_RE.findall(text)) & ids, page
         assert gl["tk_re"] == T.ID_PATTERN
 

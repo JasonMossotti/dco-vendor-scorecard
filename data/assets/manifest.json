@@ -1,0 +1,16 @@
+{
+ "disclaimer": "Synthetic asset register and inventory scans for a portfolio demonstration. All names, serials, and records are fictional.",
+ "files": {
+  "disposals.csv": 11,
+  "inventory_baseline.csv": 4874,
+  "oem_rma.csv": 71,
+  "register_opening.csv": 4379,
+  "register_transactions.csv": 3274
+ },
+ "source": "data/sample + data/security + data/telemetry/mgmt + data/telemetry/storage + docs/site/devices.json",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "seed": 2026,
+  "start": "2026-08-31T00:00:00Z"
+ }
+}
