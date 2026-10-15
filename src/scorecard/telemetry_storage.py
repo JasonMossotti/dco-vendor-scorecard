@@ -36,6 +36,7 @@ import json
 import math
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -43,6 +44,7 @@ from typing import Any
 import numpy as np
 
 from scorecard import telemetry_mgmt as TGM
+from scorecard.synthetic import telemetry_storage as TSG
 from scorecard.telemetry import Check, _csv, _jsonl, parse
 
 HOUR = 60
@@ -72,6 +74,8 @@ class StorageData:
     stalls: list[dict]
     tickets: list[dict]
     custody: list[dict]
+    ledger: list[dict]
+    counts: list[dict]
     sched: list[dict]
     topology: dict
     mgmt: Any
@@ -107,7 +111,8 @@ def load(storage_dir: str | Path, sample_dir: str | Path, mgmt_dir: str | Path |
                        inventory=_csv(d / "drive_inventory.csv"), drive_events=_jsonl(d / "drive_events.jsonl"),
                        node_events=_jsonl(d / "node_events.jsonl"), traps=_jsonl(d / "traps.jsonl"),
                        stalls=_jsonl(d / "client_stalls.jsonl"), tickets=json.loads((d / "tickets.json").read_text(encoding="utf-8")),
-                       custody=_csv(d / "custody.csv"), sched=_jsonl(s / "telemetry" / "scheduler_node_states.jsonl"),
+                       custody=_csv(d / "custody.csv"), ledger=_csv(d / "spares_ledger.csv"),
+                       counts=_csv(d / "spares_cycle_counts.csv"), sched=_jsonl(s / "telemetry" / "scheduler_node_states.jsonl"),
                        topology=json.loads((s / "site" / "topology.json").read_text(encoding="utf-8")),
                        mgmt=TGM.load(mgmt_dir, s))
 
@@ -423,7 +428,77 @@ def agreements(t: StorageData, cfg: dict[str, Any]) -> list[Check]:
     for i, f in enumerate(fl):
         c(i in hit, f"{f['switch']} {f['ifName']} flapped {t.iso(f['a'])} to {t.iso(f['b'])} ({f['downs']} downs) and no client stalled")
     out.append(c)
+
+    # 9. spares shelf
+    c = Check("spares", "Every part a storage ticket used is issued from its hall's spares shelf against that ticket before the swap, "
+                        "and every cycle count's system quantity equals the shelf ledger")
+    issues: dict[tuple[str, str, str], list[str]] = {}
+    for x in t.ledger:
+        if x["transaction"] == "issue":
+            issues.setdefault((x["ticket"], x["hall"], x["fru"]), []).append(x["timestamp"])
+    label = {p["part"]: p["fru"] for p in shelf_classes()}
+    for k in t.tickets:
+        for p in k["parts_used"]:
+            if p["part"] not in label:
+                continue
+            got = issues.get((k["number"], k["hall"], label[p["part"]]), [])
+            sw = swap_time(k, p.get("removed_serial"))
+            ok = [x for x in got if sw - timedelta(hours=4) <= parse(x) <= sw]
+            if ok:
+                got.remove(ok[0])
+            c(bool(ok), f"{k['number']} used {p['part']} ({p.get('installed_serial')}) at {TSG.iso(sw)}; no issue from the {k['hall']} shelf "
+                        "against it in the 4 hours before")
+    for (tk, hall, fru), rest in sorted(issues.items()):
+        for x in rest:
+            c(False, f"{hall} shelf issued {fru} at {x} against {tk}, which used no such part")
+    for cnt in t.counts:
+        bal = [x for x in t.ledger if x["hall"] == cnt["hall"] and x["fru"] == cnt["fru"] and x["timestamp"] <= cnt["counted_at"]]
+        want = int(bal[-1]["balance_after"]) if bal else opening(cnt["hall"], cnt["fru"])
+        c(int(cnt["system_qty"]) == want, f"{cnt['hall']} {cnt['fru']} count {cnt['counted_at']}: system {cnt['system_qty']}, ledger {want}")
+    out.append(c)
     return out
+
+
+@lru_cache(maxsize=1)
+def _shelf() -> tuple:
+    from scorecard.sla_model import load_sla
+    return tuple(TSG.shelf_classes(load_sla()))
+
+
+def shelf_classes() -> list[dict[str, Any]]:
+    return list(_shelf())
+
+
+def opening(hall: str, fru: str) -> int:
+    return next(int(round(p["minimum"] * 1.5)) for p in shelf_classes() if p["fru"] == fru)
+
+
+def swap_time(ticket: dict, removed: str | None) -> datetime:
+    return TSG.swap_time(ticket, removed)
+
+
+def shelf(t: StorageData) -> dict[str, Any]:
+    """The storage spares shelf against the IT Partner SLA: KM-06 (each class in each hall at or above its minimum at every weekly
+    count) and KM-07 (the count equals the ledger), with each class's opening, issues, receipts, and lowest balance."""
+    mins = {p["fru"]: p["minimum"] for p in shelf_classes()}
+    rows = []
+    for hall in sorted({x["hall"] for x in t.counts}):
+        for fru in sorted(mins):
+            xs = [x for x in t.ledger if x["hall"] == hall and x["fru"] == fru]
+            cs = [c for c in t.counts if c["hall"] == hall and c["fru"] == fru]
+            op = opening(hall, fru)
+            rows.append({"hall": hall, "fru": fru, "minimum": mins[fru], "opening": op,
+                         "issued": -sum(int(x["qty"]) for x in xs if x["transaction"] == "issue"),
+                         "received": sum(int(x["qty"]) for x in xs if x["transaction"] in ("receive", "emergency_receive")),
+                         "emergency": sum(int(x["qty"]) for x in xs if x["transaction"] == "emergency_receive"),
+                         "lowest": min([op] + [int(x["balance_after"]) for x in xs]),
+                         "counts": [[c["counted_at"], int(c["counted_qty"]), int(c["system_qty"])] for c in cs]})
+    counts = [c for c in t.counts]
+    below = [c for c in counts if int(c["counted_qty"]) < mins[c["fru"]]]
+    return {"rows": rows, "km06": [len(counts) - len(below), len(counts)],
+            "km07": [sum(1 for c in counts if c["counted_qty"] == c["system_qty"]), len(counts)],
+            "below": [{"hall": c["hall"], "fru": c["fru"], "at": c["counted_at"], "counted": int(c["counted_qty"]), "minimum": mins[c["fru"]]}
+                      for c in below]}
 
 
 # ------------------------------------------------------------------------- findings

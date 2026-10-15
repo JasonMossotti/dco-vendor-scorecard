@@ -4,8 +4,8 @@
   "disposals.csv": 11,
   "inventory_baseline.csv": 4874,
   "oem_rma.csv": 71,
-  "register_opening.csv": 4379,
-  "register_transactions.csv": 3274
+  "register_opening.csv": 4380,
+  "register_transactions.csv": 3285
  },
  "source": "data/sample + data/security + data/telemetry/mgmt + data/telemetry/storage + docs/site/devices.json",
  "window": {

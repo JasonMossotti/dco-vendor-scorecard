@@ -17279,6 +17279,8 @@
   "node_events.jsonl",
   "nodes_hourly.csv",
   "ports_hourly.csv",
+  "spares_cycle_counts.csv",
+  "spares_ledger.csv",
   "tickets.json",
   "traps.jsonl"
  ],

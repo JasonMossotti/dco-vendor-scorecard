@@ -548,6 +548,15 @@ See Appendix B.4 for a worked example.
 {% for f in sla.spares.minimum_stock_per_hall -%}
 | {{ f.fru }} | {{ f.minimum }} |
 {% endfor %}
+{% if sla.spares.storage_shelf %}
+**{{ sla.spares.storage_shelf.location }}.** {{ sla.spares.storage_shelf.note }}
+
+| Field-replaceable unit | Minimum stock per hall |
+|---|:-:|
+{% for f in sla.spares.storage_shelf.minimum_stock_per_hall -%}
+| {{ f.get('label') or f.fru }} | {{ f.minimum }} |
+{% endfor %}
+{% endif %}
 
 - **Reorder:** {{ sla.spares.reorder_rule }}
 - **Cycle counts:** {{ sla.spares.cycle_count }}

@@ -45,6 +45,15 @@ ROOT = Path(__file__).resolve().parents[3]
 CONFIG = ROOT / "config" / "assets.yaml"
 CAGE, FAILED_CAGE, OEM, SECURITY = "Spares cage", "Failed-parts cage", "OEM", "Security Partner"
 STORAGE_SHELF = "Storage spares shelf"
+
+
+def shelf_of(hall: str) -> str:
+    """The storage spares shelf in a hall's storage row (HALL-A gives "Storage spares shelf, Hall A")."""
+    return f"{STORAGE_SHELF}, Hall {hall.rsplit('-', 1)[-1]}"
+
+
+def in_stock_at(location: str) -> bool:
+    return location == CAGE or location.startswith(STORAGE_SHELF)
 SWITCH_KINDS = ("mgmt", "leaf", "eth_leaf", "eth_spine", "console", "agg")
 
 
@@ -147,6 +156,8 @@ class AssetLayer:
         self.certs = _csv(self.sec / "destruction_certificates.csv")
         self.drive_inv = _csv(self.stg / "drive_inventory.csv")
         self.stg_custody = _csv(self.stg / "custody.csv")
+        self.stg_ledger = _csv(self.stg / "spares_ledger.csv")
+        self.stg_counts = _csv(self.stg / "spares_cycle_counts.csv")
         self.switch_names = {x["redfish"]: x["name"] for r in self.topology["racks"] for x in r["switch_trays"]}
         self.used: set[str] = set()
         for r in self.topology["racks"]:
@@ -307,16 +318,44 @@ class AssetLayer:
             stock_open[cls] = pool
             for s in pool:
                 new(cls, s, "in_stock", CAGE, "IT Partner", before)
-        # the storage layer's spares (drives and fabric optics) sit on their own shelf: the IT Partner's spares ledger
-        # does not carry them (open item)
+        # the storage spares shelf in each hall (drives and fabric optics): its own ledger (IT Partner SLA, storage spares
+        # shelf). Each unit the shelf holds is a place in its stock, from the opening balance or a receipt; a storage
+        # ticket's installed serial takes the oldest place in stock in its hall when the shelf issues it.
+        from scorecard.sla_model import load_sla
+        from scorecard.synthetic.telemetry_storage import shelf_classes
+        part_of = {c["fru"]: c["part"] for c in shelf_classes(load_sla())}
+        stg_parts: dict[tuple[str, str, str], list[str]] = {}
+        for t in self.stg_tickets:
+            for p in t.get("parts_used", []):
+                if p.get("installed_serial"):
+                    stg_parts.setdefault((t["number"], t["hall"], p["part"]), []).append(p["installed_serial"])
+        shelf_places: dict[tuple[str, str], list[dict]] = {}
+        shelf_receipts: list[dict] = []
+        for c in self.stg_counts:
+            k = (c["hall"], part_of[c["fru"]])
+            if k not in shelf_places:
+                first = [x for x in self.stg_ledger if (x["hall"], x["fru"]) == (c["hall"], c["fru"])]
+                n0 = int(first[0]["balance_after"]) - int(first[0]["qty"]) if first else int(c["system_qty"])
+                shelf_places[k] = [{"at": None, "serial": None} for _ in range(n0)]
+        for x in self.stg_ledger:
+            k = (x["hall"], part_of[x["fru"]])
+            pl = shelf_places[k]
+            if x["transaction"] in ("receive", "emergency_receive"):
+                for _ in range(int(x["qty"])):
+                    pl.append({"at": parse(x["timestamp"]), "serial": None, "emergency": x["transaction"] == "emergency_receive"})
+                    shelf_receipts.append(pl[-1] | {"class": k[1], "hall": k[0]})
+                    shelf_receipts[-1]["place"] = pl[-1]
+            elif x["transaction"] == "issue":
+                serials = stg_parts.get((x["ticket"], k[0], k[1]), [])
+                free = next(q for q in pl if q["serial"] is None and (q["at"] is None or q["at"] <= parse(x["timestamp"])))
+                free["serial"] = serials.pop(0) if serials else self.serial(k[1], _rng(self.seed, "shelf", x["timestamp"], k[0], k[1]))
         srng = _rng(self.seed, "stock")
-        drive_cls = cls_of["drive"]["class"]
-        for cls in sorted(set(stg_installs) | {drive_cls}):
-            pool = list(stg_installs.get(cls, []))
-            extra = srng.randint(*cfg["spares"]["storage_drives"]) if cls == drive_cls else srng.randint(2, 4)
-            pool += [self.serial(cls, rng) for _ in range(extra)]
-            for s in pool:
-                new(cls, s, "in_stock", STORAGE_SHELF, "IT Partner", before)
+        for (hall, cls), pl in sorted(shelf_places.items()):
+            for q in pl:
+                if q["serial"] is None:
+                    q["serial"] = self.serial(cls, srng)
+                if q["at"] is None:
+                    new(cls, q["serial"], "in_stock", shelf_of(hall), "IT Partner", before)
         for cls, rs in receipts.items():
             for r in rs:
                 while len(r["serials"]) + r["direct"] < r["qty"]:
@@ -391,6 +430,9 @@ class AssetLayer:
                     new(cls, sr, "in_stock", CAGE, "IT Partner", r["at"], opening=False)
         for cls, at, sr in direct:
             new(cls, sr, "in_stock", CAGE, "IT Partner", at, opening=False)
+        for q in shelf_receipts:
+            a = new(q["class"], q["place"]["serial"], "in_stock", shelf_of(q["hall"]), "IT Partner", q["at"], opening=False)
+            add(rec(q["at"]), a, "receive", shelf_of(q["hall"]), "Storage shelf emergency receipt" if q["emergency"] else "Storage shelf replenishment")
         # ticket parts
         for at, t, p in parts:
             slot = slot_of_part(p["part"], p["location"]) or p["location"]

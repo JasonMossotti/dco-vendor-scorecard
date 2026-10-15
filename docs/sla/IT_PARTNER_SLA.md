@@ -1001,6 +1001,13 @@ Spares are Customer-owned and Supplier-managed.
 | Manifold hose and quick-disconnect kit | 10 |
 | E1.S drive | 20 |
 
+**Storage spares shelf in each hall's storage row.** The storage clusters' drives and the storage fabric's optics are kept on their own shelf beside the storage racks, with their own ledger and the same weekly replenishment and cycle count. Supplier-managed like the cage. KM-06 and KM-07 apply to the shelf as to the cage, measured from the shelf's own ledger and counts with the storage telemetry.
+
+| Field-replaceable unit | Minimum stock per hall |
+|---|:-:|
+| NVMe SSD 30.72 TB (U.2) | 4 |
+| 800G OSFP optic (storage fabric) | 4 |
+
 - **Reorder:** Replenishment requests are raised automatically when stock reaches minimum plus lead-time demand.
 - **Cycle counts:** Weekly cycle count of high-value FRUs; full count monthly.
 

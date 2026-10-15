@@ -4344,37 +4344,38 @@ AT-004342,E1.S drive,E1SL0M0P4809,in_stock,Spares cage,IT Partner,2026-02-12T00:
 AT-004343,E1.S drive,E1SOHXGDHHT4,in_stock,Spares cage,IT Partner,2026-02-12T00:00:00Z,
 AT-004344,E1.S drive,E1SP0VESPUSS,in_stock,Spares cage,IT Partner,2026-02-12T00:00:00Z,
 AT-004345,E1.S drive,E1SE33YYNHJ3,in_stock,Spares cage,IT Partner,2026-02-12T00:00:00Z,
-AT-004346,800G OSFP optic,OSJ7QH6T8WQ0,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004347,800G OSFP optic,OS7BFIEOR65A,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004348,800G OSFP optic,OSET99825F8M,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004349,800G OSFP optic,OSYHIO4VCWYR,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004350,800G OSFP optic,OS4OB2ZMYIM3,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004351,800G OSFP optic,OPKTGGCNMK,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004352,800G OSFP optic,OPINKU07UI,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004353,NVMe SSD 30.72 TB (U.2),NV9K6GXTAEID,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004354,NVMe SSD 30.72 TB (U.2),NVGS6669FT6P,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004355,NVMe SSD 30.72 TB (U.2),NVF2GG6O8PEY,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004356,NVMe SSD 30.72 TB (U.2),NVQ9M4BLFB35,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004357,NVMe SSD 30.72 TB (U.2),NV71UZPWE3I6,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004358,NVMe SSD 30.72 TB (U.2),NVMZ6HCCTEQJ,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004359,NVMe SSD 30.72 TB (U.2),NV2729FKMPOV,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004360,NVMe SSD 30.72 TB (U.2),NVIWZ06KRR99,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004361,NVMe SSD 30.72 TB (U.2),NVTGYY5HP4HF,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004362,NVMe SSD 30.72 TB (U.2),NVDNXWF44YV9,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004363,NVMe SSD 30.72 TB (U.2),NVKO0AGQOS5X,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004364,NVMe SSD 30.72 TB (U.2),NVZBR1C4FA4G,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004365,NVMe SSD 30.72 TB (U.2),NVIQNU1UFNJ2,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004366,NVMe SSD 30.72 TB (U.2),NV2D2PQBK8DI,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004367,NVMe SSD 30.72 TB (U.2),NV7X9G64HZEF,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004368,NVMe SSD 30.72 TB (U.2),NVKT9ALK8J2X,in_stock,Storage spares shelf,IT Partner,2026-02-12T00:00:00Z,
-AT-004369,Management switch,MS0LMVBBE8,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-28T03:59:38Z,EW-00498
-AT-004370,Compute tray,CTZ4MII9L4,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-05-24T19:22:06Z,EW-00499
-AT-004371,800G OSFP optic,OP0PJ5UIHB,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-01T13:16:15Z,EW-00500
-AT-004372,800G OSFP optic,OPJN6D796J,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-06-08T06:02:14Z,EW-00501
-AT-004373,800G OSFP optic,OP6LVKU7W8,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-19T17:51:45Z,EW-00502
-AT-004374,Compute tray,CTEYF5QNXX,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-05-07T00:54:26Z,EW-00503
-AT-004375,Management switch,MSK4Z3UMGF,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-02T17:53:02Z,EW-00504
-AT-004376,InfiniBand leaf switch,IBZPKYRPAO,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-30T20:54:50Z,EW-00505
-AT-004377,InfiniBand leaf switch,IBCBY273CQ,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-20T18:12:30Z,EW-00506
-AT-004378,Management switch,MSYBHPOMN8,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-27T09:17:10Z,EW-00507
-AT-004379,InfiniBand leaf switch,IB9IPQFQRY,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-14T02:14:52Z,EW-00508
+AT-004346,800G OSFP optic,OS4OB2ZMYIM3,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004347,800G OSFP optic,OPI80F3VJT,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004348,800G OSFP optic,OPS31Z4LV6,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004349,800G OSFP optic,OPRQP0IJNF,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004350,800G OSFP optic,OPH7FKWVLK,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004351,800G OSFP optic,OPVERHEBIY,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004352,NVMe SSD 30.72 TB (U.2),NVGS6669FT6P,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004353,NVMe SSD 30.72 TB (U.2),NVF2GG6O8PEY,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004354,NVMe SSD 30.72 TB (U.2),NVQ9M4BLFB35,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004355,NVMe SSD 30.72 TB (U.2),NV71UZPWE3I6,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004356,NVMe SSD 30.72 TB (U.2),NVMZ6HCCTEQJ,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004357,NVMe SSD 30.72 TB (U.2),NV0DE4CWV0HV,in_stock,"Storage spares shelf, Hall A",IT Partner,2026-02-12T00:00:00Z,
+AT-004358,800G OSFP optic,OSJ7QH6T8WQ0,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004359,800G OSFP optic,OS7BFIEOR65A,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004360,800G OSFP optic,OSET99825F8M,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004361,800G OSFP optic,OSYHIO4VCWYR,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004362,800G OSFP optic,OPOF3KVBAK,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004363,800G OSFP optic,OPF53W92Q4,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004364,NVMe SSD 30.72 TB (U.2),NV9K6GXTAEID,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004365,NVMe SSD 30.72 TB (U.2),NVPXJ6CZCAK0,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004366,NVMe SSD 30.72 TB (U.2),NVXVYUAU46S0,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004367,NVMe SSD 30.72 TB (U.2),NVINTE95H31T,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004368,NVMe SSD 30.72 TB (U.2),NV4F4K0DTPKZ,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004369,NVMe SSD 30.72 TB (U.2),NV57IL56A56C,in_stock,"Storage spares shelf, Hall B",IT Partner,2026-02-12T00:00:00Z,
+AT-004370,Management switch,MS0LMVBBE8,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-28T03:59:38Z,EW-00498
+AT-004371,Compute tray,CTZ4MII9L4,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-05-24T19:22:06Z,EW-00499
+AT-004372,800G OSFP optic,OP0PJ5UIHB,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-01T13:16:15Z,EW-00500
+AT-004373,800G OSFP optic,OPJN6D796J,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-06-08T06:02:14Z,EW-00501
+AT-004374,800G OSFP optic,OP6LVKU7W8,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-19T17:51:45Z,EW-00502
+AT-004375,Compute tray,CTEYF5QNXX,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-05-07T00:54:26Z,EW-00503
+AT-004376,Management switch,MSK4Z3UMGF,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-02T17:53:02Z,EW-00504
+AT-004377,InfiniBand leaf switch,IBZPKYRPAO,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-07-30T20:54:50Z,EW-00505
+AT-004378,InfiniBand leaf switch,IBCBY273CQ,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-20T18:12:30Z,EW-00506
+AT-004379,Management switch,MSYBHPOMN8,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-27T09:17:10Z,EW-00507
+AT-004380,InfiniBand leaf switch,IB9IPQFQRY,disposed,Pecan Valley Electronics Recycling (fictional),IT Partner,2026-08-14T02:14:52Z,EW-00508

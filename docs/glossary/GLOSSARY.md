@@ -164,7 +164,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | SNMP | **Simple Network Management Protocol.** A standard protocol for reading equipment status and receiving alarms (traps). | - | Interface Agreement, Alarm Board, Telemetry, Asset Register, Site model document |
 | SNR | **Signal-to-noise ratio.** How far the optical signal stands above the noise at the receiver, in dB. Low SNR at normal receive power points at the switch-side optic. | - | Telemetry |
 | SP | **Special Publication.** A NIST Special Publication, such as SP 800-88 (media sanitization). | - | Security SLA |
-| SSD | **Solid-state drive.** A drive built on flash memory. Every storage node holds 24 NVMe SSDs of 30.72 TB. | - | Telemetry, Asset Register |
+| SSD | **Solid-state drive.** A drive built on flash memory. Every storage node holds 24 NVMe SSDs of 30.72 TB. | - | IT Partner SLA, Telemetry, Asset Register |
 | SSH | **Secure Shell.** An encrypted remote login; console servers offer SSH to each serial port so a technician can reach a switch console from anywhere. | - | Site model document |
 | TAC | **Texas Administrative Code.** The state's compiled agency rules; 16 TAC chapter 73 holds the electrical rules that adopt the NEC. | - | Deployments |
 | TC | **Technical Committee (ASHRAE).** TC 9.9 is the ASHRAE committee for mission-critical facilities and data centers; it publishes the Thermal Guidelines, whose envelopes the Site health page uses for supply air. | - | Telemetry |
@@ -234,8 +234,8 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | KM-03 | **P3 Engaged On-Site Within 4 Hours.** Target at least 95%. Measured from DS-BADGE, DS-ITSM. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards |
 | KM-04 | **P4 Completed Within 5 Days.** Target at least 90%. Measured from DS-ITSM. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards |
 | KM-05 | **Incident Update Cadence Adherence.** Target at least 95%. Measured from DS-ITSM. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards |
-| KM-06 | **Spares at or Above Minimum Stock (by FRU class, daily).** Target at least 98%. Measured from DS-SPARES, DS-REDFISH. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards, Availability, Incident Portal, Weekly Review |
-| KM-07 | **Spares Cycle Count Accuracy.** Target at least 99%. Measured from DS-SPARES. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards, Availability, Incident Portal, Weekly Review |
+| KM-06 | **Spares at or Above Minimum Stock (by FRU class, daily).** Target at least 98%. Measured from DS-SPARES, DS-REDFISH. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards, Availability, Telemetry, Incident Portal, Weekly Review |
+| KM-07 | **Spares Cycle Count Accuracy.** Target at least 99%. Measured from DS-SPARES. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards, Availability, Telemetry, Incident Portal, Weekly Review |
 | KM-08 | **RMA Shipped to OEM Within 5 Business Days.** Target at least 95%. Measured from DS-SPARES. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards, Availability, Weekly Review |
 | KM-09 | **Lemon Units Escalated Within 2 Business Days.** Target at least 100%. Measured from DS-DCGM, DS-REDFISH, DS-ITSM. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Scorecards, Failure Patterns, Incident Portal, Post-Incident Review, Weekly Review |
 | KM-10 | **Change Compliance (all changes CAB-approved and in window).** Target at least 100%. Measured from DS-CAB, DS-ITSM, DS-REDFISH. | IT Partner SLA, 11. Key Measurements | IT Partner SLA, Landlord SLA, Security SLA, Scorecards, Weekly Review |

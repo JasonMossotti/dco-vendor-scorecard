@@ -196,6 +196,19 @@ Owner: IT Partner. Contract: Interface Agreement RACI: Leaf and spine switches (
 | NVDIGJMPAYJA | stg-a1-n05 Bay23 | INC3500004 | 2026-09-05T16:07:40Z |
 | NV3K6IUSS5J5 | stg-a1-n01 Bay20 | INC3500006 | 2026-09-06T17:17:49Z |
 
+## Storage spares shelf
+
+The storage clusters' drives and the storage fabric's optics, kept on a shelf in each hall's storage row with their own ledger (IT Partner SLA, spares, storage spares shelf). KM-06, at or above minimum at the weekly count: 15 of 16. KM-07, the count equals the ledger: 16 of 16.
+
+| Hall | Class | Minimum | Opening | Issued | Received | Lowest | Weekly counts |
+|---|---|---:|---:|---:|---:|---:|---|
+| Hall A | 800G OSFP optic (storage fabric) | 4 | 6 | 1 | 1 | 5 | 6, 6, 5, 6 |
+| Hall A | NVMe SSD 30.72 TB (U.2) | 4 | 6 | 5 | 5 | 2 | 2, 6, 5, 6 |
+| Hall B | 800G OSFP optic (storage fabric) | 4 | 6 | 4 | 4 | 4 | 5, 6, 4, 6 |
+| Hall B | NVMe SSD 30.72 TB (U.2) | 4 | 6 | 1 | 1 | 5 | 5, 6, 6, 6 |
+
+Below minimum: Hall A NVMe SSD 30.72 TB (U.2), 2 counted at 2026-09-06T23:00:00Z against a minimum of 4.
+
 ## What is read
 
 | Field | Source | Unit | Meaning |
@@ -223,6 +236,7 @@ Owner: IT Partner. Contract: Interface Agreement RACI: Leaf and spine switches (
 | Each node's reads and writes equal its ports' octets, and each hall's traffic crosses every tier byte for byte | 22,848 of 22,848 |
 | A tray's two storage ports are down whenever the tray is, and one is up whenever it is up | 774,144 of 774,144 |
 | Every client stall falls in a flapping episode on its row's leaf uplinks, on a node running a job | 146 of 146 |
+| Every part a storage ticket used is issued from its hall's spares shelf against that ticket before the swap, and every cycle count's system quantity equals the shelf ledger | 27 of 27 |
 
 ## Sources
 

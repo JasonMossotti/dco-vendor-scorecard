@@ -25,7 +25,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import render_telemetry  # noqa: E402
 
-NAMES = ["drives", "nodes", "cluster", "rebuild", "ports", "traffic", "trays", "stalls"]
+NAMES = ["drives", "nodes", "cluster", "rebuild", "ports", "traffic", "trays", "stalls", "spares"]
 
 
 @pytest.fixture(scope="module")
@@ -152,6 +152,28 @@ def test_checks_catch_broken_logs(t, cfg):
     row = next(r for r in t4.node_hourly if float(r["read_gb"]) > 100)
     row["read_gb"] = f"{float(row['read_gb']) * 1.05:.3f}"
     assert misses(t4, cfg)["traffic"]
+
+
+def test_storage_spares_shelf_against_the_sla(t, cfg):
+    """Each hall's storage shelf: the SLA's minimums, an issue for every part a storage ticket used, the weekly counts, and
+    KM-06 and KM-07 measured from them. The sample month's first week took four drives from Hall A's shelf."""
+    from scorecard.sla_model import load_sla
+    mins = {f.get("label") or f["fru"]: f["minimum"] for f in load_sla()["spares"]["storage_shelf"]["minimum_stock_per_hall"]}
+    assert mins == {"NVMe SSD 30.72 TB (U.2)": 4, "800G OSFP optic (storage fabric)": 4}
+    sh = TS.shelf(t)
+    assert len(sh["rows"]) == 4 and sh["km06"] == [15, 16] and sh["km07"] == [16, 16]
+    assert sh["below"] == [{"hall": "HALL-A", "fru": "NVMe SSD 30.72 TB (U.2)", "at": "2026-09-06T23:00:00Z", "counted": 2, "minimum": 4}]
+    used = sum(1 for k in t.tickets for p in k["parts_used"] if p["part"] in {"NVMe SSD 30.72 TB (U.2)", "800G OSFP optic"})
+    assert sum(r["issued"] for r in sh["rows"]) == used
+    # an issue the shelf never recorded, and a count that does not match the ledger
+    t2 = copy.copy(t)
+    i = next(i for i, x in enumerate(t.ledger) if x["transaction"] == "issue")
+    t2.ledger = t.ledger[:i] + t.ledger[i + 1:]
+    assert misses(t2, cfg)["spares"]
+    t3 = copy.copy(t)
+    t3.counts = copy.deepcopy(t.counts)
+    t3.counts[0]["system_qty"] = str(int(t3.counts[0]["system_qty"]) + 1)
+    assert misses(t3, cfg)["spares"]
 
 
 def test_site_health_has_the_storage_family(t, cfg):
