@@ -1,0 +1,55 @@
+{
+ "decoys": [
+  {
+   "kind": "in_transit",
+   "rma": "RMA-74943"
+  },
+  {
+   "kind": "late_delivery",
+   "rma": "RMA-74986"
+  },
+  {
+   "action": "remove",
+   "kind": "late_record",
+   "ref": "INC3100561",
+   "tag": "AT-005627"
+  },
+  {
+   "action": "remove",
+   "kind": "late_record",
+   "ref": "INC3100306",
+   "tag": "AT-005665"
+  },
+  {
+   "action": "remove",
+   "kind": "late_record",
+   "ref": "INC3100544",
+   "tag": "AT-005711"
+  },
+  {
+   "action": "remove",
+   "kind": "late_record",
+   "ref": "INC3100629",
+   "tag": "AT-005723"
+  }
+ ],
+ "planted": [
+  {
+   "kind": "live_in_stock",
+   "registered": "PUZN0V8L6F",
+   "serial": "PUK0AJF4YL",
+   "slot": "A15_PowerShelf_1 PSU 3"
+  },
+  {
+   "certificate": "EW-00504",
+   "kind": "disposed_answering",
+   "serial": "MSK4Z3UMGF",
+   "slot": "a09-mgmt2"
+  },
+  {
+   "kind": "rma_not_received",
+   "rma": "RMA-74947",
+   "serial": "PSQR7OZ9WS"
+  }
+ ]
+}

@@ -1,0 +1,103 @@
+# One asset register for Site AUS-1 (synthetic; portfolio demo). PR C of the monitoring gaps plan.
+#
+# Lifecycle tracking used to stop at compute parts (spares ledger, RMA shipments, Redfish serials). A real site needs
+# one register that follows every asset by serial from receipt to install, RMA, and disposal, for switches, storage,
+# PSUs, optics, and facility gear alike, and a daily reconciliation of that register against what the devices
+# themselves report. The register is the Customer's; each party records the assets it maintains (Interface Agreement
+# section 11, REG-1 to REG-6).
+#
+# What the register holds (basis: assumption):
+#   * every received device in the device directory, by serial: racks and what is inside them (compute trays, NVLink
+#     switch trays, power shelves and their six PSUs each, the two in-rack management switches), InfiniBand leaves, the
+#     storage and in-band Ethernet fabric, console servers, OOB aggregation switches, storage racks, nodes, and drives,
+#     and the Landlord's facility equipment;
+#   * spares in the cage by serial, for every serialized FRU class of the spares ledger (consumable kits are counted,
+#     not registered), and the storage drive spares;
+#   * parts out of service: failed parts awaiting RMA, parts at the OEM, drives in Security Partner custody, destroyed
+#     drives, disposed assets.
+#   Hall B racks enter at receipt (deployment milestone M1) as received and become installed at power-on (M4); racks
+#   not yet delivered are on order, not in the register. Installed optics and the drives inside compute trays are
+#   registered when they are removed: their serials are not in the sample telemetry (open item).
+#
+# How it is reconciled (src/scorecard/assets.py): once a day at the 11:00 UTC scan (06:00 CDT), the register's serial at
+# every location against the serial the device answers with (Redfish SerialNumber for trays, shelves, PSUs, and storage
+# drives; SNMP ENTITY-MIB entPhysicalSerialNum for switches, console servers, and storage nodes); at the 23:00 UTC cut,
+# the register's stock against the spares ledger; and every RMA shipment, OEM delivery, custody handover, destruction
+# certificate, disposal certificate, and ticket part against the register's transactions.
+# Read by src/scorecard/synthetic/assets.py (the data) and src/scorecard/assets.py (the checks).
+
+framing: "Synthetic asset register and inventory scans for a portfolio demonstration. All names, serials, and records are fictional."
+sources:
+  - {name: "DMTF Redfish Chassis, PowerSupply, and Drive schemas (SerialNumber, PartNumber, Model)", url: "https://redfish.dmtf.org/schemas/v1/Chassis.v1_29_0.json", checked: "2026-10-14"}
+  - {name: "RFC 6933, Entity MIB (Version 4): entPhysicalSerialNum, entPhysicalModelName", url: "https://www.rfc-editor.org/rfc/rfc6933", checked: "2026-10-14"}
+  - {name: "NIST SP 800-88 Rev. 2, Guidelines for Media Sanitization (Destroy, certificate of sanitization)", url: "https://csrc.nist.gov/pubs/sp/800/88/r2/final", checked: "2026-10-14"}
+
+scan:
+  hour_utc: 11                   # the daily inventory scan (06:00 CDT)
+  cut_hour_utc: 23               # the daily stock cut, at the cycle-count hour
+  psus_per_shelf: 6              # site/details.yaml: 8 x 1U 33 kW power shelves of 6 x 5.5 kW PSUs
+
+# Serial formats (basis: assumption; the sample's own prefixes where it has them)
+serials:
+  "Compute tray": {prefix: "CT", length: 10}
+  "NVLink switch tray": {prefix: "NS", length: 10}
+  "Power shelf": {prefix: "PS", length: 10}
+  "PSU (5.5 kW)": {prefix: "PU", length: 10}
+  "800G OSFP optic": {prefix: "OP", length: 10}
+  "E1.S drive": {prefix: "E1S", length: 12}
+  "NVMe SSD 30.72 TB (U.2)": {prefix: "NV", length: 12}
+  "Rack": {prefix: "RK", length: 10}
+  "Management switch": {prefix: "MS", length: 10}
+  "InfiniBand leaf switch": {prefix: "IB", length: 10}
+  "Ethernet switch": {prefix: "EN", length: 10}
+  "Console server": {prefix: "CS", length: 10}
+  "OOB aggregation switch": {prefix: "AG", length: 10}
+  "Storage node": {prefix: "SN", length: 10}
+  "Storage rack": {prefix: "SR", length: 10}
+  "Facility equipment": {prefix: "FE", length: 10}
+
+# What each directory kind is in the register: asset class, who maintains it, and how the device reports its serial
+classes:
+  rack: {class: "Rack", maintainer: "IT Partner", reported: null}
+  compute_tray: {class: "Compute tray", maintainer: "IT Partner", reported: "Redfish"}
+  switch_tray: {class: "NVLink switch tray", maintainer: "IT Partner", reported: "Redfish"}
+  power_shelf: {class: "Power shelf", maintainer: "IT Partner", reported: "Redfish"}
+  psu: {class: "PSU (5.5 kW)", maintainer: "IT Partner", reported: "Redfish"}
+  mgmt: {class: "Management switch", maintainer: "IT Partner", reported: "SNMP"}
+  leaf: {class: "InfiniBand leaf switch", maintainer: "IT Partner", reported: "SNMP"}
+  eth_leaf: {class: "Ethernet switch", maintainer: "IT Partner", reported: "SNMP"}
+  eth_spine: {class: "Ethernet switch", maintainer: "IT Partner", reported: "SNMP"}
+  console: {class: "Console server", maintainer: "IT Partner", reported: "SNMP"}
+  agg: {class: "OOB aggregation switch", maintainer: "IT Partner", reported: "SNMP"}
+  stg_rack: {class: "Storage rack", maintainer: "IT Partner", reported: null}
+  stg_node: {class: "Storage node", maintainer: "IT Partner", reported: "SNMP"}
+  drive: {class: "NVMe SSD 30.72 TB (U.2)", maintainer: "IT Partner", reported: "Redfish"}
+  facility: {class: "Facility equipment", maintainer: "Landlord", reported: null}
+facility_kinds: [tx, mv, gen, uss, ups, mups, mvsst, busway, tapoff, cdu, tw, crah, chiller, pump, vesda, leak]
+
+spares:
+  serialized: ["Compute tray", "NVLink switch tray", "Power shelf", "PSU (5.5 kW)", "800G OSFP optic", "E1.S drive"]
+  storage_drives: [6, 10]        # NVMe drive spares in the cage at the start (the spares ledger does not carry them; open item)
+
+# What happens in a month, and how long (basis: assumption)
+behaviour:
+  record_after_min: [1, 25]      # a register transaction after the work it records
+  late_records: [2, 4]           # transactions recorded late, inside REG-2's 4 hours (decoy)
+  late_record_h: [1.0, 3.5]
+  oem_receipt_d: [1, 4]          # the OEM logs the failed part received after it ships
+  dock_to_cage_h: [0.5, 6]       # carrier delivery (POD) to the cage receipt
+  in_transit: [1, 3]             # replacements shipped by the OEM and still in transit at month end (decoy)
+  late_delivery_h: [2, 20]       # a delivery this long before month end, not yet received: inside REG-3's 24 hours (decoy)
+  past_disposals: [3, 6]         # assets disposed before the month with certificates, never seen again (decoy)
+  past_replacements: [2, 4]      # switches replaced and the old unit disposed before the month, done right (decoy)
+  recycler: "Pecan Valley Electronics Recycling (fictional)"
+
+planted:
+  live_in_stock: true            # a PSU answering in a shelf that the register lists in the spares cage
+  rma_not_received: true         # an OEM replacement delivered (carrier POD) that neither register nor ledger received
+  disposed_answering: true       # a switch the register says was replaced and disposed is still the one answering
+
+checks:
+  record_h: 4                    # REG-2: a transaction within 4 hours of the work
+  receive_h: 24                  # REG-3: a delivery received within 24 hours of the POD
+  custody_h: 24                  # a pulled drive handed to the Security Partner within this (as the storage checks)

@@ -1,0 +1,4875 @@
+slot,source,serial
+A01_PowerShelf_1,Redfish,PS4Y8MFUUT
+A01_PowerShelf_1 PSU 1,Redfish,PUCRARJ1TU
+A01_PowerShelf_1 PSU 2,Redfish,PU9S4I051R
+A01_PowerShelf_1 PSU 3,Redfish,PU0CT5Y9WW
+A01_PowerShelf_1 PSU 4,Redfish,PUUUXK3408
+A01_PowerShelf_1 PSU 5,Redfish,PUD6OPIKCY
+A01_PowerShelf_1 PSU 6,Redfish,PUV03GYBFG
+A01_PowerShelf_2,Redfish,PSDZUUHKJU
+A01_PowerShelf_2 PSU 1,Redfish,PU0AWACCDA
+A01_PowerShelf_2 PSU 2,Redfish,PU5422RXC6
+A01_PowerShelf_2 PSU 3,Redfish,PU96QG1P8K
+A01_PowerShelf_2 PSU 4,Redfish,PUDL9R9DSY
+A01_PowerShelf_2 PSU 5,Redfish,PUT3VNPRNH
+A01_PowerShelf_2 PSU 6,Redfish,PUUNASS6IJ
+A01_PowerShelf_3,Redfish,PSDJ8GY10G
+A01_PowerShelf_3 PSU 1,Redfish,PUWVUXI6PJ
+A01_PowerShelf_3 PSU 2,Redfish,PUKNJFHMOQ
+A01_PowerShelf_3 PSU 3,Redfish,PU4YANMPJZ
+A01_PowerShelf_3 PSU 4,Redfish,PUQFJODNIR
+A01_PowerShelf_3 PSU 5,Redfish,PUMADUJ4N0
+A01_PowerShelf_3 PSU 6,Redfish,PUYF0OW3I9
+A01_PowerShelf_4,Redfish,PSWSJ4KLJC
+A01_PowerShelf_4 PSU 1,Redfish,PUDYUNTJQ6
+A01_PowerShelf_4 PSU 2,Redfish,PUYRJTUVG9
+A01_PowerShelf_4 PSU 3,Redfish,PU1Y5ASLX4
+A01_PowerShelf_4 PSU 4,Redfish,PU5R57GXUX
+A01_PowerShelf_4 PSU 5,Redfish,PU606TAAA8
+A01_PowerShelf_4 PSU 6,Redfish,PUVBRF2E6J
+A01_PowerShelf_5,Redfish,PSO61OADAE
+A01_PowerShelf_5 PSU 1,Redfish,PUGWLDZ2WB
+A01_PowerShelf_5 PSU 2,Redfish,PUFIR0Z49U
+A01_PowerShelf_5 PSU 3,Redfish,PUFVQRTH03
+A01_PowerShelf_5 PSU 4,Redfish,PU1MN0GU3M
+A01_PowerShelf_5 PSU 5,Redfish,PUWSNN1MIB
+A01_PowerShelf_5 PSU 6,Redfish,PUF3ZWYDKA
+A01_PowerShelf_6,Redfish,PSYU7M2VXW
+A01_PowerShelf_6 PSU 1,Redfish,PUHXYU9XON
+A01_PowerShelf_6 PSU 2,Redfish,PU9SZNK33F
+A01_PowerShelf_6 PSU 3,Redfish,PUUALG5M0L
+A01_PowerShelf_6 PSU 4,Redfish,PU1YIO3R51
+A01_PowerShelf_6 PSU 5,Redfish,PUFK1XEREL
+A01_PowerShelf_6 PSU 6,Redfish,PUZ8IDW5QZ
+A01_PowerShelf_7,Redfish,PS7LHQ95Y5
+A01_PowerShelf_7 PSU 1,Redfish,PUMT8K416Z
+A01_PowerShelf_7 PSU 2,Redfish,PUSXV6DJGF
+A01_PowerShelf_7 PSU 3,Redfish,PUE1F0AW0M
+A01_PowerShelf_7 PSU 4,Redfish,PUF19073SH
+A01_PowerShelf_7 PSU 5,Redfish,PUXGLG7L49
+A01_PowerShelf_7 PSU 6,Redfish,PUQ61YCGGE
+A01_PowerShelf_8,Redfish,PSY7O8M0PA
+A01_PowerShelf_8 PSU 1,Redfish,PUL6UEH493
+A01_PowerShelf_8 PSU 2,Redfish,PU0Q8DA81K
+A01_PowerShelf_8 PSU 3,Redfish,PUGOY0LK8R
+A01_PowerShelf_8 PSU 4,Redfish,PUQHHKW3JO
+A01_PowerShelf_8 PSU 5,Redfish,PUKPFI0U3F
+A01_PowerShelf_8 PSU 6,Redfish,PUPQ4WM2W3
+A02_PowerShelf_1,Redfish,PS2R6MBHE4
+A02_PowerShelf_1 PSU 1,Redfish,PU1CM127OM
+A02_PowerShelf_1 PSU 2,Redfish,PUSNGFYTEV
+A02_PowerShelf_1 PSU 3,Redfish,PU0XV4U6YP
+A02_PowerShelf_1 PSU 4,Redfish,PU9573HT50
+A02_PowerShelf_1 PSU 5,Redfish,PUNXOKEFZ2
+A02_PowerShelf_1 PSU 6,Redfish,PUMO9ZCOBD
+A02_PowerShelf_2,Redfish,PSJAHQJWCY
+A02_PowerShelf_2 PSU 1,Redfish,PUKUJ9JZJH
+A02_PowerShelf_2 PSU 2,Redfish,PUEA8L5DDP
+A02_PowerShelf_2 PSU 3,Redfish,PU5PQGFZVC
+A02_PowerShelf_2 PSU 4,Redfish,PUIDAUNYE0
+A02_PowerShelf_2 PSU 5,Redfish,PUNWL214YG
+A02_PowerShelf_2 PSU 6,Redfish,PUFG9XAUCL
+A02_PowerShelf_3,Redfish,PSTADLHQVG
+A02_PowerShelf_3 PSU 1,Redfish,PU471CBHXU
+A02_PowerShelf_3 PSU 2,Redfish,PUS45O7AU0
+A02_PowerShelf_3 PSU 3,Redfish,PUK63Q924H
+A02_PowerShelf_3 PSU 4,Redfish,PUYQAOCY5M
+A02_PowerShelf_3 PSU 5,Redfish,PUGZ4CQFSS
+A02_PowerShelf_3 PSU 6,Redfish,PUU1U8VOKV
+A02_PowerShelf_4,Redfish,PSLUZYUDJP
+A02_PowerShelf_4 PSU 1,Redfish,PUH4ATNL7W
+A02_PowerShelf_4 PSU 2,Redfish,PUGQTJPQ6O
+A02_PowerShelf_4 PSU 3,Redfish,PUK59FTD43
+A02_PowerShelf_4 PSU 4,Redfish,PUB8GAAW6T
+A02_PowerShelf_4 PSU 5,Redfish,PUGLYNLL46
+A02_PowerShelf_4 PSU 6,Redfish,PUISN5RDAD
+A02_PowerShelf_5,Redfish,PSG0996XMM
+A02_PowerShelf_5 PSU 1,Redfish,PU8WNAUA74
+A02_PowerShelf_5 PSU 2,Redfish,PU53JFL564
+A02_PowerShelf_5 PSU 3,Redfish,PULAR0WLP4
+A02_PowerShelf_5 PSU 4,Redfish,PU99H3Y0QE
+A02_PowerShelf_5 PSU 5,Redfish,PUPQII7RY2
+A02_PowerShelf_5 PSU 6,Redfish,PUMUVYUOMU
+A02_PowerShelf_6,Redfish,PSVJ54BRA3
+A02_PowerShelf_6 PSU 1,Redfish,PU4EM1PZQW
+A02_PowerShelf_6 PSU 2,Redfish,PUIFGNQCPW
+A02_PowerShelf_6 PSU 3,Redfish,PU4MWY54MA
+A02_PowerShelf_6 PSU 4,Redfish,PUT4ZQFLL4
+A02_PowerShelf_6 PSU 5,Redfish,PUU5WL0UH5
+A02_PowerShelf_6 PSU 6,Redfish,PUV29BSLHD
+A02_PowerShelf_7,Redfish,PSJ1HJ4OHB
+A02_PowerShelf_7 PSU 1,Redfish,PUYEZBPMC6
+A02_PowerShelf_7 PSU 2,Redfish,PUUY3ZN4JH
+A02_PowerShelf_7 PSU 3,Redfish,PUB7UX1JPA
+A02_PowerShelf_7 PSU 4,Redfish,PUZA99N22N
+A02_PowerShelf_7 PSU 5,Redfish,PUZGK1VHF0
+A02_PowerShelf_7 PSU 6,Redfish,PUVXA1CCMB
+A02_PowerShelf_8,Redfish,PSOCZXY1KR
+A02_PowerShelf_8 PSU 1,Redfish,PULMBJ3MCB
+A02_PowerShelf_8 PSU 2,Redfish,PUVD1QFTF4
+A02_PowerShelf_8 PSU 3,Redfish,PUKC80HD14
+A02_PowerShelf_8 PSU 4,Redfish,PUA6VSGGU5
+A02_PowerShelf_8 PSU 5,Redfish,PU00AD1TSD
+A02_PowerShelf_8 PSU 6,Redfish,PUVTHU14ZX
+A03_PowerShelf_1,Redfish,PS42U6TB89
+A03_PowerShelf_1 PSU 1,Redfish,PU2PX33NIG
+A03_PowerShelf_1 PSU 2,Redfish,PUZZMK4UEH
+A03_PowerShelf_1 PSU 3,Redfish,PUZAOG5BPC
+A03_PowerShelf_1 PSU 4,Redfish,PULEOC39ON
+A03_PowerShelf_1 PSU 5,Redfish,PUCSNKSYRJ
+A03_PowerShelf_1 PSU 6,Redfish,PU59J74MO3
+A03_PowerShelf_2,Redfish,PSY4S7868X
+A03_PowerShelf_2 PSU 1,Redfish,PUMINR67JN
+A03_PowerShelf_2 PSU 2,Redfish,PUIBK1H1C7
+A03_PowerShelf_2 PSU 3,Redfish,PURG87P4EW
+A03_PowerShelf_2 PSU 4,Redfish,PUW03CTLLE
+A03_PowerShelf_2 PSU 5,Redfish,PUA9MXUVUE
+A03_PowerShelf_2 PSU 6,Redfish,PUGY6GAF1I
+A03_PowerShelf_3,Redfish,PS8BDXKAWB
+A03_PowerShelf_3 PSU 1,Redfish,PUF62WY7MJ
+A03_PowerShelf_3 PSU 2,Redfish,PU8QDW90GY
+A03_PowerShelf_3 PSU 3,Redfish,PUVXLE6XAE
+A03_PowerShelf_3 PSU 4,Redfish,PU6XJH419O
+A03_PowerShelf_3 PSU 5,Redfish,PUV5XFUV3X
+A03_PowerShelf_3 PSU 6,Redfish,PUUSE3162I
+A03_PowerShelf_4,Redfish,PS7CZTTSTR
+A03_PowerShelf_4 PSU 1,Redfish,PUBB8FBZM9
+A03_PowerShelf_4 PSU 2,Redfish,PUSKZB7YOW
+A03_PowerShelf_4 PSU 3,Redfish,PUDM68WZSL
+A03_PowerShelf_4 PSU 4,Redfish,PUROKYU2T2
+A03_PowerShelf_4 PSU 5,Redfish,PUYJSTD23Q
+A03_PowerShelf_4 PSU 6,Redfish,PUW06CV6P5
+A03_PowerShelf_5,Redfish,PSBMTQIAND
+A03_PowerShelf_5 PSU 1,Redfish,PUZSK451OF
+A03_PowerShelf_5 PSU 2,Redfish,PU6WPS98IA
+A03_PowerShelf_5 PSU 3,Redfish,PUMSHTIOG1
+A03_PowerShelf_5 PSU 4,Redfish,PUTY5B3F5F
+A03_PowerShelf_5 PSU 5,Redfish,PUD6K848T4
+A03_PowerShelf_5 PSU 6,Redfish,PULP1H2HU4
+A03_PowerShelf_6,Redfish,PSYGIUSMKX
+A03_PowerShelf_6 PSU 1,Redfish,PU90ICFHG7
+A03_PowerShelf_6 PSU 2,Redfish,PUY2MU1KTZ
+A03_PowerShelf_6 PSU 3,Redfish,PUULQBLB6Y
+A03_PowerShelf_6 PSU 4,Redfish,PUANNWYMJ6
+A03_PowerShelf_6 PSU 5,Redfish,PUOT00RVZG
+A03_PowerShelf_6 PSU 6,Redfish,PUBHQDUS6L
+A03_PowerShelf_7,Redfish,PSGDM0E752
+A03_PowerShelf_7 PSU 1,Redfish,PUTJD2STHN
+A03_PowerShelf_7 PSU 2,Redfish,PU42M77IMO
+A03_PowerShelf_7 PSU 3,Redfish,PUPBY5MEFY
+A03_PowerShelf_7 PSU 4,Redfish,PUAIHIN8X4
+A03_PowerShelf_7 PSU 5,Redfish,PUICFQTDDB
+A03_PowerShelf_7 PSU 6,Redfish,PU6H0CQRZM
+A03_PowerShelf_8,Redfish,PS3RYYLREA
+A03_PowerShelf_8 PSU 1,Redfish,PU2R8Z7NBX
+A03_PowerShelf_8 PSU 2,Redfish,PU19QOJ5KA
+A03_PowerShelf_8 PSU 3,Redfish,PUHNQQYL2J
+A03_PowerShelf_8 PSU 4,Redfish,PUB4E8OF21
+A03_PowerShelf_8 PSU 5,Redfish,PUBVLIVEJC
+A03_PowerShelf_8 PSU 6,Redfish,PUF11BBN1A
+A04_PowerShelf_1,Redfish,PS7VML7WXO
+A04_PowerShelf_1 PSU 1,Redfish,PUYGXG62O8
+A04_PowerShelf_1 PSU 2,Redfish,PU6SZ3LUI9
+A04_PowerShelf_1 PSU 3,Redfish,PU8X3SS8WH
+A04_PowerShelf_1 PSU 4,Redfish,PULJL08IW7
+A04_PowerShelf_1 PSU 5,Redfish,PU364EGALV
+A04_PowerShelf_1 PSU 6,Redfish,PU7TM8Q3RL
+A04_PowerShelf_2,Redfish,PSPQNDN3PY
+A04_PowerShelf_2 PSU 1,Redfish,PUJY1OW4YJ
+A04_PowerShelf_2 PSU 2,Redfish,PUJ4ZYSJKW
+A04_PowerShelf_2 PSU 3,Redfish,PUL82CGAYW
+A04_PowerShelf_2 PSU 4,Redfish,PUB6CBFTNY
+A04_PowerShelf_2 PSU 5,Redfish,PUF20M3L5B
+A04_PowerShelf_2 PSU 6,Redfish,PU7U81S4LI
+A04_PowerShelf_3,Redfish,PSVUM1NMJR
+A04_PowerShelf_3 PSU 1,Redfish,PUAF554H9W
+A04_PowerShelf_3 PSU 2,Redfish,PUYMZLRGFE
+A04_PowerShelf_3 PSU 3,Redfish,PUPN6GTQ56
+A04_PowerShelf_3 PSU 4,Redfish,PUVYB1FDHN
+A04_PowerShelf_3 PSU 5,Redfish,PUXBZ88CSH
+A04_PowerShelf_3 PSU 6,Redfish,PUK5147KF7
+A04_PowerShelf_4,Redfish,PSMQV5K92E
+A04_PowerShelf_4 PSU 1,Redfish,PUE7L23E3C
+A04_PowerShelf_4 PSU 2,Redfish,PU1UP322RZ
+A04_PowerShelf_4 PSU 3,Redfish,PU6MF61M7P
+A04_PowerShelf_4 PSU 4,Redfish,PURV4FXMN5
+A04_PowerShelf_4 PSU 5,Redfish,PUY3F51U4H
+A04_PowerShelf_4 PSU 6,Redfish,PUAQ09ZB0X
+A04_PowerShelf_5,Redfish,PSLJK5ZAHC
+A04_PowerShelf_5 PSU 1,Redfish,PUS4HPIFWV
+A04_PowerShelf_5 PSU 2,Redfish,PUO5ZD6F1V
+A04_PowerShelf_5 PSU 3,Redfish,PU8TEY5GQU
+A04_PowerShelf_5 PSU 4,Redfish,PUHCJ37TMD
+A04_PowerShelf_5 PSU 5,Redfish,PU4S6LY7G5
+A04_PowerShelf_5 PSU 6,Redfish,PUTVHE3EEX
+A04_PowerShelf_6,Redfish,PSGZ78TDWS
+A04_PowerShelf_6 PSU 1,Redfish,PUUISBFV0G
+A04_PowerShelf_6 PSU 2,Redfish,PUQC9OIL6N
+A04_PowerShelf_6 PSU 3,Redfish,PUDOOHPU9U
+A04_PowerShelf_6 PSU 4,Redfish,PU5MESBV2J
+A04_PowerShelf_6 PSU 5,Redfish,PUPA19V1Y0
+A04_PowerShelf_6 PSU 6,Redfish,PUGTW9XJAH
+A04_PowerShelf_7,Redfish,PSWKDPE962
+A04_PowerShelf_7 PSU 1,Redfish,PUYJNR5UBT
+A04_PowerShelf_7 PSU 2,Redfish,PUOHDRSG2B
+A04_PowerShelf_7 PSU 3,Redfish,PUXH8CMT65
+A04_PowerShelf_7 PSU 4,Redfish,PUHG09108D
+A04_PowerShelf_7 PSU 5,Redfish,PUVVTG294N
+A04_PowerShelf_7 PSU 6,Redfish,PUPUJW3XVW
+A04_PowerShelf_8,Redfish,PSCV0NE8UA
+A04_PowerShelf_8 PSU 1,Redfish,PUCNS9BEZG
+A04_PowerShelf_8 PSU 2,Redfish,PU32JD0QT4
+A04_PowerShelf_8 PSU 3,Redfish,PU1FXCIWF9
+A04_PowerShelf_8 PSU 4,Redfish,PU24VJ9ARM
+A04_PowerShelf_8 PSU 5,Redfish,PUE9WL4MUD
+A04_PowerShelf_8 PSU 6,Redfish,PU1ROL1AOX
+A05_PowerShelf_1,Redfish,PSRQSZ01E2
+A05_PowerShelf_1 PSU 1,Redfish,PUV1XF2UGX
+A05_PowerShelf_1 PSU 2,Redfish,PUC6XG5SNY
+A05_PowerShelf_1 PSU 3,Redfish,PU1LSM7GIO
+A05_PowerShelf_1 PSU 4,Redfish,PUXJ01W4VZ
+A05_PowerShelf_1 PSU 5,Redfish,PU6ZHQ0FQG
+A05_PowerShelf_1 PSU 6,Redfish,PUOPUBBCFZ
+A05_PowerShelf_2,Redfish,PSOG8WOUAU
+A05_PowerShelf_2 PSU 1,Redfish,PU7OD5IX8N
+A05_PowerShelf_2 PSU 2,Redfish,PUXNEC2EHD
+A05_PowerShelf_2 PSU 3,Redfish,PUDYA6AWF3
+A05_PowerShelf_2 PSU 4,Redfish,PUJKFNICED
+A05_PowerShelf_2 PSU 5,Redfish,PU7C5B1ZBE
+A05_PowerShelf_2 PSU 6,Redfish,PU4Q2BANNM
+A05_PowerShelf_3,Redfish,PSC59BLEAB
+A05_PowerShelf_3 PSU 1,Redfish,PUOKF2DHUV
+A05_PowerShelf_3 PSU 2,Redfish,PUF1HINQRU
+A05_PowerShelf_3 PSU 3,Redfish,PUGBRJ11NH
+A05_PowerShelf_3 PSU 4,Redfish,PU73RQHLVS
+A05_PowerShelf_3 PSU 5,Redfish,PUJ6429ET2
+A05_PowerShelf_3 PSU 6,Redfish,PUWLYX414U
+A05_PowerShelf_4,Redfish,PSA7PB1VR8
+A05_PowerShelf_4 PSU 1,Redfish,PUKD4AY1TF
+A05_PowerShelf_4 PSU 2,Redfish,PUK4EYMD4A
+A05_PowerShelf_4 PSU 3,Redfish,PU4J11L9Y4
+A05_PowerShelf_4 PSU 4,Redfish,PUBQ7K1ED0
+A05_PowerShelf_4 PSU 5,Redfish,PUX0BDH6Y9
+A05_PowerShelf_4 PSU 6,Redfish,PU13XJP704
+A05_PowerShelf_5,Redfish,PSBQHL9RYY
+A05_PowerShelf_5 PSU 1,Redfish,PUJ6LS4YPH
+A05_PowerShelf_5 PSU 2,Redfish,PUPCO30SXW
+A05_PowerShelf_5 PSU 3,Redfish,PUIJAUPUYM
+A05_PowerShelf_5 PSU 4,Redfish,PUEOCA4GSH
+A05_PowerShelf_5 PSU 5,Redfish,PUXQDVSZ0U
+A05_PowerShelf_5 PSU 6,Redfish,PU8E8D8J1M
+A05_PowerShelf_6,Redfish,PSDPZ46LID
+A05_PowerShelf_6 PSU 1,Redfish,PUCXGFCQKC
+A05_PowerShelf_6 PSU 2,Redfish,PUV2U0PENP
+A05_PowerShelf_6 PSU 3,Redfish,PUK228T2HH
+A05_PowerShelf_6 PSU 4,Redfish,PUMOIRN0MA
+A05_PowerShelf_6 PSU 5,Redfish,PURZJB0A52
+A05_PowerShelf_6 PSU 6,Redfish,PUWNP2GY0T
+A05_PowerShelf_7,Redfish,PSABS8BKWA
+A05_PowerShelf_7 PSU 1,Redfish,PUV5VCD1IU
+A05_PowerShelf_7 PSU 2,Redfish,PUKP2K19XT
+A05_PowerShelf_7 PSU 3,Redfish,PUZ5GOTHZ9
+A05_PowerShelf_7 PSU 4,Redfish,PU9EZKMFI1
+A05_PowerShelf_7 PSU 5,Redfish,PU9RET0K0J
+A05_PowerShelf_7 PSU 6,Redfish,PUTUF9DJXC
+A05_PowerShelf_8,Redfish,PSAFHPDPD6
+A05_PowerShelf_8 PSU 1,Redfish,PUCCVXV4GK
+A05_PowerShelf_8 PSU 2,Redfish,PUQ6JDFSPR
+A05_PowerShelf_8 PSU 3,Redfish,PU248BLLZ3
+A05_PowerShelf_8 PSU 4,Redfish,PUV2I2NKHA
+A05_PowerShelf_8 PSU 5,Redfish,PUSGYISE9K
+A05_PowerShelf_8 PSU 6,Redfish,PUAWAJKHBL
+A06_PowerShelf_1,Redfish,PSKG4SLYJ1
+A06_PowerShelf_1 PSU 1,Redfish,PU2RJFA4GV
+A06_PowerShelf_1 PSU 2,Redfish,PUDQJ0MJJL
+A06_PowerShelf_1 PSU 3,Redfish,PUREYL27ZZ
+A06_PowerShelf_1 PSU 4,Redfish,PUUHVT5DYE
+A06_PowerShelf_1 PSU 5,Redfish,PU5DX43MCA
+A06_PowerShelf_1 PSU 6,Redfish,PUQ8GCYIGX
+A06_PowerShelf_2,Redfish,PSP4CZW6WR
+A06_PowerShelf_2 PSU 1,Redfish,PUB9GHKZHH
+A06_PowerShelf_2 PSU 2,Redfish,PUPRG6FTN2
+A06_PowerShelf_2 PSU 3,Redfish,PUH8QEUCUQ
+A06_PowerShelf_2 PSU 4,Redfish,PUTO004JMC
+A06_PowerShelf_2 PSU 5,Redfish,PUA1WTE749
+A06_PowerShelf_2 PSU 6,Redfish,PUKFDB6X8F
+A06_PowerShelf_3,Redfish,PSJWOB37QI
+A06_PowerShelf_3 PSU 1,Redfish,PUMNSTDTTS
+A06_PowerShelf_3 PSU 2,Redfish,PU3A9JQCJS
+A06_PowerShelf_3 PSU 3,Redfish,PUJFD7S6XK
+A06_PowerShelf_3 PSU 4,Redfish,PUAL6JUUE8
+A06_PowerShelf_3 PSU 5,Redfish,PUUMSSYMZG
+A06_PowerShelf_3 PSU 6,Redfish,PUPFEQMGYN
+A06_PowerShelf_4,Redfish,PSI0XMKO8A
+A06_PowerShelf_4 PSU 1,Redfish,PU0PLD1XFE
+A06_PowerShelf_4 PSU 2,Redfish,PUWWQDXJ5O
+A06_PowerShelf_4 PSU 3,Redfish,PU2X4HQ3BP
+A06_PowerShelf_4 PSU 4,Redfish,PU2FSYES3S
+A06_PowerShelf_4 PSU 5,Redfish,PUMQ2TAC7B
+A06_PowerShelf_4 PSU 6,Redfish,PU6D15MAFG
+A06_PowerShelf_5,Redfish,PSOMJHHQ2Y
+A06_PowerShelf_5 PSU 1,Redfish,PUBH508RBC
+A06_PowerShelf_5 PSU 2,Redfish,PU9IOUX0UB
+A06_PowerShelf_5 PSU 3,Redfish,PU7Y3MGLJ7
+A06_PowerShelf_5 PSU 4,Redfish,PUX5DZFR5V
+A06_PowerShelf_5 PSU 5,Redfish,PUOAJ1OC9D
+A06_PowerShelf_5 PSU 6,Redfish,PUB3DBP4VG
+A06_PowerShelf_6,Redfish,PSGTRDW7OJ
+A06_PowerShelf_6 PSU 1,Redfish,PUF0SIX7OL
+A06_PowerShelf_6 PSU 2,Redfish,PUUI23J7CY
+A06_PowerShelf_6 PSU 3,Redfish,PU6WZO0QG3
+A06_PowerShelf_6 PSU 4,Redfish,PUHTEUI1ET
+A06_PowerShelf_6 PSU 5,Redfish,PU0OFKDPGJ
+A06_PowerShelf_6 PSU 6,Redfish,PUICQ0L2DK
+A06_PowerShelf_7,Redfish,PSOV3BIGLT
+A06_PowerShelf_7 PSU 1,Redfish,PURMG6LGYC
+A06_PowerShelf_7 PSU 2,Redfish,PUY9LS2ZOL
+A06_PowerShelf_7 PSU 3,Redfish,PUSZALGADG
+A06_PowerShelf_7 PSU 4,Redfish,PUX15WNTVB
+A06_PowerShelf_7 PSU 5,Redfish,PULT7EJIHY
+A06_PowerShelf_7 PSU 6,Redfish,PU0O1NDMMK
+A06_PowerShelf_8,Redfish,PS373OYAMS
+A06_PowerShelf_8 PSU 1,Redfish,PUX5BA3IOQ
+A06_PowerShelf_8 PSU 2,Redfish,PUKUQOPOQU
+A06_PowerShelf_8 PSU 3,Redfish,PUP1A9R9YO
+A06_PowerShelf_8 PSU 4,Redfish,PUE397RGPA
+A06_PowerShelf_8 PSU 5,Redfish,PUQJZBK52E
+A06_PowerShelf_8 PSU 6,Redfish,PUUH7RDISX
+A07_PowerShelf_1,Redfish,PSELTL1CS9
+A07_PowerShelf_1 PSU 1,Redfish,PU2IDYRT9D
+A07_PowerShelf_1 PSU 2,Redfish,PU0YOHTHJV
+A07_PowerShelf_1 PSU 3,Redfish,PU1BUJOO6S
+A07_PowerShelf_1 PSU 4,Redfish,PU0GZFEGT9
+A07_PowerShelf_1 PSU 5,Redfish,PUG921NWAP
+A07_PowerShelf_1 PSU 6,Redfish,PUK5FOMPQY
+A07_PowerShelf_2,Redfish,PSZJXOHRNO
+A07_PowerShelf_2 PSU 1,Redfish,PUZQOWQ4Q2
+A07_PowerShelf_2 PSU 2,Redfish,PU0ZBUWYL1
+A07_PowerShelf_2 PSU 3,Redfish,PUX1PT1GIX
+A07_PowerShelf_2 PSU 4,Redfish,PUBV514EMC
+A07_PowerShelf_2 PSU 5,Redfish,PU94E2BEKJ
+A07_PowerShelf_2 PSU 6,Redfish,PUBNVBF0CG
+A07_PowerShelf_3,Redfish,PSZFXXTELH
+A07_PowerShelf_3 PSU 1,Redfish,PUZI2OZN46
+A07_PowerShelf_3 PSU 2,Redfish,PUH00GW07K
+A07_PowerShelf_3 PSU 3,Redfish,PUQRAL9HMM
+A07_PowerShelf_3 PSU 4,Redfish,PU4FG0V6S8
+A07_PowerShelf_3 PSU 5,Redfish,PU95B9O6VX
+A07_PowerShelf_3 PSU 6,Redfish,PUM68IJIJA
+A07_PowerShelf_4,Redfish,PSCW67HBJQ
+A07_PowerShelf_4 PSU 1,Redfish,PUK1WYC1LP
+A07_PowerShelf_4 PSU 2,Redfish,PU0S2FHAUA
+A07_PowerShelf_4 PSU 3,Redfish,PU80U0APY0
+A07_PowerShelf_4 PSU 4,Redfish,PUQVSP0RZH
+A07_PowerShelf_4 PSU 5,Redfish,PUXQAIHAUP
+A07_PowerShelf_4 PSU 6,Redfish,PUC7U5HM0F
+A07_PowerShelf_5,Redfish,PSNY2SOUTL
+A07_PowerShelf_5 PSU 1,Redfish,PUM378KKMW
+A07_PowerShelf_5 PSU 2,Redfish,PULHZKXTX6
+A07_PowerShelf_5 PSU 3,Redfish,PU8KNIVIYS
+A07_PowerShelf_5 PSU 4,Redfish,PU77VSVYUT
+A07_PowerShelf_5 PSU 5,Redfish,PUQA3HMCH1
+A07_PowerShelf_5 PSU 6,Redfish,PUAU06EWCZ
+A07_PowerShelf_6,Redfish,PS2ZCPC3XX
+A07_PowerShelf_6 PSU 1,Redfish,PUA9CC3QTU
+A07_PowerShelf_6 PSU 2,Redfish,PUOQDN4W4S
+A07_PowerShelf_6 PSU 3,Redfish,PUDU11F50N
+A07_PowerShelf_6 PSU 4,Redfish,PUBS8UL51X
+A07_PowerShelf_6 PSU 5,Redfish,PUKN1CTR42
+A07_PowerShelf_6 PSU 6,Redfish,PUJHAQ7YE1
+A07_PowerShelf_7,Redfish,PSB6PWPI9G
+A07_PowerShelf_7 PSU 1,Redfish,PU6OAUG03S
+A07_PowerShelf_7 PSU 2,Redfish,PU9WC0PFRG
+A07_PowerShelf_7 PSU 3,Redfish,PUPSK74ZLO
+A07_PowerShelf_7 PSU 4,Redfish,PUJMNJTDER
+A07_PowerShelf_7 PSU 5,Redfish,PUT07GBVQH
+A07_PowerShelf_7 PSU 6,Redfish,PUV4RN31MF
+A07_PowerShelf_8,Redfish,PSV4NJO1S0
+A07_PowerShelf_8 PSU 1,Redfish,PU6BP9YQ8U
+A07_PowerShelf_8 PSU 2,Redfish,PUP7OUO0US
+A07_PowerShelf_8 PSU 3,Redfish,PUBR7IWHEC
+A07_PowerShelf_8 PSU 4,Redfish,PUFZLXH45C
+A07_PowerShelf_8 PSU 5,Redfish,PUAYN4109H
+A07_PowerShelf_8 PSU 6,Redfish,PU67CJ23TG
+A08_PowerShelf_1,Redfish,PSWBVGI2H2
+A08_PowerShelf_1 PSU 1,Redfish,PUDQ5EO65W
+A08_PowerShelf_1 PSU 2,Redfish,PUGVZCQUH0
+A08_PowerShelf_1 PSU 3,Redfish,PUZI0KF3GW
+A08_PowerShelf_1 PSU 4,Redfish,PU6631CBKP
+A08_PowerShelf_1 PSU 5,Redfish,PUT0IQ4LLG
+A08_PowerShelf_1 PSU 6,Redfish,PU4VY32UTQ
+A08_PowerShelf_2,Redfish,PSM3ZAP6E3
+A08_PowerShelf_2 PSU 1,Redfish,PUKW84KLSZ
+A08_PowerShelf_2 PSU 2,Redfish,PUGNZX34DL
+A08_PowerShelf_2 PSU 3,Redfish,PU0S8CA52P
+A08_PowerShelf_2 PSU 4,Redfish,PULSNPSDPR
+A08_PowerShelf_2 PSU 5,Redfish,PUYGK2ZQ9N
+A08_PowerShelf_2 PSU 6,Redfish,PUP5HHQHT0
+A08_PowerShelf_3,Redfish,PSNILUIJRL
+A08_PowerShelf_3 PSU 1,Redfish,PU7BC1BHKP
+A08_PowerShelf_3 PSU 2,Redfish,PUS7UEWQV1
+A08_PowerShelf_3 PSU 3,Redfish,PUZ5KOXH88
+A08_PowerShelf_3 PSU 4,Redfish,PUAN6KH240
+A08_PowerShelf_3 PSU 5,Redfish,PUCPF85DAY
+A08_PowerShelf_3 PSU 6,Redfish,PUB45AIXCR
+A08_PowerShelf_4,Redfish,PSMV6L70MW
+A08_PowerShelf_4 PSU 1,Redfish,PUON2CHXC0
+A08_PowerShelf_4 PSU 2,Redfish,PUVLPYVNJ4
+A08_PowerShelf_4 PSU 3,Redfish,PULP0WFBV3
+A08_PowerShelf_4 PSU 4,Redfish,PUR4FW7FLI
+A08_PowerShelf_4 PSU 5,Redfish,PUFP3JUM77
+A08_PowerShelf_4 PSU 6,Redfish,PUGZN3E6NR
+A08_PowerShelf_5,Redfish,PS04V8TQ1G
+A08_PowerShelf_5 PSU 1,Redfish,PU25B29YCO
+A08_PowerShelf_5 PSU 2,Redfish,PUMAEBJ90K
+A08_PowerShelf_5 PSU 3,Redfish,PUK8KNN9U5
+A08_PowerShelf_5 PSU 4,Redfish,PU9MSKZUPL
+A08_PowerShelf_5 PSU 5,Redfish,PU4WOPLDEW
+A08_PowerShelf_5 PSU 6,Redfish,PUHVF4VK53
+A08_PowerShelf_6,Redfish,PSOWYPAIN4
+A08_PowerShelf_6 PSU 1,Redfish,PUU9N4GGNR
+A08_PowerShelf_6 PSU 2,Redfish,PUTSEIHIAB
+A08_PowerShelf_6 PSU 3,Redfish,PUJ58L6GJP
+A08_PowerShelf_6 PSU 4,Redfish,PUDTUTEXFI
+A08_PowerShelf_6 PSU 5,Redfish,PUUB8N8Y96
+A08_PowerShelf_6 PSU 6,Redfish,PUAQJYR7LM
+A08_PowerShelf_7,Redfish,PSOAR1B0EY
+A08_PowerShelf_7 PSU 1,Redfish,PUIPXR33KV
+A08_PowerShelf_7 PSU 2,Redfish,PU79L5ZB3D
+A08_PowerShelf_7 PSU 3,Redfish,PUW017WCSZ
+A08_PowerShelf_7 PSU 4,Redfish,PU6F6KZMLW
+A08_PowerShelf_7 PSU 5,Redfish,PUZUPYYCLS
+A08_PowerShelf_7 PSU 6,Redfish,PUIUK97TFK
+A08_PowerShelf_8,Redfish,PSXH0XOFI3
+A08_PowerShelf_8 PSU 1,Redfish,PU81JFEV29
+A08_PowerShelf_8 PSU 2,Redfish,PU855NA7AD
+A08_PowerShelf_8 PSU 3,Redfish,PU4GSMG0KJ
+A08_PowerShelf_8 PSU 4,Redfish,PU976PBN1J
+A08_PowerShelf_8 PSU 5,Redfish,PUI8MMERFT
+A08_PowerShelf_8 PSU 6,Redfish,PURAMUVKEI
+A09_PowerShelf_1,Redfish,PSTPHDVBQT
+A09_PowerShelf_1 PSU 1,Redfish,PU3MROYAKF
+A09_PowerShelf_1 PSU 2,Redfish,PUTCN9LZFW
+A09_PowerShelf_1 PSU 3,Redfish,PUHCKEPK6Q
+A09_PowerShelf_1 PSU 4,Redfish,PU1T82N0BE
+A09_PowerShelf_1 PSU 5,Redfish,PUNA3GBPRJ
+A09_PowerShelf_1 PSU 6,Redfish,PUK16KCN2M
+A09_PowerShelf_2,Redfish,PS6930RB8V
+A09_PowerShelf_2 PSU 1,Redfish,PU217KTTH6
+A09_PowerShelf_2 PSU 2,Redfish,PUNRT6V0OI
+A09_PowerShelf_2 PSU 3,Redfish,PU6X42CNFQ
+A09_PowerShelf_2 PSU 4,Redfish,PUS8E7TBUL
+A09_PowerShelf_2 PSU 5,Redfish,PUV9N3B5BR
+A09_PowerShelf_2 PSU 6,Redfish,PUWE3N5IVP
+A09_PowerShelf_3,Redfish,PSUYVO8EOG
+A09_PowerShelf_3 PSU 1,Redfish,PU60W1L6B1
+A09_PowerShelf_3 PSU 2,Redfish,PU1DECUK76
+A09_PowerShelf_3 PSU 3,Redfish,PUA8HOUV57
+A09_PowerShelf_3 PSU 4,Redfish,PU6PLHTD5R
+A09_PowerShelf_3 PSU 5,Redfish,PUWCI22BCY
+A09_PowerShelf_3 PSU 6,Redfish,PUKPMMUCDL
+A09_PowerShelf_4,Redfish,PSUEQXQ60K
+A09_PowerShelf_4 PSU 1,Redfish,PUZFIYCG19
+A09_PowerShelf_4 PSU 2,Redfish,PU7IRK8XVT
+A09_PowerShelf_4 PSU 3,Redfish,PU7RHO4CSY
+A09_PowerShelf_4 PSU 4,Redfish,PUAH55RMC3
+A09_PowerShelf_4 PSU 5,Redfish,PU5H9M6GVL
+A09_PowerShelf_4 PSU 6,Redfish,PU9HF46ZER
+A09_PowerShelf_5,Redfish,PS0U4T026J
+A09_PowerShelf_5 PSU 1,Redfish,PUFEQBLZ63
+A09_PowerShelf_5 PSU 2,Redfish,PU2D2BSIRH
+A09_PowerShelf_5 PSU 3,Redfish,PU0TCWYECH
+A09_PowerShelf_5 PSU 4,Redfish,PUWM8TYVBI
+A09_PowerShelf_5 PSU 5,Redfish,PUMENAFYTQ
+A09_PowerShelf_5 PSU 6,Redfish,PU9B9PR7UU
+A09_PowerShelf_6,Redfish,PSLE9MAJIL
+A09_PowerShelf_6 PSU 1,Redfish,PUIYW22C5D
+A09_PowerShelf_6 PSU 2,Redfish,PUN741XWDD
+A09_PowerShelf_6 PSU 3,Redfish,PU1ZUCW3CM
+A09_PowerShelf_6 PSU 4,Redfish,PUWCX6CADX
+A09_PowerShelf_6 PSU 5,Redfish,PUEXS80CWC
+A09_PowerShelf_6 PSU 6,Redfish,PUE8TL1PI4
+A09_PowerShelf_7,Redfish,PS6UPBHHDP
+A09_PowerShelf_7 PSU 1,Redfish,PUXU8TDX1H
+A09_PowerShelf_7 PSU 2,Redfish,PUNCMFNK8D
+A09_PowerShelf_7 PSU 3,Redfish,PU47NZOQ6K
+A09_PowerShelf_7 PSU 4,Redfish,PUJUZYSQ4I
+A09_PowerShelf_7 PSU 5,Redfish,PUP8RYLQBD
+A09_PowerShelf_7 PSU 6,Redfish,PU0WDCUXBJ
+A09_PowerShelf_8,Redfish,PS2OTV2N7D
+A09_PowerShelf_8 PSU 1,Redfish,PU4WSFU555
+A09_PowerShelf_8 PSU 2,Redfish,PUWTXU8NK3
+A09_PowerShelf_8 PSU 3,Redfish,PU1FLDCYQ0
+A09_PowerShelf_8 PSU 4,Redfish,PU1CZZUEUW
+A09_PowerShelf_8 PSU 5,Redfish,PU06O49SBG
+A09_PowerShelf_8 PSU 6,Redfish,PUSAV3LATJ
+A10_PowerShelf_1,Redfish,PSOJAHBQKN
+A10_PowerShelf_1 PSU 1,Redfish,PURFU0W1YH
+A10_PowerShelf_1 PSU 2,Redfish,PU1Y3RAF5P
+A10_PowerShelf_1 PSU 3,Redfish,PURQKM9LOS
+A10_PowerShelf_1 PSU 4,Redfish,PUNARDYF74
+A10_PowerShelf_1 PSU 5,Redfish,PUNX9E0CLG
+A10_PowerShelf_1 PSU 6,Redfish,PU03OJ4BNF
+A10_PowerShelf_2,Redfish,PSKRQMILFY
+A10_PowerShelf_2 PSU 1,Redfish,PUMQERHHN4
+A10_PowerShelf_2 PSU 2,Redfish,PU382VMN87
+A10_PowerShelf_2 PSU 3,Redfish,PUUL9NLH71
+A10_PowerShelf_2 PSU 4,Redfish,PU3VRHXHCU
+A10_PowerShelf_2 PSU 5,Redfish,PU2SL0NYU4
+A10_PowerShelf_2 PSU 6,Redfish,PUNXNRLCRC
+A10_PowerShelf_3,Redfish,PSZC9A4LIR
+A10_PowerShelf_3 PSU 1,Redfish,PUTN3QJV27
+A10_PowerShelf_3 PSU 2,Redfish,PUH6ZU5IWP
+A10_PowerShelf_3 PSU 3,Redfish,PUE5KWOZQ4
+A10_PowerShelf_3 PSU 4,Redfish,PU4U60HH5N
+A10_PowerShelf_3 PSU 5,Redfish,PUPT3SN5YK
+A10_PowerShelf_3 PSU 6,Redfish,PU1SA1PCZ7
+A10_PowerShelf_4,Redfish,PSAYA9EYR5
+A10_PowerShelf_4 PSU 1,Redfish,PUE5JGGWBM
+A10_PowerShelf_4 PSU 2,Redfish,PUC2A3NJE2
+A10_PowerShelf_4 PSU 3,Redfish,PUB4M2XU3C
+A10_PowerShelf_4 PSU 4,Redfish,PUGFJ5UOII
+A10_PowerShelf_4 PSU 5,Redfish,PUOQDQTWL4
+A10_PowerShelf_4 PSU 6,Redfish,PUW1LEY2TF
+A10_PowerShelf_5,Redfish,PS5AQ6EQE0
+A10_PowerShelf_5 PSU 1,Redfish,PUDXEJ8FEQ
+A10_PowerShelf_5 PSU 2,Redfish,PUJSMXV03I
+A10_PowerShelf_5 PSU 3,Redfish,PUOTMCDH4R
+A10_PowerShelf_5 PSU 4,Redfish,PUKOGT7HQP
+A10_PowerShelf_5 PSU 5,Redfish,PU78M2ENSJ
+A10_PowerShelf_5 PSU 6,Redfish,PUVXMUCAK9
+A10_PowerShelf_6,Redfish,PS33K5CNUI
+A10_PowerShelf_6 PSU 1,Redfish,PUBLXT2TNL
+A10_PowerShelf_6 PSU 2,Redfish,PUY1J64LEQ
+A10_PowerShelf_6 PSU 3,Redfish,PUELWNXAHA
+A10_PowerShelf_6 PSU 4,Redfish,PU199UCSM4
+A10_PowerShelf_6 PSU 5,Redfish,PU7XME2SWV
+A10_PowerShelf_6 PSU 6,Redfish,PUODUJ8PPH
+A10_PowerShelf_7,Redfish,PSDGH8AXFJ
+A10_PowerShelf_7 PSU 1,Redfish,PUJDLG9YOA
+A10_PowerShelf_7 PSU 2,Redfish,PUEE5LAP6J
+A10_PowerShelf_7 PSU 3,Redfish,PUD6XEGFCX
+A10_PowerShelf_7 PSU 4,Redfish,PUMSR38FI0
+A10_PowerShelf_7 PSU 5,Redfish,PUOAJWLA8A
+A10_PowerShelf_7 PSU 6,Redfish,PUQ36BOAVQ
+A10_PowerShelf_8,Redfish,PSJWEPLHBN
+A10_PowerShelf_8 PSU 1,Redfish,PUODU7MEZE
+A10_PowerShelf_8 PSU 2,Redfish,PUH8CZAOY6
+A10_PowerShelf_8 PSU 3,Redfish,PU8EA22MKE
+A10_PowerShelf_8 PSU 4,Redfish,PUG52JTT3B
+A10_PowerShelf_8 PSU 5,Redfish,PUWKEOQX7N
+A10_PowerShelf_8 PSU 6,Redfish,PUSLR0KT01
+A11_PowerShelf_1,Redfish,PS0ZTBPEI7
+A11_PowerShelf_1 PSU 1,Redfish,PU089337FH
+A11_PowerShelf_1 PSU 2,Redfish,PUXF332ZS9
+A11_PowerShelf_1 PSU 3,Redfish,PU4M0D4F0O
+A11_PowerShelf_1 PSU 4,Redfish,PUU4BQJ3DZ
+A11_PowerShelf_1 PSU 5,Redfish,PUQSR7ZZSZ
+A11_PowerShelf_1 PSU 6,Redfish,PUI1GYELV1
+A11_PowerShelf_2,Redfish,PSULMOZES0
+A11_PowerShelf_2 PSU 1,Redfish,PUKKSOQ7I0
+A11_PowerShelf_2 PSU 2,Redfish,PUICO5QOHP
+A11_PowerShelf_2 PSU 3,Redfish,PULBQ7DGPN
+A11_PowerShelf_2 PSU 4,Redfish,PUO00RDIG5
+A11_PowerShelf_2 PSU 5,Redfish,PURIX332OO
+A11_PowerShelf_2 PSU 6,Redfish,PUZE1RHM6H
+A11_PowerShelf_3,Redfish,PSE7XCR1DA
+A11_PowerShelf_3 PSU 1,Redfish,PUCGOZ0UT5
+A11_PowerShelf_3 PSU 2,Redfish,PUGFWV1G08
+A11_PowerShelf_3 PSU 3,Redfish,PU1DMBZKI3
+A11_PowerShelf_3 PSU 4,Redfish,PUY2PA15IN
+A11_PowerShelf_3 PSU 5,Redfish,PUKKWB673T
+A11_PowerShelf_3 PSU 6,Redfish,PU20CFJ5S0
+A11_PowerShelf_4,Redfish,PSY6JAQ1J6
+A11_PowerShelf_4 PSU 1,Redfish,PU2MTHVNC9
+A11_PowerShelf_4 PSU 2,Redfish,PU4OWXBVX5
+A11_PowerShelf_4 PSU 3,Redfish,PUGH4Y2238
+A11_PowerShelf_4 PSU 4,Redfish,PU3WPPHXYD
+A11_PowerShelf_4 PSU 5,Redfish,PU1K8UQOV1
+A11_PowerShelf_4 PSU 6,Redfish,PUZI45KVV2
+A11_PowerShelf_5,Redfish,PSVBU6DULL
+A11_PowerShelf_5 PSU 1,Redfish,PUE1EC9SDX
+A11_PowerShelf_5 PSU 2,Redfish,PUKF0X6QKS
+A11_PowerShelf_5 PSU 3,Redfish,PU8USR8894
+A11_PowerShelf_5 PSU 4,Redfish,PU5KKTX9YL
+A11_PowerShelf_5 PSU 5,Redfish,PUK0SEEB6Z
+A11_PowerShelf_5 PSU 6,Redfish,PUW9IHLSPD
+A11_PowerShelf_6,Redfish,PS1K79NR69
+A11_PowerShelf_6 PSU 1,Redfish,PUKQWI62OR
+A11_PowerShelf_6 PSU 2,Redfish,PUUIFFBLCL
+A11_PowerShelf_6 PSU 3,Redfish,PUMZCMMZRU
+A11_PowerShelf_6 PSU 4,Redfish,PUO8XG00L7
+A11_PowerShelf_6 PSU 5,Redfish,PUM75URR1W
+A11_PowerShelf_6 PSU 6,Redfish,PU50SEI9DT
+A11_PowerShelf_7,Redfish,PSNO3SISJI
+A11_PowerShelf_7 PSU 1,Redfish,PUZG7J8OBB
+A11_PowerShelf_7 PSU 2,Redfish,PU32ZM3UH0
+A11_PowerShelf_7 PSU 3,Redfish,PU2SB83MYW
+A11_PowerShelf_7 PSU 4,Redfish,PUHZNGMUVQ
+A11_PowerShelf_7 PSU 5,Redfish,PUQXU3VXTN
+A11_PowerShelf_7 PSU 6,Redfish,PU6MBWBEWC
+A11_PowerShelf_8,Redfish,PSYYJIAMKW
+A11_PowerShelf_8 PSU 1,Redfish,PU3S6G97BM
+A11_PowerShelf_8 PSU 2,Redfish,PUMIKQX4R7
+A11_PowerShelf_8 PSU 3,Redfish,PUQMS30G2D
+A11_PowerShelf_8 PSU 4,Redfish,PUXCL50HY5
+A11_PowerShelf_8 PSU 5,Redfish,PUPH1PS7D4
+A11_PowerShelf_8 PSU 6,Redfish,PUWLTHCT6G
+A12_PowerShelf_1,Redfish,PSH7J5LAJ0
+A12_PowerShelf_1 PSU 1,Redfish,PUQOXMHIXS
+A12_PowerShelf_1 PSU 2,Redfish,PUZLY0IU02
+A12_PowerShelf_1 PSU 3,Redfish,PUFFO8F9JN
+A12_PowerShelf_1 PSU 4,Redfish,PUWG0UVFYR
+A12_PowerShelf_1 PSU 5,Redfish,PU5GUGVX0D
+A12_PowerShelf_1 PSU 6,Redfish,PU6CTXGXH8
+A12_PowerShelf_2,Redfish,PSLLD8A8ZX
+A12_PowerShelf_2 PSU 1,Redfish,PURQ3CHP8L
+A12_PowerShelf_2 PSU 2,Redfish,PU8D7OP4RI
+A12_PowerShelf_2 PSU 3,Redfish,PU2R7AMCAN
+A12_PowerShelf_2 PSU 4,Redfish,PUDSBYLEGB
+A12_PowerShelf_2 PSU 5,Redfish,PUI4S2DQSD
+A12_PowerShelf_2 PSU 6,Redfish,PUA5J54JD8
+A12_PowerShelf_3,Redfish,PSDVHY1K2M
+A12_PowerShelf_3 PSU 1,Redfish,PUGSJ7CEI3
+A12_PowerShelf_3 PSU 2,Redfish,PUMW2N7LLN
+A12_PowerShelf_3 PSU 3,Redfish,PUY34LEJSR
+A12_PowerShelf_3 PSU 4,Redfish,PUSXMO1HTF
+A12_PowerShelf_3 PSU 5,Redfish,PUHTVXNLYU
+A12_PowerShelf_3 PSU 6,Redfish,PU080XCL2R
+A12_PowerShelf_4,Redfish,PS3GZ7H0F7
+A12_PowerShelf_4 PSU 1,Redfish,PUZXZZI3BP
+A12_PowerShelf_4 PSU 2,Redfish,PUPQR4E2AW
+A12_PowerShelf_4 PSU 3,Redfish,PUIRYN8T5V
+A12_PowerShelf_4 PSU 4,Redfish,PU8I917WW4
+A12_PowerShelf_4 PSU 5,Redfish,PUGH93YUUA
+A12_PowerShelf_4 PSU 6,Redfish,PUQHZWXLI5
+A12_PowerShelf_5,Redfish,PS7RK8N4GS
+A12_PowerShelf_5 PSU 1,Redfish,PU2W5TF7ZW
+A12_PowerShelf_5 PSU 2,Redfish,PUECO4RWPS
+A12_PowerShelf_5 PSU 3,Redfish,PU32PYB67B
+A12_PowerShelf_5 PSU 4,Redfish,PUNT0BIPK9
+A12_PowerShelf_5 PSU 5,Redfish,PUNV8TPJCY
+A12_PowerShelf_5 PSU 6,Redfish,PU57FT4N49
+A12_PowerShelf_6,Redfish,PSF5KTQXA5
+A12_PowerShelf_6 PSU 1,Redfish,PUXM47GAQ4
+A12_PowerShelf_6 PSU 2,Redfish,PU3F4X1D6F
+A12_PowerShelf_6 PSU 3,Redfish,PUBIK2U4IN
+A12_PowerShelf_6 PSU 4,Redfish,PUIZNUI0V6
+A12_PowerShelf_6 PSU 5,Redfish,PUX0ZA6JDC
+A12_PowerShelf_6 PSU 6,Redfish,PUTR01VA0V
+A12_PowerShelf_7,Redfish,PS1LIBGU1M
+A12_PowerShelf_7 PSU 1,Redfish,PULIH1QOLJ
+A12_PowerShelf_7 PSU 2,Redfish,PUASTGXC0G
+A12_PowerShelf_7 PSU 3,Redfish,PUTPZ8Y8SZ
+A12_PowerShelf_7 PSU 4,Redfish,PUZWPZRVON
+A12_PowerShelf_7 PSU 5,Redfish,PUOZQ1JY32
+A12_PowerShelf_7 PSU 6,Redfish,PU1LVKH8PP
+A12_PowerShelf_8,Redfish,PSYPBTMITI
+A12_PowerShelf_8 PSU 1,Redfish,PUM8WYQ9JB
+A12_PowerShelf_8 PSU 2,Redfish,PU21OOFSRX
+A12_PowerShelf_8 PSU 3,Redfish,PU5ZFX34BO
+A12_PowerShelf_8 PSU 4,Redfish,PUYN9TG9CW
+A12_PowerShelf_8 PSU 5,Redfish,PUNEC2OLUK
+A12_PowerShelf_8 PSU 6,Redfish,PUOUSPL8UC
+A13_PowerShelf_1,Redfish,PSDSEI7285
+A13_PowerShelf_1 PSU 1,Redfish,PUVCPGPD48
+A13_PowerShelf_1 PSU 2,Redfish,PUVVWG8QNS
+A13_PowerShelf_1 PSU 3,Redfish,PUFMPPGT4N
+A13_PowerShelf_1 PSU 4,Redfish,PUI8KK0K3C
+A13_PowerShelf_1 PSU 5,Redfish,PURVYW6YHH
+A13_PowerShelf_1 PSU 6,Redfish,PUA3HCIT8G
+A13_PowerShelf_2,Redfish,PSYWY31KEO
+A13_PowerShelf_2 PSU 1,Redfish,PU3F5IY2PH
+A13_PowerShelf_2 PSU 2,Redfish,PUENS9OYF3
+A13_PowerShelf_2 PSU 3,Redfish,PUAFHSFQ1O
+A13_PowerShelf_2 PSU 4,Redfish,PUDVEUKL3Q
+A13_PowerShelf_2 PSU 5,Redfish,PU78E0EZQE
+A13_PowerShelf_2 PSU 6,Redfish,PUEFY7PH38
+A13_PowerShelf_3,Redfish,PSNLSG23IU
+A13_PowerShelf_3 PSU 1,Redfish,PU95XD0NQ4
+A13_PowerShelf_3 PSU 2,Redfish,PU9SYE3AF4
+A13_PowerShelf_3 PSU 3,Redfish,PUCWQ08TGE
+A13_PowerShelf_3 PSU 4,Redfish,PUXESRT9PW
+A13_PowerShelf_3 PSU 5,Redfish,PU8CAYXR4T
+A13_PowerShelf_3 PSU 6,Redfish,PU5MVN0U55
+A13_PowerShelf_4,Redfish,PS21RNYTFV
+A13_PowerShelf_4 PSU 1,Redfish,PU7ZLSGNC4
+A13_PowerShelf_4 PSU 2,Redfish,PUG3Z1SQOH
+A13_PowerShelf_4 PSU 3,Redfish,PU4JT9SW73
+A13_PowerShelf_4 PSU 4,Redfish,PUYJKIRP9H
+A13_PowerShelf_4 PSU 5,Redfish,PUKRBS9ENH
+A13_PowerShelf_4 PSU 6,Redfish,PUO21ABWF2
+A13_PowerShelf_5,Redfish,PSLS7YZCWA
+A13_PowerShelf_5 PSU 1,Redfish,PUIDLMY50Q
+A13_PowerShelf_5 PSU 2,Redfish,PUCAJZXE8C
+A13_PowerShelf_5 PSU 3,Redfish,PUGVZPJXR9
+A13_PowerShelf_5 PSU 4,Redfish,PUAAH8BM7Y
+A13_PowerShelf_5 PSU 5,Redfish,PUMR6L3ZHK
+A13_PowerShelf_5 PSU 6,Redfish,PUC7HHXL6R
+A13_PowerShelf_6,Redfish,PSZIRYEQWX
+A13_PowerShelf_6 PSU 1,Redfish,PUNMXCKST2
+A13_PowerShelf_6 PSU 2,Redfish,PUVY23JTII
+A13_PowerShelf_6 PSU 3,Redfish,PUXYB0T8L6
+A13_PowerShelf_6 PSU 4,Redfish,PUVTZH4HFS
+A13_PowerShelf_6 PSU 5,Redfish,PUW1NS0I7X
+A13_PowerShelf_6 PSU 6,Redfish,PUI8ZHLPWM
+A13_PowerShelf_7,Redfish,PSKN36INJN
+A13_PowerShelf_7 PSU 1,Redfish,PUAQSHBT41
+A13_PowerShelf_7 PSU 2,Redfish,PUEFBUEXCW
+A13_PowerShelf_7 PSU 3,Redfish,PU32M3JLGQ
+A13_PowerShelf_7 PSU 4,Redfish,PU0ZU9ILOR
+A13_PowerShelf_7 PSU 5,Redfish,PU0ZC7ZZRG
+A13_PowerShelf_7 PSU 6,Redfish,PUEKI537D2
+A13_PowerShelf_8,Redfish,PS5G17749P
+A13_PowerShelf_8 PSU 1,Redfish,PU8DC2DBQG
+A13_PowerShelf_8 PSU 2,Redfish,PU0L3RQ97B
+A13_PowerShelf_8 PSU 3,Redfish,PUBT8S7NLG
+A13_PowerShelf_8 PSU 4,Redfish,PU5M7RQE0B
+A13_PowerShelf_8 PSU 5,Redfish,PUXW27QD31
+A13_PowerShelf_8 PSU 6,Redfish,PUULY6R3GY
+A14_PowerShelf_1,Redfish,PSRNK0N5GY
+A14_PowerShelf_1 PSU 1,Redfish,PU67W4DUXQ
+A14_PowerShelf_1 PSU 2,Redfish,PUI8QV9RI5
+A14_PowerShelf_1 PSU 3,Redfish,PUOLC2L5H0
+A14_PowerShelf_1 PSU 4,Redfish,PUV0TZFFZU
+A14_PowerShelf_1 PSU 5,Redfish,PUQ71PG1NL
+A14_PowerShelf_1 PSU 6,Redfish,PUD4IY94T6
+A14_PowerShelf_2,Redfish,PSRQ7MMUYZ
+A14_PowerShelf_2 PSU 1,Redfish,PUL8733546
+A14_PowerShelf_2 PSU 2,Redfish,PUKIHM4Q85
+A14_PowerShelf_2 PSU 3,Redfish,PUNGV88B16
+A14_PowerShelf_2 PSU 4,Redfish,PU3PL9WZRF
+A14_PowerShelf_2 PSU 5,Redfish,PU057HU9KB
+A14_PowerShelf_2 PSU 6,Redfish,PUNBC5EVRZ
+A14_PowerShelf_3,Redfish,PSQGQM2U8F
+A14_PowerShelf_3 PSU 1,Redfish,PU1ZTF63KI
+A14_PowerShelf_3 PSU 2,Redfish,PUI9QQKNLK
+A14_PowerShelf_3 PSU 3,Redfish,PUTNMUK54C
+A14_PowerShelf_3 PSU 4,Redfish,PUQ2OAAPY9
+A14_PowerShelf_3 PSU 5,Redfish,PUDSLQFTZK
+A14_PowerShelf_3 PSU 6,Redfish,PU23PFX9BY
+A14_PowerShelf_4,Redfish,PS4P5EZ1MS
+A14_PowerShelf_4 PSU 1,Redfish,PURMT6NOCK
+A14_PowerShelf_4 PSU 2,Redfish,PUY8UNV8LX
+A14_PowerShelf_4 PSU 3,Redfish,PUVOQD9KVY
+A14_PowerShelf_4 PSU 4,Redfish,PU8JS59YBW
+A14_PowerShelf_4 PSU 5,Redfish,PULD1I6NOO
+A14_PowerShelf_4 PSU 6,Redfish,PUV6CGPWMB
+A14_PowerShelf_5,Redfish,PSQ37SIZGZ
+A14_PowerShelf_5 PSU 1,Redfish,PUT6VNLE8P
+A14_PowerShelf_5 PSU 2,Redfish,PUDIL3OD88
+A14_PowerShelf_5 PSU 3,Redfish,PUE4LCJTMT
+A14_PowerShelf_5 PSU 4,Redfish,PUHVCPNE3S
+A14_PowerShelf_5 PSU 5,Redfish,PUBC6TAWAY
+A14_PowerShelf_5 PSU 6,Redfish,PUA1PBN8JZ
+A14_PowerShelf_6,Redfish,PSN5LEZMYW
+A14_PowerShelf_6 PSU 1,Redfish,PUOUAGY8AU
+A14_PowerShelf_6 PSU 2,Redfish,PU4ET5LADE
+A14_PowerShelf_6 PSU 3,Redfish,PUWY4GXW35
+A14_PowerShelf_6 PSU 4,Redfish,PUZMR94EH7
+A14_PowerShelf_6 PSU 5,Redfish,PUBUCIALXZ
+A14_PowerShelf_6 PSU 6,Redfish,PUAM9VQ4IC
+A14_PowerShelf_7,Redfish,PSB1E9R6UN
+A14_PowerShelf_7 PSU 1,Redfish,PU7EMX1VMU
+A14_PowerShelf_7 PSU 2,Redfish,PU4VQ0Q77A
+A14_PowerShelf_7 PSU 3,Redfish,PUKU1D7GIM
+A14_PowerShelf_7 PSU 4,Redfish,PUGI9KNJHS
+A14_PowerShelf_7 PSU 5,Redfish,PUPN10KNYE
+A14_PowerShelf_7 PSU 6,Redfish,PU23L6HTW5
+A14_PowerShelf_8,Redfish,PSO6ZKZF2P
+A14_PowerShelf_8 PSU 1,Redfish,PU7ZGXD3OE
+A14_PowerShelf_8 PSU 2,Redfish,PU4QRE03E8
+A14_PowerShelf_8 PSU 3,Redfish,PUO63ISCM0
+A14_PowerShelf_8 PSU 4,Redfish,PUHPIS97TC
+A14_PowerShelf_8 PSU 5,Redfish,PU3GTK13M5
+A14_PowerShelf_8 PSU 6,Redfish,PURD17LCS3
+A15_PowerShelf_1,Redfish,PSLRNI092M
+A15_PowerShelf_1 PSU 1,Redfish,PU5SOKZ49X
+A15_PowerShelf_1 PSU 2,Redfish,PU4FRGH68E
+A15_PowerShelf_1 PSU 3,Redfish,PUK0AJF4YL
+A15_PowerShelf_1 PSU 4,Redfish,PU8IJNY5DJ
+A15_PowerShelf_1 PSU 5,Redfish,PU42TFXKWS
+A15_PowerShelf_1 PSU 6,Redfish,PU2MF7JGEF
+A15_PowerShelf_2,Redfish,PSD4N6VO1I
+A15_PowerShelf_2 PSU 1,Redfish,PUG79NETCK
+A15_PowerShelf_2 PSU 2,Redfish,PU71SEA0A9
+A15_PowerShelf_2 PSU 3,Redfish,PUKN3LU089
+A15_PowerShelf_2 PSU 4,Redfish,PU03A8L5GT
+A15_PowerShelf_2 PSU 5,Redfish,PUTP0TUR8M
+A15_PowerShelf_2 PSU 6,Redfish,PUIXE4OKCU
+A15_PowerShelf_3,Redfish,PSX886EUA7
+A15_PowerShelf_3 PSU 1,Redfish,PUGEWV3WGH
+A15_PowerShelf_3 PSU 2,Redfish,PU0MXJ29VN
+A15_PowerShelf_3 PSU 3,Redfish,PUFDDOEHHB
+A15_PowerShelf_3 PSU 4,Redfish,PUEXNVV4CF
+A15_PowerShelf_3 PSU 5,Redfish,PUGXVT9R8M
+A15_PowerShelf_3 PSU 6,Redfish,PUL3TXFRDV
+A15_PowerShelf_4,Redfish,PSP06UJCGM
+A15_PowerShelf_4 PSU 1,Redfish,PUL5J6FMNJ
+A15_PowerShelf_4 PSU 2,Redfish,PUS5WULZN5
+A15_PowerShelf_4 PSU 3,Redfish,PU3SMBZ3GG
+A15_PowerShelf_4 PSU 4,Redfish,PURACXYB0G
+A15_PowerShelf_4 PSU 5,Redfish,PUV88JN4GI
+A15_PowerShelf_4 PSU 6,Redfish,PUNBTRJ3MB
+A15_PowerShelf_5,Redfish,PSJ4QYECMP
+A15_PowerShelf_5 PSU 1,Redfish,PULAILDXK2
+A15_PowerShelf_5 PSU 2,Redfish,PUJVY5V2UV
+A15_PowerShelf_5 PSU 3,Redfish,PUJF6OFIPI
+A15_PowerShelf_5 PSU 4,Redfish,PUR5VJ4SYQ
+A15_PowerShelf_5 PSU 5,Redfish,PUG3LUEZ1H
+A15_PowerShelf_5 PSU 6,Redfish,PU2GW40BAI
+A15_PowerShelf_6,Redfish,PS3AY4MKGF
+A15_PowerShelf_6 PSU 1,Redfish,PU3WKJ4771
+A15_PowerShelf_6 PSU 2,Redfish,PUN53P3M84
+A15_PowerShelf_6 PSU 3,Redfish,PUBJN8N18T
+A15_PowerShelf_6 PSU 4,Redfish,PU4CVTT9LD
+A15_PowerShelf_6 PSU 5,Redfish,PUYSZVI1XR
+A15_PowerShelf_6 PSU 6,Redfish,PUDZ4BOGWQ
+A15_PowerShelf_7,Redfish,PSTZTHIEC1
+A15_PowerShelf_7 PSU 1,Redfish,PUZ7ELWTIA
+A15_PowerShelf_7 PSU 2,Redfish,PUY5R8GAQT
+A15_PowerShelf_7 PSU 3,Redfish,PUE1VJ0Q9U
+A15_PowerShelf_7 PSU 4,Redfish,PUTL46NRZV
+A15_PowerShelf_7 PSU 5,Redfish,PUWLNZN6YB
+A15_PowerShelf_7 PSU 6,Redfish,PU1MITRLLN
+A15_PowerShelf_8,Redfish,PS1BX9JBDR
+A15_PowerShelf_8 PSU 1,Redfish,PUDIFQREQL
+A15_PowerShelf_8 PSU 2,Redfish,PU3JOWPMBT
+A15_PowerShelf_8 PSU 3,Redfish,PUBZUMTHRP
+A15_PowerShelf_8 PSU 4,Redfish,PUBZ0K2MON
+A15_PowerShelf_8 PSU 5,Redfish,PUX1482KI7
+A15_PowerShelf_8 PSU 6,Redfish,PUZW6TR8HT
+A16_PowerShelf_1,Redfish,PSYXJ5F0FS
+A16_PowerShelf_1 PSU 1,Redfish,PU5N1VIDYG
+A16_PowerShelf_1 PSU 2,Redfish,PUTQQNK8FM
+A16_PowerShelf_1 PSU 3,Redfish,PUQ6KQTEHH
+A16_PowerShelf_1 PSU 4,Redfish,PUCBYN3L4C
+A16_PowerShelf_1 PSU 5,Redfish,PU2A6G63ZU
+A16_PowerShelf_1 PSU 6,Redfish,PUI3QE2OMK
+A16_PowerShelf_2,Redfish,PSXHWSON1O
+A16_PowerShelf_2 PSU 1,Redfish,PUL16API8S
+A16_PowerShelf_2 PSU 2,Redfish,PUUSP2OS9Z
+A16_PowerShelf_2 PSU 3,Redfish,PUK7RY21XR
+A16_PowerShelf_2 PSU 4,Redfish,PURMZ1B17T
+A16_PowerShelf_2 PSU 5,Redfish,PUV8AS02VJ
+A16_PowerShelf_2 PSU 6,Redfish,PULOBD2GOX
+A16_PowerShelf_3,Redfish,PSPEXP0K1Q
+A16_PowerShelf_3 PSU 1,Redfish,PUKEF54IPF
+A16_PowerShelf_3 PSU 2,Redfish,PUNDGAB2CB
+A16_PowerShelf_3 PSU 3,Redfish,PURN9V0XM9
+A16_PowerShelf_3 PSU 4,Redfish,PULWXRV1FZ
+A16_PowerShelf_3 PSU 5,Redfish,PUZHBEMI2J
+A16_PowerShelf_3 PSU 6,Redfish,PUO9FLQ6M1
+A16_PowerShelf_4,Redfish,PSZG3X30UX
+A16_PowerShelf_4 PSU 1,Redfish,PU8EZIABXS
+A16_PowerShelf_4 PSU 2,Redfish,PURF23VLUQ
+A16_PowerShelf_4 PSU 3,Redfish,PUYJIFV7TT
+A16_PowerShelf_4 PSU 4,Redfish,PU39N1LIUM
+A16_PowerShelf_4 PSU 5,Redfish,PUJJP3T3IS
+A16_PowerShelf_4 PSU 6,Redfish,PUHIZ4XSR1
+A16_PowerShelf_5,Redfish,PS2W8ZDFT9
+A16_PowerShelf_5 PSU 1,Redfish,PULB2050OM
+A16_PowerShelf_5 PSU 2,Redfish,PUHRBNWKUS
+A16_PowerShelf_5 PSU 3,Redfish,PUC8L2S28B
+A16_PowerShelf_5 PSU 4,Redfish,PU3XF0F4DX
+A16_PowerShelf_5 PSU 5,Redfish,PUA5S079WO
+A16_PowerShelf_5 PSU 6,Redfish,PU35DIVLRO
+A16_PowerShelf_6,Redfish,PSKSCYSMOV
+A16_PowerShelf_6 PSU 1,Redfish,PU1UQLCYU6
+A16_PowerShelf_6 PSU 2,Redfish,PU52FK0Q1P
+A16_PowerShelf_6 PSU 3,Redfish,PUKZAC2VER
+A16_PowerShelf_6 PSU 4,Redfish,PU6B1XASW9
+A16_PowerShelf_6 PSU 5,Redfish,PUTQL69ZYX
+A16_PowerShelf_6 PSU 6,Redfish,PUA4EQEWV2
+A16_PowerShelf_7,Redfish,PSMR98ZYB0
+A16_PowerShelf_7 PSU 1,Redfish,PUGSNPKBVN
+A16_PowerShelf_7 PSU 2,Redfish,PUASDSMV0T
+A16_PowerShelf_7 PSU 3,Redfish,PUOYPLI4SC
+A16_PowerShelf_7 PSU 4,Redfish,PUFOWX6XOS
+A16_PowerShelf_7 PSU 5,Redfish,PUO9L77RO9
+A16_PowerShelf_7 PSU 6,Redfish,PUV3YLWDPJ
+A16_PowerShelf_8,Redfish,PS4CRXJZ5X
+A16_PowerShelf_8 PSU 1,Redfish,PU8QIUR36S
+A16_PowerShelf_8 PSU 2,Redfish,PUHF9CR8R1
+A16_PowerShelf_8 PSU 3,Redfish,PUZZTW2NRK
+A16_PowerShelf_8 PSU 4,Redfish,PUNF6541GW
+A16_PowerShelf_8 PSU 5,Redfish,PU9GIH3D4T
+A16_PowerShelf_8 PSU 6,Redfish,PU2FO56RMF
+A17_PowerShelf_1,Redfish,PSOKYXCI6X
+A17_PowerShelf_1 PSU 1,Redfish,PUR2NN1IZB
+A17_PowerShelf_1 PSU 2,Redfish,PU6735R6DL
+A17_PowerShelf_1 PSU 3,Redfish,PURQWOMZOZ
+A17_PowerShelf_1 PSU 4,Redfish,PUQYKRA9JM
+A17_PowerShelf_1 PSU 5,Redfish,PUNBDBEOST
+A17_PowerShelf_1 PSU 6,Redfish,PURXE3A6CL
+A17_PowerShelf_2,Redfish,PS6MP17NTV
+A17_PowerShelf_2 PSU 1,Redfish,PUM0A4Y8G3
+A17_PowerShelf_2 PSU 2,Redfish,PU2HDQQM16
+A17_PowerShelf_2 PSU 3,Redfish,PUGYD9VJQK
+A17_PowerShelf_2 PSU 4,Redfish,PU3TUDKQWB
+A17_PowerShelf_2 PSU 5,Redfish,PULLIM6OJ7
+A17_PowerShelf_2 PSU 6,Redfish,PU24ORJ1XN
+A17_PowerShelf_3,Redfish,PSEHNDHA8N
+A17_PowerShelf_3 PSU 1,Redfish,PU4UOD6OG5
+A17_PowerShelf_3 PSU 2,Redfish,PUC1QNMXKF
+A17_PowerShelf_3 PSU 3,Redfish,PUH335WBTU
+A17_PowerShelf_3 PSU 4,Redfish,PU8YOCISYD
+A17_PowerShelf_3 PSU 5,Redfish,PUYKWW9Q9D
+A17_PowerShelf_3 PSU 6,Redfish,PU6E1MTA1B
+A17_PowerShelf_4,Redfish,PSHFZRBUQV
+A17_PowerShelf_4 PSU 1,Redfish,PU11Y2YYIY
+A17_PowerShelf_4 PSU 2,Redfish,PU9OF39R6W
+A17_PowerShelf_4 PSU 3,Redfish,PUCT8ZGRWS
+A17_PowerShelf_4 PSU 4,Redfish,PUPYWKVOOF
+A17_PowerShelf_4 PSU 5,Redfish,PUCYJK7B8M
+A17_PowerShelf_4 PSU 6,Redfish,PUVJZGL2MB
+A17_PowerShelf_5,Redfish,PSD9TP70MZ
+A17_PowerShelf_5 PSU 1,Redfish,PUOKARMUUV
+A17_PowerShelf_5 PSU 2,Redfish,PUT5921SC4
+A17_PowerShelf_5 PSU 3,Redfish,PUBKKOG199
+A17_PowerShelf_5 PSU 4,Redfish,PUDETXVHQL
+A17_PowerShelf_5 PSU 5,Redfish,PUIWA0J9FD
+A17_PowerShelf_5 PSU 6,Redfish,PUMOUAN4FR
+A17_PowerShelf_6,Redfish,PS8BQJT1LY
+A17_PowerShelf_6 PSU 1,Redfish,PU1NMWX74R
+A17_PowerShelf_6 PSU 2,Redfish,PUCQ6XFM9J
+A17_PowerShelf_6 PSU 3,Redfish,PU68OUY7XA
+A17_PowerShelf_6 PSU 4,Redfish,PUT1UZ62U1
+A17_PowerShelf_6 PSU 5,Redfish,PUFAX1TVUI
+A17_PowerShelf_6 PSU 6,Redfish,PUE7L2VNS4
+A17_PowerShelf_7,Redfish,PSTATME1GY
+A17_PowerShelf_7 PSU 1,Redfish,PU1MLBCLZ2
+A17_PowerShelf_7 PSU 2,Redfish,PUSBXBBP4N
+A17_PowerShelf_7 PSU 3,Redfish,PUTO7V55MX
+A17_PowerShelf_7 PSU 4,Redfish,PULLLTAFQ7
+A17_PowerShelf_7 PSU 5,Redfish,PUQPXAARII
+A17_PowerShelf_7 PSU 6,Redfish,PU0K7F5HWA
+A17_PowerShelf_8,Redfish,PS94HWYB3Q
+A17_PowerShelf_8 PSU 1,Redfish,PUIIBHKXK0
+A17_PowerShelf_8 PSU 2,Redfish,PU3UHACFMR
+A17_PowerShelf_8 PSU 3,Redfish,PUEVCJT40R
+A17_PowerShelf_8 PSU 4,Redfish,PUAZEU6QYB
+A17_PowerShelf_8 PSU 5,Redfish,PUNVV8BBG7
+A17_PowerShelf_8 PSU 6,Redfish,PU3E5BDLFK
+A18_PowerShelf_1,Redfish,PSJV9Z6TFV
+A18_PowerShelf_1 PSU 1,Redfish,PUVUCXBCGF
+A18_PowerShelf_1 PSU 2,Redfish,PUQBCISJM2
+A18_PowerShelf_1 PSU 3,Redfish,PU3TFLSD3N
+A18_PowerShelf_1 PSU 4,Redfish,PUNCKWPJQQ
+A18_PowerShelf_1 PSU 5,Redfish,PU7EE763MT
+A18_PowerShelf_1 PSU 6,Redfish,PUWZGG4QRX
+A18_PowerShelf_2,Redfish,PSPNPWS5AO
+A18_PowerShelf_2 PSU 1,Redfish,PULG9TSZH2
+A18_PowerShelf_2 PSU 2,Redfish,PURCHXY7JI
+A18_PowerShelf_2 PSU 3,Redfish,PUVBC1FSL1
+A18_PowerShelf_2 PSU 4,Redfish,PUE6E20BX9
+A18_PowerShelf_2 PSU 5,Redfish,PU009RMU6I
+A18_PowerShelf_2 PSU 6,Redfish,PUT1O6AQU7
+A18_PowerShelf_3,Redfish,PS983SVH5I
+A18_PowerShelf_3 PSU 1,Redfish,PUAC1DAZG9
+A18_PowerShelf_3 PSU 2,Redfish,PU0FXNO7D2
+A18_PowerShelf_3 PSU 3,Redfish,PUDSONWSLG
+A18_PowerShelf_3 PSU 4,Redfish,PUAAYV8KUY
+A18_PowerShelf_3 PSU 5,Redfish,PUXZQVK8DT
+A18_PowerShelf_3 PSU 6,Redfish,PUJ42V5DKO
+A18_PowerShelf_4,Redfish,PSB8O9Q14B
+A18_PowerShelf_4 PSU 1,Redfish,PUP0QTP4UX
+A18_PowerShelf_4 PSU 2,Redfish,PUL2J4A6D5
+A18_PowerShelf_4 PSU 3,Redfish,PU8Y9KCSBJ
+A18_PowerShelf_4 PSU 4,Redfish,PUP512H3B4
+A18_PowerShelf_4 PSU 5,Redfish,PUMVTL40RX
+A18_PowerShelf_4 PSU 6,Redfish,PULIPF4JMA
+A18_PowerShelf_5,Redfish,PS2SKIMFXL
+A18_PowerShelf_5 PSU 1,Redfish,PU9MPHBB4Z
+A18_PowerShelf_5 PSU 2,Redfish,PUH1T21UJY
+A18_PowerShelf_5 PSU 3,Redfish,PUPA6IZFNU
+A18_PowerShelf_5 PSU 4,Redfish,PUHGY8DG9X
+A18_PowerShelf_5 PSU 5,Redfish,PUBWQQZF4O
+A18_PowerShelf_5 PSU 6,Redfish,PUKOMPKDLZ
+A18_PowerShelf_6,Redfish,PSD7HSPEHR
+A18_PowerShelf_6 PSU 1,Redfish,PU1ZSCW6AW
+A18_PowerShelf_6 PSU 2,Redfish,PUH24TT837
+A18_PowerShelf_6 PSU 3,Redfish,PUPZUB7GE1
+A18_PowerShelf_6 PSU 4,Redfish,PUAEFG3V7I
+A18_PowerShelf_6 PSU 5,Redfish,PU7CGI0VXX
+A18_PowerShelf_6 PSU 6,Redfish,PUI10W1Q0R
+A18_PowerShelf_7,Redfish,PSFTAYPO6B
+A18_PowerShelf_7 PSU 1,Redfish,PUXIF6AMRI
+A18_PowerShelf_7 PSU 2,Redfish,PU0DVFUN8Y
+A18_PowerShelf_7 PSU 3,Redfish,PU32H85E5T
+A18_PowerShelf_7 PSU 4,Redfish,PU2FPRO9IV
+A18_PowerShelf_7 PSU 5,Redfish,PUDQXSGY0X
+A18_PowerShelf_7 PSU 6,Redfish,PU0Q2ROQZZ
+A18_PowerShelf_8,Redfish,PSOT5PJAP0
+A18_PowerShelf_8 PSU 1,Redfish,PUZ0UK3M5Z
+A18_PowerShelf_8 PSU 2,Redfish,PUCVT04QO2
+A18_PowerShelf_8 PSU 3,Redfish,PU7HO6NLZZ
+A18_PowerShelf_8 PSU 4,Redfish,PU1BQXTCG6
+A18_PowerShelf_8 PSU 5,Redfish,PUJ1DSHO03
+A18_PowerShelf_8 PSU 6,Redfish,PUPA7WQPWC
+A19_PowerShelf_1,Redfish,PSBWE1OXA3
+A19_PowerShelf_1 PSU 1,Redfish,PUNQM5F1TF
+A19_PowerShelf_1 PSU 2,Redfish,PUWXVRU1HX
+A19_PowerShelf_1 PSU 3,Redfish,PUUZ9VALC7
+A19_PowerShelf_1 PSU 4,Redfish,PUWJH5DU2M
+A19_PowerShelf_1 PSU 5,Redfish,PUA3BN1UD3
+A19_PowerShelf_1 PSU 6,Redfish,PUDS2MBAKF
+A19_PowerShelf_2,Redfish,PS99C9DMET
+A19_PowerShelf_2 PSU 1,Redfish,PUYW3A3FJI
+A19_PowerShelf_2 PSU 2,Redfish,PUN4XNCEMI
+A19_PowerShelf_2 PSU 3,Redfish,PUZQ0DMIF2
+A19_PowerShelf_2 PSU 4,Redfish,PUGJ5D7E40
+A19_PowerShelf_2 PSU 5,Redfish,PUTS2L0SOV
+A19_PowerShelf_2 PSU 6,Redfish,PUV1T0QI17
+A19_PowerShelf_3,Redfish,PSG280WXJZ
+A19_PowerShelf_3 PSU 1,Redfish,PU2PW2ZR5D
+A19_PowerShelf_3 PSU 2,Redfish,PU9826DI3G
+A19_PowerShelf_3 PSU 3,Redfish,PU2BKE50EV
+A19_PowerShelf_3 PSU 4,Redfish,PU41IWQEIF
+A19_PowerShelf_3 PSU 5,Redfish,PUIN3DS7QR
+A19_PowerShelf_3 PSU 6,Redfish,PUEQR82TFY
+A19_PowerShelf_4,Redfish,PSH899E2L4
+A19_PowerShelf_4 PSU 1,Redfish,PU2T60JFMD
+A19_PowerShelf_4 PSU 2,Redfish,PUYJ5NQKNU
+A19_PowerShelf_4 PSU 3,Redfish,PUFK7ZT3DN
+A19_PowerShelf_4 PSU 4,Redfish,PUIITCMCVT
+A19_PowerShelf_4 PSU 5,Redfish,PUCLQDR9PS
+A19_PowerShelf_4 PSU 6,Redfish,PUOFX1H728
+A19_PowerShelf_5,Redfish,PS0FB7PNFW
+A19_PowerShelf_5 PSU 1,Redfish,PUJEPJ8VTE
+A19_PowerShelf_5 PSU 2,Redfish,PUJTYH7FXZ
+A19_PowerShelf_5 PSU 3,Redfish,PU2RCOI40I
+A19_PowerShelf_5 PSU 4,Redfish,PU5XYNIOIX
+A19_PowerShelf_5 PSU 5,Redfish,PU3YF4J4QG
+A19_PowerShelf_5 PSU 6,Redfish,PUXZT5PFB6
+A19_PowerShelf_6,Redfish,PS4EQMED67
+A19_PowerShelf_6 PSU 1,Redfish,PUMV2APXBY
+A19_PowerShelf_6 PSU 2,Redfish,PU9U97IS8B
+A19_PowerShelf_6 PSU 3,Redfish,PUAOZ63JJ5
+A19_PowerShelf_6 PSU 4,Redfish,PU6EYGGH8T
+A19_PowerShelf_6 PSU 5,Redfish,PUJE2MCERD
+A19_PowerShelf_6 PSU 6,Redfish,PU756C60XE
+A19_PowerShelf_7,Redfish,PSMUMQVIZ7
+A19_PowerShelf_7 PSU 1,Redfish,PUGCQ17U1T
+A19_PowerShelf_7 PSU 2,Redfish,PUJXV7GWKX
+A19_PowerShelf_7 PSU 3,Redfish,PUSPEF2S7O
+A19_PowerShelf_7 PSU 4,Redfish,PUDHV91F6C
+A19_PowerShelf_7 PSU 5,Redfish,PU83PU79DF
+A19_PowerShelf_7 PSU 6,Redfish,PUBTY6UZ97
+A19_PowerShelf_8,Redfish,PSC5Y3JJL9
+A19_PowerShelf_8 PSU 1,Redfish,PUXUYZJ7YY
+A19_PowerShelf_8 PSU 2,Redfish,PUU540ALB9
+A19_PowerShelf_8 PSU 3,Redfish,PUZKQBLKIL
+A19_PowerShelf_8 PSU 4,Redfish,PUWOFXTY01
+A19_PowerShelf_8 PSU 5,Redfish,PUT4KPPDK2
+A19_PowerShelf_8 PSU 6,Redfish,PUQ2FJK9A0
+A20_PowerShelf_1,Redfish,PS041901QW
+A20_PowerShelf_1 PSU 1,Redfish,PU09N14SR6
+A20_PowerShelf_1 PSU 2,Redfish,PU71DQJ4PM
+A20_PowerShelf_1 PSU 3,Redfish,PU66QRLVF3
+A20_PowerShelf_1 PSU 4,Redfish,PU9PL8JXGF
+A20_PowerShelf_1 PSU 5,Redfish,PU99Q9ISVS
+A20_PowerShelf_1 PSU 6,Redfish,PUMWDWMV0Y
+A20_PowerShelf_2,Redfish,PSHELYVLY6
+A20_PowerShelf_2 PSU 1,Redfish,PU1QM5X4ZG
+A20_PowerShelf_2 PSU 2,Redfish,PURETROXD5
+A20_PowerShelf_2 PSU 3,Redfish,PUHRGAJW2Z
+A20_PowerShelf_2 PSU 4,Redfish,PUMB1MKJF3
+A20_PowerShelf_2 PSU 5,Redfish,PUER108YA1
+A20_PowerShelf_2 PSU 6,Redfish,PUW0XD7L1A
+A20_PowerShelf_3,Redfish,PSSUNK18OQ
+A20_PowerShelf_3 PSU 1,Redfish,PUEHXJFSDX
+A20_PowerShelf_3 PSU 2,Redfish,PUYWBKZNR1
+A20_PowerShelf_3 PSU 3,Redfish,PUBN644BLI
+A20_PowerShelf_3 PSU 4,Redfish,PU51CN1QDA
+A20_PowerShelf_3 PSU 5,Redfish,PUOE7379AE
+A20_PowerShelf_3 PSU 6,Redfish,PU9D7PSTV9
+A20_PowerShelf_4,Redfish,PS2Y0GKIUF
+A20_PowerShelf_4 PSU 1,Redfish,PU9WKFEJ4Y
+A20_PowerShelf_4 PSU 2,Redfish,PU4N394UCE
+A20_PowerShelf_4 PSU 3,Redfish,PUNWGRJ6O3
+A20_PowerShelf_4 PSU 4,Redfish,PURTXXK3RF
+A20_PowerShelf_4 PSU 5,Redfish,PUEPLUW94Y
+A20_PowerShelf_4 PSU 6,Redfish,PUUQPT3TCS
+A20_PowerShelf_5,Redfish,PS1DZEVE84
+A20_PowerShelf_5 PSU 1,Redfish,PUATHBEKZ0
+A20_PowerShelf_5 PSU 2,Redfish,PU6HMHLAG7
+A20_PowerShelf_5 PSU 3,Redfish,PUFHPJ6VP4
+A20_PowerShelf_5 PSU 4,Redfish,PU5D4A6W22
+A20_PowerShelf_5 PSU 5,Redfish,PUG0UOLVAX
+A20_PowerShelf_5 PSU 6,Redfish,PUQHF3P5KU
+A20_PowerShelf_6,Redfish,PS7YX1G9JD
+A20_PowerShelf_6 PSU 1,Redfish,PUOYJQB8MT
+A20_PowerShelf_6 PSU 2,Redfish,PUR9BZ1BKP
+A20_PowerShelf_6 PSU 3,Redfish,PUWVMZ5CY5
+A20_PowerShelf_6 PSU 4,Redfish,PUBPHPX1AB
+A20_PowerShelf_6 PSU 5,Redfish,PUJ0FFICNR
+A20_PowerShelf_6 PSU 6,Redfish,PUQ48FR8IC
+A20_PowerShelf_7,Redfish,PSFMJR0TNA
+A20_PowerShelf_7 PSU 1,Redfish,PU7T6FVF09
+A20_PowerShelf_7 PSU 2,Redfish,PUZKOAZY8D
+A20_PowerShelf_7 PSU 3,Redfish,PUSTQN401P
+A20_PowerShelf_7 PSU 4,Redfish,PUARIBEI1H
+A20_PowerShelf_7 PSU 5,Redfish,PUH3A66353
+A20_PowerShelf_7 PSU 6,Redfish,PUNCSYQW0S
+A20_PowerShelf_8,Redfish,PSTT9BL64E
+A20_PowerShelf_8 PSU 1,Redfish,PUZF66RPKX
+A20_PowerShelf_8 PSU 2,Redfish,PUUDJYWLJR
+A20_PowerShelf_8 PSU 3,Redfish,PUWQIRH1LG
+A20_PowerShelf_8 PSU 4,Redfish,PUC0WWSVO4
+A20_PowerShelf_8 PSU 5,Redfish,PUUGBHLNXX
+A20_PowerShelf_8 PSU 6,Redfish,PUCONLYSWQ
+A21_PowerShelf_1,Redfish,PSKNM6THLX
+A21_PowerShelf_1 PSU 1,Redfish,PUFHDA9TBR
+A21_PowerShelf_1 PSU 2,Redfish,PUHTAOJZQD
+A21_PowerShelf_1 PSU 3,Redfish,PUP14CVSI5
+A21_PowerShelf_1 PSU 4,Redfish,PU59S2DNJN
+A21_PowerShelf_1 PSU 5,Redfish,PU6G7HWW9O
+A21_PowerShelf_1 PSU 6,Redfish,PUAFHPMLHY
+A21_PowerShelf_2,Redfish,PSTNEIGW07
+A21_PowerShelf_2 PSU 1,Redfish,PUB5L8MRR3
+A21_PowerShelf_2 PSU 2,Redfish,PUBJCBBSC8
+A21_PowerShelf_2 PSU 3,Redfish,PU1ZYRSMG6
+A21_PowerShelf_2 PSU 4,Redfish,PUP14D1B12
+A21_PowerShelf_2 PSU 5,Redfish,PUT3N085SB
+A21_PowerShelf_2 PSU 6,Redfish,PUNYBYB7OT
+A21_PowerShelf_3,Redfish,PS7PTMBBFM
+A21_PowerShelf_3 PSU 1,Redfish,PUIH058XV6
+A21_PowerShelf_3 PSU 2,Redfish,PUS7M3AMZD
+A21_PowerShelf_3 PSU 3,Redfish,PUSNEBFYV0
+A21_PowerShelf_3 PSU 4,Redfish,PU0KX5J84S
+A21_PowerShelf_3 PSU 5,Redfish,PUPVCXSZCQ
+A21_PowerShelf_3 PSU 6,Redfish,PUM97L4RU1
+A21_PowerShelf_4,Redfish,PSMRK38RIP
+A21_PowerShelf_4 PSU 1,Redfish,PUE870RUM8
+A21_PowerShelf_4 PSU 2,Redfish,PU5F2UO4F8
+A21_PowerShelf_4 PSU 3,Redfish,PUHA9C3EGV
+A21_PowerShelf_4 PSU 4,Redfish,PUA2JVR43W
+A21_PowerShelf_4 PSU 5,Redfish,PU81CUTL78
+A21_PowerShelf_4 PSU 6,Redfish,PUADIZC8QM
+A21_PowerShelf_5,Redfish,PSM4K09Q5T
+A21_PowerShelf_5 PSU 1,Redfish,PUF4GSHQAH
+A21_PowerShelf_5 PSU 2,Redfish,PU7CFC52YH
+A21_PowerShelf_5 PSU 3,Redfish,PU202NUF4N
+A21_PowerShelf_5 PSU 4,Redfish,PU9SZ9FIR4
+A21_PowerShelf_5 PSU 5,Redfish,PU5UJAQRUG
+A21_PowerShelf_5 PSU 6,Redfish,PU6WF5P9IG
+A21_PowerShelf_6,Redfish,PSKGM08JJB
+A21_PowerShelf_6 PSU 1,Redfish,PUGDKYYG5V
+A21_PowerShelf_6 PSU 2,Redfish,PUCXXHOPFY
+A21_PowerShelf_6 PSU 3,Redfish,PUKCV3V7XT
+A21_PowerShelf_6 PSU 4,Redfish,PUVBPWYNE1
+A21_PowerShelf_6 PSU 5,Redfish,PUO2PVUZYZ
+A21_PowerShelf_6 PSU 6,Redfish,PURV84Q6QK
+A21_PowerShelf_7,Redfish,PSB380OGCK
+A21_PowerShelf_7 PSU 1,Redfish,PU2IZ1ACUF
+A21_PowerShelf_7 PSU 2,Redfish,PUQC16I31R
+A21_PowerShelf_7 PSU 3,Redfish,PUY158O0MI
+A21_PowerShelf_7 PSU 4,Redfish,PUE8WPG471
+A21_PowerShelf_7 PSU 5,Redfish,PU9DEFQJXO
+A21_PowerShelf_7 PSU 6,Redfish,PU8KGUGU8N
+A21_PowerShelf_8,Redfish,PSW3XPCBXN
+A21_PowerShelf_8 PSU 1,Redfish,PU29C8HFGV
+A21_PowerShelf_8 PSU 2,Redfish,PUOU0IDJJY
+A21_PowerShelf_8 PSU 3,Redfish,PUU7E0EBOG
+A21_PowerShelf_8 PSU 4,Redfish,PUV5BUG02K
+A21_PowerShelf_8 PSU 5,Redfish,PUADD0T41D
+A21_PowerShelf_8 PSU 6,Redfish,PUSQNTVAWB
+A22_PowerShelf_1,Redfish,PS7KCU8JUN
+A22_PowerShelf_1 PSU 1,Redfish,PU349E60VR
+A22_PowerShelf_1 PSU 2,Redfish,PUNNW2KYAM
+A22_PowerShelf_1 PSU 3,Redfish,PUH0RAW7Z5
+A22_PowerShelf_1 PSU 4,Redfish,PU2FBET9TQ
+A22_PowerShelf_1 PSU 5,Redfish,PUVMWVKWZJ
+A22_PowerShelf_1 PSU 6,Redfish,PUIAXF7OX0
+A22_PowerShelf_2,Redfish,PSOLIZUXPE
+A22_PowerShelf_2 PSU 1,Redfish,PU23GNZ41U
+A22_PowerShelf_2 PSU 2,Redfish,PUL81IT9VB
+A22_PowerShelf_2 PSU 3,Redfish,PU5EASBWAV
+A22_PowerShelf_2 PSU 4,Redfish,PU33PD8FAR
+A22_PowerShelf_2 PSU 5,Redfish,PUST5N4WJP
+A22_PowerShelf_2 PSU 6,Redfish,PUOBV2ADAJ
+A22_PowerShelf_3,Redfish,PSQYHAM5RS
+A22_PowerShelf_3 PSU 1,Redfish,PUJOV0N40S
+A22_PowerShelf_3 PSU 2,Redfish,PU9Y6CMIJR
+A22_PowerShelf_3 PSU 3,Redfish,PU8KJMM4KS
+A22_PowerShelf_3 PSU 4,Redfish,PUEEIZ6IYO
+A22_PowerShelf_3 PSU 5,Redfish,PUW4OG59WL
+A22_PowerShelf_3 PSU 6,Redfish,PU8HPZ7EGT
+A22_PowerShelf_4,Redfish,PSK1TVF5RZ
+A22_PowerShelf_4 PSU 1,Redfish,PU89SW7021
+A22_PowerShelf_4 PSU 2,Redfish,PUN5RTHMG8
+A22_PowerShelf_4 PSU 3,Redfish,PU6G01L3T4
+A22_PowerShelf_4 PSU 4,Redfish,PU0IWYHM9K
+A22_PowerShelf_4 PSU 5,Redfish,PU7VI2Q1ZZ
+A22_PowerShelf_4 PSU 6,Redfish,PU2A2SBVZA
+A22_PowerShelf_5,Redfish,PS75EFR3YJ
+A22_PowerShelf_5 PSU 1,Redfish,PU95Z3TKJC
+A22_PowerShelf_5 PSU 2,Redfish,PUAHROX589
+A22_PowerShelf_5 PSU 3,Redfish,PUCQZLHI01
+A22_PowerShelf_5 PSU 4,Redfish,PUGQGDZTO7
+A22_PowerShelf_5 PSU 5,Redfish,PUL1TEMNBJ
+A22_PowerShelf_5 PSU 6,Redfish,PU8AOO5Q0U
+A22_PowerShelf_6,Redfish,PS8JP7REXA
+A22_PowerShelf_6 PSU 1,Redfish,PU5UIFHIJ8
+A22_PowerShelf_6 PSU 2,Redfish,PUQQB2XFH7
+A22_PowerShelf_6 PSU 3,Redfish,PU34MCMP8G
+A22_PowerShelf_6 PSU 4,Redfish,PU536VPPBI
+A22_PowerShelf_6 PSU 5,Redfish,PUDI3UHGT4
+A22_PowerShelf_6 PSU 6,Redfish,PUBV0Q5Y4D
+A22_PowerShelf_7,Redfish,PSW6IB4SWM
+A22_PowerShelf_7 PSU 1,Redfish,PUSD9HLSG8
+A22_PowerShelf_7 PSU 2,Redfish,PU03DHARBY
+A22_PowerShelf_7 PSU 3,Redfish,PUW5LPBNP9
+A22_PowerShelf_7 PSU 4,Redfish,PUQBDXTA8C
+A22_PowerShelf_7 PSU 5,Redfish,PU9DSDQSJN
+A22_PowerShelf_7 PSU 6,Redfish,PUVGZABDSJ
+A22_PowerShelf_8,Redfish,PSBTLMVW6K
+A22_PowerShelf_8 PSU 1,Redfish,PUTAQD46FK
+A22_PowerShelf_8 PSU 2,Redfish,PUVQF443IW
+A22_PowerShelf_8 PSU 3,Redfish,PU9LHN1NZ9
+A22_PowerShelf_8 PSU 4,Redfish,PUUHFKXWC3
+A22_PowerShelf_8 PSU 5,Redfish,PUSIETE7HT
+A22_PowerShelf_8 PSU 6,Redfish,PURWVYIH9E
+A23_PowerShelf_1,Redfish,PSEK3O4CXB
+A23_PowerShelf_1 PSU 1,Redfish,PU724RQZZN
+A23_PowerShelf_1 PSU 2,Redfish,PUAJPCPZVR
+A23_PowerShelf_1 PSU 3,Redfish,PU92YY65WH
+A23_PowerShelf_1 PSU 4,Redfish,PUX8Y34OCN
+A23_PowerShelf_1 PSU 5,Redfish,PU6HY6VU3Z
+A23_PowerShelf_1 PSU 6,Redfish,PU3TRJSS5T
+A23_PowerShelf_2,Redfish,PSL15NV89X
+A23_PowerShelf_2 PSU 1,Redfish,PUDPF8U867
+A23_PowerShelf_2 PSU 2,Redfish,PUGKWV4JN5
+A23_PowerShelf_2 PSU 3,Redfish,PU5JEEI7L4
+A23_PowerShelf_2 PSU 4,Redfish,PUPJV60YGC
+A23_PowerShelf_2 PSU 5,Redfish,PUYN0UP4X5
+A23_PowerShelf_2 PSU 6,Redfish,PU1SE9HO9X
+A23_PowerShelf_3,Redfish,PSOZ4EJSYN
+A23_PowerShelf_3 PSU 1,Redfish,PUBYPKOECI
+A23_PowerShelf_3 PSU 2,Redfish,PUOQ435G0L
+A23_PowerShelf_3 PSU 3,Redfish,PU353QD35D
+A23_PowerShelf_3 PSU 4,Redfish,PU0OWIP2V0
+A23_PowerShelf_3 PSU 5,Redfish,PUVLX9W510
+A23_PowerShelf_3 PSU 6,Redfish,PUQM940NJS
+A23_PowerShelf_4,Redfish,PSWWHK0CSF
+A23_PowerShelf_4 PSU 1,Redfish,PUM7O515WQ
+A23_PowerShelf_4 PSU 2,Redfish,PUINPN9011
+A23_PowerShelf_4 PSU 3,Redfish,PU1QF05PEX
+A23_PowerShelf_4 PSU 4,Redfish,PUE0N77KFX
+A23_PowerShelf_4 PSU 5,Redfish,PU0C26GMXR
+A23_PowerShelf_4 PSU 6,Redfish,PUHS6XHB9Z
+A23_PowerShelf_5,Redfish,PSFX0GDTLL
+A23_PowerShelf_5 PSU 1,Redfish,PU3SFKTK08
+A23_PowerShelf_5 PSU 2,Redfish,PU26FTORZ0
+A23_PowerShelf_5 PSU 3,Redfish,PU3N4AUB24
+A23_PowerShelf_5 PSU 4,Redfish,PUPCU0MQOB
+A23_PowerShelf_5 PSU 5,Redfish,PUAEE08QR4
+A23_PowerShelf_5 PSU 6,Redfish,PUF9XUCXYT
+A23_PowerShelf_6,Redfish,PSB3NV4EM0
+A23_PowerShelf_6 PSU 1,Redfish,PU6IFK14CG
+A23_PowerShelf_6 PSU 2,Redfish,PU9T5UY0XO
+A23_PowerShelf_6 PSU 3,Redfish,PUONVGNZ38
+A23_PowerShelf_6 PSU 4,Redfish,PU4ADHY6BS
+A23_PowerShelf_6 PSU 5,Redfish,PUSINXDQS1
+A23_PowerShelf_6 PSU 6,Redfish,PUE4NTZ93E
+A23_PowerShelf_7,Redfish,PSID4R8JZB
+A23_PowerShelf_7 PSU 1,Redfish,PUPIZ79S48
+A23_PowerShelf_7 PSU 2,Redfish,PUFVHR348X
+A23_PowerShelf_7 PSU 3,Redfish,PUVNYYP76X
+A23_PowerShelf_7 PSU 4,Redfish,PU5APQ8BGW
+A23_PowerShelf_7 PSU 5,Redfish,PUUUY1M9LZ
+A23_PowerShelf_7 PSU 6,Redfish,PUY7RZYBV3
+A23_PowerShelf_8,Redfish,PS4IOWRK74
+A23_PowerShelf_8 PSU 1,Redfish,PU3Y7ETRIW
+A23_PowerShelf_8 PSU 2,Redfish,PUJSFDFDWA
+A23_PowerShelf_8 PSU 3,Redfish,PU335ASACE
+A23_PowerShelf_8 PSU 4,Redfish,PU04M2SWTH
+A23_PowerShelf_8 PSU 5,Redfish,PUF45LSXPW
+A23_PowerShelf_8 PSU 6,Redfish,PUBXH17AP7
+A24_PowerShelf_1,Redfish,PS0K8KJDW4
+A24_PowerShelf_1 PSU 1,Redfish,PU9M13TH62
+A24_PowerShelf_1 PSU 2,Redfish,PUQ1LVBQDR
+A24_PowerShelf_1 PSU 3,Redfish,PU17G6OC12
+A24_PowerShelf_1 PSU 4,Redfish,PUXSNDS79C
+A24_PowerShelf_1 PSU 5,Redfish,PUK3VUT3NY
+A24_PowerShelf_1 PSU 6,Redfish,PUTLFSRWFM
+A24_PowerShelf_2,Redfish,PSSFQTCFGQ
+A24_PowerShelf_2 PSU 1,Redfish,PUXRLR7N8M
+A24_PowerShelf_2 PSU 2,Redfish,PUYXQXKAX1
+A24_PowerShelf_2 PSU 3,Redfish,PUKH56LP9G
+A24_PowerShelf_2 PSU 4,Redfish,PU9HZK3YC2
+A24_PowerShelf_2 PSU 5,Redfish,PUMH31DGQY
+A24_PowerShelf_2 PSU 6,Redfish,PU1ND3PBKL
+A24_PowerShelf_3,Redfish,PSUJO621IY
+A24_PowerShelf_3 PSU 1,Redfish,PUXHQ704AI
+A24_PowerShelf_3 PSU 2,Redfish,PUBP1ETEDZ
+A24_PowerShelf_3 PSU 3,Redfish,PUIBLYXYDI
+A24_PowerShelf_3 PSU 4,Redfish,PU3VVOP0ZY
+A24_PowerShelf_3 PSU 5,Redfish,PU1YF4GZWW
+A24_PowerShelf_3 PSU 6,Redfish,PUDIDLLSYO
+A24_PowerShelf_4,Redfish,PSN36M1ISX
+A24_PowerShelf_4 PSU 1,Redfish,PU7M4WWAG4
+A24_PowerShelf_4 PSU 2,Redfish,PUZZPEOIHL
+A24_PowerShelf_4 PSU 3,Redfish,PULTSGJ2RY
+A24_PowerShelf_4 PSU 4,Redfish,PU7W021CDA
+A24_PowerShelf_4 PSU 5,Redfish,PUAW0WMJON
+A24_PowerShelf_4 PSU 6,Redfish,PUOP9Y7EOY
+A24_PowerShelf_5,Redfish,PSMYONS5KR
+A24_PowerShelf_5 PSU 1,Redfish,PUY73XQTHJ
+A24_PowerShelf_5 PSU 2,Redfish,PU22HM2FTA
+A24_PowerShelf_5 PSU 3,Redfish,PULJT44C4G
+A24_PowerShelf_5 PSU 4,Redfish,PUZN68WZYW
+A24_PowerShelf_5 PSU 5,Redfish,PUYQ42RJJ6
+A24_PowerShelf_5 PSU 6,Redfish,PU7CBYN3TE
+A24_PowerShelf_6,Redfish,PSRDK6JY71
+A24_PowerShelf_6 PSU 1,Redfish,PUK47GJPXQ
+A24_PowerShelf_6 PSU 2,Redfish,PUCA9N9EL7
+A24_PowerShelf_6 PSU 3,Redfish,PUCR81WGW5
+A24_PowerShelf_6 PSU 4,Redfish,PUBPFGVAYS
+A24_PowerShelf_6 PSU 5,Redfish,PU5LLTQAA0
+A24_PowerShelf_6 PSU 6,Redfish,PUFSDWQ0NX
+A24_PowerShelf_7,Redfish,PSCRD1NZ3W
+A24_PowerShelf_7 PSU 1,Redfish,PU01LQH1SP
+A24_PowerShelf_7 PSU 2,Redfish,PUI2VVE0QY
+A24_PowerShelf_7 PSU 3,Redfish,PUZGXH53FB
+A24_PowerShelf_7 PSU 4,Redfish,PU6BPM8KSZ
+A24_PowerShelf_7 PSU 5,Redfish,PUADUZKN42
+A24_PowerShelf_7 PSU 6,Redfish,PUJZDN4R35
+A24_PowerShelf_8,Redfish,PSBMUXW56F
+A24_PowerShelf_8 PSU 1,Redfish,PUXI1NHEOL
+A24_PowerShelf_8 PSU 2,Redfish,PU6BDXD0NQ
+A24_PowerShelf_8 PSU 3,Redfish,PULJ0384MD
+A24_PowerShelf_8 PSU 4,Redfish,PUV4LN0SW0
+A24_PowerShelf_8 PSU 5,Redfish,PUOW465AJA
+A24_PowerShelf_8 PSU 6,Redfish,PUGCPC2AW1
+A25_PowerShelf_1,Redfish,PSQB50QVQB
+A25_PowerShelf_1 PSU 1,Redfish,PUCSOUCWJM
+A25_PowerShelf_1 PSU 2,Redfish,PU36CC89HA
+A25_PowerShelf_1 PSU 3,Redfish,PU6G1M3RAB
+A25_PowerShelf_1 PSU 4,Redfish,PU4Z2JAZW3
+A25_PowerShelf_1 PSU 5,Redfish,PUKBGU3Q2D
+A25_PowerShelf_1 PSU 6,Redfish,PUVFS1T1VF
+A25_PowerShelf_2,Redfish,PSISOQADMT
+A25_PowerShelf_2 PSU 1,Redfish,PULP7JDA5D
+A25_PowerShelf_2 PSU 2,Redfish,PUP6V5PUM9
+A25_PowerShelf_2 PSU 3,Redfish,PU1QZ0CPNJ
+A25_PowerShelf_2 PSU 4,Redfish,PURYGWQM3Y
+A25_PowerShelf_2 PSU 5,Redfish,PUTT7QFI76
+A25_PowerShelf_2 PSU 6,Redfish,PUQJG2W1SZ
+A25_PowerShelf_3,Redfish,PSLO5MFJYM
+A25_PowerShelf_3 PSU 1,Redfish,PUXJHG43IE
+A25_PowerShelf_3 PSU 2,Redfish,PUVHG7D3UM
+A25_PowerShelf_3 PSU 3,Redfish,PUXE2TO2YJ
+A25_PowerShelf_3 PSU 4,Redfish,PUZ30PDN8I
+A25_PowerShelf_3 PSU 5,Redfish,PU5P5KSS6N
+A25_PowerShelf_3 PSU 6,Redfish,PUWGBX7DAL
+A25_PowerShelf_4,Redfish,PS1QJ52HE3
+A25_PowerShelf_4 PSU 1,Redfish,PUJ2TXT7S9
+A25_PowerShelf_4 PSU 2,Redfish,PUL4F64AL8
+A25_PowerShelf_4 PSU 3,Redfish,PU5DA27JIA
+A25_PowerShelf_4 PSU 4,Redfish,PUC44QZ55Y
+A25_PowerShelf_4 PSU 5,Redfish,PUROR6YINN
+A25_PowerShelf_4 PSU 6,Redfish,PUSJV5MXS3
+A25_PowerShelf_5,Redfish,PSCKBXPJ6B
+A25_PowerShelf_5 PSU 1,Redfish,PU5SYUJ6QZ
+A25_PowerShelf_5 PSU 2,Redfish,PU9WESOIS2
+A25_PowerShelf_5 PSU 3,Redfish,PU2GMX9K04
+A25_PowerShelf_5 PSU 4,Redfish,PUBVL60SVL
+A25_PowerShelf_5 PSU 5,Redfish,PUALKR5GXH
+A25_PowerShelf_5 PSU 6,Redfish,PUBS7O3IRQ
+A25_PowerShelf_6,Redfish,PS42VSG73Z
+A25_PowerShelf_6 PSU 1,Redfish,PU6CY9UFGY
+A25_PowerShelf_6 PSU 2,Redfish,PUEEZ41MTV
+A25_PowerShelf_6 PSU 3,Redfish,PUZVO6ZIKZ
+A25_PowerShelf_6 PSU 4,Redfish,PUFMFMNHPC
+A25_PowerShelf_6 PSU 5,Redfish,PUOF4ENIOE
+A25_PowerShelf_6 PSU 6,Redfish,PUADIK8HX5
+A25_PowerShelf_7,Redfish,PS8DCTPZQ4
+A25_PowerShelf_7 PSU 1,Redfish,PUCTWREGGO
+A25_PowerShelf_7 PSU 2,Redfish,PUS1COPG0V
+A25_PowerShelf_7 PSU 3,Redfish,PU7RFQ0913
+A25_PowerShelf_7 PSU 4,Redfish,PUVF4D7MDC
+A25_PowerShelf_7 PSU 5,Redfish,PUYNUVVHMW
+A25_PowerShelf_7 PSU 6,Redfish,PUN8QZ3TMR
+A25_PowerShelf_8,Redfish,PS2HNFX4E4
+A25_PowerShelf_8 PSU 1,Redfish,PUHX1A3A76
+A25_PowerShelf_8 PSU 2,Redfish,PU86BNKYM2
+A25_PowerShelf_8 PSU 3,Redfish,PUULZ57IAA
+A25_PowerShelf_8 PSU 4,Redfish,PUD08DCEAL
+A25_PowerShelf_8 PSU 5,Redfish,PUSAEKN0XV
+A25_PowerShelf_8 PSU 6,Redfish,PU1U93UDN2
+A26_PowerShelf_1,Redfish,PSVNQ9SVV7
+A26_PowerShelf_1 PSU 1,Redfish,PU8U2IWHQG
+A26_PowerShelf_1 PSU 2,Redfish,PUI79KKTMJ
+A26_PowerShelf_1 PSU 3,Redfish,PU7T0S5SRN
+A26_PowerShelf_1 PSU 4,Redfish,PUXKUKTMEQ
+A26_PowerShelf_1 PSU 5,Redfish,PU77Z77VAA
+A26_PowerShelf_1 PSU 6,Redfish,PUSTY88T2D
+A26_PowerShelf_2,Redfish,PSH3JYAYPE
+A26_PowerShelf_2 PSU 1,Redfish,PUBBP3NT0U
+A26_PowerShelf_2 PSU 2,Redfish,PUVBD7KR65
+A26_PowerShelf_2 PSU 3,Redfish,PUBTFPGBCT
+A26_PowerShelf_2 PSU 4,Redfish,PUL2EXY01T
+A26_PowerShelf_2 PSU 5,Redfish,PUGMD6JHIT
+A26_PowerShelf_2 PSU 6,Redfish,PUYZTCWWBZ
+A26_PowerShelf_3,Redfish,PSWYCC3WJE
+A26_PowerShelf_3 PSU 1,Redfish,PUFR73NHW7
+A26_PowerShelf_3 PSU 2,Redfish,PU5MJKQ9ZU
+A26_PowerShelf_3 PSU 3,Redfish,PU2JMZ9P21
+A26_PowerShelf_3 PSU 4,Redfish,PUPC55X4WV
+A26_PowerShelf_3 PSU 5,Redfish,PUKFH4RMWL
+A26_PowerShelf_3 PSU 6,Redfish,PU35HW0VEH
+A26_PowerShelf_4,Redfish,PSIKS5BYIQ
+A26_PowerShelf_4 PSU 1,Redfish,PUYB210Z92
+A26_PowerShelf_4 PSU 2,Redfish,PUJ8MZF0SO
+A26_PowerShelf_4 PSU 3,Redfish,PUTKNKZU2O
+A26_PowerShelf_4 PSU 4,Redfish,PUL34KZJRY
+A26_PowerShelf_4 PSU 5,Redfish,PU0JWJN4IA
+A26_PowerShelf_4 PSU 6,Redfish,PUQLYN2YNZ
+A26_PowerShelf_5,Redfish,PSL0D2Q0BC
+A26_PowerShelf_5 PSU 1,Redfish,PUXJ3A6EJ3
+A26_PowerShelf_5 PSU 2,Redfish,PUBN5QAK6M
+A26_PowerShelf_5 PSU 3,Redfish,PUFFU0M0BI
+A26_PowerShelf_5 PSU 4,Redfish,PU0GCCGQ9S
+A26_PowerShelf_5 PSU 5,Redfish,PUKVVJ3GS3
+A26_PowerShelf_5 PSU 6,Redfish,PUB86TQNLC
+A26_PowerShelf_6,Redfish,PSM1ERRD8N
+A26_PowerShelf_6 PSU 1,Redfish,PU99MTI5JT
+A26_PowerShelf_6 PSU 2,Redfish,PUQT70O0NA
+A26_PowerShelf_6 PSU 3,Redfish,PUDI7ZNNLG
+A26_PowerShelf_6 PSU 4,Redfish,PU1XX2V1LK
+A26_PowerShelf_6 PSU 5,Redfish,PU96K35GZ9
+A26_PowerShelf_6 PSU 6,Redfish,PU16QDZ431
+A26_PowerShelf_7,Redfish,PSOY88OJQ6
+A26_PowerShelf_7 PSU 1,Redfish,PUOBXSNFHC
+A26_PowerShelf_7 PSU 2,Redfish,PUSHDSND1J
+A26_PowerShelf_7 PSU 3,Redfish,PU2QI0NDED
+A26_PowerShelf_7 PSU 4,Redfish,PU6D619FHJ
+A26_PowerShelf_7 PSU 5,Redfish,PUBII6L93A
+A26_PowerShelf_7 PSU 6,Redfish,PUDB6LA7G1
+A26_PowerShelf_8,Redfish,PSMXLQDF9R
+A26_PowerShelf_8 PSU 1,Redfish,PURIH20P4C
+A26_PowerShelf_8 PSU 2,Redfish,PUFLBT6W9Q
+A26_PowerShelf_8 PSU 3,Redfish,PU3TGMPYLE
+A26_PowerShelf_8 PSU 4,Redfish,PUV78JVZW8
+A26_PowerShelf_8 PSU 5,Redfish,PUEUPM0ZTP
+A26_PowerShelf_8 PSU 6,Redfish,PU3PDH77GR
+A27_PowerShelf_1,Redfish,PSRHBEKSXM
+A27_PowerShelf_1 PSU 1,Redfish,PUSU8Q40R7
+A27_PowerShelf_1 PSU 2,Redfish,PUT396YURQ
+A27_PowerShelf_1 PSU 3,Redfish,PUB4I4ULWJ
+A27_PowerShelf_1 PSU 4,Redfish,PUCO413I6A
+A27_PowerShelf_1 PSU 5,Redfish,PUQSR87UAR
+A27_PowerShelf_1 PSU 6,Redfish,PUEVQLNEH9
+A27_PowerShelf_2,Redfish,PSBZQZGBDR
+A27_PowerShelf_2 PSU 1,Redfish,PU5J8G0TMP
+A27_PowerShelf_2 PSU 2,Redfish,PUW1HH8XA1
+A27_PowerShelf_2 PSU 3,Redfish,PUJ2OEX6DW
+A27_PowerShelf_2 PSU 4,Redfish,PU84YU1TA6
+A27_PowerShelf_2 PSU 5,Redfish,PUGKQPZTGG
+A27_PowerShelf_2 PSU 6,Redfish,PUB2UPMNSH
+A27_PowerShelf_3,Redfish,PSH17FX6KA
+A27_PowerShelf_3 PSU 1,Redfish,PURS3G1IHP
+A27_PowerShelf_3 PSU 2,Redfish,PU15JAYXZP
+A27_PowerShelf_3 PSU 3,Redfish,PUC5MRZJQ6
+A27_PowerShelf_3 PSU 4,Redfish,PUQDOD960O
+A27_PowerShelf_3 PSU 5,Redfish,PUY5J6YT10
+A27_PowerShelf_3 PSU 6,Redfish,PU4TBEPG24
+A27_PowerShelf_4,Redfish,PSRGCUZYU6
+A27_PowerShelf_4 PSU 1,Redfish,PUQYZ9A0RR
+A27_PowerShelf_4 PSU 2,Redfish,PUC6BPPL32
+A27_PowerShelf_4 PSU 3,Redfish,PU9FDLI33E
+A27_PowerShelf_4 PSU 4,Redfish,PUSF15O0JF
+A27_PowerShelf_4 PSU 5,Redfish,PURC5JOJQ8
+A27_PowerShelf_4 PSU 6,Redfish,PUH850C14J
+A27_PowerShelf_5,Redfish,PSNHI37705
+A27_PowerShelf_5 PSU 1,Redfish,PURJQ9JAU9
+A27_PowerShelf_5 PSU 2,Redfish,PUIMVQ0DEM
+A27_PowerShelf_5 PSU 3,Redfish,PUUW9B2C18
+A27_PowerShelf_5 PSU 4,Redfish,PUR56BA9WC
+A27_PowerShelf_5 PSU 5,Redfish,PUKJ7FYA3T
+A27_PowerShelf_5 PSU 6,Redfish,PUI87J3MG1
+A27_PowerShelf_6,Redfish,PS0ZVZ1SGM
+A27_PowerShelf_6 PSU 1,Redfish,PUYYO1BEW8
+A27_PowerShelf_6 PSU 2,Redfish,PUHE5EOQG5
+A27_PowerShelf_6 PSU 3,Redfish,PU5HFHP0HE
+A27_PowerShelf_6 PSU 4,Redfish,PUNER5T1II
+A27_PowerShelf_6 PSU 5,Redfish,PUC106VW5I
+A27_PowerShelf_6 PSU 6,Redfish,PUPACRRJ5M
+A27_PowerShelf_7,Redfish,PS9K3LQQYQ
+A27_PowerShelf_7 PSU 1,Redfish,PUD0T12AHX
+A27_PowerShelf_7 PSU 2,Redfish,PUNY49ZAQJ
+A27_PowerShelf_7 PSU 3,Redfish,PUU3NERM11
+A27_PowerShelf_7 PSU 4,Redfish,PUPPQRSDHN
+A27_PowerShelf_7 PSU 5,Redfish,PUUNFLUHER
+A27_PowerShelf_7 PSU 6,Redfish,PU5FAEVR34
+A27_PowerShelf_8,Redfish,PSV7BYWV8D
+A27_PowerShelf_8 PSU 1,Redfish,PURGRX9QQC
+A27_PowerShelf_8 PSU 2,Redfish,PU75PNLAJU
+A27_PowerShelf_8 PSU 3,Redfish,PUDVLZSBJ8
+A27_PowerShelf_8 PSU 4,Redfish,PU69K53ELR
+A27_PowerShelf_8 PSU 5,Redfish,PUYKSM9H7L
+A27_PowerShelf_8 PSU 6,Redfish,PUBOLZBMFJ
+A28_PowerShelf_1,Redfish,PSWVX5A2V1
+A28_PowerShelf_1 PSU 1,Redfish,PU75J1NPQE
+A28_PowerShelf_1 PSU 2,Redfish,PUWAW528JN
+A28_PowerShelf_1 PSU 3,Redfish,PU7DQCRGZ3
+A28_PowerShelf_1 PSU 4,Redfish,PUJFLWM381
+A28_PowerShelf_1 PSU 5,Redfish,PU2Q3TSXPD
+A28_PowerShelf_1 PSU 6,Redfish,PU8RGLT1PN
+A28_PowerShelf_2,Redfish,PS4VM5ZUO5
+A28_PowerShelf_2 PSU 1,Redfish,PU0SZW7VGH
+A28_PowerShelf_2 PSU 2,Redfish,PUUO6PZZZC
+A28_PowerShelf_2 PSU 3,Redfish,PU642E8A3J
+A28_PowerShelf_2 PSU 4,Redfish,PU46O4ZPH4
+A28_PowerShelf_2 PSU 5,Redfish,PUBHT714RQ
+A28_PowerShelf_2 PSU 6,Redfish,PU0D9KCV9T
+A28_PowerShelf_3,Redfish,PSI5F0HU9G
+A28_PowerShelf_3 PSU 1,Redfish,PU2XML18VI
+A28_PowerShelf_3 PSU 2,Redfish,PUNHFJK66L
+A28_PowerShelf_3 PSU 3,Redfish,PUT3PA4CZ0
+A28_PowerShelf_3 PSU 4,Redfish,PU0HAPXOH7
+A28_PowerShelf_3 PSU 5,Redfish,PU6E37SQBW
+A28_PowerShelf_3 PSU 6,Redfish,PUKCCDBNEH
+A28_PowerShelf_4,Redfish,PSDRFI68CO
+A28_PowerShelf_4 PSU 1,Redfish,PUESZPGKIX
+A28_PowerShelf_4 PSU 2,Redfish,PUQMQEK3BP
+A28_PowerShelf_4 PSU 3,Redfish,PUUAE6B8B3
+A28_PowerShelf_4 PSU 4,Redfish,PUNWW5OHC1
+A28_PowerShelf_4 PSU 5,Redfish,PUU7WW2UYN
+A28_PowerShelf_4 PSU 6,Redfish,PUIEXMI5FZ
+A28_PowerShelf_5,Redfish,PS55YWBXW9
+A28_PowerShelf_5 PSU 1,Redfish,PUT0L3PMFD
+A28_PowerShelf_5 PSU 2,Redfish,PUOEO5X8ZX
+A28_PowerShelf_5 PSU 3,Redfish,PUXKPZZZAG
+A28_PowerShelf_5 PSU 4,Redfish,PU0SK7Q2FV
+A28_PowerShelf_5 PSU 5,Redfish,PUJE8EOAXL
+A28_PowerShelf_5 PSU 6,Redfish,PUD7N7XGB6
+A28_PowerShelf_6,Redfish,PSTY6TH0RX
+A28_PowerShelf_6 PSU 1,Redfish,PUO4QYROOQ
+A28_PowerShelf_6 PSU 2,Redfish,PUQXUOEEPB
+A28_PowerShelf_6 PSU 3,Redfish,PUMS1Z0HFJ
+A28_PowerShelf_6 PSU 4,Redfish,PURY1X47GA
+A28_PowerShelf_6 PSU 5,Redfish,PUVIUAEJRM
+A28_PowerShelf_6 PSU 6,Redfish,PUGQ75P89B
+A28_PowerShelf_7,Redfish,PSJRMFERXJ
+A28_PowerShelf_7 PSU 1,Redfish,PUTAL7291R
+A28_PowerShelf_7 PSU 2,Redfish,PUG388QYTR
+A28_PowerShelf_7 PSU 3,Redfish,PU1WDLG1YC
+A28_PowerShelf_7 PSU 4,Redfish,PUT8KESK7D
+A28_PowerShelf_7 PSU 5,Redfish,PU9KX3AH39
+A28_PowerShelf_7 PSU 6,Redfish,PU3X9CRSMP
+A28_PowerShelf_8,Redfish,PSF4E2VGTX
+A28_PowerShelf_8 PSU 1,Redfish,PUQQCKKVXA
+A28_PowerShelf_8 PSU 2,Redfish,PURK5UTMFP
+A28_PowerShelf_8 PSU 3,Redfish,PUE6WRUJH8
+A28_PowerShelf_8 PSU 4,Redfish,PUX33H7FUD
+A28_PowerShelf_8 PSU 5,Redfish,PUY79UQPX8
+A28_PowerShelf_8 PSU 6,Redfish,PUSOIUJ4PE
+A29_PowerShelf_1,Redfish,PS9A29DCNT
+A29_PowerShelf_1 PSU 1,Redfish,PUHBK5EZ91
+A29_PowerShelf_1 PSU 2,Redfish,PUNHJYU70F
+A29_PowerShelf_1 PSU 3,Redfish,PUAGWFXIYZ
+A29_PowerShelf_1 PSU 4,Redfish,PUXRIQAJNH
+A29_PowerShelf_1 PSU 5,Redfish,PUU53W7YPW
+A29_PowerShelf_1 PSU 6,Redfish,PUU1DAWOE7
+A29_PowerShelf_2,Redfish,PSHONWZ0CM
+A29_PowerShelf_2 PSU 1,Redfish,PU33J87UA4
+A29_PowerShelf_2 PSU 2,Redfish,PUO2PARHKB
+A29_PowerShelf_2 PSU 3,Redfish,PUFVVW066O
+A29_PowerShelf_2 PSU 4,Redfish,PUH7346TMQ
+A29_PowerShelf_2 PSU 5,Redfish,PUAECC5191
+A29_PowerShelf_2 PSU 6,Redfish,PUL0BWYO7Y
+A29_PowerShelf_3,Redfish,PSBZAH9L0L
+A29_PowerShelf_3 PSU 1,Redfish,PUGXRJO2M2
+A29_PowerShelf_3 PSU 2,Redfish,PUPYLBUG7R
+A29_PowerShelf_3 PSU 3,Redfish,PUG2JLLARJ
+A29_PowerShelf_3 PSU 4,Redfish,PUEH5SDMPQ
+A29_PowerShelf_3 PSU 5,Redfish,PUP42IXNPR
+A29_PowerShelf_3 PSU 6,Redfish,PUKW2D0DX8
+A29_PowerShelf_4,Redfish,PS5DVORKRI
+A29_PowerShelf_4 PSU 1,Redfish,PUN2QJU059
+A29_PowerShelf_4 PSU 2,Redfish,PUIESVEF7H
+A29_PowerShelf_4 PSU 3,Redfish,PUJAS0YFBK
+A29_PowerShelf_4 PSU 4,Redfish,PUA7VQNBTX
+A29_PowerShelf_4 PSU 5,Redfish,PU0QSKRXH0
+A29_PowerShelf_4 PSU 6,Redfish,PU3YKWRBRL
+A29_PowerShelf_5,Redfish,PS2V1NJ2RT
+A29_PowerShelf_5 PSU 1,Redfish,PU5C342KHG
+A29_PowerShelf_5 PSU 2,Redfish,PU15NY35T9
+A29_PowerShelf_5 PSU 3,Redfish,PUGS08QTLG
+A29_PowerShelf_5 PSU 4,Redfish,PU4IFYRLH8
+A29_PowerShelf_5 PSU 5,Redfish,PUFYNMPF2N
+A29_PowerShelf_5 PSU 6,Redfish,PU335GGT5M
+A29_PowerShelf_6,Redfish,PS7DM0E42M
+A29_PowerShelf_6 PSU 1,Redfish,PU9TCMYYS8
+A29_PowerShelf_6 PSU 2,Redfish,PUJ5CWIC50
+A29_PowerShelf_6 PSU 3,Redfish,PUJD7KNJL4
+A29_PowerShelf_6 PSU 4,Redfish,PUHTNO6U76
+A29_PowerShelf_6 PSU 5,Redfish,PU2P33B16T
+A29_PowerShelf_6 PSU 6,Redfish,PUZCF0KKBW
+A29_PowerShelf_7,Redfish,PS3V9QXI5C
+A29_PowerShelf_7 PSU 1,Redfish,PUKTP317L9
+A29_PowerShelf_7 PSU 2,Redfish,PUCRCVVFYJ
+A29_PowerShelf_7 PSU 3,Redfish,PUBYOWHBBM
+A29_PowerShelf_7 PSU 4,Redfish,PUX97VR5CM
+A29_PowerShelf_7 PSU 5,Redfish,PU4NPF9F3V
+A29_PowerShelf_7 PSU 6,Redfish,PULQA00VRZ
+A29_PowerShelf_8,Redfish,PSB09O1MIB
+A29_PowerShelf_8 PSU 1,Redfish,PUKTCXPJP9
+A29_PowerShelf_8 PSU 2,Redfish,PUPPGZ2UHJ
+A29_PowerShelf_8 PSU 3,Redfish,PUCBV5P9R4
+A29_PowerShelf_8 PSU 4,Redfish,PUQXIM5TLD
+A29_PowerShelf_8 PSU 5,Redfish,PUIGO4IJ7X
+A29_PowerShelf_8 PSU 6,Redfish,PUXYIEIUX3
+A30_PowerShelf_1,Redfish,PSR6SQQ2OO
+A30_PowerShelf_1 PSU 1,Redfish,PUAF96DM06
+A30_PowerShelf_1 PSU 2,Redfish,PU8RMXAY6E
+A30_PowerShelf_1 PSU 3,Redfish,PU2YBUJ9EO
+A30_PowerShelf_1 PSU 4,Redfish,PUECAWYD73
+A30_PowerShelf_1 PSU 5,Redfish,PUNVUKEVIZ
+A30_PowerShelf_1 PSU 6,Redfish,PUSPTNVUG1
+A30_PowerShelf_2,Redfish,PSLNP7O16S
+A30_PowerShelf_2 PSU 1,Redfish,PUUVQY7CDC
+A30_PowerShelf_2 PSU 2,Redfish,PU3DAKAH87
+A30_PowerShelf_2 PSU 3,Redfish,PUOJSBS0O9
+A30_PowerShelf_2 PSU 4,Redfish,PUMPJJ8D5Q
+A30_PowerShelf_2 PSU 5,Redfish,PUO2YLAOPI
+A30_PowerShelf_2 PSU 6,Redfish,PU5NCXJWIL
+A30_PowerShelf_3,Redfish,PSB65B5W4W
+A30_PowerShelf_3 PSU 1,Redfish,PUO4WCCZAK
+A30_PowerShelf_3 PSU 2,Redfish,PUPH0MG43N
+A30_PowerShelf_3 PSU 3,Redfish,PUVVKD4H06
+A30_PowerShelf_3 PSU 4,Redfish,PUT242P43E
+A30_PowerShelf_3 PSU 5,Redfish,PUZMCVX3M1
+A30_PowerShelf_3 PSU 6,Redfish,PUGRWM53V6
+A30_PowerShelf_4,Redfish,PSZM4YQDM9
+A30_PowerShelf_4 PSU 1,Redfish,PU386IH2VE
+A30_PowerShelf_4 PSU 2,Redfish,PUA46I7YTK
+A30_PowerShelf_4 PSU 3,Redfish,PU1O6V4CNY
+A30_PowerShelf_4 PSU 4,Redfish,PUW52PW2AL
+A30_PowerShelf_4 PSU 5,Redfish,PU9Q7Q0OM3
+A30_PowerShelf_4 PSU 6,Redfish,PUAI8S4DWQ
+A30_PowerShelf_5,Redfish,PSMOUYSZ8E
+A30_PowerShelf_5 PSU 1,Redfish,PUM5J3IPJ3
+A30_PowerShelf_5 PSU 2,Redfish,PU5HKHRMJE
+A30_PowerShelf_5 PSU 3,Redfish,PUM42SBOG1
+A30_PowerShelf_5 PSU 4,Redfish,PUFA7BT4DX
+A30_PowerShelf_5 PSU 5,Redfish,PUDMHCVHYH
+A30_PowerShelf_5 PSU 6,Redfish,PUJJYR71R8
+A30_PowerShelf_6,Redfish,PS56GGJMVJ
+A30_PowerShelf_6 PSU 1,Redfish,PUFDLJZOEK
+A30_PowerShelf_6 PSU 2,Redfish,PU9INN5A8X
+A30_PowerShelf_6 PSU 3,Redfish,PUUIHQBI2Y
+A30_PowerShelf_6 PSU 4,Redfish,PUU4OW7AY7
+A30_PowerShelf_6 PSU 5,Redfish,PUPMKJ0R31
+A30_PowerShelf_6 PSU 6,Redfish,PUDJ2IY7T6
+A30_PowerShelf_7,Redfish,PSSU9A38SF
+A30_PowerShelf_7 PSU 1,Redfish,PUDXD18NUI
+A30_PowerShelf_7 PSU 2,Redfish,PU7SSCKJSD
+A30_PowerShelf_7 PSU 3,Redfish,PUWC8CZR6K
+A30_PowerShelf_7 PSU 4,Redfish,PUF7ZQJQLF
+A30_PowerShelf_7 PSU 5,Redfish,PU0365KJ6W
+A30_PowerShelf_7 PSU 6,Redfish,PU0H5XX438
+A30_PowerShelf_8,Redfish,PSNDFMP6TZ
+A30_PowerShelf_8 PSU 1,Redfish,PU4266WGJR
+A30_PowerShelf_8 PSU 2,Redfish,PUU556LS0Y
+A30_PowerShelf_8 PSU 3,Redfish,PUHV2TIR6Q
+A30_PowerShelf_8 PSU 4,Redfish,PUPOXVTZ2B
+A30_PowerShelf_8 PSU 5,Redfish,PUYKZXABUZ
+A30_PowerShelf_8 PSU 6,Redfish,PUNEBOVVXO
+A31_PowerShelf_1,Redfish,PSFOE341RR
+A31_PowerShelf_1 PSU 1,Redfish,PU9O5FM6SX
+A31_PowerShelf_1 PSU 2,Redfish,PUMHM99HZI
+A31_PowerShelf_1 PSU 3,Redfish,PU7HQJWLGW
+A31_PowerShelf_1 PSU 4,Redfish,PUS3ZK4P76
+A31_PowerShelf_1 PSU 5,Redfish,PU3EX7IKTX
+A31_PowerShelf_1 PSU 6,Redfish,PURA8OHGMK
+A31_PowerShelf_2,Redfish,PSVTL8ZC4T
+A31_PowerShelf_2 PSU 1,Redfish,PUG73EA13Z
+A31_PowerShelf_2 PSU 2,Redfish,PUT2S8DAJV
+A31_PowerShelf_2 PSU 3,Redfish,PUGPN3YD6E
+A31_PowerShelf_2 PSU 4,Redfish,PU2G06NGTV
+A31_PowerShelf_2 PSU 5,Redfish,PUPPHJPVHN
+A31_PowerShelf_2 PSU 6,Redfish,PUIHGJIXWF
+A31_PowerShelf_3,Redfish,PS9NPBTH0M
+A31_PowerShelf_3 PSU 1,Redfish,PUOAXWYBNJ
+A31_PowerShelf_3 PSU 2,Redfish,PUSKSIFJYY
+A31_PowerShelf_3 PSU 3,Redfish,PUZE7C6TV6
+A31_PowerShelf_3 PSU 4,Redfish,PURKKPXR7X
+A31_PowerShelf_3 PSU 5,Redfish,PUM6PMSOV9
+A31_PowerShelf_3 PSU 6,Redfish,PUW2LIURHP
+A31_PowerShelf_4,Redfish,PSO897E4J9
+A31_PowerShelf_4 PSU 1,Redfish,PUGYEE7LPU
+A31_PowerShelf_4 PSU 2,Redfish,PUHCALCG5Z
+A31_PowerShelf_4 PSU 3,Redfish,PUZ7L45PJ7
+A31_PowerShelf_4 PSU 4,Redfish,PU3VCSKJ7N
+A31_PowerShelf_4 PSU 5,Redfish,PUI66K467Z
+A31_PowerShelf_4 PSU 6,Redfish,PU45931UY2
+A31_PowerShelf_5,Redfish,PSJMQB82JR
+A31_PowerShelf_5 PSU 1,Redfish,PUJIPRDDRJ
+A31_PowerShelf_5 PSU 2,Redfish,PU8INMZQJA
+A31_PowerShelf_5 PSU 3,Redfish,PUSSFZLDHB
+A31_PowerShelf_5 PSU 4,Redfish,PULMUMC51C
+A31_PowerShelf_5 PSU 5,Redfish,PUD9XO3KM1
+A31_PowerShelf_5 PSU 6,Redfish,PUS6WDXCQQ
+A31_PowerShelf_6,Redfish,PSR8KTCGP2
+A31_PowerShelf_6 PSU 1,Redfish,PU28G2F5V8
+A31_PowerShelf_6 PSU 2,Redfish,PUUPWH5K5R
+A31_PowerShelf_6 PSU 3,Redfish,PU6Z40HL1W
+A31_PowerShelf_6 PSU 4,Redfish,PUWFWRQTAV
+A31_PowerShelf_6 PSU 5,Redfish,PUH9KZ57VR
+A31_PowerShelf_6 PSU 6,Redfish,PUWE9MUV8Y
+A31_PowerShelf_7,Redfish,PSFUJDG4FT
+A31_PowerShelf_7 PSU 1,Redfish,PULP942PAI
+A31_PowerShelf_7 PSU 2,Redfish,PUV0ZBGNUV
+A31_PowerShelf_7 PSU 3,Redfish,PUBFHP6LAG
+A31_PowerShelf_7 PSU 4,Redfish,PUDZUG5SS6
+A31_PowerShelf_7 PSU 5,Redfish,PUXTQ9VFLV
+A31_PowerShelf_7 PSU 6,Redfish,PUUDM9XDK3
+A31_PowerShelf_8,Redfish,PSHC8VBG85
+A31_PowerShelf_8 PSU 1,Redfish,PUG8LZMH2T
+A31_PowerShelf_8 PSU 2,Redfish,PUAO0BQAT0
+A31_PowerShelf_8 PSU 3,Redfish,PU859TEY89
+A31_PowerShelf_8 PSU 4,Redfish,PUILBJGRDX
+A31_PowerShelf_8 PSU 5,Redfish,PU28XXPZYG
+A31_PowerShelf_8 PSU 6,Redfish,PUMG31AEFI
+A32_PowerShelf_1,Redfish,PS9E1F53LR
+A32_PowerShelf_1 PSU 1,Redfish,PU60T1GY6Z
+A32_PowerShelf_1 PSU 2,Redfish,PUVPUS7B1I
+A32_PowerShelf_1 PSU 3,Redfish,PUI90BJ8NN
+A32_PowerShelf_1 PSU 4,Redfish,PULSWTQDPB
+A32_PowerShelf_1 PSU 5,Redfish,PU86RZZ3JX
+A32_PowerShelf_1 PSU 6,Redfish,PUM1CBVP6M
+A32_PowerShelf_2,Redfish,PSQ9DR040P
+A32_PowerShelf_2 PSU 1,Redfish,PUIXEXFUPB
+A32_PowerShelf_2 PSU 2,Redfish,PULSFU9FL5
+A32_PowerShelf_2 PSU 3,Redfish,PU5TKKIG2A
+A32_PowerShelf_2 PSU 4,Redfish,PUW1ZJ7IOT
+A32_PowerShelf_2 PSU 5,Redfish,PUJZ3EL1VE
+A32_PowerShelf_2 PSU 6,Redfish,PU5ZUR4UOA
+A32_PowerShelf_3,Redfish,PSF5PZLFF5
+A32_PowerShelf_3 PSU 1,Redfish,PU1LAYDF40
+A32_PowerShelf_3 PSU 2,Redfish,PU3XWCZZYV
+A32_PowerShelf_3 PSU 3,Redfish,PU6APU3OOY
+A32_PowerShelf_3 PSU 4,Redfish,PURCIYXVI4
+A32_PowerShelf_3 PSU 5,Redfish,PUGKZL7XG9
+A32_PowerShelf_3 PSU 6,Redfish,PUZWTGNSEC
+A32_PowerShelf_4,Redfish,PSIDZ5NR48
+A32_PowerShelf_4 PSU 1,Redfish,PU44G04K94
+A32_PowerShelf_4 PSU 2,Redfish,PUFBB7BDDJ
+A32_PowerShelf_4 PSU 3,Redfish,PU0S4Y98RU
+A32_PowerShelf_4 PSU 4,Redfish,PUFX0EOCDB
+A32_PowerShelf_4 PSU 5,Redfish,PU9ZA1ZEZX
+A32_PowerShelf_4 PSU 6,Redfish,PUSNOXVQJ1
+A32_PowerShelf_5,Redfish,PSNQA3Q49D
+A32_PowerShelf_5 PSU 1,Redfish,PU8HPNNUGM
+A32_PowerShelf_5 PSU 2,Redfish,PULKXBX688
+A32_PowerShelf_5 PSU 3,Redfish,PUNE07O5HA
+A32_PowerShelf_5 PSU 4,Redfish,PU12PFISLB
+A32_PowerShelf_5 PSU 5,Redfish,PUYEM9O496
+A32_PowerShelf_5 PSU 6,Redfish,PUPWZO12FB
+A32_PowerShelf_6,Redfish,PSYO73AX7I
+A32_PowerShelf_6 PSU 1,Redfish,PUI8B78LDO
+A32_PowerShelf_6 PSU 2,Redfish,PUWDIZFS1Y
+A32_PowerShelf_6 PSU 3,Redfish,PUOCZ8YCKH
+A32_PowerShelf_6 PSU 4,Redfish,PU600FZYJ7
+A32_PowerShelf_6 PSU 5,Redfish,PUHWV2XHV4
+A32_PowerShelf_6 PSU 6,Redfish,PUN0QDYOZG
+A32_PowerShelf_7,Redfish,PSQGII368H
+A32_PowerShelf_7 PSU 1,Redfish,PUYIFVK1E7
+A32_PowerShelf_7 PSU 2,Redfish,PUU1MKK26J
+A32_PowerShelf_7 PSU 3,Redfish,PUOT2P419A
+A32_PowerShelf_7 PSU 4,Redfish,PUTL3GTC6X
+A32_PowerShelf_7 PSU 5,Redfish,PUW31PHJ56
+A32_PowerShelf_7 PSU 6,Redfish,PUU1QLYATX
+A32_PowerShelf_8,Redfish,PSU5DQ4H93
+A32_PowerShelf_8 PSU 1,Redfish,PUJRH37OFA
+A32_PowerShelf_8 PSU 2,Redfish,PUD35BFZHI
+A32_PowerShelf_8 PSU 3,Redfish,PU1TEOSYFH
+A32_PowerShelf_8 PSU 4,Redfish,PUT8A1MRZ9
+A32_PowerShelf_8 PSU 5,Redfish,PUA4F9YS7Q
+A32_PowerShelf_8 PSU 6,Redfish,PUNT6PKW2J
+B01_PowerShelf_1,Redfish,PSC1R7YSEC
+B01_PowerShelf_1 PSU 1,Redfish,PUFF5SST88
+B01_PowerShelf_1 PSU 2,Redfish,PUDUE8R0X3
+B01_PowerShelf_1 PSU 3,Redfish,PUCKVGLFCG
+B01_PowerShelf_1 PSU 4,Redfish,PUJZ83D2ZG
+B01_PowerShelf_1 PSU 5,Redfish,PUHG48UFIX
+B01_PowerShelf_1 PSU 6,Redfish,PUD5J08K68
+B01_PowerShelf_2,Redfish,PSAFCGVXY6
+B01_PowerShelf_2 PSU 1,Redfish,PUOYFEINJL
+B01_PowerShelf_2 PSU 2,Redfish,PUSZ41ZZEA
+B01_PowerShelf_2 PSU 3,Redfish,PUXAB3GXL1
+B01_PowerShelf_2 PSU 4,Redfish,PUD18267L5
+B01_PowerShelf_2 PSU 5,Redfish,PUXTBBE1SR
+B01_PowerShelf_2 PSU 6,Redfish,PUWEY5W8CN
+B01_PowerShelf_3,Redfish,PSIR6SMB6B
+B01_PowerShelf_3 PSU 1,Redfish,PUZQ91QV25
+B01_PowerShelf_3 PSU 2,Redfish,PUXO0WTIPW
+B01_PowerShelf_3 PSU 3,Redfish,PU0XZCOT93
+B01_PowerShelf_3 PSU 4,Redfish,PULIAXFBFQ
+B01_PowerShelf_3 PSU 5,Redfish,PUR971N3FM
+B01_PowerShelf_3 PSU 6,Redfish,PUWM3PW8HF
+B01_PowerShelf_4,Redfish,PSXP14W7Q8
+B01_PowerShelf_4 PSU 1,Redfish,PUKPZEM6Y0
+B01_PowerShelf_4 PSU 2,Redfish,PUT1AX5BOX
+B01_PowerShelf_4 PSU 3,Redfish,PUQW8IRGZ0
+B01_PowerShelf_4 PSU 4,Redfish,PUWK4YOIRV
+B01_PowerShelf_4 PSU 5,Redfish,PU39NAY6GM
+B01_PowerShelf_4 PSU 6,Redfish,PUFVC8N54O
+B01_PowerShelf_5,Redfish,PSNPV3T1TT
+B01_PowerShelf_5 PSU 1,Redfish,PUDYP9QF42
+B01_PowerShelf_5 PSU 2,Redfish,PUMQSMU4FG
+B01_PowerShelf_5 PSU 3,Redfish,PUR8S8297R
+B01_PowerShelf_5 PSU 4,Redfish,PU7QF4O9LT
+B01_PowerShelf_5 PSU 5,Redfish,PUEIK24P37
+B01_PowerShelf_5 PSU 6,Redfish,PUNIFQRV1O
+B01_PowerShelf_6,Redfish,PS66N5N5WX
+B01_PowerShelf_6 PSU 1,Redfish,PU17BJZV48
+B01_PowerShelf_6 PSU 2,Redfish,PU1X5RAMZR
+B01_PowerShelf_6 PSU 3,Redfish,PUJM3W81U5
+B01_PowerShelf_6 PSU 4,Redfish,PUT2DW82V3
+B01_PowerShelf_6 PSU 5,Redfish,PUQ5EOFFZ5
+B01_PowerShelf_6 PSU 6,Redfish,PUMOLN8D3N
+B01_PowerShelf_7,Redfish,PS855YWWNL
+B01_PowerShelf_7 PSU 1,Redfish,PUAG6PG8QU
+B01_PowerShelf_7 PSU 2,Redfish,PUK5JIKANW
+B01_PowerShelf_7 PSU 3,Redfish,PUC7L4HP8I
+B01_PowerShelf_7 PSU 4,Redfish,PU7FEYFCK9
+B01_PowerShelf_7 PSU 5,Redfish,PUIH52VWV5
+B01_PowerShelf_7 PSU 6,Redfish,PU4TREV747
+B01_PowerShelf_8,Redfish,PSL6OBXJ13
+B01_PowerShelf_8 PSU 1,Redfish,PUKZJLRXAQ
+B01_PowerShelf_8 PSU 2,Redfish,PU4A4U2KF0
+B01_PowerShelf_8 PSU 3,Redfish,PUKM8XNUHH
+B01_PowerShelf_8 PSU 4,Redfish,PUE2MSF2AQ
+B01_PowerShelf_8 PSU 5,Redfish,PU7BV3JMQ0
+B01_PowerShelf_8 PSU 6,Redfish,PUAZ6JQ1BS
+B02_PowerShelf_1,Redfish,PSJFV5SDFO
+B02_PowerShelf_1 PSU 1,Redfish,PUIYU2YCN4
+B02_PowerShelf_1 PSU 2,Redfish,PU70ZUKQS3
+B02_PowerShelf_1 PSU 3,Redfish,PURRQIH0OL
+B02_PowerShelf_1 PSU 4,Redfish,PU1PHHK84S
+B02_PowerShelf_1 PSU 5,Redfish,PUYRCXKIM9
+B02_PowerShelf_1 PSU 6,Redfish,PU18XQW0V9
+B02_PowerShelf_2,Redfish,PS56XB6YCO
+B02_PowerShelf_2 PSU 1,Redfish,PUEQRBJ27A
+B02_PowerShelf_2 PSU 2,Redfish,PUBXX5LOGE
+B02_PowerShelf_2 PSU 3,Redfish,PUTZKJGVOJ
+B02_PowerShelf_2 PSU 4,Redfish,PU3X5EIEUO
+B02_PowerShelf_2 PSU 5,Redfish,PUI8CTWE4X
+B02_PowerShelf_2 PSU 6,Redfish,PU2D4LWMWG
+B02_PowerShelf_3,Redfish,PSDS0KYNLA
+B02_PowerShelf_3 PSU 1,Redfish,PUQ8L5L3A2
+B02_PowerShelf_3 PSU 2,Redfish,PUINFCKM65
+B02_PowerShelf_3 PSU 3,Redfish,PUKJFCZ0SY
+B02_PowerShelf_3 PSU 4,Redfish,PU1HKSM7RT
+B02_PowerShelf_3 PSU 5,Redfish,PU37CJJHWP
+B02_PowerShelf_3 PSU 6,Redfish,PU3N29UZID
+B02_PowerShelf_4,Redfish,PSTC0H2SUA
+B02_PowerShelf_4 PSU 1,Redfish,PUZ99MC2WG
+B02_PowerShelf_4 PSU 2,Redfish,PUTPGK29LJ
+B02_PowerShelf_4 PSU 3,Redfish,PUX26ISNL0
+B02_PowerShelf_4 PSU 4,Redfish,PU5M9Y1ATX
+B02_PowerShelf_4 PSU 5,Redfish,PU7V738FPC
+B02_PowerShelf_4 PSU 6,Redfish,PUZ32CLD8Q
+B02_PowerShelf_5,Redfish,PSDI8K6SCI
+B02_PowerShelf_5 PSU 1,Redfish,PUV0ATO27T
+B02_PowerShelf_5 PSU 2,Redfish,PUWP0V6CSD
+B02_PowerShelf_5 PSU 3,Redfish,PULCAACOZG
+B02_PowerShelf_5 PSU 4,Redfish,PUGP6LWUSY
+B02_PowerShelf_5 PSU 5,Redfish,PUHEGEDVZU
+B02_PowerShelf_5 PSU 6,Redfish,PUPI5RVORI
+B02_PowerShelf_6,Redfish,PSODJ60KRN
+B02_PowerShelf_6 PSU 1,Redfish,PUBJSX3O1Z
+B02_PowerShelf_6 PSU 2,Redfish,PULSHP2VP3
+B02_PowerShelf_6 PSU 3,Redfish,PU6FR7PTL1
+B02_PowerShelf_6 PSU 4,Redfish,PU8XRX8GNZ
+B02_PowerShelf_6 PSU 5,Redfish,PU1R2K0UQ5
+B02_PowerShelf_6 PSU 6,Redfish,PU4GLJ3C04
+B02_PowerShelf_7,Redfish,PSILH4S1R3
+B02_PowerShelf_7 PSU 1,Redfish,PU97V4QDF5
+B02_PowerShelf_7 PSU 2,Redfish,PUHJ75ATQU
+B02_PowerShelf_7 PSU 3,Redfish,PUQ6PODVNO
+B02_PowerShelf_7 PSU 4,Redfish,PUE51158YS
+B02_PowerShelf_7 PSU 5,Redfish,PULCRB5066
+B02_PowerShelf_7 PSU 6,Redfish,PU6T4GUWTZ
+B02_PowerShelf_8,Redfish,PS6KJO3TRP
+B02_PowerShelf_8 PSU 1,Redfish,PUGTA4CCOB
+B02_PowerShelf_8 PSU 2,Redfish,PU5ENBUGP9
+B02_PowerShelf_8 PSU 3,Redfish,PU0HRSJGDH
+B02_PowerShelf_8 PSU 4,Redfish,PUB2PZKOKC
+B02_PowerShelf_8 PSU 5,Redfish,PUG4LLXYFU
+B02_PowerShelf_8 PSU 6,Redfish,PUC23L5DO5
+B03_PowerShelf_1,Redfish,PSLGOMUTWM
+B03_PowerShelf_1 PSU 1,Redfish,PUU3HFXTIQ
+B03_PowerShelf_1 PSU 2,Redfish,PUIO025VTZ
+B03_PowerShelf_1 PSU 3,Redfish,PU4YXFMBN2
+B03_PowerShelf_1 PSU 4,Redfish,PUSZQIP5LP
+B03_PowerShelf_1 PSU 5,Redfish,PUQYBLIR44
+B03_PowerShelf_1 PSU 6,Redfish,PUB39JWJWJ
+B03_PowerShelf_2,Redfish,PS25S8IOL0
+B03_PowerShelf_2 PSU 1,Redfish,PUCSERSV8G
+B03_PowerShelf_2 PSU 2,Redfish,PUS8O8W0VY
+B03_PowerShelf_2 PSU 3,Redfish,PUP9DXM310
+B03_PowerShelf_2 PSU 4,Redfish,PUH8VKUFBY
+B03_PowerShelf_2 PSU 5,Redfish,PUTZM1PKKE
+B03_PowerShelf_2 PSU 6,Redfish,PUKNGW20AD
+B03_PowerShelf_3,Redfish,PSRPLHTH0B
+B03_PowerShelf_3 PSU 1,Redfish,PUR6NMHRIF
+B03_PowerShelf_3 PSU 2,Redfish,PU3KZ07TGN
+B03_PowerShelf_3 PSU 3,Redfish,PUP788DEIR
+B03_PowerShelf_3 PSU 4,Redfish,PULZVFO3A7
+B03_PowerShelf_3 PSU 5,Redfish,PU1PGTU931
+B03_PowerShelf_3 PSU 6,Redfish,PUPX5K5CVK
+B03_PowerShelf_4,Redfish,PSFXORKZ41
+B03_PowerShelf_4 PSU 1,Redfish,PUWCFB3KER
+B03_PowerShelf_4 PSU 2,Redfish,PUY42GMV1U
+B03_PowerShelf_4 PSU 3,Redfish,PUMIMOV4LF
+B03_PowerShelf_4 PSU 4,Redfish,PUDE6RGWAT
+B03_PowerShelf_4 PSU 5,Redfish,PUML67F4R2
+B03_PowerShelf_4 PSU 6,Redfish,PU5LN4GNL8
+B03_PowerShelf_5,Redfish,PS0I34FY5Z
+B03_PowerShelf_5 PSU 1,Redfish,PU87FFDPY1
+B03_PowerShelf_5 PSU 2,Redfish,PUZ4APCVMV
+B03_PowerShelf_5 PSU 3,Redfish,PU4P3PCRUF
+B03_PowerShelf_5 PSU 4,Redfish,PUUF0P39KL
+B03_PowerShelf_5 PSU 5,Redfish,PUDEG4GX0H
+B03_PowerShelf_5 PSU 6,Redfish,PUI1Q5SCTP
+B03_PowerShelf_6,Redfish,PSPVPNVY3S
+B03_PowerShelf_6 PSU 1,Redfish,PUYCJJ0JTP
+B03_PowerShelf_6 PSU 2,Redfish,PUE2EY8V6D
+B03_PowerShelf_6 PSU 3,Redfish,PUG383JOTM
+B03_PowerShelf_6 PSU 4,Redfish,PUK9KNI0LA
+B03_PowerShelf_6 PSU 5,Redfish,PU1XCZGHZ0
+B03_PowerShelf_6 PSU 6,Redfish,PUM6P8W035
+B03_PowerShelf_7,Redfish,PSVB0PD1V1
+B03_PowerShelf_7 PSU 1,Redfish,PUTKI9MWV7
+B03_PowerShelf_7 PSU 2,Redfish,PUJIP0BXEC
+B03_PowerShelf_7 PSU 3,Redfish,PUVZAY8K8U
+B03_PowerShelf_7 PSU 4,Redfish,PU6NAFB55V
+B03_PowerShelf_7 PSU 5,Redfish,PUXNGYI72R
+B03_PowerShelf_7 PSU 6,Redfish,PUD6XEZ3YS
+B03_PowerShelf_8,Redfish,PSBKZDPEKZ
+B03_PowerShelf_8 PSU 1,Redfish,PUHECQGC8P
+B03_PowerShelf_8 PSU 2,Redfish,PUCQFYCHLG
+B03_PowerShelf_8 PSU 3,Redfish,PUGL5G82H2
+B03_PowerShelf_8 PSU 4,Redfish,PUJCYP79QG
+B03_PowerShelf_8 PSU 5,Redfish,PUPMUXQ9XF
+B03_PowerShelf_8 PSU 6,Redfish,PUSB61H5I2
+B04_PowerShelf_1,Redfish,PS5KIH1PCL
+B04_PowerShelf_1 PSU 1,Redfish,PUF9GJ6L38
+B04_PowerShelf_1 PSU 2,Redfish,PUI6YAU6U9
+B04_PowerShelf_1 PSU 3,Redfish,PUHKTT63KL
+B04_PowerShelf_1 PSU 4,Redfish,PUXRM77BEV
+B04_PowerShelf_1 PSU 5,Redfish,PUZY68O2ZG
+B04_PowerShelf_1 PSU 6,Redfish,PUCUAIKBYQ
+B04_PowerShelf_2,Redfish,PSVTDSK6PZ
+B04_PowerShelf_2 PSU 1,Redfish,PUNDMWEUD5
+B04_PowerShelf_2 PSU 2,Redfish,PUEDO53QXD
+B04_PowerShelf_2 PSU 3,Redfish,PUHAZVZCV6
+B04_PowerShelf_2 PSU 4,Redfish,PU0TZSZRYH
+B04_PowerShelf_2 PSU 5,Redfish,PU37810SDC
+B04_PowerShelf_2 PSU 6,Redfish,PUSUIPPE0W
+B04_PowerShelf_3,Redfish,PSHCI7SYXT
+B04_PowerShelf_3 PSU 1,Redfish,PUNEQ4COXI
+B04_PowerShelf_3 PSU 2,Redfish,PU8N0M2FLC
+B04_PowerShelf_3 PSU 3,Redfish,PUNL3E1C9B
+B04_PowerShelf_3 PSU 4,Redfish,PUJFFYCV9P
+B04_PowerShelf_3 PSU 5,Redfish,PUWH48DL0I
+B04_PowerShelf_3 PSU 6,Redfish,PUXDAKN7YF
+B04_PowerShelf_4,Redfish,PSMDOWYX9C
+B04_PowerShelf_4 PSU 1,Redfish,PUILPK08BK
+B04_PowerShelf_4 PSU 2,Redfish,PUFS40XY6U
+B04_PowerShelf_4 PSU 3,Redfish,PULYIAP5NL
+B04_PowerShelf_4 PSU 4,Redfish,PUWO6VWG3E
+B04_PowerShelf_4 PSU 5,Redfish,PUGPYP5OVL
+B04_PowerShelf_4 PSU 6,Redfish,PUAIVMEDF1
+B04_PowerShelf_5,Redfish,PSLSDBSUCK
+B04_PowerShelf_5 PSU 1,Redfish,PU1AED9O4A
+B04_PowerShelf_5 PSU 2,Redfish,PU2ODYQLC5
+B04_PowerShelf_5 PSU 3,Redfish,PU4HHHHYDB
+B04_PowerShelf_5 PSU 4,Redfish,PUTQG4IW4M
+B04_PowerShelf_5 PSU 5,Redfish,PU2H84ODCD
+B04_PowerShelf_5 PSU 6,Redfish,PUC8CDFXTI
+B04_PowerShelf_6,Redfish,PS2QHMX1P6
+B04_PowerShelf_6 PSU 1,Redfish,PUYF2VIMVK
+B04_PowerShelf_6 PSU 2,Redfish,PU0PRZLX9D
+B04_PowerShelf_6 PSU 3,Redfish,PUVE82O90W
+B04_PowerShelf_6 PSU 4,Redfish,PUF626QAFS
+B04_PowerShelf_6 PSU 5,Redfish,PUZQ6B6H8C
+B04_PowerShelf_6 PSU 6,Redfish,PUJAPUIITJ
+B04_PowerShelf_7,Redfish,PSJACYWFCV
+B04_PowerShelf_7 PSU 1,Redfish,PU79XLKYDH
+B04_PowerShelf_7 PSU 2,Redfish,PU4H5MM2BJ
+B04_PowerShelf_7 PSU 3,Redfish,PU5KEFT0PS
+B04_PowerShelf_7 PSU 4,Redfish,PU7E8J6FJF
+B04_PowerShelf_7 PSU 5,Redfish,PUAI1L37CN
+B04_PowerShelf_7 PSU 6,Redfish,PUD1L10QME
+B04_PowerShelf_8,Redfish,PSMLM88LHP
+B04_PowerShelf_8 PSU 1,Redfish,PUNZ58I14F
+B04_PowerShelf_8 PSU 2,Redfish,PU9L6BZ1Z3
+B04_PowerShelf_8 PSU 3,Redfish,PUTQC9HOIL
+B04_PowerShelf_8 PSU 4,Redfish,PU7AYC8FT9
+B04_PowerShelf_8 PSU 5,Redfish,PUT626RS5N
+B04_PowerShelf_8 PSU 6,Redfish,PUEZ3XRXJM
+B05_PowerShelf_1,Redfish,PS2CYX878V
+B05_PowerShelf_1 PSU 1,Redfish,PU35EAA5GJ
+B05_PowerShelf_1 PSU 2,Redfish,PU344PCMHJ
+B05_PowerShelf_1 PSU 3,Redfish,PUMV7MBPX0
+B05_PowerShelf_1 PSU 4,Redfish,PU04MGRUFB
+B05_PowerShelf_1 PSU 5,Redfish,PUJQAVQ37I
+B05_PowerShelf_1 PSU 6,Redfish,PUX008T1KB
+B05_PowerShelf_2,Redfish,PSLZN2DDWK
+B05_PowerShelf_2 PSU 1,Redfish,PUET7LW4YI
+B05_PowerShelf_2 PSU 2,Redfish,PULPGLVYAI
+B05_PowerShelf_2 PSU 3,Redfish,PUAVK60LI9
+B05_PowerShelf_2 PSU 4,Redfish,PUTFJFF2V3
+B05_PowerShelf_2 PSU 5,Redfish,PU0H8636OM
+B05_PowerShelf_2 PSU 6,Redfish,PUTVZ2NRYL
+B05_PowerShelf_3,Redfish,PSM75AW6VN
+B05_PowerShelf_3 PSU 1,Redfish,PUNBBLG6JO
+B05_PowerShelf_3 PSU 2,Redfish,PUXTYD3L18
+B05_PowerShelf_3 PSU 3,Redfish,PUOIXZ87QK
+B05_PowerShelf_3 PSU 4,Redfish,PUEAOR0E56
+B05_PowerShelf_3 PSU 5,Redfish,PUSMD6Q08D
+B05_PowerShelf_3 PSU 6,Redfish,PU4TQ7XW5B
+B05_PowerShelf_4,Redfish,PSV8VXUB0W
+B05_PowerShelf_4 PSU 1,Redfish,PU60OAG5JJ
+B05_PowerShelf_4 PSU 2,Redfish,PUV1PE5DMA
+B05_PowerShelf_4 PSU 3,Redfish,PU0O7PNNHK
+B05_PowerShelf_4 PSU 4,Redfish,PUHZFFBO1U
+B05_PowerShelf_4 PSU 5,Redfish,PUKBETGACS
+B05_PowerShelf_4 PSU 6,Redfish,PULIL4T5PH
+B05_PowerShelf_5,Redfish,PSFU4DN5VT
+B05_PowerShelf_5 PSU 1,Redfish,PUD4OGU4UX
+B05_PowerShelf_5 PSU 2,Redfish,PUKL5EKL8Q
+B05_PowerShelf_5 PSU 3,Redfish,PULZC0UX2K
+B05_PowerShelf_5 PSU 4,Redfish,PUTTGWTN58
+B05_PowerShelf_5 PSU 5,Redfish,PUGZ9M4HWD
+B05_PowerShelf_5 PSU 6,Redfish,PUJ12GHU3B
+B05_PowerShelf_6,Redfish,PSVGBH41AP
+B05_PowerShelf_6 PSU 1,Redfish,PUHI39G5EF
+B05_PowerShelf_6 PSU 2,Redfish,PUNMTRMR9F
+B05_PowerShelf_6 PSU 3,Redfish,PUS1KHHLJB
+B05_PowerShelf_6 PSU 4,Redfish,PU1A12M2LF
+B05_PowerShelf_6 PSU 5,Redfish,PU9ONSLXM5
+B05_PowerShelf_6 PSU 6,Redfish,PUQ668IYPT
+B05_PowerShelf_7,Redfish,PSETJ9IJAM
+B05_PowerShelf_7 PSU 1,Redfish,PUTJ72XKFT
+B05_PowerShelf_7 PSU 2,Redfish,PUE51LKTJE
+B05_PowerShelf_7 PSU 3,Redfish,PUK4CMRG5A
+B05_PowerShelf_7 PSU 4,Redfish,PU994H779H
+B05_PowerShelf_7 PSU 5,Redfish,PUSBFHDCRI
+B05_PowerShelf_7 PSU 6,Redfish,PUOVM2VMBB
+B05_PowerShelf_8,Redfish,PS7L60UNAE
+B05_PowerShelf_8 PSU 1,Redfish,PUWKUTD8U8
+B05_PowerShelf_8 PSU 2,Redfish,PU9U823FF8
+B05_PowerShelf_8 PSU 3,Redfish,PUK35UEYG7
+B05_PowerShelf_8 PSU 4,Redfish,PU37YVJ9DF
+B05_PowerShelf_8 PSU 5,Redfish,PUYCDCC7DU
+B05_PowerShelf_8 PSU 6,Redfish,PU2HLJ4L2N
+B06_PowerShelf_1,Redfish,PS055MXMXP
+B06_PowerShelf_1 PSU 1,Redfish,PUC7K3JOJX
+B06_PowerShelf_1 PSU 2,Redfish,PUDE518TPF
+B06_PowerShelf_1 PSU 3,Redfish,PUAFCJWD4W
+B06_PowerShelf_1 PSU 4,Redfish,PUBAJLOPME
+B06_PowerShelf_1 PSU 5,Redfish,PUNSYLFZRI
+B06_PowerShelf_1 PSU 6,Redfish,PU0R3ZSN6Y
+B06_PowerShelf_2,Redfish,PSO34FOF64
+B06_PowerShelf_2 PSU 1,Redfish,PUHCWIHDCA
+B06_PowerShelf_2 PSU 2,Redfish,PUALHDADAY
+B06_PowerShelf_2 PSU 3,Redfish,PUH0VIEPBJ
+B06_PowerShelf_2 PSU 4,Redfish,PUCAYSPCWN
+B06_PowerShelf_2 PSU 5,Redfish,PUIJU8WT3P
+B06_PowerShelf_2 PSU 6,Redfish,PUD4DYVKDP
+B06_PowerShelf_3,Redfish,PSDO48KZL1
+B06_PowerShelf_3 PSU 1,Redfish,PUVR9QB34H
+B06_PowerShelf_3 PSU 2,Redfish,PUZ3ALPMAX
+B06_PowerShelf_3 PSU 3,Redfish,PUMWBL24J5
+B06_PowerShelf_3 PSU 4,Redfish,PU12EXQA19
+B06_PowerShelf_3 PSU 5,Redfish,PU5RQ4CJ2N
+B06_PowerShelf_3 PSU 6,Redfish,PU42TQL53P
+B06_PowerShelf_4,Redfish,PSHPTPQP6O
+B06_PowerShelf_4 PSU 1,Redfish,PURRIA2AJO
+B06_PowerShelf_4 PSU 2,Redfish,PUR7YJV8SO
+B06_PowerShelf_4 PSU 3,Redfish,PUQUP85VJI
+B06_PowerShelf_4 PSU 4,Redfish,PUUX8E2V3Z
+B06_PowerShelf_4 PSU 5,Redfish,PULJDBZQXN
+B06_PowerShelf_4 PSU 6,Redfish,PU7T0P7ZL4
+B06_PowerShelf_5,Redfish,PSHS1V874S
+B06_PowerShelf_5 PSU 1,Redfish,PUX0OMIWXY
+B06_PowerShelf_5 PSU 2,Redfish,PUK4DRCSON
+B06_PowerShelf_5 PSU 3,Redfish,PU2EVJL191
+B06_PowerShelf_5 PSU 4,Redfish,PU77062FWQ
+B06_PowerShelf_5 PSU 5,Redfish,PUJBM0CPR0
+B06_PowerShelf_5 PSU 6,Redfish,PU1UBIVO73
+B06_PowerShelf_6,Redfish,PSJ01KHRGM
+B06_PowerShelf_6 PSU 1,Redfish,PUHGIQKQTU
+B06_PowerShelf_6 PSU 2,Redfish,PUS3WRH5EP
+B06_PowerShelf_6 PSU 3,Redfish,PUCSUGRUW6
+B06_PowerShelf_6 PSU 4,Redfish,PUNSLN0ZBC
+B06_PowerShelf_6 PSU 5,Redfish,PUYY2SWJBR
+B06_PowerShelf_6 PSU 6,Redfish,PUXXVBD3BU
+B06_PowerShelf_7,Redfish,PS0Z7YZ6UD
+B06_PowerShelf_7 PSU 1,Redfish,PUIU8KGYQ0
+B06_PowerShelf_7 PSU 2,Redfish,PUX2KSJOCX
+B06_PowerShelf_7 PSU 3,Redfish,PU030MHY30
+B06_PowerShelf_7 PSU 4,Redfish,PU249FV9JQ
+B06_PowerShelf_7 PSU 5,Redfish,PUWVVV5Q84
+B06_PowerShelf_7 PSU 6,Redfish,PUD123W8SW
+B06_PowerShelf_8,Redfish,PS74D90JMT
+B06_PowerShelf_8 PSU 1,Redfish,PUU3AVEM4O
+B06_PowerShelf_8 PSU 2,Redfish,PUQK9DNF09
+B06_PowerShelf_8 PSU 3,Redfish,PUIG272J3L
+B06_PowerShelf_8 PSU 4,Redfish,PUHLF601UU
+B06_PowerShelf_8 PSU 5,Redfish,PUH9JSMMIU
+B06_PowerShelf_8 PSU 6,Redfish,PUPC2V94FD
+B07_PowerShelf_1,Redfish,PSKZYGYB9I
+B07_PowerShelf_1 PSU 1,Redfish,PUBY7RFUME
+B07_PowerShelf_1 PSU 2,Redfish,PUJUORONYA
+B07_PowerShelf_1 PSU 3,Redfish,PU9LNLWMTE
+B07_PowerShelf_1 PSU 4,Redfish,PU0THYXE4Q
+B07_PowerShelf_1 PSU 5,Redfish,PUSF4D33VG
+B07_PowerShelf_1 PSU 6,Redfish,PUK5M5U7ZB
+B07_PowerShelf_2,Redfish,PSIRTDSVMW
+B07_PowerShelf_2 PSU 1,Redfish,PUQFSKJDV9
+B07_PowerShelf_2 PSU 2,Redfish,PUXL5NYDOA
+B07_PowerShelf_2 PSU 3,Redfish,PUCOC9EMIS
+B07_PowerShelf_2 PSU 4,Redfish,PU55VIU4YX
+B07_PowerShelf_2 PSU 5,Redfish,PUYYQCKEFC
+B07_PowerShelf_2 PSU 6,Redfish,PUI6YAYYQ6
+B07_PowerShelf_3,Redfish,PSMNBLOE3A
+B07_PowerShelf_3 PSU 1,Redfish,PUK7W97PVK
+B07_PowerShelf_3 PSU 2,Redfish,PUSX6UTOYA
+B07_PowerShelf_3 PSU 3,Redfish,PUZ9YS7WK9
+B07_PowerShelf_3 PSU 4,Redfish,PU8L2AYMCW
+B07_PowerShelf_3 PSU 5,Redfish,PUXC2BI7Q6
+B07_PowerShelf_3 PSU 6,Redfish,PUWL558QJG
+B07_PowerShelf_4,Redfish,PSFQFV4Z1I
+B07_PowerShelf_4 PSU 1,Redfish,PUCKWXE3AK
+B07_PowerShelf_4 PSU 2,Redfish,PUORM0509T
+B07_PowerShelf_4 PSU 3,Redfish,PU1NBROAUJ
+B07_PowerShelf_4 PSU 4,Redfish,PUYYN4SE92
+B07_PowerShelf_4 PSU 5,Redfish,PU9EED4LRS
+B07_PowerShelf_4 PSU 6,Redfish,PULP6ITDH8
+B07_PowerShelf_5,Redfish,PSHGZUJ4EQ
+B07_PowerShelf_5 PSU 1,Redfish,PUCTLT8VCL
+B07_PowerShelf_5 PSU 2,Redfish,PUKFC7CAQY
+B07_PowerShelf_5 PSU 3,Redfish,PUBKNTXPOJ
+B07_PowerShelf_5 PSU 4,Redfish,PUIV238SOT
+B07_PowerShelf_5 PSU 5,Redfish,PU317JO4Y6
+B07_PowerShelf_5 PSU 6,Redfish,PULMI04XOQ
+B07_PowerShelf_6,Redfish,PSLANLICMO
+B07_PowerShelf_6 PSU 1,Redfish,PUXX31AGH1
+B07_PowerShelf_6 PSU 2,Redfish,PUTPEQZ0TC
+B07_PowerShelf_6 PSU 3,Redfish,PU5LNTX136
+B07_PowerShelf_6 PSU 4,Redfish,PU06R6QPBI
+B07_PowerShelf_6 PSU 5,Redfish,PUQICN6DNI
+B07_PowerShelf_6 PSU 6,Redfish,PU63K7VBDR
+B07_PowerShelf_7,Redfish,PSIU3LVHO2
+B07_PowerShelf_7 PSU 1,Redfish,PUSDNEUP0W
+B07_PowerShelf_7 PSU 2,Redfish,PU7F7NEW4B
+B07_PowerShelf_7 PSU 3,Redfish,PUYN74223F
+B07_PowerShelf_7 PSU 4,Redfish,PU0LB4OHB1
+B07_PowerShelf_7 PSU 5,Redfish,PUEMMW8JCO
+B07_PowerShelf_7 PSU 6,Redfish,PUQWDMZOAP
+B07_PowerShelf_8,Redfish,PS7VO9G0JD
+B07_PowerShelf_8 PSU 1,Redfish,PU1GX07LWK
+B07_PowerShelf_8 PSU 2,Redfish,PUVV4I6CZS
+B07_PowerShelf_8 PSU 3,Redfish,PUIVRKGKB0
+B07_PowerShelf_8 PSU 4,Redfish,PUZ289T4B2
+B07_PowerShelf_8 PSU 5,Redfish,PUCHVV1AWE
+B07_PowerShelf_8 PSU 6,Redfish,PU0EA9F7WX
+B08_PowerShelf_1,Redfish,PSHPWK0KUD
+B08_PowerShelf_1 PSU 1,Redfish,PULB005W1C
+B08_PowerShelf_1 PSU 2,Redfish,PU84QROVF3
+B08_PowerShelf_1 PSU 3,Redfish,PUX0C2BVIU
+B08_PowerShelf_1 PSU 4,Redfish,PUHOMHJNG1
+B08_PowerShelf_1 PSU 5,Redfish,PUAKS9KXP9
+B08_PowerShelf_1 PSU 6,Redfish,PUXTQJI0K8
+B08_PowerShelf_2,Redfish,PSYKOUB84Q
+B08_PowerShelf_2 PSU 1,Redfish,PU32U9U890
+B08_PowerShelf_2 PSU 2,Redfish,PUWLHRRSEB
+B08_PowerShelf_2 PSU 3,Redfish,PUWXDZON37
+B08_PowerShelf_2 PSU 4,Redfish,PU23DPVWON
+B08_PowerShelf_2 PSU 5,Redfish,PUMITN1GAU
+B08_PowerShelf_2 PSU 6,Redfish,PUELXA1481
+B08_PowerShelf_3,Redfish,PSF39JOUD8
+B08_PowerShelf_3 PSU 1,Redfish,PUJDUN41HK
+B08_PowerShelf_3 PSU 2,Redfish,PUGHIF9RI8
+B08_PowerShelf_3 PSU 3,Redfish,PUXN5TLZT9
+B08_PowerShelf_3 PSU 4,Redfish,PU7PNKKDWG
+B08_PowerShelf_3 PSU 5,Redfish,PUB5M5Z0OF
+B08_PowerShelf_3 PSU 6,Redfish,PUK2NVBX8J
+B08_PowerShelf_4,Redfish,PSBVK9L9G0
+B08_PowerShelf_4 PSU 1,Redfish,PU1TQOHKL2
+B08_PowerShelf_4 PSU 2,Redfish,PU5HIUD1N1
+B08_PowerShelf_4 PSU 3,Redfish,PUXA2HHUYN
+B08_PowerShelf_4 PSU 4,Redfish,PUCF2AFZFR
+B08_PowerShelf_4 PSU 5,Redfish,PUACMYM6JQ
+B08_PowerShelf_4 PSU 6,Redfish,PUEOXSAA67
+B08_PowerShelf_5,Redfish,PSPL5QQ81K
+B08_PowerShelf_5 PSU 1,Redfish,PUA1GO1Z0V
+B08_PowerShelf_5 PSU 2,Redfish,PUD1D5YNXT
+B08_PowerShelf_5 PSU 3,Redfish,PUF3WBV9WO
+B08_PowerShelf_5 PSU 4,Redfish,PUTF5Q9H0C
+B08_PowerShelf_5 PSU 5,Redfish,PUM2MH63F8
+B08_PowerShelf_5 PSU 6,Redfish,PUPA1MKO3R
+B08_PowerShelf_6,Redfish,PSA2QKQA8E
+B08_PowerShelf_6 PSU 1,Redfish,PUJTPSQ8HL
+B08_PowerShelf_6 PSU 2,Redfish,PUB178DJE9
+B08_PowerShelf_6 PSU 3,Redfish,PUACCS80JF
+B08_PowerShelf_6 PSU 4,Redfish,PU13XHD05Z
+B08_PowerShelf_6 PSU 5,Redfish,PUIJH7WXHV
+B08_PowerShelf_6 PSU 6,Redfish,PUKRJNW072
+B08_PowerShelf_7,Redfish,PSVWIIE5YW
+B08_PowerShelf_7 PSU 1,Redfish,PUOXNJ8NJ8
+B08_PowerShelf_7 PSU 2,Redfish,PUMGRC1OMS
+B08_PowerShelf_7 PSU 3,Redfish,PUV6VS91CE
+B08_PowerShelf_7 PSU 4,Redfish,PUYHXUM0P8
+B08_PowerShelf_7 PSU 5,Redfish,PUUIQDJIY4
+B08_PowerShelf_7 PSU 6,Redfish,PUFLRIWO6T
+B08_PowerShelf_8,Redfish,PSQ1OY0L6P
+B08_PowerShelf_8 PSU 1,Redfish,PUOOSY9HM9
+B08_PowerShelf_8 PSU 2,Redfish,PURYL8Q1TE
+B08_PowerShelf_8 PSU 3,Redfish,PUIG56C9NL
+B08_PowerShelf_8 PSU 4,Redfish,PUKZ32ZIJT
+B08_PowerShelf_8 PSU 5,Redfish,PULGURXAMT
+B08_PowerShelf_8 PSU 6,Redfish,PUGFYIR24F
+B09_PowerShelf_1,Redfish,PSR0WLCNY2
+B09_PowerShelf_1 PSU 1,Redfish,PULY4W7A5M
+B09_PowerShelf_1 PSU 2,Redfish,PUXOJO7F5D
+B09_PowerShelf_1 PSU 3,Redfish,PUP2U7NXVJ
+B09_PowerShelf_1 PSU 4,Redfish,PUVX91HBCE
+B09_PowerShelf_1 PSU 5,Redfish,PU5U5CER3X
+B09_PowerShelf_1 PSU 6,Redfish,PU1KIH5QKN
+B09_PowerShelf_2,Redfish,PSYPZ8C9I1
+B09_PowerShelf_2 PSU 1,Redfish,PUAFJZ1O6C
+B09_PowerShelf_2 PSU 2,Redfish,PUBJK1GUSD
+B09_PowerShelf_2 PSU 3,Redfish,PURRF851KW
+B09_PowerShelf_2 PSU 4,Redfish,PUE9YPKEA2
+B09_PowerShelf_2 PSU 5,Redfish,PUUQ04FRE8
+B09_PowerShelf_2 PSU 6,Redfish,PU7WT3Y498
+B09_PowerShelf_3,Redfish,PSKOCABOI7
+B09_PowerShelf_3 PSU 1,Redfish,PUK6LNH7QZ
+B09_PowerShelf_3 PSU 2,Redfish,PUO554DONM
+B09_PowerShelf_3 PSU 3,Redfish,PU3NFVDS1R
+B09_PowerShelf_3 PSU 4,Redfish,PUC81ZYHCQ
+B09_PowerShelf_3 PSU 5,Redfish,PUI83QI6II
+B09_PowerShelf_3 PSU 6,Redfish,PUTH64NRPU
+B09_PowerShelf_4,Redfish,PS1KX92SGH
+B09_PowerShelf_4 PSU 1,Redfish,PUVLMVQQ17
+B09_PowerShelf_4 PSU 2,Redfish,PU1XUUIJH4
+B09_PowerShelf_4 PSU 3,Redfish,PUOJJ9I24Z
+B09_PowerShelf_4 PSU 4,Redfish,PUXJEORB2X
+B09_PowerShelf_4 PSU 5,Redfish,PUUQTVXKQV
+B09_PowerShelf_4 PSU 6,Redfish,PU08S54CS4
+B09_PowerShelf_5,Redfish,PSZZ70ZE82
+B09_PowerShelf_5 PSU 1,Redfish,PUTRG6IM40
+B09_PowerShelf_5 PSU 2,Redfish,PUC1YN79Q9
+B09_PowerShelf_5 PSU 3,Redfish,PUD3LN0J9L
+B09_PowerShelf_5 PSU 4,Redfish,PUL757QBAK
+B09_PowerShelf_5 PSU 5,Redfish,PUS5YYKBOM
+B09_PowerShelf_5 PSU 6,Redfish,PU8RECAPYM
+B09_PowerShelf_6,Redfish,PS0M2P0FYW
+B09_PowerShelf_6 PSU 1,Redfish,PU59E2KVFE
+B09_PowerShelf_6 PSU 2,Redfish,PUQP8DTWA1
+B09_PowerShelf_6 PSU 3,Redfish,PUXMBPUVTZ
+B09_PowerShelf_6 PSU 4,Redfish,PU7302QF63
+B09_PowerShelf_6 PSU 5,Redfish,PUQV1K5TFI
+B09_PowerShelf_6 PSU 6,Redfish,PUTZ8JUL82
+B09_PowerShelf_7,Redfish,PSFJOX8ZAZ
+B09_PowerShelf_7 PSU 1,Redfish,PUIUCPQRYQ
+B09_PowerShelf_7 PSU 2,Redfish,PU9U0EFXUF
+B09_PowerShelf_7 PSU 3,Redfish,PUON2RXJA7
+B09_PowerShelf_7 PSU 4,Redfish,PUINV4JP10
+B09_PowerShelf_7 PSU 5,Redfish,PU15GD93G9
+B09_PowerShelf_7 PSU 6,Redfish,PUN8ZP4FQR
+B09_PowerShelf_8,Redfish,PSU6DCSQJH
+B09_PowerShelf_8 PSU 1,Redfish,PUVJR4ILRP
+B09_PowerShelf_8 PSU 2,Redfish,PUQI6WYA4N
+B09_PowerShelf_8 PSU 3,Redfish,PUR3TMQTXQ
+B09_PowerShelf_8 PSU 4,Redfish,PUFHIMF2CY
+B09_PowerShelf_8 PSU 5,Redfish,PUQ0MEB709
+B09_PowerShelf_8 PSU 6,Redfish,PUW931FNHL
+B10_PowerShelf_1,Redfish,PSI40ZK2ER
+B10_PowerShelf_1 PSU 1,Redfish,PUUMPCAJ40
+B10_PowerShelf_1 PSU 2,Redfish,PUWLS9HLIB
+B10_PowerShelf_1 PSU 3,Redfish,PUE5LWYC4E
+B10_PowerShelf_1 PSU 4,Redfish,PU3AJ591LV
+B10_PowerShelf_1 PSU 5,Redfish,PUUD3FE6BW
+B10_PowerShelf_1 PSU 6,Redfish,PU8CHPYN9F
+B10_PowerShelf_2,Redfish,PSIO5L6EE6
+B10_PowerShelf_2 PSU 1,Redfish,PUCDH0K94D
+B10_PowerShelf_2 PSU 2,Redfish,PUYTZD8TRJ
+B10_PowerShelf_2 PSU 3,Redfish,PUEF80H0VR
+B10_PowerShelf_2 PSU 4,Redfish,PUEAU6F8H0
+B10_PowerShelf_2 PSU 5,Redfish,PU6X25DI13
+B10_PowerShelf_2 PSU 6,Redfish,PUXLULB44H
+B10_PowerShelf_3,Redfish,PSSJ0FDLSN
+B10_PowerShelf_3 PSU 1,Redfish,PU6BSDVSKL
+B10_PowerShelf_3 PSU 2,Redfish,PU13C82GBC
+B10_PowerShelf_3 PSU 3,Redfish,PUOF72ERXJ
+B10_PowerShelf_3 PSU 4,Redfish,PUEAWGLI60
+B10_PowerShelf_3 PSU 5,Redfish,PUDGQQYVLA
+B10_PowerShelf_3 PSU 6,Redfish,PU8MZXA50Z
+B10_PowerShelf_4,Redfish,PSRV7ZSJG8
+B10_PowerShelf_4 PSU 1,Redfish,PUZHVOOJK9
+B10_PowerShelf_4 PSU 2,Redfish,PUA3OBKS7S
+B10_PowerShelf_4 PSU 3,Redfish,PUIG57T7L4
+B10_PowerShelf_4 PSU 4,Redfish,PU8SSXKM7U
+B10_PowerShelf_4 PSU 5,Redfish,PUDM4FOOFN
+B10_PowerShelf_4 PSU 6,Redfish,PU2CT7SRJT
+B10_PowerShelf_5,Redfish,PSCDF16N08
+B10_PowerShelf_5 PSU 1,Redfish,PUWBFPVQF8
+B10_PowerShelf_5 PSU 2,Redfish,PU4DZ7HHZH
+B10_PowerShelf_5 PSU 3,Redfish,PURMQLF05X
+B10_PowerShelf_5 PSU 4,Redfish,PU4GMFC4I4
+B10_PowerShelf_5 PSU 5,Redfish,PU4O4PGJYH
+B10_PowerShelf_5 PSU 6,Redfish,PU1FW8KFFQ
+B10_PowerShelf_6,Redfish,PSLYQLQJIL
+B10_PowerShelf_6 PSU 1,Redfish,PU0Q28B218
+B10_PowerShelf_6 PSU 2,Redfish,PU1PP4HDS8
+B10_PowerShelf_6 PSU 3,Redfish,PU3VXF7PB4
+B10_PowerShelf_6 PSU 4,Redfish,PU14VF6NN5
+B10_PowerShelf_6 PSU 5,Redfish,PUQ9K6ZW3Y
+B10_PowerShelf_6 PSU 6,Redfish,PUK93DT9XA
+B10_PowerShelf_7,Redfish,PSQYHWS3ET
+B10_PowerShelf_7 PSU 1,Redfish,PUIYIHDSC3
+B10_PowerShelf_7 PSU 2,Redfish,PUDDIMMXSY
+B10_PowerShelf_7 PSU 3,Redfish,PUXIY3Z8D0
+B10_PowerShelf_7 PSU 4,Redfish,PUQ2YEQFSN
+B10_PowerShelf_7 PSU 5,Redfish,PU2CZTKBCH
+B10_PowerShelf_7 PSU 6,Redfish,PUKUJW416Y
+B10_PowerShelf_8,Redfish,PSGHBAKL2Y
+B10_PowerShelf_8 PSU 1,Redfish,PUCSOT2VUK
+B10_PowerShelf_8 PSU 2,Redfish,PUAJH9E3FU
+B10_PowerShelf_8 PSU 3,Redfish,PUH27SGGN1
+B10_PowerShelf_8 PSU 4,Redfish,PUN6R5OHL4
+B10_PowerShelf_8 PSU 5,Redfish,PU0PZ9AFDW
+B10_PowerShelf_8 PSU 6,Redfish,PUL8ZQ644J
+B11_PowerShelf_1,Redfish,PSOF2QKDTX
+B11_PowerShelf_1 PSU 1,Redfish,PULPODBF5W
+B11_PowerShelf_1 PSU 2,Redfish,PUIYRPPUVQ
+B11_PowerShelf_1 PSU 3,Redfish,PUOSPXT8JE
+B11_PowerShelf_1 PSU 4,Redfish,PUB5GXJGHX
+B11_PowerShelf_1 PSU 5,Redfish,PUX3F6JO4Q
+B11_PowerShelf_1 PSU 6,Redfish,PU2W68N15O
+B11_PowerShelf_2,Redfish,PSZ9NX5B5F
+B11_PowerShelf_2 PSU 1,Redfish,PU7F7BRVBS
+B11_PowerShelf_2 PSU 2,Redfish,PU0UBRD8WQ
+B11_PowerShelf_2 PSU 3,Redfish,PUX1S53MH3
+B11_PowerShelf_2 PSU 4,Redfish,PUPWPCWC9I
+B11_PowerShelf_2 PSU 5,Redfish,PURSJVRLIF
+B11_PowerShelf_2 PSU 6,Redfish,PUEX4T3VJZ
+B11_PowerShelf_3,Redfish,PSBYDQGMQE
+B11_PowerShelf_3 PSU 1,Redfish,PU2YHO7A9Q
+B11_PowerShelf_3 PSU 2,Redfish,PU5IL8SJOL
+B11_PowerShelf_3 PSU 3,Redfish,PUHU066GNW
+B11_PowerShelf_3 PSU 4,Redfish,PURHYMHWPS
+B11_PowerShelf_3 PSU 5,Redfish,PUOKGVQ3AN
+B11_PowerShelf_3 PSU 6,Redfish,PUENG7GUOJ
+B11_PowerShelf_4,Redfish,PSBH7AJP0F
+B11_PowerShelf_4 PSU 1,Redfish,PUTS6942R2
+B11_PowerShelf_4 PSU 2,Redfish,PUYKB8ZZ6O
+B11_PowerShelf_4 PSU 3,Redfish,PUHSAN4QRO
+B11_PowerShelf_4 PSU 4,Redfish,PU4S5VF2XD
+B11_PowerShelf_4 PSU 5,Redfish,PU5C065H7J
+B11_PowerShelf_4 PSU 6,Redfish,PULBPNKHV9
+B11_PowerShelf_5,Redfish,PS9MP4YYMH
+B11_PowerShelf_5 PSU 1,Redfish,PUH4S25XQA
+B11_PowerShelf_5 PSU 2,Redfish,PUM2EVA3L2
+B11_PowerShelf_5 PSU 3,Redfish,PUOZZSX2TP
+B11_PowerShelf_5 PSU 4,Redfish,PUEG6P72HT
+B11_PowerShelf_5 PSU 5,Redfish,PU1UGLRGIL
+B11_PowerShelf_5 PSU 6,Redfish,PUZY8ITUOX
+B11_PowerShelf_6,Redfish,PSWO57WH1D
+B11_PowerShelf_6 PSU 1,Redfish,PULICR8DF6
+B11_PowerShelf_6 PSU 2,Redfish,PUUIZOM10O
+B11_PowerShelf_6 PSU 3,Redfish,PUGD6SJ7Y4
+B11_PowerShelf_6 PSU 4,Redfish,PU7JOSOITI
+B11_PowerShelf_6 PSU 5,Redfish,PUV3LPYYVU
+B11_PowerShelf_6 PSU 6,Redfish,PUVJJR5I5F
+B11_PowerShelf_7,Redfish,PSALI0NRZ8
+B11_PowerShelf_7 PSU 1,Redfish,PUDGXPZXUA
+B11_PowerShelf_7 PSU 2,Redfish,PUKCHIMAYX
+B11_PowerShelf_7 PSU 3,Redfish,PUITYG6ML2
+B11_PowerShelf_7 PSU 4,Redfish,PUAU8U071O
+B11_PowerShelf_7 PSU 5,Redfish,PU4E1BXZ5L
+B11_PowerShelf_7 PSU 6,Redfish,PUFR6BU3Z6
+B11_PowerShelf_8,Redfish,PSMNGTV5LI
+B11_PowerShelf_8 PSU 1,Redfish,PUAP9D6RW5
+B11_PowerShelf_8 PSU 2,Redfish,PU0K51NAV9
+B11_PowerShelf_8 PSU 3,Redfish,PUJO0Z0VX4
+B11_PowerShelf_8 PSU 4,Redfish,PUBEUJRMWB
+B11_PowerShelf_8 PSU 5,Redfish,PUZIP8BFSA
+B11_PowerShelf_8 PSU 6,Redfish,PUTNXGXZDD
+B12_PowerShelf_1,Redfish,PSRRJEUROC
+B12_PowerShelf_1 PSU 1,Redfish,PU8QAI9UK0
+B12_PowerShelf_1 PSU 2,Redfish,PU6VURO53F
+B12_PowerShelf_1 PSU 3,Redfish,PUMKRJ9VFT
+B12_PowerShelf_1 PSU 4,Redfish,PUBX3RFDIV
+B12_PowerShelf_1 PSU 5,Redfish,PUVNA119D8
+B12_PowerShelf_1 PSU 6,Redfish,PUQCJK6NNQ
+B12_PowerShelf_2,Redfish,PSUOE2Y6YB
+B12_PowerShelf_2 PSU 1,Redfish,PUGPIJQ5WN
+B12_PowerShelf_2 PSU 2,Redfish,PU33QJTOIF
+B12_PowerShelf_2 PSU 3,Redfish,PU5WIZA9SQ
+B12_PowerShelf_2 PSU 4,Redfish,PUSPK9RJ5O
+B12_PowerShelf_2 PSU 5,Redfish,PUGL8098EC
+B12_PowerShelf_2 PSU 6,Redfish,PUFGCCFNAF
+B12_PowerShelf_3,Redfish,PS7VS1AN0T
+B12_PowerShelf_3 PSU 1,Redfish,PUMKVH3O0N
+B12_PowerShelf_3 PSU 2,Redfish,PUMVHJYNY5
+B12_PowerShelf_3 PSU 3,Redfish,PUD673HKTG
+B12_PowerShelf_3 PSU 4,Redfish,PUE0A05J5F
+B12_PowerShelf_3 PSU 5,Redfish,PUFMMRRWK5
+B12_PowerShelf_3 PSU 6,Redfish,PU2KASMX5U
+B12_PowerShelf_4,Redfish,PSYE65DXIT
+B12_PowerShelf_4 PSU 1,Redfish,PUS4791NYJ
+B12_PowerShelf_4 PSU 2,Redfish,PUSNEVTXUY
+B12_PowerShelf_4 PSU 3,Redfish,PUIKE3B6XG
+B12_PowerShelf_4 PSU 4,Redfish,PU1Z1T6YEM
+B12_PowerShelf_4 PSU 5,Redfish,PU2FHZ7Y86
+B12_PowerShelf_4 PSU 6,Redfish,PU20GTQ3NP
+B12_PowerShelf_5,Redfish,PSD7WFVI46
+B12_PowerShelf_5 PSU 1,Redfish,PUUFUJ6QK5
+B12_PowerShelf_5 PSU 2,Redfish,PU6LAN0JUI
+B12_PowerShelf_5 PSU 3,Redfish,PUAMVYJ5PO
+B12_PowerShelf_5 PSU 4,Redfish,PU9T93ZRUE
+B12_PowerShelf_5 PSU 5,Redfish,PU0HVU8ZFH
+B12_PowerShelf_5 PSU 6,Redfish,PUAFMIVCML
+B12_PowerShelf_6,Redfish,PSIY11K0U6
+B12_PowerShelf_6 PSU 1,Redfish,PUBRKQ6LCV
+B12_PowerShelf_6 PSU 2,Redfish,PUM7AE1R84
+B12_PowerShelf_6 PSU 3,Redfish,PUY50WW03Z
+B12_PowerShelf_6 PSU 4,Redfish,PU92L3KR79
+B12_PowerShelf_6 PSU 5,Redfish,PUMSU3UXE6
+B12_PowerShelf_6 PSU 6,Redfish,PUWW0TNGYK
+B12_PowerShelf_7,Redfish,PS54EHABGI
+B12_PowerShelf_7 PSU 1,Redfish,PUC3UY9AJS
+B12_PowerShelf_7 PSU 2,Redfish,PUESEIKWA8
+B12_PowerShelf_7 PSU 3,Redfish,PUN3670LPA
+B12_PowerShelf_7 PSU 4,Redfish,PUAOPHHO8V
+B12_PowerShelf_7 PSU 5,Redfish,PUT6V1RPD9
+B12_PowerShelf_7 PSU 6,Redfish,PUVDFXK3J5
+B12_PowerShelf_8,Redfish,PSLBZ3R6LY
+B12_PowerShelf_8 PSU 1,Redfish,PUNHAZ8Q3O
+B12_PowerShelf_8 PSU 2,Redfish,PUHS7FF5P8
+B12_PowerShelf_8 PSU 3,Redfish,PUUIF06IXL
+B12_PowerShelf_8 PSU 4,Redfish,PUEWO8J1FQ
+B12_PowerShelf_8 PSU 5,Redfish,PUEP0ZVWZ8
+B12_PowerShelf_8 PSU 6,Redfish,PU2X373AP1
+B13_PowerShelf_1,Redfish,PSL2TPBCZO
+B13_PowerShelf_1 PSU 1,Redfish,PUF1NWTQ9U
+B13_PowerShelf_1 PSU 2,Redfish,PUP08XKV2E
+B13_PowerShelf_1 PSU 3,Redfish,PURFNUDB5Q
+B13_PowerShelf_1 PSU 4,Redfish,PUCKQNEULN
+B13_PowerShelf_1 PSU 5,Redfish,PU1DIKVDHO
+B13_PowerShelf_1 PSU 6,Redfish,PURLGYC9LI
+B13_PowerShelf_2,Redfish,PSXHYI7UFM
+B13_PowerShelf_2 PSU 1,Redfish,PUYQN5XET5
+B13_PowerShelf_2 PSU 2,Redfish,PU49GCKUYQ
+B13_PowerShelf_2 PSU 3,Redfish,PUIR9JIH5K
+B13_PowerShelf_2 PSU 4,Redfish,PUSGQND8EF
+B13_PowerShelf_2 PSU 5,Redfish,PU4EIO94M0
+B13_PowerShelf_2 PSU 6,Redfish,PUMF4YKKNE
+B13_PowerShelf_3,Redfish,PSBUQ5C4UV
+B13_PowerShelf_3 PSU 1,Redfish,PUO8NFYUQK
+B13_PowerShelf_3 PSU 2,Redfish,PUS51IAKJS
+B13_PowerShelf_3 PSU 3,Redfish,PUO2V6HQ9H
+B13_PowerShelf_3 PSU 4,Redfish,PUMJECZOFZ
+B13_PowerShelf_3 PSU 5,Redfish,PU66BC03BL
+B13_PowerShelf_3 PSU 6,Redfish,PURRCXPWVA
+B13_PowerShelf_4,Redfish,PS4W1I84XK
+B13_PowerShelf_4 PSU 1,Redfish,PUOITN6PUQ
+B13_PowerShelf_4 PSU 2,Redfish,PU1BKGS3OX
+B13_PowerShelf_4 PSU 3,Redfish,PUSKKASLXL
+B13_PowerShelf_4 PSU 4,Redfish,PUORNH9FNR
+B13_PowerShelf_4 PSU 5,Redfish,PUP4893XVY
+B13_PowerShelf_4 PSU 6,Redfish,PUGW9BOPPD
+B13_PowerShelf_5,Redfish,PSATIIWXRX
+B13_PowerShelf_5 PSU 1,Redfish,PU2F50YE8B
+B13_PowerShelf_5 PSU 2,Redfish,PUNN88JJT2
+B13_PowerShelf_5 PSU 3,Redfish,PUEZ96O9QE
+B13_PowerShelf_5 PSU 4,Redfish,PUX3BSY9O0
+B13_PowerShelf_5 PSU 5,Redfish,PU9YGAJCJ2
+B13_PowerShelf_5 PSU 6,Redfish,PUI3LDMJ0N
+B13_PowerShelf_6,Redfish,PSQRRFNZ74
+B13_PowerShelf_6 PSU 1,Redfish,PUNRURK65I
+B13_PowerShelf_6 PSU 2,Redfish,PU2RM2E0Y7
+B13_PowerShelf_6 PSU 3,Redfish,PU56J10IO4
+B13_PowerShelf_6 PSU 4,Redfish,PU6JOCGZ2M
+B13_PowerShelf_6 PSU 5,Redfish,PUOAWYWFXA
+B13_PowerShelf_6 PSU 6,Redfish,PUCYABKWZI
+B13_PowerShelf_7,Redfish,PS4GN38XBP
+B13_PowerShelf_7 PSU 1,Redfish,PUT6OE7YWQ
+B13_PowerShelf_7 PSU 2,Redfish,PURIAR4BIZ
+B13_PowerShelf_7 PSU 3,Redfish,PUWJ8H2GN9
+B13_PowerShelf_7 PSU 4,Redfish,PUUZ11PWR0
+B13_PowerShelf_7 PSU 5,Redfish,PUNGSD816Y
+B13_PowerShelf_7 PSU 6,Redfish,PUBRG8Z3ZI
+B13_PowerShelf_8,Redfish,PS01OL9CCI
+B13_PowerShelf_8 PSU 1,Redfish,PUV256T3Z1
+B13_PowerShelf_8 PSU 2,Redfish,PULMIKYPB4
+B13_PowerShelf_8 PSU 3,Redfish,PUC8T8OM0H
+B13_PowerShelf_8 PSU 4,Redfish,PU96XWYAUW
+B13_PowerShelf_8 PSU 5,Redfish,PUBMKWHO4A
+B13_PowerShelf_8 PSU 6,Redfish,PUDF22W05O
+B14_PowerShelf_1,Redfish,PS44DE1LVI
+B14_PowerShelf_1 PSU 1,Redfish,PULM1FGKD9
+B14_PowerShelf_1 PSU 2,Redfish,PUAJ8SALGG
+B14_PowerShelf_1 PSU 3,Redfish,PUSVOYFDHW
+B14_PowerShelf_1 PSU 4,Redfish,PUQ006NW4I
+B14_PowerShelf_1 PSU 5,Redfish,PUBGOM6OJN
+B14_PowerShelf_1 PSU 6,Redfish,PUQZMI6VFN
+B14_PowerShelf_2,Redfish,PSS0ME8IGD
+B14_PowerShelf_2 PSU 1,Redfish,PUI8164QDE
+B14_PowerShelf_2 PSU 2,Redfish,PUCM438Z2W
+B14_PowerShelf_2 PSU 3,Redfish,PU70BIDZ40
+B14_PowerShelf_2 PSU 4,Redfish,PUS3K9LJFH
+B14_PowerShelf_2 PSU 5,Redfish,PUAMYN7J99
+B14_PowerShelf_2 PSU 6,Redfish,PU714FS96B
+B14_PowerShelf_3,Redfish,PSZOQAOE00
+B14_PowerShelf_3 PSU 1,Redfish,PUPSK6QYCJ
+B14_PowerShelf_3 PSU 2,Redfish,PUQN8AFN5A
+B14_PowerShelf_3 PSU 3,Redfish,PUZC5D8N1S
+B14_PowerShelf_3 PSU 4,Redfish,PUAB6KW3VX
+B14_PowerShelf_3 PSU 5,Redfish,PUDHMYSBV3
+B14_PowerShelf_3 PSU 6,Redfish,PUIX32JRF6
+B14_PowerShelf_4,Redfish,PSQJDJ50IF
+B14_PowerShelf_4 PSU 1,Redfish,PU614F8TPE
+B14_PowerShelf_4 PSU 2,Redfish,PU89EGGFSW
+B14_PowerShelf_4 PSU 3,Redfish,PUFBXK2ZHW
+B14_PowerShelf_4 PSU 4,Redfish,PUVJQWXTPQ
+B14_PowerShelf_4 PSU 5,Redfish,PUQFBKKVLH
+B14_PowerShelf_4 PSU 6,Redfish,PU9BMSFROS
+B14_PowerShelf_5,Redfish,PSV5MKAYH5
+B14_PowerShelf_5 PSU 1,Redfish,PUC769NOQ0
+B14_PowerShelf_5 PSU 2,Redfish,PUJ7GMG6P8
+B14_PowerShelf_5 PSU 3,Redfish,PU1F51B349
+B14_PowerShelf_5 PSU 4,Redfish,PUM8YOY4WV
+B14_PowerShelf_5 PSU 5,Redfish,PUF2QWICB7
+B14_PowerShelf_5 PSU 6,Redfish,PUU800GBVJ
+B14_PowerShelf_6,Redfish,PSVHR7AKVV
+B14_PowerShelf_6 PSU 1,Redfish,PUY7JUT4U5
+B14_PowerShelf_6 PSU 2,Redfish,PUBOEGM1JH
+B14_PowerShelf_6 PSU 3,Redfish,PU8G0OVI02
+B14_PowerShelf_6 PSU 4,Redfish,PUQ0UVLH03
+B14_PowerShelf_6 PSU 5,Redfish,PU6DKBCEX6
+B14_PowerShelf_6 PSU 6,Redfish,PUKQXEUE2X
+B14_PowerShelf_7,Redfish,PSN2ADF7AJ
+B14_PowerShelf_7 PSU 1,Redfish,PUJLL88DUG
+B14_PowerShelf_7 PSU 2,Redfish,PURSZ27QNZ
+B14_PowerShelf_7 PSU 3,Redfish,PUHIU2CDU6
+B14_PowerShelf_7 PSU 4,Redfish,PU0UWD8SMU
+B14_PowerShelf_7 PSU 5,Redfish,PUSNJG7BKQ
+B14_PowerShelf_7 PSU 6,Redfish,PUYGY9UBCE
+B14_PowerShelf_8,Redfish,PSS1NKCXWC
+B14_PowerShelf_8 PSU 1,Redfish,PUL77JJ24U
+B14_PowerShelf_8 PSU 2,Redfish,PU96YCXBDD
+B14_PowerShelf_8 PSU 3,Redfish,PUKGIWQ9G2
+B14_PowerShelf_8 PSU 4,Redfish,PURDQW00K3
+B14_PowerShelf_8 PSU 5,Redfish,PUOFNBSBCP
+B14_PowerShelf_8 PSU 6,Redfish,PUYYUMGRSO
+a01-ct01,Redfish,CTESS4DIVU
+a01-ct02,Redfish,CT2T011VIW
+a01-ct03,Redfish,CTD3Q3YYHJ
+a01-ct04,Redfish,CT9729SCMU
+a01-ct05,Redfish,CTKQ5ZUAZN
+a01-ct06,Redfish,CTPOVRES1V
+a01-ct07,Redfish,CTR7JP7RSA
+a01-ct08,Redfish,CTIEBZ5DWQ
+a01-ct09,Redfish,CTRI5WQQ79
+a01-ct10,Redfish,CTTUYL2SR5
+a01-ct11,Redfish,CTPKJBXVQS
+a01-ct12,Redfish,CTR7JRS33U
+a01-ct13,Redfish,CT63L7DY2S
+a01-ct14,Redfish,CTQ884RCJR
+a01-ct15,Redfish,CTD0OQAAU7
+a01-ct16,Redfish,CTC2IW18YW
+a01-ct17,Redfish,CTFLU18RZE
+a01-ct18,Redfish,CTIV85SDY7
+a01-mgmt1,SNMP,MSAZ7VS4LQ
+a01-mgmt2,SNMP,MSMHHUFFBX
+a01-nvsw1,Redfish,NS26LO3SHA
+a01-nvsw2,Redfish,NSD5BMM1AS
+a01-nvsw3,Redfish,NSLKLE8U2F
+a01-nvsw4,Redfish,NSSPMVYCOH
+a01-nvsw5,Redfish,NS7BT4Q1GZ
+a01-nvsw6,Redfish,NS5ET2S8F4
+a01-nvsw7,Redfish,NSOPOCKMJR
+a01-nvsw8,Redfish,NS2OQLRE22
+a01-nvsw9,Redfish,NS34I85XO2
+a02-ct01,Redfish,CTZK82E1L6
+a02-ct02,Redfish,CTTMUZEWEE
+a02-ct03,Redfish,CTMXXBUMNI
+a02-ct04,Redfish,CTPHETX7YO
+a02-ct05,Redfish,CTJFAJRJL7
+a02-ct06,Redfish,CTV4TX8SJW
+a02-ct07,Redfish,CT1LXA9Q8Y
+a02-ct08,Redfish,CT576O98I3
+a02-ct09,Redfish,CTMHMWTR2U
+a02-ct10,Redfish,CTGWF6834Z
+a02-ct11,Redfish,CT2XDN0E09
+a02-ct12,Redfish,CTAH4UU8N8
+a02-ct13,Redfish,CTSXFSD0MJ
+a02-ct14,Redfish,CTBV2FKTM9
+a02-ct15,Redfish,CTG0AVRP36
+a02-ct16,Redfish,CT99GSGTF5
+a02-ct17,Redfish,CTS5XANNHF
+a02-ct18,Redfish,CTVE9R50NW
+a02-mgmt1,SNMP,MSBNO1788P
+a02-mgmt2,SNMP,MS5CM3L7TC
+a02-nvsw1,Redfish,NSXM6ES3YQ
+a02-nvsw2,Redfish,NSVC2DRL1I
+a02-nvsw3,Redfish,NSLSL604OG
+a02-nvsw4,Redfish,NS3HYM2O2N
+a02-nvsw5,Redfish,NSF0XEJ4L4
+a02-nvsw6,Redfish,NSQFWI9UEK
+a02-nvsw7,Redfish,NSQOAZYMY7
+a02-nvsw8,Redfish,NS648YTHML
+a02-nvsw9,Redfish,NS70AUJMXO
+a03-ct01,Redfish,CTDSSLLMG9
+a03-ct02,Redfish,CT5GJ85SND
+a03-ct03,Redfish,CTVHQHSSS2
+a03-ct04,Redfish,CTJ5RU4L9O
+a03-ct05,Redfish,CTWTFT90E3
+a03-ct06,Redfish,CTXCXB27GJ
+a03-ct07,Redfish,CTTMQGBGFX
+a03-ct08,Redfish,CTRTBHNTQ0
+a03-ct09,Redfish,CTFLZBADVZ
+a03-ct10,Redfish,CT3J1FG3PP
+a03-ct11,Redfish,CT3GI8HF9P
+a03-ct12,Redfish,CTP4Z8WP8V
+a03-ct13,Redfish,CTD60ECZWF
+a03-ct14,Redfish,CTGXG89B8X
+a03-ct15,Redfish,CT62KNAS54
+a03-ct16,Redfish,CTRE2U8QVV
+a03-ct17,Redfish,CT7YLJYQM3
+a03-ct18,Redfish,CTSTDJBVC7
+a03-mgmt1,SNMP,MS3E21OVUF
+a03-mgmt2,SNMP,MSMRAWD4C7
+a03-nvsw1,Redfish,NSUNXUQRA6
+a03-nvsw2,Redfish,NSEDDTJ80C
+a03-nvsw3,Redfish,NSVE86ZLQL
+a03-nvsw4,Redfish,NS6YOS4PRV
+a03-nvsw5,Redfish,NSP1VVRA8N
+a03-nvsw6,Redfish,NSBQFISJP0
+a03-nvsw7,Redfish,NSAVS8ENHC
+a03-nvsw8,Redfish,NSGODD9OAH
+a03-nvsw9,Redfish,NSJ2S6DG6H
+a04-ct01,Redfish,CTN8RPUSM0
+a04-ct02,Redfish,CTVXINIKYY
+a04-ct03,Redfish,CTULT9M0ZV
+a04-ct04,Redfish,CTIQ7VSXEE
+a04-ct05,Redfish,CTWLOJPKFW
+a04-ct06,Redfish,CTAVD3PCNJ
+a04-ct07,Redfish,CT103J0OKL
+a04-ct08,Redfish,CTGWBHZZ1O
+a04-ct09,Redfish,CT5XFDNVXO
+a04-ct10,Redfish,CTWKT8YM7I
+a04-ct11,Redfish,CTSBWHGPUQ
+a04-ct12,Redfish,CTNRCLBVMK
+a04-ct13,Redfish,CTO9WT38KX
+a04-ct14,Redfish,CT8S3MOHPP
+a04-ct15,Redfish,CTW642UN55
+a04-ct16,Redfish,CTBIGWR3PG
+a04-ct17,Redfish,CTBDDHEVW9
+a04-ct18,Redfish,CTWOL6DCMF
+a04-mgmt1,SNMP,MSY1ZKLDG6
+a04-mgmt2,SNMP,MS7VWIGN1A
+a04-nvsw1,Redfish,NSWDD35TRV
+a04-nvsw2,Redfish,NSEMFQ4D92
+a04-nvsw3,Redfish,NSP8DYP9PC
+a04-nvsw4,Redfish,NSR09OPCZS
+a04-nvsw5,Redfish,NSPMG4V2J2
+a04-nvsw6,Redfish,NS2ZN1OWUW
+a04-nvsw7,Redfish,NSL45L0VGP
+a04-nvsw8,Redfish,NSBVSK05H7
+a04-nvsw9,Redfish,NS0PMS8L5I
+a05-ct01,Redfish,CT1K7U4P7O
+a05-ct02,Redfish,CTFX9FOBQU
+a05-ct03,Redfish,CT3PW2K22P
+a05-ct04,Redfish,CTJ0SFL1YB
+a05-ct05,Redfish,CTDQCOC9NY
+a05-ct06,Redfish,CTJHMDTETY
+a05-ct07,Redfish,CTQM2EFTYO
+a05-ct08,Redfish,CTVQG17R6V
+a05-ct09,Redfish,CTWK9T9M7Z
+a05-ct10,Redfish,CTR77FQ68Z
+a05-ct11,Redfish,CTHE83CLK8
+a05-ct12,Redfish,CTZ37KP5X7
+a05-ct13,Redfish,CTA9HWLJ94
+a05-ct14,Redfish,CTYTWB4URY
+a05-ct15,Redfish,CTYCX5H7TS
+a05-ct16,Redfish,CT2T1W52P7
+a05-ct17,Redfish,CTBVR5RE65
+a05-ct18,Redfish,CT8JIIH9QY
+a05-mgmt1,SNMP,MSI1XVPHSW
+a05-mgmt2,SNMP,MS52MJOOBI
+a05-nvsw1,Redfish,NSE0SMO2X3
+a05-nvsw2,Redfish,NSZKLPPPPD
+a05-nvsw3,Redfish,NSNNHTV18J
+a05-nvsw4,Redfish,NSLZ034LDH
+a05-nvsw5,Redfish,NSJCGZILO4
+a05-nvsw6,Redfish,NSBJ85KDB4
+a05-nvsw7,Redfish,NS2M315S0P
+a05-nvsw8,Redfish,NSEYEB5ILU
+a05-nvsw9,Redfish,NSLIWJY6UJ
+a06-ct01,Redfish,CTGV6C9PBZ
+a06-ct02,Redfish,CT215QAMR0
+a06-ct03,Redfish,CTVWH4C5GR
+a06-ct04,Redfish,CT49YDPN5E
+a06-ct05,Redfish,CTV5V697XQ
+a06-ct06,Redfish,CTMJ6CO83D
+a06-ct07,Redfish,CTR2S93UHT
+a06-ct08,Redfish,CTDJQ9YYFJ
+a06-ct09,Redfish,CT30O3SGAX
+a06-ct10,Redfish,CTW9A0ZEZF
+a06-ct11,Redfish,CTF0EFIQ92
+a06-ct12,Redfish,CTYVZBC9E9
+a06-ct13,Redfish,CTVTAEE6BD
+a06-ct14,Redfish,CTIWMGV5P8
+a06-ct15,Redfish,CT9Q726OBS
+a06-ct16,Redfish,CTD4ODDTMC
+a06-ct17,Redfish,CTBFHO1UVM
+a06-ct18,Redfish,CTJEKOLLC5
+a06-mgmt1,SNMP,MSJ54597M3
+a06-mgmt2,SNMP,MSP7IMUC8R
+a06-nvsw1,Redfish,NS0E09BG5R
+a06-nvsw2,Redfish,NSCZ5R8E14
+a06-nvsw3,Redfish,NSIWCMNVUO
+a06-nvsw4,Redfish,NST1LHNB77
+a06-nvsw5,Redfish,NSFMFMFNZD
+a06-nvsw6,Redfish,NSTEX339KU
+a06-nvsw7,Redfish,NS4EHS0CI2
+a06-nvsw8,Redfish,NS06EGH3SX
+a06-nvsw9,Redfish,NSNR62QOKA
+a07-ct01,Redfish,CT7MOKCUGX
+a07-ct02,Redfish,CT6UGGUTPU
+a07-ct03,Redfish,CTI6ZREAUV
+a07-ct04,Redfish,CTRYB13GAR
+a07-ct05,Redfish,CT7W28FWJG
+a07-ct06,Redfish,CTRFZ03JJC
+a07-ct07,Redfish,CTQPP2JFHP
+a07-ct08,Redfish,CTRPVDDN84
+a07-ct09,Redfish,CT1KP29OEM
+a07-ct10,Redfish,CTGTVBHGEP
+a07-ct11,Redfish,CTOPV9F4HG
+a07-ct12,Redfish,CT1GU0RNA8
+a07-ct13,Redfish,CTE0WFGRGN
+a07-ct14,Redfish,CTLUGDZHLP
+a07-ct15,Redfish,CT2Z6JA4CN
+a07-ct16,Redfish,CT8KB6PMWK
+a07-ct17,Redfish,CT07BWZL6T
+a07-ct18,Redfish,CT8E2C2PJY
+a07-mgmt1,SNMP,MSCL77QN5T
+a07-mgmt2,SNMP,MS2NTABOCI
+a07-nvsw1,Redfish,NST36S6V32
+a07-nvsw2,Redfish,NS7P7ACU83
+a07-nvsw3,Redfish,NSZ87LCDMR
+a07-nvsw4,Redfish,NS0IWECYMU
+a07-nvsw5,Redfish,NS04V484TS
+a07-nvsw6,Redfish,NS30KVICKH
+a07-nvsw7,Redfish,NSWHNUQL9P
+a07-nvsw8,Redfish,NSL8FQJZAU
+a07-nvsw9,Redfish,NS9S0NSMP3
+a08-ct01,Redfish,CT7MPER8KN
+a08-ct02,Redfish,CTKGF97G4T
+a08-ct03,Redfish,CTE93AFNW1
+a08-ct04,Redfish,CT2PCRSRJU
+a08-ct05,Redfish,CT81EVT6MR
+a08-ct06,Redfish,CTOAN8KT60
+a08-ct07,Redfish,CTXYZZOCTR
+a08-ct08,Redfish,CTMC6JKSCQ
+a08-ct09,Redfish,CTS7OK3FCD
+a08-ct10,Redfish,CTGEB1QBTR
+a08-ct11,Redfish,CTRS9MKRDE
+a08-ct12,Redfish,CT7N6GW09G
+a08-ct13,Redfish,CTQ85K19JL
+a08-ct14,Redfish,CTELHWQOR2
+a08-ct15,Redfish,CTZLC9HIF1
+a08-ct16,Redfish,CTN9766REG
+a08-ct17,Redfish,CTQJ5AIB2K
+a08-ct18,Redfish,CTSL73383H
+a08-mgmt1,SNMP,MSPKOP7OK0
+a08-mgmt2,SNMP,MSELWSNCAC
+a08-nvsw1,Redfish,NSU5S17DKW
+a08-nvsw2,Redfish,NSMR56C27N
+a08-nvsw3,Redfish,NSGXCEYF3Z
+a08-nvsw4,Redfish,NSWO6CY2ZG
+a08-nvsw5,Redfish,NS6W9TM7WC
+a08-nvsw6,Redfish,NSRC9MT1MU
+a08-nvsw7,Redfish,NSPLD3SB9W
+a08-nvsw8,Redfish,NSQLN58QGG
+a08-nvsw9,Redfish,NS4SSI7GOM
+a09-ct01,Redfish,CT3Z2RYQ0Q
+a09-ct02,Redfish,CTAABNFQEJ
+a09-ct03,Redfish,CTJFKIW1JE
+a09-ct04,Redfish,CTKYROJYG8
+a09-ct05,Redfish,CTDL6OXRQ2
+a09-ct06,Redfish,CTX28AU6D7
+a09-ct07,Redfish,CT0TUGHFVB
+a09-ct08,Redfish,CT8RVIDMB9
+a09-ct09,Redfish,CTNEV58KJQ
+a09-ct10,Redfish,CTQSRSX7QQ
+a09-ct11,Redfish,CTPC65GLZP
+a09-ct12,Redfish,CTZBPT7M0K
+a09-ct13,Redfish,CTLKRGWQ11
+a09-ct14,Redfish,CTPYYG82JD
+a09-ct15,Redfish,CT7ES3HRGB
+a09-ct16,Redfish,CTLY6LEHDY
+a09-ct17,Redfish,CTRQZKZX9X
+a09-ct18,Redfish,CTDI1M258Y
+a09-mgmt1,SNMP,MSDFG7YBRE
+a09-mgmt2,SNMP,MSK4Z3UMGF
+a09-nvsw1,Redfish,NSNW0YLP1E
+a09-nvsw2,Redfish,NSOB8FXGOG
+a09-nvsw3,Redfish,NSVHQP6VCN
+a09-nvsw4,Redfish,NSX1CJUDSK
+a09-nvsw5,Redfish,NS7WV37QY7
+a09-nvsw6,Redfish,NSQV5EMXAJ
+a09-nvsw7,Redfish,NSE2L47B3F
+a09-nvsw8,Redfish,NS2V78KV69
+a09-nvsw9,Redfish,NS5K8MDPR7
+a10-ct01,Redfish,CTZPG6JEIL
+a10-ct02,Redfish,CTGRQHBB5V
+a10-ct03,Redfish,CT3907NLTT
+a10-ct04,Redfish,CTBCSB9EW0
+a10-ct05,Redfish,CTCNJ75REI
+a10-ct06,Redfish,CT2F4TRX2B
+a10-ct07,Redfish,CTJ4I7CETJ
+a10-ct08,Redfish,CT15GO4BDF
+a10-ct09,Redfish,CTGWZNPFAL
+a10-ct10,Redfish,CTMU1IFE9A
+a10-ct11,Redfish,CTY2DOQC8P
+a10-ct12,Redfish,CTZJDXTEZZ
+a10-ct13,Redfish,CTX4GH2MXS
+a10-ct14,Redfish,CTTXRN23HU
+a10-ct15,Redfish,CTTD8GKV9K
+a10-ct16,Redfish,CT95I2LRQD
+a10-ct17,Redfish,CT7T362Q11
+a10-ct18,Redfish,CTV5EWZGVM
+a10-mgmt1,SNMP,MSA8MMMCZW
+a10-mgmt2,SNMP,MS01VUZUBV
+a10-nvsw1,Redfish,NSFEX12ORF
+a10-nvsw2,Redfish,NSWJDLOG54
+a10-nvsw3,Redfish,NSD4Y8065T
+a10-nvsw4,Redfish,NSKMWZJCLB
+a10-nvsw5,Redfish,NS1JBT0V8K
+a10-nvsw6,Redfish,NSWV7CWDAA
+a10-nvsw7,Redfish,NS3RJ2XB54
+a10-nvsw8,Redfish,NS1KZCSM5M
+a10-nvsw9,Redfish,NS0CDVNFBX
+a11-ct01,Redfish,CTO8H3V7NM
+a11-ct02,Redfish,CTZOYRUWQJ
+a11-ct03,Redfish,CTK7DB38E3
+a11-ct04,Redfish,CT3LNYVB1I
+a11-ct05,Redfish,CT7KJHF6QM
+a11-ct06,Redfish,CTRQ8J2MKH
+a11-ct07,Redfish,CTDUJZCGJ0
+a11-ct08,Redfish,CTQDF5XTM4
+a11-ct09,Redfish,CTWWC45KNP
+a11-ct10,Redfish,CTFO8M8ZEH
+a11-ct11,Redfish,CTNP61ONMM
+a11-ct12,Redfish,CTFLDPIXPX
+a11-ct13,Redfish,CTXMSLERPL
+a11-ct14,Redfish,CTT5KER2NB
+a11-ct15,Redfish,CTY1JO5B7H
+a11-ct16,Redfish,CT50ZNYIRL
+a11-ct17,Redfish,CTR65GWTJT
+a11-ct18,Redfish,CTMG12YET7
+a11-mgmt1,SNMP,MSPIATW6MD
+a11-mgmt2,SNMP,MSO6D8D04F
+a11-nvsw1,Redfish,NSVVSW7G5W
+a11-nvsw2,Redfish,NSHBMXP9AE
+a11-nvsw3,Redfish,NSRM5COFJJ
+a11-nvsw4,Redfish,NSPI3H243W
+a11-nvsw5,Redfish,NSUYWZN91P
+a11-nvsw6,Redfish,NS7BLKV4SJ
+a11-nvsw7,Redfish,NSFH0NO3LU
+a11-nvsw8,Redfish,NS060Z1761
+a11-nvsw9,Redfish,NSHI9UI2OO
+a12-ct01,Redfish,CTDDWKNJTF
+a12-ct02,Redfish,CTAFBPRVA0
+a12-ct03,Redfish,CTED3R4WX5
+a12-ct04,Redfish,CTYS1B2RUZ
+a12-ct05,Redfish,CTOT9X58NP
+a12-ct06,Redfish,CT0ABQSWVV
+a12-ct07,Redfish,CTDAMOVTOM
+a12-ct08,Redfish,CTT7ZCMHJD
+a12-ct09,Redfish,CTFSLT4W6J
+a12-ct10,Redfish,CTOWNJZ7E8
+a12-ct11,Redfish,CTJ8S09G11
+a12-ct12,Redfish,CTN9J38ZVH
+a12-ct13,Redfish,CT3ROSJEB0
+a12-ct14,Redfish,CT4RCFF424
+a12-ct15,Redfish,CTG9WSW3XT
+a12-ct16,Redfish,CTQI2J0BRL
+a12-ct17,Redfish,CTJT9W97RW
+a12-ct18,Redfish,CTG3FUE6RB
+a12-mgmt1,SNMP,MST855EKPX
+a12-mgmt2,SNMP,MSMH0DV5TE
+a12-nvsw1,Redfish,NS7BZR84RD
+a12-nvsw2,Redfish,NSPPHJWTA7
+a12-nvsw3,Redfish,NSHY5AALCQ
+a12-nvsw4,Redfish,NSZMG8KHG2
+a12-nvsw5,Redfish,NSQ1VPRDRZ
+a12-nvsw6,Redfish,NS31J1DZVN
+a12-nvsw7,Redfish,NSRCDINDJD
+a12-nvsw8,Redfish,NS18M6JYP0
+a12-nvsw9,Redfish,NSB846020X
+a13-ct01,Redfish,CTUA2DP68L
+a13-ct02,Redfish,CTZ7APXNOK
+a13-ct03,Redfish,CTSZ6D4J2J
+a13-ct04,Redfish,CTC9N7NFSZ
+a13-ct05,Redfish,CTGI2116UE
+a13-ct06,Redfish,CT1MXPG5HC
+a13-ct07,Redfish,CT8MWKLUVR
+a13-ct08,Redfish,CTTPQHATWJ
+a13-ct09,Redfish,CTFZKJM9RL
+a13-ct10,Redfish,CTA5F79H0D
+a13-ct11,Redfish,CTD3FMC06Q
+a13-ct12,Redfish,CTSX6N0897
+a13-ct13,Redfish,CT0UQW0424
+a13-ct14,Redfish,CTQO6C5FRP
+a13-ct15,Redfish,CTX3UENLEM
+a13-ct16,Redfish,CTKOYXP1K6
+a13-ct17,Redfish,CTSEGH2MYC
+a13-ct18,Redfish,CTT7INKPK9
+a13-mgmt1,SNMP,MSICUX0DZ8
+a13-mgmt2,SNMP,MSX4I7V4HT
+a13-nvsw1,Redfish,NSHGKHABV5
+a13-nvsw2,Redfish,NS44R9MRXF
+a13-nvsw3,Redfish,NS7EC8N6R4
+a13-nvsw4,Redfish,NS1ZL1202S
+a13-nvsw5,Redfish,NSPLL21101
+a13-nvsw6,Redfish,NS23HLGKS7
+a13-nvsw7,Redfish,NSGD62QRD1
+a13-nvsw8,Redfish,NSXYK8F8B6
+a13-nvsw9,Redfish,NS124828S5
+a14-ct01,Redfish,CTLW7BWIFM
+a14-ct02,Redfish,CTH4E4H5XS
+a14-ct03,Redfish,CTJN2F0ULU
+a14-ct04,Redfish,CT76YR5UPG
+a14-ct05,Redfish,CTX54FG0BF
+a14-ct06,Redfish,CTWUCKSBKD
+a14-ct07,Redfish,CTA1QSVRVF
+a14-ct08,Redfish,CT5CA75XXE
+a14-ct09,Redfish,CTMTY3OZ6X
+a14-ct10,Redfish,CT5LYCTFEB
+a14-ct11,Redfish,CTZPZIKTMT
+a14-ct12,Redfish,CTAU2GCB5H
+a14-ct13,Redfish,CT4FV9EW1G
+a14-ct14,Redfish,CTU04P32H5
+a14-ct15,Redfish,CTNMR4RFLW
+a14-ct16,Redfish,CTJDF7S33K
+a14-ct17,Redfish,CTBQ6K3LMJ
+a14-ct18,Redfish,CTSGSGMBIH
+a14-mgmt1,SNMP,MSJ9HACDLH
+a14-mgmt2,SNMP,MS2OSFYBQT
+a14-nvsw1,Redfish,NS47JYFBV9
+a14-nvsw2,Redfish,NS1W6ZWKDU
+a14-nvsw3,Redfish,NS7C28LARC
+a14-nvsw4,Redfish,NSDQMZU03J
+a14-nvsw5,Redfish,NSUFMXXO2E
+a14-nvsw6,Redfish,NSTHQ1TV9P
+a14-nvsw7,Redfish,NST4T5FLZW
+a14-nvsw8,Redfish,NSPGWMT42Y
+a14-nvsw9,Redfish,NS17PK0JXN
+a15-ct01,Redfish,CTQDQXRA64
+a15-ct02,Redfish,CT284V2Z9L
+a15-ct03,Redfish,CTPNQN3LWA
+a15-ct04,Redfish,CTDMUN0U0E
+a15-ct05,Redfish,CTD9ZQVDMD
+a15-ct06,Redfish,CTEB4DTN0O
+a15-ct07,Redfish,CTB8P6H4LC
+a15-ct08,Redfish,CTGQFG5ILR
+a15-ct09,Redfish,CTS9QKQAT8
+a15-ct10,Redfish,CTGEULQHRI
+a15-ct11,Redfish,CTFV7CJK8R
+a15-ct12,Redfish,CTNS6JRWRS
+a15-ct13,Redfish,CTMO2EBBL3
+a15-ct14,Redfish,CTQPY0PVEM
+a15-ct15,Redfish,CTQLZ9PE36
+a15-ct16,Redfish,CTHO0QLRXP
+a15-ct17,Redfish,CTGELGCRZH
+a15-ct18,Redfish,CT5V8FWNQP
+a15-mgmt1,SNMP,MSR4IK4RCP
+a15-mgmt2,SNMP,MSBRHD2M3I
+a15-nvsw1,Redfish,NSRP8X5HJG
+a15-nvsw2,Redfish,NSRBW9EPJ5
+a15-nvsw3,Redfish,NSOM4K9ZBC
+a15-nvsw4,Redfish,NS6AAWC7F8
+a15-nvsw5,Redfish,NSBA0IAUTS
+a15-nvsw6,Redfish,NSNEDN883Z
+a15-nvsw7,Redfish,NSLG6DTO7J
+a15-nvsw8,Redfish,NSCIJBDPQN
+a15-nvsw9,Redfish,NS2YUPRO0D
+a16-ct01,Redfish,CT8VAFZXJA
+a16-ct02,Redfish,CTW71G600W
+a16-ct03,Redfish,CTSQ1QICA1
+a16-ct04,Redfish,CTOTQ2E6WB
+a16-ct05,Redfish,CTV8PQSFL0
+a16-ct06,Redfish,CT2E53HXJ5
+a16-ct07,Redfish,CT75R89G0I
+a16-ct08,Redfish,CTAR39PJJG
+a16-ct09,Redfish,CTP7V0NTAX
+a16-ct10,Redfish,CTCW8E0SRL
+a16-ct11,Redfish,CTS1J0S90W
+a16-ct12,Redfish,CTFMXQPUW2
+a16-ct13,Redfish,CTYM0HZ4YY
+a16-ct14,Redfish,CTY00WS6LS
+a16-ct15,Redfish,CTTELNOM6M
+a16-ct16,Redfish,CTQB59FY7Z
+a16-ct17,Redfish,CT8J7K1KUA
+a16-ct18,Redfish,CTM89BG0WX
+a16-mgmt1,SNMP,MSBY8IRQ0V
+a16-mgmt2,SNMP,MSQLPKYS9A
+a16-nvsw1,Redfish,NS8FSHPYZQ
+a16-nvsw2,Redfish,NSNVWQZEHM
+a16-nvsw3,Redfish,NSEB63MNJW
+a16-nvsw4,Redfish,NSJDLS5VLU
+a16-nvsw5,Redfish,NS1RMQG24Y
+a16-nvsw6,Redfish,NSKQS6EC2I
+a16-nvsw7,Redfish,NSEKXL3IZP
+a16-nvsw8,Redfish,NSX6ZK24YC
+a16-nvsw9,Redfish,NSHIFURKR6
+a17-ct01,Redfish,CTZLNMKNX9
+a17-ct02,Redfish,CT3LK4OENK
+a17-ct03,Redfish,CTRFJRM8II
+a17-ct04,Redfish,CTTVZUPFCH
+a17-ct05,Redfish,CTW9PNPUS1
+a17-ct06,Redfish,CT12DTU81G
+a17-ct07,Redfish,CTK1O8AB7C
+a17-ct08,Redfish,CTWUTLAWNF
+a17-ct09,Redfish,CTUEO27JBL
+a17-ct10,Redfish,CTJY11IMT2
+a17-ct11,Redfish,CTZLE2MLQG
+a17-ct12,Redfish,CT0ZEODCYD
+a17-ct13,Redfish,CTA4RQ77SS
+a17-ct14,Redfish,CTD4JR85BR
+a17-ct15,Redfish,CTY3Z0EMPO
+a17-ct16,Redfish,CTMTCKHEKX
+a17-ct17,Redfish,CTCH0JQ2HF
+a17-ct18,Redfish,CTU6SW8F8W
+a17-mgmt1,SNMP,MS6YOF5WW7
+a17-mgmt2,SNMP,MSDG8US29Z
+a17-nvsw1,Redfish,NSL4GEYC2X
+a17-nvsw2,Redfish,NSWU0Z8USM
+a17-nvsw3,Redfish,NSI6MAA2Z0
+a17-nvsw4,Redfish,NS7DXRNA7Y
+a17-nvsw5,Redfish,NSDCAPDPGH
+a17-nvsw6,Redfish,NSUJ9WQM8O
+a17-nvsw7,Redfish,NSECP51ZAY
+a17-nvsw8,Redfish,NSKW4KM4LN
+a17-nvsw9,Redfish,NSCTT3DXEF
+a18-ct01,Redfish,CTAYZVVE3J
+a18-ct02,Redfish,CTFLCX85MQ
+a18-ct03,Redfish,CTTC6ZHWQZ
+a18-ct04,Redfish,CTGS1IRFGA
+a18-ct05,Redfish,CTHFRYX2PH
+a18-ct06,Redfish,CTSPYOIJPK
+a18-ct07,Redfish,CTDSO2UADQ
+a18-ct08,Redfish,CTX37D14F4
+a18-ct09,Redfish,CTIR8NELS8
+a18-ct10,Redfish,CT41L5J0NW
+a18-ct11,Redfish,CTKK0KAFY2
+a18-ct12,Redfish,CTP4B6I11F
+a18-ct13,Redfish,CTO4BYA5QV
+a18-ct14,Redfish,CTXW2L3SR9
+a18-ct15,Redfish,CTD873C8HV
+a18-ct16,Redfish,CTV14DXI6K
+a18-ct17,Redfish,CTQIP353HW
+a18-ct18,Redfish,CTEN207N83
+a18-mgmt1,SNMP,MSF74ZZU7M
+a18-mgmt2,SNMP,MSHUT92U7J
+a18-nvsw1,Redfish,NSQI6NESQQ
+a18-nvsw2,Redfish,NSN4ATLD4L
+a18-nvsw3,Redfish,NS6YP80L9R
+a18-nvsw4,Redfish,NS285U61FG
+a18-nvsw5,Redfish,NSWWSN1GCV
+a18-nvsw6,Redfish,NSOF0U6IF4
+a18-nvsw7,Redfish,NSC4RT6HP9
+a18-nvsw8,Redfish,NS3UFZX1PJ
+a18-nvsw9,Redfish,NSPMBWBYHB
+a19-ct01,Redfish,CT1L8O2Y2E
+a19-ct02,Redfish,CTZQAVJSRQ
+a19-ct03,Redfish,CTWBPSDR86
+a19-ct04,Redfish,CTLGLIDDKQ
+a19-ct05,Redfish,CTMAVMDG7F
+a19-ct06,Redfish,CT8I339KOI
+a19-ct07,Redfish,CTSAZW3WGL
+a19-ct08,Redfish,CTC8F4NN94
+a19-ct09,Redfish,CTVOUHMB5O
+a19-ct10,Redfish,CT97GQKQGT
+a19-ct11,Redfish,CT1CJOEHKO
+a19-ct12,Redfish,CTO9CVG1R5
+a19-ct13,Redfish,CT4BS4GU03
+a19-ct14,Redfish,CTNUPIPWJN
+a19-ct15,Redfish,CT9602BBTK
+a19-ct16,Redfish,CT2ESNSY19
+a19-ct17,Redfish,CTWW3OWQ0G
+a19-ct18,Redfish,CT7403BK83
+a19-mgmt1,SNMP,MSPJ056SEX
+a19-mgmt2,SNMP,MSW8RQ1EKF
+a19-nvsw1,Redfish,NSWM4B89MW
+a19-nvsw2,Redfish,NSA18FMJVK
+a19-nvsw3,Redfish,NSGELG88Y3
+a19-nvsw4,Redfish,NSMEQNZ93A
+a19-nvsw5,Redfish,NSKZH7ETBK
+a19-nvsw6,Redfish,NSERH9GLQ5
+a19-nvsw7,Redfish,NSEM4OJSNH
+a19-nvsw8,Redfish,NSIY6AESX5
+a19-nvsw9,Redfish,NS7D14QG3U
+a20-ct01,Redfish,CTTMX4VL3Q
+a20-ct02,Redfish,CTSBCGNI2M
+a20-ct03,Redfish,CTUZ1YP5HL
+a20-ct04,Redfish,CTITQNBI4D
+a20-ct05,Redfish,CTBTOJZ3H8
+a20-ct06,Redfish,CT9SKU95XP
+a20-ct07,Redfish,CTIVL27E8R
+a20-ct08,Redfish,CT1N1EPAMY
+a20-ct09,Redfish,CT08N0JBMH
+a20-ct10,Redfish,CTX55C8X0H
+a20-ct11,Redfish,CTQ28KUSD4
+a20-ct12,Redfish,CTDDSEW2SQ
+a20-ct13,Redfish,CTP7SD4N7I
+a20-ct14,Redfish,CTO6KRG6G0
+a20-ct15,Redfish,CTYI8I5ZGF
+a20-ct16,Redfish,CTVEBPQGXU
+a20-ct17,Redfish,CT2GIQPFMD
+a20-ct18,Redfish,CT16F59SIM
+a20-mgmt1,SNMP,MSO039D1M7
+a20-mgmt2,SNMP,MS7L6E4QSC
+a20-nvsw1,Redfish,NSD38CKGG9
+a20-nvsw2,Redfish,NSQVON2AAO
+a20-nvsw3,Redfish,NSPS50Y28E
+a20-nvsw4,Redfish,NST9YWVS2W
+a20-nvsw5,Redfish,NS5DUSKRVB
+a20-nvsw6,Redfish,NSD1AQI2Q3
+a20-nvsw7,Redfish,NSWL6OE6T1
+a20-nvsw8,Redfish,NS16XHPNWN
+a20-nvsw9,Redfish,NS0S6K2LX5
+a21-ct01,Redfish,CTHOIFOQI2
+a21-ct02,Redfish,CTD20CDUWV
+a21-ct03,Redfish,CTP3RCVMP7
+a21-ct04,Redfish,CTTII9HPY9
+a21-ct05,Redfish,CT728823F2
+a21-ct06,Redfish,CTCUQ7ERFG
+a21-ct07,Redfish,CTEGYKFMNF
+a21-ct08,Redfish,CTM63DQHP5
+a21-ct09,Redfish,CTHJOE3J8Z
+a21-ct10,Redfish,CT10DD96Z0
+a21-ct11,Redfish,CTD14FSRCX
+a21-ct12,Redfish,CTMDWVGMZV
+a21-ct13,Redfish,CT1C0EFDVG
+a21-ct14,Redfish,CT1IDRPDCC
+a21-ct15,Redfish,CTU3Y5491J
+a21-ct16,Redfish,CTXI7YKPYW
+a21-ct17,Redfish,CTNI479CJ9
+a21-ct18,Redfish,CTNEA7M56E
+a21-mgmt1,SNMP,MS7H31FX0J
+a21-mgmt2,SNMP,MSX9NU5SFR
+a21-nvsw1,Redfish,NSNQ4V5O66
+a21-nvsw2,Redfish,NSE2WNAXBO
+a21-nvsw3,Redfish,NSXI6T36SP
+a21-nvsw4,Redfish,NSN5EHGWUH
+a21-nvsw5,Redfish,NS0PKRZEC8
+a21-nvsw6,Redfish,NSRZOF6FY2
+a21-nvsw7,Redfish,NSX19XBNIW
+a21-nvsw8,Redfish,NSRFPEAHU1
+a21-nvsw9,Redfish,NSG5VM7GT4
+a22-ct01,Redfish,CT5RN1RRDT
+a22-ct02,Redfish,CT5K95M7HP
+a22-ct03,Redfish,CTVZWZ7F2B
+a22-ct04,Redfish,CT354WWKBD
+a22-ct05,Redfish,CTNKKSB4ZF
+a22-ct06,Redfish,CTFXM0FA65
+a22-ct07,Redfish,CTR9IUS5X3
+a22-ct08,Redfish,CTGOW7JCU8
+a22-ct09,Redfish,CT3YB4OFFC
+a22-ct10,Redfish,CTL3N6V860
+a22-ct11,Redfish,CTNMX2EON5
+a22-ct12,Redfish,CTH9ALBQE4
+a22-ct13,Redfish,CTX3FY4QFY
+a22-ct14,Redfish,CTZ7TKU42E
+a22-ct15,Redfish,CTXI4XADFT
+a22-ct16,Redfish,CTO8ZXQV3T
+a22-ct17,Redfish,CT0ZOODH9R
+a22-ct18,Redfish,CT40XC8AQ8
+a22-mgmt1,SNMP,MS1ENSBD40
+a22-mgmt2,SNMP,MS7MTPMOS6
+a22-nvsw1,Redfish,NSFTAD24B6
+a22-nvsw2,Redfish,NSB001XPA6
+a22-nvsw3,Redfish,NSL8FYX4FI
+a22-nvsw4,Redfish,NS9OKX0XZ3
+a22-nvsw5,Redfish,NS7H0385KS
+a22-nvsw6,Redfish,NSA3NVKFPF
+a22-nvsw7,Redfish,NSBGTVCM70
+a22-nvsw8,Redfish,NSFOKTKBMJ
+a22-nvsw9,Redfish,NSVEUG9MRG
+a23-ct01,Redfish,CTXQ77YFFX
+a23-ct02,Redfish,CTGLRVU4TA
+a23-ct03,Redfish,CT6KA9D61H
+a23-ct04,Redfish,CTZO363BHD
+a23-ct05,Redfish,CTFOPOZ5GQ
+a23-ct06,Redfish,CTWQ6O3SQ1
+a23-ct07,Redfish,CTXKHFRU0Z
+a23-ct08,Redfish,CTKB8FLQ2Z
+a23-ct09,Redfish,CT1DKYB8MB
+a23-ct10,Redfish,CTFK3R71ZY
+a23-ct11,Redfish,CTOFNX5F55
+a23-ct12,Redfish,CTUAI8CDAD
+a23-ct13,Redfish,CTKMVCPX81
+a23-ct14,Redfish,CT51K0C4V2
+a23-ct15,Redfish,CTJCYNLWPZ
+a23-ct16,Redfish,CTL4WJHAX2
+a23-ct17,Redfish,CT0KA5FLX4
+a23-ct18,Redfish,CTQBXNMJOB
+a23-mgmt1,SNMP,MS3285LP0Q
+a23-mgmt2,SNMP,MSVV8DFHCE
+a23-nvsw1,Redfish,NSCCHIG44G
+a23-nvsw2,Redfish,NS7JRY63C9
+a23-nvsw3,Redfish,NSXFPIPGOK
+a23-nvsw4,Redfish,NSIA9PRUID
+a23-nvsw5,Redfish,NSFZBP2TN9
+a23-nvsw6,Redfish,NS4N03VKFG
+a23-nvsw7,Redfish,NS9CYVZAPG
+a23-nvsw8,Redfish,NSKBFG5QSC
+a23-nvsw9,Redfish,NSN90QSRYM
+a24-ct01,Redfish,CTVYHRX8HY
+a24-ct02,Redfish,CTQFIBWF75
+a24-ct03,Redfish,CT2U83UC5R
+a24-ct04,Redfish,CTA3S7SSG7
+a24-ct05,Redfish,CT8UB4Z8AJ
+a24-ct06,Redfish,CTW6P0Z20O
+a24-ct07,Redfish,CTNK00YUAB
+a24-ct08,Redfish,CTVDGM9RSY
+a24-ct09,Redfish,CTGA72741F
+a24-ct10,Redfish,CT9PPYR8VJ
+a24-ct11,Redfish,CTOYQIERAH
+a24-ct12,Redfish,CTLVYX2RBF
+a24-ct13,Redfish,CTYJV2N078
+a24-ct14,Redfish,CTUR28CB6E
+a24-ct15,Redfish,CTVI5MX56E
+a24-ct16,Redfish,CT5UCNWZ6D
+a24-ct17,Redfish,CTSCZ5C4BU
+a24-ct18,Redfish,CT7K5NF2RW
+a24-mgmt1,SNMP,MSYI57OBDB
+a24-mgmt2,SNMP,MSN5I5ESQP
+a24-nvsw1,Redfish,NS2IVE1X44
+a24-nvsw2,Redfish,NSAZMPHC79
+a24-nvsw3,Redfish,NSV7AWK99G
+a24-nvsw4,Redfish,NSAY4N6WDX
+a24-nvsw5,Redfish,NS28XSE38R
+a24-nvsw6,Redfish,NSAUV85MYU
+a24-nvsw7,Redfish,NSSQ2LMC3V
+a24-nvsw8,Redfish,NSKPKFA24S
+a24-nvsw9,Redfish,NSHQI2I9ZS
+a25-ct01,Redfish,CT1BD44FWH
+a25-ct02,Redfish,CTVVSWBBWU
+a25-ct03,Redfish,CTXQRZVKOP
+a25-ct04,Redfish,CT3ZH0WEQC
+a25-ct05,Redfish,CT8N8XP8LN
+a25-ct06,Redfish,CT1D5CVVZ4
+a25-ct07,Redfish,CTG1ZF3ZIH
+a25-ct08,Redfish,CT8RH62579
+a25-ct09,Redfish,CT0ADTCVZ8
+a25-ct10,Redfish,CT4N1BALKH
+a25-ct11,Redfish,CT2IGNT30O
+a25-ct12,Redfish,CTWENVUJKA
+a25-ct13,Redfish,CTP42TI2UT
+a25-ct14,Redfish,CTW78QPB9O
+a25-ct15,Redfish,CTYZH60LG0
+a25-ct16,Redfish,CTH0YJOJQQ
+a25-ct17,Redfish,CTGQE8OA41
+a25-ct18,Redfish,CTNE71HV7V
+a25-mgmt1,SNMP,MS1T7WZV4N
+a25-mgmt2,SNMP,MSITM5H08I
+a25-nvsw1,Redfish,NS7QHX9VP8
+a25-nvsw2,Redfish,NSNYTGC01E
+a25-nvsw3,Redfish,NSR3715W8O
+a25-nvsw4,Redfish,NSE3PUZKOU
+a25-nvsw5,Redfish,NSCR1DST0R
+a25-nvsw6,Redfish,NSBK2UND0N
+a25-nvsw7,Redfish,NS7CQ5CG97
+a25-nvsw8,Redfish,NS5OSTF7BQ
+a25-nvsw9,Redfish,NSBVQQQRRN
+a26-ct01,Redfish,CTBB96IHTW
+a26-ct02,Redfish,CTM5OZLCPP
+a26-ct03,Redfish,CT06BG3HX4
+a26-ct04,Redfish,CTIE0CQ3W5
+a26-ct05,Redfish,CT9HYVRYUP
+a26-ct06,Redfish,CTK1ZMHGJF
+a26-ct07,Redfish,CTC4G68AOM
+a26-ct08,Redfish,CT46W6IH5A
+a26-ct09,Redfish,CT41NSEVB9
+a26-ct10,Redfish,CTOJJ5MHFD
+a26-ct11,Redfish,CTQ6JWFWMN
+a26-ct12,Redfish,CTCO4IR2IN
+a26-ct13,Redfish,CTADPNO6J3
+a26-ct14,Redfish,CTHTZ9BJO0
+a26-ct15,Redfish,CTTJW186NY
+a26-ct16,Redfish,CTSXQ9HJ60
+a26-ct17,Redfish,CTL63R4BJI
+a26-ct18,Redfish,CTGY2L5IEY
+a26-mgmt1,SNMP,MS478HR9F7
+a26-mgmt2,SNMP,MSKZMK8D9A
+a26-nvsw1,Redfish,NSP6CWZRVW
+a26-nvsw2,Redfish,NSXNWG15IH
+a26-nvsw3,Redfish,NSPJ50ZMZA
+a26-nvsw4,Redfish,NSY6YOVA80
+a26-nvsw5,Redfish,NS4LB2EQZG
+a26-nvsw6,Redfish,NS4CJIZIX1
+a26-nvsw7,Redfish,NS0IOUSPPN
+a26-nvsw8,Redfish,NS5KUJNQSH
+a26-nvsw9,Redfish,NSDNB26P1P
+a27-ct01,Redfish,CTCCFOZN1D
+a27-ct02,Redfish,CTYMGQPVRD
+a27-ct03,Redfish,CT0CUEC99U
+a27-ct04,Redfish,CTHKEZS2WQ
+a27-ct05,Redfish,CTS0X92MR2
+a27-ct06,Redfish,CTJRFIKQ53
+a27-ct07,Redfish,CTYWKXJV2Y
+a27-ct08,Redfish,CTHA379WJ4
+a27-ct09,Redfish,CTA714RVKR
+a27-ct10,Redfish,CTZFO9KCOB
+a27-ct11,Redfish,CTSW8TLJUK
+a27-ct12,Redfish,CTYPD1F0PV
+a27-ct13,Redfish,CT7O9S3SZ2
+a27-ct14,Redfish,CTIOVGW924
+a27-ct15,Redfish,CT3KJYJAK5
+a27-ct16,Redfish,CTD27QKL5H
+a27-ct17,Redfish,CT517OSL0T
+a27-ct18,Redfish,CTMET4A9VF
+a27-mgmt1,SNMP,MSPKBVFZYA
+a27-mgmt2,SNMP,MSVFD5C8ZM
+a27-nvsw1,Redfish,NSM8X3UFDH
+a27-nvsw2,Redfish,NS9MFVYNCK
+a27-nvsw3,Redfish,NSIXQF5VPL
+a27-nvsw4,Redfish,NSBYITNGUX
+a27-nvsw5,Redfish,NS361DMYYH
+a27-nvsw6,Redfish,NSQ6BREWJO
+a27-nvsw7,Redfish,NSK2O95BJ1
+a27-nvsw8,Redfish,NS2F7HB61D
+a27-nvsw9,Redfish,NSRL8HKBH6
+a28-ct01,Redfish,CTT1QII5VA
+a28-ct02,Redfish,CTNE5WW3I2
+a28-ct03,Redfish,CT573Y66ET
+a28-ct04,Redfish,CTEOLAWSZK
+a28-ct05,Redfish,CTWPA0PU9L
+a28-ct06,Redfish,CTPE9YBPO7
+a28-ct07,Redfish,CTB42HH2X1
+a28-ct08,Redfish,CTMX91ZUT0
+a28-ct09,Redfish,CT6CP0GITY
+a28-ct10,Redfish,CT7VE9JD1V
+a28-ct11,Redfish,CTTRJXGWAH
+a28-ct12,Redfish,CTQVPE6MIZ
+a28-ct13,Redfish,CTAKG4BP4P
+a28-ct14,Redfish,CTMFDIBB7Z
+a28-ct15,Redfish,CTP3DUKOTA
+a28-ct16,Redfish,CTRAC9ZICP
+a28-ct17,Redfish,CTHSFNBAAF
+a28-ct18,Redfish,CTZTYTBMKD
+a28-mgmt1,SNMP,MSN6JFNCGE
+a28-mgmt2,SNMP,MSMDUYLP31
+a28-nvsw1,Redfish,NS3IBBPGUH
+a28-nvsw2,Redfish,NS386JI7O1
+a28-nvsw3,Redfish,NSSKFZZV80
+a28-nvsw4,Redfish,NSA9PFODXK
+a28-nvsw5,Redfish,NSHM6WZRZO
+a28-nvsw6,Redfish,NSG7VJ05J0
+a28-nvsw7,Redfish,NSCIDKEAEM
+a28-nvsw8,Redfish,NS4T9WZQYO
+a28-nvsw9,Redfish,NSOY9YYCRO
+a29-ct01,Redfish,CTGVSO5VJD
+a29-ct02,Redfish,CTVLT3Z5RC
+a29-ct03,Redfish,CTOTEIFWVL
+a29-ct04,Redfish,CTCC7SHHWO
+a29-ct05,Redfish,CT4HP2ZVZE
+a29-ct06,Redfish,CTF3L6EISN
+a29-ct07,Redfish,CTIGIYJ6T0
+a29-ct08,Redfish,CT9MB22POW
+a29-ct09,Redfish,CTUOMZXVRU
+a29-ct10,Redfish,CTEITKENTU
+a29-ct11,Redfish,CTAMG2O1OC
+a29-ct12,Redfish,CT2KTBMCLY
+a29-ct13,Redfish,CTKAAF1DSH
+a29-ct14,Redfish,CT3X1TMZFV
+a29-ct15,Redfish,CTLBYBG9CI
+a29-ct16,Redfish,CTN0FCQBLH
+a29-ct17,Redfish,CT8FI2RFG3
+a29-ct18,Redfish,CTSBWI8B08
+a29-mgmt1,SNMP,MS3UHGSMJN
+a29-mgmt2,SNMP,MS7CUWVJ25
+a29-nvsw1,Redfish,NSKGI2JCQR
+a29-nvsw2,Redfish,NSO10LFGNG
+a29-nvsw3,Redfish,NSPFYHXJI3
+a29-nvsw4,Redfish,NSZRVIPFA5
+a29-nvsw5,Redfish,NSD890MP04
+a29-nvsw6,Redfish,NSHNPHW4XT
+a29-nvsw7,Redfish,NS1C4HF1IR
+a29-nvsw8,Redfish,NSO8FKG1KA
+a29-nvsw9,Redfish,NS04877Z4G
+a30-ct01,Redfish,CTL2X4X9KO
+a30-ct02,Redfish,CTAZC81BLD
+a30-ct03,Redfish,CTZHG2M5LX
+a30-ct04,Redfish,CTNY0KHCDP
+a30-ct05,Redfish,CTICVOEIWS
+a30-ct06,Redfish,CTKX3ZU5J9
+a30-ct07,Redfish,CTFPAHD2DE
+a30-ct08,Redfish,CTW4PJ9FZ0
+a30-ct09,Redfish,CTBHFIUMZ3
+a30-ct10,Redfish,CT117L8Q1J
+a30-ct11,Redfish,CTZEN9SUI6
+a30-ct12,Redfish,CTR223QOFH
+a30-ct13,Redfish,CTQ84PJA7D
+a30-ct14,Redfish,CT1MF6HP7Y
+a30-ct15,Redfish,CT29MTCDW5
+a30-ct16,Redfish,CTTXFZKYX4
+a30-ct17,Redfish,CT7LJ5O4SQ
+a30-ct18,Redfish,CTUDYUGPBQ
+a30-mgmt1,SNMP,MSRT189W5J
+a30-mgmt2,SNMP,MSZ0OQOIIU
+a30-nvsw1,Redfish,NS96WGMFTD
+a30-nvsw2,Redfish,NSA7X8FYUS
+a30-nvsw3,Redfish,NSAY12CWWO
+a30-nvsw4,Redfish,NSFELG74C6
+a30-nvsw5,Redfish,NSJTP91Q5B
+a30-nvsw6,Redfish,NS1SOJABQ1
+a30-nvsw7,Redfish,NSE90AI5NN
+a30-nvsw8,Redfish,NSIZO97SZX
+a30-nvsw9,Redfish,NS9SX2H2MK
+a31-ct01,Redfish,CT2C0DYDXE
+a31-ct02,Redfish,CTSIBTJW0U
+a31-ct03,Redfish,CTZ0C37ARU
+a31-ct04,Redfish,CT1KGG85HM
+a31-ct05,Redfish,CT8WPK5I93
+a31-ct06,Redfish,CTBIHSL4VQ
+a31-ct07,Redfish,CT0QYVS9HP
+a31-ct08,Redfish,CTNO278HS4
+a31-ct09,Redfish,CTC5572JE1
+a31-ct10,Redfish,CTFBPXMF61
+a31-ct11,Redfish,CTUCUJKCBY
+a31-ct12,Redfish,CTSASTJB6V
+a31-ct13,Redfish,CT8P7HS29U
+a31-ct14,Redfish,CTUQ6GVCU6
+a31-ct15,Redfish,CT4TDXX1SR
+a31-ct16,Redfish,CT42NGNKI4
+a31-ct17,Redfish,CTH9GMP6ZF
+a31-ct18,Redfish,CTIDRWA4OX
+a31-mgmt1,SNMP,MS33HE787X
+a31-mgmt2,SNMP,MS30H1YSVD
+a31-nvsw1,Redfish,NSY0POP5JD
+a31-nvsw2,Redfish,NSGTXUEY22
+a31-nvsw3,Redfish,NSV00NI18O
+a31-nvsw4,Redfish,NS6DDIJ6YX
+a31-nvsw5,Redfish,NSHERA26HE
+a31-nvsw6,Redfish,NSGRS55QDU
+a31-nvsw7,Redfish,NSG4BZT9MH
+a31-nvsw8,Redfish,NSK3SZA7FT
+a31-nvsw9,Redfish,NSNWSYC48H
+a32-ct01,Redfish,CT9IKOQGNX
+a32-ct02,Redfish,CTTA7G8YCE
+a32-ct03,Redfish,CT88WUMNKU
+a32-ct04,Redfish,CTS2AU51P4
+a32-ct05,Redfish,CTLWRPHZHL
+a32-ct06,Redfish,CTUYC19A1M
+a32-ct07,Redfish,CTQW5CZTL1
+a32-ct08,Redfish,CTSINO11KD
+a32-ct09,Redfish,CTXQMCJHYP
+a32-ct10,Redfish,CTHJ91OX6A
+a32-ct11,Redfish,CT5F0GE8TH
+a32-ct12,Redfish,CTF9050V3N
+a32-ct13,Redfish,CTQ8P6UEK7
+a32-ct14,Redfish,CTH598CGQ4
+a32-ct15,Redfish,CTQ2P7UTON
+a32-ct16,Redfish,CT3RMA4SOH
+a32-ct17,Redfish,CTA90Z2XC9
+a32-ct18,Redfish,CTGCGJHVLK
+a32-mgmt1,SNMP,MSWJJ66H87
+a32-mgmt2,SNMP,MSUBQ1ZJWI
+a32-nvsw1,Redfish,NSKZVWVTEU
+a32-nvsw2,Redfish,NSG4SB7ML2
+a32-nvsw3,Redfish,NSIUJBVR3G
+a32-nvsw4,Redfish,NS5576H8UA
+a32-nvsw5,Redfish,NS3HG1GKVI
+a32-nvsw6,Redfish,NSN4AC18YG
+a32-nvsw7,Redfish,NSEBUX9G5A
+a32-nvsw8,Redfish,NS0PWDXFPA
+a32-nvsw9,Redfish,NSEAB02EWX
+b01-ct01,Redfish,CT0WP8RL4M
+b01-ct02,Redfish,CT6XXRY35U
+b01-ct03,Redfish,CTSMPSUOUP
+b01-ct04,Redfish,CT1QDA0AA5
+b01-ct05,Redfish,CTR1U0Q54U
+b01-ct06,Redfish,CT2S7BT9TE
+b01-ct07,Redfish,CTZ15OSSZL
+b01-ct08,Redfish,CT3CVL1DBX
+b01-ct09,Redfish,CTEZ294LK1
+b01-ct10,Redfish,CT99PTIT2W
+b01-ct11,Redfish,CTDGTMV77X
+b01-ct12,Redfish,CTX49YKGGF
+b01-ct13,Redfish,CTS5Y9IZ3M
+b01-ct14,Redfish,CT16ZM8JKV
+b01-ct15,Redfish,CT8XERKME7
+b01-ct16,Redfish,CTQ028G2LT
+b01-ct17,Redfish,CTWSECX394
+b01-ct18,Redfish,CTRILISEZX
+b01-mgmt1,SNMP,MSANIH9IKS
+b01-mgmt2,SNMP,MS8FD3KI8L
+b01-nvsw1,Redfish,NSPBZ71DCE
+b01-nvsw2,Redfish,NSZ6FIUOJI
+b01-nvsw3,Redfish,NS3HC0XBOU
+b01-nvsw4,Redfish,NSHC81Y3F0
+b01-nvsw5,Redfish,NSO1ND6ZJ0
+b01-nvsw6,Redfish,NSPYV61YWQ
+b01-nvsw7,Redfish,NSJ3IA7JM8
+b01-nvsw8,Redfish,NSXV8G3UEH
+b01-nvsw9,Redfish,NSWTCQGS26
+b02-ct01,Redfish,CT18Q8Z8WH
+b02-ct02,Redfish,CT6ZSMWQZ7
+b02-ct03,Redfish,CT7R4WATCA
+b02-ct04,Redfish,CTZ5RKHPS7
+b02-ct05,Redfish,CTEGGLHSDW
+b02-ct06,Redfish,CTFPJN8J35
+b02-ct07,Redfish,CTRB8O9KUT
+b02-ct08,Redfish,CTJGPQ35IZ
+b02-ct09,Redfish,CTRVRPZJKW
+b02-ct10,Redfish,CTUAUE85JI
+b02-ct11,Redfish,CTJ1CODIWN
+b02-ct12,Redfish,CTWDPOZXNV
+b02-ct13,Redfish,CT1XARJCKV
+b02-ct14,Redfish,CT2RZGVMIQ
+b02-ct15,Redfish,CT4ANG1QEK
+b02-ct16,Redfish,CT64QIDO5Y
+b02-ct17,Redfish,CTC3G7M0IC
+b02-ct18,Redfish,CTJAJFTFJU
+b02-mgmt1,SNMP,MSNNNHPGAS
+b02-mgmt2,SNMP,MSFJAK80GC
+b02-nvsw1,Redfish,NSSMU1G0J9
+b02-nvsw2,Redfish,NSI5033G36
+b02-nvsw3,Redfish,NSWYZSE6TN
+b02-nvsw4,Redfish,NS9HHL30X4
+b02-nvsw5,Redfish,NSUZAJHV9B
+b02-nvsw6,Redfish,NSZ9IMS5QM
+b02-nvsw7,Redfish,NSJPZX94V4
+b02-nvsw8,Redfish,NS9ZFA9ER0
+b02-nvsw9,Redfish,NSOQZZ6OJD
+b03-ct01,Redfish,CTGBFKKT2S
+b03-ct02,Redfish,CTQNF0GFSM
+b03-ct03,Redfish,CTLNWHJV08
+b03-ct04,Redfish,CTWK5OCBH5
+b03-ct05,Redfish,CT425J3R02
+b03-ct06,Redfish,CTSS4S1PLE
+b03-ct07,Redfish,CTQDIP1S46
+b03-ct08,Redfish,CTD5GYUEWF
+b03-ct09,Redfish,CTWLZO35B4
+b03-ct10,Redfish,CTE5CYY0FT
+b03-ct11,Redfish,CTX82GZ4D3
+b03-ct12,Redfish,CTUULCMEBA
+b03-ct13,Redfish,CTGKCK1BTO
+b03-ct14,Redfish,CTCT6IJ6KS
+b03-ct15,Redfish,CTM8ATSSBI
+b03-ct16,Redfish,CTE3TCHF5J
+b03-ct17,Redfish,CTS3PALCGW
+b03-ct18,Redfish,CTVCTGDPNV
+b03-mgmt1,SNMP,MSH1CPA876
+b03-mgmt2,SNMP,MSQ0HGFQB1
+b03-nvsw1,Redfish,NS4XMFQFQI
+b03-nvsw2,Redfish,NSQ4EEUGIX
+b03-nvsw3,Redfish,NSHU57SN8E
+b03-nvsw4,Redfish,NSURMZEMGI
+b03-nvsw5,Redfish,NSUKW2U73W
+b03-nvsw6,Redfish,NSW1JB2K5P
+b03-nvsw7,Redfish,NSQRC2XMJP
+b03-nvsw8,Redfish,NSWHQODYYK
+b03-nvsw9,Redfish,NSGK6LN8N0
+b04-ct01,Redfish,CTH5IODIJX
+b04-ct02,Redfish,CTPKXBLQ7Y
+b04-ct03,Redfish,CTV3XRNSLA
+b04-ct04,Redfish,CTF9Y32F8M
+b04-ct05,Redfish,CT8W6IU1DO
+b04-ct06,Redfish,CTAXHZKSKB
+b04-ct07,Redfish,CTSVW4IYSW
+b04-ct08,Redfish,CTFBAOFSED
+b04-ct09,Redfish,CT5DFXMJBV
+b04-ct10,Redfish,CTBJGRPL6M
+b04-ct11,Redfish,CT5IFHT0MQ
+b04-ct12,Redfish,CTZF68DH1O
+b04-ct13,Redfish,CT8HDEJV8K
+b04-ct14,Redfish,CTXA7E2CH6
+b04-ct15,Redfish,CTMLMRP7MT
+b04-ct16,Redfish,CTJJUOA4RE
+b04-ct17,Redfish,CTYRYXZHCU
+b04-ct18,Redfish,CTU2X2BFJE
+b04-mgmt1,SNMP,MST6IGQSUX
+b04-mgmt2,SNMP,MSJEFMYCBA
+b04-nvsw1,Redfish,NSINGAHCDN
+b04-nvsw2,Redfish,NSZWNLMEO1
+b04-nvsw3,Redfish,NSLRXLLRGH
+b04-nvsw4,Redfish,NSJ64120AJ
+b04-nvsw5,Redfish,NSITQMMW5V
+b04-nvsw6,Redfish,NSYS2NTUXG
+b04-nvsw7,Redfish,NS4XCKJNAI
+b04-nvsw8,Redfish,NS3PI5YYJS
+b04-nvsw9,Redfish,NSIZIC41X7
+b05-ct01,Redfish,CT3ZWO3SPE
+b05-ct02,Redfish,CT69POZM9U
+b05-ct03,Redfish,CTQ9GDLNFA
+b05-ct04,Redfish,CT3EYJDL1G
+b05-ct05,Redfish,CTHDODY7BL
+b05-ct06,Redfish,CTJMWC9H4W
+b05-ct07,Redfish,CTGVJW09MU
+b05-ct08,Redfish,CTI227FBX1
+b05-ct09,Redfish,CTD9NANS6J
+b05-ct10,Redfish,CTAO8ARX2O
+b05-ct11,Redfish,CTIZVNF0FE
+b05-ct12,Redfish,CT1Z8ER94T
+b05-ct13,Redfish,CTEC5ANGWR
+b05-ct14,Redfish,CTX1YW7MX6
+b05-ct15,Redfish,CTHHQUJ5K6
+b05-ct16,Redfish,CTQ9BQTH1J
+b05-ct17,Redfish,CT6YC7AJJ3
+b05-ct18,Redfish,CTRQ5RZ1M3
+b05-mgmt1,SNMP,MSTPOVCYA1
+b05-mgmt2,SNMP,MSK0N6UXRO
+b05-nvsw1,Redfish,NSKM29TQ7E
+b05-nvsw2,Redfish,NSK9KPBLJZ
+b05-nvsw3,Redfish,NSXNMF3UDG
+b05-nvsw4,Redfish,NSSHYNQVO5
+b05-nvsw5,Redfish,NSRNDSAMWA
+b05-nvsw6,Redfish,NS6EWCOOFI
+b05-nvsw7,Redfish,NSZI593WM7
+b05-nvsw8,Redfish,NSA5FCOVXZ
+b05-nvsw9,Redfish,NSOAN99D5P
+b06-ct01,Redfish,CT2X6TMHMA
+b06-ct02,Redfish,CTW34ZZQK1
+b06-ct03,Redfish,CT8QPHVKID
+b06-ct04,Redfish,CTUC2I7ZFE
+b06-ct05,Redfish,CTIT4185C9
+b06-ct06,Redfish,CTIDPT4FKM
+b06-ct07,Redfish,CTHRV7L787
+b06-ct08,Redfish,CTMMHLSMN9
+b06-ct09,Redfish,CTXWG86T7L
+b06-ct10,Redfish,CT9A4T2FH4
+b06-ct11,Redfish,CTN5V0VVMX
+b06-ct12,Redfish,CTAL7DNO7L
+b06-ct13,Redfish,CT4HPQ4OZD
+b06-ct14,Redfish,CTMEYDU5T5
+b06-ct15,Redfish,CTTFBSGGTQ
+b06-ct16,Redfish,CTDN9TB7MH
+b06-ct17,Redfish,CTIQVUVD4O
+b06-ct18,Redfish,CTZHY9P4H8
+b06-mgmt1,SNMP,MSH03UGNZ5
+b06-mgmt2,SNMP,MS2F3SSAUT
+b06-nvsw1,Redfish,NSP5XOER8I
+b06-nvsw2,Redfish,NSVASANC3D
+b06-nvsw3,Redfish,NSJJGBZOOI
+b06-nvsw4,Redfish,NSPUGIQ3Q1
+b06-nvsw5,Redfish,NSIHU9IIN0
+b06-nvsw6,Redfish,NS6NCG3ZSW
+b06-nvsw7,Redfish,NS6FSKV6WJ
+b06-nvsw8,Redfish,NSSBP7NCRV
+b06-nvsw9,Redfish,NSVHT4YB7I
+b07-ct01,Redfish,CTGKS1PUCR
+b07-ct02,Redfish,CT5YRB4CGV
+b07-ct03,Redfish,CTH95BNPS8
+b07-ct04,Redfish,CTGFGGLZ9O
+b07-ct05,Redfish,CT0XPFM1FV
+b07-ct06,Redfish,CTCZURZTRO
+b07-ct07,Redfish,CTK0ECND4A
+b07-ct08,Redfish,CTVT3XD5CH
+b07-ct09,Redfish,CTSJRAB2JO
+b07-ct10,Redfish,CTPPPYCIOF
+b07-ct11,Redfish,CT68WDZAPR
+b07-ct12,Redfish,CTSOUBESMM
+b07-ct13,Redfish,CTKSOOMBEY
+b07-ct14,Redfish,CTIKRHP8EY
+b07-ct15,Redfish,CTD0T3BL17
+b07-ct16,Redfish,CTTYIJLX6V
+b07-ct17,Redfish,CT4GOMHEA8
+b07-ct18,Redfish,CTKR5BX3VE
+b07-mgmt1,SNMP,MSH6KBXCQJ
+b07-mgmt2,SNMP,MS3A9FPPWN
+b07-nvsw1,Redfish,NSIMZ3RPX9
+b07-nvsw2,Redfish,NSVFJE5GNJ
+b07-nvsw3,Redfish,NSEYCOEXV3
+b07-nvsw4,Redfish,NSX9URQ67B
+b07-nvsw5,Redfish,NS57AXPH02
+b07-nvsw6,Redfish,NSWDIJDH6J
+b07-nvsw7,Redfish,NSADV35NXC
+b07-nvsw8,Redfish,NS9EOF2MRF
+b07-nvsw9,Redfish,NSITTKDRQJ
+b08-ct01,Redfish,CTOJIZJR72
+b08-ct02,Redfish,CTWFYYESVE
+b08-ct03,Redfish,CT3ESSG4DT
+b08-ct04,Redfish,CTKSTUVQXO
+b08-ct05,Redfish,CT2ZTXQJGN
+b08-ct06,Redfish,CTULWZDPPK
+b08-ct07,Redfish,CTONFLTAJ6
+b08-ct08,Redfish,CTR9UZ3L4W
+b08-ct09,Redfish,CTVY7SONQE
+b08-ct10,Redfish,CTAMXWRW2T
+b08-ct11,Redfish,CTGGFBD96X
+b08-ct12,Redfish,CTP958VFKL
+b08-ct13,Redfish,CTXY2GQIPS
+b08-ct14,Redfish,CTQTZ9I9LU
+b08-ct15,Redfish,CTNLNC2E7V
+b08-ct16,Redfish,CT8QBXNECI
+b08-ct17,Redfish,CTLBKGBG9E
+b08-ct18,Redfish,CT2HI2I65V
+b08-mgmt1,SNMP,MS10LI2BOY
+b08-mgmt2,SNMP,MSDJKXMGHZ
+b08-nvsw1,Redfish,NS0JQGJK42
+b08-nvsw2,Redfish,NSDHO1YXVA
+b08-nvsw3,Redfish,NSFDMWFSIX
+b08-nvsw4,Redfish,NSF3K6LR06
+b08-nvsw5,Redfish,NSULCLDAXM
+b08-nvsw6,Redfish,NSGXED2YWX
+b08-nvsw7,Redfish,NSUMZ0UBE5
+b08-nvsw8,Redfish,NSIZBUV9O5
+b08-nvsw9,Redfish,NSPZW8A6V2
+b09-ct01,Redfish,CTQPF3ZO1V
+b09-ct02,Redfish,CTFJEEG9FK
+b09-ct03,Redfish,CT05NAJ6RX
+b09-ct04,Redfish,CTBTJW0BIJ
+b09-ct05,Redfish,CT2G05I1R3
+b09-ct06,Redfish,CT7UX7DPEY
+b09-ct07,Redfish,CTED6LHL1S
+b09-ct08,Redfish,CT5Q0QCZS7
+b09-ct09,Redfish,CT0NCLWAQ7
+b09-ct10,Redfish,CTVMOX7YXK
+b09-ct11,Redfish,CT5A9HUJS6
+b09-ct12,Redfish,CTFYDPLFBG
+b09-ct13,Redfish,CTULENIWCM
+b09-ct14,Redfish,CTC5T5PBX7
+b09-ct15,Redfish,CTL5WSAEQ6
+b09-ct16,Redfish,CTW0F65T34
+b09-ct17,Redfish,CT9M09CGVA
+b09-ct18,Redfish,CTK3MYBGBR
+b09-mgmt1,SNMP,MSEMW977LZ
+b09-mgmt2,SNMP,MSWIN9BFV0
+b09-nvsw1,Redfish,NS3PZA37L7
+b09-nvsw2,Redfish,NSCA3TLBOE
+b09-nvsw3,Redfish,NSLH7FJETD
+b09-nvsw4,Redfish,NSGCQZHKQA
+b09-nvsw5,Redfish,NSYZ7IY6KU
+b09-nvsw6,Redfish,NSPAAVIF15
+b09-nvsw7,Redfish,NS30TRYGJ2
+b09-nvsw8,Redfish,NSAIOKK9WQ
+b09-nvsw9,Redfish,NSOX3LDG4L
+b10-ct01,Redfish,CTTMUDGMBX
+b10-ct02,Redfish,CT7XVTKIOJ
+b10-ct03,Redfish,CT9B1BPTQG
+b10-ct04,Redfish,CT7MFZGYML
+b10-ct05,Redfish,CTX9RK7777
+b10-ct06,Redfish,CT57VG0LC3
+b10-ct07,Redfish,CTDB6J7JB2
+b10-ct08,Redfish,CTWT3219OL
+b10-ct09,Redfish,CT8PEJZ4PM
+b10-ct10,Redfish,CT8DRVO6E0
+b10-ct11,Redfish,CT7WNB1PW2
+b10-ct12,Redfish,CTJOU3D0Z8
+b10-ct13,Redfish,CTNT0EQXSN
+b10-ct14,Redfish,CT9QH9TVJP
+b10-ct15,Redfish,CTRR9G0FU5
+b10-ct16,Redfish,CTM4DDNMX5
+b10-ct17,Redfish,CTGSIP4P0L
+b10-ct18,Redfish,CTNAV2G3LV
+b10-mgmt1,SNMP,MS8LK0W0LF
+b10-mgmt2,SNMP,MSSU1BMXXT
+b10-nvsw1,Redfish,NSAKZLDKVE
+b10-nvsw2,Redfish,NSPB0JM9PT
+b10-nvsw3,Redfish,NS2ONZI38B
+b10-nvsw4,Redfish,NSME7V0O8C
+b10-nvsw5,Redfish,NSCHN936IQ
+b10-nvsw6,Redfish,NSYF0VEAKE
+b10-nvsw7,Redfish,NSNGJ6YKTY
+b10-nvsw8,Redfish,NSFVW35G6W
+b10-nvsw9,Redfish,NSWYHU75DV
+b11-ct01,Redfish,CTBKLUKG0Y
+b11-ct02,Redfish,CTFDP24D19
+b11-ct03,Redfish,CTOEMLLGDF
+b11-ct04,Redfish,CT4VPK6OYX
+b11-ct05,Redfish,CTLP63HNBB
+b11-ct06,Redfish,CT80YELQ33
+b11-ct07,Redfish,CTWL60GWNG
+b11-ct08,Redfish,CTQ5DOSWKJ
+b11-ct09,Redfish,CTK72K85EQ
+b11-ct10,Redfish,CT1PIWGGW6
+b11-ct11,Redfish,CTCL9ANJOL
+b11-ct12,Redfish,CTHKE1OXP8
+b11-ct13,Redfish,CT3SKGK4FC
+b11-ct14,Redfish,CTABTJF82E
+b11-ct15,Redfish,CTEVFIPQ9V
+b11-ct16,Redfish,CTQ28BAU8U
+b11-ct17,Redfish,CT4YZJGLTZ
+b11-ct18,Redfish,CTZTRZENA1
+b11-mgmt1,SNMP,MS37Y0RIPR
+b11-mgmt2,SNMP,MSPP1WWT43
+b11-nvsw1,Redfish,NS90271GOZ
+b11-nvsw2,Redfish,NSD97GXUF6
+b11-nvsw3,Redfish,NSEIE7QRNQ
+b11-nvsw4,Redfish,NS05XBAADF
+b11-nvsw5,Redfish,NS88EG3P7S
+b11-nvsw6,Redfish,NSYHG8UHYZ
+b11-nvsw7,Redfish,NSQM72YXTW
+b11-nvsw8,Redfish,NSN6FZNCBD
+b11-nvsw9,Redfish,NSJ3IFQPZT
+b12-ct01,Redfish,CTX37UNEUQ
+b12-ct02,Redfish,CTNHLQ1MSQ
+b12-ct03,Redfish,CTOKOJTIFW
+b12-ct04,Redfish,CTEINKON3S
+b12-ct05,Redfish,CTN9ERT0W2
+b12-ct06,Redfish,CT6IHV56YX
+b12-ct07,Redfish,CTID7XNA6E
+b12-ct08,Redfish,CT22DOEVFY
+b12-ct09,Redfish,CTMYUSF2P5
+b12-ct10,Redfish,CT9BOK2VZ3
+b12-ct11,Redfish,CTYOQ4D41Q
+b12-ct12,Redfish,CTP945VY3O
+b12-ct13,Redfish,CTX6AE1X0H
+b12-ct14,Redfish,CT9UV9QJ7J
+b12-ct15,Redfish,CTPCYW4VLM
+b12-ct16,Redfish,CT0A7H4IYH
+b12-ct17,Redfish,CTXY8DWFR9
+b12-ct18,Redfish,CTN17ERB8H
+b12-mgmt1,SNMP,MSAUT3MXYS
+b12-mgmt2,SNMP,MS1UCRVP84
+b12-nvsw1,Redfish,NS362IENVT
+b12-nvsw2,Redfish,NS6D33VLZM
+b12-nvsw3,Redfish,NSFLOMDS57
+b12-nvsw4,Redfish,NSVJD9XZMS
+b12-nvsw5,Redfish,NSFQHJX2RT
+b12-nvsw6,Redfish,NS3BIQK6TI
+b12-nvsw7,Redfish,NSLTJ7K0D0
+b12-nvsw8,Redfish,NSGUTPFMGO
+b12-nvsw9,Redfish,NSJAQE6H4M
+b13-ct01,Redfish,CTNMUCQFU2
+b13-ct02,Redfish,CTXM61DD64
+b13-ct03,Redfish,CTE9E2JPV7
+b13-ct04,Redfish,CTJBSHMURU
+b13-ct05,Redfish,CTC7CX688I
+b13-ct06,Redfish,CTRZM8PBYD
+b13-ct07,Redfish,CTA2NH2NYF
+b13-ct08,Redfish,CT45FHSSLJ
+b13-ct09,Redfish,CTQIPARLRL
+b13-ct10,Redfish,CT695UZLFF
+b13-ct11,Redfish,CTGHW2NYQ4
+b13-ct12,Redfish,CTOF3GWE8T
+b13-ct13,Redfish,CT1SUABMM3
+b13-ct14,Redfish,CTJQ4XIQOJ
+b13-ct15,Redfish,CTGN02VX96
+b13-ct16,Redfish,CT3E59WXEK
+b13-ct17,Redfish,CTIU4C0KJD
+b13-ct18,Redfish,CT97RVAXP7
+b13-mgmt1,SNMP,MSOB7XJ6WO
+b13-mgmt2,SNMP,MSEF8U8SZO
+b13-nvsw1,Redfish,NSAIEMRTVQ
+b13-nvsw2,Redfish,NSHNB77QFA
+b13-nvsw3,Redfish,NSLP77Q2WH
+b13-nvsw4,Redfish,NSZSD4D6LE
+b13-nvsw5,Redfish,NSLPJBXJE2
+b13-nvsw6,Redfish,NS9NO4WMNA
+b13-nvsw7,Redfish,NSLDVD0Z0K
+b13-nvsw8,Redfish,NSK8JMEGR1
+b13-nvsw9,Redfish,NSFU2OOPOI
+b14-ct01,Redfish,CTWNA2089K
+b14-ct02,Redfish,CT53YO7KTC
+b14-ct03,Redfish,CT8E850R6A
+b14-ct04,Redfish,CTQ1HIE6Y8
+b14-ct05,Redfish,CT5MCRPEJI
+b14-ct06,Redfish,CTJ93UJH2J
+b14-ct07,Redfish,CTPWTZLOXJ
+b14-ct08,Redfish,CTB1XP3I87
+b14-ct09,Redfish,CTBQZ13KGF
+b14-ct10,Redfish,CT9P9XDTTC
+b14-ct11,Redfish,CT807TTVTM
+b14-ct12,Redfish,CT8XCBIZLB
+b14-ct13,Redfish,CTHD27OISJ
+b14-ct14,Redfish,CTM470W3HM
+b14-ct15,Redfish,CT2UX6VMUJ
+b14-ct16,Redfish,CTL63LR91T
+b14-ct17,Redfish,CTGBHDB9UV
+b14-ct18,Redfish,CTNXZNQL6L
+b14-mgmt1,SNMP,MSY7H3TPB3
+b14-mgmt2,SNMP,MSLEX6X818
+b14-nvsw1,Redfish,NSCFAAI824
+b14-nvsw2,Redfish,NS0F1WDLKK
+b14-nvsw3,Redfish,NS1F6DFS55
+b14-nvsw4,Redfish,NS678S0FAS
+b14-nvsw5,Redfish,NSSAOLBZ73
+b14-nvsw6,Redfish,NSEQF3OW55
+b14-nvsw7,Redfish,NSJ9H2SESC
+b14-nvsw8,Redfish,NSIFEOW24N
+b14-nvsw9,Redfish,NS002J8BMS
+con-a1,SNMP,CSN9E8KWQJ
+con-a2,SNMP,CSS57YW67H
+con-a3,SNMP,CS48MT30AP
+con-a4,SNMP,CSDF4KV9JX
+con-b1,SNMP,CSB2J0GX4M
+con-b2,SNMP,CSAQCPMAGU
+con-b3,SNMP,CSBUP6KEPD
+con-b4,SNMP,CS727GP3H9
+eth-a-sp1,SNMP,ENGVW1AKJO
+eth-a-sp2,SNMP,EN0YF97GB3
+eth-a-st1,SNMP,ENPO3W13QE
+eth-a-st2,SNMP,ENMNJ2Z00W
+eth-a1-1,SNMP,ENJN1EY5S2
+eth-a1-2,SNMP,ENU0MDFYPV
+eth-a2-1,SNMP,EN25A6IWG6
+eth-a2-2,SNMP,ENHK3R5JYM
+eth-a3-1,SNMP,ENOOSM3BVG
+eth-a3-2,SNMP,EN82EFW68V
+eth-a4-1,SNMP,ENC8BNE8A8
+eth-a4-2,SNMP,ENZG688ILW
+eth-b-sp1,SNMP,ENN2AFUZE8
+eth-b-sp2,SNMP,ENFS31OT9N
+eth-b-st1,SNMP,EN7MQ4J8QV
+eth-b-st2,SNMP,EN0UWSNJP4
+eth-b1-1,SNMP,ENPFNWOH3B
+eth-b1-2,SNMP,ENTJISQ5WI
+eth-b2-1,SNMP,ENTSN4DGKR
+eth-b2-2,SNMP,ENQ7XHE4ZD
+eth-b3-1,SNMP,ENCCWA2RTX
+eth-b3-2,SNMP,ENEFS3Z780
+eth-b4-1,SNMP,ENHCF444I9
+eth-b4-2,SNMP,ENP47E44LT
+leaf-a01-r0,SNMP,IBC3M8GLAB
+leaf-a01-r1,SNMP,IBC9HF04ZV
+leaf-a01-r2,SNMP,IB1ZAZHYBX
+leaf-a01-r3,SNMP,IBDK92ACNM
+leaf-a02-r0,SNMP,IBH21CJD31
+leaf-a02-r1,SNMP,IBF6PFQJI9
+leaf-a02-r2,SNMP,IBHIJFDYNG
+leaf-a02-r3,SNMP,IBD3MIHRGU
+leaf-a03-r0,SNMP,IBGZ9VPM0Q
+leaf-a03-r1,SNMP,IBL0GYEKUF
+leaf-a03-r2,SNMP,IB5M7T0XI7
+leaf-a03-r3,SNMP,IBP9GKFY4W
+leaf-a04-r0,SNMP,IBLS6NY3X5
+leaf-a04-r1,SNMP,IB45VXCRR6
+leaf-a04-r2,SNMP,IBDCXCW15G
+leaf-a04-r3,SNMP,IBXELMS0GF
+leaf-a05-r0,SNMP,IB5ZVU6KTO
+leaf-a05-r1,SNMP,IBCXW68JHA
+leaf-a05-r2,SNMP,IBQBKRN9IW
+leaf-a05-r3,SNMP,IB2RK1V2S8
+leaf-a06-r0,SNMP,IBCCAPXZTO
+leaf-a06-r1,SNMP,IBMY6KDGDY
+leaf-a06-r2,SNMP,IBG1GKL9IE
+leaf-a06-r3,SNMP,IBBMZA7P99
+leaf-a07-r0,SNMP,IBHPG7OYCS
+leaf-a07-r1,SNMP,IBCN5N5HAH
+leaf-a07-r2,SNMP,IBOCSJTPE8
+leaf-a07-r3,SNMP,IBNSLLGY3J
+leaf-a08-r0,SNMP,IB81X7QZI2
+leaf-a08-r1,SNMP,IB14ZUVYSA
+leaf-a08-r2,SNMP,IBP1JSAODN
+leaf-a08-r3,SNMP,IBXUL4HCGH
+leaf-a09-r0,SNMP,IBZ2M8ZQM2
+leaf-a09-r1,SNMP,IB3IT4R3G1
+leaf-a09-r2,SNMP,IBC9072T9Y
+leaf-a09-r3,SNMP,IBF3E2TDQD
+leaf-a10-r0,SNMP,IBI9537OFH
+leaf-a10-r1,SNMP,IBIJPJEYM2
+leaf-a10-r2,SNMP,IBO8229G54
+leaf-a10-r3,SNMP,IB0B0B37I3
+leaf-a11-r0,SNMP,IBB28FL41G
+leaf-a11-r1,SNMP,IBFXT3R6A1
+leaf-a11-r2,SNMP,IB99AKSOHJ
+leaf-a11-r3,SNMP,IB33T99W4T
+leaf-a12-r0,SNMP,IBTMDEX8C1
+leaf-a12-r1,SNMP,IB4XJ71TM9
+leaf-a12-r2,SNMP,IBDRVENKB8
+leaf-a12-r3,SNMP,IB899N1ZRD
+leaf-a13-r0,SNMP,IBU6BN6U8H
+leaf-a13-r1,SNMP,IBZGGPAAV8
+leaf-a13-r2,SNMP,IBUKUXROV1
+leaf-a13-r3,SNMP,IBJ891TTK5
+leaf-a14-r0,SNMP,IB6RYBASOZ
+leaf-a14-r1,SNMP,IB1SYCYW8W
+leaf-a14-r2,SNMP,IBFF69R1RI
+leaf-a14-r3,SNMP,IBV7IVN75H
+leaf-a15-r0,SNMP,IB8R9KH3XF
+leaf-a15-r1,SNMP,IBIOYLCRYW
+leaf-a15-r2,SNMP,IB1LPCSKM4
+leaf-a15-r3,SNMP,IB6CUSHK6Q
+leaf-a16-r0,SNMP,IBVFWOIT0H
+leaf-a16-r1,SNMP,IBM0RJNH7A
+leaf-a16-r2,SNMP,IBWGHK6NJW
+leaf-a16-r3,SNMP,IBK8PPCQCN
+leaf-b01-r0,SNMP,IBQWWL7AFW
+leaf-b01-r1,SNMP,IBRGRE1ATT
+leaf-b01-r2,SNMP,IB19LEW9L7
+leaf-b01-r3,SNMP,IBAJA5P7YY
+leaf-b02-r0,SNMP,IBGBGPKVDP
+leaf-b02-r1,SNMP,IBGPNIMPO0
+leaf-b02-r2,SNMP,IBN1XQKKPO
+leaf-b02-r3,SNMP,IBX8GDB740
+leaf-b03-r0,SNMP,IBU020RXNM
+leaf-b03-r1,SNMP,IB4F3YNAGB
+leaf-b03-r2,SNMP,IBHTMHMXXQ
+leaf-b03-r3,SNMP,IB3Z10R95J
+leaf-b04-r0,SNMP,IBHREJO520
+leaf-b04-r1,SNMP,IBMPC4U4U5
+leaf-b04-r2,SNMP,IB5CICSTWQ
+leaf-b04-r3,SNMP,IBV0JWRNUY
+leaf-b05-r0,SNMP,IBXBZDHYKY
+leaf-b05-r1,SNMP,IB5SULQM0Q
+leaf-b05-r2,SNMP,IB8AU63GJ9
+leaf-b05-r3,SNMP,IB6C5QWK9U
+leaf-b06-r0,SNMP,IBT9UDVIJJ
+leaf-b06-r1,SNMP,IBC4SKHWI6
+leaf-b06-r2,SNMP,IBOSFBZOJ9
+leaf-b06-r3,SNMP,IBH61YQZ4H
+leaf-b07-r0,SNMP,IBFALZ85C2
+leaf-b07-r1,SNMP,IBEKJ0A9HJ
+leaf-b07-r2,SNMP,IBSTBU1670
+leaf-b07-r3,SNMP,IB5QY7C39U
+leaf-b08-r0,SNMP,IBVJ90YZR9
+leaf-b08-r1,SNMP,IBMWDWD1WM
+leaf-b08-r2,SNMP,IBJN5EBEO6
+leaf-b08-r3,SNMP,IBIFMI39M0
+leaf-b09-r0,SNMP,IBEVQ1QBQ6
+leaf-b09-r1,SNMP,IBFNRWTAKT
+leaf-b09-r2,SNMP,IB8G4DN88M
+leaf-b09-r3,SNMP,IBXY9CT1N1
+leaf-b10-r0,SNMP,IBU7B9R9JL
+leaf-b10-r1,SNMP,IBV95U9VZY
+leaf-b10-r2,SNMP,IBAMZSU1LC
+leaf-b10-r3,SNMP,IB6FAZJHNM
+leaf-b11-r0,SNMP,IBW25SOZF7
+leaf-b11-r1,SNMP,IBPQPFQEWL
+leaf-b11-r2,SNMP,IB53ZPF0V9
+leaf-b11-r3,SNMP,IBUX1Q5MFI
+leaf-b12-r0,SNMP,IBNS468KLK
+leaf-b12-r1,SNMP,IBIZLJD3FI
+leaf-b12-r2,SNMP,IBZQDE67DR
+leaf-b12-r3,SNMP,IB3UK73Q0V
+leaf-b13-r0,SNMP,IBQI291JBX
+leaf-b13-r1,SNMP,IBFB53PVER
+leaf-b13-r2,SNMP,IBJ49R9PXH
+leaf-b13-r3,SNMP,IB38BJIYV1
+leaf-b14-r0,SNMP,IB45T82MNN
+leaf-b14-r1,SNMP,IB5OTUU662
+leaf-b14-r2,SNMP,IB6TVTJZOZ
+leaf-b14-r3,SNMP,IBZ7DE6CHA
+leaf-b15-r0,SNMP,IB5GGI154M
+leaf-b15-r1,SNMP,IBOYZZ2F4G
+leaf-b15-r2,SNMP,IBHDOA0NR8
+leaf-b15-r3,SNMP,IBLNPN0PIH
+leaf-b16-r0,SNMP,IBO30H0UIK
+leaf-b16-r1,SNMP,IBVQ6LLU06
+leaf-b16-r2,SNMP,IBMGKOKDW3
+leaf-b16-r3,SNMP,IB6D41YI0A
+oob-agg-a1,SNMP,AGY3X0QZ03
+oob-agg-a2,SNMP,AGAQBBWU4H
+oob-agg-b1,SNMP,AGGXERIHF8
+oob-agg-b2,SNMP,AGBU1L9PXR
+stg-a1-n01,SNMP,SN9TE09OQ4
+stg-a1-n01 Bay01,Redfish,NVAXTAK20NBQ
+stg-a1-n01 Bay02,Redfish,NVZA6793Y2VX
+stg-a1-n01 Bay03,Redfish,NVGYXBEE16OC
+stg-a1-n01 Bay04,Redfish,NVFNYPAEP3X8
+stg-a1-n01 Bay05,Redfish,NV1IFM9Q2QO2
+stg-a1-n01 Bay06,Redfish,NVYAD8T6JSNA
+stg-a1-n01 Bay07,Redfish,NV5F4SU9FBB7
+stg-a1-n01 Bay08,Redfish,NV8MEZ5OH4NK
+stg-a1-n01 Bay09,Redfish,NVGUJPN0YKGH
+stg-a1-n01 Bay10,Redfish,NVYXA5BG2TAF
+stg-a1-n01 Bay11,Redfish,NVDNGMK3VN72
+stg-a1-n01 Bay12,Redfish,NVMZZC8OCYME
+stg-a1-n01 Bay13,Redfish,NVS9ELNLUKPS
+stg-a1-n01 Bay14,Redfish,NVPA9YMPR01E
+stg-a1-n01 Bay15,Redfish,NVT1DRWYDCDJ
+stg-a1-n01 Bay16,Redfish,NVU4UVLZDXXK
+stg-a1-n01 Bay17,Redfish,NVMLYWQFQOQF
+stg-a1-n01 Bay18,Redfish,NVISXL3GOX0C
+stg-a1-n01 Bay19,Redfish,NVIQ4A9MJPS8
+stg-a1-n01 Bay20,Redfish,NV3K6IUSS5J5
+stg-a1-n01 Bay21,Redfish,NVCJB1VC7TI2
+stg-a1-n01 Bay22,Redfish,NV2L5V2QSBIX
+stg-a1-n01 Bay23,Redfish,NVFW8X8H88ND
+stg-a1-n01 Bay24,Redfish,NVIW7MBZ1AKI
+stg-a1-n02,SNMP,SNEUNQDUB8
+stg-a1-n02 Bay01,Redfish,NV0V3T8Y1YTS
+stg-a1-n02 Bay02,Redfish,NVEI1KBM1UXQ
+stg-a1-n02 Bay03,Redfish,NVYL08CC6KHY
+stg-a1-n02 Bay04,Redfish,NVS1MOE757MP
+stg-a1-n02 Bay05,Redfish,NVXGIGINL3IJ
+stg-a1-n02 Bay06,Redfish,NVSS2M14RM3O
+stg-a1-n02 Bay07,Redfish,NVR5G4DC2ZAU
+stg-a1-n02 Bay08,Redfish,NVF390V6TCHN
+stg-a1-n02 Bay09,Redfish,NVWA0L28YC4O
+stg-a1-n02 Bay10,Redfish,NVL23284W98H
+stg-a1-n02 Bay11,Redfish,NV3TGCH8ZHAI
+stg-a1-n02 Bay12,Redfish,NVU6MXSNUZ8H
+stg-a1-n02 Bay13,Redfish,NV9OTEIBF4N8
+stg-a1-n02 Bay14,Redfish,NVZEL872TZIV
+stg-a1-n02 Bay15,Redfish,NVGN4L0EYN3J
+stg-a1-n02 Bay16,Redfish,NVTB95OBHNKR
+stg-a1-n02 Bay17,Redfish,NVENSNCRR7UQ
+stg-a1-n02 Bay18,Redfish,NVOYTE87L3TN
+stg-a1-n02 Bay19,Redfish,NV1QWT35Z3UV
+stg-a1-n02 Bay20,Redfish,NVOQ8EQIMG9F
+stg-a1-n02 Bay21,Redfish,NV9P55J5R74L
+stg-a1-n02 Bay22,Redfish,NVOISSE1FXZW
+stg-a1-n02 Bay23,Redfish,NV9RU7PNU6OU
+stg-a1-n02 Bay24,Redfish,NV4UMDV1MHNI
+stg-a1-n03,SNMP,SNX9VGANP3
+stg-a1-n03 Bay01,Redfish,NVW09GVQKJQI
+stg-a1-n03 Bay02,Redfish,NVFP9PU3B2KM
+stg-a1-n03 Bay03,Redfish,NVULFKZVL4TZ
+stg-a1-n03 Bay04,Redfish,NVYXRWHWXOBF
+stg-a1-n03 Bay05,Redfish,NV949NMETPQE
+stg-a1-n03 Bay06,Redfish,NVSE6P3DBBNH
+stg-a1-n03 Bay07,Redfish,NVFFBOA87HDM
+stg-a1-n03 Bay08,Redfish,NVAAI9ZEXWXH
+stg-a1-n03 Bay09,Redfish,NVMU0H9HEE1E
+stg-a1-n03 Bay10,Redfish,NV3LZC8AK0AB
+stg-a1-n03 Bay11,Redfish,NVM087NLM1C5
+stg-a1-n03 Bay12,Redfish,NVMNIPH8FNYZ
+stg-a1-n03 Bay13,Redfish,NVPMYWITNOXT
+stg-a1-n03 Bay14,Redfish,NVOI2P1OL76T
+stg-a1-n03 Bay15,Redfish,NVNRHY0LJOP1
+stg-a1-n03 Bay16,Redfish,NV51BTM8J724
+stg-a1-n03 Bay17,Redfish,NVV786HZMXDG
+stg-a1-n03 Bay18,Redfish,NV6K05OZ65UT
+stg-a1-n03 Bay19,Redfish,NVSRJECVNQQ4
+stg-a1-n03 Bay20,Redfish,NV3QTFMVZCSS
+stg-a1-n03 Bay21,Redfish,NVWR3BBVV08M
+stg-a1-n03 Bay22,Redfish,NV7H2UOSLRZ4
+stg-a1-n03 Bay23,Redfish,NV1HCCGSI0RU
+stg-a1-n03 Bay24,Redfish,NVRKHAEOOT89
+stg-a1-n04,SNMP,SNQOCWQRXR
+stg-a1-n04 Bay01,Redfish,NV62W1UOWUO1
+stg-a1-n04 Bay02,Redfish,NVBXZXDEAAFZ
+stg-a1-n04 Bay03,Redfish,NVO409M5V7A5
+stg-a1-n04 Bay04,Redfish,NVGZ55J683M5
+stg-a1-n04 Bay05,Redfish,NVS4VRTN0TE3
+stg-a1-n04 Bay06,Redfish,NV11NL3OGPUR
+stg-a1-n04 Bay07,Redfish,NVQS8WFVDAIY
+stg-a1-n04 Bay08,Redfish,NVK0JQ1XYP81
+stg-a1-n04 Bay09,Redfish,NVLD28AUNKWU
+stg-a1-n04 Bay10,Redfish,NVFUXO7CO1JH
+stg-a1-n04 Bay11,Redfish,NVBNDRZH2YG3
+stg-a1-n04 Bay12,Redfish,NVXPWZBZQRMF
+stg-a1-n04 Bay13,Redfish,NVHYNF2GLDOM
+stg-a1-n04 Bay14,Redfish,NVC61XZH7TGN
+stg-a1-n04 Bay15,Redfish,NVW7HB0ZYBMG
+stg-a1-n04 Bay16,Redfish,NVG9LG3WJTR5
+stg-a1-n04 Bay17,Redfish,NVVJVU69R5LY
+stg-a1-n04 Bay18,Redfish,NVMRVB7C71SE
+stg-a1-n04 Bay19,Redfish,NVMO8QIH38XL
+stg-a1-n04 Bay20,Redfish,NVVP9FXZX0LV
+stg-a1-n04 Bay21,Redfish,NV9SFGTMG44L
+stg-a1-n04 Bay22,Redfish,NV677XYNHZEC
+stg-a1-n04 Bay23,Redfish,NVZV99GDVIG9
+stg-a1-n04 Bay24,Redfish,NVQYGGQUGQAB
+stg-a1-n05,SNMP,SNZXU4U2A5
+stg-a1-n05 Bay01,Redfish,NV0GDJUMP0XR
+stg-a1-n05 Bay02,Redfish,NVB78J2ZNMLJ
+stg-a1-n05 Bay03,Redfish,NVZFBPX19HTM
+stg-a1-n05 Bay04,Redfish,NVODS1OWYM0F
+stg-a1-n05 Bay05,Redfish,NVFN22H9ETJ3
+stg-a1-n05 Bay06,Redfish,NV4RJQB463KC
+stg-a1-n05 Bay07,Redfish,NVRHUW3PWISM
+stg-a1-n05 Bay08,Redfish,NVWOYRJD2RWZ
+stg-a1-n05 Bay09,Redfish,NVKVXGTBEFCJ
+stg-a1-n05 Bay10,Redfish,NVSIYPY047QT
+stg-a1-n05 Bay11,Redfish,NVK3XZC5SPTV
+stg-a1-n05 Bay12,Redfish,NVEU3IJS33I5
+stg-a1-n05 Bay13,Redfish,NV6PQYNZHRS7
+stg-a1-n05 Bay14,Redfish,NVDH62O581AX
+stg-a1-n05 Bay15,Redfish,NVORD0T25UXG
+stg-a1-n05 Bay16,Redfish,NVNO216HUZA4
+stg-a1-n05 Bay17,Redfish,NVO2TUQHB7I6
+stg-a1-n05 Bay18,Redfish,NVHMCYBKU6R3
+stg-a1-n05 Bay19,Redfish,NVC0NA0VQREU
+stg-a1-n05 Bay20,Redfish,NVUWJBSIFJ80
+stg-a1-n05 Bay21,Redfish,NVVJBJO5KB6G
+stg-a1-n05 Bay22,Redfish,NV0DAOXJIL36
+stg-a1-n05 Bay23,Redfish,NVDIGJMPAYJA
+stg-a1-n05 Bay24,Redfish,NVA5O7V7OWVF
+stg-a1-n06,SNMP,SNNDLR29UJ
+stg-a1-n06 Bay01,Redfish,NVOMI8SDFAZ6
+stg-a1-n06 Bay02,Redfish,NV0BWQYVFGZ9
+stg-a1-n06 Bay03,Redfish,NV4INJZL2SR3
+stg-a1-n06 Bay04,Redfish,NVWKVZN3NSLX
+stg-a1-n06 Bay05,Redfish,NV0H8FRSBIG4
+stg-a1-n06 Bay06,Redfish,NVNY4CC3ADSR
+stg-a1-n06 Bay07,Redfish,NVZK4L566EU4
+stg-a1-n06 Bay08,Redfish,NVJL042LDT97
+stg-a1-n06 Bay09,Redfish,NV2NZ51KNYEQ
+stg-a1-n06 Bay10,Redfish,NV55QR27O9LI
+stg-a1-n06 Bay11,Redfish,NV9TDKFPLKZ8
+stg-a1-n06 Bay12,Redfish,NV0O7I4ULLLG
+stg-a1-n06 Bay13,Redfish,NVISYOFQUTLV
+stg-a1-n06 Bay14,Redfish,NVJNU5LDPC4F
+stg-a1-n06 Bay15,Redfish,NVZWY09590P7
+stg-a1-n06 Bay16,Redfish,NV6K26GVRHYK
+stg-a1-n06 Bay17,Redfish,NVP8I093GRNJ
+stg-a1-n06 Bay18,Redfish,NVGD40C4MXA6
+stg-a1-n06 Bay19,Redfish,NV5CGTH7S2P8
+stg-a1-n06 Bay20,Redfish,NVA3S03HG2VL
+stg-a1-n06 Bay21,Redfish,NVRT3D7TFC0I
+stg-a1-n06 Bay22,Redfish,NV5RWAZ0ZTSE
+stg-a1-n06 Bay23,Redfish,NVE1VXD5VG1Q
+stg-a1-n06 Bay24,Redfish,NVFWXE6Y2OAR
+stg-a1-n07,SNMP,SNLEMT8D2P
+stg-a1-n07 Bay01,Redfish,NVIIH7NXXQDO
+stg-a1-n07 Bay02,Redfish,NV3T8BGYU7ZV
+stg-a1-n07 Bay03,Redfish,NVPYGCH9TMCU
+stg-a1-n07 Bay04,Redfish,NV4PO0J7JTL7
+stg-a1-n07 Bay05,Redfish,NVZUCAHIFOX2
+stg-a1-n07 Bay06,Redfish,NV90HXM8BHWP
+stg-a1-n07 Bay07,Redfish,NVTBCB9DBI2A
+stg-a1-n07 Bay08,Redfish,NV70KEUAJU04
+stg-a1-n07 Bay09,Redfish,NVHIA0KP0SSY
+stg-a1-n07 Bay10,Redfish,NV4XIXALSZD8
+stg-a1-n07 Bay11,Redfish,NVJX3506KRG3
+stg-a1-n07 Bay12,Redfish,NVQ9VGHJ6P54
+stg-a1-n07 Bay13,Redfish,NVQMENQF2ET3
+stg-a1-n07 Bay14,Redfish,NVA9WMVU3C5R
+stg-a1-n07 Bay15,Redfish,NVB79B5O7EVD
+stg-a1-n07 Bay16,Redfish,NV9CH0U50QYC
+stg-a1-n07 Bay17,Redfish,NVUWIMMEWSUB
+stg-a1-n07 Bay18,Redfish,NVXFYRFC9752
+stg-a1-n07 Bay19,Redfish,NV0AV3WTHCAR
+stg-a1-n07 Bay20,Redfish,NV4P8MAPAKKL
+stg-a1-n07 Bay21,Redfish,NVKJAM1H0364
+stg-a1-n07 Bay22,Redfish,NVQWYMB15X0Z
+stg-a1-n07 Bay23,Redfish,NVIAGFQP6ZBU
+stg-a1-n07 Bay24,Redfish,NVTZ6KQUOXH6
+stg-a1-n08,SNMP,SNBBJA4B6G
+stg-a1-n08 Bay01,Redfish,NVEOITVQ662I
+stg-a1-n08 Bay02,Redfish,NV7JC1OWQSIC
+stg-a1-n08 Bay03,Redfish,NVZXWKHKR0BX
+stg-a1-n08 Bay04,Redfish,NVO8XU21QDD2
+stg-a1-n08 Bay05,Redfish,NV90KSOO0OAI
+stg-a1-n08 Bay06,Redfish,NVY4TI68RUCC
+stg-a1-n08 Bay07,Redfish,NVS8342KZ8LD
+stg-a1-n08 Bay08,Redfish,NVIDY5GP23UT
+stg-a1-n08 Bay09,Redfish,NV15I7NEXWYE
+stg-a1-n08 Bay10,Redfish,NVEYD6YP1BNH
+stg-a1-n08 Bay11,Redfish,NVSS1A9EPCG3
+stg-a1-n08 Bay12,Redfish,NVCQDFNF1CLQ
+stg-a1-n08 Bay13,Redfish,NVKOQ22KKI41
+stg-a1-n08 Bay14,Redfish,NVG1D0GQKH68
+stg-a1-n08 Bay15,Redfish,NVSZA49TSIKT
+stg-a1-n08 Bay16,Redfish,NVXGOIMH73BD
+stg-a1-n08 Bay17,Redfish,NVPOCGV96SY0
+stg-a1-n08 Bay18,Redfish,NVBD8W2H82R0
+stg-a1-n08 Bay19,Redfish,NVRMZU3Y1YC4
+stg-a1-n08 Bay20,Redfish,NV0T72T2CM44
+stg-a1-n08 Bay21,Redfish,NVFCTN5HDZ46
+stg-a1-n08 Bay22,Redfish,NVDGBLDCPEYW
+stg-a1-n08 Bay23,Redfish,NVQ2AQMPBV2T
+stg-a1-n08 Bay24,Redfish,NVO455FB7HA6
+stg-a2-n01,SNMP,SN9OIK3NOB
+stg-a2-n01 Bay01,Redfish,NVTRW6SSOJ21
+stg-a2-n01 Bay02,Redfish,NVMN7O4UPMTA
+stg-a2-n01 Bay03,Redfish,NVPQ6AW6X5Z2
+stg-a2-n01 Bay04,Redfish,NV0WWMUXHOJL
+stg-a2-n01 Bay05,Redfish,NVB4BOKJCWBB
+stg-a2-n01 Bay06,Redfish,NVEAGPIJPVG2
+stg-a2-n01 Bay07,Redfish,NVFL8OO4T6AU
+stg-a2-n01 Bay08,Redfish,NVED9LPZV5DX
+stg-a2-n01 Bay09,Redfish,NV9HB5PTOQ3Y
+stg-a2-n01 Bay10,Redfish,NV1VL6VT8ALX
+stg-a2-n01 Bay11,Redfish,NVTSTQL0ZJCE
+stg-a2-n01 Bay12,Redfish,NVGRCO12O1YD
+stg-a2-n01 Bay13,Redfish,NVI0OQH5GIIQ
+stg-a2-n01 Bay14,Redfish,NV5TI7FEUT40
+stg-a2-n01 Bay15,Redfish,NVKD08J24WDL
+stg-a2-n01 Bay16,Redfish,NVE7DT8JTXS5
+stg-a2-n01 Bay17,Redfish,NVQ2NQY56RMK
+stg-a2-n01 Bay18,Redfish,NVFWH6PCK0OU
+stg-a2-n01 Bay19,Redfish,NV1L8L8RS68Q
+stg-a2-n01 Bay20,Redfish,NVUYPZFPHMFB
+stg-a2-n01 Bay21,Redfish,NVU05BBRQ2K7
+stg-a2-n01 Bay22,Redfish,NVDFR9YDJ2ZI
+stg-a2-n01 Bay23,Redfish,NV16WFHD0UQN
+stg-a2-n01 Bay24,Redfish,NVDIIYZIKRJI
+stg-a2-n02,SNMP,SN2L2BYZNI
+stg-a2-n02 Bay01,Redfish,NV2U036J7DVU
+stg-a2-n02 Bay02,Redfish,NVK0IX8HK1R1
+stg-a2-n02 Bay03,Redfish,NVHS86NVIWB2
+stg-a2-n02 Bay04,Redfish,NV5P6QJQPMM7
+stg-a2-n02 Bay05,Redfish,NVANWBJHB5J9
+stg-a2-n02 Bay06,Redfish,NVBD5AMH0O8K
+stg-a2-n02 Bay07,Redfish,NV2ZKIZ5IVYD
+stg-a2-n02 Bay08,Redfish,NVDLT5ZHDJQM
+stg-a2-n02 Bay09,Redfish,NVOA209YPLXH
+stg-a2-n02 Bay10,Redfish,NV54RUI18P7C
+stg-a2-n02 Bay11,Redfish,NVU8X9KVDBQU
+stg-a2-n02 Bay12,Redfish,NV0IXV8RMK4G
+stg-a2-n02 Bay13,Redfish,NV9LYX880KBH
+stg-a2-n02 Bay14,Redfish,NVK46UXM0TYI
+stg-a2-n02 Bay15,Redfish,NVFSEAX409WM
+stg-a2-n02 Bay16,Redfish,NVUBX3N351IP
+stg-a2-n02 Bay17,Redfish,NVR76EKFNCIS
+stg-a2-n02 Bay18,Redfish,NVYWZNBRPHQB
+stg-a2-n02 Bay19,Redfish,NVXVUSNDRTL1
+stg-a2-n02 Bay20,Redfish,NVVH0HKIXN2S
+stg-a2-n02 Bay21,Redfish,NV4VWUBI9KLS
+stg-a2-n02 Bay22,Redfish,NV8G6ISZR43M
+stg-a2-n02 Bay23,Redfish,NVHUGS3B1FQL
+stg-a2-n02 Bay24,Redfish,NVUC3DTY4V0Z
+stg-a2-n03,SNMP,SNLU6IF9RL
+stg-a2-n03 Bay01,Redfish,NVBVDBZCEW2Z
+stg-a2-n03 Bay02,Redfish,NV9KDHH76Y6T
+stg-a2-n03 Bay03,Redfish,NV27WYM0SORO
+stg-a2-n03 Bay04,Redfish,NVZI2QMCABJ9
+stg-a2-n03 Bay05,Redfish,NVLZ6PPY1L8X
+stg-a2-n03 Bay06,Redfish,NVQJ0XU3HPXU
+stg-a2-n03 Bay07,Redfish,NVWMV94FD065
+stg-a2-n03 Bay08,Redfish,NV3Z8LI22YC3
+stg-a2-n03 Bay09,Redfish,NVRLQRKI30Q8
+stg-a2-n03 Bay10,Redfish,NV3XBQ7U3FU0
+stg-a2-n03 Bay11,Redfish,NVY61JYMQKPM
+stg-a2-n03 Bay12,Redfish,NVYRXNET63W0
+stg-a2-n03 Bay13,Redfish,NVV1PK4FPHPA
+stg-a2-n03 Bay14,Redfish,NV68Q9ZNZN7H
+stg-a2-n03 Bay15,Redfish,NVXGCSNINPTO
+stg-a2-n03 Bay16,Redfish,NVMCCDMB22SZ
+stg-a2-n03 Bay17,Redfish,NVH7U6YQWAPH
+stg-a2-n03 Bay18,Redfish,NVXVZU88ZIYL
+stg-a2-n03 Bay19,Redfish,NV8XMN1A6V54
+stg-a2-n03 Bay20,Redfish,NVP9APRX7ZBQ
+stg-a2-n03 Bay21,Redfish,NVPWRKKHR67R
+stg-a2-n03 Bay22,Redfish,NVIT53VD9OYY
+stg-a2-n03 Bay23,Redfish,NVTF75UM6VO6
+stg-a2-n03 Bay24,Redfish,NVC6OCTQ13KO
+stg-a2-n04,SNMP,SNM3TD1AIZ
+stg-a2-n04 Bay01,Redfish,NVADQYGJBGIO
+stg-a2-n04 Bay02,Redfish,NVOYGE35XY7F
+stg-a2-n04 Bay03,Redfish,NVQ1NOE7DSG8
+stg-a2-n04 Bay04,Redfish,NVKIIS8H2W0F
+stg-a2-n04 Bay05,Redfish,NVCVANO812WZ
+stg-a2-n04 Bay06,Redfish,NV6N3R2JTY3E
+stg-a2-n04 Bay07,Redfish,NV9EKCKD8Y8Q
+stg-a2-n04 Bay08,Redfish,NVKBYYB45QZB
+stg-a2-n04 Bay09,Redfish,NVHGYJIXJHU8
+stg-a2-n04 Bay10,Redfish,NV0VM3P13CCA
+stg-a2-n04 Bay11,Redfish,NV1J8WSK3CED
+stg-a2-n04 Bay12,Redfish,NVOAKI51O5F3
+stg-a2-n04 Bay13,Redfish,NV6UV3WRKDJK
+stg-a2-n04 Bay14,Redfish,NV2BR74EAALI
+stg-a2-n04 Bay15,Redfish,NV7K4SHTA6D3
+stg-a2-n04 Bay16,Redfish,NVJU84G0F4MM
+stg-a2-n04 Bay17,Redfish,NVGSO43XE64T
+stg-a2-n04 Bay18,Redfish,NVP5LCQ2RPUU
+stg-a2-n04 Bay19,Redfish,NV7LBDKGBRZC
+stg-a2-n04 Bay20,Redfish,NVLD4ZIN2O4V
+stg-a2-n04 Bay21,Redfish,NVDKVK0ZK46G
+stg-a2-n04 Bay22,Redfish,NVKD7GSDUSE7
+stg-a2-n04 Bay23,Redfish,NVJTTKYV4QTX
+stg-a2-n04 Bay24,Redfish,NVJ9CW0ZVOZE
+stg-a2-n05,SNMP,SNASSGIFED
+stg-a2-n05 Bay01,Redfish,NVLTPNQ5NK4I
+stg-a2-n05 Bay02,Redfish,NV2XNR6TB300
+stg-a2-n05 Bay03,Redfish,NVR0BA9IN76Z
+stg-a2-n05 Bay04,Redfish,NVNOL0NBRCC7
+stg-a2-n05 Bay05,Redfish,NVPNZZDOHLCC
+stg-a2-n05 Bay06,Redfish,NV2EFWVR8GBA
+stg-a2-n05 Bay07,Redfish,NVQL2GXOMVH6
+stg-a2-n05 Bay08,Redfish,NVOXF2UFIDO5
+stg-a2-n05 Bay09,Redfish,NVDRVXSI9HAN
+stg-a2-n05 Bay10,Redfish,NVBIDO97XOPO
+stg-a2-n05 Bay11,Redfish,NV4U5PFQ6CJU
+stg-a2-n05 Bay12,Redfish,NVOT08APRBAH
+stg-a2-n05 Bay13,Redfish,NV4D59X7H7PR
+stg-a2-n05 Bay14,Redfish,NVXYNUD9GIEZ
+stg-a2-n05 Bay15,Redfish,NVSAGZRH481Y
+stg-a2-n05 Bay16,Redfish,NVMLALMZCLB4
+stg-a2-n05 Bay17,Redfish,NVF6KEHCD9OS
+stg-a2-n05 Bay18,Redfish,NV8IFFFB3UHZ
+stg-a2-n05 Bay19,Redfish,NVYMP93RBP51
+stg-a2-n05 Bay20,Redfish,NVLOQ3WYOGNJ
+stg-a2-n05 Bay21,Redfish,NV204UCXJOQM
+stg-a2-n05 Bay22,Redfish,NV6JJR8JW4U7
+stg-a2-n05 Bay23,Redfish,NV04XNE24SM5
+stg-a2-n05 Bay24,Redfish,NVVL6IVZQJR6
+stg-a2-n06,SNMP,SN8DW0J9FZ
+stg-a2-n06 Bay01,Redfish,NVQ9PML5OIQI
+stg-a2-n06 Bay02,Redfish,NVTN1W76INAO
+stg-a2-n06 Bay03,Redfish,NVY4KG3Z40IX
+stg-a2-n06 Bay04,Redfish,NVU7HZA2JGRQ
+stg-a2-n06 Bay05,Redfish,NV10PDMWET2O
+stg-a2-n06 Bay06,Redfish,NVSW5NARWFD3
+stg-a2-n06 Bay07,Redfish,NV55YLS4KHFA
+stg-a2-n06 Bay08,Redfish,NVTNNBPN84QH
+stg-a2-n06 Bay09,Redfish,NV8Z1LS7DZ6R
+stg-a2-n06 Bay10,Redfish,NVV3JZWBKKW3
+stg-a2-n06 Bay11,Redfish,NVQGJLSM20CA
+stg-a2-n06 Bay12,Redfish,NVTPSHSK7C13
+stg-a2-n06 Bay13,Redfish,NVNN60369UKO
+stg-a2-n06 Bay14,Redfish,NVM445P49655
+stg-a2-n06 Bay15,Redfish,NVVLAKWHXUZM
+stg-a2-n06 Bay16,Redfish,NV8TAP0D9XUQ
+stg-a2-n06 Bay17,Redfish,NVSU25QPSCIM
+stg-a2-n06 Bay18,Redfish,NVEHU8VOBSB8
+stg-a2-n06 Bay19,Redfish,NV47ZV159XQL
+stg-a2-n06 Bay20,Redfish,NVDQGT6IB277
+stg-a2-n06 Bay21,Redfish,NVF06O0E1OX3
+stg-a2-n06 Bay22,Redfish,NVMHZTUZ14AN
+stg-a2-n06 Bay23,Redfish,NVOWBCPRNZP1
+stg-a2-n06 Bay24,Redfish,NVNNPV3JMD5F
+stg-a2-n07,SNMP,SNIC5PIZ7K
+stg-a2-n07 Bay01,Redfish,NVMCXMK8F20D
+stg-a2-n07 Bay02,Redfish,NVME60ZMQTOF
+stg-a2-n07 Bay03,Redfish,NVE23GX2UUZW
+stg-a2-n07 Bay04,Redfish,NV52ATWARLRO
+stg-a2-n07 Bay05,Redfish,NVYFJKQ4O55L
+stg-a2-n07 Bay06,Redfish,NVUTOHNPM46F
+stg-a2-n07 Bay07,Redfish,NVMIIX8WU329
+stg-a2-n07 Bay08,Redfish,NVKOOXCU45Z7
+stg-a2-n07 Bay09,Redfish,NV359YSCHV8H
+stg-a2-n07 Bay10,Redfish,NVF0KN7QX6G3
+stg-a2-n07 Bay11,Redfish,NVSNDKSSN0QR
+stg-a2-n07 Bay12,Redfish,NV605PMHOB3A
+stg-a2-n07 Bay13,Redfish,NVSN0V51T3MH
+stg-a2-n07 Bay14,Redfish,NV6DD31T77VL
+stg-a2-n07 Bay15,Redfish,NV5R12EICIGI
+stg-a2-n07 Bay16,Redfish,NV5C0KC3QG9K
+stg-a2-n07 Bay17,Redfish,NVOT6HLHV5HZ
+stg-a2-n07 Bay18,Redfish,NVLDCLL9ISP9
+stg-a2-n07 Bay19,Redfish,NVPENL9EDO83
+stg-a2-n07 Bay20,Redfish,NVUY4LF3L8XG
+stg-a2-n07 Bay21,Redfish,NVRVXLO8ZKUX
+stg-a2-n07 Bay22,Redfish,NV1FMDQ6B3JJ
+stg-a2-n07 Bay23,Redfish,NV5M0255YS7T
+stg-a2-n07 Bay24,Redfish,NVTVQT6NU5ID
+stg-a2-n08,SNMP,SNPWSEX6EE
+stg-a2-n08 Bay01,Redfish,NV0CE0THO4GX
+stg-a2-n08 Bay02,Redfish,NVDSP3FCBTDH
+stg-a2-n08 Bay03,Redfish,NV5DRX4XMHL7
+stg-a2-n08 Bay04,Redfish,NVRM0CG5RK25
+stg-a2-n08 Bay05,Redfish,NVIB3652QU1C
+stg-a2-n08 Bay06,Redfish,NVLDH74F46SE
+stg-a2-n08 Bay07,Redfish,NVNXLC6R8H8H
+stg-a2-n08 Bay08,Redfish,NVLJGSHISEH5
+stg-a2-n08 Bay09,Redfish,NV8S3G414HLO
+stg-a2-n08 Bay10,Redfish,NVG4VO7V0S8R
+stg-a2-n08 Bay11,Redfish,NVRP3EVQFR5X
+stg-a2-n08 Bay12,Redfish,NVAFZMI3TC9V
+stg-a2-n08 Bay13,Redfish,NVJDT7R9T8PB
+stg-a2-n08 Bay14,Redfish,NVWG2HQVUXIF
+stg-a2-n08 Bay15,Redfish,NVZU6PM1HI49
+stg-a2-n08 Bay16,Redfish,NVPYVPDUPK0U
+stg-a2-n08 Bay17,Redfish,NVJJTJ4DCJ6Y
+stg-a2-n08 Bay18,Redfish,NV9XGTBAXSRH
+stg-a2-n08 Bay19,Redfish,NVG4YDQQQQGO
+stg-a2-n08 Bay20,Redfish,NV2VX787PMR1
+stg-a2-n08 Bay21,Redfish,NVBHD3W3RCCP
+stg-a2-n08 Bay22,Redfish,NVR3CT66VKS6
+stg-a2-n08 Bay23,Redfish,NVIJH7YLFFI1
+stg-a2-n08 Bay24,Redfish,NVLAV6SB1J2A
+stg-b1-n01,SNMP,SNL7VJE93N
+stg-b1-n01 Bay01,Redfish,NVNZXL8F6SDD
+stg-b1-n01 Bay02,Redfish,NVAU54VU8UG1
+stg-b1-n01 Bay03,Redfish,NV5KJ1HZ94S3
+stg-b1-n01 Bay04,Redfish,NVOQAUIBS04Z
+stg-b1-n01 Bay05,Redfish,NVG1EDRXA2N0
+stg-b1-n01 Bay06,Redfish,NVA4E1CEGX2X
+stg-b1-n01 Bay07,Redfish,NVEL9N0AWNZI
+stg-b1-n01 Bay08,Redfish,NVRLY0I2M1IL
+stg-b1-n01 Bay09,Redfish,NVHBJGLIY7HR
+stg-b1-n01 Bay10,Redfish,NVR5W2DWMU7H
+stg-b1-n01 Bay11,Redfish,NV6X5JGSESNC
+stg-b1-n01 Bay12,Redfish,NV2W7PAW9D0F
+stg-b1-n01 Bay13,Redfish,NV942QJXI1EA
+stg-b1-n01 Bay14,Redfish,NVVVI9I0705M
+stg-b1-n01 Bay15,Redfish,NVH7Z3Z4T33L
+stg-b1-n01 Bay16,Redfish,NVDKUH412CZQ
+stg-b1-n01 Bay17,Redfish,NV7XPSW7MRXR
+stg-b1-n01 Bay18,Redfish,NV7FF3423AUA
+stg-b1-n01 Bay19,Redfish,NVG5WDUOJ5Z3
+stg-b1-n01 Bay20,Redfish,NVL0ASVJ50XZ
+stg-b1-n01 Bay21,Redfish,NVIMCHAFD2QJ
+stg-b1-n01 Bay22,Redfish,NVS74TX0L8G8
+stg-b1-n01 Bay23,Redfish,NVRKRAY7WZ2D
+stg-b1-n01 Bay24,Redfish,NVWJNT8QR85V
+stg-b1-n02,SNMP,SNCJ09BMJ0
+stg-b1-n02 Bay01,Redfish,NVK4BLW6R325
+stg-b1-n02 Bay02,Redfish,NVS86728GN79
+stg-b1-n02 Bay03,Redfish,NVUHAORVGPXX
+stg-b1-n02 Bay04,Redfish,NV15SAG00O9P
+stg-b1-n02 Bay05,Redfish,NVJT0XZVX8W4
+stg-b1-n02 Bay06,Redfish,NVBYQSUGBCAC
+stg-b1-n02 Bay07,Redfish,NV8Z0NCKJSUE
+stg-b1-n02 Bay08,Redfish,NV4MRMZS4UWZ
+stg-b1-n02 Bay09,Redfish,NVO2EP62T8W9
+stg-b1-n02 Bay10,Redfish,NVS2QXERA71H
+stg-b1-n02 Bay11,Redfish,NVH54NSKZ72V
+stg-b1-n02 Bay12,Redfish,NV6RTPAOOQ2O
+stg-b1-n02 Bay13,Redfish,NV64YAG9X9FY
+stg-b1-n02 Bay14,Redfish,NV2N2PG2W6WI
+stg-b1-n02 Bay15,Redfish,NVYBETOGIFXY
+stg-b1-n02 Bay16,Redfish,NVGBUZTVBKXE
+stg-b1-n02 Bay17,Redfish,NVWGLUYZNO9U
+stg-b1-n02 Bay18,Redfish,NVLCIDS1KWTC
+stg-b1-n02 Bay19,Redfish,NV9844DBUX2W
+stg-b1-n02 Bay20,Redfish,NV2ZPTE4EOQD
+stg-b1-n02 Bay21,Redfish,NVPBQEACKPB7
+stg-b1-n02 Bay22,Redfish,NVLYUQO6RESA
+stg-b1-n02 Bay23,Redfish,NVKGF4UZJMCH
+stg-b1-n02 Bay24,Redfish,NVU8BS1TC1IS
+stg-b1-n03,SNMP,SN73J3IYJB
+stg-b1-n03 Bay01,Redfish,NVODXUUPEMZX
+stg-b1-n03 Bay02,Redfish,NVG8NM6XBL4I
+stg-b1-n03 Bay03,Redfish,NVBZ0MCEUECJ
+stg-b1-n03 Bay04,Redfish,NVQTPROLE5PX
+stg-b1-n03 Bay05,Redfish,NV85H59SCUAK
+stg-b1-n03 Bay06,Redfish,NVXR6LFLXJ9Q
+stg-b1-n03 Bay07,Redfish,NV0C9YAT0ZBF
+stg-b1-n03 Bay08,Redfish,NV1AUJN8AZYQ
+stg-b1-n03 Bay09,Redfish,NVHHAUSAMLQP
+stg-b1-n03 Bay10,Redfish,NV2ZQPKABRB2
+stg-b1-n03 Bay11,Redfish,NVNP8UHZU3Z8
+stg-b1-n03 Bay12,Redfish,NV8O1WNO1OKL
+stg-b1-n03 Bay13,Redfish,NV2VO4FY9Y66
+stg-b1-n03 Bay14,Redfish,NVNOE0KA2OYH
+stg-b1-n03 Bay15,Redfish,NVZZPFQ9KJBW
+stg-b1-n03 Bay16,Redfish,NVWJKLMGRNBR
+stg-b1-n03 Bay17,Redfish,NV9VCX8AMOZ2
+stg-b1-n03 Bay18,Redfish,NV7LATOKGL5Y
+stg-b1-n03 Bay19,Redfish,NVFWPAWIXXI7
+stg-b1-n03 Bay20,Redfish,NV30TROMIRMH
+stg-b1-n03 Bay21,Redfish,NVS1JCGXPS4F
+stg-b1-n03 Bay22,Redfish,NVSL2QZ50W7Z
+stg-b1-n03 Bay23,Redfish,NV13W5JG472G
+stg-b1-n03 Bay24,Redfish,NVCPAT8A8CIJ
+stg-b1-n04,SNMP,SNIXM6ZIG1
+stg-b1-n04 Bay01,Redfish,NVY20PHX1I8E
+stg-b1-n04 Bay02,Redfish,NVOUFR24PNFK
+stg-b1-n04 Bay03,Redfish,NVUDTYUVFSMP
+stg-b1-n04 Bay04,Redfish,NVCRXHCEN2AR
+stg-b1-n04 Bay05,Redfish,NVIYBSMMNAPB
+stg-b1-n04 Bay06,Redfish,NV448UOHPPQO
+stg-b1-n04 Bay07,Redfish,NVPSDBV3G6ZZ
+stg-b1-n04 Bay08,Redfish,NV1RIT8BHGZ5
+stg-b1-n04 Bay09,Redfish,NVPP91QYDXQ1
+stg-b1-n04 Bay10,Redfish,NVK7LQNKHAJK
+stg-b1-n04 Bay11,Redfish,NVO7JO96IE0I
+stg-b1-n04 Bay12,Redfish,NVSFRZ90IQGB
+stg-b1-n04 Bay13,Redfish,NVGG6PGD0TME
+stg-b1-n04 Bay14,Redfish,NVS01RHBKJZZ
+stg-b1-n04 Bay15,Redfish,NV2QTN5DKFFH
+stg-b1-n04 Bay16,Redfish,NV1ICU1OAWZF
+stg-b1-n04 Bay17,Redfish,NV02UZUXYAIG
+stg-b1-n04 Bay18,Redfish,NVISD8HKWQC4
+stg-b1-n04 Bay19,Redfish,NVGZMX0QLKOR
+stg-b1-n04 Bay20,Redfish,NVFYK255EWGX
+stg-b1-n04 Bay21,Redfish,NV6GCGYWPTRQ
+stg-b1-n04 Bay22,Redfish,NV63M9AEFS41
+stg-b1-n04 Bay23,Redfish,NV3VFJU6TGAG
+stg-b1-n04 Bay24,Redfish,NVIHI3Q84ZSG
+stg-b1-n05,SNMP,SNQIXO8EXU
+stg-b1-n05 Bay01,Redfish,NV0AH38EBMIW
+stg-b1-n05 Bay02,Redfish,NVDC0T91C9EC
+stg-b1-n05 Bay03,Redfish,NV9CRJIJI3DH
+stg-b1-n05 Bay04,Redfish,NVSDMG2LQJ5F
+stg-b1-n05 Bay05,Redfish,NV58DJUZFK00
+stg-b1-n05 Bay06,Redfish,NVSCAHLV9YY5
+stg-b1-n05 Bay07,Redfish,NV6PXE6A9P43
+stg-b1-n05 Bay08,Redfish,NVV9L6HFZIVM
+stg-b1-n05 Bay09,Redfish,NVVL14V111RV
+stg-b1-n05 Bay10,Redfish,NVF0CH1JBBCX
+stg-b1-n05 Bay11,Redfish,NVAB358QEL4M
+stg-b1-n05 Bay12,Redfish,NVDNW9Q0LUS0
+stg-b1-n05 Bay13,Redfish,NV176T0G95AB
+stg-b1-n05 Bay14,Redfish,NVI0R0RG9QVS
+stg-b1-n05 Bay15,Redfish,NVKEXUO5XA2V
+stg-b1-n05 Bay16,Redfish,NVPOPC48B5Z7
+stg-b1-n05 Bay17,Redfish,NV3IKXVB0KFT
+stg-b1-n05 Bay18,Redfish,NV6UNDO1QMCN
+stg-b1-n05 Bay19,Redfish,NV6ZQKQYWJ13
+stg-b1-n05 Bay20,Redfish,NVZSYUZU1PJH
+stg-b1-n05 Bay21,Redfish,NVUB6NYI392C
+stg-b1-n05 Bay22,Redfish,NVCSIYUVX60N
+stg-b1-n05 Bay23,Redfish,NV3845SBA0IY
+stg-b1-n05 Bay24,Redfish,NVK243DRICIK
+stg-b1-n06,SNMP,SNA189U9GW
+stg-b1-n06 Bay01,Redfish,NVOQDFUX85IZ
+stg-b1-n06 Bay02,Redfish,NVL2LALDBMVL
+stg-b1-n06 Bay03,Redfish,NV3WTSAFQK0U
+stg-b1-n06 Bay04,Redfish,NVCDA2ZSM308
+stg-b1-n06 Bay05,Redfish,NVJNJNAZECZZ
+stg-b1-n06 Bay06,Redfish,NVE7X6EHFF2N
+stg-b1-n06 Bay07,Redfish,NVKNF5IBGP4L
+stg-b1-n06 Bay08,Redfish,NVOQ691DHDZZ
+stg-b1-n06 Bay09,Redfish,NV5A8PTHS7I9
+stg-b1-n06 Bay10,Redfish,NVZIB7QVDAT9
+stg-b1-n06 Bay11,Redfish,NV1JLF7Y5F2L
+stg-b1-n06 Bay12,Redfish,NVIMJW2UVZMG
+stg-b1-n06 Bay13,Redfish,NV4DG3RP7NM3
+stg-b1-n06 Bay14,Redfish,NV7YWINYODDG
+stg-b1-n06 Bay15,Redfish,NVPBHYH75W9Y
+stg-b1-n06 Bay16,Redfish,NVU91W8S0WOR
+stg-b1-n06 Bay17,Redfish,NVESOKX7FGHY
+stg-b1-n06 Bay18,Redfish,NV7400MK1SIW
+stg-b1-n06 Bay19,Redfish,NV2BM9X9CR3R
+stg-b1-n06 Bay20,Redfish,NVDDKUZNX7FQ
+stg-b1-n06 Bay21,Redfish,NVQRP9LG01N5
+stg-b1-n06 Bay22,Redfish,NVKSEP2O7RTD
+stg-b1-n06 Bay23,Redfish,NVCV84BYP286
+stg-b1-n06 Bay24,Redfish,NVQEZ86VE17J
+stg-b1-n07,SNMP,SNS46HGVNO
+stg-b1-n07 Bay01,Redfish,NVS4IFIMIUUX
+stg-b1-n07 Bay02,Redfish,NV962STCH0E5
+stg-b1-n07 Bay03,Redfish,NV7Z574UOMPP
+stg-b1-n07 Bay04,Redfish,NVMJ52EYQZ2J
+stg-b1-n07 Bay05,Redfish,NVW9DMVBIMJX
+stg-b1-n07 Bay06,Redfish,NVBX936KZV6F
+stg-b1-n07 Bay07,Redfish,NV9BYEURJNAA
+stg-b1-n07 Bay08,Redfish,NVSSE4ZTPV0B
+stg-b1-n07 Bay09,Redfish,NVW4PLKI1FTV
+stg-b1-n07 Bay10,Redfish,NVPKFM8XLGLV
+stg-b1-n07 Bay11,Redfish,NVCVZCJE3RZS
+stg-b1-n07 Bay12,Redfish,NV8RDQIF2BRS
+stg-b1-n07 Bay13,Redfish,NV4QWJNXJF9J
+stg-b1-n07 Bay14,Redfish,NVE00RIHZE5O
+stg-b1-n07 Bay15,Redfish,NVUVU4Y6PQ3H
+stg-b1-n07 Bay16,Redfish,NV4OHRJTOAIX
+stg-b1-n07 Bay17,Redfish,NVENPPJMFXJC
+stg-b1-n07 Bay18,Redfish,NVIIESE2MBNB
+stg-b1-n07 Bay19,Redfish,NVUB984CQV2Y
+stg-b1-n07 Bay20,Redfish,NVDDPQJJ982Y
+stg-b1-n07 Bay21,Redfish,NVHVT9NW16Z9
+stg-b1-n07 Bay22,Redfish,NVOT97472AHM
+stg-b1-n07 Bay23,Redfish,NV1DGBD13OTF
+stg-b1-n07 Bay24,Redfish,NVJHBGDC1KP5
+stg-b1-n08,SNMP,SN3AME6514
+stg-b1-n08 Bay01,Redfish,NVUAZZPWTCUW
+stg-b1-n08 Bay02,Redfish,NVSTP4N8XLT2
+stg-b1-n08 Bay03,Redfish,NV8O6LHZQ5D3
+stg-b1-n08 Bay04,Redfish,NV8NI3PKUKZL
+stg-b1-n08 Bay05,Redfish,NVLOW54QO8FY
+stg-b1-n08 Bay06,Redfish,NV5B1R6RQP2K
+stg-b1-n08 Bay07,Redfish,NVGK6B3QFMUV
+stg-b1-n08 Bay08,Redfish,NVNLJTGBSF2X
+stg-b1-n08 Bay09,Redfish,NVNDBH1DV8GP
+stg-b1-n08 Bay10,Redfish,NVGD9CIULIIN
+stg-b1-n08 Bay11,Redfish,NVP3SN0IYUQ0
+stg-b1-n08 Bay12,Redfish,NVGUEE4LAXUZ
+stg-b1-n08 Bay13,Redfish,NVYQJSMY5K9E
+stg-b1-n08 Bay14,Redfish,NVPKNETWLDS3
+stg-b1-n08 Bay15,Redfish,NVUFFNX1AAKI
+stg-b1-n08 Bay16,Redfish,NVSUXRG1FGUS
+stg-b1-n08 Bay17,Redfish,NV8FRYY46NRV
+stg-b1-n08 Bay18,Redfish,NV50ODPB2IDO
+stg-b1-n08 Bay19,Redfish,NVPS3I5X7Z0A
+stg-b1-n08 Bay20,Redfish,NVPVBPHWVTXY
+stg-b1-n08 Bay21,Redfish,NV8581XN72F1
+stg-b1-n08 Bay22,Redfish,NVV0VF2V9G34
+stg-b1-n08 Bay23,Redfish,NVJBOT7BNF5W
+stg-b1-n08 Bay24,Redfish,NVO1RS3YCG0W
+stg-b2-n01,SNMP,SNYPD7TCLS
+stg-b2-n01 Bay01,Redfish,NVJCW00YBY98
+stg-b2-n01 Bay02,Redfish,NV1LXRTQWPAT
+stg-b2-n01 Bay03,Redfish,NVTXPSCBR8KI
+stg-b2-n01 Bay04,Redfish,NVEYM3T3MR4O
+stg-b2-n01 Bay05,Redfish,NVHQ59U30BYI
+stg-b2-n01 Bay06,Redfish,NVFZ6XPORXV2
+stg-b2-n01 Bay07,Redfish,NVFXVY5ZVA5P
+stg-b2-n01 Bay08,Redfish,NV2A653YNV7M
+stg-b2-n01 Bay09,Redfish,NVR1XCXPPSEA
+stg-b2-n01 Bay10,Redfish,NVPRKTT3J76A
+stg-b2-n01 Bay11,Redfish,NVY0GEKBBBFX
+stg-b2-n01 Bay12,Redfish,NVLNV9CSG5KR
+stg-b2-n01 Bay13,Redfish,NVIE4IQNGBDD
+stg-b2-n01 Bay14,Redfish,NVGRUGB0Q8GF
+stg-b2-n01 Bay15,Redfish,NVO6GPQUY7ZL
+stg-b2-n01 Bay16,Redfish,NV0I2YVT5J85
+stg-b2-n01 Bay17,Redfish,NV60Z4KBAAGV
+stg-b2-n01 Bay18,Redfish,NVMSXHREXPH0
+stg-b2-n01 Bay19,Redfish,NV8CFS4DLBQK
+stg-b2-n01 Bay20,Redfish,NVA1ZKBDPK3G
+stg-b2-n01 Bay21,Redfish,NV24ZL485FM3
+stg-b2-n01 Bay22,Redfish,NV9UGFJE566Q
+stg-b2-n01 Bay23,Redfish,NVGYWEGWOB22
+stg-b2-n01 Bay24,Redfish,NVL64QM6CYI9
+stg-b2-n02,SNMP,SNECO9SL99
+stg-b2-n02 Bay01,Redfish,NVXOXRRGOQJO
+stg-b2-n02 Bay02,Redfish,NV44YZ155XVV
+stg-b2-n02 Bay03,Redfish,NVLDJ6HXQKCJ
+stg-b2-n02 Bay04,Redfish,NVT09X0T0H2T
+stg-b2-n02 Bay05,Redfish,NV8SQMVV2NSG
+stg-b2-n02 Bay06,Redfish,NVXLYH89JD2W
+stg-b2-n02 Bay07,Redfish,NVZK9TM7FHIR
+stg-b2-n02 Bay08,Redfish,NV51FQ9O2K3B
+stg-b2-n02 Bay09,Redfish,NVP2QYF6JQP3
+stg-b2-n02 Bay10,Redfish,NVOF4YW56ODD
+stg-b2-n02 Bay11,Redfish,NVV6DBA3K7DY
+stg-b2-n02 Bay12,Redfish,NVQE899LQ0RE
+stg-b2-n02 Bay13,Redfish,NVA7K8MQCWNE
+stg-b2-n02 Bay14,Redfish,NVGHP2A61R5E
+stg-b2-n02 Bay15,Redfish,NV2WF6E5RX6V
+stg-b2-n02 Bay16,Redfish,NVJ5UNDX09HR
+stg-b2-n02 Bay17,Redfish,NVBVQUL6NU13
+stg-b2-n02 Bay18,Redfish,NV26K6SLQVRP
+stg-b2-n02 Bay19,Redfish,NV8672WSD8SY
+stg-b2-n02 Bay20,Redfish,NVPOBEAME4J9
+stg-b2-n02 Bay21,Redfish,NVKY2ED6DRZ8
+stg-b2-n02 Bay22,Redfish,NVZZ7WGA6MSA
+stg-b2-n02 Bay23,Redfish,NVUTNK09RXEI
+stg-b2-n02 Bay24,Redfish,NVDDKBI35MXU
+stg-b2-n03,SNMP,SNJ07P0D6J
+stg-b2-n03 Bay01,Redfish,NVAUWYHJE8LT
+stg-b2-n03 Bay02,Redfish,NVCZ6884JB6M
+stg-b2-n03 Bay03,Redfish,NVRUPAKK6ESA
+stg-b2-n03 Bay04,Redfish,NVWTLJLT0PAD
+stg-b2-n03 Bay05,Redfish,NVRMDK4RDDJD
+stg-b2-n03 Bay06,Redfish,NVVJZO85L6PS
+stg-b2-n03 Bay07,Redfish,NVUBWVM45336
+stg-b2-n03 Bay08,Redfish,NV1X348JFB1H
+stg-b2-n03 Bay09,Redfish,NV550XAAJCID
+stg-b2-n03 Bay10,Redfish,NVGCEF1Z1F9W
+stg-b2-n03 Bay11,Redfish,NVSHSLLY298U
+stg-b2-n03 Bay12,Redfish,NVO601R1YBIF
+stg-b2-n03 Bay13,Redfish,NVAHNIATEJ7F
+stg-b2-n03 Bay14,Redfish,NVT84900384H
+stg-b2-n03 Bay15,Redfish,NVG9GNXCSM48
+stg-b2-n03 Bay16,Redfish,NVII8YJDV566
+stg-b2-n03 Bay17,Redfish,NVN3F1BTJDD6
+stg-b2-n03 Bay18,Redfish,NV9WNZETC3DG
+stg-b2-n03 Bay19,Redfish,NVIQ4JQMCHVB
+stg-b2-n03 Bay20,Redfish,NVO8HCC3E380
+stg-b2-n03 Bay21,Redfish,NVHMTB90ON8Q
+stg-b2-n03 Bay22,Redfish,NV1785QT662E
+stg-b2-n03 Bay23,Redfish,NV5TM65ILKPQ
+stg-b2-n03 Bay24,Redfish,NVB3BVK189WG
+stg-b2-n04,SNMP,SNG5MN17YW
+stg-b2-n04 Bay01,Redfish,NVVUPJJDPUXH
+stg-b2-n04 Bay02,Redfish,NVS9SWM4L90Y
+stg-b2-n04 Bay03,Redfish,NVX82U0VUCD4
+stg-b2-n04 Bay04,Redfish,NV676V2ST8RM
+stg-b2-n04 Bay05,Redfish,NVTRFC83RYMB
+stg-b2-n04 Bay06,Redfish,NVLWHNCSTXEC
+stg-b2-n04 Bay07,Redfish,NVSUBEUNTS5C
+stg-b2-n04 Bay08,Redfish,NV6MQX6WITOL
+stg-b2-n04 Bay09,Redfish,NVUEHW0J27EA
+stg-b2-n04 Bay10,Redfish,NV06T2YML074
+stg-b2-n04 Bay11,Redfish,NVI2G0DWZL61
+stg-b2-n04 Bay12,Redfish,NVZQ3XDFRAB9
+stg-b2-n04 Bay13,Redfish,NVUTJ2T50UX6
+stg-b2-n04 Bay14,Redfish,NVT1956LT65H
+stg-b2-n04 Bay15,Redfish,NVFOXI877SXF
+stg-b2-n04 Bay16,Redfish,NV136QTXAM28
+stg-b2-n04 Bay17,Redfish,NVQZIOVQ5ZKT
+stg-b2-n04 Bay18,Redfish,NVKHS8VCKYM6
+stg-b2-n04 Bay19,Redfish,NVVOMW8QT3KM
+stg-b2-n04 Bay20,Redfish,NV3BVFZSPOYN
+stg-b2-n04 Bay21,Redfish,NVGOH2GRAHHY
+stg-b2-n04 Bay22,Redfish,NVROVRVN5JB2
+stg-b2-n04 Bay23,Redfish,NVQUCFDFYDDX
+stg-b2-n04 Bay24,Redfish,NVQULHEI8C0S
+stg-b2-n05,SNMP,SNPMDUBS57
+stg-b2-n05 Bay01,Redfish,NVNAW6WTJZ87
+stg-b2-n05 Bay02,Redfish,NV4ZXM819A0B
+stg-b2-n05 Bay03,Redfish,NVRONKH944E5
+stg-b2-n05 Bay04,Redfish,NVQ1KK40VYP2
+stg-b2-n05 Bay05,Redfish,NV5SK8O1Y2OP
+stg-b2-n05 Bay06,Redfish,NVHX55SGOINZ
+stg-b2-n05 Bay07,Redfish,NVZ3GBUCNUZI
+stg-b2-n05 Bay08,Redfish,NVZJKV8KS7JR
+stg-b2-n05 Bay09,Redfish,NVT9K0E821VV
+stg-b2-n05 Bay10,Redfish,NVIMH65ELMOH
+stg-b2-n05 Bay11,Redfish,NVECVPPQUOHZ
+stg-b2-n05 Bay12,Redfish,NVDMPVNFTVHK
+stg-b2-n05 Bay13,Redfish,NVSKPPH7SRX9
+stg-b2-n05 Bay14,Redfish,NVEBR97CABPB
+stg-b2-n05 Bay15,Redfish,NVWJ2YS4BJG0
+stg-b2-n05 Bay16,Redfish,NVT6AWCHHXZH
+stg-b2-n05 Bay17,Redfish,NVBFYVO2I8US
+stg-b2-n05 Bay18,Redfish,NVG44V32TMXB
+stg-b2-n05 Bay19,Redfish,NVF6YUGM4O13
+stg-b2-n05 Bay20,Redfish,NVZNFUUWHMZS
+stg-b2-n05 Bay21,Redfish,NV27GINZTPDR
+stg-b2-n05 Bay22,Redfish,NV042I5OR9KF
+stg-b2-n05 Bay23,Redfish,NVACI1ZEH3VD
+stg-b2-n05 Bay24,Redfish,NVUQJFL8PY6M
+stg-b2-n06,SNMP,SNCRBC30RB
+stg-b2-n06 Bay01,Redfish,NVHCZZOXJK5Z
+stg-b2-n06 Bay02,Redfish,NVTQ3F8TMJ4H
+stg-b2-n06 Bay03,Redfish,NVF4LI3FPS8Z
+stg-b2-n06 Bay04,Redfish,NVDYVV06LKTC
+stg-b2-n06 Bay05,Redfish,NV4XY4ITSMOS
+stg-b2-n06 Bay06,Redfish,NV9Q4NRWRFGE
+stg-b2-n06 Bay07,Redfish,NV2O2F27AFVI
+stg-b2-n06 Bay08,Redfish,NV4YA2YKBO74
+stg-b2-n06 Bay09,Redfish,NVDA9ZHFNG90
+stg-b2-n06 Bay10,Redfish,NVSAS8Z2OING
+stg-b2-n06 Bay11,Redfish,NVE7GGB3I5J1
+stg-b2-n06 Bay12,Redfish,NVPXTMBYU0IR
+stg-b2-n06 Bay13,Redfish,NVUNWIIEOMHM
+stg-b2-n06 Bay14,Redfish,NVSWI1RJR1Q4
+stg-b2-n06 Bay15,Redfish,NV9S9PFKG1PP
+stg-b2-n06 Bay16,Redfish,NVMNP57XKRGP
+stg-b2-n06 Bay17,Redfish,NVWTT01EE6G6
+stg-b2-n06 Bay18,Redfish,NVE8MAAUQNI5
+stg-b2-n06 Bay19,Redfish,NV2UDVRE9TNH
+stg-b2-n06 Bay20,Redfish,NV636VQ5Q891
+stg-b2-n06 Bay21,Redfish,NVAM2UNGB1WU
+stg-b2-n06 Bay22,Redfish,NVFVQ2WUG1AR
+stg-b2-n06 Bay23,Redfish,NVT1O1M6UMHY
+stg-b2-n06 Bay24,Redfish,NVPXCTL4J5TQ
+stg-b2-n07,SNMP,SNYAAVDW0E
+stg-b2-n07 Bay01,Redfish,NVCJCYNRABQ8
+stg-b2-n07 Bay02,Redfish,NVPK9OWLQMPL
+stg-b2-n07 Bay03,Redfish,NV0P6MKKHKRR
+stg-b2-n07 Bay04,Redfish,NVDC88191M37
+stg-b2-n07 Bay05,Redfish,NV2ZU05TLZVD
+stg-b2-n07 Bay06,Redfish,NVQW9MFQG2TM
+stg-b2-n07 Bay07,Redfish,NVXTXJQ6IHH4
+stg-b2-n07 Bay08,Redfish,NV7AS9BH809X
+stg-b2-n07 Bay09,Redfish,NVYVP8SCBCXG
+stg-b2-n07 Bay10,Redfish,NVPKGCM49275
+stg-b2-n07 Bay11,Redfish,NVIAMXEB60NX
+stg-b2-n07 Bay12,Redfish,NVNSC4HNHVHF
+stg-b2-n07 Bay13,Redfish,NV7NE6KT48QQ
+stg-b2-n07 Bay14,Redfish,NVIA6GE5MY7R
+stg-b2-n07 Bay15,Redfish,NVJEIEUWS6R6
+stg-b2-n07 Bay16,Redfish,NV4NGWF14Z6E
+stg-b2-n07 Bay17,Redfish,NVNWLTUOH9DU
+stg-b2-n07 Bay18,Redfish,NV3A9KZKCATR
+stg-b2-n07 Bay19,Redfish,NVU6LUSLYPGC
+stg-b2-n07 Bay20,Redfish,NVBAKPKWZ8EH
+stg-b2-n07 Bay21,Redfish,NVN2B8IFADE7
+stg-b2-n07 Bay22,Redfish,NV6EG41NB1MF
+stg-b2-n07 Bay23,Redfish,NVY4GI9P43WN
+stg-b2-n07 Bay24,Redfish,NVE3XZCE6CHA
+stg-b2-n08,SNMP,SN3XFPW74T
+stg-b2-n08 Bay01,Redfish,NV2DIBOCC074
+stg-b2-n08 Bay02,Redfish,NVT6PCK8QPKX
+stg-b2-n08 Bay03,Redfish,NVK39O0NA7TV
+stg-b2-n08 Bay04,Redfish,NV067JA8J6T7
+stg-b2-n08 Bay05,Redfish,NV2Q4M5QY9RP
+stg-b2-n08 Bay06,Redfish,NVMYWLG44NAE
+stg-b2-n08 Bay07,Redfish,NVLOQ0XU61VQ
+stg-b2-n08 Bay08,Redfish,NVW23R4C86GC
+stg-b2-n08 Bay09,Redfish,NVHT48YHLGHJ
+stg-b2-n08 Bay10,Redfish,NVIDR8BXF9GU
+stg-b2-n08 Bay11,Redfish,NVX9NSN7IA8W
+stg-b2-n08 Bay12,Redfish,NVNB0GZXO78D
+stg-b2-n08 Bay13,Redfish,NVP85NKDT27T
+stg-b2-n08 Bay14,Redfish,NVE4LMQA8JAZ
+stg-b2-n08 Bay15,Redfish,NVWFL6MM9K3K
+stg-b2-n08 Bay16,Redfish,NVHUX8TVDICR
+stg-b2-n08 Bay17,Redfish,NV2CNI0I713Z
+stg-b2-n08 Bay18,Redfish,NVEE2GHV3J38
+stg-b2-n08 Bay19,Redfish,NV057NM5LG77
+stg-b2-n08 Bay20,Redfish,NVVPHMV16VE1
+stg-b2-n08 Bay21,Redfish,NVL4A1RIV24S
+stg-b2-n08 Bay22,Redfish,NV9461B8OOQF
+stg-b2-n08 Bay23,Redfish,NVELDZMDFDTF
+stg-b2-n08 Bay24,Redfish,NV2GYESJP1WO

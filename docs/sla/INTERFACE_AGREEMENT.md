@@ -12,7 +12,7 @@
 
 | Document ID | Version | Effective date |
 |---|---|---|
-| IA-AUS1-001 | 1.2.0 | 2026-10-13 |
+| IA-AUS1-001 | 1.3.0 | 2026-10-14 |
 
 ## Contents
 
@@ -26,6 +26,7 @@
 8. [Change Coordination](#8-change-coordination)
 9. [Customer Data Access](#9-customer-data-access)
 10. [Change-Aware Alarm Notification](#10-change-aware-alarm-notification)
+11. [Asset Register](#11-asset-register)
 
 ---
 
@@ -192,6 +193,19 @@ Planned work causes alarms the parties can predict. Each change therefore declar
 
 Key measures report and trigger corrective action; they carry no service credit. Moving them to credit-bearing service levels is a later negotiation once both delivery logs have proved reliable.
 
+## 11. Asset Register
+
+One register follows every asset at the site by serial, from receipt to install, RMA, and disposal. A quantity count shows how many parts are on the shelf; only the serials show which, and only the devices' own answers show what is really installed.
+
+| ID | Rule | Text |
+|---|---|---|
+| REG-1 | One register | The Customer's asset register holds every asset at the site by serial: installed devices and their field-replaceable parts, spares, parts removed for RMA, and storage media removed from service. Each party records the assets it maintains: the IT Partner its IT equipment and the spares cage, the Landlord its facility equipment, and the Security Partner the media in its custody. |
+| REG-2 | Record every move within 4 hours | Every receipt, install, removal, RMA shipment, custody handover, destruction, and disposal is recorded by serial within 4 hours of the work, citing the ticket, work order, RMA, milestone, or certificate. |
+| REG-3 | Receive deliveries within 24 hours | A delivery signed for at the dock (carrier proof of delivery) is received into the register and the spares ledger within 24 hours. |
+| REG-4 | Daily reconciliation | The Customer reconciles the register every day against the serials the devices report (Redfish SerialNumber; SNMP entPhysicalSerialNum), the spares ledger, RMA shipments, the OEM's RMA portal, custody handovers, and destruction and disposal certificates. A device that does not answer is a gap in evidence, not a finding. |
+| REG-5 | Disposal by serial | A disposal certificate names the serial of every asset it covers and is witnessed by the Security Partner. A disposed serial that answers on any network is an asset whose disposal is unconfirmed: the party that disposed of it and the Security Partner trace it the same day. |
+| REG-6 | Serial-level cycle counts | The monthly full count of the spares cage checks serials, not only quantities, so a removed part returned to the shelf in place of a good one is found. |
+
 ---
 
-*Generated from `sla/interface_agreement.yaml` (version 1.2.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/interface_agreement.yaml` (version 1.3.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*

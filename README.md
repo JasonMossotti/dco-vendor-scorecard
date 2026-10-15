@@ -322,6 +322,7 @@ Fields that name a rack, room, or device carry a red **location pin** that opens
 **How it works.**
 - `src/scorecard/devices.py` builds the directory from the site model, the rack inventory, and the generator's own cabling rule (imported, not retyped): leaf-aNN serves racks 2N-1 and 2N, so "leaf-a07-r1 port 18" is cabled to rack A13 tray 18, NIC mlx5_1. Tests check every cable against the telemetry's own port records (8,896 of 8,896 across the robustness months).
 - The drawings are generated SVG (`src/scorecard/site_drawings.py`, `src/scorecard/detail_drawings.py`). While drawing, the code records where it put each item, so `docs/site/locations.json` comes from the drawing code itself, never from hand placement.
+- **Asset register** (`/devices/#assets`). Every asset by serial (5,855: trays, switch trays, power shelves and their PSUs, switches, storage nodes and drives, facility units, spares), from receipt to install, RMA, and disposal, reconciled every day against the serials the devices answer with, the spares ledger, RMA shipments, the OEM's RMA portal, custody handovers, and destruction and disposal certificates (Interface Agreement section 11, REG-1 to REG-6). 9 agreements, 123,877 of 123,877 cases; three findings where records do not reconcile: a PSU live in a shelf that the register holds in stock, a switch disposed under a certificate that still answers on the management network, and an OEM replacement delivered and never received. Disagreements other checks already found (two unverified swaps, a drive shipped without destruction, a wrong bay, a custody gap) are shown as corroborations and not counted again. Each device page shows what the register holds against what the device answers with. Built by `scripts/generate_assets.py` (own random stream) and `src/scorecard/assets.py`; report `reports/asset_register.md`.
 - 12 equipment detail sheets, one per product (GB200 and GB300 NVL72 racks, CDU, thermal wall, free-cooling chiller, Galaxy VX and VL UPSs, busway and tap-off, generator, VESDA, TraceTek, InfiniBand leaf switch), with each part's source or stated assumption in `site/details.yaml`.
 
 ## The site
@@ -360,6 +361,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
+| Asset register | 3 of 3, 123,877 of 123,877 cases | 180 of 180, 0 false positives; every agreement holds (installed 7,212,525 of 7,212,525) |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
 
 ```bash
@@ -374,6 +376,7 @@ python scripts/render_telemetry.py --robustness 60
 python scripts/render_tickets.py --robustness 60
 python scripts/render_deployments.py --robustness 60
 python scripts/render_availability.py --robustness 60
+python scripts/render_assets.py --robustness 60 --jobs 4
 ```
 
 ## Toward live data: the read-only collector

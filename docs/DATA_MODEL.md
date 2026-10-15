@@ -159,6 +159,20 @@ Derived from `data/sample/` by `scripts/generate_changes.py` with its own random
 
 Planted only in generated robustness months (appended to that month's own files): the wrong CDU isolated during a filter change, an NVLink switch tray failure during tray firmware work, a tap-off opened before its window, a CDU pump left isolated past its window, and three decoys (a chiller alarm during a CDU change, a GPU error on a rack fed by a UPS under maintenance, a UPS back online inside the grace), plus one missing and one late P1 page.
 
+## Asset register (`data/assets/`)
+
+Derived by `scripts/generate_assets.py` from `data/sample/`, `data/security/`, `data/telemetry/mgmt/`, and `data/telemetry/storage/` with its own random stream (`{seed}:assets`); none of those is written. Every move mirrors a record that already exists (ticket parts, RMA shipments, ledger receipts, custody and destruction records, Hall B M1 and M4).
+
+| File | What it represents |
+|---|---|
+| `register_opening.csv` | The register at the start of the month: one row per asset (tag, class, serial, status, location, maintainer, since, record) |
+| `register_transactions.csv` | Every move the IT Partner recorded in the month: receive, issue, install, remove, RMA ship, custody, destroy, dispose, each with its record and when it was recorded |
+| `inventory_baseline.csv` | What each slot (tray, switch tray, shelf, PSU, switch, storage node, drive bay) answered with at the first daily scan (Redfish or SNMP); later scans follow the recorded swaps |
+| `oem_rma.csv` | The OEM's RMA portal: failed unit received, replacement shipped and delivered with proof of delivery |
+| `disposals.csv` | Disposal certificates by serial (recycler, method, Security Partner witness) |
+| `answer_key.json` | Planted findings (a live PSU held in stock, a disposed switch still answering, an OEM delivery never received) and decoys. The checks never read it |
+| `manifest.json` | Window, seed, sources, counts |
+
 ## Live collector output
 
 `scripts/collect.py` (see `src/scorecard/live/`) writes the same contract files from real devices. It creates every contract file, leaves the ones it does not collect empty, and lists them in `manifest.json` under `not_collected` (Landlord work orders and maintenance records come from Landlord system exports, not device polling). It adds two files the synthetic data does not have:

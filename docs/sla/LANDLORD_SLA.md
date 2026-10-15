@@ -91,7 +91,7 @@ Each service level has an **Expected** level (missing it triggers root cause ana
 
 ### 3.3 Break-fix ownership matrix
 
-Exhibit from the Interface Agreement (IA-AUS1-001, version 1.2.0), which governs demarcation, fault attribution, and joint operations between the parties.
+Exhibit from the Interface Agreement (IA-AUS1-001, version 1.3.0), which governs demarcation, fault attribution, and joint operations between the parties.
 
 **R** = Responsible: performs the work; **A** = Accountable: owns the outcome and approves; **C** = Consulted; **I** = Informed.
 

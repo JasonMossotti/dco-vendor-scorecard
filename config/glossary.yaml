@@ -39,6 +39,7 @@ contract_terms:
   - {path: ticket_handling.stability.rules, type: rule, title: "{name}", text: "{rule}"}
   - {path: fault_attribution.rules, type: rule, title: "Fault attribution rule", text: "{rule}"}
   - {path: handoffs, type: rule, title: "{name}", text: "{rule}"}
+  - {path: asset_register.rules, type: rule, title: "Asset register: {name}", text: "{rule}"}
   - {path: energy_reporting.terms, type: measure, title: "{name}", text: "{rule}"}
   - {path: demarcations, type: rule, title: "{system} demarcation", text: "Boundary: {boundary} Evidence: {evidence}"}
   - {path: chronic_failure.triggers, type: rule, title: "Chronic failure trigger", text: "{rule}"}
@@ -385,6 +386,17 @@ families:
      text: "An access badge; badge-ins and badge-outs at the hall doors are the evidence for on-site times."}
   - {key: LOT, label: "LOT-####", pattern: 'LOT-\d{4}', type: record, title: Manufacturing lot, example: LOT-2544,
      text: "A batch of parts made together; a bad lot fails more often than the others."}
+  - {key: AR-N, label: "AR-#", pattern: 'AR-\d{1,2}', type: record, title: Asset register finding, example: AR-1, see: "devices/#assets",
+     text: "A finding of the daily asset register reconciliation: a device answering with a serial the register lists in the spares cage or as disposed, or an OEM replacement delivered to the dock and never received (Interface Agreement section 11)."}
+  - {key: AT-TAG, label: "AT-######", pattern: 'AT-\d{6}', type: record, title: Asset tag, example: AT-004079, see: "devices/#assets",
+     text: "An asset's tag in the Customer's asset register: one per serial, from receipt to disposal (REG-1)."}
+  - {key: EW-CERT, label: "EW-#####", pattern: 'EW-\d{5}', type: record, title: Disposal certificate, example: EW-00504, see: "devices/#assets",
+     text: "An e-waste disposal certificate from the recycler, naming the serial of every asset it covers and witnessed by the Security Partner (REG-5)."}
+  - {key: RMA-N, label: "RMA-#####", pattern: 'RMA-\d{5}', type: record, title: OEM return authorization, example: RMA-74947, see: "devices/#assets",
+     text: "The OEM's RMA number for a failed part: when the OEM received it, and the replacement it shipped and delivered (carrier proof of delivery)."}
+  - {key: SER-REG, label: "RK, MS, IB, EN, CS, AG, SN, SR, or FE + 8 characters", pattern: '(?:RK|MS|IB|EN|CS|AG|SN|SR|FE)[A-Z0-9]{8}', type: record,
+     title: Equipment serial number, example: MSK4Z3UMGF, see: "devices/#assets",
+     text: "The serial number of a rack (RK), management switch (MS), InfiniBand leaf (IB), Ethernet switch (EN), console server (CS), OOB aggregation switch (AG), storage node (SN), storage rack (SR), or piece of facility equipment (FE), as the asset register holds it and, for switches and storage nodes, as SNMP entPhysicalSerialNum reports it."}
   - {key: SER-NV, label: "NV + 10 characters", pattern: 'NV[A-Z0-9]{10}', type: record, title: Storage node drive serial number, example: NVWJNT8QR85V, see: "telemetry/#storage-tickets",
      text: "An NVMe drive's serial number from a storage node's Redfish Drive resource. A swap shows as a new serial in the bay, and the pulled drive must reach the Security Partner under chain of custody (HO-5)."}
   - {key: EQ-PFS, label: "PFS-[hall]", pattern: 'PFS-[A-C]', type: equipment, title: Storage cluster, example: PFS-A, see: "telemetry/#storage",

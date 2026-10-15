@@ -17,8 +17,8 @@ document:
   id: "IA-AUS1-001"
   title: "Interface Agreement: Site AUS-1"
   subtitle: "Joined to the Data Center Lease (Schedule C), the IT Partner Services Agreement (Schedule B), and the Security Services Agreement (Schedule D)"
-  version: "1.2.0"
-  effective_date: "2026-10-13"
+  version: "1.3.0"
+  effective_date: "2026-10-14"
   status: "MOCK / ILLUSTRATIVE"
   disclaimer: >-
     This is a fictional, illustrative interface agreement created for a
@@ -248,3 +248,29 @@ data_access:
     - "The Landlord keeps 13 months of BMS and EPMS history and provides it within 5 business days of a request."
     - "All systems are NTP-synchronized; clock skew over 5 seconds is flagged under the common measurement terms."
     - "The Customer uses the data only to measure the SLAs, attribute outages, and protect safety, and shares it with the IT Partner only as needed for attribution."
+
+asset_register:
+  principle: >-
+    One register follows every asset at the site by serial, from receipt to install, RMA, and disposal. A quantity count
+    shows how many parts are on the shelf; only the serials show which, and only the devices' own answers show what is
+    really installed.
+  rules:
+    - id: "REG-1"
+      name: "One register"
+      rule: "The Customer's asset register holds every asset at the site by serial: installed devices and their field-replaceable parts, spares, parts removed for RMA, and storage media removed from service. Each party records the assets it maintains: the IT Partner its IT equipment and the spares cage, the Landlord its facility equipment, and the Security Partner the media in its custody."
+    - id: "REG-2"
+      name: "Record every move within 4 hours"
+      rule: "Every receipt, install, removal, RMA shipment, custody handover, destruction, and disposal is recorded by serial within 4 hours of the work, citing the ticket, work order, RMA, milestone, or certificate."
+    - id: "REG-3"
+      name: "Receive deliveries within 24 hours"
+      rule: "A delivery signed for at the dock (carrier proof of delivery) is received into the register and the spares ledger within 24 hours."
+    - id: "REG-4"
+      name: "Daily reconciliation"
+      rule: "The Customer reconciles the register every day against the serials the devices report (Redfish SerialNumber; SNMP entPhysicalSerialNum), the spares ledger, RMA shipments, the OEM's RMA portal, custody handovers, and destruction and disposal certificates. A device that does not answer is a gap in evidence, not a finding."
+    - id: "REG-5"
+      name: "Disposal by serial"
+      rule: "A disposal certificate names the serial of every asset it covers and is witnessed by the Security Partner. A disposed serial that answers on any network is an asset whose disposal is unconfirmed: the party that disposed of it and the Security Partner trace it the same day."
+    - id: "REG-6"
+      name: "Serial-level cycle counts"
+      rule: "The monthly full count of the spares cage checks serials, not only quantities, so a removed part returned to the shelf in place of a good one is found."
+

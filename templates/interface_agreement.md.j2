@@ -26,6 +26,7 @@
 8. [Change Coordination](#8-change-coordination)
 9. [Customer Data Access](#9-customer-data-access)
 10. [Change-Aware Alarm Notification](#10-change-aware-alarm-notification)
+11. [Asset Register](#11-asset-register)
 
 ---
 
@@ -143,6 +144,16 @@ This agreement joins the Landlord SLA, the IT Partner SLA, and the Security Part
 {% endfor %}
 
 {{ ia.alarm_notification.measurement_note }}
+
+## 11. Asset Register
+
+{{ ia.asset_register.principle }}
+
+| ID | Rule | Text |
+|---|---|---|
+{% for r in ia.asset_register.rules -%}
+| {{ r.id }} | {{ r.name }} | {{ r.rule }} |
+{% endfor %}
 
 ---
 

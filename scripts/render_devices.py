@@ -50,8 +50,21 @@ def telemetry_links() -> dict[str, str]:
     return out
 
 
+def register() -> dict | None:
+    """The asset register's page data (scripts/render_assets.py), trimmed to what the page shows."""
+    if not (ROOT / "data" / "assets" / "manifest.json").exists():
+        return None
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import render_assets
+    f = render_assets.prepare()
+    rows = [r + (f["opening"].get(r[0]) or ["", "", "", ""]) for r in f["assets"]]
+    return {"window": f["window"], "findings": f["findings"], "corroborations": f["corroborations"], "agreements": f["agreements"],
+            "by_class": f["by_class"], "statuses": f["statuses"], "assets": rows, "history": f["history"],
+            "reported": f["reported"], "total": f["total"], "transactions": f["transactions"]}
+
+
 def html_page() -> str:
-    data = {**devices.load(), "telemetry": telemetry_links()}
+    data = {**devices.load(), "telemetry": telemetry_links(), "assets": register()}
     tpl = sitenav.inject((ROOT / "templates" / "devices.html").read_text(encoding="utf-8"), "devices")
     body = json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/")
     return sitenav.finish(tpl.replace("__DEVICES__", body))

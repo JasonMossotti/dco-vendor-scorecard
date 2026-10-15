@@ -17,6 +17,7 @@ data/*
 !data/telemetry/
 !data/incident_comms/
 !data/security/
+!data/assets/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/
