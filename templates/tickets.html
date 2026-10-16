@@ -208,13 +208,13 @@ function swimlane(r) {
   if (r.end) {
     const lane = r.partner, a = x(r.start), b = Math.max(a + 2, x(r.end));
     s += `<rect x="${a}" y="${y(lane) - 9}" width="${b - a}" height="18" fill="${color[lane]}" opacity=".8"/>` +
-         `<text x="${(a + b) / 2}" y="${y(lane) - 13}" font-size="11" fill="${color[lane]}" text-anchor="middle">${esc(r.id)} ${r.type === "chg" || r.type === "mop" ? "window" : r.type === "pm" ? "due to done" : "open"}</text>`;
+         `<text x="${(a + b) / 2}" y="${y(lane) - 13}" font-size="11" fill="${color[lane]}" text-anchor="middle">${esc(r.id)} ${r.type === "chg" || r.type === "mop" ? "window" : r.type === "pm" ? "due to done" : r.type === "imp" ? "impaired (log)" : "open"}</text>`;
   }
   const m = r.measured;
   if (m && (m.rts || m.restored)) {
     const a = x(m.t0), b = Math.max(a + 2, x(m.rts || m.restored));
     s += `<rect x="${a}" y="${y("Customer") - 9}" width="${b - a}" height="18" fill="#4b5563" opacity=".55"/>` +
-         `<text x="${(a + b) / 2}" y="${y("Customer") + 22}" font-size="11" fill="#4b5563" text-anchor="middle">Measured from telemetry</text>`;
+         `<text x="${(a + b) / 2}" y="${y("Customer") + 22}" font-size="11" fill="#4b5563" text-anchor="middle">${m.kind === "Fire" ? "Out of service on the fire panel" : "Measured from telemetry"}</text>`;
   }
   rows.forEach(e => s += `<circle cx="${x(e.t)}" cy="${y(e.party)}" r="3" fill="#1e2933"><title>${esc(loc(e.t) + " CDT · " + e.event)}</title></circle>`);
   (r.markers || []).forEach(([v, lbl], i) => {
@@ -246,6 +246,13 @@ function measurement(r) {
       [m.within_target ? "Met" : "Missed", "Against the target (badge)"]].map(([v, l]) => `<div class="stat"><div class="v${l.startsWith("Against") ? m.within_target ? " met" : " missed" : ""}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</div>` +
       `<p class="note">Measured from the Customer's access control system: the alarm, and the first guard badge at the alarmed door's reader. The dispatch log's on-scene time is the Security Partner's claim. ` +
       `${r.findings.length ? "This record does not reconcile with the access control system; see the findings below." : "This record reconciles with the access control system."}</p></div>`;
+  }
+  if (m.kind === "Fire") {
+    return `<h2>What the Customer's data says</h2><div class="card ${m.agrees && !r.findings.length ? "ok" : "bad"}"><div class="strip">${[
+      [m.measured || "open", "Out of service (fire panel)"], [m.logged_text, "Impairment log says"], [m.agrees ? "Agrees" : "Differs", "Log and panel"],
+      [m.fire_watch || "None", "Fire watch (log)"]].map(([v, l]) => `<div class="stat"><div class="v${l === "Log and panel" ? m.agrees ? " met" : " missed" : ""}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</div>` +
+      `<p class="note">Measured from the fire panel's history log: from the impairment's start to the time the panel shows every disabled point enabled and every supervisory signal cleared (Interface Agreement FPI-5). ` +
+      `${r.findings.length ? "This record does not reconcile with the fire panel; see the findings below." : "This record reconciles with the fire panel."} <a href="../telemetry/#fire">Fire protection</a></p></div>`;
   }
   return `<h2>What the Customer's data says</h2><div class="card ${m.agrees ? "ok" : "bad"}"><div class="strip">${[[m.measured || "open", "Measured: event start to restore"],
       [m.owner, "Owner by telemetry"], [m.claimed_owner || "—", "Work order says"], [m.agrees ? "Agrees" : "Differs", "Attribution"], [m.rule, "Interface Agreement rule"]]
@@ -354,7 +361,7 @@ function detail(id) {
   const t = D.types[r.type];
   let h = `<div class="dhead"><h1 data-tk-skip>${esc(r.id)}</h1>${badge(r.partner)}<span class="pill">${esc(t.label)}</span>${r.priority ? `<span class="pill ${esc(r.priority)}">${esc(r.priority)}</span>` : ""}<span class="pill">${esc(r.state)}</span></div>`;
   h += `<p class="sub">${esc(r.summary)}</p>`;
-  const when = r.type === "chg" || r.type === "mop" ? ["Window opens", "Window closes"] : r.type === "pm" ? ["Due from", "Completed"] : ["Opened", r.type === "inc" ? "Resolved" : "Closed"];
+  const when = r.type === "chg" || r.type === "mop" ? ["Window opens", "Window closes"] : r.type === "pm" ? ["Due from", "Completed"] : r.type === "imp" ? ["Impairment start", "Restored (log)"] : ["Opened", r.type === "inc" ? "Resolved" : "Closed"];
   h += `<div class="grid">` + [["System of record", r.system], [when[0] + " (CDT)", loc(r.start)], [when[1] + " (CDT)", loc(r.end)],
     ["Device or item", r.device, "loc"], ["Location", r.location], ["Assigned (person ID)", r.assigned], ["Category or fault class", r.category],
     ["Close code", r.close_code], ["Work type", r.work_type]].filter(([, v]) => v)

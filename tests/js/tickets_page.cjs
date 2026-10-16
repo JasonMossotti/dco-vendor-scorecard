@@ -23,6 +23,10 @@ const reset = async () => { d.getElementById("f-reset").click(); await tick(); }
   const tl = d.querySelectorAll("#detail table")[0];
   ok(d.querySelector("#detail").textContent.includes("F-001"), "the finding that names it is shown");
   ok(d.querySelector("#detail").textContent.includes("Measured: T0 to validated RTS"), "the Customer's measurement is shown");
+  w.location.hash = "#IMP-0005"; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick();
+  ok(head() === "IMP-0005" && d.querySelector("#detail").textContent.includes("Out of service (fire panel)") && d.querySelector("#detail").textContent.includes("FLS-1")
+     && d.querySelector("#detail").textContent.includes("Differs"), "an impairment shows the fire panel's measurement and its finding");
+  w.location.hash = "#INC3100068"; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick();
   result.all = ids().length;
   // type dropdown
   const types = [...d.querySelectorAll("#f-type option")].map(o => o.value).filter(Boolean);

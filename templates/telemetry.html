@@ -237,7 +237,7 @@ __SITENAV__
   function tree() {
     let h = `<div class="sec">Device family</div><ul class="fam"><li><a href="#site" data-fam="site">Site health</a></li><li><a href="#gpus" data-fam="gpu">GPUs</a></li><li><a href="#cdus" data-fam="cdu">CDUs</a></li><li><a href="#power" data-fam="power">Power</a></li><li><a href="#network" data-fam="network">Network</a></li><li><a href="#mechanical" data-fam="mech">Mechanical</a></li><li><a href="#storage" data-fam="storage">Storage</a></li>`
       + C.planned.map(p => `<li><span class="planned" title="${esc(p)} telemetry: planned">${esc(p)} <small>planned</small></span></li>`).join("") + `</ul>`;
-    h += `<div class="famsec" data-fam="site"><div class="sec">Site health</div><ul><li>${link("site", "The whole site, by hour")}</li>`
+    h += `<div class="famsec" data-fam="site"><div class="sec">Site health</div><ul><li>${link("site", "The whole site, by hour")}</li><li>${link("fire", "Fire protection")}</li>`
       + SH.halls.map(x => `<li><details open><summary>${esc(x.name)}</summary><ul class="racks">` + Object.keys(SHR).filter(k => SHR[k].hall === x.id).map(k => `<li>${link(k, k)}</li>`).join("") + `</ul></details></li>`).join("")
       + `</ul><div class="sec">Elsewhere</div><ul><li><a href="../alarms/">Alarm Board ↗</a></li><li><a href="../availability/">Availability ↗</a></li></ul></div>`;
     h += `<div class="famsec" data-fam="gpu"><div class="sec">GPUs</div><ul><li>${link("gpus", "Overview")}</li>`;
@@ -2488,6 +2488,36 @@ __SITENAV__
       + SG.custody.map(c => `<tr><td><code>${esc(c.drive_serial)}</code></td><td>${link(c.node, c.node)} ${esc(c.bay)}</td><td>${esc(c.ticket)}</td><td class="n">${esc(at(c.handed_over_at))}</td></tr>`).join("") + `</tbody></table></div>`;
     main.innerHTML = h;
   }
+  // --------------------------------------------------------------------- fire protection (events only: the panel's history)
+  const FP = B.fire, tms = iso => Date.parse(iso);
+  const fpRefs = refs => (refs || []).filter(Boolean).map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}">${esc(r)}</a>`).join(", ");
+  function fpOut(a, b) { return FP.spans.filter(s => s.signal === "Disable" || (s.signal === "Supervisory" && /^(PAZ|CAS)-/.test(s.device))).filter(s => tms(s.start) < b && tms(s.end) > a); }
+  function shFire(h) {
+    const a = tms(hourIso(h)), b = tms(hourIso(h + 1)), out = fpOut(a, b);
+    if (!out.length) return `<p>${tag("normal", "ok")} Every detector, pre-action zone, and clean agent system in service at this hour.</p>`;
+    return `<table><thead><tr><th>Device</th><th>On the panel</th><th>From</th><th>To</th><th>Impairment log</th></tr></thead><tbody>` + out.map(s => {
+      const imp = FP.impairments.find(i => i.imp_id === s.logged), late = imp && tms(imp.restored_at) < tms(s.end) - 15 * 60e3 && tms(imp.restored_at) < b;
+      return `<tr><td>${esc(s.device)}</td><td>${tag(s.signal.toLowerCase(), "warn")} ${esc(s.text)}</td><td class="n">${esc(at(s.start))}</td><td class="n">${esc(at(s.end))}</td><td>${s.logged ? fpRefs([s.logged]) + (late ? ` ${tag("logged restored " + at(imp.restored_at), "bad")}` : "") : tag("not on the log", "bad")}</td></tr>`;
+    }).join("") + `</tbody></table>`;
+  }
+  function fireView() {
+    const agree = FP.agreements.reduce((x, a) => x + a.checked - a.misses, 0), tot = FP.agreements.reduce((x, a) => x + a.checked, 0);
+    const imps = FP.impairments, planned = imps.filter(i => i.type === "planned").length;
+    let h = `<div class="kind">Site health</div><h1>Fire protection</h1><p class="sub">The Landlord owns fire protection: the fire alarm control panel (FACP-1), the aspirating smoke detectors, the pre-action sprinkler zones in the halls, and the clean agent systems in the electrical rooms. There is no telemetry stream here, only events: the panel's history log, the Landlord's impairment log, and the impairment notices the Customer received. They are reconciled under Interface Agreement section 12 (FPI-1 to FPI-6); the panel is the record of when protection was out (FPI-5). Everything is fictional.</p>`;
+    h += `<div class="tiles">` + tile("Impairments", num(imps.length), `${num(planned)} planned, ${num(imps.length - planned)} unplanned`) + tile("Panel signals", num(FP.panel.length), "alarm, supervisory, trouble, and disabled points")
+      + tile("Findings", num(FP.findings.length), "records that do not reconcile") + tile("Agreements", `${num(agree)} of ${num(tot)}`, "cases agree, or are explained by a finding") + `</div>`;
+    h += `<h2 class="sec">Findings</h2>` + (FP.findings.length ? FP.findings.map(f => `<div class="card bad"><h3>${esc(f.id)} · ${esc(f.title)}</h3><p>${esc(f.summary)}</p><ul>${f.lines.map(l => `<li class="note">${esc(l)}</li>`).join("")}</ul><p class="note">Owner: ${esc(f.owner)}. Contract: ${esc(f.contract)}.${f.imp ? " Record: " + fpRefs([f.imp]) + "." : ""}</p></div>`).join("") : `<p>None this month.</p>`);
+    h += `<h2 class="sec">Impairment log</h2><p class="note">As the Landlord logged them, with the panel's restoration beside the logged one. Each number opens its record in the Incident Portal.</p><div class="scroll"><table><thead><tr><th>Impairment</th><th>Type</th><th>Devices</th><th>Reason</th><th>Start</th><th>Window end</th><th>Logged restored</th><th>Panel restored</th><th>Fire watch</th><th>Records</th></tr></thead><tbody>`
+      + imps.map(i => { const off = i.panel_end && Math.abs(tms(i.panel_end) - tms(i.restored_at)) > 15 * 60e3;
+        return `<tr><td>${fpRefs([i.imp_id])}</td><td>${esc(i.type)}</td><td>${esc(i.devices.join(", "))}</td><td>${esc(i.reason)}</td><td class="n">${esc(at(i.start))}</td><td class="n">${i.window_end ? esc(at(i.window_end)) : "–"}</td><td class="n">${esc(at(i.restored_at))}</td><td class="n">${i.panel_end ? esc(at(i.panel_end)) : "–"}${off ? " " + tag("differs", "bad") : ""}</td><td class="n">${i.fire_watch_start ? `${esc(at(i.fire_watch_start))} to ${esc(i.fire_watch_end.slice(11, 16))}` : "–"}</td><td>${fpRefs([i.mop_ref, i.pm_ref])}</td></tr>`; }).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Notices received</h2><div class="scroll"><table><thead><tr><th>Notice</th><th>Received</th><th>Impairment</th><th>Kind</th><th>Text</th></tr></thead><tbody>`
+      + FP.notices.map(n => `<tr><td>${esc(n.notice_id)}</td><td class="n">${esc(at(n.received_at))}</td><td>${fpRefs([n.imp_id])}</td><td>${esc(n.kind)}</td><td class="note">${esc(n.text)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Fire panel history</h2><p class="note">Every signal FACP-1 logged this month. NFPA 72 signal classes: an alarm, a supervisory (a valve, air, or pressure off normal), a trouble (a fault in the system itself); a disabled point is one taken out of service at the panel. A test alarm from a disabled point has no outputs.</p><div class="scroll"><table><thead><tr><th>Time</th><th>Device</th><th>Point</th><th>Signal</th><th>State</th><th>Text</th></tr></thead><tbody>`
+      + FP.panel.map(e => `<tr><td class="n">${esc(at(e.timestamp))}</td><td>${esc(e.device)}</td><td>${esc(e.point)}</td><td>${esc(e.signal)}</td><td>${esc(e.state)}</td><td>${esc(e.text)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Agreement with the records</h2><table><thead><tr><th>Check</th><th class="n">Agrees</th><th class="n">Explained by a finding</th></tr></thead><tbody>` + FP.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)}</td><td class="n">${num(a.explained)}</td></tr>`).join("") + `</tbody></table>`;
+    h += `<p class="note">The same checks, and both planted findings, run on 60 generated months (scripts/render_fire.py --robustness 60); the report is reports/fire_protection.md. <a href="../agreements/">Agreements</a> · <a href="../devices/#FACP-1">FACP-1 in the device directory</a></p>`;
+    main.innerHTML = h;
+  }
   function storageSpares() {
     const S = SG.shelf, hn = x => (Object.values(SG.clusters).find(c => c.hall === x) || {}).hall_name || x, pct = x => x[1] ? (100 * x[0] / x[1]).toFixed(1) + "%" : "n/a";
     let h = `<div class="kind">Storage reference</div><h1>Storage spares shelf</h1><p class="sub">The storage clusters' drives and the storage fabric's optics are kept on a shelf in each hall's storage row, with their own ledger and the cage's weekly schedule: replenished Monday 10:00 and counted Sunday 18:00, site time. Minimums are per hall, from the IT Partner SLA (spares, storage spares shelf); KM-06 and KM-07 apply to the shelf as to the cage.</p>`;
@@ -2584,6 +2614,7 @@ __SITENAV__
       + `<a class="b" href="../alarms/">Alarm Board ↗</a></div></div>`;
     h += `<h2 class="sec">Redundancy</h2><p class="note">Units in service against the units the design needs (site/site.yaml). Amber: running at N, with no redundant unit; red: below N. A unit out for planned work counts too. Click a system for its devices.</p><div class="scroll" id="sh-red"></div>`;
     h += `<h2 class="sec">Device families</h2><div class="shf" id="sh-fam"></div>`;
+    h += `<h2 class="sec">Fire protection</h2><p class="note">From the fire panel's history: a disabled point, or a supervisory signal on a pre-action valve or a clean agent system, is protection out of service. Shown beside the states above, not counted in them. ${link("fire", "Fire protection")}</p><div id="sh-fire"></div>`;
     h += `<h2 class="sec">Hall map</h2><p class="note">Every rack at this hour, with its row's CDU. Hover for what is behind a colour; click a rack to open it at this hour.</p><div class="shmap" id="sh-map"></div>`
       + `<div class="legend"><span><i class="band" style="background:${esc(stCol[0])}"></i>normal</span><span><i class="band" style="background:${esc(stCol[1])}"></i>degraded</span><span><i class="band" style="background:${esc(stCol[2])}"></i>lost</span><span><i class="band shc"></i>commissioning (Hall B rack not yet handed over)</span><span><i class="band" style="background:${esc(stCol[-1])}"></i>not installed</span></div>`;
     h += `<h2 class="sec">Conditions at this hour</h2><div id="sh-cond"></div>`;
@@ -2632,6 +2663,7 @@ __SITENAV__
     document.getElementById("sh-fam").innerHTML = SH.families.map(f => shFamily(f, h)).join("");
     document.getElementById("sh-map").innerHTML = SH.halls.map(x => shHall(x, h)).join("")
       + SH.planned.map(p => `<div class="shhall"><div class="hallname">${esc(p.name)}</div><p class="note">${esc(p.state === "planned" ? "Planned: not in service, no telemetry yet." : p.state)} <a href="../deployments/#hallc">Readiness ↗</a></p></div>`).join("");
+    document.getElementById("sh-fire").innerHTML = shFire(h);
     document.getElementById("sh-cond").innerHTML = n.length ? `<table><thead><tr><th>State</th><th>Family</th><th>Where</th><th>Condition</th><th>Since</th><th>Until</th></tr></thead><tbody>`
       + n.map(i => `<tr><td>${stTag(i.state)}</td><td>${esc((SH.families.find(f => f.key === i.family) || {}).name)}</td><td>${esc(i.hall ? hallName(i.hall) : "Site")}</td><td><a href="#${esc(shLink(i.link, h))}">${esc(i.text)}</a></td><td class="n">${esc(hourAt(i.from))}</td><td class="n">${esc(hourAt(i.to + 1))}</td></tr>`).join("") + `</tbody></table>`
       : `<p>Nothing degraded or lost at this hour: every system has its redundant unit and every reading is inside its thresholds.</p>`;
@@ -2770,6 +2802,7 @@ __SITENAV__
     if (pf) return {view: pf, dev: up, minute: pm, key: up, fam: "power"};
     if (a === "power-fields" || a === "power-agreements") return {view: a, key: a, fam: "power"};
     if (a === "power") return {view: "power", key: "power", fam: "power"};
+    if (a === "fire") return {view: "fire", key: "fire", fam: "site"};
     if (a === "gpus") return {view: "gpus", key: "gpus"};
     return {view: "site", key: "site", fam: "site", hour: b == null ? null : parseInt(b, 10)};
   }
@@ -2814,6 +2847,7 @@ __SITENAV__
     else if (r.view === "sgRack") sgRackView(r.dev);
     else if (r.view === "storage-tickets") storageTickets();
     else if (r.view === "storage-spares") storageSpares();
+    else if (r.view === "fire") fireView();
     else if (r.view === "storage-fields") storageFields();
     else if (r.view === "storage-agreements") storageAgreements();
     else overview(seq);

@@ -173,6 +173,18 @@ Derived by `scripts/generate_assets.py` from `data/sample/`, `data/security/`, `
 | `answer_key.json` | Planted findings (a live PSU held in stock, a disposed switch still answering, an OEM delivery never received) and decoys. The checks never read it |
 | `manifest.json` | Window, seed, sources, counts |
 
+## Fire protection (`data/fire/`)
+
+Derived by `scripts/generate_fire.py` from `data/sample/` (window, VESDA events, the Landlord's maintenance records, MOP approvals, and roster) with its own random stream (`{seed}:fire`); the sample is never written. Settings in `config/fire.yaml`; the rules are Interface Agreement section 12 (FPI-1 to FPI-6).
+
+| File | What it represents |
+|---|---|
+| `facp_history.jsonl` | The fire alarm control panel's history log: device, point, signal (Alarm, Supervisory, Trouble, Disable), state (Active, Cleared, Test), text. Every VESDA event appears a few seconds after the detector's own record |
+| `impairments.csv` | The Landlord's impairment log: planned or unplanned, system, devices, reason, MOP and PM references, start, window end, logged restoration, fire watch start and end, the engineer's ID |
+| `impairment_notices.csv` | Impairment notices as the Customer received them (FPN-n): start, extension (with the new end), restored |
+| `answer_key.json` | Planted findings (an impairment logged restored inside its window while the panel shows it out for hours after; a control valve closed with nothing logged). The checks never read it |
+| `manifest.json` | Window, seed, source, counts |
+
 ## Live collector output
 
 `scripts/collect.py` (see `src/scorecard/live/`) writes the same contract files from real devices. It creates every contract file, leaves the ones it does not collect empty, and lists them in `manifest.json` under `not_collected` (Landlord work orders and maintenance records come from Landlord system exports, not device polling). It adds two files the synthetic data does not have:

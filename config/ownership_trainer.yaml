@@ -99,16 +99,24 @@ rows:
     criterion: "Any building leak alarm, VESDA Action or higher, or unplanned fire protection impairment."
     rules: [HO-3]
     match: {categories: [OT-FC-LEAK], devices: ["TTDM-"]}
-  - component: "Fire alarm, VESDA, and pre-action suppression"
+  - component: "Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression"
     scenario: "VESDA-B2 in Hall B goes to Action on rising smoke obscuration."
     priority: P1
     criterion: "Any building leak alarm, VESDA Action or higher, or unplanned fire protection impairment."
-    match: {categories: [OT-FC-FIRE, Fire protection], devices: ["VESDA-"]}
+    match: {categories: [OT-FC-FIRE, Fire protection], devices: ["VESDA-", "PAZ-", "CAS-"]}
   - component: "BMS and EPMS operation"
     scenario: "The BMS stops sending alarms to the Customer's real-time feed for 20 minutes after a server patch."
     priority: P2
     criterion: "The Landlord may not disable, filter, or delay the feeds. A feed outage over 15 minutes is a Landlord P2 and counts against OT-KM-06."
     demarcation: DM-MON
+    match: {}
+  - component: "Core network services: DNS, DHCP, and NTP and PTP time"
+    scenario: "After a change to the site's time servers, every BMC in Hall A row 2 stamps its events 40 seconds behind the leaf switches."
+    priority: null
+    match: {}
+  - component: "Firewalls and network segmentation, including the monitoring network"
+    scenario: "A new rule on the monitoring network's firewall stops the Customer's collector reaching the CDUs' Redfish service."
+    priority: null
     match: {}
   - component: "Customer Telemetry of Record collector and read-only taps"
     scenario: "The Customer's telemetry collector stops polling the busway meters after its client certificate expires."

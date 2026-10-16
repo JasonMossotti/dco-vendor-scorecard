@@ -107,6 +107,8 @@ def render_markdown(site: dict, sheet_list: list[tuple[str, str, str, str]]) -> 
     ups_like = sum(1 for e in S.equipment(site) if e["id"].startswith(("UPS-", "MUPS-")))
     counts["galaxy_li_ion"] = f"{ups_like} (one per UPS)"
     counts["notifier_facp"] = 1
+    counts["preaction_zone"] = sum(h["fire_life_safety"].get("preaction_zones", 0) for h in site["halls"])
+    counts["clean_agent"] = sum(h["fire_life_safety"].get("clean_agent_systems", 0) for h in site["halls"])
     counts["tracetek_water_cable"] = f"{water_circuits} circuits"
     counts["tracetek_tt5000"] = f"{site['plants']['generators']['count']} circuits (one per fuel tank)"
     rows = []
@@ -116,7 +118,7 @@ def render_markdown(site: dict, sheet_list: list[tuple[str, str, str, str]]) -> 
                                                        ("rating_kva", "kVA"), ("rating_a", "A"), ("design_kw", "kW"))
                        if k in prod), "")
         maker = prod["manufacturer"]
-        name = (f"{prod['model']} ({maker.lower()})" if maker.lower().startswith(("to be selected", "utility"))
+        name = (f"{prod['model']} ({maker.lower()})" if maker.lower().startswith(("to be selected", "utility", "landlord"))
                 else f"{maker} {prod['model']}")
         rows.append([CATEGORY_LABELS.get(prod["category"], prod["category"].replace("_", " ").capitalize()), name, n, rating, "; ".join(prod["interfaces"])])
     add(_table(["Category", "Product", "Count", "Rating", "Management interfaces"], rows))

@@ -18,7 +18,7 @@ function answer(s, right) {
 }
 
 ok(errors.length === 0, "no script errors " + errors.join(";"));
-ok(D.scenarios.length === 28, "one scenario per row of the ownership matrix");
+ok(D.scenarios.length === 30, "one scenario per row of the ownership matrix");
 ok(d.querySelector(".doctabs a.on").textContent === "Ownership trainer", "its tab is marked");
 ok(d.getElementById("tr-progress").textContent.startsWith("Question 1 of 10"), "opens on a quick round of 10");
 ok(d.getElementById("tr-check").disabled, "cannot check before answering all three");
@@ -39,8 +39,8 @@ ok(d.querySelector(".tr-end h2").textContent === "9 of 10 right" && d.querySelec
 const seen = new Set();
 // Every row, in order: the leak at the manifold and the utility outage.
 [...d.querySelectorAll("#tr-modes button")].find(b => b.dataset.mode === "all").click();
-ok(d.getElementById("tr-progress").textContent.startsWith("Question 1 of 28"), "every row mode has 28 questions");
-for (let i = 0; i < 28; i++) {
+ok(d.getElementById("tr-progress").textContent.startsWith("Question 1 of 30"), "every row mode has 30 questions");
+for (let i = 0; i < 30; i++) {
   s = scn(); seen.add(s.n);
   if (s.component.startsWith("Rack manifold")) {
     answer(s, true);
@@ -56,6 +56,6 @@ for (let i = 0; i < 28; i++) {
   } else answer(s, true);
   d.getElementById("tr-next").click();
 }
-ok(seen.size === 28 && d.querySelector(".tr-end h2").textContent === "28 of 28 right", "every row once");
+ok(seen.size === 30 && d.querySelector(".tr-end h2").textContent === "30 of 30 right", "every row once");
 ok(!/localStorage|sessionStorage|fetch\(/.test(html), "nothing is stored or sent");
 ok(errors.length === 0, "still no script errors " + errors.join(";"));

@@ -169,7 +169,15 @@ def prepare(t: TM.Telemetry | None = None) -> dict:
         "mgmt": prepare_mgmt(),
         "storage": prepare_storage(),
         "site": prepare_site(),
+        "fire": _fire(),
     }
+
+
+def _fire() -> dict:
+    """The Fire protection view (#fire): scripts/render_fire.py's page data."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import render_fire
+    return render_fire.prepare()
 
 
 # --------------------------------------------------------------------------- CDUs

@@ -155,6 +155,16 @@ This agreement joins the Landlord SLA, the IT Partner SLA, and the Security Part
 | {{ r.id }} | {{ r.name }} | {{ r.rule }} |
 {% endfor %}
 
+## 12. Fire Protection Impairments
+
+{{ ia.fire_impairments.principle }}
+
+| ID | Rule | Text |
+|---|---|---|
+{% for r in ia.fire_impairments.rules -%}
+| {{ r.id }} | {{ r.name }} | {{ r.rule }} |
+{% endfor %}
+
 ---
 
 *Generated from `sla/interface_agreement.yaml` (version {{ ia.document.version }}). {{ ia.document.disclaimer }}*

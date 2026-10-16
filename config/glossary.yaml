@@ -40,6 +40,7 @@ contract_terms:
   - {path: fault_attribution.rules, type: rule, title: "Fault attribution rule", text: "{rule}"}
   - {path: handoffs, type: rule, title: "{name}", text: "{rule}"}
   - {path: asset_register.rules, type: rule, title: "Asset register: {name}", text: "{rule}"}
+  - {path: fire_impairments.rules, type: rule, title: "Fire protection impairment: {name}", text: "{rule}"}
   - {path: energy_reporting.terms, type: measure, title: "{name}", text: "{rule}"}
   - {path: demarcations, type: rule, title: "{system} demarcation", text: "Boundary: {boundary} Evidence: {evidence}"}
   - {path: chronic_failure.triggers, type: rule, title: "Chronic failure trigger", text: "{rule}"}
@@ -130,6 +131,10 @@ terms:
   - {term: BMS, type: acronym, expansion: Building management system, text: "The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it."}
   - {term: EPMS, type: acronym, expansion: Electrical power monitoring system, text: "The system that records switchgear, UPS, and meter data for the electrical plant."}
   - {term: DCIM, type: acronym, expansion: Data center infrastructure management, text: "Software that tracks power, capacity, and assets across the facility."}
+  - {term: DNS, type: acronym, expansion: Domain Name System, text: "Turns names into network addresses. A Customer-owned core network service at this site; the Interface Agreement names its owner and models no data for it."}
+  - {term: DHCP, type: acronym, expansion: Dynamic Host Configuration Protocol, text: "Hands out network addresses to devices as they join. A Customer-owned core network service; named in the ownership matrix, not modeled."}
+  - {term: NTP, type: acronym, expansion: Network Time Protocol, text: "Keeps every system's clock in step, so records from different parties line up. A Customer-owned core service; clock skew over 5 seconds is flagged under the common measurement terms."}
+  - {term: PTP, type: acronym, expansion: Precision Time Protocol, text: "Time to within microseconds over the network (IEEE 1588), for systems that need tighter time than NTP. Customer-owned; named in the ownership matrix, not modeled."}
   - {term: SCADA, type: acronym, expansion: Supervisory control and data acquisition, text: "Industrial control and monitoring; here, the utility's own system for its substation."}
   - {term: CDU, type: acronym, expansion: Coolant distribution unit, text: "Moves coolant between the facility water loop and the racks' liquid loop, and controls its temperature, flow, and pressure. The Landlord owns the CDUs; each serves up to 8 racks."}
   - {term: CRAH, type: acronym, expansion: Computer room air handler, text: "A chilled-water air handler that cools a room's air, here the electrical rooms."}
@@ -388,6 +393,12 @@ families:
      text: "A batch of parts made together; a bad lot fails more often than the others."}
   - {key: AR-N, label: "AR-#", pattern: 'AR-\d{1,2}', type: record, title: Asset register finding, example: AR-1, see: "devices/#assets",
      text: "A finding of the daily asset register reconciliation: a device answering with a serial the register lists in the spares cage or as disposed, or an OEM replacement delivered to the dock and never received (Interface Agreement section 11)."}
+  - {key: IMP, label: "IMP-####", pattern: 'IMP-\d{4}', type: record, title: Fire protection impairment, example: IMP-0005, see: "tickets/",
+     text: "The Landlord's impairment log entry for a time all or part of a fire alarm, detection, or suppression system was out of service: why, the window, the restoration, and the fire watch (Interface Agreement section 12). The fire panel's history is the evidence."}
+  - {key: FPN, label: "FPN-####", pattern: 'FPN-\d{4}', type: record, title: Impairment notice, example: FPN-0006, see: "telemetry/#fire",
+     text: "A fire protection impairment notice as the Customer received it: before planned work, on an unplanned impairment, for an extension, or on restoration (FPI-1, FPI-2, FPI-4, FPI-5)."}
+  - {key: FLS-N, label: "FLS-#", pattern: 'FLS-\d{1,2}', type: record, title: Fire protection finding, example: FLS-1, see: "telemetry/#fire",
+     text: "A finding of the daily reconciliation of the Landlord's impairment log with the fire panel's history: an impairment logged restored while the panel shows it out of service, or protection out of service with no impairment logged."}
   - {key: AT-TAG, label: "AT-######", pattern: 'AT-\d{6}', type: record, title: Asset tag, example: AT-004079, see: "devices/#assets",
      text: "An asset's tag in the Customer's asset register: one per serial, from receipt to disposal (REG-1)."}
   - {key: EW-CERT, label: "EW-#####", pattern: 'EW-\d{5}', type: record, title: Disposal certificate, example: EW-00504, see: "devices/#assets",
@@ -492,6 +503,12 @@ families:
      text: "One of the 3 variable-speed facility water pumps in the central plant: two run, one stands by."}
   - {key: FWLOOP, label: "FW-LOOP", pattern: 'FW-LOOP', type: data_source, title: Facility water loop readings, example: FW-LOOP, see: "telemetry/#FW-LOOP",
      text: "The Telemetry tab's view of the central plant's supply and return headers (BMS plant objects): their temperatures, flow, and differential pressure."}
+  - {key: EQ-PAZ, label: "PAZ-[hall]#", pattern: 'PAZ-[A-C]\d', type: equipment, title: Pre-action sprinkler zone, example: PAZ-A1,
+     text: "A double-interlock pre-action sprinkler zone in a hall: the pipes hold supervised air, and water enters only when detection and a fused head both operate. Its valve tamper and low air switches report to the fire panel."}
+  - {key: EQ-CAS, label: "CAS-[hall]#", pattern: 'CAS-[A-C]\d', type: equipment, title: Clean agent system, example: CAS-B1,
+     text: "The gaseous fire suppression system for a hall's electrical room (NFPA 2001), released by the fire panel on cross-zoned detection."}
+  - {key: EQ-FACP, label: "FACP-1", pattern: 'FACP-1', type: equipment, title: Fire alarm control panel, example: FACP-1, see: "devices/#FACP-1",
+     text: "The site's fire alarm control panel, in the fire riser: every smoke detector, pre-action zone, and clean agent system reports to it, and its history log is the record of when fire protection was out of service."}
   - {key: EQ-VESDA, label: "VESDA-[hall]#", pattern: 'VESDA-[A-C]\d', type: equipment, title: Smoke detector, example: VESDA-B1,
      text: "An aspirating smoke detector in a hall, named by hall and number."}
   - {key: EQ-BW, label: "BW-[hall]-R#-PG-[hall]#-[side]", pattern: 'BW-[A-C]-R\d-PG-[A-C]\d-[AB]', type: equipment, title: Busway segment, example: BW-A-R1-PG-A2-A,

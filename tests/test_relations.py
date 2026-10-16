@@ -33,7 +33,7 @@ def result(records):
 
 def test_every_link_the_records_make_would_be_suggested(result):
     """The truth set is the links the records themselves make. Scoring must find all of them."""
-    assert result["links"] == 18 and result["found"] == 18, result["missed"]
+    assert result["links"] == 20 and result["found"] == 20, result["missed"]   # 18 before the impairment log (IMP-0002 names MOP-307 and PM-0017)
 
 
 def test_decoys_are_not_suggested(result):

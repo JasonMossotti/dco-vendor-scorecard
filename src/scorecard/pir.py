@@ -441,6 +441,15 @@ def _record_review(ds: Dataset, r: dict[str, Any]) -> dict[str, Any]:
         if we:
             rows.append(_metric("Alarm to dispatch log closed", ws, we, None,
                                 "" if m.get("arrived") else "No guard badged the door before the close."))
+    elif t == "imp":   # a fire protection impairment: the log's window and restoration, and the fire panel's
+        m = r["measured"] or {}
+        if n["window_end"]:
+            rows.append(_metric("Planned window", ws, _t(n["window_end"])))
+        if n["restored_at"]:
+            rows.append(_metric("Start to restored (impairment log)", ws, _t(n["restored_at"])))
+        if m.get("panel_end"):
+            rows.append(_metric("Start to restored (fire panel)", ws, _t(m["panel_end"]), None,
+                                "Agrees with the log." if m["agrees"] else "The panel shows the point out of service longer than the log says."))
     else:   # PM task
         rows.append(_metric("Due window", ws, _t(n["due_end"])))
         if n.get("completed_at"):
@@ -460,7 +469,7 @@ def _record_review(ds: Dataset, r: dict[str, Any]) -> dict[str, Any]:
     hours = ((we - ws).total_seconds() / 3600) if (gpus and we) else 0.0
     osr = 1 if gpus == 0 else 2 if gpus <= GPUS_PER_RACK else 3
     lane = r["partner"] if r["partner"] in ("Landlord", "Security Partner") else "Customer" if t in ("chg", "mop") else "IT Partner"
-    label = {"pm": "Due window", "sir": "Alarm to close"}.get(t, "Approved window")
+    label = {"pm": "Due window", "sir": "Alarm to close", "imp": "Impaired (log)"}.get(t, "Approved window")
     return {
         "kind": t, "start": r["start"], "end": r["end"],
         "labels": {"duration": label, "gpus": "GPUs out of service",

@@ -146,6 +146,8 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 | Pump | Facility water pump, VFD driven (to be selected) | 3 |  | BACnet/IP via VFD |
 | Smoke detection | Xtralis (Honeywell) VESDA-E VEP aspirating smoke detector | 5 |  | VESDAnet to fire panel (primary); Modbus HLI to BMS (secondary) |
 | Fire panel | Notifier (Honeywell) Addressable fire alarm control panel | 1 |  | BACnet gateway to BMS (secondary monitoring) |
+| Suppression | Double-interlock pre-action sprinkler zone (landlord standard) | 5 |  | Valve tamper, low air, and waterflow switches to the fire panel |
+| Suppression | Clean agent total-flooding system (landlord standard) | 3 |  | Release circuit and container pressure switch on the fire panel |
 | Leak detection | Chemelex (nVent RAYCHEM TraceTek) TTDM-128 alarm and locator module | 3 |  | Modbus RTU (RS-485) via gateway to Modbus TCP |
 | Leak cable | Chemelex (nVent RAYCHEM TraceTek) Water and conductive-fluid sensing cable (PG25 coolant) | 21 circuits |  | Monitored by TTDM-128 |
 | Leak cable | Chemelex (nVent RAYCHEM TraceTek) TT5000 hydrocarbon sensing cable (generator diesel) | 7 circuits (one per fuel tank) |  | Monitored by TTDM-128 |

@@ -227,6 +227,18 @@ products:
     manufacturer: "Notifier (Honeywell)"
     model: "Addressable fire alarm control panel"
     interfaces: ["BACnet gateway to BMS (secondary monitoring)"]
+  preaction_zone:
+    category: suppression
+    manufacturer: "Landlord standard"
+    model: "Double-interlock pre-action sprinkler zone"
+    interfaces: ["Valve tamper, low air, and waterflow switches to the fire panel"]
+    note: "Pipes hold supervised air; water enters only when detection and a fused sprinkler head both operate (NFPA 13). The valve's tamper and low-air switches report to the fire panel as supervisory signals."
+  clean_agent:
+    category: suppression
+    manufacturer: "Landlord standard"
+    model: "Clean agent total-flooding system"
+    interfaces: ["Release circuit and container pressure switch on the fire panel"]
+    note: "Gaseous agent for an electrical room (NFPA 2001), released by the fire panel on cross-zoned detection. Container pressure and the disabled release circuit report to the panel."
   tracetek_ttdm128:
     category: leak_detection
     manufacturer: "Chemelex (nVent RAYCHEM TraceTek)"
@@ -342,6 +354,8 @@ halls:
     fire_life_safety:
       vesda_detectors: 2              # hall + electrical room
       leak_circuits: 8                # one per row manifold, one under each CDU
+      preaction_zones: 2              # the hall in halves, two rows each
+      clean_agent_systems: 1          # the electrical room
     management:                       # basis: assumption (counts and wiring; see config/telemetry_mgmt.yaml)
       rack_switch_product: sn2201
       rack_switches: 2                # <rack>-mgmt1 out of band (BMCs), <rack>-mgmt2 in band (NVLink switch eth0, host management)
@@ -396,6 +410,8 @@ halls:
     fire_life_safety:
       vesda_detectors: 2
       leak_circuits: 8
+      preaction_zones: 2
+      clean_agent_systems: 1
     management:                       # basis: assumption (counts and wiring; see config/telemetry_mgmt.yaml)
       rack_switch_product: sn2201
       rack_switches: 2                # <rack>-mgmt1 out of band (BMCs), <rack>-mgmt2 in band (NVLink switch eth0, host management)
@@ -437,6 +453,8 @@ halls:
     fire_life_safety:
       vesda_detectors: 1
       leak_circuits: 5
+      preaction_zones: 1
+      clean_agent_systems: 1
 
 # -----------------------------------------------------------------------------
 # Central plants

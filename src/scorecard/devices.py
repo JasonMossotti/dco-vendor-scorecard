@@ -43,7 +43,8 @@ KIND_LABEL = {
     "group": "Power group", "ups": "UPS", "uss": "Unit substation", "mups": "Mechanical UPS", "mvsst": "Solid-state transformer",
     "mv": "Medium-voltage switchgear", "tx": "Utility transformer", "gen": "Generator", "chiller": "Chiller",
     "pump": "Facility water pump", "cdu": "Coolant distribution unit", "tw": "Thermal wall", "crah": "Air handler",
-    "vesda": "Smoke detector", "leak": "Leak detection module",
+    "vesda": "Smoke detector", "leak": "Leak detection module", "facp": "Fire alarm control panel",
+    "paz": "Pre-action sprinkler zone", "cas": "Clean agent system",
     "mgmt": "Management switch", "agg": "Management aggregation switch", "console": "Console server",
     "stg_rack": "Storage rack", "stg_node": "Storage node", "eth_leaf": "Storage fabric leaf switch", "eth_spine": "Storage fabric spine switch",
 }
@@ -55,7 +56,7 @@ GROUPS = [
     ("storage", "Storage and its Ethernet fabric", ["stg_rack", "stg_node", "eth_leaf", "eth_spine"]),
     ("power", "Power", ["tx", "mv", "gen", "uss", "ups", "mups", "mvsst", "group", "busway", "tapoff"]),
     ("cooling", "Cooling", ["cdu", "tw", "crah", "chiller", "pump"]),
-    ("safety", "Smoke and leak detection", ["vesda", "leak"]),
+    ("safety", "Fire protection and leak detection", ["facp", "vesda", "paz", "cas", "leak"]),
 ]
 GROUP_OF = {k: g for g, _, kinds in GROUPS for k in kinds}
 
@@ -390,7 +391,18 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
         for n in range(1, h["fire_life_safety"]["vesda_detectors"] + 1):
             name = f"VESDA-{L}{n}"
             add(name, "vesda", desc(name), [["Samples", "", f"air from every cold aisle in {short}" if n == 1
-                                             else f"the {short} electrical room's air"]])
+                                             else f"the {short} electrical room's air"], ["Reports to", "FACP-1", "VESDAnet"]])
+        fls = h["fire_life_safety"]
+        zones = fls.get("preaction_zones", 0)
+        for n in range(1, zones + 1):
+            zr = [r["rack"] for r in racks if (r["row"] - 1) * zones // rows == n - 1]
+            add(f"PAZ-{L}{n}", "paz", desc(f"PAZ-{L}{n}"),
+                [["Protects", zr[0], f"to {zr[-1]}"], ["Released by", "FACP-1", f"double interlock: VESDA-{L}1 at Fire 2 and a fused head"],
+                 ["Detection", f"VESDA-{L}1", "the first interlock"]])
+        for n in range(1, fls.get("clean_agent_systems", 0) + 1):
+            add(f"CAS-{L}{n}", "cas", desc(f"CAS-{L}{n}"),
+                [["Protects", ups[0], f"to {ups[-1]} in the {short} electrical room"] if ups else ["Protects", "", f"the {short} electrical room"],
+                 ["Released by", "FACP-1", f"cross-zoned: VESDA-{L}2 at Fire 2 and a second detector" if fls["vesda_detectors"] > 1 else "cross-zoned detection"]])
         circuits = h["fire_life_safety"].get("leak_circuits", 0)
         if circuits and hid in it_halls:
             conn = []
@@ -435,6 +447,9 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
         name = f"USS-CH{i}"
         add(name, "uss", desc(name), [["Fed by", S.mv_bus_for(i), ""]] +
             [["Feeds", x, ""] for x in chillers + pumps if eq[x]["fed_from"] == name])
+    fire = [n for n, e in dev.items() if e["kind"] in ("vesda", "paz", "cas")]
+    add("FACP-1", "facp", desc("FACP-1"), [["Monitors", n, KIND_LABEL[dev[n]["kind"]].lower()] for n in fire] +
+        [["Reports to", "", "the BMS through a BACnet gateway (secondary); the panel is the life-safety system of record"]])
     return {"kinds": KIND_LABEL, "groups": [[g, label, kinds] for g, label, kinds in GROUPS], "devices": dev}
 
 

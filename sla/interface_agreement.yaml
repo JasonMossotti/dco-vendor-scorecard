@@ -17,8 +17,8 @@ document:
   id: "IA-AUS1-001"
   title: "Interface Agreement: Site AUS-1"
   subtitle: "Joined to the Data Center Lease (Schedule C), the IT Partner Services Agreement (Schedule B), and the Security Services Agreement (Schedule D)"
-  version: "1.3.0"
-  effective_date: "2026-10-14"
+  version: "1.4.0"
+  effective_date: "2026-10-16"
   status: "MOCK / ILLUSTRATIVE"
   disclaimer: >-
     This is a fictional, illustrative interface agreement created for a
@@ -98,8 +98,10 @@ raci:
   - {component: "Chillers, facility water, and pumps", Customer: "I", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
   - {component: "Thermal walls, CRAHs, and hot-aisle containment", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
   - {component: "Building leak detection (cable and controllers)", Customer: "I", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
-  - {component: "Fire alarm, VESDA, and pre-action suppression", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression", Customer: "I", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
   - {component: "BMS and EPMS operation", Customer: "C", IT Partner: "-", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Core network services: DNS, DHCP, and NTP and PTP time", Customer: "A/R", IT Partner: "I", Landlord: "I", OEM: "-", Utility: "-", Security Partner: "-"}
+  - {component: "Firewalls and network segmentation, including the monitoring network", Customer: "A/R", IT Partner: "I", Landlord: "C", OEM: "-", Utility: "-", Security Partner: "-"}
   - {component: "Customer Telemetry of Record collector and read-only taps", Customer: "A/R", IT Partner: "I", Landlord: "C", OEM: "-", Utility: "-", Security Partner: "-"}
   - {component: "Back-end fabric optics, cables, and fiber", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
   - {component: "Leaf and spine switches (physical replacement)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "-"}
@@ -274,3 +276,29 @@ asset_register:
       name: "Serial-level cycle counts"
       rule: "The monthly full count of the spares cage checks serials, not only quantities, so a removed part returned to the shelf in place of a good one is found."
 
+fire_impairments:
+  principle: >-
+    The Landlord owns fire protection; the Customer's halls depend on it. An impairment is any time all or part of
+    a fire alarm, detection, or suppression system is out of service, planned or not (NFPA 25, 2026 edition,
+    chapter 15; NFPA 72, 2025 edition; NFPA 2001, 2025 edition for clean agent). The fire panel's history log
+    records when protection was out; the Landlord's impairment log says why and who. A trouble on one detector
+    while adjacent detection keeps coverage is not an impairment.
+  rules:
+    - id: "FPI-1"
+      name: "Notice before planned work"
+      rule: "A planned impairment is notified to the Customer at least 24 hours before it begins, naming the points to be disabled, the window, and the method of procedure where one applies."
+    - id: "FPI-2"
+      name: "Unplanned impairment"
+      rule: "An unplanned impairment is notified to the Customer within 15 minutes of discovery and handled as a P1 under OT-FC-FIRE."
+    - id: "FPI-3"
+      name: "Fire watch"
+      rule: "When an impairment lasts more than 4 hours, a fire watch patrols the affected area from no later than the fourth hour until restoration, logged with its start and end. Where the authority having jurisdiction sets a stricter threshold, that threshold applies."
+    - id: "FPI-4"
+      name: "Restore within the window, or extend with notice"
+      rule: "A planned impairment is restored by the end of its window, or an extension naming the new end time is notified to the Customer before the window ends."
+    - id: "FPI-5"
+      name: "Restoration is what the panel shows"
+      rule: "An impairment is restored when the fire panel shows every disabled point enabled and every supervisory signal on it cleared. The Landlord's impairment log records that time within 15 minutes and notifies the Customer within 30 minutes."
+    - id: "FPI-6"
+      name: "Log every impairment"
+      rule: "A disabled point or a supervisory signal on a suppression valve or release circuit that lasts more than 30 minutes is an impairment and goes on the log. The Customer reconciles the log with the panel's history every day."
