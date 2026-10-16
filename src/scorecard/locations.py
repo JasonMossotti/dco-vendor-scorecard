@@ -186,6 +186,16 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
             else:
                 add(f"VESDA-{L}{n}", "equipment", f"VESDA-{L}{n}",
                     f"Aspirating smoke detector for the {short} electrical room.", [view("A-101", [f"ER-{L}"])], VESDA_PRODUCT)
+        fls = h["fire_life_safety"]
+        zones = fls.get("preaction_zones", 0)
+        for n in range(1, zones + 1):
+            rows = [r for r in range(1, h["rows"] + 1) if (r - 1) * zones // h["rows"] == n - 1]
+            add(f"PAZ-{L}{n}", "equipment", f"PAZ-{L}{n}",
+                f"Pre-action sprinkler zone {n} of {zones} in {short} (rows {_join([str(r) for r in rows])}); its valve and air supply "
+                "are in the fire riser.", [view("A-101", [hid])], "preaction_zone")
+        for n in range(1, fls.get("clean_agent_systems", 0) + 1):
+            add(f"CAS-{L}{n}", "equipment", f"CAS-{L}{n}", f"Clean agent system for the {short} electrical room.",
+                [view("A-101", [f"ER-{L}"])], "clean_agent")
 
     # site plants
     for i in range(1, pl["utility"]["transformer_count"] + 1):
@@ -223,6 +233,8 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
                        ("Spares cage", "On-site spares: trays, PSUs, optics."), ("Security lobby", "Mantrap and guard desk."),
                        ("Pump room", "Facility water pumps."), ("Fire riser", "Fire alarm control panel.")):
         add(room, "room", room, text, [view("A-101", [room])])
+    add("FACP-1", "equipment", "FACP-1", "The site's fire alarm control panel, in the fire riser: every smoke detector, pre-action "
+        "valve, and clean agent system reports to it.", [view("A-101", ["Fire riser"])], "notifier_facp")
     parts_out = {}
     for key, spec in details["products"].items():
         num = spec["sheet"]

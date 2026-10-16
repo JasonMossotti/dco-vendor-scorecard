@@ -81,7 +81,7 @@ a.tk-link:hover { background:#e8f0fc; }
   function linkTickets(root) {
     if (!TK.size || root.nodeType === 1 && root.closest(TK_SKIP)) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode: n => !/(?:INC|CHG|WO-|MOP-|PM-|SIR-)\d/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(TK_SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+      acceptNode: n => !/(?:INC|CHG|WO-|MOP-|PM-|SIR-|IMP-)\d/.test(n.nodeValue) || n.parentElement && n.parentElement.closest(TK_SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
     });
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);

@@ -142,7 +142,8 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 **How it works.**
 - `src/scorecard/tickets.py` assembles each record from the dataset. Tickets and work orders reuse the post-incident review's timeline builder (`pir.build_review`); changes add the rack's Redfish inventory changes; MOPs add their work orders and PM tasks; PM tasks add the engineer's badge entries.
 - The measurement comes from the same scorecard JSON the app shows, so the portal and the scorecards cannot disagree.
-- Every INC, CHG, WO, MOP, and PM number anywhere on the site links here (`#INC3900001`), including inside the Scorecards app.
+- Fire protection impairments (IMP records) carry the fire panel's own restoration time beside the one the Landlord logged.
+- Every INC, CHG, WO, MOP, PM, SIR, and IMP number anywhere on the site links here (`#INC3900001`), including inside the Scorecards app.
 - Every record carries **Start post-incident review**, which opens the review form filled from that record's own facts, or a link to the completed review when there is one.
 - **Related records** separates three things a reader should never have to untangle: the links the records themselves make, the relations a person has confirmed (`tickets/relations.yaml`, with the role who confirmed each and why), and leads **suggested by the data**, each with the reasons that scored it and a **Confirm** or **Deny** button. A relation can also be added by number, with a type of related, duplicate, or follow-up. Confirmations are kept in your own browser and **Export YAML** gives the file they are committed as.
 - The suggestions are scored, not guessed: `src/scorecard/relations.py` awards points for place (same device, same rack, a connected device in the device directory, a shared power group or busway or row CDU), time (overlapping windows, within an hour, same day), and shared evidence (the same alarm, the same part or serial, a finding that names both, a MOP covering the work), and nothing qualifies on place or time alone. Every weight and the reason for it is published in `config/relations.yaml`; the person assigned is never a signal, because suggesting a relation because the same technician worked both would read as blaming a person.
@@ -256,6 +257,7 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 - `src/scorecard/synthetic/telemetry_storage.py` and `config/telemetry_storage.yaml` build the data on its own random stream: drive failures, predictive swaps, rebuilds, node reboots, port blips, and flapping uplinks, with the IT Partner's tickets and the custody log of every pulled drive. `src/scorecard/telemetry_storage.py` checks it against itself and the other records (928,339 of 928,339 cases) and raises four findings, each a case where records do not reconcile: a ticket naming the wrong bay, a ticket resolved before the rebuild finished, a pulled drive with no custody handover, and a flapping uplink whose ticket says there was no customer impact. 4 of 4 planted, 0 false positives.
 - **Storage spares shelf** (`/telemetry/#storage-spares`). The storage drives and the storage fabric's optics sit on a shelf in each hall's storage row with their own ledger. The IT Partner SLA sets a minimum of 4 of each per hall, and KM-06 and KM-07 are measured on the weekly counts: 15 of 16 counts at or above minimum in the sample month (Hall A's drive shelf counted 2 after four drive swaps in the first week), 16 of 16 counts matching the ledger. Every part a storage ticket used is issued from its hall's shelf, and the asset register's shelf matches the shelf ledger at every daily cut.
+- **Fire protection** (`/telemetry/#fire`). The Landlord's fire alarm panel (FACP-1), pre-action sprinkler zones, and clean agent systems are events, not a telemetry stream: the panel's history log, the Landlord's impairment log, and the impairment notices the Customer received, reconciled under the Interface Agreement's impairment rules (FPI-1 to FPI-6: notice 24 hours ahead, a fire watch past 4 hours, restore within the window or extend with notice, and the panel is the record of restoration). The sample month holds 6 impairments and two findings: an impairment logged restored inside its window while the panel shows the control valve closed until the next morning (FLS-1), and a control valve closed for over two hours with nothing on the log (FLS-2). Site health shows what is out of service at the hour shown, beside the redundancy states, and each impairment is an IMP record in the Incident Portal.
 
 ## Deployments
 
@@ -361,7 +363,8 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Site health agreement with each section's hourly figures | 72,682 of 72,682 cases | 4,359,964 of 4,359,964 cases on 60 generated months |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
-| Related-record suggestions | 18 of 18 links recovered, 0 of 715 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
+| Related-record suggestions | 20 of 20 links recovered, 0 of 732 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
+| Fire protection impairments | 2 of 2, 40 of 40 cases | 120 of 120, 0 false positives; every agreement holds |
 | Asset register | 3 of 3, 123,877 of 123,877 cases | 180 of 180, 0 false positives; every agreement holds (installed 7,212,525 of 7,212,525) |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
 
@@ -378,6 +381,7 @@ python scripts/render_tickets.py --robustness 60
 python scripts/render_deployments.py --robustness 60
 python scripts/render_availability.py --robustness 60
 python scripts/render_assets.py --robustness 60 --jobs 4
+python scripts/render_fire.py --robustness 60 --jobs 4
 ```
 
 ## Toward live data: the read-only collector

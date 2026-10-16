@@ -32,12 +32,13 @@ ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = ROOT / "data" / "sample"
 CHANGES = ROOT / "data" / "changes"
 SECURITY = ROOT / "data" / "security"
+FIRE = ROOT / "data" / "fire"
 REPORTS = ROOT / "reports"
 UTC = timezone.utc
 LOCAL = timezone(timedelta(hours=-5), "CDT")
 
 # The record numbers the portal opens; every page links them to tickets/#<number>.
-ID_PATTERN = r"INC\d{7}|CHG\d{7}|WO-\d{5}|MOP-\d{3}|PM-\d{4}|SIR-\d{5}"
+ID_PATTERN = r"INC\d{7}|CHG\d{7}|WO-\d{5}|MOP-\d{3}|PM-\d{4}|SIR-\d{5}|IMP-\d{4}"
 ID_RE = re.compile(rf"\b(?:{ID_PATTERN})\b")
 
 TYPES = {   # key: (label, plural, partner, system of record)
@@ -47,9 +48,11 @@ TYPES = {   # key: (label, plural, partner, system of record)
     "mop": ("Method of procedure", "Methods of procedure (Landlord changes)", "Landlord", "Customer change management system (Landlord MOP approval)"),
     "pm": ("Maintenance task", "Preventive maintenance tasks", "Landlord", "Landlord maintenance management system (preventive maintenance record)"),
     "sir": ("Security incident", "Security incidents (door alarms)", "Security Partner", "Security Partner dispatch log (door alarm response record)"),
+    "imp": ("Impairment", "Fire protection impairments", "Landlord", "Landlord impairment log (fire protection)"),
 }
 SOURCE = {"inc": "vendor/tickets.json", "chg": "customer/cab_changes.json", "wo": "landlord/work_orders.json",
-          "mop": "customer/landlord_mop_approvals.json", "pm": "landlord/pm_records.csv", "sir": "security/dispatch_log.json"}
+          "mop": "customer/landlord_mop_approvals.json", "pm": "landlord/pm_records.csv", "sir": "security/dispatch_log.json",
+          "imp": "fire/impairments.csv"}
 
 
 def _t(s: str) -> datetime:
@@ -100,12 +103,23 @@ def security_dir(data_dir: Path) -> Path | None:
     return None
 
 
+def fire_dir(data_dir: Path) -> Path | None:
+    """The fire protection layer beside a dataset: data/fire for the sample, <month>/fire for a generated month."""
+    data_dir = Path(data_dir)
+    for d in (data_dir / "fire", FIRE if data_dir.resolve() == SAMPLE.resolve() else None):
+        if d and (d / "impairments.csv").exists():
+            return d
+    return None
+
+
 def _read(data_dir: Path) -> dict[str, Any]:
     js = lambda f: json.loads((data_dir / f).read_text(encoding="utf-8"))
     sec = security_dir(data_dir)
     return {"inc": js(SOURCE["inc"]), "chg": js(SOURCE["chg"]), "wo": js(SOURCE["wo"]), "mop": js(SOURCE["mop"]),
             "pm": list(csv.DictReader((data_dir / SOURCE["pm"]).open(encoding="utf-8"))),
-            "sir": json.loads((sec / "dispatch_log.json").read_text(encoding="utf-8")) if sec else [], "sec": sec}
+            "sir": json.loads((sec / "dispatch_log.json").read_text(encoding="utf-8")) if sec else [], "sec": sec,
+            "imp": list(csv.DictReader((fire_dir(data_dir) / "impairments.csv").open(encoding="utf-8"))) if fire_dir(data_dir) else [],
+            "fire": fire_dir(data_dir)}
 
 
 def ids(data_dir: Path = SAMPLE) -> list[str]:
@@ -117,7 +131,8 @@ def ids(data_dir: Path = SAMPLE) -> list[str]:
 def _ids(data_dir: str) -> frozenset[str]:
     r = _read(Path(data_dir))
     return frozenset([x["number"] for x in r["inc"]] + [x["change_id"] for x in r["chg"]] + [x["wo"] for x in r["wo"]]
-                     + [x["mop_id"] for x in r["mop"]] + [x["task_id"] for x in r["pm"]] + [x["sir"] for x in r["sir"]])
+                     + [x["mop_id"] for x in r["mop"]] + [x["task_id"] for x in r["pm"]] + [x["sir"] for x in r["sir"]]
+                     + [x["imp_id"] for x in r["imp"]])
 
 
 def _measures(reports: Path) -> tuple[dict, dict, list, dict]:
@@ -205,6 +220,17 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
                  summary=f"{a['event']} at {door.get('name', x['door'])}: {x['disposition']}", device=x["door"],
                  location=door.get("name", x["door"]), hall=f"HALL-{door['hall']}" if door else "", assigned=x["dispatched"], category=x["type"])
         r["native"] = dict(x)
+    fire = _fire(raw["fire"], data_dir) if raw["fire"] else None
+    for x in raw["imp"]:
+        devs = x["devices"].split(";")
+        r = base(x["imp_id"], "imp", x["start"], x["restored_at"] or None, state="Restored" if x["restored_at"] else "Open",
+                 priority="P1" if x["type"] == "unplanned" else "", summary=f"{x['reason']}: {', '.join(devs)}", device=devs[0],
+                 location=", ".join(devs), hall=_hall(devs[0]), assigned=x["engineer"], category=x["system"])
+        r["native"] = dict(x)
+        r["work_type"] = "Planned impairment" if x["type"] == "planned" else "Unplanned impairment"
+        r["related"].update(v for v in (x["mop_ref"], x["pm_ref"]) if v)
+    if fire:
+        findings += fire["findings"]
     for p in raw["pm"]:
         r = base(p["task_id"], "pm", p["due_start"], p["completed_at"] or p["due_end"], state="Complete" if p["completed_at"] else "Open",
                  summary=f"{p['task']}: {p['asset']}", device=p["asset"], location=p["asset"], hall=_hall(p["asset"]),
@@ -302,6 +328,8 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
             r["measured"] = {"kind": "Security", "t0": a["timestamp"], "arrived": _iso(first) if first else None,
                              "measured_min": round(mins, 1) if mins is not None else None, "measured": _hm(mins) if mins is not None else "",
                              "target_min": target, "within_target": mins is not None and mins <= target}
+        elif t == "imp":
+            tl, r["measured"] = _imp_timeline(ref, r["native"], fire)
         else:   # PM
             n = r["native"]
             tl = [_row(n["due_start"], "Landlord", SOURCE[t], f"{ref} due window opens: {n['task']} ({n['asset']})", n),
@@ -325,6 +353,9 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
             r["markers"] = [[m["t0"], "Measured T0"], [m["rts"], "Measured RTS"]]
         elif m and m["kind"] == "Security":
             r["markers"] = [[m["t0"], "Alarm"]] + ([[m["arrived"], "Guard at the door"]] if m["arrived"] else [])
+        elif m and m["kind"] == "Fire":
+            r["markers"] = ([[m["window_end"], "Window ends"]] if m["window_end"] else []) + [[m["logged"], "Log: restored"]] + \
+                ([[m["panel_end"], "Panel: restored"]] if m["panel_end"] and not m["agrees"] else [])
         elif m and m["kind"] == "Landlord":
             tl.append(_row(m["t0"], "Customer", "reports/landlord_scorecard.json", f"Measured start of the facility event: {m['event']}"))
             if m["restored"]:
@@ -349,6 +380,8 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
                        "types": ["inc"], "records": counts["inc"]},
                       {"partner": "Landlord", "system": "Maintenance management system (Maximo-style)", "access": "Read-only API account",
                        "types": ["wo", "pm"], "records": counts["wo"] + counts["pm"]},
+                      {"partner": "Landlord", "system": "Fire protection impairment log", "access": "Read-only API account",
+                       "types": ["imp"], "records": counts["imp"]},
                       {"partner": "Security Partner", "system": "Dispatch log", "access": "Read-only API account",
                        "types": ["sir"], "records": counts["sir"]},
                       {"partner": "Customer", "system": "Change management (CAB)", "access": "Customer system",
@@ -365,6 +398,49 @@ def _security(sec: Path) -> dict[str, Any]:
     cfg = yaml.safe_load((ROOT / "config" / "security.yaml").read_text(encoding="utf-8"))
     prio = {p["id"]: p["engaged_on_site_min"] for p in load_sla(PARTNER_FILES["security"])["priorities"]}
     return {"alarms": alarms, "badges": badges, "doors": {d["id"]: d for d in cfg["doors"]}, "on_site": prio}
+
+
+def _fire(fire: Path, data_dir: Path) -> dict[str, Any]:
+    """The fire panel's history, the notices, and the fire protection findings (the checks in scorecard.fire)."""
+    from scorecard import fire as F
+    t = F.load(fire, data_dir)
+    r = F.analyse(t)
+    by_imp = {x["row"]["imp_id"]: x for x in r["rc"]["imps"]}
+    findings = [{"id": f["id"], "partner": "Landlord", "severity": f["severity"], "title": f["title"], "summary": f["summary"],
+                 "refs": [f["imp"]] if f["imp"] else [], "sla_refs": f["sla_refs"]} for f in r["findings"]]
+    return {"t": t, "by_imp": by_imp, "findings": findings}
+
+
+def _imp_timeline(ref: str, n: dict, fire: dict | None) -> tuple[list[dict], dict | None]:
+    """An impairment's log entries, its notices, and what the fire panel shows on its devices."""
+    tl = [_row(n["start"], "Landlord", SOURCE["imp"], f"{ref} {n['type']} impairment begins: {n['reason']} ({n['devices'].replace(';', ', ')})", n)]
+    if n["window_end"]:
+        tl.append(_row(n["window_end"], "Landlord", SOURCE["imp"], f"{ref} window ends"))
+    if n["fire_watch_start"]:
+        tl.append(_row(n["fire_watch_start"], "Landlord", SOURCE["imp"], "Fire watch begins"))
+        tl.append(_row(n["fire_watch_end"], "Landlord", SOURCE["imp"], "Fire watch ends"))
+    if n["restored_at"]:
+        tl.append(_row(n["restored_at"], "Landlord", SOURCE["imp"], f"{ref} logged restored by {n['engineer']}"))
+    if not fire or ref not in fire["by_imp"]:
+        return tl, None
+    x, t = fire["by_imp"][ref], fire["t"]
+    for m in x["notices"]:
+        what = {"start": "Impairment notice", "extension": f"Extension notice (new end {m['new_end'][:16].replace('T', ' ')} UTC)",
+                "restored": "Restoration notice"}[m["kind"]]
+        tl.append(_row(m["received_at"], "Customer", "fire/impairment_notices.csv", f"{what} {m['notice_id']} received: {m['text']}", m))
+    lo, hi = x["start"] - timedelta(hours=1), max(x["restored"], x["panel_end"] or x["restored"]) + timedelta(hours=1)
+    for e in t.panel:
+        if e["device"] in x["devices"] and lo <= _t(e["timestamp"]) <= hi:
+            tl.append(_row(e["timestamp"], "Customer", "fire/facp_history.jsonl",
+                           f"Fire panel {e['device']} {e['point']}: {e['signal'].lower()} {e['state'].lower()} ({e['text']})", e))
+    pe = x["panel_end"]
+    mins = (pe - x["start"]).total_seconds() / 60 if pe else None
+    logged = (x["restored"] - x["start"]).total_seconds() / 60
+    return tl, {"kind": "Fire", "t0": n["start"], "restored": _iso(pe) if pe else None, "panel_end": _iso(pe) if pe else None,
+                "logged": n["restored_at"], "window_end": n["window_end"] or None, "measured_min": round(mins, 1) if mins is not None else None,
+                "measured": _hm(mins) if mins is not None else "", "logged_text": _hm(logged),
+                "agrees": pe is not None and abs((pe - x["restored"]).total_seconds()) <= 15 * 60,
+                "fire_watch": f"{n['fire_watch_start'][11:16]} to {n['fire_watch_end'][11:16]} UTC" if n["fire_watch_start"] else ""}
 
 
 def _iso(t: datetime) -> str:

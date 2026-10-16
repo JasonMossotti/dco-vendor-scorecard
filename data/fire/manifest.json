@@ -1,0 +1,15 @@
+{
+ "disclaimer": "Synthetic fire panel history, impairment log, and notices for a portfolio demonstration. All names and records are fictional.",
+ "files": {
+  "facp_history.jsonl": 35,
+  "impairment_notices.csv": 13,
+  "impairments.csv": 6
+ },
+ "source": "data/sample",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "seed": 2026,
+  "start": "2026-08-31T00:00:00Z",
+  "weeks": 4
+ }
+}

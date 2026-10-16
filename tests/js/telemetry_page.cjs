@@ -541,6 +541,17 @@ async function until(fn, what, ms = 8000) {
   ok(Sx.fields.every(f => t().includes(f.name)) && Sx.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#storage-fields lists every field and source");
   await go("#storage-agreements");
   ok(d.querySelectorAll("tbody tr").length === Sx.agreements.length && Sx.agreements.every(a => t().includes(a.title)), "#storage-agreements shows every check");
+  // ---- fire protection: events only, from the panel's history
+  const FPx = D.fire;
+  await go("#fire");
+  ok(d.querySelector("#main h1").textContent === "Fire protection" && FPx.findings.length === 2 && FPx.findings.every(f => t().includes(`${f.id} · ${f.title}`))
+     && FPx.impairments.every(i => d.querySelector(`#main a[href="../tickets/#${i.imp_id}"]`)), "#fire: both findings, and every impairment links to its portal record");
+  ok(d.querySelectorAll("#main table")[2].querySelectorAll("tbody tr").length === FPx.panel.length, "#fire: every signal in the panel's history");
+  const unl = FPx.findings.find(f => f.kind === "unlogged");
+  await go(`#site/${Math.floor((Date.parse(unl.from) - Date.parse(D.window.start)) / 3600000) + 1}`);
+  ok(d.getElementById("sh-fire").textContent.includes(unl.devices[0]) && d.getElementById("sh-fire").textContent.includes("not on the log"), "site health: protection out of service with no impairment logged");
+  await go("#site/1");
+  ok(d.getElementById("sh-fire").textContent.includes("in service at this hour"), "site health: fire protection normal when nothing is out");
   const ep = Sx.episodes.find(e => e.switch === stall.devices[0]);
   await go(`#site/${Math.floor((Date.parse(ep.from) - Date.parse(D.window.start)) / 3600000)}`);
   const stt = [...d.querySelectorAll("#sh-fam a.shtile")].find(a => a.getAttribute("href") === "#network");

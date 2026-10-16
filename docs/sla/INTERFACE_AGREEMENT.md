@@ -12,7 +12,7 @@
 
 | Document ID | Version | Effective date |
 |---|---|---|
-| IA-AUS1-001 | 1.3.0 | 2026-10-14 |
+| IA-AUS1-001 | 1.4.0 | 2026-10-16 |
 
 ## Contents
 
@@ -81,8 +81,10 @@ This agreement joins the Landlord SLA, the IT Partner SLA, and the Security Part
 | Chillers, facility water, and pumps | I | - | A/R | - | - | - |
 | Thermal walls, CRAHs, and hot-aisle containment | I | C | A/R | - | - | - |
 | Building leak detection (cable and controllers) | I | C | A/R | - | - | - |
-| Fire alarm, VESDA, and pre-action suppression | I | I | A/R | - | - | - |
+| Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression | I | I | A/R | - | - | - |
 | BMS and EPMS operation | C | - | A/R | - | - | - |
+| Core network services: DNS, DHCP, and NTP and PTP time | A/R | I | I | - | - | - |
+| Firewalls and network segmentation, including the monitoring network | A/R | I | C | - | - | - |
 | Customer Telemetry of Record collector and read-only taps | A/R | I | C | - | - | - |
 | Back-end fabric optics, cables, and fiber | A | R | - | C | - | - |
 | Leaf and spine switches (physical replacement) | A | R | - | C | - | - |
@@ -206,6 +208,19 @@ One register follows every asset at the site by serial, from receipt to install,
 | REG-5 | Disposal by serial | A disposal certificate names the serial of every asset it covers and is witnessed by the Security Partner. A disposed serial that answers on any network is an asset whose disposal is unconfirmed: the party that disposed of it and the Security Partner trace it the same day. |
 | REG-6 | Serial-level cycle counts | The monthly full count of the spares cage checks serials, not only quantities, so a removed part returned to the shelf in place of a good one is found. |
 
+## 12. Fire Protection Impairments
+
+The Landlord owns fire protection; the Customer's halls depend on it. An impairment is any time all or part of a fire alarm, detection, or suppression system is out of service, planned or not (NFPA 25, 2026 edition, chapter 15; NFPA 72, 2025 edition; NFPA 2001, 2025 edition for clean agent). The fire panel's history log records when protection was out; the Landlord's impairment log says why and who. A trouble on one detector while adjacent detection keeps coverage is not an impairment.
+
+| ID | Rule | Text |
+|---|---|---|
+| FPI-1 | Notice before planned work | A planned impairment is notified to the Customer at least 24 hours before it begins, naming the points to be disabled, the window, and the method of procedure where one applies. |
+| FPI-2 | Unplanned impairment | An unplanned impairment is notified to the Customer within 15 minutes of discovery and handled as a P1 under OT-FC-FIRE. |
+| FPI-3 | Fire watch | When an impairment lasts more than 4 hours, a fire watch patrols the affected area from no later than the fourth hour until restoration, logged with its start and end. Where the authority having jurisdiction sets a stricter threshold, that threshold applies. |
+| FPI-4 | Restore within the window, or extend with notice | A planned impairment is restored by the end of its window, or an extension naming the new end time is notified to the Customer before the window ends. |
+| FPI-5 | Restoration is what the panel shows | An impairment is restored when the fire panel shows every disabled point enabled and every supervisory signal on it cleared. The Landlord's impairment log records that time within 15 minutes and notifies the Customer within 30 minutes. |
+| FPI-6 | Log every impairment | A disabled point or a supervisory signal on a suppression valve or release circuit that lasts more than 30 minutes is an impairment and goes on the log. The Customer reconciles the log with the panel's history every day. |
+
 ---
 
-*Generated from `sla/interface_agreement.yaml` (version 1.3.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*
+*Generated from `sla/interface_agreement.yaml` (version 1.4.0). This is a fictional, illustrative interface agreement created for a portfolio demonstration. All parties, sites, and terms are invented. It is not legal advice and is not derived from any real organization's internal documents or contracts.*

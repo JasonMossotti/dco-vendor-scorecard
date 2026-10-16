@@ -87,7 +87,7 @@ Each service level has an **Expected** level (missing it triggers root cause ana
 
 ### 3.3 Break-fix ownership matrix
 
-Exhibit from the Interface Agreement (IA-AUS1-001, version 1.3.0), which governs demarcation, fault attribution, and joint operations between the parties.
+Exhibit from the Interface Agreement (IA-AUS1-001, version 1.4.0), which governs demarcation, fault attribution, and joint operations between the parties.
 
 **R** = Responsible: performs the work; **A** = Accountable: owns the outcome and approves; **C** = Consulted; **I** = Informed.
 
@@ -105,8 +105,10 @@ Exhibit from the Interface Agreement (IA-AUS1-001, version 1.3.0), which governs
 | Chillers, facility water, and pumps | I | - | A/R | - | - | - |
 | Thermal walls, CRAHs, and hot-aisle containment | I | C | A/R | - | - | - |
 | Building leak detection (cable and controllers) | I | C | A/R | - | - | - |
-| Fire alarm, VESDA, and pre-action suppression | I | I | A/R | - | - | - |
+| Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression | I | I | A/R | - | - | - |
 | BMS and EPMS operation | C | - | A/R | - | - | - |
+| Core network services: DNS, DHCP, and NTP and PTP time | A/R | I | I | - | - | - |
+| Firewalls and network segmentation, including the monitoring network | A/R | I | C | - | - | - |
 | Customer Telemetry of Record collector and read-only taps | A/R | I | C | - | - | - |
 | Back-end fabric optics, cables, and fiber | A | R | - | C | - | - |
 | Leaf and spine switches (physical replacement) | A | R | - | C | - | - |

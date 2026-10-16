@@ -89,7 +89,7 @@ def test_ownership_matrix_covers_the_site_model(ia):
     keywords = {"compute_rack": "Compute tray", "ups": "UPS", "battery": "batteries", "busway": "Busway",
                 "transformer": "transformers", "generator": "Generators", "cdu": "CDUs", "chiller": "Chillers",
                 "pump": "pumps", "thermal_wall": "Thermal walls", "crah": "CRAHs", "leak_detection": "leak detection",
-                "leak_cable": "leak detection", "smoke_detection": "VESDA", "fire_panel": "Fire alarm",
+                "leak_cable": "leak detection", "smoke_detection": "VESDA", "fire_panel": "Fire alarm", "suppression": "suppression",
                 "ib_switch": "Leaf and spine", "solid_state_transformer": "switchgear", "mgmt_switch": "out-of-band management",
                 "mgmt_aggregation": "out-of-band management", "console_server": "out-of-band management",
                 "ethernet_switch": "Leaf and spine", "storage_node": "Storage nodes and drives"}
@@ -101,7 +101,8 @@ def test_ownership_matrix_covers_the_site_model(ia):
 def test_landlord_equipment_is_landlord_accountable(ia):
     row = {r["component"]: r for r in ia["raci"]}
     for comp in ("CDUs and the hall secondary header", "Busway, tap-off units, and tap-off breakers",
-                 "Generators, paralleling controls, and fuel", "Fire alarm, VESDA, and pre-action suppression"):
+                 "Generators, paralleling controls, and fuel",
+                 "Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression"):
         assert "A" in row[comp]["Landlord"], comp
     assert row["Rack manifold, isolation valves, quick-disconnects"]["IT Partner"] == "R"
 

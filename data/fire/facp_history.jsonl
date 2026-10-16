@@ -1,0 +1,35 @@
+{"device": "CAS-A1", "panel": "FACP-1", "point": "release circuit", "signal": "Disable", "state": "Active", "text": "Release circuit disabled", "timestamp": "2026-09-03T17:10:17Z"}
+{"device": "CAS-A1", "panel": "FACP-1", "point": "release circuit", "signal": "Disable", "state": "Cleared", "text": "Release circuit enabled", "timestamp": "2026-09-03T18:53:54Z"}
+{"device": "CAS-A1", "panel": "FACP-1", "point": "container pressure", "signal": "Supervisory", "state": "Active", "text": "Container pressure low", "timestamp": "2026-09-04T15:38:42Z"}
+{"device": "CAS-A1", "panel": "FACP-1", "point": "container pressure", "signal": "Supervisory", "state": "Cleared", "text": "Container pressure normal", "timestamp": "2026-09-04T15:51:49Z"}
+{"device": "VESDA-B1", "panel": "FACP-1", "point": "detector", "signal": "Disable", "state": "Active", "text": "Point disabled: inspection", "timestamp": "2026-09-05T17:25:13Z"}
+{"device": "VESDA-B1", "panel": "FACP-1", "point": "detector", "signal": "Alarm", "state": "Test", "text": "Fire 1 from a disabled point: no outputs", "timestamp": "2026-09-05T17:40:12Z"}
+{"device": "VESDA-B1", "panel": "FACP-1", "point": "detector", "signal": "Disable", "state": "Cleared", "text": "Point enabled", "timestamp": "2026-09-05T18:10:16Z"}
+{"device": "PAZ-A2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Active", "text": "Low air pressure", "timestamp": "2026-09-06T22:37:44Z"}
+{"device": "PAZ-A2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Cleared", "text": "Air pressure normal", "timestamp": "2026-09-06T22:47:47Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Active", "text": "Low air pressure", "timestamp": "2026-09-07T01:54:09Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Cleared", "text": "Air pressure normal", "timestamp": "2026-09-07T02:11:51Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "valve tamper", "signal": "Supervisory", "state": "Active", "text": "Control valve closed", "timestamp": "2026-09-07T13:00:41Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Active", "text": "Low air pressure", "timestamp": "2026-09-07T13:33:15Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Cleared", "text": "Air pressure normal", "timestamp": "2026-09-07T14:14:45Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "valve tamper", "signal": "Supervisory", "state": "Cleared", "text": "Control valve open", "timestamp": "2026-09-07T15:31:39Z"}
+{"device": "CAS-B1", "panel": "FACP-1", "point": "release circuit", "signal": "Disable", "state": "Active", "text": "Release circuit disabled", "timestamp": "2026-09-07T18:35:44Z"}
+{"device": "CAS-B1", "panel": "FACP-1", "point": "release circuit", "signal": "Disable", "state": "Cleared", "text": "Release circuit enabled", "timestamp": "2026-09-07T22:43:12Z"}
+{"device": "PAZ-A1", "panel": "FACP-1", "point": "valve tamper", "signal": "Supervisory", "state": "Active", "text": "Control valve closed", "timestamp": "2026-09-08T16:40:46Z"}
+{"device": "PAZ-A1", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Active", "text": "Low air pressure", "timestamp": "2026-09-08T17:18:53Z"}
+{"device": "PAZ-A1", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Cleared", "text": "Air pressure normal", "timestamp": "2026-09-08T17:59:34Z"}
+{"device": "PAZ-A1", "panel": "FACP-1", "point": "valve tamper", "signal": "Supervisory", "state": "Cleared", "text": "Control valve open", "timestamp": "2026-09-09T02:45:18Z"}
+{"device": "FACP-1", "panel": "FACP-1", "point": "Loop 3", "signal": "Trouble", "state": "Active", "text": "Ground fault", "timestamp": "2026-09-10T05:41:25Z"}
+{"device": "FACP-1", "panel": "FACP-1", "point": "Loop 3", "signal": "Trouble", "state": "Cleared", "text": "Ground fault cleared", "timestamp": "2026-09-10T05:55:24Z"}
+{"device": "PAZ-A1", "panel": "FACP-1", "point": "valve tamper", "signal": "Supervisory", "state": "Active", "text": "Control valve closed", "timestamp": "2026-09-10T15:45:00Z"}
+{"device": "PAZ-A1", "panel": "FACP-1", "point": "valve tamper", "signal": "Supervisory", "state": "Cleared", "text": "Control valve open", "timestamp": "2026-09-10T18:00:16Z"}
+{"device": "CAS-B1", "panel": "FACP-1", "point": "container pressure", "signal": "Supervisory", "state": "Active", "text": "Container pressure low", "timestamp": "2026-09-12T01:46:08Z"}
+{"device": "CAS-B1", "panel": "FACP-1", "point": "container pressure", "signal": "Supervisory", "state": "Cleared", "text": "Container pressure normal", "timestamp": "2026-09-12T01:55:29Z"}
+{"device": "VESDA-B2", "panel": "FACP-1", "point": "detector", "signal": "Trouble", "state": "Active", "text": "Airflow Low", "timestamp": "2026-09-15T17:09:04Z"}
+{"device": "VESDA-B2", "panel": "FACP-1", "point": "detector", "signal": "Trouble", "state": "Cleared", "text": "Fault cleared", "timestamp": "2026-09-15T20:25:00Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Active", "text": "Low air pressure", "timestamp": "2026-09-17T10:29:05Z"}
+{"device": "PAZ-B2", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Cleared", "text": "Air pressure normal", "timestamp": "2026-09-17T10:38:12Z"}
+{"device": "FACP-1", "panel": "FACP-1", "point": "Loop 4", "signal": "Trouble", "state": "Active", "text": "Ground fault", "timestamp": "2026-09-21T02:07:32Z"}
+{"device": "FACP-1", "panel": "FACP-1", "point": "Loop 4", "signal": "Trouble", "state": "Cleared", "text": "Ground fault cleared", "timestamp": "2026-09-21T03:26:25Z"}
+{"device": "PAZ-B1", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Active", "text": "Low air pressure", "timestamp": "2026-09-23T07:26:48Z"}
+{"device": "PAZ-B1", "panel": "FACP-1", "point": "low air", "signal": "Supervisory", "state": "Cleared", "text": "Air pressure normal", "timestamp": "2026-09-23T10:11:14Z"}

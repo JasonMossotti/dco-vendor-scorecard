@@ -1,0 +1,38 @@
+# Fire protection layer: the fire panel's history log, the Landlord's impairment log, and the Customer's
+# record of impairment notices (data/fire/, own random stream "<seed>:fire").
+# Read by src/scorecard/synthetic/fire.py (generation) and src/scorecard/fire.py (checks).
+# Thresholds quote the Interface Agreement, section 12 (FPI-1 to FPI-6); the checks read them from there.
+
+panel: "FACP-1"
+
+# Fire protection inspection, testing, and maintenance the Landlord schedules each month, beside the VESDA
+# inspection the Landlord's maintenance records already carry. Durations in hours: planned window, then how much
+# of it the work uses.
+planned:
+  count: [3, 5]
+  jobs:
+    - {system: "Pre-action sprinkler", kind: paz, task: "Pre-action valve trip test", window_h: [3, 7], used: [0.7, 0.95]}
+    - {system: "Clean agent", kind: cas, task: "Clean agent semiannual inspection", window_h: [1.5, 3], used: [0.6, 0.95]}
+  utc_start_hours: [13, 18]        # 8 a.m. to 1 p.m. Central daylight time: the work starts in the morning
+
+# Unplanned impairments: a pre-action zone's air compressor fails and the low air signal stays up until it is fixed
+unplanned:
+  probability: 0.6
+  hours: [1, 3]
+
+# Signals that are not impairments (decoys for the checks)
+noise:
+  low_air_short: [3, 6]            # per month; 3 to 20 minutes while the compressor catches up
+  low_air_short_minutes: [3, 20]
+  ground_fault: [1, 3]             # trouble on a panel loop, 10 to 90 minutes
+  ground_fault_minutes: [10, 90]
+  agent_pressure: [0, 2]           # container pressure supervisory on a hot afternoon, under 25 minutes
+  agent_pressure_minutes: [5, 25]
+  extension: 1                     # one planned impairment runs past its window with an extension notice sent in time
+
+# Planted discrepancies (the answer key is written beside the data; the checks never read it)
+planted:
+  restored_late: 1                 # logged restored inside the window; the panel shows it restored hours after
+  unlogged: 1                      # the panel shows a pre-action control valve closed for hours; no impairment logged
+  late_hours: [2, 8]
+  unlogged_hours: [2, 5]

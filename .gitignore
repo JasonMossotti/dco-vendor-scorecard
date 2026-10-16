@@ -18,6 +18,7 @@ data/*
 !data/incident_comms/
 !data/security/
 !data/assets/
+!data/fire/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/
