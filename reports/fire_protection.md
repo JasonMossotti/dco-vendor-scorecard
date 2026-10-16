@@ -24,7 +24,7 @@ The Landlord's impairment log records IMP-0005 (pre-action valve trip test on PA
 Owner: Landlord. Contract: Interface Agreement FPI-4 and FPI-5 (restore within the window or extend with notice; restoration is what the panel shows); FPI-3 (fire watch).
 
 - Impairment log IMP-0005: pre-action sprinkler, PAZ-A1, pre-action valve trip test; start 2026-09-08 16:40 UTC, window to 2026-09-08 20:40 UTC, restored 2026-09-08 20:04 UTC (logged by CCF-E01)
-- Notice FPN-0006, received 2026-09-06 08:47 UTC: Planned impairment of PAZ-A1 (Pre-action valve trip test), window to 2026-09-08T20:40:00Z
+- Notice FPN-0006, received 2026-09-06 08:47 UTC: Planned impairment of PAZ-A1 (Pre-action valve trip test), window to 2026-09-08 20:40 UTC
 - Notice FPN-0011, received 2026-09-08 20:09 UTC: PAZ-A1 restored to service
 - Fire panel PAZ-A1 valve tamper: control valve closed at 2026-09-08 16:40 UTC; control valve open at 2026-09-09 02:45 UTC
 - Extension notices: none

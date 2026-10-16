@@ -179,7 +179,7 @@ class FireLayer:
         imp["_n"] = len(self.imps)
         start, restored = imp["start"], imp["restored_at"]
         self.notice(start - timedelta(hours=self.rng.uniform(26, 96)), imp, "start",
-                    f"Planned impairment of {', '.join(imp['devices'])} ({imp['reason']}), window to {iso(imp['window_end'])}")
+                    f"Planned impairment of {', '.join(imp['devices'])} ({imp['reason']}), window to {imp['window_end']:%Y-%m-%d %H:%M} UTC")
         if extension:
             self.notice(imp["window_end"] - timedelta(minutes=self.rng.uniform(10, 40)), imp, "extension",
                         f"Work on {', '.join(imp['devices'])} needs more time; new end time given", extension)

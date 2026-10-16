@@ -60,7 +60,7 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
   && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py
 # generate_telemetry.py writes the GPU telemetry, the energy meters (they follow the racks, CDUs, and thermal walls), then CDU, power, network, and mechanical
-pytest -q                                      # 711 tests as of 2026-10-15
+pytest -q                                      # 721 tests as of 2026-10-16
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 

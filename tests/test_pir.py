@@ -99,7 +99,7 @@ def test_index_covers_every_record_in_the_portal(ds):
     assert set(idx) == set(ids())
     for ref, f in idx.items():
         assert f["title"] and f["date"] and f["metrics"], ref
-        assert f["kind"] in ("rack_power", "event", "chg", "mop", "pm", "sir")
+        assert f["kind"] in ("rack_power", "event", "chg", "mop", "pm", "sir", "imp")
         assert f["impact"]["gpus"] >= 0 and f["osr_suggested"]["level"] in OSR
 
 
