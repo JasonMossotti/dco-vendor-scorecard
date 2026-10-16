@@ -2352,6 +2352,7 @@ __SITENAV__
     h += `<div class="tiles">` + SGCL.map(k => { const c = SG.clusters[k]; return tile(`${c.hall_name}: ${k}`, `${num(c.capacity_tb / 1000, 2)} PB`, `${num(c.nodes.length)} nodes, ${num(c.drives)} drives, erasure coding ${esc(c.ec[0])}+${esc(c.ec[1])}; ${num(c.used_tb[c.used_tb.length - 1] / 1000, 2)} PB used at month end`); }).join("")
       + tile("Fabric switches", num(nsw), `a leaf pair per row for the compute trays, a storage leaf pair and a spine pair per hall, all SN5600`)
       + tile("GPU-hours idle on storage", num(SG.idle_gpu_hours, 1), `running jobs waiting on I/O behind a flapping uplink; not in CSL-01 or the scheduler's availability`)
+      + `<div class="tile"><div class="k">Spares shelf at minimum (KM-06)</div><div class="v"><a href="#storage-spares">${num(SG.shelf.km06[0])} of ${num(SG.shelf.km06[1])}</a></div><div class="s">weekly counts of the storage drives and optics, each hall, at or above the SLA minimum</div></div>`
       + `<div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#storage-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(SG.agreements.length)} checks: drives, nodes, protection, rebuilds, ports, traffic, the compute trays' host ports, and the stalls</div></div></div>`;
     h += `<h2 class="sec">Findings</h2><p class="note">Records that do not reconcile with what the storage and its fabric reported. A failed drive or a flapping link is not a finding by itself; it becomes one when a ticket or the custody log says something the telemetry contradicts. Each is a case to look into, not a claim that anyone misled.</p>`
       + (SG.findings.filter(f => f.kind !== "fabric_stall").map(sgFindingBox).join("") || `<p>None this month.</p>`)
@@ -2487,6 +2488,16 @@ __SITENAV__
       + SG.custody.map(c => `<tr><td><code>${esc(c.drive_serial)}</code></td><td>${link(c.node, c.node)} ${esc(c.bay)}</td><td>${esc(c.ticket)}</td><td class="n">${esc(at(c.handed_over_at))}</td></tr>`).join("") + `</tbody></table></div>`;
     main.innerHTML = h;
   }
+  function storageSpares() {
+    const S = SG.shelf, hn = x => (Object.values(SG.clusters).find(c => c.hall === x) || {}).hall_name || x, pct = x => x[1] ? (100 * x[0] / x[1]).toFixed(1) + "%" : "n/a";
+    let h = `<div class="kind">Storage reference</div><h1>Storage spares shelf</h1><p class="sub">The storage clusters' drives and the storage fabric's optics are kept on a shelf in each hall's storage row, with their own ledger and the cage's weekly schedule: replenished Monday 10:00 and counted Sunday 18:00, site time. Minimums are per hall, from the IT Partner SLA (spares, storage spares shelf); KM-06 and KM-07 apply to the shelf as to the cage.</p>`;
+    h += `<div class="tiles">` + tile("KM-06 at or above minimum", pct(S.km06), `${num(S.km06[0])} of ${num(S.km06[1])} weekly counts; target 98%`) + tile("KM-07 count equals the ledger", pct(S.km07), `${num(S.km07[0])} of ${num(S.km07[1])} weekly counts; target 99%`) + `</div>`;
+    if (S.below.length) h += `<h2 class="sec">Below minimum</h2><ul>` + S.below.map(b => `<li>${esc(hn(b.hall))}: ${esc(b.fru)}, ${num(b.counted)} counted at ${esc(at(b.at))} against a minimum of ${num(b.minimum)}</li>`).join("") + `</ul>`;
+    h += `<h2 class="sec">By hall and class</h2><div class="scroll"><table><thead><tr><th>Hall</th><th>Class</th><th class="n">Minimum</th><th class="n">Opening</th><th class="n">Issued</th><th class="n">Received</th><th class="n">Lowest</th><th>Weekly counts</th></tr></thead><tbody>`
+      + S.rows.map(r => `<tr><td>${esc(hn(r.hall))}</td><td>${esc(r.fru)}</td><td class="n">${num(r.minimum)}</td><td class="n">${num(r.opening)}</td><td class="n">${num(r.issued)}</td><td class="n">${num(r.received)}${r.emergency ? ` <span class="note">(${num(r.emergency)} emergency)</span>` : ""}</td><td class="n">${num(r.lowest)}</td><td>${r.counts.map(c => c[1] < r.minimum ? `<b style="color:var(--bad)">${num(c[1])}</b>` : num(c[1])).join(", ")}</td></tr>`).join("")
+      + `</tbody></table></div><p class="note">Each issue is checked against the ticket that used the part (${link("storage-tickets", "Tickets and custody")}); the asset register follows every unit by serial (<a href="../devices/#assets">Devices, asset register</a>).</p>`;
+    main.innerHTML = h;
+  }
   function storageFields() {
     const K = SG.collection;
     let h = `<div class="kind">Storage reference</div><h1>What is read</h1><p class="sub">${esc(SG.framing)} The names are the published ones: the DMTF Redfish Drive schema and IF-MIB (RFC 2863). The fabric follows NVIDIA's GB200 SuperPOD reference architecture; port maps and the storage nodes are this site's assumptions (no storage product is named). No vendor's internal tooling is implied.</p>`;
@@ -2510,7 +2521,7 @@ __SITENAV__
       h += `<li><details${k === SGCL[0] ? " open" : ""}><summary>${link("storage", `${c.hall_name} · ${k}`)} <small>${esc(c.nodes.length)} nodes</small></summary>`
         + c.racks.map(r => `<ul><li>${link(r, r)}</li></ul><ul class="racks">` + SGRK[r].map(n => `<li>${link(n, n.slice(-3))}</li>`).join("") + `</ul>`).join("") + `</details></li>`;
     }
-    h += `</ul><div class="sec">Elsewhere</div><ul><li>${link("north-south", "Storage fabric (Network, North-South)")}</li></ul><div class="sec">Storage reference</div><ul><li>${link("storage-tickets", "Tickets and custody")}</li><li>${link("storage-fields", "What is read")}</li><li>${link("storage-agreements", "Agreement with the records")}</li></ul></div>`;
+    h += `</ul><div class="sec">Elsewhere</div><ul><li>${link("north-south", "Storage fabric (Network, North-South)")}</li></ul><div class="sec">Storage reference</div><ul><li>${link("storage-tickets", "Tickets and custody")}</li><li>${link("storage-spares", "Spares shelf")}</li><li>${link("storage-fields", "What is read")}</li><li>${link("storage-agreements", "Agreement with the records")}</li></ul></div>`;
     return h;
   }
   function fabricTree() {
@@ -2747,7 +2758,7 @@ __SITENAV__
     if (gRackOf(a)) return {view: "mgmtRack", rack: gRackOf(a), minute: pm, key: "mgmt-" + gRackOf(a), fam: "network"};
     if (GSW[a.toLowerCase()] && GSW[a.toLowerCase()].family !== "rack") return {view: "mgmtSw", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "network"};
     if (a === "storage") return {view: "storage", key: "storage", fam: "storage"};
-    if (a === "storage-fields" || a === "storage-agreements" || a === "storage-tickets") return {view: a, key: a, fam: "storage"};
+    if (a === "storage-fields" || a === "storage-agreements" || a === "storage-tickets" || a === "storage-spares") return {view: a, key: a, fam: "storage"};
     if (SGN[a.toLowerCase()]) return {view: "sgNode", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "storage"};
     if (SGS[a.toLowerCase()]) return {view: "sgSw", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "network"};
     if (a === "north-south") return {view: "north-south", key: "north-south", fam: "network"};
@@ -2802,6 +2813,7 @@ __SITENAV__
     else if (r.view === "sgSw") sgSwView(r.dev, seq);
     else if (r.view === "sgRack") sgRackView(r.dev);
     else if (r.view === "storage-tickets") storageTickets();
+    else if (r.view === "storage-spares") storageSpares();
     else if (r.view === "storage-fields") storageFields();
     else if (r.view === "storage-agreements") storageAgreements();
     else overview(seq);

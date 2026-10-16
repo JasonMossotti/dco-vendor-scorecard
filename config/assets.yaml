@@ -77,7 +77,6 @@ facility_kinds: [tx, mv, gen, uss, ups, mups, mvsst, busway, tapoff, cdu, tw, cr
 
 spares:
   serialized: ["Compute tray", "NVLink switch tray", "Power shelf", "PSU (5.5 kW)", "800G OSFP optic", "E1.S drive"]
-  storage_drives: [6, 10]        # NVMe drive spares in the cage at the start (the spares ledger does not carry them; open item)
 
 # What happens in a month, and how long (basis: assumption)
 behaviour:

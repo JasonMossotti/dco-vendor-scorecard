@@ -534,6 +534,9 @@ async function until(fn, what, ms = 8000) {
   ok(d.querySelectorAll("#main tbody tr").length === 8, "storage rack: its eight nodes");
   await go("#storage-tickets");
   ok(d.querySelectorAll("#main table")[0].querySelectorAll("tbody tr").length === Sx.tickets.length && d.querySelectorAll("#main table")[1].querySelectorAll("tbody tr").length === Sx.custody.length, "#storage-tickets: every ticket and every custody handover");
+  await go("#storage-spares");
+  ok(d.querySelector("#main h1").textContent === "Storage spares shelf" && d.querySelectorAll("#main tbody tr").length === Sx.shelf.rows.length
+     && t().includes(`${Sx.shelf.km06[0]} of ${Sx.shelf.km06[1]}`) && (!Sx.shelf.below.length || t().includes("Below minimum")), "#storage-spares: each hall's shelf against the SLA minimums, KM-06 and KM-07");
   await go("#storage-fields");
   ok(Sx.fields.every(f => t().includes(f.name)) && Sx.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#storage-fields lists every field and source");
   await go("#storage-agreements");

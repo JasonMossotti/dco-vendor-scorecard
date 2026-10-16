@@ -561,6 +561,77 @@ PORT_HOURLY = ["hour", "switch", "ifName", "up_s", "in_octets", "out_octets", "i
 LEAF_HOURLY = ["hour", "switch", "tray_ports", "tray_ports_up", "tray_port_min", "in_octets", "out_octets"]
 
 
+LEDGER = ["timestamp", "hall", "transaction", "fru", "qty", "ticket", "balance_after"]
+COUNTS = ["counted_at", "hall", "fru", "system_qty", "counted_qty"]
+
+
+def shelf_classes(sla: dict[str, Any]) -> list[dict[str, Any]]:
+    """The storage spares shelf's classes from the IT Partner SLA: part name on a ticket, class label, minimum per hall."""
+    return [{"part": f["fru"], "fru": f.get("label") or f["fru"], "minimum": f["minimum"]}
+            for f in sla["spares"]["storage_shelf"]["minimum_stock_per_hall"]]
+
+
+def swap_time(ticket: dict, removed: str | None) -> datetime:
+    """When the part went in: the work note that names the removed serial, else the resolution."""
+    for n in ticket.get("work_notes", []):
+        if removed and removed in n["text"]:
+            return parse(n["at"])
+    return parse(ticket["resolved_at"])
+
+
+def shelf_ledger(layer: StorageTelemetry, out: dict[str, Any], sla: dict[str, Any]) -> tuple[list[dict], list[dict]]:
+    """The storage spares shelf in each hall: opening stock at one and a half times the SLA minimum, an issue for every
+    part a storage ticket used (10 minutes before the swap), the weekly replenishment back to the opening level, and
+    the weekly cycle count, on the cage's own schedule (counts Sunday 18:00 local, replenishment Monday 10:00 local).
+    Uses no random numbers, so nothing else in the layer changes. The shelf is counted in full; a part needed when the
+    shelf is empty arrives from the OEM by courier two hours before the swap and is posted as an emergency receipt."""
+    classes = shelf_classes(sla)
+    by_part = {c["part"]: c["fru"] for c in classes}
+    halls = sorted(layer.fab["halls"])
+    level = {(h, c["fru"]): int(round(c["minimum"] * 1.5)) for h in halls for c in classes}
+    counts_at = sorted({r["counted_at"] for r in _read_csv(layer.d / "vendor" / "spares_cycle_counts.csv")})
+    ev: list[tuple[datetime, int, str, str, str, str]] = []
+    for t in out["tickets"]:
+        for p in t["parts_used"]:
+            if p["part"] in by_part:
+                ev.append((swap_time(t, p.get("removed_serial")) - timedelta(minutes=10), 1, "issue", t["hall"], by_part[p["part"]], t["number"]))
+    for c in counts_at:
+        ev.append((parse(c), 2, "count", "", "", ""))
+        mon = parse(c) + timedelta(hours=16)
+        if mon < layer.end:
+            ev.append((mon, 0, "replenish", "", "", ""))
+    ev.sort()
+    bal = dict(level)
+    ledger: list[dict] = []
+    counts: list[dict] = []
+    for when, _, kind, hall, fru, ticket in ev:
+        if kind == "issue":
+            if bal[(hall, fru)] <= 0:
+                bal[(hall, fru)] += 1
+                ledger.append({"timestamp": iso(when - timedelta(hours=2)), "hall": hall, "transaction": "emergency_receive", "fru": fru,
+                               "qty": 1, "ticket": ticket, "balance_after": bal[(hall, fru)]})
+            bal[(hall, fru)] -= 1
+            ledger.append({"timestamp": iso(when), "hall": hall, "transaction": "issue", "fru": fru, "qty": -1, "ticket": ticket,
+                           "balance_after": bal[(hall, fru)]})
+        elif kind == "replenish":
+            for k in sorted(level):
+                need = level[k] - bal[k]
+                if need > 0:
+                    bal[k] += need
+                    ledger.append({"timestamp": iso(when), "hall": k[0], "transaction": "receive", "fru": k[1], "qty": need, "ticket": "",
+                                   "balance_after": bal[k]})
+        else:
+            for k in sorted(level):
+                counts.append({"counted_at": iso(when), "hall": k[0], "fru": k[1], "system_qty": bal[k], "counted_qty": bal[k]})
+    ledger.sort(key=lambda r: (r["timestamp"], r["hall"], r["fru"]))
+    return ledger, counts
+
+
+def _read_csv(p: Path) -> list[dict]:
+    with p.open(encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
 def bay_states(layer: StorageTelemetry, out: dict[str, Any]) -> dict[str, np.ndarray]:
     """Per node: [bays x minutes] state (OK, FAILED, ABSENT, REBUILDING) from the drive event log."""
     M = layer.M
@@ -754,6 +825,10 @@ def write_storage(layer: StorageTelemetry, out: dict[str, Any], dest: str | Path
         "custody.csv": _csv(out["custody"], ["drive_serial", "node", "bay", "ticket", "from", "to", "handed_over_at"]),
         "answer_key.json": json.dumps(out["key"], indent=1, sort_keys=True) + "\n",
     }
+    from scorecard.sla_model import load_sla
+    ledger, counts = shelf_ledger(layer, out, load_sla())
+    files["spares_ledger.csv"] = _csv(ledger, LEDGER)
+    files["spares_cycle_counts.csv"] = _csv(counts, COUNTS)
     for name, text in files.items():
         (dest / name).write_text(text, encoding="utf-8", newline="\n")
     man = {"disclaimer": "Synthetic storage and fabric telemetry for a fictional site; portfolio demo.",

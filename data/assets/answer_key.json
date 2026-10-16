@@ -11,26 +11,20 @@
   {
    "action": "remove",
    "kind": "late_record",
-   "ref": "INC3100561",
-   "tag": "AT-005627"
-  },
-  {
-   "action": "remove",
-   "kind": "late_record",
-   "ref": "INC3100306",
-   "tag": "AT-005665"
+   "ref": "INC3100357",
+   "tag": "AT-005692"
   },
   {
    "action": "remove",
    "kind": "late_record",
    "ref": "INC3100544",
-   "tag": "AT-005711"
+   "tag": "AT-005721"
   },
   {
    "action": "remove",
    "kind": "late_record",
-   "ref": "INC3100629",
-   "tag": "AT-005723"
+   "ref": "INC3101020",
+   "tag": "AT-005826"
   }
  ],
  "planted": [

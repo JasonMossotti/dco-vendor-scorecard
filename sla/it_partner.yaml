@@ -1039,6 +1039,19 @@ spares:
       minimum: 10
     - fru: "E1.S drive"
       minimum: 20
+  storage_shelf:
+    location: "Storage spares shelf in each hall's storage row"
+    note: >-
+      The storage clusters' drives and the storage fabric's optics are kept on their own shelf beside the
+      storage racks, with their own ledger and the same weekly replenishment and cycle count. Supplier-managed
+      like the cage. KM-06 and KM-07 apply to the shelf as to the cage, measured from the shelf's own ledger and
+      counts with the storage telemetry.
+    minimum_stock_per_hall:
+      - fru: "NVMe SSD 30.72 TB (U.2)"
+        minimum: 4
+      - fru: "800G OSFP optic"
+        label: "800G OSFP optic (storage fabric)"
+        minimum: 4
   reorder_rule: "Replenishment requests are raised automatically when stock reaches minimum plus lead-time demand."
   cycle_count: "Weekly cycle count of high-value FRUs; full count monthly."
 

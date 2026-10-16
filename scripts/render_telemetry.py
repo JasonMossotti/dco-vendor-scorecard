@@ -1339,7 +1339,7 @@ def prepare_storage(t: TST.StorageData | None = None) -> dict:
             "idle_gpu_hours": round(sum(x["gpu_hours"] for x in stalls), 1),
             "tickets": [{k: x.get(k) for k in ("number", "category", "configuration_item", "opened_at", "resolved_at", "state", "customer_impact",
                                                 "short_description")} for x in t.tickets],
-            "custody": t.custody, "events": events, "findings": fs,
+            "custody": t.custody, "events": events, "findings": fs, "shelf": TST.shelf(t),
             "agreements": [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks],
             "misses": [m for c in checks for m in c.misses][:20]}
 
@@ -1427,6 +1427,18 @@ def storage_markdown(f: dict) -> str:
     L += ["", "## Chain of custody", "", "| Drive | From | Ticket | Handed to the Security Partner |", "|---|---|---|---|"]
     for c in f["custody"]:
         L.append(f"| {c['drive_serial']} | {c['node']} {c['bay']} | {c['ticket']} | {c['handed_over_at']} |")
+    sh = f["shelf"]
+    L += ["", "## Storage spares shelf", "",
+          "The storage clusters' drives and the storage fabric's optics, kept on a shelf in each hall's storage row with their own ledger (IT Partner "
+          f"SLA, spares, storage spares shelf). KM-06, at or above minimum at the weekly count: {sh['km06'][0]} of {sh['km06'][1]}. "
+          f"KM-07, the count equals the ledger: {sh['km07'][0]} of {sh['km07'][1]}.", "",
+          "| Hall | Class | Minimum | Opening | Issued | Received | Lowest | Weekly counts |", "|---|---|---:|---:|---:|---:|---:|---|"]
+    for r in sh["rows"]:
+        L.append(f"| {HALL_NAME.get(r['hall'], r['hall'])} | {r['fru']} | {r['minimum']} | {r['opening']} | {r['issued']} | {r['received']} | {r['lowest']} | "
+                 + ", ".join(str(c[1]) for c in r["counts"]) + " |")
+    for b in sh["below"]:
+        L.append("")
+        L.append(f"Below minimum: {HALL_NAME.get(b['hall'], b['hall'])} {b['fru']}, {b['counted']} counted at {b['at']} against a minimum of {b['minimum']}.")
     L += ["", "## What is read", "", "| Field | Source | Unit | Meaning |", "|---|---|---|---|"]
     for x in f["fields"]:
         L.append(f"| `{x['name']}` | {x['source']} | {x['unit']} | {x['help']} |")

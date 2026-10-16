@@ -10,7 +10,8 @@ Agreements (every case reconciles, or is explained by a finding; each returns ca
 
 1. installed: at every daily scan, every answering slot answers with a serial the register holds there (REG-4), allowing
    REG-2's 4 hours either way for the record to catch up with the hardware.
-2. stock: at every daily cut, the register's spares in the cage equal the spares ledger's balance, class by class.
+2. stock: at every daily cut, the register's spares in the cage equal the spares ledger's balance, class by class, and each
+   hall's storage spares shelf equals the shelf's own ledger.
 3. tickets: every part a ticket replaced is removed and installed in the register, at that location, citing the ticket,
    within 4 hours of the work (REG-2).
 4. rma: every RMA shipment is in the register, and every register RMA shipment is a shipment.
@@ -43,7 +44,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from scorecard.synthetic.assets import (CAGE, STORAGE_SHELF, load_config, parse, iso, slot_of_part, slot_of_resource, work_time,
+from scorecard.synthetic.assets import (CAGE, STORAGE_SHELF, in_stock_at, shelf_of, load_config, parse, iso, slot_of_part, slot_of_resource, work_time,
                                         _csv, _jsonl)
 from scorecard.telemetry import Check
 
@@ -83,6 +84,7 @@ class AssetData:
     stg_custody: list[dict]
     tickets: list[dict]
     ledger: list[dict]
+    stg_ledger: list[dict]
     rma: list[dict]
     tray_drives: list[dict]
     custody: list[dict]
@@ -118,7 +120,7 @@ def load(assets_dir: str | Path, sample_dir: str | Path, sec_dir: str | Path, mg
         inv=[e for e in _jsonl(s / "telemetry" / "redfish_inventory_changes.jsonl") if e["property"] == "SerialNumber"],
         drive_events=_jsonl(st / "drive_events.jsonl"), stg_tickets=json.loads((st / "tickets.json").read_text(encoding="utf-8")),
         stg_custody=_csv(st / "custody.csv"), tickets=json.loads((s / "vendor" / "tickets.json").read_text(encoding="utf-8")),
-        ledger=_csv(s / "vendor" / "spares_ledger.csv"), rma=_csv(s / "vendor" / "rma_shipments.csv"),
+        ledger=_csv(s / "vendor" / "spares_ledger.csv"), stg_ledger=_csv(st / "spares_ledger.csv"), rma=_csv(s / "vendor" / "rma_shipments.csv"),
         tray_drives=_csv(sec / "tray_drives.csv"), custody=_csv(sec / "chain_of_custody.csv"), certs=_csv(sec / "destruction_certificates.csv"),
         milestones=_csv(s / "vendor" / "deployment_milestones.csv"),
         first_answer=json.loads((mg / "first_answer.json").read_text(encoding="utf-8")) if (mg / "first_answer.json").exists() else {},
@@ -174,8 +176,10 @@ class Register:
             st = {o["tag"]: (o["status"], o["location"]) for o in self.t.opening}
             for x in self.t.tx[:n]:
                 s = STATUS_OF[x["action"]]
+                if x["action"] == "receive" and st.get(x["tag"], ("",))[0] == "installed":
+                    continue                # a receipt recorded after the install it fed (both inside REG-2's 4 hours)
                 if s is None:
-                    s = "in_stock" if x["location"] in (CAGE, STORAGE_SHELF) else "received"
+                    s = "in_stock" if in_stock_at(x["location"]) else "received"
                 st[x["tag"]] = (s, x["location"])
             held: dict[str, list[str]] = {}
             for tag, (s, loc) in st.items():
@@ -193,7 +197,7 @@ class Register:
         out = [{"at": a["since"], "action": "opening", "status": a["status"], "location": a["location"], "ref": a["ref"]}] if a["status"] else []
         for x in self.t.tx:
             if x["tag"] == tag:
-                s = STATUS_OF[x["action"]] or ("in_stock" if x["location"] in (CAGE, STORAGE_SHELF) else "received")
+                s = STATUS_OF[x["action"]] or ("in_stock" if in_stock_at(x["location"]) else "received")
                 out.append({"at": x["at"], "action": x["action"], "status": s, "location": x["location"], "ref": x["ref"], "by": x["by"]})
         return out
 
@@ -271,40 +275,44 @@ def reconcile(t: AssetData) -> dict[str, Any]:
                 continue
             ok = rep in held.get(slot, []) or rep in held_g.get(slot, []) or D.serial(slot, clamp(T + g)) in held.get(slot, [])
             case("installed", ok, {"at": T, "slot": slot, "reported": rep, "held": sorted(held.get(slot, []))})
-    # 2. stock
+    # 2. stock: the cage against the spares ledger, and each hall's storage shelf against the shelf's own ledger
+    from scorecard.sla_model import load_sla
+    from scorecard.synthetic.telemetry_storage import shelf_classes
+    part_of = {c["fru"]: c["part"] for c in shelf_classes(load_sla())}
     ser = cfg["spares"]["serialized"]
-    led: dict[str, list[tuple[datetime, int]]] = {}
-    opening: dict[str, int] = {}
-    for r in t.ledger:
-        opening.setdefault(r["fru"], int(r["balance_after"]) - int(r["qty"]))
-        led.setdefault(r["fru"], []).append((parse(r["timestamp"]), int(r["balance_after"])))
+    led: dict[tuple[str, str], list[tuple[datetime, int]]] = {}
+    opening: dict[tuple[str, str], int] = {}
+    for loc, cls, r in ([(CAGE, r["fru"], r) for r in t.ledger if r["fru"] in ser]
+                        + [(shelf_of(r["hall"]), part_of[r["fru"]], r) for r in t.stg_ledger]):
+        opening.setdefault((loc, cls), int(r["balance_after"]) - int(r["qty"]))
+        led.setdefault((loc, cls), []).append((parse(r["timestamp"]), int(r["balance_after"])))
 
-    def bal(fru: str, at: datetime) -> int | None:
-        b = opening.get(fru)
-        for when, v in led.get(fru, []):
+    def bal(k: tuple[str, str], at: datetime) -> int | None:
+        b = opening.get(k)
+        for when, v in led.get(k, []):
             if when > at:
                 break
             b = v
         return b
 
-    def count(fru: str, at: datetime) -> int:
+    def count(k: tuple[str, str], at: datetime) -> int:
         st = R.state(at)[0]
-        return sum(1 for tag, (s, loc) in st.items() if s == "in_stock" and loc == CAGE and R.asset[tag]["class"] == fru)
+        return sum(1 for tag, (s, loc) in st.items() if s == "in_stock" and loc == k[0] and R.asset[tag]["class"] == k[1])
     moves: dict[str, list[datetime]] = {}
     for x in t.tx:
         moves.setdefault(x["class"], []).append(parse(x["at"]))
     for T in scans(t, cfg["scan"]["cut_hour_utc"]):
-        for fru in ser:
-            lb = bal(fru, T)
+        for k in sorted(led):
+            lb = bal(k, T)
             if lb is None:
                 continue
-            rc = count(fru, T)
+            rc = count(k, T)
             lb = max(lb, 0)                 # a ledger below zero issued parts it did not hold: the cage is empty
             # the ledger issues a part when it leaves the cage, the register when it is installed: either record may
             # trail the other by REG-2's 4 hours, so the cut agrees if the two meet anywhere inside that span
-            near = [x for x in moves.get(fru, []) if T - g <= x <= T + g]
-            ok = rc == lb or any(count(fru, x) == lb for x in near) or any(max(bal(fru, y), 0) == rc for y, _ in led.get(fru, []) if T - g <= y <= T + g)
-            case("stock", ok, {"at": T, "fru": fru, "register": rc, "ledger": lb})
+            near = [x for x in moves.get(k[1], []) if T - g <= x <= T + g]
+            ok = rc == lb or any(count(k, x) == lb for x in near) or any(max(bal(k, y), 0) == rc for y, _ in led.get(k, []) if T - g <= y <= T + g)
+            case("stock", ok, {"at": T, "fru": k[1] if k[0] == CAGE else f"{k[1]} ({k[0]})", "register": rc, "ledger": lb})
     # 3. tickets
     txs: dict[tuple[str, str], list[dict]] = {}
     for x in t.tx:
@@ -393,7 +401,7 @@ def reconcile(t: AssetData) -> dict[str, Any]:
 
 AGREEMENTS = [
     ("installed", "Every answering slot answers with the serial the register holds there, at every daily scan"),
-    ("stock", "The register's spares in the cage equal the spares ledger, class by class, at every daily cut"),
+    ("stock", "The register's spares in the cage, and on each hall's storage shelf, equal their ledgers, class by class, at every daily cut"),
     ("tickets", "Every part a ticket replaced is removed and installed in the register within 4 hours, citing the ticket"),
     ("rma", "Every RMA shipment is in the register, and every register shipment is an RMA shipment"),
     ("returns", "Every OEM replacement delivered is received into the register within 24 hours"),

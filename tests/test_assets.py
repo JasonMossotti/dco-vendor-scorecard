@@ -84,6 +84,19 @@ def test_every_received_device_is_registered(t, r):
     assert len({a["serial"] for a in R.asset.values()}) == len(R.asset), "one asset per serial"
 
 
+def test_each_halls_storage_shelf_matches_its_ledger(t, r):
+    """The register's units on each hall's storage spares shelf at month end equal the shelf ledger's closing balance."""
+    R = r["R"]
+    st = R.state(t.end)[0]
+    last: dict[tuple[str, str], int] = {}
+    for x in t.stg_ledger:
+        last[(G.shelf_of(x["hall"]), x["fru"].replace(" (storage fabric)", ""))] = int(x["balance_after"])
+    assert last
+    for (loc, cls), n in last.items():
+        held = sum(1 for tag, (s, l) in st.items() if s == "in_stock" and l == loc and R.asset[tag]["class"] == cls)
+        assert held == n, (loc, cls)
+
+
 def test_every_agreement_holds(r):
     cs = r["agreements"]
     assert [c.name for c in cs] == NAMES
