@@ -573,7 +573,10 @@ function show() {
   const main = document.getElementById("doc");
   // Record numbers link to the Incident Portal only for the month it holds; a newer month reuses the numbers.
   if (ds.key === "sample") main.removeAttribute("data-tk-skip"); else main.setAttribute("data-tk-skip", "");
-  main.innerHTML = {site: viewSite, it: viewIT, landlord: viewLandlord, security: viewSecurity, credits: viewCredits}[S.view](ds);
+  // An explicit choice, not a lookup by the hash's text (parse() already accepts only the five views).
+  const render = S.view === "it" ? viewIT : S.view === "landlord" ? viewLandlord : S.view === "security" ? viewSecurity
+    : S.view === "credits" ? viewCredits : viewSite;
+  main.innerHTML = render(ds);
   wireFindings(); wireIncidents(); wireEvents(); wireCredits();
   document.title = `${VIEWS.find(v => v.key === S.view).label} · Scorecards · Unified Site Management`;
 }
