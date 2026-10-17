@@ -3,9 +3,10 @@
 
 Output (default _site/):
     index.html              the Unified Site Management overview (scripts/render_hub.py)
-    app/index.html          the site tab bar above the scorecard app, run in the browser by stlite
-    app/streamlit_app.py    the app entrypoint
-    app/app_bundle.zip      Python package, SLA, generator config, and datasets
+    app/index.html          the Scorecards tab, prebuilt (scripts/render_scorecards.py): every partner's scorecard and Service credits
+    app/lab/index.html      "Try another month": the scorecard app, run in the browser by stlite, which can generate a new month
+    app/lab/streamlit_app.py    the app entrypoint
+    app/lab/app_bundle.zip  Python package, SLA, generator config, and datasets
     alarms/ pir/ weekly/ patterns/ energy/ gpu/ deployments/ availability/  the static pages, each with the same tab bar
     telemetry/              GPU telemetry (scripts/render_telemetry.py) and the data it fetches (telemetry/data/)
     tickets/                the Incident Portal: both partners' tickets, changes, and work orders (scripts/render_tickets.py)
@@ -68,9 +69,10 @@ INDEX_HTML = """<!doctype html>
     {nav}
     <div id="root">
       <div class="boot">
-        <h2>Scorecards</h2>
-        <p>Starting Python in your browser. The first visit takes about 20 to 40 seconds while the runtime downloads;
-        after that it is cached.</p>
+        <h2>Try another month</h2>
+        <p>Starting Python in your browser, so the same engines can score a month generated from any seed. The first
+        visit takes about 20 to 40 seconds while the runtime downloads; after that it is cached.</p>
+        <p><a href="../">Back to Scorecards</a>, which opens at once with the shipped months.</p>
         <p><small>Everything runs locally in this tab. Synthetic data only; all names and events are fictional.</small></p>
         <noscript>This demo needs JavaScript enabled.</noscript>
       </div>
@@ -116,7 +118,7 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     from scorecard import sitenav
     if out.exists():
         shutil.rmtree(out)
-    app = out / "app"
+    app = out / "app" / "lab"
     app.mkdir(parents=True)
     shutil.copy2(root / "app" / "streamlit_app.py", app / "streamlit_app.py")
     members = bundle_members(root)
@@ -126,8 +128,11 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     reqs = "[" + ", ".join(f'"{r}"' for r in REQUIREMENTS) + "]"
     (app / "index.html").write_text(
         INDEX_HTML.format(version=STLITE_VERSION, requirements=reqs, streamlit_config=json.dumps(STREAMLIT_CONFIG),
-                          nav_css=sitenav.CSS.strip(), nav=sitenav.nav_html("scorecards")),
+                          nav_css=sitenav.CSS.strip(), nav=sitenav.nav_html("scorecards", "../../")),
         encoding="utf-8", newline="\n")
+    # The Scorecards tab itself: prebuilt, so it opens without Python.
+    import render_scorecards
+    (out / "app" / "index.html").write_text(render_scorecards.html_page(), encoding="utf-8", newline="\n")
     # The Unified Site Management overview, at the site root.
     import render_hub
     (out / "index.html").write_text(render_hub.html_page(), encoding="utf-8", newline="\n")

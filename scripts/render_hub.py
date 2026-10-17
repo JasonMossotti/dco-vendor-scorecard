@@ -192,7 +192,7 @@ def body(f: dict) -> str:
               (str(ll["defaults"]), "Landlord Minimum defaults"), (money(ll["credits"]), "Landlord credits")],
              [("Open the scorecards", "app/")],
              f"Engine self-check: IT Partner {check(it)}, Landlord {check(ll)}, Security Partner {check(sec)} planted discrepancies found. "
-             "Runs Python in your browser; the first visit takes 20 to 40 seconds to start."),
+             "Service credits explained in plain words, with a calculator."),
         tile("security", "Security",
              "The Security Partner's post log, dispatch log, visitor log, and destruction certificates, checked against the "
              "Customer's access control system, the drive inventory, and the RMA shipments.",

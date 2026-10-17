@@ -90,17 +90,18 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 
 ![IT Partner scorecard: vendor reported vs. measured from telemetry](docs/images/scorecards.png)
 
-**What it shows.** The interactive scorecard app with four views: a **site summary** (every partner side by side, the outage that crossed the demarcation, and what attribution changed), the **IT Partner** scorecard, the **Landlord** scorecard, and the **Security Partner** scorecard. Each shows service levels reported vs. measured, credits, the severity log, corrective action plans, and every finding with its evidence. A dataset picker switches between the committed sample, the latest 4 weeks (regenerated every Monday by GitHub Actions), and a brand-new random month generated on the spot.
+**What it shows.** Five views: a **site summary** (a card per partner, the credits across all three contracts, the outage that crossed the demarcation, and what attribution changed), the **IT Partner**, **Landlord**, and **Security Partner** scorecards, and **Service credits**. Each scorecard shows service levels reported vs. measured, credits, the severity log, corrective action plans, every Ticket of Record, and every finding with its evidence, with filters, search, sortable tables, and a link to any finding (`#it/findings/F-001`). **Service credits** explains in plain words what a credit is, works out this month's credits for each partner step by step from the contract terms, and has a calculator for defaults, repeat months, and earnback. A dataset picker switches between the committed sample and the latest 4 weeks (regenerated every Monday by GitHub Actions); **Try another month** opens the Python version, which scores a brand-new month generated from any seed.
 
 <img src="docs/images/finding.png" alt="A finding with its evidence: a repeat failure logged as a new ticket to restart the clock" width="860">
 
 *A finding: a compute tray failed again 29 minutes after return to service and the follow-up was logged as a new ticket. Under ticket rule TR-1 it is one Ticket of Record, measured at 10.4 hours against the 8-hour target. The evidence rows are the exact telemetry and ticket records.*
 
 **How it works.**
-- A Streamlit app (`app/streamlit_app.py`) that runs **entirely in the browser** through [stlite](https://github.com/whitphx/stlite) (Python on WebAssembly). No server: the first visit takes 20 to 40 seconds while Python boots.
+- The page is prebuilt like the other tabs: `scripts/render_scorecards.py` (`src/scorecard/scorecards_page.py`) runs the three engines on each shipped dataset when the site is built, so it opens at once. The commercial terms the Service credits view uses come from the SLA YAML.
+- **Try another month** (`/app/lab/`) is a Streamlit app (`app/streamlit_app.py`) that runs **entirely in the browser** through [stlite](https://github.com/whitphx/stlite) (Python on WebAssembly). No server: the first visit takes 20 to 40 seconds while Python boots.
 - `src/scorecard/app_support.py` runs the same pipeline the command line runs: generator, engines, `build_scorecard(sla, result)`. The scorecard is a pure function of the contract and the data, so a contract amendment is a one-line YAML change and the effect on breaches and credits shows on the next run.
 - Service levels are measured from telemetry in `src/scorecard/kpi.py`, using the contract's ticket handling rules (`src/scorecard/measurement.py`, TR-1 to TR-7). Credits, the monthly cap, and the S1 to S4 severity index come from `src/scorecard/sla_model.py`.
-- The app is tested in CI against a fake Streamlit (`tests/fake_streamlit.py`) that records every element it renders.
+- The page is tested in CI with jsdom (`tests/js/scorecards_page.cjs`) and against the reports (`tests/test_scorecards_page.py`); the Python app against a fake Streamlit (`tests/fake_streamlit.py`) that records every element it renders.
 
 **The Security Partner.** Llano Gate guards the Customer halls under its own [Security SLA](docs/sla/SECURITY_SLA.md): guard post coverage, door alarm response (a guard badged at the door within 3 minutes for a forced door, 5 for a held one), visitor escorts, camera availability, leaver badges off within 24 hours, every drive in a failed compute tray destroyed on site (NIST SP 800-88 Destroy) before the tray ships, and record integrity. The measurements never use video or a guard's word: the evidence is the Customer's own access control system (a guard's badge at the post or the alarmed door, the escort's badge before the visitor's), camera health and recorder retention, the identity feed of leavers, the trays' Redfish drive inventory, and the RMA shipments. Its records are generated on their own random stream (`src/scorecard/synthetic/security.py`) from the guard and visitor badges the site already had, and `scripts/run_security.py` plants four discrepancies a month: a post reported staffed with no guard badged in, a door alarm closed with no guard at the door, a visitor in a hall without the escort, and a drive shipped with no destruction certificate. Dispatch records (SIR) appear in the Incident Portal, the Interface Agreement gains five ownership rows and a demarcation point (DM-SEC), and the weekly pack carries a third partner.
 
@@ -454,7 +455,7 @@ src/scorecard/tickets.py         Incident Portal records with timelines and meas
 src/scorecard/glossary.py        Code meanings, lookup, and tokenizer used by render_glossary.py
 src/scorecard/sitenav.py         The tab bar on every page and ticket-number links
 src/scorecard/live/              Read-only collector, protocol adapters, dataset writer
-app/streamlit_app.py             Scorecards app (Streamlit; runs in the browser via stlite)
+app/streamlit_app.py             "Try another month" app (Streamlit; runs in the browser via stlite)
 pir/reviews/*.yaml               Written part of each post-incident review
 weekly/notes/*.yaml              Written part of a weekly review (decisions, asks, commentary)
 weekly/brief/*.yaml              Written part of each week's leadership brief (risks, decisions needed, asks)
