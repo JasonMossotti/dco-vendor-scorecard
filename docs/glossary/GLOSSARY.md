@@ -43,11 +43,11 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | DAC | **Direct attach copper.** A short copper network cable with connectors built on. | - | IT Partner SLA, Availability |
 | DART | **Days away, restricted, or transferred.** The rate of injuries serious enough to cost work days or restrict duty, per 200,000 hours worked. | - | IT Partner SLA, Landlord SLA, Security SLA |
 | DC | **Direct current.** Electric current in one direction, as from batteries. | - | IT Partner SLA, Landlord SLA, Security SLA, Telemetry, Deployments |
-| DCGM | **Data Center GPU Manager.** The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM. | - | IT Partner SLA, Landlord SLA, Security SLA, Failure Patterns, GPU Health, Telemetry, Overview |
+| DCGM | **Data Center GPU Manager.** The GPU vendor's monitoring tool for GPU health, errors, and diagnostics; the source for DS-DCGM. | - | IT Partner SLA, Landlord SLA, Security SLA, Failure Patterns, GPU Health, Telemetry |
 | DCIM | **Data center infrastructure management.** Software that tracks power, capacity, and assets across the facility. | - | Site model document |
 | DCO | **Data center operations.** The Customer's site operations team, which runs the Telemetry of Record and manages both partners. | - | IT Partner SLA, Landlord SLA, Security SLA, Scorecards, Post-Incident Review |
 | DHCP | **Dynamic Host Configuration Protocol.** Hands out network addresses to devices as they join. A Customer-owned core network service; named in the ownership matrix, not modeled. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Security SLA |
-| DMTF | **Distributed Management Task Force.** The standards body behind Redfish, the REST API the CDUs report their telemetry through. | - | Telemetry, Overview |
+| DMTF | **Distributed Management Task Force.** The standards body behind Redfish, the REST API the CDUs report their telemetry through. | - | Telemetry |
 | DNS | **Domain Name System.** Turns names into network addresses. A Customer-owned core network service at this site; the Interface Agreement names its owner and models no data for it. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Security SLA |
 | DOM | **Digital optical monitoring.** An optic's own report of temperature, power, and signal levels; a DOM alarm warns the optic is failing. | - | Failure Patterns, Overview |
 | DPU | **Data processing unit.** A network card with its own processors. Each compute tray's BlueField-3 DPU carries its two 200 GbE storage ports, one to each leaf of its row's storage leaf pair. | - | Telemetry |
@@ -181,7 +181,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | UFM | **Unified Fabric Manager.** Manages and monitors the InfiniBand fabric: port state, link-down events, and optic health; the source for DS-UFM. | - | Failure Patterns, Telemetry, Site model document |
 | UINT16 | **Unsigned 16-bit integer.** A Modbus value held in one register (0 to 65,535); the point map gives its scale, such as 0.1 Hz. | - | Telemetry |
 | UINT32 | **Unsigned 32-bit integer.** A Modbus value held in two registers, used for counters such as energy and engine hours. | - | Telemetry |
-| UPS | **Uninterruptible power supply.** Batteries and power electronics that carry the load through a utility loss until the generators take over. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Security SLA, Alarm Board, Energy, Telemetry, Deployments, Site model document, Incident Portal, Post-Incident Review, Weekly Review |
+| UPS | **Uninterruptible power supply.** Batteries and power electronics that carry the load through a utility loss until the generators take over. | - | Interface Agreement, IT Partner SLA, Landlord SLA, Security SLA, Alarm Board, Energy, Telemetry, Deployments, Site model document, Overview, Incident Portal, Post-Incident Review, Weekly Review |
 | US | **United States.** The United States. | - | Alarm Board |
 | USA | **United States of America.** The United States. | - | Site model document |
 | UTC | **Coordinated Universal Time.** The time standard every record is stamped in. The site is in US Central time (UTC minus 5 in summer). | - | IT Partner SLA, Landlord SLA, Security SLA, Scorecards, Alarm Board, Energy, Availability, GPU Health, Telemetry, Fire protection, Deployments, Overview, Incident Portal, Post-Incident Review, Weekly Review |
@@ -628,7 +628,7 @@ Every acronym, contract code, and record ID the site's pages and documents use: 
 | MLNX-OS | **MLNX-OS switch operating system.** The operating system on the QM9700 InfiniBand switches; it names ports ib 1/<cage>/<port>. | - | Telemetry |
 | MVSST | **Medium-voltage solid-state transformer.** Converts 13.8 kV directly to 800 VDC for the planned 800 VDC racks. | - | Deployments, Site model document |
 | NMC4 | **Network management card 4.** The SNMPv3 and Modbus TCP card in each Galaxy UPS. The power telemetry polls it once a minute; its event log is the record of mode changes. | - | Telemetry |
-| NVIDIA | **GPU and network vendor.** Makes the GB200 and GB300 NVL72 racks, the NVLink switches, and the InfiniBand fabric. | - | IT Partner SLA, GPU Health, Telemetry, Site model document, Overview |
+| NVIDIA | **GPU and network vendor.** Makes the GB200 and GB300 NVL72 racks, the NVLink switches, and the InfiniBand fabric. | - | IT Partner SLA, GPU Health, Telemetry, Site model document |
 | NVL72 | **NVL72 rack.** A rack of 72 GPUs in one NVLink domain, so they work as one large GPU. One rack-hour is 72 GPU-hours. | - | IT Partner SLA, Landlord SLA, Security SLA, Telemetry, Deployments, Site model document, Post-Incident Review |
 | NVOS | **NVOS switch operating system.** The operating system on the Quantum-X800 switches; it streams telemetry over gNMI and names ports sw<cage>p<port>. | - | Telemetry |
 | PCW | **Liebert PCW.** Vertiv's chilled-water room cooling unit. Its iCOM 3 monitoring guide names the points used here for the thermal walls and CRAHs. | - | Telemetry |
