@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scorecards · Unified Site Management</title>
+<meta name="description" content="Vendor SLA scorecards for partner-operated GPU data center sites. Synthetic data portfolio demo.">
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --bad:#b42318; --good:#1d7a46; --warn:#9a6700;
+        --grid:#eef1f4; --band:#fdecea; --accent:#1f5fbf; --it:#2a78d6; --ll:#eb6834; --sec:#8b5cf6;
+        --c1:#2a78d6; --c2:#1baf7a; --c3:#8b5cf6; --c4:#eb6834; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:12px 24px; display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.tools { display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; font-size:13px; }
+.tools select, .tools button, .tools a.btn { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:5px 10px; border-radius:6px; cursor:pointer; text-decoration:none; }
+.tools a.btn:hover, .tools button:hover { border-color:var(--accent); }
+.views { display:flex; flex-wrap:wrap; gap:6px; max-width:1180px; margin:16px auto 0; padding:0 16px; }
+.views button { font:inherit; font-size:14px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:7px 14px; border-radius:18px; cursor:pointer; }
+.views button.on { background:var(--ink); color:#fff; border-color:var(--ink); font-weight:600; }
+.views button:disabled { opacity:.45; cursor:not-allowed; }
+.views .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:0; }
+main { max-width:1180px; margin:12px auto 24px; background:var(--bg); padding:28px 40px 32px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:16px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.lead { font-size:15px; margin:10px 0 4px; }
+.subtabs { display:flex; flex-wrap:wrap; gap:0; border-bottom:1px solid var(--line); margin:16px 0 4px; }
+.subtabs a { padding:8px 14px 7px; color:var(--muted); text-decoration:none; border-bottom:3px solid transparent; font-size:14px; }
+.subtabs a.on { color:var(--ink); font-weight:600; border-bottom-color:var(--accent); }
+.subtabs a:hover { color:var(--ink); }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:14px 0; }
+.tile { background:var(--panel); border-radius:8px; padding:12px 14px; }
+.tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.tile .v { font-size:26px; font-weight:700; line-height:1.2; } .tile .s { font-size:12px; color:var(--muted); }
+.tile.bad .v { color:var(--bad); }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin:14px 0; }
+.card { border:1px solid var(--line); border-top:4px solid var(--c); border-radius:8px; padding:12px 16px; display:flex; flex-direction:column; gap:6px; }
+.card h3 { margin:0; font-size:15px; } .card .who { font-size:12px; color:var(--muted); margin-top:-4px; }
+.card dl { display:grid; grid-template-columns:auto auto; gap:2px 12px; margin:4px 0; font-size:13px; }
+.card dt { color:var(--muted); } .card dd { margin:0; text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
+.card a.go { margin-top:auto; font-size:13px; color:var(--accent); text-decoration:none; font-weight:600; }
+.flag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+.flag.bad { background:var(--band); color:var(--bad); } .flag.ok { background:#e7f4ec; color:var(--good); } .flag.warn { background:#fff4d6; color:var(--warn); }
+.flag.na { background:var(--grid); color:var(--muted); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+table.sort th { cursor:pointer; user-select:none; } table.sort th:hover { color:var(--accent); }
+table.sort th[aria-sort="ascending"]::after { content:" ▲"; font-size:10px; } table.sort th[aria-sort="descending"]::after { content:" ▼"; font-size:10px; }
+tr.default td { background:#fff7f6; } tr.tot td { font-weight:600; border-top:2px solid var(--ink); }
+.wide { overflow-x:auto; } .nw { white-space:nowrap; }
+.gapbar { position:relative; width:120px; height:12px; background:var(--grid); border-radius:2px; display:inline-block; vertical-align:-1px; margin-right:6px; }
+.gapbar::before { content:""; position:absolute; left:50%; top:-2px; bottom:-2px; border-left:1px solid var(--muted); }
+.gapbar span { position:absolute; top:0; height:100%; border-radius:2px; }
+.filters { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; font-size:13px; margin:10px 0; }
+.filters select, .filters input[type=search] { font:inherit; font-size:13px; padding:4px 8px; border:1px solid var(--line); border-radius:6px; }
+.filters input[type=search] { min-width:220px; }
+.count { color:var(--muted); }
+details.f { border:1px solid var(--line); border-radius:8px; margin:8px 0; background:#fff; }
+details.f > summary { cursor:pointer; padding:9px 12px; list-style:none; display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline; }
+details.f > summary::-webkit-details-marker { display:none; }
+details.f > summary::before { content:"▸"; color:var(--muted); } details.f[open] > summary::before { content:"▾"; }
+details.f[open] > summary { border-bottom:1px solid var(--line); background:var(--panel); border-radius:8px 8px 0 0; }
+details.f .body { padding:10px 14px 12px; font-size:14px; }
+details.f .body p { margin:6px 0; }
+.sev { font-weight:700; } .sev.S1 { color:var(--bad); } .sev.S2 { color:var(--warn); } .sev.S3, .sev.S4 { color:var(--muted); }
+.box { background:var(--panel); border-radius:8px; padding:12px 16px; margin:12px 0; font-size:14px; }
+.box.key { border-left:4px solid var(--accent); }
+.legend { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12px; color:var(--muted); margin:6px 0; align-items:center; }
+.legend i { display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+svg text { font:11px "Inter","Segoe UI",Helvetica,Arial,sans-serif; fill:var(--muted); }
+.steps { counter-reset:s; list-style:none; padding:0; margin:10px 0; display:grid; gap:8px; }
+.steps li { counter-increment:s; position:relative; padding:8px 12px 8px 44px; background:var(--panel); border-radius:8px; }
+.steps li::before { content:counter(s); position:absolute; left:12px; top:8px; width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+                    font-size:12px; font-weight:700; text-align:center; line-height:22px; }
+.levels { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:12px 0; }
+.levels div { border-radius:8px; padding:10px 14px; font-size:14px; }
+.levels b { display:block; font-size:13px; text-transform:uppercase; letter-spacing:.03em; margin-bottom:2px; }
+.lv-ok { background:#e7f4ec; } .lv-ok b { color:var(--good); } .lv-rca { background:#fff4d6; } .lv-rca b { color:var(--warn); }
+.lv-def { background:var(--band); } .lv-def b { color:var(--bad); }
+.potbar { display:flex; height:30px; border-radius:6px; overflow:hidden; background:var(--grid); margin:6px 0 2px; font-size:12px; }
+.potbar span { height:100%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; border-right:1px solid #fff; }
+.potbar span.rest { background:transparent; color:var(--muted); font-weight:400; border:0; }
+.scale { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
+.calc { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:16px; align-items:start; }
+.calc table td input[type=number] { width:56px; font:inherit; font-size:13px; padding:2px 4px; border:1px solid var(--line); border-radius:4px; }
+.result { position:sticky; top:12px; }
+.result .big { font-size:30px; font-weight:700; }
+.result .line { display:flex; justify-content:space-between; gap:12px; font-size:13px; padding:3px 0; border-bottom:1px dashed var(--line); }
+.result .line:last-child { border-bottom:0; }
+.small-btn { font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; padding:3px 10px; border-radius:6px; cursor:pointer; }
+a { color:var(--accent); }
+@media (max-width:820px) { main { padding:20px 16px; margin:12px 0; border-radius:0; } header.top { padding:10px 16px; } .calc { grid-template-columns:1fr; } .result { position:static; } }
+@media print { header.top, .views, .subtabs, .filters, .small-btn { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; }
+               details.f { break-inside:avoid; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Scorecards</strong> <span class="note" id="window"></span></div>
+  <div class="tools">
+    <label>Dataset <select id="ds"></select></label>
+    <a class="btn" href="lab/" title="Opens the Python version of this page, which can generate a new synthetic month from any seed">Try another month ↗</a>
+    <button id="print">Print / save PDF</button>
+  </div>
+</header>
+<nav class="views" id="views" aria-label="Scorecard views"></nav>
+<main id="doc"></main>
+<script id="data" type="application/json" data-gl-skip>__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const bold = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+const usd = v => "$" + esc(Math.round(+v).toLocaleString("en-US"));
+const num = v => esc((+v).toLocaleString("en-US"));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const md = iso => { const [, m, d] = iso.slice(0, 10).split("-"); return `${MON[+m - 1]} ${+d}`; };
+const lastDay = iso => new Date(Date.parse(iso) - 1000).toISOString();
+const VIEWS = [
+  {key: "site", label: "Site summary", color: "var(--ink)"},
+  {key: "it", label: "IT Partner (Ridgeline)", color: "var(--it)"},
+  {key: "landlord", label: "Landlord (Caprock)", color: "var(--ll)"},
+  {key: "security", label: "Security Partner (Llano Gate)", color: "var(--sec)"},
+  {key: "credits", label: "Service credits", color: "var(--good)"},
+];
+const SUBTABS = {
+  it: [["overview", "Overview"], ["levels", "Service levels"], ["findings", "Findings"], ["actions", "Corrective actions"], ["incidents", "Incidents"], ["about", "About"]],
+  landlord: [["overview", "Overview"], ["levels", "Service levels"], ["findings", "Findings"], ["events", "Facility events"], ["about", "About"]],
+  security: [["overview", "Overview"], ["levels", "Service levels"], ["findings", "Findings"], ["about", "About"]],
+};
+const FRAME = "Each finding is a place where the partner's records do not reconcile with the Customer's own systems. A finding starts a review; it is not by itself proof of intent.";
+const FOOT = "Synthetic data for a portfolio demonstration; all names and events are fictional.";
+const REPO = "https://github.com/JasonMossotti/dco-vendor-scorecard";
+let S = {ds: D.datasets[0].key, view: "site", sub: "", item: ""};
+const DS = () => D.datasets.find(d => d.key === S.ds) || D.datasets[0];
+
+// ---- Hash: #[latest/]view[/sub[/item]] -------------------------------------------------------------------------
+function parse() {
+  const parts = decodeURIComponent(location.hash.slice(1)).split("/").filter(Boolean);
+  const st = {ds: D.datasets[0].key, view: "site", sub: "", item: ""};
+  if (parts.length && D.datasets.some(d => d.key === parts[0]) && parts[0] !== D.datasets[0].key) st.ds = parts.shift();
+  if (parts.length && VIEWS.some(v => v.key === parts[0])) st.view = parts.shift();
+  if (parts.length) st.sub = parts.shift();
+  if (parts.length) st.item = parts.join("/");
+  return st;
+}
+function hashOf(st) {
+  const p = [];
+  if (st.ds !== D.datasets[0].key) p.push(st.ds);
+  p.push(st.view);
+  if (st.sub) p.push(st.sub);
+  if (st.item) p.push(st.item);
+  return "#" + p.join("/");
+}
+function go(st, replace) {
+  const h = hashOf(st);
+  if (h === location.hash) { show(); return; }
+  if (replace) { history.replaceState(null, "", h); show(); } else location.hash = h;
+}
+
+// ---- Building blocks --------------------------------------------------------------------------------------------
+function tile(k, v, s, cls) { return `<div class="tile ${cls || ""}"><div class="k">${esc(k)}</div><div class="v">${v}</div><div class="s">${s || ""}</div></div>`; }
+function statusFlag(text) {
+  const t = String(text);
+  const cls = /default|Missed/.test(t) ? "bad" : /Below Expected/.test(t) ? "warn" : /^Met|^Met$/.test(t) ? "ok" : "na";
+  return `<span class="flag ${cls}">${esc(t)}</span>`;
+}
+const LOC_COLS = new Set(["Rack"]);
+function cell(col, v) {
+  if (v === null || v === undefined || v === "") return `<td>${v === "" ? "" : "n/a"}</td>`;
+  if (typeof v === "boolean") return `<td>${v ? '<span class="flag ok">Yes</span>' : '<span class="flag bad">No</span>'}</td>`;
+  if (typeof v === "number") return `<td class="n">${num(v)}</td>`;
+  if (col === "Status" || col === "Result") return `<td>${statusFlag(v)}</td>`;
+  if (col === "Agrees") return `<td>${v === "Yes" ? '<span class="flag ok">Yes</span>' : '<span class="flag bad">No</span>'}</td>`;
+  if (LOC_COLS.has(col)) return `<td class="nw"><span data-loc="${esc(v)}">${esc(v)}</span></td>`;
+  return `<td${String(v).length < 24 ? ' class="nw"' : ""}>${esc(v)}</td>`;
+}
+function table(rows, opts = {}) {
+  if (!rows || !rows.length) return `<p class="note">${esc(opts.empty || "Nothing to show.")}</p>`;
+  const cols = opts.cols || Object.keys(rows[0]);
+  const head = cols.map(c => `<th${typeof rows[0][c] === "number" ? ' class="n"' : ""}>${esc(c)}</th>`).join("");
+  const body = rows.map((r, i) => `<tr${opts.rowClass ? ` class="${opts.rowClass(r, i)}"` : ""} data-i="${i}">` + cols.map(c => cell(c, r[c])).join("") + "</tr>").join("");
+  return `<div class="wide"><table class="sort"${opts.id ? ` id="${opts.id}"` : ""}><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+// Any table: click a heading to sort by it (numbers as numbers), click again to reverse.
+document.addEventListener("click", e => {
+  const th = e.target.closest("table.sort th");
+  if (!th) return;
+  const tbl = th.closest("table"), i = [...th.parentNode.children].indexOf(th), tb = tbl.tBodies[0];
+  const dir = th.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending";
+  tbl.querySelectorAll("th").forEach(x => x.removeAttribute("aria-sort"));
+  th.setAttribute("aria-sort", dir);
+  const key = tr => { const t = tr.cells[i].textContent.trim(), n = parseFloat(t.replace(/[$,%+]/g, "")); return /^[-+$\d.,%\s]+$/.test(t) && !isNaN(n) ? n : t.toLowerCase(); };
+  const rows = [...tb.rows].sort((a, b) => { const x = key(a), y = key(b); const c = typeof x === typeof y ? (x < y ? -1 : x > y ? 1 : 0) : typeof x === "number" ? -1 : 1; return dir === "ascending" ? c : -c; });
+  rows.forEach(r => tb.appendChild(r));
+});
+function gapBar(gap, span) {
+  if (gap == null) return "";
+  const w = Math.min(50, Math.abs(gap) / span * 50);
+  const col = gap < 0 ? "var(--bad)" : "var(--good)";
+  return `<span class="gapbar" title="${esc(gap)} points"><span style="${gap < 0 ? `right:50%` : `left:50%`};width:${w}%;background:${col}"></span></span>`;
+}
+function reportedTable(rows, who) {
+  const keys = Object.keys(rows[0]), rep = keys[1], mea = keys[2];
+  const span = Math.max(0.5, ...rows.map(r => Math.abs(r["Gap (pts)"] || 0)));
+  return `<div class="wide"><table class="sort"><thead><tr><th>Service level</th><th class="n">${esc(who)} reported</th><th class="n">Measured</th><th>Measured minus reported (points)</th></tr></thead><tbody>` +
+    rows.map(r => { const g = r["Gap (pts)"];
+      return `<tr${g != null && g < 0 ? ' class="default"' : ""}><td>${esc(r["Service level"])}</td><td class="n">${r[rep] == null ? "n/a" : esc(r[rep]) + "%"}</td>
+      <td class="n">${r[mea] == null ? "n/a" : esc(r[mea]) + "%"}</td><td class="nw">${gapBar(g, span)}${g == null ? "n/a" : esc((g > 0 ? "+" : "") + g)}</td></tr>`; }).join("") +
+    `</tbody></table></div><p class="note">Below zero (red) means the partner's report was better than the measurement. The bar is scaled to the largest gap in this table.</p>`;
+}
+function selfCheck(ev, what) {
+  if (!ev) return "";
+  return `<div class="box"><b>Engine self-check.</b> The data generator planted <b>${num(ev.planted)}</b> ${esc(what)} discrepancies in an answer key the engine cannot read.
+    The engine found <b>${num(ev.detected)} of ${num(ev.planted)}</b> with <b>${num(ev.false_positives)} false positive${ev.false_positives === 1 ? "" : "s"}</b>.</div>`;
+}
+function cslTable(csl, id) {
+  return table(csl.map(c => c.row), {id, rowClass: r => (csl.find(c => c.row.ID === r.ID) || {}).status === "default" ? "default" : ""});
+}
+function creditLine(cr, view) {
+  return `<p><b>Credits:</b> ${usd(cr.uncapped)} before the monthly cap; <b>${usd(cr.payable)} payable</b>${cr.capped ? " (the cap applied)" : ""}.
+    <a href="${hashOf({...S, view: "credits", sub: view, item: ""})}">How this is worked out</a></p>`;
+}
+
+// ---- Findings, with filters --------------------------------------------------------------------------------------
+function findingsView(p, view) {
+  const F = p.findings, sevs = [...new Set(F.map(f => f.severity))].sort(), types = [...new Set(F.map(f => f.title))].sort();
+  return `<p>${esc(FRAME)}</p>
+  <div class="filters">
+    <label>Severity <select id="fsev"><option value="">All</option>${sevs.map(s => `<option>${esc(s)}</option>`).join("")}</select></label>
+    <label>Type <select id="ftype"><option value="">All</option>${types.map(s => `<option>${esc(s)}</option>`).join("")}</select></label>
+    <input type="search" id="fq" placeholder="Search: ticket, rack, unit, text" aria-label="Search findings">
+    <button class="small-btn" id="fopen">Open all</button>
+    <span class="count" id="fcount"></span>
+  </div>
+  <div id="flist">${F.map(f => `<details class="f" id="f-${esc(f.id)}" data-sev="${esc(f.severity)}" data-type="${esc(f.title)}">
+    <summary><b>${esc(f.id)}</b><span class="sev ${esc(f.severity)}">${esc(f.severity)} ${esc(f.severity_name)}</span><span>${esc(f.title)}</span>
+      <span class="note">${esc(f.tickets.join(", ") || f.unit)}</span></summary>
+    <div class="body"><p>${esc(f.summary)}</p>
+      ${table(f.evidence)}
+      ${f.reasons.length ? `<p><b>Why ${esc(f.severity)}:</b> ${esc(f.reasons.join("; "))}.</p>` : ""}
+      <p><b>Recommended action:</b> ${esc(f.action)}</p>
+      <p><b>SLA references:</b> ${esc(f.refs.join(", "))}</p>
+      <p class="note"><a href="${hashOf({...S, view, sub: "findings", item: f.id})}">Link to this finding</a></p></div></details>`).join("")}</div>`;
+}
+function wireFindings() {
+  const sev = document.getElementById("fsev");
+  if (!sev) return;
+  const type = document.getElementById("ftype"), q = document.getElementById("fq"), list = [...document.querySelectorAll("#flist details")];
+  const apply = () => {
+    const s = sev.value, t = type.value, w = q.value.trim().toLowerCase();
+    let n = 0;
+    list.forEach(d => { const hit = (!s || d.dataset.sev === s) && (!t || d.dataset.type === t) && (!w || d.textContent.toLowerCase().includes(w)); d.hidden = !hit; n += hit; });
+    document.getElementById("fcount").textContent = `${n} of ${list.length} findings`;
+  };
+  [sev, type].forEach(x => x.addEventListener("change", apply));
+  q.addEventListener("input", apply);
+  document.getElementById("fopen").addEventListener("click", e => {
+    const open = e.target.textContent === "Open all";
+    list.forEach(d => { if (!d.hidden) d.open = open; });
+    e.target.textContent = open ? "Close all" : "Open all";
+  });
+  apply();
+  if (S.item) {
+    const d = document.getElementById("f-" + S.item);
+    if (d) { d.open = true; d.scrollIntoView && d.scrollIntoView({block: "start"}); }
+  }
+}
+
+// ---- Weekly gap chart (IT Partner) -------------------------------------------------------------------------------
+function gapChart(rows) {
+  const series = Object.keys(rows[0]).filter(k => k !== "Week"), cols = ["var(--c1)", "var(--c2)", "var(--c3)", "var(--c4)"];
+  const vals = rows.flatMap(r => series.map(s => r[s])).filter(v => v != null);
+  const lo = Math.min(-1, ...vals), hi = Math.max(1, ...vals), W = 760, H = 210, l = 44, r = 16, t = 12, b = 28;
+  const pad = 50, x = i => l + pad + (W - l - r - 2 * pad) * (rows.length === 1 ? 0.5 : i / (rows.length - 1)), y = v => t + (H - t - b) * (hi - v) / (hi - lo);
+  const step = (hi - lo) > 20 ? 5 : (hi - lo) > 8 ? 2 : 1;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Measured minus reported, by week">`;
+  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step)
+    s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 0 ? "#9aa7b4" : "var(--grid)"}"/><text x="${l - 6}" y="${y(v) + 4}" text-anchor="end">${v > 0 ? "+" : ""}${v}</text>`;
+  rows.forEach((row, i) => { s += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">Week of ${esc(md(row.Week))}</text>`; });
+  series.forEach((k, j) => {
+    const pts = rows.map((row, i) => row[k] == null ? null : [x(i), y(row[k]), row[k], row.Week]).filter(Boolean);
+    s += `<polyline fill="none" stroke="${cols[j]}" stroke-width="2.2" points="${pts.map(p => p[0] + "," + p[1]).join(" ")}"/>`;
+    pts.forEach(p => { s += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${cols[j]}"><title>${esc(k)}, week of ${esc(md(p[3]))}: ${p[2] > 0 ? "+" : ""}${esc(p[2])} points</title></circle>`; });
+  });
+  return `<div class="legend">${series.map((k, j) => `<span><i style="background:${cols[j]}"></i>${esc(k)}</span>`).join("")}</div>` + s + `</svg>`;
+}
+
+// ---- Views ------------------------------------------------------------------------------------------------------
+function subtabs(view) {
+  const cur = S.sub || SUBTABS[view][0][0];
+  return `<nav class="subtabs" aria-label="Sections">${SUBTABS[view].map(([k, l]) =>
+    `<a href="${hashOf({...S, view, sub: k, item: ""})}" class="${k === cur ? "on" : ""}" data-sub="${k}">${esc(l)}</a>`).join("")}</nav>`;
+}
+function about(text, links) {
+  return `<div class="box">${text}</div><p><b>Read more:</b> ${links.map(([l, u]) => `<a href="${esc(u)}">${esc(l)}</a>`).join(" · ")}</p>
+    <p class="note">All data, people, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on internal information from, any real company.</p>`;
+}
+
+function viewIT(ds) {
+  const p = ds.it, t = p.tiles, sub = S.sub || "overview";
+  let h = `<h1>IT Partner scorecard</h1><p class="sub">${esc(p.supplier)} · ${esc(winText(ds))} · ${esc(FOOT)}</p>` + subtabs("it");
+  if (sub === "overview") {
+    h += `<p class="lead">${bold(p.headline)}</p><div class="tiles">
+      ${tile("Minimum defaults", num(t.defaults), "service levels below the contract's floor", t.defaults ? "bad" : "")}
+      ${tile("Credits payable", usd(t.payable), t.capped ? `capped from ${usd(t.uncapped)}` : "off the next invoice")}
+      ${tile("S1 items", num(t.s1), "the most serious findings")}
+      ${tile("Corrective action plans", num(t.caps), "drafted for S1 and S2 items")}
+      ${tile("Discrepancies found", num(t.findings), "records that do not reconcile")}
+      ${tile("GPU-hours lost", num(t.gpu_hours_lost), `${num(t.vendor_gpu_hours_lost)} in the partner's tickets`)}</div>
+      <h2>Partner reported against measured from telemetry</h2>${reportedTable(p.reported, "Partner")}
+      <p class="note">Fleet availability is nearly identical either way: a few hidden hours vanish inside millions of GPU-hours. The gaps show up in restoration, repair quality, and record integrity.</p>
+      ${selfCheck(p.ev, "")}`;
+  } else if (sub === "levels") {
+    h += `<h2>Critical Service Levels (credit-bearing)</h2>${cslTable(p.csl, "csl")}${creditLine(p.credits, "it")}
+      <h2>Week by week: how far the partner's report was from the telemetry</h2>
+      <p class="note">Measured minus partner-reported, in percentage points. 0 means the weekly report was accurate; below 0 means it overstated performance.</p>
+      ${gapChart(p.gaps)}${table(p.weeks)}<h2>Key Measurements</h2>${table(p.km)}`;
+  } else if (sub === "findings") {
+    h += findingsView(p, "it");
+  } else if (sub === "actions") {
+    h += `<h2>Corrective action plans</h2><p class="note">Drafted automatically at this period review for every S1 and S2 item, grouped by affected tickets. Due dates count from the review: S1 within 5 business days, S2 within 10.</p>
+      ${table(p.caps)}<h2>Severity log</h2>${table(p.severity)}`;
+  } else if (sub === "incidents") {
+    const pr = [...new Set(p.incidents.map(i => i.Priority))].sort();
+    h += `<p>One row per <b>Ticket of Record</b>, rebuilt from telemetry. Split partner tickets are merged (TR-1, TR-2), and restoration runs from telemetry T0 to Validated RTS.</p>
+      <div class="filters"><label>Priority <select id="ipri"><option value="">All</option>${pr.map(x => `<option>${esc(x)}</option>`).join("")}</select></label>
+      <label><input type="checkbox" id="ilate"> Only incidents past their restore target</label>
+      <label><input type="checkbox" id="ival"> Only without a validated return to service</label><span class="count" id="icount"></span></div>
+      ${table(p.incidents, {id: "inc", rowClass: r => r["Within target"] ? "" : "default"})}`;
+  } else {
+    h += about(`<p><b>What this is.</b> A portfolio demonstration of vendor oversight at a partner-operated GPU data center (a fictional site of NVIDIA GB200 NVL72 racks).
+      The core idea: <b>verify partner performance with independent telemetry, not partner self-reporting.</b></p>
+      <ol><li>A machine-readable SLA defines every service level, ticket handling rule, and severity band.</li>
+      <li>A synthetic data generator simulates four weeks of hardware telemetry and partner records, then plants realistic discrepancies (split tickets, unverified part swaps, skipped validation, and more).</li>
+      <li>A discrepancy engine rebuilds every incident from telemetry alone and flags where the partner's records disagree.</li>
+      <li>This scorecard measures every service level from telemetry and compares it with the partner's own weekly report.</li></ol>
+      <p>The engines ran when this page was built, so it opens at once. <a href="lab/">Try another month</a> runs the same engines in your browser on a month generated from any seed.</p>`,
+      [["README", REPO + "#readme"], ["IT Partner SLA", "../agreements/it-partner-sla/"], ["Discrepancy report", REPO + "/blob/main/reports/discrepancy_report.md"], ["Data model", REPO + "/blob/main/docs/DATA_MODEL.md"]]);
+  }
+  return h;
+}
+function wireIncidents() {
+  const pri = document.getElementById("ipri");
+  if (!pri) return;
+  const late = document.getElementById("ilate"), val = document.getElementById("ival"), rows = DS().it.incidents;
+  const apply = () => {
+    let n = 0;
+    document.querySelectorAll("#inc tbody tr").forEach(tr => {
+      const r = rows[+tr.dataset.i];
+      const hit = (!pri.value || r.Priority === pri.value) && (!late.checked || !r["Within target"]) && (!val.checked || !r.Validated);
+      tr.hidden = !hit; n += hit;
+    });
+    document.getElementById("icount").textContent = `${n} of ${rows.length} incidents`;
+  };
+  [pri, late, val].forEach(x => x.addEventListener("change", apply));
+  apply();
+}
+
+function viewLandlord(ds) {
+  const p = ds.landlord, t = p.tiles, sub = S.sub || "overview";
+  let h = `<h1>Landlord scorecard</h1><p class="sub">${esc(p.supplier)} · ${esc(winText(ds))} · ${esc(FOOT)}</p>` + subtabs("landlord");
+  if (sub === "overview") {
+    h += `<p class="lead">${bold(p.headline)}</p><div class="tiles">
+      ${tile("Minimum defaults", num(t.defaults), "service levels below the lease's floor", t.defaults ? "bad" : "")}
+      ${tile("Credits against rent", usd(t.payable), t.capped ? "the monthly cap applied" : "off next month's rent")}
+      ${tile("S1 findings", num(t.s1), "the most serious findings")}
+      ${tile("Discrepancies found", num(t.findings), "records that do not reconcile")}
+      ${tile("Facility events", num(t.events), `${num(t.disagree)} where the work order names a different owner`)}</div>
+      <h2>Landlord reported against measured from telemetry</h2>${reportedTable(p.reported, "Landlord")}${selfCheck(p.ev, "Landlord")}`;
+  } else if (sub === "levels") {
+    h += `<h2>Critical Service Levels (credit-bearing, against rent)</h2>${cslTable(p.csl, "csl")}${creditLine(p.credits, "landlord")}<h2>Key Measurements</h2>${table(p.km)}`;
+  } else if (sub === "findings") {
+    h += findingsView(p, "landlord");
+  } else if (sub === "events") {
+    h += `<p>Every facility event in the window, rebuilt from device telemetry and attributed under the Interface Agreement, beside the party the Landlord's work order named.</p>
+      <div class="filters"><label><input type="checkbox" id="edis"> Only where the work order disagrees</label>
+      <label><input type="checkbox" id="ecap"> Only where rack capacity was lost</label><span class="count" id="ecount"></span></div>
+      ${table(p.events, {id: "events", rowClass: r => r.Agrees === "No" ? "default" : ""})}`;
+  } else {
+    h += about(`<p><b>What this is.</b> The Landlord's side of the same fictional site: a wholesale owner-operator that runs the building, power, and cooling and leases the halls to the Customer.
+      Its SLA is measured from device telemetry the Customer reads under a negotiated term of the lease (UPS management cards, busway monitors, generator controllers, CDU Redfish, leak and VESDA controllers, the BMS, and badge entries), not from the Landlord's own reports.</p>`,
+      [["Landlord SLA", "../agreements/landlord-sla/"], ["Interface Agreement", "../agreements/interface-agreement/"], ["Landlord discrepancy report", REPO + "/blob/main/reports/landlord_discrepancy_report.md"], ["Site model and drawings", REPO + "/blob/main/docs/site/SITE.md"]]);
+  }
+  return h;
+}
+function wireEvents() {
+  const dis = document.getElementById("edis");
+  if (!dis) return;
+  const cap = document.getElementById("ecap"), rows = DS().landlord.events;
+  const apply = () => {
+    let n = 0;
+    document.querySelectorAll("#events tbody tr").forEach(tr => {
+      const r = rows[+tr.dataset.i], hit = (!dis.checked || r.Agrees === "No") && (!cap.checked || r["Rack capacity lost"] === "Yes");
+      tr.hidden = !hit; n += hit;
+    });
+    document.getElementById("ecount").textContent = `${n} of ${rows.length} events`;
+  };
+  [dis, cap].forEach(x => x.addEventListener("change", apply));
+  apply();
+}
+
+function viewSecurity(ds) {
+  const p = ds.security, t = p.tiles, sub = S.sub || "overview";
+  let h = `<h1>Security Partner scorecard</h1><p class="sub">${esc(p.supplier)} · ${esc(winText(ds))} · ${esc(FOOT)}</p>` + subtabs("security");
+  if (sub === "overview") {
+    h += `<p class="lead">${bold(p.headline)}</p><div class="tiles">
+      ${tile("Minimum defaults", num(t.defaults), "service levels below the contract's floor", t.defaults ? "bad" : "")}
+      ${tile("Service credits", usd(t.payable), t.capped ? "the monthly cap applied" : "off the next invoice")}
+      ${tile("S1 findings", num(t.s1), "the most serious findings")}
+      ${tile("Discrepancies found", num(t.findings), "records that do not reconcile")}</div>
+      <h2>Security Partner reported against measured from the Customer's systems</h2>${reportedTable(p.reported, "Security Partner")}${selfCheck(p.ev, "security")}`;
+  } else if (sub === "levels") {
+    h += `<h2>Critical Service Levels (credit-bearing)</h2>${cslTable(p.csl, "csl")}${creditLine(p.credits, "security")}<h2>Key Measurements</h2>${table(p.km)}`;
+  } else if (sub === "findings") {
+    h += findingsView(p, "security");
+  } else {
+    h += about(`<p><b>What this is.</b> The contract security company for the Customer's halls in the same fictional site. It runs the Customer's security policy on the Customer's own systems:
+      guard posts, door alarm response, visitor sign-in and escorts, camera health, badge removal for leavers, and destroying drives on site before a failed part ships.
+      Its SLA is measured from the access control system, the video system's health records, and the identity feed, not from its own logs.</p>`,
+      [["Security SLA", "../agreements/security-sla/"], ["Interface Agreement", "../agreements/interface-agreement/"], ["Security discrepancy report", REPO + "/blob/main/reports/security_discrepancy_report.md"]]);
+  }
+  return h;
+}
+
+function viewSite(ds) {
+  const s = ds.site;
+  const card = (k, color, title, p, money, moneyLabel) => p ? `<div class="card" style="--c:${color}"><h3>${esc(title)}</h3><div class="who">${esc(p.supplier)}</div>
+    <dl><dt>Minimum defaults</dt><dd>${num(p.tiles.defaults)}</dd><dt>${esc(moneyLabel)}</dt><dd>${usd(money)}</dd>
+    <dt>Findings (S1)</dt><dd>${num(p.tiles.findings)} (${num(p.tiles.s1)})</dd>
+    ${p.ev ? `<dt>Engine self-check</dt><dd>${num(p.ev.detected)} of ${num(p.ev.planted)}</dd>` : ""}</dl>
+    <a class="go" href="${hashOf({...S, view: k, sub: "", item: ""})}">Open the scorecard →</a></div>` : "";
+  const total = ds.it.tiles.payable + (ds.landlord ? ds.landlord.tiles.payable : 0) + (ds.security ? ds.security.tiles.payable : 0);
+  let h = `<h1>Site AUS-1: three partners, one set of records</h1><p class="sub">${esc(winText(ds))} · ${esc(FOOT)}</p>
+    <p>The Customer leases the halls from a Landlord that runs the building, power, and cooling, contracts an IT Partner for the data hall work, and contracts a Security Partner for the guards, door alarms, visitors,
+    and media destruction in its halls. Each is measured against its own SLA from the Customer's own systems. Outages that cross the boundary between them are attributed under the Interface Agreement.</p>
+    <div class="cards">${card("it", "var(--it)", "IT Partner", ds.it, ds.it.tiles.payable, "Credits payable")}
+    ${card("landlord", "var(--ll)", "Landlord", ds.landlord, ds.landlord && ds.landlord.tiles.payable, "Credits against rent")}
+    ${card("security", "var(--sec)", "Security Partner", ds.security, ds.security && ds.security.tiles.payable, "Service credits")}</div>
+    <div class="box key">Across the three contracts, <b>${usd(total)}</b> in service credits this month. Every partner's own weekly report said its service levels were met.
+    <a href="${hashOf({...S, view: "credits", sub: "", item: ""})}">What a service credit is and how it is worked out</a>.</div>`;
+  if (!s) return h + `<p class="note">This dataset has no facility data, so only the IT Partner view is available.</p>`;
+  h += `<h2>Every partner, measured</h2>${table(s.rows)}
+    <h2>Outages that crossed the demarcation</h2>${(s.crossing.length ? s.crossing : ["No outage crossed the demarcation in this window."]).map(x => `<p>${bold(x)}</p>`).join("")}
+    <h2>What attribution changed for the IT Partner</h2><p class="note">The same telemetry, scored with the IT Partner's clock starting at the power loss instead of the Landlord's handoff.</p>
+    ${table(s.attribution)}<p>Without attribution, the IT Partner would be charged for hours the Landlord's equipment kept the rack dark. With it, each party is charged only for its own side of the demarcation.</p>`;
+  return h;
+}
+
+// ---- Service credits: in plain words, this month's arithmetic, and a calculator ------------------------------------
+const PART = [["it", "IT Partner", "var(--it)"], ["landlord", "Landlord", "var(--ll)"], ["security", "Security Partner", "var(--sec)"]];
+const SEG = ["#2a78d6", "#1baf7a", "#8b5cf6", "#eb6834", "#d4a017", "#0e9fb5", "#7a8794", "#c2417a"];
+function potBar(items, atRisk) {
+  let used = 0;
+  const segs = items.map((x, i) => { used += x.credit; return `<span style="flex:${x.credit} 0 0;background:${SEG[i % SEG.length]}" title="${esc(x.csl)}: ${usd(x.credit)}">${esc(x.csl)}</span>`; }).join("");
+  const rest = Math.max(0, atRisk - used);
+  return `<div class="potbar" role="img" aria-label="Credits taken out of the at-risk amount">${segs}${rest > 0 ? `<span class="rest" style="flex:${rest} 0 0">${usd(rest)} not taken</span>` : ""}</div>
+    <div class="scale"><span>$0</span><span>${usd(atRisk)}: the at-risk amount, the most that can come off in a month</span></div>`;
+}
+function partnerMonth(k, ds) {
+  const T = D.terms[k], p = ds[k], label = PART.find(x => x[0] === k)[1];
+  if (!p) return `<h3>${esc(label)}</h3><p class="note">This dataset has no ${esc(label)} records.</p>`;
+  const ar = T.monthly_charges * T.at_risk_pct / 100, cr = p.credits;
+  return `<h3 id="cr-${k}">${esc(label)} <span class="note">${esc(p.supplier)}</span></h3>
+    <p>Monthly charges ${usd(T.monthly_charges)} × ${esc(T.at_risk_pct)}% at risk = <b>${usd(ar)}</b>.
+    ${cr.items.length ? `${num(cr.items.length)} service level${cr.items.length === 1 ? "" : "s"} fell below the Minimum:` : "No service level fell below the Minimum, so nothing comes off."}</p>
+    ${cr.items.length ? `<div class="wide"><table><thead><tr><th>Service level</th><th class="n">Weight</th><th>Arithmetic</th><th class="n">Credit</th><th>Can be earned back</th></tr></thead><tbody>
+      ${cr.items.map(x => `<tr><td><b>${esc(x.csl)}</b> ${esc(x.name)}</td><td class="n">${esc(x.allocation_pct)}%</td><td class="nw">${esc(x.allocation_pct)}% × ${usd(ar)}</td>
+        <td class="n">${usd(x.credit)}</td><td>${x.earnback === false ? '<span class="flag bad">No</span> <span class="note">record integrity finding</span>' : x.earnback ? '<span class="flag ok">Yes</span>' : '<span class="flag na">If the rule allows</span>'}</td></tr>`).join("")}
+      <tr class="tot"><td>Total</td><td class="n">${esc(cr.items.reduce((s, x) => s + x.allocation_pct, 0))}%</td><td>${cr.capped ? `capped at ${usd(ar)}` : `under the ${usd(ar)} cap`}</td><td class="n">${usd(cr.payable)}</td><td></td></tr>
+      </tbody></table></div>${potBar(cr.items, ar)}` : ""}
+    <p class="note">${esc(T.application)} <a href="../agreements/${k === "it" ? "it-partner" : k}-sla/">Read the ${esc(label)} SLA</a>.</p>`;
+}
+function viewCredits(ds) {
+  const it = D.terms.it, ar = it.monthly_charges * it.at_risk_pct / 100, ex = ds.it.credits.items[0] || {csl: "CSL-07", allocation_pct: 25, credit: ar * 0.25};
+  const ehs = D.terms.ehs.classes;
+  return `<h1>Service credits</h1><p class="sub">What they are, how much comes off, and why. ${esc(winText(ds))}.</p>
+  <div class="box key"><b>In one sentence:</b> when a partner's measured service falls below the floor its contract sets, the Customer pays it less the next month, by an amount the contract fixes in advance.</div>
+
+  <h2>1. What is a service credit?</h2>
+  <p>Every contract lists the services the partner promises, each with a number to hit. For example, "restore a P1 fault within 4 hours in at least 95% of cases." Each of these <b>Critical Service Levels</b> has two lines:</p>
+  <div class="levels"><div class="lv-ok"><b>Expected or better</b>Good. Nothing happens.</div>
+    <div class="lv-rca"><b>Below Expected, above Minimum</b>No money comes off, but the partner must find the root cause and fix it.</div>
+    <div class="lv-def"><b>Below Minimum</b>A <i>Minimum default</i>. The Customer takes a service credit: money off the partner's next invoice (for the Landlord, off next month's rent).</div></div>
+  <p>A credit is a <b>price adjustment</b>: the Customer paid for a level of service and got less, so it pays less. It is not a fine, and it does not take away the Customer's other rights under the contract, such as ending it for repeated failure.</p>
+  <p>Credits are worked out from what the Customer <b>measured</b> in its own systems, not from what the partner reported. A weekly report that says "every SLA met" does not change the credit; that is why each scorecard shows reported and measured side by side.</p>
+
+  <h2>2. How much comes off?</h2>
+  <ol class="steps">
+    <li><b>Start with the monthly bill.</b> The Customer pays the IT Partner ${usd(it.monthly_charges)} a month.</li>
+    <li><b>A fixed share of it is "at risk".</b> The contract puts ${esc(it.at_risk_pct)}% at risk: ${usd(ar)}. That is the most that can ever come off for service levels in one month.</li>
+    <li><b>Each service level has a weight.</b> ${esc(ex.csl)} weighs ${esc(ex.allocation_pct)}%. When it defaults, ${esc(ex.allocation_pct)}% of ${usd(ar)} comes off: <b>${usd(ex.credit)}</b>.</li>
+    <li><b>Add up every default, then apply the cap.</b> The weights add up to ${esc(it.csl.reduce((a, c) => a + c.allocation_pct, 0))}%, more than 100%, so a partner cannot fail a few service levels and treat the rest as free. No single weight is above ${esc(it.max_allocation_pct)}%. However many defaults there are, the month's total stops at the at-risk amount.</li>
+    <li><b>It comes off the next bill.</b> ${esc(it.application)}</li>
+  </ol>
+
+  <h2>3. What makes it bigger, or gives it back</h2>
+  <div class="tiles">
+    ${tile("Three months in a row", "×" + esc(it.multiplier), `The same service level below Minimum for ${esc(it.doubling_after)} months running: the credit doubles.`)}
+    ${tile("Earnback", "Paid back", `The partner meets Expected on that service level in each of the next ${esc(it.earnback_periods)} months: the credit is returned.`)}
+    ${tile("No earnback when", "3 cases", "The credit was doubled, or the default involved a record integrity finding, a safety (EHS) event, or a security event.")}
+  </div>
+  <p><b>Safety (EHS) credits are separate.</b> A confirmed safety violation costs a share of the monthly bill on top of everything above: ${ehs.map(c => `${esc(c.name.toLowerCase())} ${esc(c.pct)}%`).join(", ")}.
+    They sit outside the cap and are never earned back. If the partner reported the violation itself, the credit is cut by ${esc(D.terms.ehs.self_reported_reduction_pct)}%; if it hid it, the credit is multiplied by ${esc(D.terms.ehs.concealment_multiplier)}.</p>
+
+  <h2>4. This month, partner by partner</h2>
+  ${PART.map(([k]) => partnerMonth(k, ds)).join("")}
+
+  <h2>5. Try it yourself</h2>
+  <p>Pick a partner, tick the service levels that fell below Minimum, and say how many months in a row. The calculator applies the contract's own rules; it is an illustration, not a forecast.</p>
+  <div class="filters"><label>Partner <select id="cp">${PART.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></label>
+    <button class="small-btn" id="cthis">This month's defaults</button><button class="small-btn" id="cnone">Clear</button></div>
+  <div class="calc"><div class="wide" id="ctable"></div><div class="box result" id="cres" aria-live="polite"></div></div>`;
+}
+function wireCredits() {
+  const sel = document.getElementById("cp");
+  if (!sel) return;
+  if (["it", "landlord", "security"].includes(S.sub)) {
+    sel.value = S.sub;
+    const h = document.getElementById("cr-" + S.sub);
+    if (h && h.scrollIntoView) h.scrollIntoView({block: "start"});
+  }
+  const defaults = k => new Set(((DS()[k] || {}).credits || {items: []}).items.map(x => x.csl));
+  const earnNo = k => new Set(((DS()[k] || {}).credits || {items: []}).items.filter(x => x.earnback === false).map(x => x.csl));
+  const draw = (k, preset) => {
+    const T = D.terms[k], on = preset || new Set(), no = earnNo(k);
+    document.getElementById("ctable").innerHTML = `<table id="ct"><thead><tr><th>Below Minimum</th><th>Service level</th><th class="n">Weight</th><th class="n">Months in a row</th><th>Record integrity, safety, or security finding</th></tr></thead><tbody>
+      ${T.csl.map(c => `<tr data-csl="${esc(c.id)}"><td><input type="checkbox" class="cd" aria-label="${esc(c.id)} below Minimum"${on.has(c.id) ? " checked" : ""}></td>
+        <td><b>${esc(c.id)}</b> ${esc(c.name)}</td><td class="n">${esc(c.allocation_pct)}%</td>
+        <td class="n"><input type="number" class="cm" min="1" max="12" value="1" aria-label="${esc(c.id)} months in a row"></td>
+        <td><input type="checkbox" class="ca" aria-label="${esc(c.id)} aggravating finding"${on.has(c.id) && no.has(c.id) ? " checked" : ""}></td></tr>`).join("")}</tbody></table>`;
+    calc();
+  };
+  const calc = () => {
+    const k = sel.value, T = D.terms[k], ar = T.monthly_charges * T.at_risk_pct / 100;
+    let total = 0, lines = [], back = 0;
+    document.querySelectorAll("#ct tbody tr").forEach(tr => {
+      if (!tr.querySelector(".cd").checked) return;
+      const c = T.csl.find(x => x.id === tr.dataset.csl), months = Math.max(1, +tr.querySelector(".cm").value || 1);
+      const mult = months >= T.doubling_after ? T.multiplier : 1, cr = ar * c.allocation_pct / 100 * mult;
+      const earn = mult === 1 && !tr.querySelector(".ca").checked;
+      total += cr; if (earn) back += cr;
+      lines.push(`<div class="line"><span><b>${esc(c.id)}</b> ${esc(c.allocation_pct)}%${mult > 1 ? ` ×${esc(mult)} (month ${esc(months)})` : ""}</span><span>${usd(cr)} ${earn ? '<span class="flag ok">can be earned back</span>' : '<span class="flag bad">final</span>'}</span></div>`);
+    });
+    const pay = Math.min(total, ar);
+    document.getElementById("cres").innerHTML = `<div class="note">Credit off the next ${k === "landlord" ? "rent" : "invoice"}</div><div class="big" id="cpay">${usd(pay)}</div>
+      <div class="note">${pay ? `${esc((pay / T.monthly_charges * 100).toFixed(1))}% of the ${usd(T.monthly_charges)} monthly charges` : "Nothing below Minimum, nothing comes off."}${total > ar ? `; capped from ${usd(total)}` : ""}</div>
+      ${lines.join("")}
+      <div class="line"><span>At-risk amount (the cap)</span><span>${usd(ar)}</span></div>
+      ${pay ? `<p class="note">If the partner meets Expected on the earnable ones for the next ${esc(T.earnback_periods)} months, up to ${usd(Math.min(back, pay))} comes back.</p>` : ""}`;
+  };
+  sel.addEventListener("change", () => draw(sel.value, defaults(sel.value)));
+  document.getElementById("cthis").addEventListener("click", () => draw(sel.value, defaults(sel.value)));
+  document.getElementById("cnone").addEventListener("click", () => draw(sel.value, new Set()));
+  document.getElementById("ctable").addEventListener("input", calc);
+  document.getElementById("ctable").addEventListener("change", calc);
+  draw(sel.value, defaults(sel.value));
+}
+
+// ---- Page -------------------------------------------------------------------------------------------------------
+function winText(ds) { return `${md(ds.start)} to ${md(lastDay(ds.end))}, ${lastDay(ds.end).slice(0, 4)}`; }
+function show() {
+  S = parse();
+  const ds = DS();
+  if ((S.view === "landlord" && !ds.landlord) || (S.view === "security" && !ds.security)) S.view = "site";
+  if (S.sub && SUBTABS[S.view] && !SUBTABS[S.view].some(x => x[0] === S.sub)) S.sub = "";
+  document.getElementById("ds").value = ds.key;
+  document.getElementById("window").textContent = winText(ds);
+  document.getElementById("views").innerHTML = VIEWS.map(v => `<button data-view="${v.key}" class="${v.key === S.view ? "on" : ""}"${(v.key === "landlord" && !ds.landlord) || (v.key === "security" && !ds.security) ? " disabled" : ""}><span class="dot" style="background:${v.color}"></span>${esc(v.label)}</button>`).join("");
+  const main = document.getElementById("doc");
+  // Record numbers link to the Incident Portal only for the month it holds; a newer month reuses the numbers.
+  if (ds.key === "sample") main.removeAttribute("data-tk-skip"); else main.setAttribute("data-tk-skip", "");
+  // An explicit choice, not a lookup by the hash's text (parse() already accepts only the five views).
+  const render = S.view === "it" ? viewIT : S.view === "landlord" ? viewLandlord : S.view === "security" ? viewSecurity
+    : S.view === "credits" ? viewCredits : viewSite;
+  main.innerHTML = render(ds);
+  wireFindings(); wireIncidents(); wireEvents(); wireCredits();
+  document.title = `${VIEWS.find(v => v.key === S.view).label} · Scorecards · Unified Site Management`;
+}
+document.getElementById("ds").innerHTML = D.datasets.map(d => `<option value="${esc(d.key)}">${esc(d.label)}</option>`).join("");
+document.getElementById("ds").addEventListener("change", e => go({...S, ds: e.target.value, item: ""}));
+document.getElementById("views").addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b && !b.disabled) go({...S, view: b.dataset.view, sub: "", item: ""}); });
+document.getElementById("print").addEventListener("click", () => window.print());
+window.addEventListener("hashchange", show);
+show();
+</script>
+</body>
+</html>

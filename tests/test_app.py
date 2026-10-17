@@ -102,7 +102,7 @@ def test_built_site_runs_in_browser_layout(monkeypatch, tmp_path):
     import build_site
     site = tmp_path / "site"
     build_site.build(site)
-    site = site / "app"                              # the app is served at /app/, under the site tab bar
+    site = site / "app" / "lab"                      # the app is served at /app/lab/ ("Try another month"), under the site tab bar
     html = (site / "index.html").read_text(encoding="utf-8")
     assert f"@stlite/browser@{build_site.STLITE_VERSION}/build/stlite.js" in html
     assert 'entrypoint: "streamlit_app.py"' in html and "app_bundle.zip" in html

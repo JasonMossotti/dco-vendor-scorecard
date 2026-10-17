@@ -141,13 +141,13 @@ def test_markdown_renderer():
 
 # ------------------------------------------------------------------ popups on every page
 def test_every_static_page_has_popups_with_just_its_codes(site):
-    pages = ["", "alarms/", "pir/", "weekly/", "patterns/", "energy/", "gpu/", "telemetry/", "agreements/", "agreements/it-partner-sla/", "glossary/"]
+    pages = ["", "app/", "alarms/", "pir/", "weekly/", "patterns/", "energy/", "gpu/", "telemetry/", "agreements/", "agreements/it-partner-sla/", "glossary/"]
     for path in pages:
         html = (site / path / "index.html").read_text(encoding="utf-8")
         assert html.count('<script id="gl-data"') == 1, path
         assert "GLOSSARY_POPUPS" not in html, path
-    app = (site / "app" / "index.html").read_text(encoding="utf-8")
-    assert "gl-data" not in app, "Streamlit owns the app's markup; the app has its own lookup"
+    lab = (site / "app" / "lab" / "index.html").read_text(encoding="utf-8")
+    assert "gl-data" not in lab, "Streamlit owns the Python app's markup; the app has its own lookup"
     import json
     hub = (site / "index.html").read_text(encoding="utf-8")
     data = json.loads(re.search(r'<script id="gl-data" type="application/json">(.*?)</script>', hub, re.S).group(1).replace("<\\/", "</"))
