@@ -5,7 +5,7 @@
 
 **Site operations for a partner-operated GPU data center, verified with independent telemetry instead of partner self-reporting.**
 
-**▶ [Open Unified Site Management](https://jasonmossotti.github.io/dco-vendor-scorecard/)**, the live demo: scorecards, an alarm board, an incident portal, a post-incident review, a weekly operations review, a failure pattern review, the contracts, a glossary, and a device directory, all built from one synthetic site and one set of contracts.
+**▶ [Open Unified Site Management](https://jasonmossotti.github.io/dco-vendor-scorecard/)**, the live demo: scorecards and service credits for three partners, fleet availability, an alarm board, an incident portal, post-incident reviews with an Incident Commander runbook, a weekly operations review with a one-page leadership brief, a failure pattern review, PUE, GPU health, minute-by-minute telemetry for every device family with a site health dashboard, the Hall B rollout and Hall C readiness, the contracts with an ownership trainer, a glossary, and a device directory with an asset register, all built from one synthetic site and one set of contracts.
 
 > Portfolio demonstration. All data, parties, sites, and commercial terms are synthetic and fictional. Not affiliated with, or based on internal information from, any real company.
 
@@ -29,21 +29,21 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 
 | Page | The question it answers | Live |
 |---|---|---|
-| [Overview](#overview) | How are both partners doing this month? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/) |
+| [Overview](#overview) | How are the three partners doing this month? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/) |
 | [Scorecards](#scorecards) | What did each partner report, and what does the telemetry say? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/app/) |
 | [Availability](#availability-and-repair-turnaround) | Where did the GPU-hours go, who owns each lost hour, and how fast are repairs, stage by stage? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/availability/) |
 | [Alarm Board](#alarm-board) | Which alarms are expected from approved change work, and which are not? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/) |
-| [Incident Portal](#incident-portal) | What do the partners' own tickets and work orders say, record by record? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/) |
+| [Incident Portal](#incident-portal) | What do the partners' own tickets, work orders, and dispatch records say, record by record? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/) |
 | [Post-Incident Review](#post-incident-review) | What happened in an event, why, and what are we doing about it? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) |
-| [Weekly Review](#weekly-operations-review) | What do we discuss with both partners this week? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) |
+| [Weekly Review](#weekly-operations-review) | What do we discuss with the partners this week, and what does leadership need to know? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) |
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
 | [GPU Health](#gpu-health) | Which GPUs are failing, or about to, and whose side is it on? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/gpu/) |
-| [Telemetry](#telemetry) | Does every system still have its redundant unit right now, and what is every GPU, CDU, UPS, busway, generator, chiller, and network link reading, minute by minute? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
-| [Deployments](#deployments) | Where is the Hall B rollout, and do the partners' records of it hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
-| [Agreements](#agreements-slas-as-code) | What exactly did each party agree to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
+| [Telemetry](#telemetry) | Does every system still have its redundant unit right now, and what is every GPU, CDU, UPS, busway, generator, chiller, network link, management port, and storage drive reading, minute by minute? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
+| [Deployments](#deployments) | Where is the Hall B rollout, is Hall C ready for first compute, and do the records of both hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
+| [Agreements](#agreements-slas-as-code) | What exactly did each party agree to, and who owns which fault? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
-| [Devices](#devices-location-pins-and-detail-sheets) | What is this device, where is it, and what does it connect to? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/devices/) |
+| [Devices](#devices-location-pins-and-detail-sheets) | What is this device, where is it, what does it connect to, and does the asset register agree? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/devices/) |
 
 Then: [how it fits together](#how-it-fits-together), [the site](#the-site), [the data and the engines](#the-data-and-the-engines), [measuring on months the code never saw](#measuring-on-months-the-code-never-saw), [toward live data](#toward-live-data-the-read-only-collector), [tests and deployment](#tests-and-deployment), [run it locally](#run-it-locally), and the [project layout](#project-layout).
 
@@ -54,18 +54,18 @@ Everything is generated from three sources of truth: the contracts (`sla/*.yaml`
 ```mermaid
 flowchart LR
   subgraph truth[Sources of truth]
-    SLA["Contracts as code<br/>sla/common.yaml<br/>it_partner · ot_partner<br/>interface_agreement"]
+    SLA["Contracts as code<br/>sla/common.yaml<br/>it_partner · ot_partner · security_partner<br/>interface_agreement"]
     SITE["Site model<br/>site/site.yaml"]
   end
   GEN["Synthetic generator<br/>config/synthetic.yaml"]
   GEN --> DATA["Dataset<br/>telemetry + partner records<br/>data/sample/"]
   SITE --> GEN
   SLA --> GEN
-  DATA --> ENG["Engines<br/>IT discrepancy engine<br/>Landlord engine + attribution"]
+  DATA --> ENG["Engines<br/>IT discrepancy engine<br/>Landlord engine + attribution<br/>Security Partner engine"]
   SLA --> ENG
   SITE --> ENG
   ENG --> REP["Scorecards, findings,<br/>credits, CAPs<br/>reports/"]
-  DATA --> HIST["History, change, energy, GPU health<br/>data/history/ · data/changes/ · data/energy/ · data/gpu_health/"]
+  DATA --> HIST["Layers on their own random streams<br/>security · history · changes · energy · GPU health<br/>telemetry · deployments · readiness · assets · fire<br/>incident comms (data/*/)"]
   REP --> PAGES
   HIST --> PAGES
   JUDG["Human judgment (YAML)<br/>pir/ · weekly/notes/ · weekly/brief/ · patterns/"] --> PAGES
@@ -76,13 +76,13 @@ flowchart LR
   PAGES["Static site<br/>scripts/build_site.py"] --> GH["GitHub Pages"]
 ```
 
-Every page is a static HTML file with its data embedded as JSON, so it loads instantly and needs no server. The one exception is the Scorecards app, which runs the real Python pipeline in the browser.
+Every page is a static HTML file with its data embedded as JSON, so it loads instantly and needs no server. The one exception is **Try another month** on the Scorecards tab (`/app/lab/`), which runs the real Python pipeline in the browser to score a month generated from any seed. Each data layer after the sample is generated on its own random stream, so adding one never changes a record or a result that already existed. [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) describes every layer and file.
 
 ## Overview
 
 ![Overview page](docs/images/overview.png)
 
-**What it shows.** The landing page: each partner's self-report beside the measured result, then one card per function with its headline numbers (120 alarms this month, 11 expected from change work, 4 outside declared impact; 146 partner records, 29 that do not reconcile) and a button into each. A tab bar at the top of every page reaches every function.
+**What it shows.** The landing page: each partner's self-report beside the measured result, then one card per function with its headline numbers (120 alarms this month, 11 expected from change work, 4 outside declared impact; 152 partner records, 30 that do not reconcile) and a button into each. A tab bar at the top of every page reaches every function.
 
 **How it works.** `scripts/render_hub.py` fills `templates/hub.html` by computing every number with the same data and code as the page it links to, and `tests/test_hub.py` checks they agree, so the overview can never disagree with a report. The tab bar is defined once in `src/scorecard/sitenav.py` and injected into every page by `scripts/build_site.py`, which also links every ticket number on a page to its record in the Incident Portal.
 
@@ -96,6 +96,10 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 
 *A finding: a compute tray failed again 29 minutes after return to service and the follow-up was logged as a new ticket. Under ticket rule TR-1 it is one Ticket of Record, measured at 10.4 hours against the 8-hour target. The evidence rows are the exact telemetry and ticket records.*
 
+<img src="docs/images/service-credits.png" alt="Service credits: what a credit is, then each partner's credits worked out step by step" width="860">
+
+*Service credits in plain words: what a credit is, then each partner's month worked out from the contract terms, with a calculator.*
+
 **How it works.**
 - The page is prebuilt like the other tabs: `scripts/render_scorecards.py` (`src/scorecard/scorecards_page.py`) runs the three engines on each shipped dataset when the site is built, so it opens at once. The commercial terms the Service credits view uses come from the SLA YAML.
 - **Try another month** (`/app/lab/`) is a Streamlit app (`app/streamlit_app.py`) that runs **entirely in the browser** through [stlite](https://github.com/whitphx/stlite) (Python on WebAssembly). No server: the first visit takes 20 to 40 seconds while Python boots.
@@ -104,6 +108,8 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 - The page is tested in CI with jsdom (`tests/js/scorecards_page.cjs`) and against the reports (`tests/test_scorecards_page.py`); the Python app against a fake Streamlit (`tests/fake_streamlit.py`) that records every element it renders.
 
 **The Security Partner.** Llano Gate guards the Customer halls under its own [Security SLA](docs/sla/SECURITY_SLA.md): guard post coverage, door alarm response (a guard badged at the door within 3 minutes for a forced door, 5 for a held one), visitor escorts, camera availability, leaver badges off within 24 hours, every drive in a failed compute tray destroyed on site (NIST SP 800-88 Destroy) before the tray ships, and record integrity. The measurements never use video or a guard's word: the evidence is the Customer's own access control system (a guard's badge at the post or the alarmed door, the escort's badge before the visitor's), camera health and recorder retention, the identity feed of leavers, the trays' Redfish drive inventory, and the RMA shipments. Its records are generated on their own random stream (`src/scorecard/synthetic/security.py`) from the guard and visitor badges the site already had, and `scripts/run_security.py` plants four discrepancies a month: a post reported staffed with no guard badged in, a door alarm closed with no guard at the door, a visitor in a hall without the escort, and a drive shipped with no destruction certificate. Dispatch records (SIR) appear in the Incident Portal, the Interface Agreement gains five ownership rows and a demarcation point (DM-SEC), and the weekly pack carries a third partner.
+
+<img src="docs/images/security-scorecard.png" alt="Security Partner scorecard: every service level reported at 100%, measured lower from the access control system" width="860">
 
 ## Availability and repair turnaround
 
@@ -161,6 +167,8 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 - **Blank form**: enter any record number, or press **Start post-incident review** on any record in the Incident Portal, and every factual field fills from the data: times, response against the right partner's targets for that priority, the timeline with each source record, attribution, measurement, findings, and related records. Narratives, factors, and actions stay editable, drafts save as you type in your own browser, and **Export YAML** gives the file a signed-off review is committed as.
 - **Command**: the Customer's Incident Commander runbook. A severity matrix puts both SLAs' priorities side by side with the stricter clock and how the Customer commands at each, beside the internal S1 to S4 escalation; the paging tree for a critical alarm comes from the Customer's notification routing; 14 steps in three phases (first 15 minutes, while the bridge is open, restoration and close) each name their clock; and three status-update templates (to leadership, and from each partner's lead). Below it, the rack A07 outage is **replayed** against the runbook: 9 of 14 steps met, 5 missed (the bridge opened at 19 minutes against 15, one 65-minute gap in the Landlord lead's updates, a 2 h 37 min gap in leadership updates, no decision as MOP-310's window expired, and restoration confirmed while the A-side feed was still open). Each miss says why, and the bridge's comms log is shown in full. A missed step is a process finding for the review, not an SLA default.
 
+<img src="docs/images/command-replay.png" alt="The rack A07 outage replayed against the Incident Commander runbook: 14 steps, 9 met, 5 missed" width="860">
+
 ![Impact strip and timeline at a glance](docs/images/pir-timeline.png)
 
 The technical sections follow: response against targets, every alarm and event reproduced exactly from its source record, the attribution decision, contract and EHS consequences, contributing factors (classified the way Uptime classifies human-error outages), lessons including where we got lucky, owned and dated action items, the communications log, a repeat-event check, and sign-off. A plain-language toggle hides the technical sections for leadership; the review prints to PDF or exports to Markdown.
@@ -171,14 +179,16 @@ The technical sections follow: response against targets, every alarm and event r
 
 ![Weekly operations review, week 38](docs/images/weekly.png)
 
-**What it shows.** The pack the Customer's site lead brings to the weekly joint review with both partners, one per week of the sample month, in meeting order: a status line per partner (on track, at risk, or below Minimum month to date), every service level for the week and month to date beside the partner's own report with overstated figures flagged, P1 incidents in full and P2 exceptions, new findings, open post-incident actions, a seven-day look-ahead (approved MOPs and changes, maintenance due, Hall B handoffs, rostered shifts), staffing, spares, safety, and the meeting's decisions, priorities, and asks.
+**What it shows.** The pack the Customer's site lead brings to the weekly joint review with the partners, one per week of the sample month, in meeting order: a status line per partner (on track, at risk, or below Minimum month to date), every service level for the week and month to date beside the partner's own report with overstated figures flagged, P1 incidents in full and P2 exceptions, new findings, open post-incident actions, a seven-day look-ahead (approved MOPs and changes, maintenance due, Hall B handoffs, rostered shifts), staffing, spares, safety, and the meeting's decisions, priorities, and asks.
 
 **How it works.** `src/scorecard/weekly.py` computes each pack with the same engines as the monthly scorecards, as of the end of its week. Three rules keep it honest, and each is a test:
 - **Early warnings, not credits.** The contract settles monthly, so a weekly pack never shows a credit.
 - **Nothing known early.** A pack uses only what existed by the end of its week; a finding appears in the week its discrepancy was observed.
-- **The weeks reconcile with the month.** The last week's month to date equals the monthly scorecards for both partners, weekly power availability averages exactly to the monthly figure, and every finding and incident is counted exactly once, on the sample and on 20 generated months.
+- **The weeks reconcile with the month.** The last week's month to date equals the monthly scorecards for every partner, weekly power availability averages exactly to the monthly figure, and every finding and incident is counted exactly once, on the sample and on 20 generated months.
 
 **Leadership brief.** A second view of each week, sized to print on one page for site leadership: four headline numbers in plain language (fleet availability, Hall B racks handed off on time against their committed dates, each partner's service levels below minimum, and PUE against its target), then the top three risks with owners and dates, the decisions needed, and the asks. The numbers are read from the week's pack and tested to equal it (Hall B racks also equal CSL-09 month to date); the risks, decisions, and asks are written in `weekly/brief/<week>.yaml` and tested against the facts like the notes: every reference is in that week's facts, every number appears in them, codes stay out of the text, owners are roles, and no credits are shown. Link to one with `#2026-W38/brief`.
+
+<img src="docs/images/leadership-brief.png" alt="Leadership brief for week 39: four headline numbers, the top risks, and the decisions needed" width="860">
 
 Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_weekly.py` writes the page and [`docs/weekly/`](docs/weekly/) (each week's pack and its brief).
 
@@ -201,7 +211,7 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 ![Energy and PUE: tiles and the 52-week chart](docs/images/energy.png)
 
-**What it shows.** Power usage effectiveness for the sample month from the site's meters (1.502), set beside the PUE in the Landlord's monthly energy report (1.434) and the 52-week PUE the Landlord SLA tracks (1.507 against a target of at most 1.35, missed: the site runs its full cooling and house load while Hall B is still deploying). A stacked bar per four-week period splits PUE into cooling, the power path, and house load, so the free-cooling winters and the hot summers are visible; a daily line shows the month. Two findings: the report does not reconcile with the meters (its PUE matches IT energy read at the UPS inputs instead of the outputs), and a chiller's free cooling was left off for six days after maintenance with no change record.
+**What it shows.** Power usage effectiveness for the sample month from the site's meters (1.431), set beside the PUE in the Landlord's monthly energy report (1.367) and the 52-week PUE the Landlord SLA tracks (1.425 against a target of at most 1.35, missed: the site runs its full cooling and house load while Hall B is still deploying). A stacked bar per four-week period splits PUE into cooling, the power path, and house load, so the free-cooling winters and the hot summers are visible; a daily line shows the month. Two findings: the report does not reconcile with the meters (its PUE matches IT energy read at the UPS inputs instead of the outputs), and a chiller's free cooling was left off for six days after maintenance with no change record.
 
 **How it works.**
 - PUE follows ISO/IEC 30134-2:2026: total facility energy (utility revenue meters, plus generator energy only while the generators carried the site in an outage) divided by IT energy (UPS output meters), both as energy over the period. Partial PUE splits the overhead into cooling, power path, and house load.
@@ -226,13 +236,12 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 ![Telemetry opens on Site health: redundancy against the design, a tile per device family, and the hall map, at any hour](docs/images/telemetry.png)
 
-**Site health.** The tab opens on the whole site at one hour, with a replay clock over the month. Redundancy is the headline: for each of 20 systems (utility feeds 2N, generators N+1, IT UPSs 4 make 3, rack feeds 2N, CDUs and their pumps, chillers, water pumps, thermal walls and their fans, CRAHs), the units in service against the units the design needs; amber means running at N with no spare, red means below N. Under it, a tile per device family with each hall's main readings, a map of all 64 racks with their CDUs, and the conditions behind every amber or red. At the Sep 24 utility outage hour it shows 0 of 2 utility feeds and the site on generators; at Sep 15 16:00 it shows rack A07 red with both feeds lost. It shows readings and redundancy, not alarms, and there is no single health score, because one number would hide which redundancy is gone.
+**Site health.** The tab opens on the whole site at one hour, with a replay clock over the month. Redundancy is the headline: for each of 28 systems (utility feeds 2N, generators N+1, IT UPSs 4 make 3, mechanical UPSs and rack feeds 2N, CDUs and their pumps, chillers, water pumps, thermal walls and their fans, CRAHs, the management aggregation pairs, and each hall's storage cluster, storage leaves, and spines), the units in service against the units the design needs; amber means running at N with no spare, red means below N. Under it, a tile per device family with each hall's main readings, a map of all 64 racks with their CDUs, and the conditions behind every amber or red. At the Sep 24 utility outage hour it shows 0 of 2 utility feeds and the site on generators; at Sep 15 16:00 it shows rack A07 red with both feeds lost. It shows readings and redundancy, not alarms, and there is no single health score, because one number would hide which redundancy is gone.
 
-- `src/scorecard/site_health.py` reads only what the five telemetry sections publish (their hourly tiers and recorded state changes) and the topology in `site/site.yaml`. A unit counts as out for any minute a recorded state says so, planned work included: the design is at N while a pump is out for a filter change, even though the CDU's own redundancy status reports only failures. Thresholds are in `config/site_health.yaml` (ASHRAE's recommended and A1 allowable supply air, 75% per UPS for 4 make 3).
-- It is checked against the hourly figures each section publishes, which it was not built from: bypass minutes, busway dead minutes, chiller alarm and BMS-off minutes, fans running, pump redundancy, dark racks only while both feeds are lost, and generators running whenever the utility is lost. On the sample, 72,682 of 72,682 cases agree. Report: `reports/site_health.md`.
+- `src/scorecard/site_health.py` reads only what the seven telemetry sections publish (their hourly tiers and recorded state changes) and the topology in `site/site.yaml`. A unit counts as out for any minute a recorded state says so, planned work included: the design is at N while a pump is out for a filter change, even though the CDU's own redundancy status reports only failures. Thresholds are in `config/site_health.yaml` (ASHRAE's recommended and A1 allowable supply air, 75% per UPS for 4 make 3).
+- It is checked against the hourly figures each section publishes, which it was not built from: bypass minutes, busway dead minutes, chiller alarm and BMS-off minutes, fans running, pump redundancy, dark racks only while both feeds are lost, generators running whenever the utility is lost, management switches up, storage protection, and each hall's GPU power adding up to its UPS output. On the sample, 162,730 of 162,730 cases agree. Report: `reports/site_health.md`.
 
-
-**What it shows.** Every GPU at the site (3,312 in 46 racks) sampled once a minute for the month, in the published format of NVIDIA's open-source DCGM exporter: temperature, memory temperature, power, energy, utilization, SM clock, memory used, tensor activity, the last XID, remapped rows, pending remaps, corrected errors, and the time spent throttled for heat or power. A heatmap of every rack by hour opens a rack's 72 GPUs at any hour, and a GPU's month by hour, with its XIDs, drains, and slowdowns marked and linked to their tickets. Around each event the page has one-minute detail for the tray's four GPUs, and shows the exporter's own text output (`/metrics`) at any of those minutes. Hall B's GB300s are capped at 1,200 W to fit the 132 kW rack envelope, so they spend much of the month held at that limit.
+**GPUs.** Every GPU at the site (3,312 in 46 racks) sampled once a minute for the month, in the published format of NVIDIA's open-source DCGM exporter: temperature, memory temperature, power, energy, utilization, SM clock, memory used, tensor activity, the last XID, remapped rows, pending remaps, corrected errors, and the time spent throttled for heat or power. A heatmap of every rack by hour opens a rack's 72 GPUs at any hour, and a GPU's month by hour, with its XIDs, drains, and slowdowns marked and linked to their tickets. Around each event the page has one-minute detail for the tray's four GPUs, and shows the exporter's own text output (`/metrics`) at any of those minutes. Hall B's GB300s are capped at 1,200 W to fit the 132 kW rack envelope, so they spend much of the month held at that limit.
 
 **How it works.**
 - The data is synthetic and on its own random stream (`src/scorecard/synthetic/telemetry.py`, `config/telemetry.yaml`): field names, metric types, help text, and labels as the exporter publishes them; a workload model per rack (one job per NVLink domain, checkpoints, restarts after a GPU fault, burn-in on Hall B until each node's validated handoff); temperature following power above the CDU supply. Every number is an assumption or a cited public figure.
@@ -240,25 +249,43 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - Storage is tiered as a real site would: rack hourly and one-minute windows around events are committed (`data/telemetry/gpu/`); the per-GPU hourly tier (about 37 MB) is built when the site is published, and its checksums are committed so the tests catch any drift.
 - Building it found one disagreement in the GPU Health data itself: a brief slowdown could read higher than its rack's recorded daily peak. The GPU Health generator now records the higher reading (18 rack-days changed by under 1 °C; no finding or headline moved).
 
-**CDUs.** A selector on the left picks the device family: GPUs, CDUs, Power, and the families still to come (network, mechanical) shown as planned. The 8 CDUs serving Halls A and B (CoolIT CHx2000, one duty pump and one standby, PG25) are read once a minute over **DMTF Redfish**, the open standard the site already uses for its read-only access to the Landlord's CDUs: the `CoolingUnit`, its primary (facility water) and secondary (rack loop) `CoolantConnectors` with supply and return temperature, flow, pressures and `HeatRemovedkW`, both `Pumps`, the filter, the reservoir, two leak detectors, and the environment. No CDU maker publishes its Modbus register map or BACnet point list (they ship with the unit or under NDA), so the BMS point numbers on the page are labelled illustrative. Each CDU has a month by hour, its events linked to the work orders, PMs, and tickets, and the Redfish JSON a client would read at any minute.
+**CDUs.** A selector on the left picks the device family: Site health, GPUs, CDUs, Power, Network, Mechanical, and Storage. The 8 CDUs serving Halls A and B (CoolIT CHx2000, one duty pump and one standby, PG25) are read once a minute over **DMTF Redfish**, the open standard the site already uses for its read-only access to the Landlord's CDUs: the `CoolingUnit`, its primary (facility water) and secondary (rack loop) `CoolantConnectors` with supply and return temperature, flow, pressures and `HeatRemovedkW`, both `Pumps`, the filter, the reservoir, two leak detectors, and the environment. No CDU maker publishes its Modbus register map or BACnet point list (they ship with the unit or under NDA), so the BMS point numbers on the page are labelled illustrative. Each CDU has a month by hour, its events linked to the work orders, PMs, and tickets, and the Redfish JSON a client would read at any minute.
 
 - `src/scorecard/synthetic/telemetry_cdu.py` and `config/telemetry_cdu.yaml` build the readings on their own random stream; `src/scorecard/telemetry_cdu.py` checks them from what they publish against every CDU record: the hourly supply and flow to the last digit, each pump failure (the failed pump was the one running, flow dips for a minute while the standby ramps), each filter-change isolation, the leaks on the right detectors, the filter's pressure drop falling only at a recorded change, the facility water temperature in the energy meters, the CDUs' own draw inside the metered mechanical load, and a **heat balance**: each hall's heat removed equals the liquid share of its racks' power in the GPU telemetry, so rack A07's power loss and Hall B's burn-in show on the CDUs too. On the sample, 664,024 of 664,024 cases agree.
+
+![Power telemetry: the one-line diagram coloured by the month's peak load](docs/images/telemetry-power.png)
 
 **Power.** Every UPS, busway run, tap-off, and generator, read once a minute in its maker's published point map: the Galaxy VX and VL UPSs over SNMPv3 (UPS-MIB, RFC 1628, and APC PowerNet-MIB) with the Galaxy VX Modbus registers beside them, the Starline busway's M70 meters over SNMP, and the CAT generators' EMCP 4.4 controllers over Modbus. A one-line diagram colours the power path by the month's peak load; each UPS has its month by hour and any minute with the SNMP walk or Modbus read a client would get; each busway run shows its current against the one-feed limit beside its partner's; each generator shows its runs against the NFPA 110 30% line, with GEN-4's short test (finding L-003) marked.
 
 - `src/scorecard/synthetic/telemetry_power.py` and `config/telemetry_power.yaml` build the readings bottom up on their own random stream: each rack's power from the GPU telemetry splits across its A and B tap-offs, runs add busway loss, and each UPS carries its runs, so the hall totals are the racks. The records drive every state: UPS bypass, battery, and module events, tap-off breakers opening and closing, a busway losing its feed, the generators' monthly tests, and the utility outage (UPSs on battery for 11 to 14 seconds, then all 7 generators carrying the site).
-- `src/scorecard/telemetry_power.py` checks them from what they publish: each rack's two tap-offs against its power, every breaker and feed loss at its recorded minute, the power tree up to each hall's UPS output and input every hour against the energy meters, UPS modes and batteries against the event log, the mechanical UPSs against their polls and the CDUs' draw, every generator reading, the outage energy within 0.2% of the meter, and voltage and frequency inside ANSI C84.1 range A. On the sample, 140,974 of 140,974 cases agree.
+- `src/scorecard/telemetry_power.py` checks them from what they publish: each rack's two tap-offs against its power, every breaker and feed loss at its recorded minute, the power tree up to each hall's UPS output and input every hour against the energy meters, UPS modes and batteries against the event log, the mechanical UPSs against their polls and the CDUs' draw, every generator reading, the outage energy within 0.2% of the meter, and voltage and frequency inside ANSI C84.1 range A. On the sample, 140,299 of 140,299 cases agree.
+
+![Network telemetry, East-West: every InfiniBand leaf by hall and rail, with each hall's totals](docs/images/telemetry-network.png)
 
 **Network.** Every back-end InfiniBand link (3,312, one per GPU, rail-optimized to 92 leaf switches) and every NVLink switch tray (414), read once a minute under the published names: the IBTA port counters as NVIDIA UFM Telemetry and `perfquery` name them (PortXmitDataExtended, SymbolErrorCounterExtended, LinkDownedCounterExtended), the optic's receive power, SNR, raw BER, and temperature, the tray end through node_exporter, the leaf chassis over SNMP (Quantum-2) or gNMI (Quantum-X800), and the NVLink trays under the NMX-T names NVIDIA publishes. A fabric map shows every leaf by hall, rack pair, and rail; each port has its month by hour and minute detail around every fault with what UFM, `perfquery`, `mlxlink`, and the tray's node_exporter would read; the wrong-end optic swap on leaf-a07-r1:swp18 (finding F-011) shows the errors continuing until the host end was replaced.
 
 - `src/scorecard/synthetic/telemetry_network.py` and `config/telemetry_network.yaml` build the readings on their own random stream: traffic follows each tray's GPUs, a failing optic shows its signature (low receive power for a host-end laser, low SNR for a switch-end receiver) before its errors, and every link event comes from the fabric manager's records. Rack A07's power loss and Hall B's cabling now log their link events as a real fabric manager would; the engine and alarm board fold the outage's 144 events under the rack outage (`src/scorecard/fabric.py`), so every headline number is unchanged.
 - `src/scorecard/telemetry_network.py` checks them from what they publish: every symbol-error report against the counter, each link down exactly between its recorded down and up, every link's far end against the device directory, traffic only while the tray's GPUs report, each Hall B rack's 72 links up from their recorded cabling, the optic signature before each replacement on record, uplinks carrying their share, the NVLink trays against the NMX records, and every reading inside the module's published range. On the sample, 33,917 of 33,917 cases agree.
 
+![Mechanical telemetry: the chiller plant by hour, with free cooling, trips, and BMS holds](docs/images/telemetry-mechanical.png)
+
+**Mechanical.** The chiller plant (11 Liebert AFC free-cooling chillers, N+1), the 3 facility water pumps, the facility water loop, the 8 thermal walls, and the 6 electrical-room CRAHs, read once a minute over **BACnet/IP** from the Landlord's BMS server under the point names Vertiv publishes for its iCOM controllers. A plant chart shows every chiller's hour (compressors, free cooling, tripped, or held off by the BMS) against the outdoor air, and each machine has its month by hour and the BACnet read a client would get at any minute. The hourly energy meters split into each machine, and each hall's thermal walls carry the heat its CDUs do not.
+
+- `src/scorecard/synthetic/telemetry_mechanical.py` and `config/telemetry_mechanical.yaml` build the readings on their own random stream; `src/scorecard/telemetry_mechanical.py` checks them against the records: chillers, pumps, and CRAHs adding up to their energy meters every hour, each hall's thermal walls plus its CDUs equal to its mechanical UPS output, chiller capacity equal to the plant's heat and loop flow equal to the water its users draw, the supply header against the metered water temperature, every compressor trip, BMS hold, and free-cooling lockout exactly over its recorded span, and no alarm or hold the records do not have. On the sample, 16,035 of 16,035 cases agree.
+
+![Management network telemetry: BMC polls answered by hall, and the records that do not reconcile](docs/images/telemetry-management.png)
+
+**Management network.** The out-of-band plane the Customer reads every rack through: 2,240 BMCs (every compute tray, power shelf controller, and NVLink switch tray), 128 rack management switches (one out of band and one in band per rack), 4 aggregation switches, and 8 console servers. Every BMC's Redfish service root is polled once a minute by the Telemetry of Record, every switch and console server is read over SNMPv3 with its traps, and the IT Partner's console sessions are logged. A span with no answers is a span with no evidence. Four findings, each a case where records do not reconcile: a power shelf's redundancy check recorded as passing while its BMC was not answering, three Hall B BMCs first answering 10 hours after the rack's milestone M4 was reported complete, a management switch down for 19.9 hours with no ticket, and two console server ports labelled the wrong way round. 4 of 4 planted, 0 false positives; 132,944 of 132,944 cases agree (`src/scorecard/telemetry_mgmt.py`, own random stream).
+
+![Storage telemetry: each hall's cluster, the fabric, GPU-hours idle on storage, and the spares shelf](docs/images/telemetry-storage.png)
+
 **Storage.** Each hall's storage cluster (16 generic all-flash storage nodes, 24 NVMe drives each, erasure coding 8+2) and the storage and in-band Ethernet fabric that connects every compute tray to it (SN5600 leaf pairs per row, a storage leaf pair and a spine pair per hall, as in NVIDIA's GB200 SuperPOD reference architecture), read as the Customer's Telemetry of Record would: each drive bay's Redfish Drive resource once a minute, every fabric port over SNMPv3 IF-MIB with its traps, and the clients' I/O stalls from the Customer's job telemetry. A storage fault idles GPUs that are healthy, so neither the scheduler nor CSL-01 counts the time; this section measures it (271.6 GPU-hours in the sample month, shown beside the Availability bridge) and names the owner. The Network family is split in two: East-West (GPU to GPU: InfiniBand and NVLink) and North-South (in and out of the racks: this storage fabric and the management network).
 
 - `src/scorecard/synthetic/telemetry_storage.py` and `config/telemetry_storage.yaml` build the data on its own random stream: drive failures, predictive swaps, rebuilds, node reboots, port blips, and flapping uplinks, with the IT Partner's tickets and the custody log of every pulled drive. `src/scorecard/telemetry_storage.py` checks it against itself and the other records (928,339 of 928,339 cases) and raises four findings, each a case where records do not reconcile: a ticket naming the wrong bay, a ticket resolved before the rebuild finished, a pulled drive with no custody handover, and a flapping uplink whose ticket says there was no customer impact. 4 of 4 planted, 0 false positives.
 - **Storage spares shelf** (`/telemetry/#storage-spares`). The storage drives and the storage fabric's optics sit on a shelf in each hall's storage row with their own ledger. The IT Partner SLA sets a minimum of 4 of each per hall, and KM-06 and KM-07 are measured on the weekly counts: 15 of 16 counts at or above minimum in the sample month (Hall A's drive shelf counted 2 after four drive swaps in the first week), 16 of 16 counts matching the ledger. Every part a storage ticket used is issued from its hall's shelf, and the asset register's shelf matches the shelf ledger at every daily cut.
-- **Fire protection** (`/telemetry/#fire`). The Landlord's fire alarm panel (FACP-1), pre-action sprinkler zones, and clean agent systems are events, not a telemetry stream: the panel's history log, the Landlord's impairment log, and the impairment notices the Customer received, reconciled under the Interface Agreement's impairment rules (FPI-1 to FPI-6: notice 24 hours ahead, a fire watch past 4 hours, restore within the window or extend with notice, and the panel is the record of restoration). The sample month holds 6 impairments and two findings: an impairment logged restored inside its window while the panel shows the control valve closed until the next morning (FLS-1), and a control valve closed for over two hours with nothing on the log (FLS-2). Site health shows what is out of service at the hour shown, beside the redundancy states, and each impairment is an IMP record in the Incident Portal.
+- **Fire protection** (`/telemetry/#fire`, screenshot below). The Landlord's fire alarm panel (FACP-1), pre-action sprinkler zones, and clean agent systems are events, not a telemetry stream: the panel's history log, the Landlord's impairment log, and the impairment notices the Customer received, reconciled under the Interface Agreement's impairment rules (FPI-1 to FPI-6: notice 24 hours ahead, a fire watch past 4 hours, restore within the window or extend with notice, and the panel is the record of restoration). The sample month holds 6 impairments and two findings: an impairment logged restored inside its window while the panel shows the control valve closed until the next morning (FLS-1), and a control valve closed for over two hours with nothing on the log (FLS-2). Site health shows what is out of service at the hour shown, beside the redundancy states, and each impairment is an IMP record in the Incident Portal.
+
+![Fire protection: impairments reconciled against the fire panel's history log](docs/images/fire-protection.png)
 
 ## Deployments
 
@@ -279,6 +306,9 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - Scored on 60 generated programs with the planted records moved each time: 240 of 240 found (60 per check). There were 0 false positives against pending signatures, failed-then-passed inspections, and tap-offs energized minutes after their leak test.
 
 **Hall C readiness** (`#hallc`). The tab also carries the next hall: Hall C, the 800 VDC pilot, from the Landlord's commissioning to the Customer's first compute.
+
+![Hall C readiness: the first-compute forecast, its critical path, and commissioning by system and level](docs/images/hall-c-readiness.png)
+
 - Commissioning levels L1 to L5 for 13 systems from the site model (MVSSTs, energy storage, 800 VDC busway, CDUs, CRAHs, VESDA, leak detection, monitoring points) plus the hall-wide integrated test. Each script shows its runs, its signatures in order, and its issues log entries by category.
 - The Customer's own readiness gates: R0 commissioning accepted, R1 spares and logistics, R2 security and access, R3 people and process, R4 first compute.
 - A first-compute forecast with its critical path. In the sample, the energy storage factory test slipped with the vendor, and the forecast runs one day past the committed date.
@@ -301,13 +331,15 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - **EHS for every partner** (OSHA 1910/1926/1904, NFPA 70E-2027, 70B, 855, 110, 72, 51B): 12 site safety rules and three violation classes; EHS credits apply only to independently confirmed violations and are never based on reported injuries or near misses.
 - **Fault attribution** walks each rack's power and cooling paths in the site model to decide which side of the demarcation an outage started on (FA-1), and starts the other partner's clock only at the handoff (FA-3).
 
-**Ownership trainer.** A scenario quiz at [`/agreements/ownership-trainer/`](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/ownership-trainer/), one scenario per row of the Interface Agreement's break-fix ownership matrix (27). An example is coolant dripping from a quick-disconnect on rack A06's manifold: who is Responsible, who is Accountable, and who has to alert the Customer how fast? After each answer it shows the RACI row, the demarcation boundary, the priority criterion quoted from the owning party's SLA, the notification rule (NT-1 within 5 minutes for a P1, NT-2 within 15 for a P2), the attribution rules and handoffs that apply, and the sample month's records where that row applied, linked to the Incident Portal. It has a Quick 10 mode and an every-row mode. `config/ownership_trainer.yaml` holds only what a technician would see; every answer is read from `sla/interface_agreement.yaml` (`src/scorecard/trainer.py`), and tests check that every sample record belongs to a row and every priority criterion exists in the contract, so the quiz cannot drift from the contract. The score stays in the page; nothing is stored.
+**Ownership trainer.** A scenario quiz at [`/agreements/ownership-trainer/`](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/ownership-trainer/), one scenario per row of the Interface Agreement's break-fix ownership matrix (30). An example is coolant dripping from a quick-disconnect on rack A06's manifold: who is Responsible, who is Accountable, and who has to alert the Customer how fast? After each answer it shows the RACI row, the demarcation boundary, the priority criterion quoted from the owning party's SLA, the notification rule (NT-1 within 5 minutes for a P1, NT-2 within 15 for a P2), the attribution rules and handoffs that apply, and the sample month's records where that row applied, linked to the Incident Portal. It has a Quick 10 mode and an every-row mode. `config/ownership_trainer.yaml` holds only what a technician would see; every answer is read from `sla/interface_agreement.yaml` (`src/scorecard/trainer.py`), and tests check that every sample record belongs to a row and every priority criterion exists in the contract, so the quiz cannot drift from the contract. The score stays in the page; nothing is stored.
+
+<img src="docs/images/ownership-trainer.png" alt="Ownership trainer: who is Responsible, who is Accountable, and who must alert the Customer how fast" width="860">
 
 ## Glossary and code popups
 
 ![Glossary, A to Z](docs/images/glossary.png)
 
-**What it shows.** Every acronym, contract code, and record ID the site uses (371 entries), A to Z or by type, with search. On every page each code has a dotted underline; clicking it opens a small card with its meaning and a link to the clause that defines it, without leaving the page. The Scorecards app has a "Look up a code" panel.
+**What it shows.** Every acronym, contract code, and record ID the site uses (700 entries), A to Z or by type, with search. On every page each code has a dotted underline; clicking it opens a small card with its meaning and a link to the clause that defines it, without leaving the page. The Scorecards app has a "Look up a code" panel.
 
 **How it works.** Contract meanings are quoted from the same YAML the scorecards are scored against (`config/glossary.yaml` points at contract paths rather than retyping them); acronyms and record families (format and an example) are written once. `scripts/render_glossary.py` scans the text of every page, contract, review, and pack for code-shaped tokens, and its `--check` mode fails CI if any of them has no meaning in the glossary. The popup script is one shared partial (`templates/partials/glossary_popup.html`).
 
@@ -315,7 +347,7 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 ![Device directory: leaf-a07-r1 with its connections and its place on the floor plan](docs/images/devices.png)
 
-**What it shows.** All 2,768 named devices at the site (racks and the compute trays, NVLink switch trays, and power shelves inside them; InfiniBand leaf switches and their ports; busways, tap-offs, UPSs, substations, MV switchgear, generators, CDUs, thermal walls, chillers, pumps, VESDA, and leak detection), each with a description, what it connects to, and where it is on the drawings. Device names on every page are underlined like codes: clicking one opens a card with its connections, each of which opens its own card.
+**What it shows.** All 2,977 named devices at the site (racks and the compute trays, NVLink switch trays, and power shelves inside them; InfiniBand leaf switches and their ports; storage nodes and the storage fabric's leaves and spines; management switches, aggregation switches, and console servers; busways, tap-offs, UPSs, substations, MV switchgear, generators, CDUs, thermal walls, CRAHs, chillers, pumps, VESDA, leak detection, the fire alarm panel, pre-action zones, and clean agent systems), each with a description, what it connects to, and where it is on the drawings. Device names on every page are underlined like codes: clicking one opens a card with its connections, each of which opens its own card.
 
 <img src="docs/images/device-popup.png" alt="Device card for tap-off TO-A07-A on the alarm board" width="860">
 
@@ -324,9 +356,11 @@ Fields that name a rack, room, or device carry a red **location pin** that opens
 <img src="docs/images/location-pin.png" alt="Location pin: rack A07 outlined on the Hall A floor plan" width="640">
 
 **How it works.**
-- `src/scorecard/devices.py` builds the directory from the site model, the rack inventory, and the generator's own cabling rule (imported, not retyped): leaf-aNN serves racks 2N-1 and 2N, so "leaf-a07-r1 port 18" is cabled to rack A13 tray 18, NIC mlx5_1. Tests check every cable against the telemetry's own port records (8,896 of 8,896 across the robustness months).
+- `src/scorecard/devices.py` builds the directory from the site model, the rack inventory, and the generator's own cabling rule (imported, not retyped): leaf-aNN serves racks 2N-1 and 2N, so "leaf-a07-r1 port 18" is cabled to rack A13 tray 18, NIC mlx5_1. Tests check every cable against the telemetry's own port records (77,728 of 77,728 leaf port events across the robustness months).
 - The drawings are generated SVG (`src/scorecard/site_drawings.py`, `src/scorecard/detail_drawings.py`). While drawing, the code records where it put each item, so `docs/site/locations.json` comes from the drawing code itself, never from hand placement.
-- **Asset register** (`/devices/#assets`). Every asset by serial (5,855: trays, switch trays, power shelves and their PSUs, switches, storage nodes and drives, facility units, spares), from receipt to install, RMA, and disposal, reconciled every day against the serials the devices answer with, the spares ledger, RMA shipments, the OEM's RMA portal, custody handovers, and destruction and disposal certificates (Interface Agreement section 11, REG-1 to REG-6). 9 agreements, 123,877 of 123,877 cases; three findings where records do not reconcile: a PSU live in a shelf that the register holds in stock, a switch disposed under a certificate that still answers on the management network, and an OEM replacement delivered and never received. Disagreements other checks already found (two unverified swaps, a drive shipped without destruction, a wrong bay, a custody gap) are shown as corroborations and not counted again. Each device page shows what the register holds against what the device answers with. Built by `scripts/generate_assets.py` (own random stream) and `src/scorecard/assets.py`; report `reports/asset_register.md`.
+- **Asset register** (`/devices/#assets`). Every asset by serial (5,867: trays, switch trays, power shelves and their PSUs, switches, storage nodes and drives, facility units, spares), from receipt to install, RMA, and disposal, reconciled every day against the serials the devices answer with, the spares ledger, RMA shipments, the OEM's RMA portal, custody handovers, and destruction and disposal certificates (Interface Agreement section 11, REG-1 to REG-6). 9 agreements, 123,989 of 123,989 cases; three findings where records do not reconcile: a PSU live in a shelf that the register holds in stock, a switch disposed under a certificate that still answers on the management network, and an OEM replacement delivered and never received. Disagreements other checks already found (two unverified swaps, a drive shipped without destruction, a wrong bay, a custody gap) are shown as corroborations and not counted again. Each device page shows what the register holds against what the device answers with. Built by `scripts/generate_assets.py` (own random stream) and `src/scorecard/assets.py`; report `reports/asset_register.md`.
+
+  <img src="docs/images/asset-register.png" alt="Asset register: every asset by serial, and the records that do not reconcile" width="860">
 - 12 equipment detail sheets, one per product (GB200 and GB300 NVL72 racks, CDU, thermal wall, free-cooling chiller, Galaxy VX and VL UPSs, busway and tap-off, generator, VESDA, TraceTek, InfiniBand leaf switch), with each part's source or stated assumption in `site/details.yaml`.
 
 ## The site
@@ -361,23 +395,30 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | GPU health checks | 7 of 7 | 548 of 548, 0 false positives (decoys: 1,942 stable remaps, 120 error bursts, 1,159 brief slowdowns) |
 | GPU telemetry agreement with the records | 60,257 of 60,257 cases | 8,520,414 of 8,520,414 cases on 60 generated months |
 | CDU telemetry agreement with the records | 664,024 of 664,024 cases | 39,841,812 of 39,841,812 cases on 60 generated months |
-| Site health agreement with each section's hourly figures | 72,682 of 72,682 cases | 4,359,964 of 4,359,964 cases on 60 generated months |
+| Power telemetry agreement with the records | 140,299 of 140,299 cases | 8,404,698 of 8,404,698 cases on 60 generated months |
+| Network telemetry agreement with the records | 33,917 of 33,917 cases | 2,033,293 of 2,033,293 cases on 60 generated months |
+| Mechanical telemetry agreement with the records | 16,035 of 16,035 cases | 962,055 of 962,055 cases on 60 generated months |
+| Management network telemetry | 4 of 4 planted, 132,944 of 132,944 cases | 240 of 240, 0 false positives; 7,977,564 of 7,977,564 cases |
+| Storage and storage fabric telemetry | 4 of 4 planted, 928,339 of 928,339 cases | 240 of 240, 0 false positives; 55,697,867 of 55,697,867 cases |
+| Site health agreement with each section's hourly figures | 162,730 of 162,730 cases | 9,762,844 of 9,762,844 cases on 60 generated months |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
+| Hall C readiness record checks | 4 of 4 | 240 of 240, 0 false positives |
 | Related-record suggestions | 20 of 20 links recovered, 0 of 732 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
 | Fire protection impairments | 2 of 2, 40 of 40 cases | 120 of 120, 0 false positives; every agreement holds |
-| Asset register | 3 of 3, 123,877 of 123,877 cases | 180 of 180, 0 false positives; every agreement holds (installed 7,212,525 of 7,212,525) |
-| Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf cables 8,896/8,896 |
+| Asset register | 3 of 3, 123,989 of 123,989 cases | 180 of 180, 0 false positives; every agreement holds (installed 7,212,525 of 7,212,525) |
+| Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf port events 77,728/77,728 |
 
 ```bash
 python scripts/run_engine.py --robustness 60
 python scripts/run_landlord.py --robustness 60
 python scripts/run_security.py --robustness 60
+python scripts/check_facility_data.py
 python scripts/render_patterns.py --robustness 60
 python scripts/render_alarms.py --robustness 60
 python scripts/render_energy.py --robustness 60
 python scripts/render_gpu_health.py --robustness 60
-python scripts/render_telemetry.py --robustness 60
+python scripts/render_telemetry.py --robustness 60 --jobs 3 --resume build/robustness/telemetry   # about two hours
 python scripts/render_tickets.py --robustness 60
 python scripts/render_deployments.py --robustness 60
 python scripts/render_availability.py --robustness 60
@@ -396,8 +437,8 @@ python scripts/render_fire.py --robustness 60 --jobs 4
 
 ## Tests and deployment
 
-- **661 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generator, both engines, the scorecards, the app (against `tests/fake_streamlit.py`), and the written reviews held to the facts. The PIR and weekly pages are exercised in a real DOM with jsdom (`tests/js/`).
-- **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, Landlord reports, reviews, packs, patterns, alarms, glossary), and the tests fail if any committed copy is stale.
+- **728 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
 
@@ -408,12 +449,17 @@ pip install -r requirements-live.txt     # everything, including the live collec
 python scripts/render_sla.py && python scripts/render_site.py && python scripts/generate_data.py \
   && python scripts/run_engine.py && python scripts/build_scorecard.py && python scripts/run_landlord.py \
   && python scripts/generate_security.py && python scripts/run_security.py \
-  && python scripts/render_pir.py && python scripts/render_weekly.py \
+  && python scripts/generate_incident_comms.py && python scripts/render_pir.py && python scripts/render_weekly.py \
   && python scripts/generate_history.py && python scripts/render_patterns.py \
-  && python scripts/generate_changes.py && python scripts/render_alarms.py && python scripts/render_glossary.py
-pytest -q
+  && python scripts/generate_changes.py && python scripts/render_alarms.py \
+  && python scripts/generate_gpu_health.py && python scripts/render_gpu_health.py \
+  && python scripts/generate_telemetry.py && python scripts/generate_energy.py && python scripts/render_energy.py \
+  && python scripts/render_weekly.py && python scripts/generate_fire.py && python scripts/render_fire.py && python scripts/render_glossary.py \
+  && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
+  && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py
+pytest -q                                   # the full suite takes a while; pytest -q tests/test_hub.py runs one file
 python scripts/build_site.py --out _site    # the whole site; serve it with: python -m http.server -d _site
-streamlit run app/streamlit_app.py          # the Scorecards app on its own
+streamlit run app/streamlit_app.py          # the "Try another month" app on its own
 ```
 
 ## Project layout
@@ -445,6 +491,15 @@ src/scorecard/builder.py         Scorecard: SLA results, reported vs. measured, 
 src/scorecard/pir.py             Post-incident review facts and timeline (also used by the Incident Portal)
 src/scorecard/command.py         Incident Commander runbook and its replay against an incident
 src/scorecard/weekly.py          Weekly operations review facts, as of each week's end
+src/scorecard/scorecards_page.py Prebuilt Scorecards page data (three engines on each shipped dataset) and service credits
+src/scorecard/availability.py    Availability rollup: scheduler, GPU-hours lost by owner, the bridge, repair stages, spares
+src/scorecard/telemetry*.py      Telemetry checks per section (GPU, CDU, power, network, mechanical, management, storage)
+src/scorecard/site_health.py     Site health: redundancy against the design at any hour
+src/scorecard/fire.py            Fire protection impairments reconciled against the fire panel
+src/scorecard/assets.py          Asset register reconciled against the devices, ledger, RMA, custody, and certificates
+src/scorecard/readiness.py       Hall C readiness: commissioning, readiness gates, forecast, record checks
+src/scorecard/relations.py       Related-record suggestions, scored and explained
+src/scorecard/trainer.py         Ownership trainer answers, read from the Interface Agreement
 src/scorecard/patterns.py        Failure pattern statistics, evidence for a cause, owner from the RACI
 src/scorecard/alarms.py          Change-aware alarms: one feed, classified against declared changes
 src/scorecard/energy.py         PUE and partial PUE from the meters; report and free-cooling checks
@@ -469,8 +524,8 @@ config/deployments.yaml          Deployment standard work: gates, steps, sign-of
 config/security.yaml             Security layer: guards, doors, cameras, tours, visitors, leavers, media
 config/deployments_data.yaml     Synthetic deployment record settings and planted records
 config/jira_fields.yaml          Jira field map: project keys, custom field ids, CSV headers, status categories
-scripts/render_*.py              One renderer per page or document (sla, site, hub, pir, weekly, patterns, alarms, energy, gpu_health, deployments, tickets, glossary, agreements, devices)
-scripts/generate_*.py            Synthetic data: sample, history, change layer, energy meters, GPU health, deployment record
+scripts/render_*.py              One renderer per page or document (sla, site, hub, scorecards, availability, pir, weekly, patterns, alarms, energy, gpu_health, telemetry, fire, assets, deployments, tickets, glossary, agreements, devices)
+scripts/generate_*.py            Synthetic data: sample, security, history, change layer, incident comms, energy meters, GPU health, telemetry, deployment record, readiness, assets, fire
 scripts/run_engine.py            IT Partner engine -> reports/
 scripts/run_landlord.py          Landlord engine -> Landlord and attribution reports
 scripts/run_security.py          Security Partner engine -> Security reports
@@ -478,7 +533,7 @@ scripts/build_scorecard.py       Scorecard -> reports/
 scripts/build_site.py            The static GitHub Pages site
 scripts/collect.py               Read-only live collector
 docs/                            Generated contracts, drawings, reviews, packs, glossary; guides
-data/                            Committed synthetic sample, history, and change layer
+data/                            Committed synthetic sample and every layer derived from it (see docs/DATA_MODEL.md)
 reports/                         Generated scorecards, findings, and reviews (Markdown and JSON)
 tests/                           Pytest suite and jsdom page tests
 ```

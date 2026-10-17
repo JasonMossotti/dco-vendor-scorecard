@@ -4,8 +4,8 @@ The demo is published on GitHub Pages, but the same code runs on AWS three ways,
 
 | Option | What runs where | Good for |
 |---|---|---|
-| A. S3 static site | Python runs in the visitor's browser (same build as GitHub Pages) | Cheapest public hosting; no server to patch |
-| B. EC2 server | Streamlit runs on a Linux instance | A private demo, or running against data that should not leave a server |
+| A. S3 static site | Prebuilt pages; only "Try another month" (`/app/lab/`) runs Python, in the visitor's browser (same build as GitHub Pages) | Cheapest public hosting; no server to patch |
+| B. EC2 server | The Streamlit scorecards app (the "Try another month" app) runs on a Linux instance | A private demo, or running against data that should not leave a server |
 | C. Production architecture | Scheduled jobs inside the site network, reports to S3, app behind authentication | How this would run for real |
 
 ## A. Static site on S3

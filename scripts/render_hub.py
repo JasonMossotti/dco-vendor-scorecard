@@ -45,10 +45,24 @@ DOCS = [
     ("GPU health review", "reports/gpu_health.md"),
     ("GPU telemetry report", "reports/gpu_telemetry.md"),
     ("CDU telemetry report", "reports/cdu_telemetry.md"),
+    ("Power telemetry report", "reports/power_telemetry.md"),
+    ("Network telemetry report", "reports/network_telemetry.md"),
+    ("Mechanical telemetry report", "reports/mechanical_telemetry.md"),
+    ("Management network report", "reports/management_telemetry.md"),
+    ("Storage telemetry report", "reports/storage_telemetry.md"),
+    ("Site health report", "reports/site_health.md"),
+    ("Fire protection impairments", "reports/fire_protection.md"),
+    ("Asset register", "reports/asset_register.md"),
+    ("Security Partner discrepancy report", "reports/security_discrepancy_report.md"),
+    ("Incident Commander runbook and A07 replay", "docs/pir/incident-command.md"),
     ("Hall B deployment plan", "docs/deployments/DEPLOYMENT_PLAN.md"),
     ("Hall C readiness", "docs/deployments/HALL_C_READINESS.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
 ]
+
+
+# The Telemetry tab's sections ("" is the GPU section, which sits at the top level of render_telemetry.prepare()).
+TELEMETRY_SECTIONS = ("", "cdu", "power", "network", "mechanical", "mgmt", "storage", "site", "fire")
 
 
 def facts() -> dict:
@@ -121,7 +135,11 @@ def facts() -> dict:
                       "halls": [(h["name"], h["util_avg"], h["at_cap_pct"]) for h in tm["halls"].values()],
                       "cdus": len(tm["cdu"]["cdus"]),
                       "cdu_agree": sum(a["checked"] - a["misses"] for a in tm["cdu"]["agreements"]),
-                      "cdu_cases": sum(a["checked"] for a in tm["cdu"]["agreements"])},
+                      "cdu_cases": sum(a["checked"] for a in tm["cdu"]["agreements"]),
+                      # every section that checks itself against the records, site health and fire protection included
+                      "all_agree": sum(a["checked"] - a["misses"] for sec in TELEMETRY_SECTIONS
+                                       for a in (tm[sec] if sec else tm)["agreements"]),
+                      "all_cases": sum(a["checked"] for sec in TELEMETRY_SECTIONS for a in (tm[sec] if sec else tm)["agreements"])},
         "availability": {"sched": av["sched"]["pct"], "csl01": av["csl01"]["actual"],
                          "owners": [(o["owner"], o["hours"]) for o in av["owners"] if o["hours"] > 0],
                          "below": [(r["fru"], r["days_below"]) for r in av["spares"]["rows"] if r["days_below"]], "days": av["spares"]["days"],
@@ -219,7 +237,7 @@ def body(f: dict) -> str:
               ("Notifications", "alarms/#notify")],
              f"{flag_note}. Notifications on time under Interface Agreement section 10: {notify}." if flag_note else notify),
         tile("tickets", "Incident Portal",
-             "Both partners' tickets, changes, and work orders as their own systems record them, each with a timeline and "
+             "Every partner's tickets, changes, work orders, and dispatch records as their own systems record them, each with a timeline and "
              "what the Customer's data says.",
              [(str(tk["records"]), "records"), (str(tk["incidents"]), "incidents and work orders"),
               (str(tk["changes"]), "changes and MOPs"), (str(tk["findings"]), "do not reconcile")],
@@ -253,11 +271,13 @@ def body(f: dict) -> str:
              [("Open GPU health", "gpu/")],
              ("; ".join(gh["findings"]) + ".") if gh["findings"] else "Every GPU passed every check."),
         tile("telemetry", "Telemetry",
-             "Every GPU sampled once a minute in the published format of NVIDIA's open-source DCGM exporter, and every CDU "
-             "read once a minute over DMTF Redfish, both shaped never to contradict the records the other pages show.",
+             "The whole site at any hour (redundancy against the design), then every GPU, CDU, UPS, busway, generator, "
+             "chiller, network link, management port, and storage drive read once a minute in its maker's published format, "
+             "and fire protection impairments, all shaped never to contradict the records the other pages show.",
              [(f"{tm['gpus']:,}", f"GPUs in {tm['racks']} racks"), (str(tm["cdus"]), "CDUs over Redfish"),
-              (f"{tm['agree'] + tm['cdu_agree']:,} of {tm['cases'] + tm['cdu_cases']:,}", "cases agree with the records")],
-             [("Open telemetry", "telemetry/"), ("CDUs", "telemetry/#cdus"), ("Fields", "telemetry/#fields")],
+              (f"{tm['all_agree']:,} of {tm['all_cases']:,}", "cases agree with the records")],
+             [("Site health", "telemetry/"), ("Power", "telemetry/#power"), ("Network", "telemetry/#network"),
+              ("Fire protection", "telemetry/#fire")],
              "Mean GPU utilization: " + ", ".join(f"{n} {u}%" for n, u, _c in tm["halls"])
              + f"; {tm['halls'][-1][0]} at the power limit {tm['halls'][-1][2]}% of samples."),
         tile("deployments", "Deployments",
