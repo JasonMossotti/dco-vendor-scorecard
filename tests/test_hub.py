@@ -73,7 +73,7 @@ def test_overview_agrees_with_the_app_table(facts):
 def test_site_has_every_page(site):
     for path in PAGES:
         assert (site / path / "index.html").exists(), path
-    assert (site / "app" / "app_bundle.zip").exists() and (site / "app" / "streamlit_app.py").exists()
+    assert (site / "app" / "lab" / "app_bundle.zip").exists() and (site / "app" / "lab" / "streamlit_app.py").exists()
 
 
 def test_every_page_has_the_tab_bar_with_its_own_tab_marked(site):
@@ -122,7 +122,7 @@ def test_overview_deep_links_name_real_sub_views(site):
 
 def test_app_page_keeps_one_scroll_bar_and_the_light_theme(site):
     import build_site
-    html = (site / "app" / "index.html").read_text(encoding="utf-8")
+    html = (site / "app" / "lab" / "index.html").read_text(encoding="utf-8")
     assert "overflow: hidden" in html and "transform: translateZ(0)" in html, "the page never scrolls; the app scrolls inside"
     assert '"theme.base": "light"' in html
     local = tomllib.loads((ROOT / ".streamlit" / "config.toml").read_text(encoding="utf-8"))
@@ -131,7 +131,7 @@ def test_app_page_keeps_one_scroll_bar_and_the_light_theme(site):
 
 
 def test_static_pages_use_the_light_toolbar():
-    for name in ("alarms", "pir", "weekly", "patterns", "energy", "gpu_health", "availability"):
+    for name in ("alarms", "pir", "weekly", "patterns", "energy", "gpu_health", "availability", "scorecards"):
         tpl = (ROOT / "templates" / f"{name}.html").read_text(encoding="utf-8")
         assert "header.top { background:#fff;" in tpl, name
         assert "__SITENAV__" in tpl and "__SITENAV_CSS__" in tpl, name
