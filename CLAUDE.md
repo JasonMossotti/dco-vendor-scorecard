@@ -61,7 +61,7 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py
 # render_scorecards.py runs inside build_site.py (the Scorecards page is built with the site, from the shipped datasets)
 # generate_telemetry.py writes the GPU telemetry, the energy meters (they follow the racks, CDUs, and thermal walls), then CDU, power, network, and mechanical
-pytest -q                                      # 721 tests as of 2026-10-16
+pytest -q                                      # 728 tests as of 2026-10-17
 python scripts/build_site.py --out _site       # the GitHub Pages build
 ```
 
