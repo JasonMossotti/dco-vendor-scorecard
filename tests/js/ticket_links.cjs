@@ -19,6 +19,9 @@ const tick = () => new Promise(r => w.setTimeout(r, 0));
   ok(links.length > 0, `numbers are links (${links.length})`);
   const root = new w.URL(G.root, url).href;
   ok(links.every(a => a.href === root + "tickets/#" + a.textContent && known.has(a.textContent)), "each link opens its own record on the portal");
+  const inPortal = G.page === "tickets";
+  ok(links.every(a => inPortal ? !a.target : a.target === "_blank" && a.rel === "noopener"),
+     inPortal ? "inside the portal each link opens in place" : "each link opens the portal in a new tab");
   // Any number left as plain text sits where a link cannot go (a button, a form field, a drawing, a heading's summary).
   const SKIP = "script,style,textarea,input,select,option,button,a,svg,summary,label,nav.usm,.gl-pop,[data-gl-skip],[data-tk-skip],[contenteditable]";
   const plain = [];

@@ -122,7 +122,7 @@ async function until(fn, what, ms = 8000) {
   await until(() => d.querySelectorAll("table.labels td").length > 0, "GPU labels");
   const x = t();
   ok(x.includes("a31-ct11 GPU 0") && x.includes("GPU-cb5953d0-6aee-9f09-bf52-e47384e4b06f") && x.includes("GPU-a95746f8-e0e3-442e-b940-d620ba2e6a43") && x.includes("new GPUs, new UUID, new series"), "labels show both UUIDs across the tray replacement");
-  ok(x.includes("XID 94") && d.querySelector('a[href="../tickets/#INC3100068"]'), "XID 94 event with its ticket link");
+  ok(x.includes("XID 94") && d.querySelector('a[href="../tickets/#INC3100068"][target="_blank"][rel="noopener"]'), "XID 94 event with its ticket link, opening in a new tab");
   ok(x.includes("GH-F2") && d.querySelector('a[href="../gpu/#A31"]'), "the GPU Health finding on this host, linked");
   ok(main().querySelectorAll("svg[data-ch]").length === 4, "four month charts");
   ok(main().querySelectorAll("svg[data-ch] rect[fill='#e3e7ec']").length >= 4, "drain bands on the charts");
@@ -545,7 +545,7 @@ async function until(fn, what, ms = 8000) {
   const FPx = D.fire;
   await go("#fire");
   ok(d.querySelector("#main h1").textContent === "Fire protection" && FPx.findings.length === 2 && FPx.findings.every(f => t().includes(`${f.id} · ${f.title}`))
-     && FPx.impairments.every(i => d.querySelector(`#main a[href="../tickets/#${i.imp_id}"]`)), "#fire: both findings, and every impairment links to its portal record");
+     && FPx.impairments.every(i => d.querySelector(`#main a[href="../tickets/#${i.imp_id}"][target="_blank"]`)), "#fire: both findings, and every impairment links to its portal record");
   ok(d.querySelectorAll("#main table")[2].querySelectorAll("tbody tr").length === FPx.panel.length, "#fire: every signal in the panel's history");
   const unl = FPx.findings.find(f => f.kind === "unlogged");
   await go(`#site/${Math.floor((Date.parse(unl.from) - Date.parse(D.window.start)) / 3600000) + 1}`);

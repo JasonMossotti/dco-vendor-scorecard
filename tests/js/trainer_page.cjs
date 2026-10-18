@@ -46,7 +46,7 @@ for (let i = 0; i < 30; i++) {
     answer(s, true);
     const t = d.getElementById("tr-reveal").textContent;
     ok(s.A === "Customer" && s.R.join() === "IT Partner" && s.notifier === "IT Partner" && s.minutes === 5, "manifold leak: IT Partner does it, the Customer owns it, NT-1 in 5 minutes");
-    ok(t.includes("DM-COOL") && t.includes("HO-3") && d.querySelector('.tr-recs a[href="../../tickets/#INC3100714"]'), "with the boundary, the handoff, and the A06 leak ticket");
+    ok(t.includes("DM-COOL") && t.includes("HO-3") && d.querySelector('.tr-recs a[href="../../tickets/#INC3100714"][target="_blank"]'), "with the boundary, the handoff, and the A06 leak ticket");
   } else if (s.component.startsWith("138 kV")) {
     answer(s, true);
     ok(s.A === "Utility" && s.notifier === "Landlord" && d.getElementById("tr-reveal").textContent.includes("FA-6"), "utility outage: the Landlord alerts the Customer (FA-6)");

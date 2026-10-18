@@ -358,7 +358,7 @@ __SITENAV__
     if (!rows.length) return `<p class="note">None.</p>`;
     return `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Where</th><th>Event</th><th>Ticket</th></tr></thead><tbody>` + rows.map(({e, n}) => {
       const where = e.gpu == null ? (n > 1 ? `${link(rackOf(e.host), "Rack " + rackOf(e.host))}, ${esc(n)} trays` : link(rackOf(e.host) + "/" + hourOf(e.t), e.host)) : link(`${e.host}/${e.gpu}`, `${e.host} GPU ${e.gpu}`);
-      return `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${where}</td><td>${kindTag(e.kind)} ${esc(e.text)}</td><td>${e.ticket ? `<a href="../tickets/#${esc(e.ticket)}">${esc(e.ticket)}</a>` : ""}</td></tr>`;
+      return `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${where}</td><td>${kindTag(e.kind)} ${esc(e.text)}</td><td>${e.ticket ? `<a href="../tickets/#${esc(e.ticket)}" target="_blank" rel="noopener">${esc(e.ticket)}</a>` : ""}</td></tr>`;
     }).join("") + `</tbody></table></div>`;
   }
   const kindTag = k => tag({xid: "XID", slowdown: "slowdown", drain: "drain", dark: "no samples"}[k] || k, {xid: "bad", slowdown: "warn", drain: "", dark: ""}[k]);
@@ -524,7 +524,7 @@ __SITENAV__
       + `<p><button class="b" id="csv">Download CSV (hourly series)</button> <span class="note" id="csv-note"></span></p>`;
     // events
     h += `<h2 class="sec">Events on this GPU and its tray</h2>` + (evs.length ? `<div class="scroll"><table><thead><tr><th>When (UTC)</th><th>Event</th><th>Ticket</th></tr></thead><tbody>`
-      + evs.map(e => `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${kindTag(e.kind)} ${esc(e.text)}${e.gpu == null ? " (whole tray)" : ""}</td><td>${e.ticket ? `<a href="../tickets/#${esc(e.ticket)}">${esc(e.ticket)}</a>` : ""}</td></tr>`).join("") + `</tbody></table></div>` : `<p class="note">None this month.</p>`);
+      + evs.map(e => `<tr><td class="n">${esc(at(e.t))}${e.end ? ` to ${esc(at(e.end))}` : ""}</td><td>${kindTag(e.kind)} ${esc(e.text)}${e.gpu == null ? " (whole tray)" : ""}</td><td>${e.ticket ? `<a href="../tickets/#${esc(e.ticket)}" target="_blank" rel="noopener">${esc(e.ticket)}</a>` : ""}</td></tr>`).join("") + `</tbody></table></div>` : `<p class="note">None this month.</p>`);
     // counters
     h += `<h2 class="sec">Counters</h2><p class="note">Each time a remapped-row counter, the pending flag, or the last XID changed.</p><div class="scroll"><table><thead><tr><th>From (UTC)</th><th class="n">Correctable remapped rows</th><th class="n">Uncorrectable remapped rows</th><th>Remap pending</th><th class="n">Last XID</th></tr></thead><tbody>`
       + x.counters.map(c => `<tr><td>${esc(at(c[0]))}</td><td class="n">${num(c[1])}</td><td class="n">${num(c[2])}</td><td>${c[3] ? tag("pending", "warn") : "no"}</td><td class="n">${c[4] ? num(c[4]) : "–"}</td></tr>`).join("") + `</tbody></table></div>`;
@@ -668,7 +668,7 @@ __SITENAV__
     }
     return d;
   });
-  const refLinks = refs => (refs || []).map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}">${esc(r)}</a>`).join(", ");
+  const refLinks = refs => (refs || []).map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}" target="_blank" rel="noopener">${esc(r)}</a>`).join(", ");
   const cduKind = k => tag({pm: "maintenance", pump: "pump failure", leak: "leak", rack: "rack power", excursion: "excursion"}[k] || k, {pm: "", pump: "bad", leak: "warn", rack: "it", excursion: "warn"}[k]);
   const EVC = {pm: "#e3e7ec", pump: "#f8d9d5", leak: "#fbeccb", rack: "#dde8fb", excursion: "#fbeccb"};
   const r1 = x => Math.round(x * 10) / 10;
@@ -2490,7 +2490,7 @@ __SITENAV__
   }
   // --------------------------------------------------------------------- fire protection (events only: the panel's history)
   const FP = B.fire, tms = iso => Date.parse(iso);
-  const fpRefs = refs => (refs || []).filter(Boolean).map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}">${esc(r)}</a>`).join(", ");
+  const fpRefs = refs => (refs || []).filter(Boolean).map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}" target="_blank" rel="noopener">${esc(r)}</a>`).join(", ");
   function fpOut(a, b) { return FP.spans.filter(s => s.signal === "Disable" || (s.signal === "Supervisory" && /^(PAZ|CAS)-/.test(s.device))).filter(s => tms(s.start) < b && tms(s.end) > a); }
   function shFire(h) {
     const a = tms(hourIso(h)), b = tms(hourIso(h + 1)), out = fpOut(a, b);
