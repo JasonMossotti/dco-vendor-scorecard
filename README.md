@@ -437,7 +437,7 @@ python scripts/render_fire.py --robustness 60 --jobs 4
 
 ## Tests and deployment
 
-- **728 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **729 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).

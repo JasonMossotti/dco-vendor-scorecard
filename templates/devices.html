@@ -244,7 +244,7 @@ __SITENAV__
     return h;
   }
   const TICKET = /^(?:INC\d{7}|CHG\d{7}|WO-\d{5}|MOP-\d{3}|PM-\d{4}|SIR-\d{5})$/;
-  const refLink = r => TICKET.test(r) ? `<a href="../tickets/#${esc(r)}">${esc(r)}</a>` : esc(r);
+  const refLink = r => TICKET.test(r) ? `<a href="../tickets/#${esc(r)}" target="_blank" rel="noopener">${esc(r)}</a>` : esc(r);
   function assetView(key) {
     const tag = BY_TAG[key] ? key : BY_SERIAL[key];
     if (!tag) return `<h1>${esc(key)}</h1><p class="empty">No asset with that tag or serial in the register. <a href="#assets">The register ↗</a></p>`;

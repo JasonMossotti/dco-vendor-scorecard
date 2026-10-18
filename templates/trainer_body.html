@@ -96,7 +96,7 @@ the agreement itself, so a change to the contract changes the answer.</p>
     s.rules.forEach(r => h += `<p><b><a href="../interface-agreement/#${esc(r.id)}">${esc(r.id)}</a>:</b> ${esc(r.text)}</p>`);
     h += `</div><div class="tr-recs"><h3>Where this row applied in the sample month</h3>`;
     h += s.records.length
-      ? `<ul>${s.records.slice(0, 6).map(r => `<li><a href="../../tickets/#${esc(r.id)}">${esc(r.id)}</a> <span class="note">${esc(r.type)}${r.priority ? " " + esc(r.priority) : ""}, ${esc(r.partner)}</span> ${esc(r.summary)}</li>`).join("")}</ul>${s.records.length > 6 ? `<p class="note">and ${s.records.length - 6} more in the Incident Portal.</p>` : ""}`
+      ? `<ul>${s.records.slice(0, 6).map(r => `<li><a href="../../tickets/#${esc(r.id)}" target="_blank" rel="noopener">${esc(r.id)}</a> <span class="note">${esc(r.type)}${r.priority ? " " + esc(r.priority) : ""}, ${esc(r.partner)}</span> ${esc(r.summary)}</li>`).join("")}</ul>${s.records.length > 6 ? `<p class="note">and ${s.records.length - 6} more in the Incident Portal.</p>` : ""}`
       : `<p class="note">No record in the sample month; the row still binds.</p>`;
     h += `</div><div class="tr-act"><button type="button" class="tr-go" id="tr-next">${at + 1 < deck.length ? "Next question" : "See your score"}</button></div>`;
     document.getElementById("tr-reveal").innerHTML = h;

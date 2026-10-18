@@ -26,6 +26,8 @@ from scorecard.sla_model import load_sla  # noqa: E402
 
 SAMPLE = ROOT / "data" / "sample"
 BLOB = f"{sitenav.REPO}/blob/main/"
+# Ticket links open the Incident Portal in a new tab.
+NEW_TAB = ' target="_blank" rel="noopener"'
 # The contracts open on the Agreements tab; the rest are files in the repository.
 DOCS = [
     ("IT Partner SLA", "agreements/it-partner-sla/"),
@@ -166,7 +168,8 @@ def md_inline(s: str) -> str:
 
 def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: list[tuple[str, str]], note: str = "") -> str:
     st = "".join(f'<div class="stat"><b>{escape(v)}</b><span>{escape(k)}</span></div>' for v, k in stats)
-    ln = "".join(f'<a href="{escape(h)}">{escape(t)}</a>' for t, h in links)
+    # A link to one record opens the Incident Portal in its own tab, as ticket numbers do on every page.
+    ln = "".join(f'<a href="{escape(h)}"{NEW_TAB if h.startswith("tickets/#") else ""}>{escape(t)}</a>' for t, h in links)
     nt = f'<p class="note">{escape(note)}</p>' if note else ""
     return (f'<section class="tile" data-tile="{key}"><h2><a href="{escape(links[0][1])}">{escape(title)}</a></h2>'
             f'<p class="lead">{escape(lead)}</p><div class="stats">{st}</div>{nt}<div class="links">{ln}</div></section>')
@@ -195,7 +198,7 @@ def body(f: dict) -> str:
         '<section class="follow"><h2>Follow one incident through every tool</h2>'
         f'{crossing}<ol>'
         '<li><a href="alarms/#changes">Alarm Board, Change work</a>: the alarms MOP-310 raised outside its declared scope and window.</li>'
-        f'<li><a href="tickets/#{pir["ref"]}">Incident Portal</a>: the IT Partner\'s ticket and the Landlord\'s work order as each partner recorded them, '
+        f'<li><a href="tickets/#{pir["ref"]}"{NEW_TAB}>Incident Portal</a>: the IT Partner\'s ticket and the Landlord\'s work order as each partner recorded them, '
         'beside the Customer\'s measurement.</li>'
         '<li><a href="pir/">Post-Incident Review</a>: the completed review, its causes and owned actions.</li>'
         '<li><a href="weekly/#2026-W38">Weekly Review, week 3</a>: the outage and its actions in the weekly pack.</li>'

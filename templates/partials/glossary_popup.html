@@ -77,6 +77,7 @@ a.tk-link:hover { background:#e8f0fc; }
 
   // Ticket, change, and work order numbers link to the Incident Portal, which opens that record.
   const TK = new Set(G.tk || []), TK_RE = G.tk_re ? new RegExp("\\b(?:" + G.tk_re + ")\\b", "g") : null;
+  const IN_PORTAL = G.page === "tickets";
   const TK_SKIP = "script,style,textarea,input,select,option,button,a,svg,summary,label,nav.usm,.gl-pop,[data-gl-skip],[data-tk-skip],[contenteditable]";
   function linkTickets(root) {
     if (!TK.size || root.nodeType === 1 && root.closest(TK_SKIP)) return;
@@ -95,7 +96,9 @@ a.tk-link:hover { background:#e8f0fc; }
         if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
         const a = document.createElement("a");
         a.className = "tk-link"; a.href = ROOT + "tickets/#" + m[0]; a.textContent = m[0];
-        a.title = "Open " + m[0] + " in the Incident Portal";
+        // Other pages open the portal in a new tab, so the page keeps its place; inside the portal a record opens in place.
+        if (!IN_PORTAL) { a.target = "_blank"; a.rel = "noopener"; }
+        a.title = "Open " + m[0] + " in the Incident Portal" + (IN_PORTAL ? "" : " (new tab)");
         frag.appendChild(a);
         last = m.index + m[0].length;
       }

@@ -107,6 +107,27 @@ def test_every_internal_link_resolves(site):
             assert f.exists(), (path, href, f)
 
 
+def test_ticket_links_open_the_portal_in_a_new_tab(site):
+    """Every link to one Incident Portal record, written into a page or built by its script, opens a new tab
+    (inside the portal, a record opens in place: its links are #<number>, and the code popups' scan leaves them in place there)."""
+    pages = sorted(site.rglob("index.html"))
+    found = 0
+    for f in pages:
+        for a in re.findall(r'<a\b[^>]*\bhref="[^"]*tickets/#[^"]*"[^>]*>', f.read_text(encoding="utf-8")):
+            found += 1
+            assert 'target="_blank"' in a and 'rel="noopener"' in a, (f.relative_to(site), a)
+    assert found > 0
+    # Links the pages' scripts build: the code popups' scan, the related records in the portal, and each template's tables.
+    for t in ROOT.glob("templates/**/*.html"):
+        src = t.read_text(encoding="utf-8")
+        for a in re.findall(r'<a\b[^>]*\bhref="[^"]*tickets/#[^>]*>', src) :
+            assert 'target="_blank" rel="noopener"' in a, (t.name, a)
+    popup = (ROOT / "templates" / "partials" / "glossary_popup.html").read_text(encoding="utf-8")
+    assert 'if (!IN_PORTAL) { a.target = "_blank"; a.rel = "noopener"; }' in popup and 'IN_PORTAL = G.page === "tickets"' in popup
+    portal = (site / "tickets" / "index.html").read_text(encoding="utf-8")
+    assert '<a class="tk-link" href="#${esc(x.id)}">' in portal, "related records open in the same portal tab"
+
+
 def test_overview_deep_links_name_real_sub_views(site):
     """#live, #changes, #notify (alarm board), #blank (PIR), and week ids (weekly) are views those pages open."""
     html = (site / "index.html").read_text(encoding="utf-8")
