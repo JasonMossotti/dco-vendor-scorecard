@@ -188,8 +188,10 @@ DOCS = {"interface_agreement": "Interface Agreement", "ot_partner": "Landlord SL
 
 
 def html_page() -> str:
+    import render_predict
     f = prepare()
     f["docs"] = DOCS
+    f["predict"] = render_predict.prepare()
     tpl = sitenav.inject((ROOT / "templates" / "patterns.html").read_text(encoding="utf-8"), "patterns")
     return sitenav.finish(tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/")))
 

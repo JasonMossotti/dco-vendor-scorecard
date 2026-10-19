@@ -379,6 +379,19 @@ Derived by `scripts/generate_fire.py` from `data/sample/` (window, VESDA events,
 | `answer_key.json` | Planted findings (an impairment logged restored inside its window while the panel shows it out for hours after; a control valve closed with nothing logged). The checks never read it |
 | `manifest.json` | Window, seed, source, counts |
 
+## Predictive maintenance (`data/predict/`)
+
+Derived by `scripts/generate_predict.py` from `data/history/` (racks, inventory, links, failures, Landlord PM records), the topology, and the CDU settings, with its own random stream (`predict-{seed}`); no other layer is written. Settings in `config/predict.yaml` (the `condition` section shapes this history; the detectors use only the `detectors` section). The detectors in `src/scorecard/predict/` never read the answer key; `scripts/predict.py` runs them on a site's own exports (`docs/predict/README.md`).
+
+| File | What it represents |
+|---|---|
+| `optic_dom_daily.csv` | One row per optic module (serial, location, host or switch end, peer, lot, first day, days) with its daily worst-lane DOM readings as space-separated integers in tenths: laser bias (mA), transmit and receive power (dBm). Receive power is the far end's transmit power less the link loss; wear, reseats (steps), and fiber dips are planted |
+| `gpu_memory_daily.csv` | DCGM-style daily counters per GPU, sparse (a row only when a counter is not zero): corrected and uncorrected ECC, remapped rows, remap pending. Rising counters precede about half of the uncorrectable XIDs in the history; bursts that settle and stable remaps are decoys |
+| `cdu_condition.csv` | Four-hourly CDU readings over the history: flow, filter pressure drop (falls at each PM filter change, rises with fouling), and each pump's speed (duty pump rotates weekly; one pump wears out) |
+| `pump_events.jsonl` | Redfish `Pumps/{n}` `Status.Health` events: Critical at a failure, OK at the replacement |
+| `answer_key.json` | The planted precursors: optic modules and GPU episodes with a precursor, the fouled filter, the worn pump and the sudden one. Used only by the robustness score |
+| `manifest.json` | Window, seed, source, counts |
+
 ## Live collector output
 
 `scripts/collect.py` (see `src/scorecard/live/`) writes the same contract files from real devices. It creates every contract file, leaves the ones it does not collect empty, and lists them in `manifest.json` under `not_collected` (Landlord work orders and maintenance records come from Landlord system exports, not device polling). It adds two files the synthetic data does not have:

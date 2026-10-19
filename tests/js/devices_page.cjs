@@ -43,6 +43,13 @@ const go = async h => { w.location.hash = h; await tick(); await tick(); };
   }
   await go("#B30");
   ok(!main.querySelector("a.tel"), "a rack with no telemetry gets no Telemetry link");
+  ok(!main.querySelector(".pred"), "and no prediction");
+  await go("#CDU-A1");
+  const pred = main.querySelector(".pred");
+  ok(pred && pred.textContent.includes("Filter healthy by condition") && pred.textContent.includes("due by the calendar"), "a CDU card says its filter's condition: " + (pred && pred.textContent));
+  ok(pred && pred.querySelector('a[href="../patterns/#predict"]'), "and links to the Predictive maintenance view");
+  await go("#a16-ct18");
+  ok(main.querySelector(".pred") && main.querySelector(".pred").textContent.includes("GPU 2 on the memory watch list"), "a tray on the GPU memory watch list says so");
   await go("#nothing-here");
   ok(main.textContent.includes("No device by that name"), "an unknown name says so");
   const names = ["leaf-a07-r1 port 18", "leaf-a07-r1:swp18", "Rack A07", "a13-ct18", "A06_PowerShelf_1", "leaf-a07-r1 port 40", "UPS-B4"];

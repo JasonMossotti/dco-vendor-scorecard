@@ -1,0 +1,18 @@
+{
+  "disclaimer": "Synthetic data for a portfolio demonstration. All sites, people, serials, and events are fictional.",
+  "files": {
+    "answer_key.json": 1,
+    "cdu_condition.csv": 4368,
+    "gpu_memory_daily.csv": 5693,
+    "optic_dom_daily.csv": 4733,
+    "pump_events.jsonl": 6
+  },
+  "generator": "scorecard.synthetic.predict",
+  "note": "Condition history for predictive maintenance, on the failure history in data/history/. answer_key.json records what was planted; the detectors must not read it.",
+  "window": {
+    "end": "2026-08-31T00:00:00Z",
+    "hall": "HALL-A",
+    "seed": 2026,
+    "start": "2026-03-02T00:00:00Z"
+  }
+}

@@ -32,6 +32,21 @@ CHIP = {"On track": "ok", "At risk": "warn", "Below Minimum (month to date)": "b
 PLAIN_STATUS = {"On track": "On track", "At risk": "At risk", "Below Minimum (month to date)": "Below minimum this month"}
 
 
+def predict_text(p: dict) -> str:
+    """The predictive maintenance line's sentence (the page builds the same sentence)."""
+    f, pu = p["filters"], p["pumps"]
+    t = f"CDU filters {f['healthy']} of {f['of']} healthy by condition"
+    if f["act"]:
+        t += f" (work request: {', '.join(f['act'])})"
+    if f["watch"]:
+        t += f" (watch: {', '.join(f['watch'])})"
+    if f["due_by_calendar"]:
+        t += f"; {', '.join(f['due_by_calendar'])} due by the calendar but still clean"
+    t += f"; CDU pumps {pu['healthy']} of {pu['of']} healthy" + (f" ({', '.join(pu['not_healthy'])} not)" if pu["not_healthy"] else "")
+    g = p["gpu_watch"]
+    t += "; GPU memory watch list: " + (", ".join(g) if g else "none") + "."
+    return t
+
 def local(iso: str | None, with_day: bool = True) -> str:
     if not iso:
         return "—"
@@ -211,6 +226,8 @@ def markdown(w: dict, n: dict | None) -> str:
                   f"that do not reconcile" + (f" ({'; '.join(dp['checks'])})" if dp["checks"] else "") + ". "
                   f"Racks: {dp['racks']['in_production']} of {dp['racks']['planned']} handed off to the scheduler; {dp['racks']['on_time']} of "
                   f"{dp['racks']['committed']} committed by the end of the week handed off on time. Detail on the Deployments tab."]
+    if w.get("predict"):
+        L += ["", "Predictive maintenance: " + predict_text(w["predict"]) + " Detail on the Failure Patterns tab (Predictive maintenance)."]
     e = w["ehs"]
     L += ["", "## 8. Safety (EHS)", "", f"- **Injuries this week:** {e['injuries']}"]
     L += [f"- **Event:** {x['pir']}: {x['screening']}" for x in e["events"]]

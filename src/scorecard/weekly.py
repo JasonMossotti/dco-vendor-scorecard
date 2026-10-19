@@ -95,6 +95,7 @@ class WeeklyData:
         self.pattern_review = self._pattern_review()
         self.energy = self._energy()
         self.deploy = self._deploy()
+        self.predict_flags = self._predict_flags()
         from scorecard.availability import Rollup
         self.avail = Rollup(self.data_dir)
 
@@ -109,6 +110,14 @@ class WeeklyData:
         from scorecard import deployments
         p = self.data_dir.parent / "deployments"
         return deployments.build(self.data_dir, rec_dir=p) if (p / "manifest.json").exists() else None
+
+    def _predict_flags(self):
+        """The GPU memory early-warning flags for the predictive maintenance line, if the CDU telemetry beside the sample
+        has been generated (the line reads the CDUs' hourly feed)."""
+        if not (self.data_dir.parent / "telemetry" / "cdu" / "cdu_hourly.csv").exists():
+            return None
+        from scorecard.predict import review
+        return review.gpu_memory_flags(self.data_dir.parent)
 
     def _csv(self, rel: str) -> list[dict]:
         p = self.data_dir / rel
@@ -389,6 +398,15 @@ def _deploy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:
             "gates_closed": gates, "findings": len(known), "checks": sorted({f["check"] for f in known})}
 
 
+def _predict_line(d: WeeklyData, we: datetime) -> dict | None:
+    """The predictive maintenance detectors at the end of the week, on the same feeds as the Predictive maintenance
+    view of the Failure Patterns tab: CDU filters and pumps, and GPUs on the memory watch list."""
+    if d.predict_flags is None:
+        return None
+    from scorecard.predict import review
+    return review.week_line(review.now(d.data_dir.parent, until=_iso(we), flags=d.predict_flags))
+
+
 # --------------------------------------------------------------------------- the pack
 def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
     we = next(e for s, e in d.weeks if s == ws)
@@ -434,6 +452,7 @@ def build_week(d: WeeklyData, ws: datetime) -> dict[str, Any]:
         "energy": _energy_line(d, ws, we),
         "availability": _avail_line(d, ws, we),
         "deploy": _deploy_line(d, ws, we),
+        "predict": _predict_line(d, we),
     }
     out["brief"] = leadership_brief(out)
     return out

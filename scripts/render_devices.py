@@ -63,8 +63,32 @@ def register() -> dict | None:
             "reported": f["reported"], "total": f["total"], "transactions": f["transactions"]}
 
 
+def predictions() -> dict[str, str]:
+    """The predictive maintenance detectors' state at month end for each device they watch (CDU filters and pumps,
+    GPUs on the memory watch list), as one sentence per device card. The same run as the Failure Patterns tab's view."""
+    if not (TEL / "cdu" / "cdu_hourly.csv").exists():
+        return {}
+    from scorecard.predict import review
+    n = review.now()
+    st = {"healthy": "healthy", "watch": "on watch", "act": "work request proposed"}
+    out: dict[str, str] = {}
+    for f in n["cdu_filter"]:
+        t = f"Filter {st[f['state']]} by condition: {f['level']:g} kPa at design flow"
+        t += f", change limit projected {f['limit_on']}" if f["limit_on"] else ""
+        t += f" (due by the calendar {f['next_change']}, still clean)." if f["overdue"] and f["state"] == "healthy" else "."
+        out[f["cdu"]] = t
+    for p in sorted(n["cdu_pump"], key=lambda p: (p["cdu"], p["pump"])):
+        out[p["cdu"]] += f" Pump {p['pump']} {st[p['state']]}" + (
+            f" (failed on {', '.join(t[:10] for t in p['failures'])} with no wear seen first; replaced)" if p["failures"] and not p["warned"] else "") + "."
+    for g in n["gpu_memory"]:
+        if not g["xid_before"] and not g["xid_after"]:
+            out[g["host"]] = (f"GPU {g['gpu']} on the memory watch list since {g['flagged'][:10]} ({g['why']}): drain and swap the tray "
+                              "at the next window.")
+    return out
+
+
 def html_page() -> str:
-    data = {**devices.load(), "telemetry": telemetry_links(), "assets": register()}
+    data = {**devices.load(), "telemetry": telemetry_links(), "assets": register(), "predict": predictions()}
     tpl = sitenav.inject((ROOT / "templates" / "devices.html").read_text(encoding="utf-8"), "devices")
     body = json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/")
     return sitenav.finish(tpl.replace("__DEVICES__", body))
