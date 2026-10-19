@@ -205,7 +205,7 @@ Derived by `scripts/generate_gpu_health.py` from `data/sample/` (topology, DCGM 
 
 Written by `scripts/generate_telemetry.py`, one layer per folder, each with its own random stream and settings file. Each layer runs on the finished month and writes beside the records it reads, never into them; nothing in `data/sample/` or any other layer is written, except that the same script rebuilds `data/energy/` between the GPU and CDU layers (see [Energy meters](#energy-meters-dataenergy)). The order is GPU, CDU (with the energy meters built around it), power, network, mechanical, management network, storage. Each folder holds a `manifest.json` (window, source, device list, counts, and an index of the windows).
 
-Most layers publish in tiers. The committed tiers are hourly summaries, a `states.jsonl` of every state change with the record it matches, and `windows/` with one-minute samples around each event. The full one-minute or per-port series for the GPU, CDU, power, mechanical, and network layers are built into the git-ignored `build/telemetry/` (`gpu_hourly/`, `cdu_minutes/`, `power_minutes/`, `mechanical_minutes/`, `network_hourly/`); only their SHA-256 checksums and sizes are committed, in each manifest, and `scripts/build_site.py` publishes them. The management network and storage layers are committed in full.
+Most layers publish in tiers. The committed tiers are hourly summaries, a `states.jsonl` of every state change with the record it matches, and `windows/` with one-minute samples around each event. The full one-minute or per-port series for the GPU, CDU, power, mechanical, and network layers are built into the git-ignored `build/telemetry/` (`gpu_hourly/`, `cdu_minutes/`, `power_minutes/`, `utility_minutes/`, `mechanical_minutes/`, `network_hourly/`); only their SHA-256 checksums and sizes are committed, in each manifest, and `scripts/build_site.py` publishes them. The management network and storage layers are committed in full.
 
 ### GPU (`data/telemetry/gpu/`)
 
@@ -238,6 +238,17 @@ Stream `{seed}:telemetry:power`; settings in `config/telemetry_power.yaml`. Read
 | `generator_hourly.csv` | Per generator per hour: run minutes, energy, peak kW and load, coolant temperature, fuel level, engine hours |
 | `states.jsonl` | Each device state or breaker change at its minute, with the record it matches |
 | `windows/<device>_<start>.json` | One-minute series around each event |
+
+### Utility mains and ride-through (`data/telemetry/utility/`)
+
+Stream `{seed}:telemetry:utility`; settings in `config/telemetry_utility.yaml`. Read from `data/sample/` (the EPMS breaker events), `data/energy/`, and the power telemetry; writes nothing else. The Landlord's revenue meters on the two 13.8 kV mains (MV-A, MV-B), one reading a minute under PowerLogic ION measurement labels (`Vll ab`, `I a`, `kW tot`, `PF sign tot`, `Freq`). Each hour's energy across both mains equals `utility_kwh`, so PUE does not move; each UPS's unit substation sits on one bus (odd-numbered on MV-A, even on MV-B, an assumption) and the rest of the site splits half and half. The meters are on the utility side of the main breakers, so they read nothing from the trip to the retransfer. Ride-through is not drawn: it is the shortest published runtime among the UPSs carrying load, gathered per minute.
+
+| File | What it represents |
+|---|---|
+| `mains_hourly.csv` | Per main per hour: energy, mean and peak kW, peak current, mean, lowest, and highest voltage, minutes without the utility, power factor, frequency range, peak THD |
+| `ride_through_hourly.csv` | Per hour per scope (SITE-IT, SITE-COOLING, HALL-A, HALL-B): the lowest ride-through in seconds, the UPS that set it, the hour's mean |
+| `windows/<main>_<start>.json` | One-minute series around each breaker change (the utility outage) |
+| `manifest.json` | The UPSs on each bus, each outage's bridge seconds and the ride-through when it began, checksums of the minute files in `build/telemetry/utility_minutes/` |
 
 ### Mechanical (`data/telemetry/mechanical/`)
 

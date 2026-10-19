@@ -48,6 +48,7 @@ DOCS = [
     ("GPU telemetry report", "reports/gpu_telemetry.md"),
     ("CDU telemetry report", "reports/cdu_telemetry.md"),
     ("Power telemetry report", "reports/power_telemetry.md"),
+    ("Utility mains and UPS ride-through", "reports/utility_telemetry.md"),
     ("Network telemetry report", "reports/network_telemetry.md"),
     ("Mechanical telemetry report", "reports/mechanical_telemetry.md"),
     ("Management network report", "reports/management_telemetry.md"),

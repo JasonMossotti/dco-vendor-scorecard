@@ -1,0 +1,109 @@
+{
+ "disclaimer": "Synthetic utility metering for a portfolio demonstration, under PowerLogic ION measurement labels. All names and readings are fictional.",
+ "files": {
+  "mains_hourly.csv": 1344,
+  "ride_through_hourly.csv": 2688,
+  "windows": 2
+ },
+ "mains": {
+  "MV-A": {
+   "breaker": "MV-A main breaker",
+   "bus": "MV-A",
+   "ups": [
+    "MUPS-A1",
+    "MUPS-B1",
+    "UPS-A1",
+    "UPS-A3",
+    "UPS-B1",
+    "UPS-B3"
+   ]
+  },
+  "MV-B": {
+   "breaker": "MV-B main breaker",
+   "bus": "MV-B",
+   "ups": [
+    "MUPS-A2",
+    "MUPS-B2",
+    "UPS-A2",
+    "UPS-A4",
+    "UPS-B2",
+    "UPS-B4"
+   ]
+  }
+ },
+ "minutes": {
+  "MV-A.json": {
+   "bytes": 1354008,
+   "sha256": "43be35eab5f526457c6517fd80de036e797af647f15e4fcd0199737b2680ed52"
+  },
+  "MV-B.json": {
+   "bytes": 1352211,
+   "sha256": "8cf1b515bdaa7f638b40249e9d383a14a478cfd63b8d948f212bfcddd315647f"
+  },
+  "ride_through.json": {
+   "bytes": 399202,
+   "sha256": "ac61666ddaf787a4204075ca66ede41a5260a317d64cabddc3be38451e87e99c"
+  }
+ },
+ "outages": [
+  {
+   "back": "2026-09-24T21:56:06Z",
+   "bridge_s": 12,
+   "bus_live": "2026-09-24T21:14:30Z",
+   "ride_cooling_s": 1290,
+   "ride_it_s": 550,
+   "ties_closed": "2026-09-24T21:14:32Z",
+   "ties_open": "2026-09-24T21:56:11Z",
+   "trip": "2026-09-24T21:14:20Z"
+  }
+ ],
+ "scopes": {
+  "HALL-A": [
+   "UPS-A1",
+   "UPS-A2",
+   "UPS-A3",
+   "UPS-A4"
+  ],
+  "HALL-B": [
+   "UPS-B1",
+   "UPS-B2",
+   "UPS-B3",
+   "UPS-B4"
+  ],
+  "SITE-COOLING": [
+   "MUPS-A1",
+   "MUPS-A2",
+   "MUPS-B1",
+   "MUPS-B2"
+  ],
+  "SITE-IT": [
+   "UPS-A1",
+   "UPS-A2",
+   "UPS-A3",
+   "UPS-A4",
+   "UPS-B1",
+   "UPS-B2",
+   "UPS-B3",
+   "UPS-B4"
+  ]
+ },
+ "source": "data/sample + data/energy + power telemetry",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "start": "2026-08-31T00:00:00Z"
+ },
+ "windows": [
+  {
+   "device": "MV-A",
+   "file": "windows/MV-A_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 163
+  },
+  {
+   "device": "MV-B",
+   "file": "windows/MV-B_20260924T2044.json",
+   "from": "2026-09-24T20:44:00Z",
+   "minutes": 163
+  }
+ ]
+}

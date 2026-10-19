@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Render the Telemetry tab (site health, GPUs, CDUs, power, network, mechanical, the management network, and storage)
-and its reports: reports/gpu_telemetry.md, cdu_telemetry.md, power_telemetry.md, network_telemetry.md,
+and its reports: reports/gpu_telemetry.md, cdu_telemetry.md, power_telemetry.md, utility_telemetry.md, network_telemetry.md,
 mechanical_telemetry.md, management_telemetry.md, storage_telemetry.md, and site_health.md.
 
 Reads the committed GPU telemetry (data/telemetry/gpu/), the per-GPU hourly tier (built into
@@ -9,7 +9,7 @@ with (data/gpu_health/, data/sample/). Synthetic data in the published format of
 exporter; no vendor's internal tooling is implied.
 
 Usage:
-    python scripts/render_telemetry.py                    # write the eight reports
+    python scripts/render_telemetry.py                    # write the nine reports
     python scripts/render_telemetry.py --check            # exit 1 if a report is out of date
     python scripts/render_telemetry.py --robustness 60    # every agreement on 60 generated months
     python scripts/render_telemetry.py --robustness 60 --jobs 4 --resume build/robustness/telemetry
@@ -47,6 +47,7 @@ from scorecard import telemetry_mgmt as TG  # noqa: E402
 from scorecard import telemetry_network as TN  # noqa: E402
 from scorecard import telemetry_power as TP  # noqa: E402
 from scorecard import telemetry_storage as TST  # noqa: E402
+from scorecard import telemetry_utility as TU  # noqa: E402
 from scorecard import xid as X  # noqa: E402
 from scorecard.synthetic import gpu_health as G  # noqa: E402
 from scorecard.synthetic import telemetry as T  # noqa: E402
@@ -56,6 +57,7 @@ from scorecard.synthetic import telemetry_mgmt as TGS  # noqa: E402
 from scorecard.synthetic import telemetry_network as TNS  # noqa: E402
 from scorecard.synthetic import telemetry_power as TPS  # noqa: E402
 from scorecard.synthetic import telemetry_storage as TSS  # noqa: E402
+from scorecard.synthetic import telemetry_utility as TUS  # noqa: E402
 
 DATA = ROOT / "data" / "telemetry" / "gpu"
 HEALTH = ROOT / "data" / "gpu_health"
@@ -582,7 +584,89 @@ def prepare_power(t: TP.PowerData | None = None) -> dict:
             "ups": ups, "runs": runs, "gens": gens, "halls": halls, "rack_feeds": rack_feeds,
             "events": events, "outages": t.manifest["outages"], "windows": t.manifest["windows"],
             "agreements": [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks],
+            "misses": [m for c in checks for m in c.misses][:20],
+            "utility": prepare_utility(t)}
+
+
+# --------------------------------------------------------------------------- utility mains and ride-through
+DATA_UTIL = ROOT / "data" / "telemetry" / "utility"
+OUT_UTIL = ROOT / "reports" / "utility_telemetry.md"
+
+
+def load_utility(pw: TP.PowerData | None = None) -> TU.UtilityData:
+    return TU.load(DATA_UTIL, hourly_dir().parent / "utility_minutes", pw or load_power())
+
+
+def prepare_utility(pw: TP.PowerData | None = None, t: TU.UtilityData | None = None) -> dict:
+    """The Power page's Utility section: both 13.8 kV mains and the site's UPS ride-through, from the committed tiers."""
+    ucfg, pcfg = TUS.load_config(), TPS.load_config()
+    t = t or load_utility(pw)
+    checks = TU.agreements(t, ucfg, pcfg)
+    fl = lambda rows, k: [float(r[k]) for r in rows]          # noqa: E731
+    mains = []
+    for b, x in sorted(t.manifest["mains"].items()):
+        rows = [r for r in t.mains_hourly if r["main"] == b]
+        live = [r for r in rows if int(r["dead_min"]) < 60]
+        kw = fl(rows, "kw_avg")
+        mains.append({"id": b, "breaker": x["breaker"], "ups": x["ups"], "mwh": round(sum(fl(rows, "kwh")) / 1000, 1),
+                      "kw_avg": round(sum(kw) / len(kw), 1), "kw_peak": max(fl(rows, "kw_max")), "amps_peak": max(fl(rows, "amps_max")),
+                      "v_avg": round(sum(fl(live, "v_avg")) / len(live)), "v_low": min(float(r["v_min"]) for r in live if int(r["dead_min"]) == 0),
+                      "v_max": max(fl(rows, "v_max")), "dead_min": sum(int(r["dead_min"]) for r in rows),
+                      "pf_avg": round(sum(fl(live, "pf_avg")) / len(live), 3), "thd_max": max(fl(rows, "thd_max")),
+                      "hz_min": min(float(r["hz_min"]) for r in live), "hz_max": max(fl(rows, "hz_max")),
+                      "series": {k: [float(r[k]) for r in rows] for k in ("kw_avg", "kw_max", "amps_max", "v_avg", "v_min", "v_max", "dead_min", "pf_avg", "thd_max")}})
+    ride = {}
+    order = ["SITE-IT", "SITE-COOLING"] + sorted(k for k in t.manifest["scopes"] if not k.startswith("SITE-"))
+    for s in order:
+        ids = t.manifest["scopes"][s]
+        rows = [r for r in t.ride_hourly if r["scope"] == s]
+        vals = [(int(r["min_s"]), i, r["ups"]) for i, r in enumerate(rows) if r["min_s"] != ""]
+        low = min(vals) if vals else None
+        ride[s] = {"ups": ids, "min_s": low[0] if low else None, "min_hour": low[1] if low else None, "min_ups": low[2] if low else None,
+                   "avg_s": round(sum(int(r["avg_s"]) for r in rows if r["avg_s"] != "") / len(vals)) if vals else None,
+                   "limit": sorted({r["ups"] for r in rows if r["ups"]}),
+                   "series": [int(r["min_s"]) if r["min_s"] != "" else None for r in rows],
+                   "who": [r["ups"] or None for r in rows]}
+    return {"framing": ucfg["framing"], "sources": ucfg["sources"], "collection": ucfg["collection"], "fields": ucfg["fields"],
+            "nominal_v": ucfg["electrical"]["nominal_v"], "band_pct": ucfg["checks"]["voltage_band_pct"],
+            "design_take_load_s": ucfg["ride_through"]["design_take_load_s"], "min_load_kw": ucfg["ride_through"]["min_load_kw"],
+            "runtime_cap_s": pcfg["ups"]["battery"]["runtime_cap_min"] * 60,
+            "window": t.manifest["window"], "mains": mains, "ride": ride, "outages": t.manifest["outages"], "windows": t.manifest["windows"],
+            "agreements": [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks],
             "misses": [m for c in checks for m in c.misses][:20]}
+
+
+def utility_markdown(f: dict) -> str:
+    fs = TU.fmt_s
+    L = ["# Utility mains and UPS ride-through (Site AUS-1, synthetic)", "",
+         f"{f['framing']} One read a minute of the Landlord's revenue meters on the two 13.8 kV mains ({f['collection']['meter']}), "
+         f"through {f['collection']['path']}. All names and readings are fictional; no vendor's internal tooling is implied.", "",
+         "Generator: scripts/generate_telemetry.py, scripts/render_telemetry.py", "",
+         "Each hour's energy across both mains equals the energy meters' utility energy, so PUE and every headline are unchanged. "
+         "Ride-through is the shortest battery runtime among the UPSs carrying load, as each UPS's network management card reports it.", "",
+         "## Mains", "", "| Main | UPSs on its bus | Energy MWh | kW avg / peak | Amps peak | Voltage avg / lowest / highest | PF avg | THD max % | Minutes dead |",
+         "|---|---|---:|---:|---:|---:|---:|---:|---:|"]
+    for m in f["mains"]:
+        L.append(f"| {m['id']} | {', '.join(m['ups'])} | {m['mwh']:,} | {m['kw_avg']:,} / {m['kw_peak']:,} | {m['amps_peak']} | "
+                 f"{m['v_avg']:,} / {m['v_low']:,.0f} / {m['v_max']:,.0f} | {m['pf_avg']} | {m['thd_max']} | {m['dead_min']} |")
+    L += ["", "## Ride-through (m:ss)", "", "| Scope | Lowest | When (hour) | Set by | Month average of the hourly lowest |", "|---|---:|---|---|---:|"]
+    for s, r in f["ride"].items():
+        when = "" if r["min_hour"] is None else (G.parse(f["window"]["start"]) + timedelta(hours=r["min_hour"])).strftime("%Y-%m-%d %H:00Z")
+        L.append(f"| {s} | {fs(r['min_s']) if r['min_s'] is not None else '–'} | {when} | {r['min_ups'] or '–'} | {fs(r['avg_s']) if r['avg_s'] is not None else '–'} |")
+    L += ["", "## Utility outages", "", "| Trip | Ties closed | Utility back | UPS bridge s | IT ride-through at the trip | Cooling ride-through at the trip | Margin |",
+          "|---|---|---|---:|---:|---:|---:|"]
+    for o in f["outages"]:
+        L.append(f"| {o['trip']} | {o['ties_closed']} | {o['back']} | {o['bridge_s']} | {fs(o['ride_it_s'])} | {fs(o['ride_cooling_s'])} | "
+                 f"{fs(o['ride_it_s'] - o['bridge_s'])} |")
+    L += ["", f"The design reference for the generators taking load is {f['design_take_load_s']} s (NFPA 110 Type 10). That applies to Level 1 "
+          "emergency systems; the data halls' critical load is not one, so no take-load time binds the site and the UPS batteries bridge it.", "",
+          "## Agreement with the records", "", "| Check | Agrees |", "|---|---:|"]
+    for a in f["agreements"]:
+        L.append(f"| {a['title']} | {a['checked'] - a['misses']:,} of {a['checked']:,} |")
+    if f["misses"]:
+        L += ["", "Disagreements:", ""] + [f"- {m}" for m in f["misses"]]
+    L += ["", "## Sources", ""] + [f"- {s['name']}: {s['url']} (checked {s['checked']})" for s in f["sources"]]
+    return "\n".join(L) + "\n"
 
 
 def power_json(t: TP.PowerData, device: str) -> dict:
@@ -1578,6 +1662,14 @@ def write_site(out: Path) -> None:
     for name in pw.manifest["minutes"]:
         shutil.copy2(pw.minutes_dir / name, data / "power_minutes" / name)
     shutil.copytree(DATA_POWER / "windows", data / "power" / "windows")
+    ut = load_utility(pw)
+    for sub in ("utility", "utility_minutes"):
+        if (data / sub).exists():
+            shutil.rmtree(data / sub)
+        (data / sub).mkdir(parents=True)
+    for name in ut.manifest["minutes"]:
+        shutil.copy2(ut.minutes_dir / name, data / "utility_minutes" / name)
+    shutil.copytree(DATA_UTIL / "windows", data / "utility" / "windows")
     nt = load_network()
     if (data / "network").exists():
         shutil.rmtree(data / "network")
@@ -1659,7 +1751,7 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
     syn = yaml.safe_load((ROOT / "config" / "synthetic.yaml").read_text(encoding="utf-8"))
     from scorecard import devices as DV
     cfg, hcfg, ccfg, ecfg, pcfg = T.load_config(), G.load_config(), TCS.load_config(), energy_config(), TPS.load_config()
-    ncfg, mcfg, gcfg, scfg = TNS.load_config(), TMS.load_config(), TGS.load_config(), TSS.load_config()
+    ncfg, mcfg, gcfg, scfg, ucfg = TNS.load_config(), TMS.load_config(), TGS.load_config(), TSS.load_config(), TUS.load_config()
     with (contextlib.nullcontext(str(keep)) if keep else tempfile.TemporaryDirectory()) as tmp:
         d = Path(tmp)
         write_dataset(SiteGenerator(load_sla(), syn, start=date(2025, 1, 6) + timedelta(weeks=4 * k), seed=2000 + k).run(), d)
@@ -1678,8 +1770,14 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         layer = built["layer"]
         cchecks = TC.agreements(TC.load(d / "cdu", d / "cdu_min", d / "gpu_health", d, d / "energy", d / "telemetry"), ccfg, hcfg)
         power = TPS.PowerTelemetry(pub.tel, pub, d / "energy", pcfg, energy_cfg=ecfg, rack_rest=ccfg["rack_rest"])
-        TPS.write_power(power, power.run(), d / "power", "", d / "power_min")
-        pchecks = TP.agreements(TP.load(d / "power", d / "power_min", d, d / "energy", d / "telemetry", d / "cdu"), pcfg, ccfg["rack_rest"], ecfg)
+        pout = power.run()
+        TPS.write_power(power, pout, d / "power", "", d / "power_min")
+        pdata = TP.load(d / "power", d / "power_min", d, d / "energy", d / "telemetry", d / "cdu")
+        pchecks = TP.agreements(pdata, pcfg, ccfg["rack_rest"], ecfg)
+        util = TUS.UtilityTelemetry(power, pout, ucfg)
+        TUS.write_utility(util, util.run(), d / "utility", "", d / "util_min")
+        uchecks = TU.agreements(TU.load(d / "utility", d / "util_min", pdata), ucfg, pcfg)
+        del pout
         net = TNS.NetworkTelemetry(pub.tel, pub, ncfg)
         TNS.write_network(net, net.run(), d / "network", "", d / "net_min")
         nchecks = TN.agreements(TN.load(d / "network", d / "net_min", d, d / "hourly"), ncfg, DV.load())
@@ -1704,7 +1802,7 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         + [f"network records disagree with each other: {net.conflicts[:3]}"] * bool(net.conflicts) \
         + [f"mechanical records disagree with each other: {mech.conflicts[:3]}"] * bool(mech.conflicts)
     pack = lambda cs: {c.name: [c.checked - len(c.misses), c.checked, c.misses[:3]] for c in cs}      # noqa: E731
-    return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "network": pack(nchecks), "mechanical": pack(mchecks),
+    return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "utility": pack(uchecks), "network": pack(nchecks), "mechanical": pack(mchecks),
             "mgmt": pack(gchecks), "mgmt_findings": gscore, "storage": pack(stchecks), "storage_findings": stscore, "site": pack(schecks),
             "conflicts": conflicts}
 
@@ -1738,7 +1836,7 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
             keep(robustness_month(k))
     bad = 0
     ok = True
-    for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("network", "Network", 14),
+    for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("utility", "Utility", 12), ("network", "Network", 14),
                          ("mechanical", "Mechanical", 12), ("mgmt", "Management", 12), ("storage", "Storage", 12), ("site", "Site health", 12)):
         tot: dict[str, list[int]] = {}
         for k in range(n):
@@ -1779,7 +1877,7 @@ def main() -> int:
     if args.robustness:
         return robustness(args.robustness, args.jobs, args.resume)
     f = prepare()
-    texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"]), OUT_NET: network_markdown(f["network"]),
+    texts = {OUT: markdown(f), OUT_CDU: cdu_markdown(f["cdu"]), OUT_POWER: power_markdown(f["power"]), OUT_UTIL: utility_markdown(f["power"]["utility"]), OUT_NET: network_markdown(f["network"]),
              OUT_MECH: mechanical_markdown(f["mechanical"]), OUT_MGMT: mgmt_markdown(f["mgmt"]), OUT_STORAGE: storage_markdown(f["storage"]),
              OUT_SITE: site_markdown(f["site"])}
     if args.check:
@@ -1789,7 +1887,7 @@ def main() -> int:
         return 1 if stale else 0
     for p, text in texts.items():
         p.write_text(text, encoding="utf-8", newline="\n")
-    for name, a in (("GPU", f["agreements"]), ("CDU", f["cdu"]["agreements"]), ("Power", f["power"]["agreements"]),
+    for name, a in (("GPU", f["agreements"]), ("CDU", f["cdu"]["agreements"]), ("Power", f["power"]["agreements"]), ("Utility", f["power"]["utility"]["agreements"]),
                     ("Network", f["network"]["agreements"]), ("Mechanical", f["mechanical"]["agreements"]),
                     ("Management", f["mgmt"]["agreements"]), ("Storage", f["storage"]["agreements"]), ("Site health", f["site"]["agreements"])):
         ok = sum(x["checked"] - x["misses"] for x in a)

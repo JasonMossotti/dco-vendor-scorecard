@@ -328,6 +328,35 @@ async function until(fn, what, ms = 8000) {
   ok(["ups", "busway", "tapoff", "generator"].every(k => P.fields[k].every(f => t().includes(f.name))) && P.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#power-fields lists every point and source");
   await go("#power-agreements");
   ok(d.querySelectorAll("tbody tr").length === P.agreements.length && P.agreements.every(a => t().includes(a.title)), "#power-agreements shows every check");
+  // ---- utility mains and ride-through
+  const UT = P.utility, mss = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`, uo = UT.outages[0];
+  await go("#power");
+  ok(t().includes("Utility and UPS ride-through") && t().includes(mss(UT.ride["SITE-IT"].min_s)), "the power overview shows the ride-through in m:ss");
+  await go("#utility");
+  await until(() => d.querySelectorAll("#uride svg").length === 1 && d.querySelectorAll("#umains svg").length === 2, "utility charts");
+  ok(t().includes("Utility mains and UPS ride-through") && d.querySelectorAll(".ctile").length === UT.mains.length, "#utility: a tile per main");
+  ok(t().includes(mss(UT.ride["SITE-IT"].min_s)) && t().includes(mss(UT.ride["SITE-COOLING"].min_s)) && t().includes(`${uo.bridge_s} s`), "IT and cooling ride-through and the measured bridge");
+  ok(t().includes(mss(uo.ride_it_s - uo.bridge_s)) && t().includes("NFPA 110 Type 10"), "the margin at the outage and the design reference");
+  ok(UT.agreements.every(c => c.misses === 0) && d.querySelector('#main a[href="#utility-agreements"]'), "utility agreements, none missed");
+  ok(d.querySelector('#tree a[href="#utility"]').classList.contains("on"), "tree highlights Utility");
+  noBad("#utility");
+  await go("#MV-A");
+  await until(() => d.querySelectorAll("#uc svg").length === 3, "MV-A charts");
+  ok(t().includes("MV-A main breaker") && d.querySelector('#main a[href="#UPS-A1"]'), "MV-A: its breaker and the UPSs on its bus");
+  noBad("#MV-A");
+  await go(`#MV-A/${mOf(uo.trip) - 1}`);
+  await until(() => d.getElementById("um-raw") && d.getElementById("um-raw").textContent.includes("Vll ab"), "MV-A minute view");
+  const uraw = () => d.getElementById("um-raw").textContent;
+  ok(/"Vll ab": 1[34]\d{3}/.test(uraw()) && uraw().includes('"MV-A main breaker": "Closed"'), "the minute before the trip the main is live and closed");
+  ok(d.querySelectorAll("#um-ch svg").length === 3 && d.querySelectorAll("#um-tbl tbody tr").length === UT.fields.length, "minute view: three charts and every point");
+  d.querySelector('#um-step button[data-s="10"]').click();
+  await sleep(20);
+  ok(w.location.hash === `#MV-A/${mOf(uo.trip) + 9}` && /"Vll ab": 0,/.test(uraw()) && uraw().includes('"Open"'), "ten minutes later the line side is dead and the main open");
+  noBad("#MV-A minute view");
+  await go("#utility-fields");
+  ok(UT.fields.every(f => t().includes(f.name)) && UT.sources.every(s => d.querySelector(`a[href="${s.url}"]`)), "#utility-fields lists every point and source");
+  await go("#utility-agreements");
+  ok(d.querySelectorAll("tbody tr").length === UT.agreements.length && UT.agreements.every(a => t().includes(a.title)), "#utility-agreements shows every check");
   fs.renameSync(path.join(site, "data/power_minutes/UPS-B2.json"), path.join(site, "data/power_minutes/UPS-B2.json.bak"));
   try {
     await go("#UPS-B2/5");

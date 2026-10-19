@@ -988,9 +988,9 @@ __SITENAV__
     }
     const Ht = y + 4, mid = Ht / 2;
     const box = (x, yy, w, h, fill, text, href, title, dark) => `<a href="${esc(href || "#power")}"><rect x="${esc(x)}" y="${esc(yy)}" width="${esc(w)}" height="${esc(h)}" rx="4" fill="${esc(fill)}" stroke="#9aa6b2"><title>${esc(title || text)}</title></rect><text x="${esc(x + 6)}" y="${esc(yy + h / 2 + 4)}" style="fill:${dark ? "#fff" : "var(--ink)"};font-weight:600">${esc(text)}</text></a>`;
-    body += box(x0, mid - 64, 150, 26, "#fff", "138 kV utility", "#power", "The utility service (WO-41009 records the 09-24 outage)");
+    body += box(x0, mid - 64, 150, 26, "#fff", "138 kV utility", "#utility", "The utility service and the UPS ride-through (WO-41009 records the 09-24 outage)");
     body += box(x0, mid - 30, 150, 26, "#fff", `${P.gens.length} generators (N+1)`, "#GEN-1", `${P.gens.length} × CAT C175-16, ${P.gen_rated_kw.toLocaleString("en-US")} kW each, 13.8 kV`);
-    body += box(x0, mid + 8, 150, 26, "#fff", "MV-A / MV-B", "#power", "13.8 kV switchgear: utility mains and generator tie breakers");
+    body += box(x0, mid + 8, 150, 26, "#fff", "MV-A / MV-B", "#MV-A", "13.8 kV switchgear: utility mains (revenue meters) and generator tie breakers");
     body += `<line x1="${esc(x0 + 150)}" x2="${esc(xBus)}" y1="${esc(mid + 21)}" y2="${esc(mid + 21)}" stroke="#7b8794"/><line x1="${esc(x0 + 75)}" x2="${esc(x0 + 75)}" y1="${esc(mid - 38)}" y2="${esc(mid + 8)}" stroke="#7b8794"/>`;
     const ups = rows.filter(r => r.ups);
     body += `<line x1="${esc(xBus)}" x2="${esc(xBus)}" y1="${esc(ups[0].y + 11)}" y2="${esc(ups[ups.length - 1].y + 11)}" stroke="#7b8794" stroke-width="2"/>`;
@@ -1012,6 +1012,7 @@ __SITENAV__
 
   function powerOverview(seq) {
     let h = `<div class="kind">Power</div><h1>Power telemetry</h1><p class="sub">${esc(P.framing)} Every UPS (SNMPv3 through its network management card), every busway run and tap-off (Starline M70 meters, SNMP), and every generator (EMCP 4.4, Modbus TCP), read once a minute, ${esc(md(P.window.start))} to ${esc(md(P.window.end))}. Built from the bottom up: each rack's power splits across its A and B tap-offs, the tap-offs add up to their run, and the runs to their UPS. All names and readings are fictional.</p>`;
+    h += `<h2 class="sec">Utility and UPS ride-through</h2>` + rideTiles() + `<p class="note"><a href="#utility">The mains and the ride-through, hour by hour →</a></p>`;
     h += `<h2 class="sec">One-line, coloured by the month's peak load</h2>` + oneLine();
     for (const hall of PHALLS) {
       const H = P.halls[hall];
@@ -1395,7 +1396,8 @@ __SITENAV__
     main.innerHTML = h;
   }
   function powerTree() {
-    let h = `<div class="famsec" data-fam="power"><div class="sec">Power</div><ul><li>${link("power", "Overview")}</li>`;
+    let h = `<div class="famsec" data-fam="power"><div class="sec">Power</div><ul><li>${link("power", "Overview")}</li>`
+      + `<li><details open><summary>${link("utility", "Utility and ride-through")} <small>${esc(P.utility.mains.length)}</small></summary><ul>` + P.utility.mains.map(m => `<li>${link(m.id, `${m.id} main`)}</li>`).join("") + `</ul></details></li>`;
     for (const hall of PHALLS) {
       const H = P.halls[hall];
       h += `<li><details open><summary>${link("power", `${H.name} UPS`)} <small>${esc(H.ups.length)} + ${esc(H.mups.length)}</small></summary><ul>`
@@ -1408,8 +1410,148 @@ __SITENAV__
         + `</ul></details></li>`;
     }
     h += `<li><details open><summary>${link("GEN-1", "Generators")} <small>${esc(P.gens.length)}</small></summary><ul>` + P.gens.map(g => `<li>${link(g.id, g.id)}</li>`).join("") + `</ul></details></li>`;
-    h += `</ul><div class="sec">Power reference</div><ul><li>${link("power-fields", "Points and registers")}</li><li>${link("power-agreements", "Agreement with the records")}</li></ul></div>`;
+    h += `</ul><div class="sec">Power reference</div><ul><li>${link("power-fields", "Points and registers")}</li><li>${link("power-agreements", "Agreement with the records")}</li><li>${link("utility-fields", "Utility points and sources")}</li><li>${link("utility-agreements", "Utility agreement")}</li></ul></div>`;
     return h;
+  }
+
+  // ---------------------------------------------------------------- utility
+  // Page data: B.power.utility (scripts/render_telemetry.py prepare_utility). Fetched: data/utility_minutes/<main>.json
+  // (every minute of the month) for the minute detail.
+  const UT = P.utility, UMAIN = Object.fromEntries(UT.mains.map(m => [m.id, m]));
+  const UF = Object.fromEntries(UT.fields.map(f => [f.key, f]));
+  const mss = s => s == null || s < 0 ? "–" : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  const SCOPE_NAME = {"SITE-IT": "IT load (data halls)", "SITE-COOLING": "Cooling (CDU pumps, thermal-wall fans)", "HALL-A": "Hall A IT", "HALL-B": "Hall B IT"};
+  const loadUMin = id => getJson(`data/utility_minutes/${encodeURIComponent(id)}.json`).then(d => {
+    if (!d.decoded) { d.decoded = true; d.v = {}; for (const [k, arr] of Object.entries(d.fields)) d.v[k] = unpackSteps(arr, UF[k] ? UF[k].scale : 1); }
+    return d;
+  });
+  const uAgree = () => [UT.agreements.reduce((a, c) => a + c.checked - c.misses, 0), UT.agreements.reduce((a, c) => a + c.checked, 0)];
+  function rideTiles() {
+    const o = UT.outages[0];
+    let h = `<div class="tiles">`;
+    for (const s of ["SITE-IT", "SITE-COOLING"]) {
+      const r = UT.ride[s];
+      h += tile(`Ride-through · ${SCOPE_NAME[s]}`, esc(mss(r.min_s)), `the month's lowest (${esc(r.min_ups || "–")}, ${esc(r.min_hour == null ? "–" : hourAt(r.min_hour))}); typical hour's lowest ${esc(mss(r.avg_s))}`);
+    }
+    h += tile("Generators take the load", o ? `${num(o.bridge_s)} s` : "–", o ? `measured ${esc(at(o.trip))} (trip to the generator ties closing); design reference ${num(UT.design_take_load_s)} s (NFPA 110 Type 10)` : "no utility outage this month");
+    if (o) h += tile("Margin at the outage", esc(mss(o.ride_it_s - o.bridge_s)), `IT ride-through ${esc(mss(o.ride_it_s))} when the utility failed, less the ${num(o.bridge_s)} s bridge`);
+    return h + `</div>`;
+  }
+  function utilityOverview(seq) {
+    const [agree, tot] = uAgree(), o = UT.outages[0];
+    let h = `<div class="kind">Power</div><h1>Utility mains and UPS ride-through</h1><p class="sub">${esc(UT.framing)} The Landlord's revenue meters on the two 13.8 kV mains (${esc(UT.collection.meter)}), read once a minute through ${esc(UT.collection.path)}. Ride-through is how long the UPS batteries would carry today's load if the utility failed and the generators never took it: the shortest runtime among the UPSs carrying load, as each UPS's network management card reports it. All names and readings are fictional.</p>`;
+    h += `<h2 class="sec">If the utility failed</h2>` + rideTiles();
+    h += `<p class="note">Read it as: if commercial power were lost at the month's worst hour, the data halls would run on battery for ${esc(mss(UT.ride["SITE-IT"].min_s))} and the cooling for ${esc(mss(UT.ride["SITE-COOLING"].min_s))}. The generators took the load in ${o ? num(o.bridge_s) : "–"} s on ${o ? esc(md(o.trip)) : "–"}. The 10 s design reference applies to Level 1 emergency systems; a data hall's critical load is not one, so no take-load time binds the site and the batteries bridge it. A UPS at light load reports its runtime capped at ${esc(mss(UT.runtime_cap_s))}.</p>`;
+    h += `<div class="tiles">` + ["HALL-A", "HALL-B"].filter(s => UT.ride[s]).map(s => { const r = UT.ride[s]; return tile(SCOPE_NAME[s], esc(mss(r.min_s)), `lowest this month, set by ${esc(r.min_ups || "–")}; typical ${esc(mss(r.avg_s))}`); }).join("") + `</div>`;
+    h += `<div id="uride"></div>`;
+    h += `<h2 class="sec">The mains</h2><div class="ctiles">` + UT.mains.map(m => `<a class="tile ctile" href="#${esc(m.id)}"><div class="k">${esc(m.id)} <span>· ${esc(m.breaker)}</span></div>`
+      + kv("Load avg / peak", `${num(m.kw_avg)} / ${num(m.kw_peak)} kW`) + kv("Current peak", `${num(m.amps_peak, 1)} A`)
+      + kv("Voltage L-L avg", `${num(m.v_avg)} V`, ` <span class="note">lowest ${num(m.v_low)}, highest ${num(m.v_max)}</span>`)
+      + kv("Power factor avg", num(m.pf_avg, 3)) + kv("Voltage THD max", `${num(m.thd_max, 2)}%`)
+      + kv("Without the utility", `${num(m.dead_min)} min`, m.dead_min ? tag("outage", "bad") : "") + `</a>`).join("") + `</div>`;
+    h += `<div id="umains"></div>`;
+    h += `<h2 class="sec">Utility outages</h2>` + (UT.outages.length ? `<div class="scroll"><table><thead><tr><th>Trip</th><th>Generator ties closed</th><th>Utility back</th><th class="n">UPS bridge</th><th class="n">IT ride-through then</th><th class="n">Cooling ride-through then</th><th></th></tr></thead><tbody>`
+      + UT.outages.map(x => `<tr><td class="n">${esc(at(x.trip))}</td><td class="n">${esc(at(x.ties_closed))}</td><td class="n">${esc(at(x.back))}</td><td class="n">${num(x.bridge_s)} s</td><td class="n">${esc(mss(x.ride_it_s))}</td><td class="n">${esc(mss(x.ride_cooling_s))}</td><td><a class="b" href="#MV-A/${esc(Math.max(0, minOf(x.trip) - 10))}">Minute detail</a></td></tr>`).join("") + `</tbody></table></div>` : `<p class="note">None this month.</p>`);
+    h += `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#utility-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(UT.agreements.length)} checks: the energy meters, the EPMS breaker events, every UPS's input, frequency, battery, and runtime</div></div></div>`;
+    h += `<p><a href="#utility-fields">Points and sources</a> · <a href="#power">Power overview</a></p>`;
+    main.innerHTML = h;
+    const n = P.hours, X = {...HX, n, bands: UT.outages.map(x => ({a: hourOf(x.trip), b: hourOf(x.back) + 1, label: `${at(x.trip)}: utility outage`, color: PEVC.utility}))};
+    const toMin = v => v.map(x => x == null ? null : x / 60);
+    document.getElementById("uride").innerHTML = chart({...X, title: "Ride-through, the lowest each hour (minutes)", unit: "min", d: 1, lo: 0,
+      series: [{v: toMin(UT.ride["SITE-COOLING"].series), color: "var(--s2)", name: "Cooling"}, {v: toMin(UT.ride["SITE-IT"].series), color: "var(--s1)", name: "IT load", w: 1.8}]})
+      + lg([["var(--s1)", "IT load: the shortest IT UPS runtime"], ["var(--s2)", "cooling: the shortest mechanical UPS runtime"]]);
+    document.getElementById("umains").innerHTML = chart({...X, title: "Load on each main, hourly mean (kW)", unit: "kW", d: 0, lo: 0, series: UT.mains.map((m, i) => ({v: m.series.kw_avg, color: `var(--s${i + 1})`, name: m.id}))})
+      + lg(UT.mains.map((m, i) => [`var(--s${i + 1})`, m.id]))
+      + chart({...X, title: "Voltage line to line, hourly mean (V)", unit: "V", d: 0, series: UT.mains.map((m, i) => ({v: m.series.v_avg.map((v, k) => m.series.dead_min[k] >= 60 ? null : v), color: `var(--s${i + 1})`, name: m.id})), hlines: [{y: UT.nominal_v, label: `nominal ${num(UT.nominal_v)} V`, color: "var(--muted)"}]});
+  }
+  function mainHeader(m) {
+    return `<div class="kind">Utility · 13.8 kV main · ${esc(UT.collection.meter.split(",")[0])}</div><h1>${esc(m.id)}</h1>`
+      + `<p class="sub">The revenue meter on the utility side of the ${esc(m.breaker)}, read once a minute through ${esc(UT.collection.path)}. The unit substations of ${m.ups.map(u => link(u, u)).join(", ")} sit on this bus; the chillers, pumps, CRAHs, and house load split across both. <a href="#utility">← Utility and ride-through</a></p>`;
+  }
+  function mainView(id, seq) {
+    const m = UMAIN[id], o = UT.outages[0];
+    let h = mainHeader(m) + `<div class="tiles">` + tile("Load avg / peak", `${num(m.kw_avg)} kW`, `peak ${num(m.kw_peak)} kW; ${num(m.mwh, 1)} MWh this month`)
+      + tile("Current peak", `${num(m.amps_peak, 1)} A`, "the highest phase, one-minute average")
+      + tile("Voltage L-L", `${num(m.v_avg)} V`, `lowest ${num(m.v_low)} V outside the outage, highest ${num(m.v_max)} V; frequency ${num(m.hz_min, 2)} to ${num(m.hz_max, 2)} Hz`)
+      + tile("Without the utility", `${num(m.dead_min)} min`, o ? `from ${esc(at(o.trip))} to ${esc(at(o.back))}` : "none this month") + `</div>`;
+    h += `<p><a class="b" href="#${esc(id)}/${esc(o ? Math.max(0, minOf(o.trip) - 10) : P.hours * 60 - 61)}">Minute detail and the PME read</a></p>`;
+    h += `<h2 class="sec">The month, by hour</h2><div id="uc"></div>`;
+    main.innerHTML = h;
+    const S = m.series, n = P.hours, X = {...HX, n, bands: UT.outages.map(x => ({a: hourOf(x.trip), b: hourOf(x.back) + 1, label: `${at(x.trip)}: utility outage`, color: PEVC.utility}))};
+    const live = k => S[k].map((v, i) => S.dead_min[i] >= 60 ? null : v);
+    document.getElementById("uc").innerHTML = chart({...X, title: "Real power (kW)", unit: "kW", lo: 0, series: [{v: S.kw_max, color: "var(--s2)", name: "Hourly max", w: 1, op: 0.8}, {v: S.kw_avg, color: "var(--s1)", name: "Hourly mean", w: 1.8}]})
+      + lg([["var(--s1)", "hourly mean"], ["var(--s2)", "hourly max"]])
+      + chart({...X, title: "Current, highest phase (A)", unit: "A", d: 1, lo: 0, series: [{v: S.amps_max, color: "var(--s4)", name: "Current"}]})
+      + chart({...X, title: "Voltage line to line (V)", unit: "V", series: [{v: live("v_min"), color: "var(--s2)", name: "Lowest", w: 1}, {v: live("v_avg"), color: "var(--s1)", name: "Mean", w: 1.8}], hlines: [{y: UT.nominal_v, label: `nominal ${num(UT.nominal_v)} V`, color: "var(--muted)"}]})
+      + lg([["var(--s1)", "hourly mean"], ["var(--s2)", "lowest in the hour (the minute recorder)"]]);
+  }
+  let umCtx = null;
+  function mainMinuteView(id, m, seq) {
+    main.innerHTML = mainHeader(UMAIN[id]) + `<p class="sub"><a href="#${esc(id)}">← The month by hour</a></p><div id="um"><p class="note">Loading data/utility_minutes/${esc(id)}.json (every minute of the month)…</p></div>`;
+    loadUMin(id).then(d => {
+      if (seq !== current) return;
+      umCtx = {id, d, m: Math.max(0, Math.min(d.minutes - 1, m))};
+      const n = d.minutes;
+      document.getElementById("um").innerHTML = `<h2 class="sec">Minute detail</h2><p class="note">Any minute of the month: the readings, the hour around it, and what the PME read returns. kW and current are one-minute averages; voltage, frequency, and the breaker are read at the minute; the lowest voltage covers the whole minute.</p>`
+        + `<div class="ctl"><label for="umi">Minute</label><input type="number" id="umi" min="0" max="${esc(n - 1)}" value="${esc(umCtx.m)}"> <span class="muted">of ${num(n - 1)}</span> <b id="um-lab"></b></div>`
+        + `<div class="btns" id="um-step">${[-60, -10, -1, 1, 10, 60].map(s => `<button data-s="${esc(s)}">${esc((s > 0 ? "+" : "") + s + " min")}</button>`).join("")}</div>`
+        + `<input type="range" id="umr" min="0" max="${esc(n - 1)}" value="${esc(umCtx.m)}" aria-label="Minute of the month">`
+        + `<div id="um-ch"></div><h3>Readings at this minute</h3><div id="um-tbl"></div>`
+        + `<h2 class="sec">PME read at this minute</h2><pre class="scrape" id="um-raw" data-gl-skip></pre>`;
+      uMinuteUpdate();
+    }).catch(e => { if (seq === current) document.getElementById("um").innerHTML = errBox(e, `data/utility_minutes/${id}.json`); });
+  }
+  function uSetMinute(m) {
+    const ctx = umCtx;
+    if (!ctx) return;
+    m = Math.max(0, Math.min(ctx.d.minutes - 1, Number.isNaN(m) ? 0 : m));
+    ctx.m = m;
+    const i = document.getElementById("umi"), r = document.getElementById("umr");
+    if (i && document.activeElement !== i) i.value = m;
+    if (r) r.value = m;
+    history.replaceState(null, "", `#${ctx.id}/${m}`);
+    uMinuteUpdate();
+  }
+  function uMinuteUpdate() {
+    const ctx = umCtx;
+    if (!ctx) return;
+    const {id, d, m} = ctx, n = d.minutes, a = Math.max(0, m - 60), b = Math.min(n - 1, m + 60), v = k => d.v[k] ? d.v[k][m] : null;
+    document.getElementById("um-lab").textContent = minAt(m);
+    const sl = k => (d.v[k] || []).slice(a, b + 1);
+    const evm = UT.outages.flatMap(x => [[x.trip, "utility trip"], [x.ties_closed, "generator ties closed"], [x.back, "retransfer to utility"]]).map(([t, txt]) => ({i: minOf(t) - a, color: "var(--bad)", label: `${at(t)} ${txt}`})).filter(e => e.i >= 0 && e.i <= b - a);
+    const MX = {n: b - a + 1, xlab: i => minIso(a + i).slice(11, 16), xtick: 15, xminor: 5, hover: i => minAt(a + i), H: 130, marks: [{i: m - a, color: "var(--ink)", label: minAt(m)}].concat(evm)};
+    document.getElementById("um-ch").innerHTML = chart({...MX, title: "Real power, ±60 minutes (kW)", unit: "kW", lo: 0, d: 1, series: [{v: sl("kw"), color: "var(--s1)", name: "kW tot"}]})
+      + chart({...MX, title: "Voltage line to line (V)", unit: "V", lo: 0, series: [{v: sl("v_ab"), color: "var(--s1)", name: "Vll ab"}, {v: sl("v_min"), color: "var(--s2)", name: "Lowest in the minute", w: 1}]})
+      + chart({...MX, title: "Current per phase (A)", unit: "A", d: 1, lo: 0, series: [{v: sl("a_a"), color: "var(--s1)", name: "I a"}, {v: sl("a_b"), color: "var(--s3)", name: "I b"}, {v: sl("a_c"), color: "var(--s4)", name: "I c"}]});
+    const fmt = (f, x) => x == null ? "–" : f.key === "brk" ? (x ? "closed (1)" : "open (0)") : num(x, f.scale >= 1000 ? 3 : f.scale >= 100 ? 2 : f.scale >= 10 ? 1 : 0);
+    document.getElementById("um-tbl").innerHTML = `<div class="scroll"><table><thead><tr><th>Point</th><th class="n">Reading</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>`
+      + UT.fields.map(f => `<tr><td><code>${esc(f.name)}</code></td><td class="n">${fmt(f, v(f.key))}</td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    const rows = UT.fields.filter(f => f.key !== "brk").map(f => `  "${esc(f.name)}": ${esc(String(v(f.key)))},  <span class="c">${esc(f.unit)}</span>`);
+    document.getElementById("um-raw").innerHTML = `<span class="c"># PME, read-only account: ${esc(id)} main meter, ${esc(minIso(m))} (ION measurement labels; values as the meter reports them)</span>\n{\n  "source": "${esc(id)}.Main",\n  "timestamp": "${esc(minIso(m))}",\n` + rows.join("\n") + `\n  "${esc(UMAIN[id].breaker)}": "${v("brk") ? "Closed" : "Open"}"\n}`;
+  }
+  main.addEventListener("input", e => {
+    if (!umCtx) return;
+    if (e.target.id === "umr") uSetMinute(parseInt(e.target.value, 10));
+    else if (e.target.id === "umi") uSetMinute(parseInt(e.target.value, 10));
+  });
+  main.addEventListener("click", e => {
+    const s = e.target.closest("#um-step button");
+    if (s && umCtx) uSetMinute(umCtx.m + parseInt(s.dataset.s, 10));
+  });
+  function utilityFields() {
+    let h = `<div class="kind">Power reference</div><h1>Utility points and sources</h1><p class="sub">${esc(UT.framing)} The point names are the ION architecture's measurement labels; the ION9000's own register map is an attachment to Schneider's FAQ that could not be opened from here, so no register numbers are shown, and a deployment reads the names from PME. Values are this site's synthetic series.</p>`;
+    h += `<div class="cards">` + tile("Poll interval", `${num(UT.collection.poll_interval_s)} s`, "both mains read once a minute") + tile("Meter", esc(UT.collection.meter), "") + tile("Read through", esc(UT.collection.path), "") + `</div>`;
+    h += `<div class="scroll"><table data-gl-skip><thead><tr><th>Point</th><th>Unit</th><th>Meaning</th></tr></thead><tbody>` + UT.fields.map(f => `<tr><td><code>${esc(f.name)}</code></td><td>${esc(f.unit)}</td><td class="note">${esc(f.help)}</td></tr>`).join("") + `</tbody></table></div>`;
+    h += `<h2 class="sec">Sources</h2><ul>` + UT.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a> <span class="note">(checked ${esc(s.checked)})</span></li>`).join("") + `</ul>`;
+    main.innerHTML = h;
+  }
+  function utilityAgreements() {
+    const [agree, tot] = uAgree();
+    let h = `<div class="kind">Power reference</div><h1>Utility: agreement with the records</h1><p class="sub">The mains and the ride-through are synthetic, so they are shaped never to contradict the energy meters, the EPMS breaker events, or the UPS telemetry. Each check reads only what is published. ${num(agree)} of ${num(tot)} cases agree.</p>`;
+    h += `<table><thead><tr><th>Check</th><th class="n">Agrees</th></tr></thead><tbody>` + UT.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)} ${a.misses ? tag("does not reconcile", "bad") : tag("agrees", "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    if (UT.misses.length) h += `<h2 class="sec">Disagreements</h2><p class="note">A disagreement means two records do not reconcile, not that anyone misled.</p><ul>` + UT.misses.map(m => `<li>${esc(m)}</li>`).join("") + `</ul>`;
+    h += `<p class="note">The same checks run on 60 generated months (scripts/render_telemetry.py --robustness 60); the report is reports/utility_telemetry.md.</p>`;
+    main.innerHTML = h;
   }
 
   // ---------------------------------------------------------------- network
@@ -2795,6 +2937,8 @@ __SITENAV__
     if (SGS[a.toLowerCase()]) return {view: "sgSw", dev: a.toLowerCase(), key: a.toLowerCase(), fam: "network"};
     if (a === "north-south") return {view: "north-south", key: "north-south", fam: "network"};
     if (SGRK[a.toUpperCase()]) return {view: "sgRack", dev: a.toUpperCase(), key: a.toUpperCase(), fam: "storage"};
+    if (a === "utility" || a === "utility-fields" || a === "utility-agreements") return {view: a, key: a, fam: "power"};
+    if (UMAIN[a.toUpperCase()]) return {view: "main", dev: a.toUpperCase(), minute: pm, key: a.toUpperCase(), fam: "power"};
     const up = a.toUpperCase(), pf = famOf(up);
     if (mFam(up)) return {view: "mech", dev: up, minute: pm, key: up, fam: "mech"};
     if (a === "mech-fields" || a === "mech-agreements") return {view: a, key: a, fam: "mech"};
@@ -2808,7 +2952,7 @@ __SITENAV__
   }
   function show() {
     const seq = ++current, r = route(), fam = r.fam || "gpu";
-    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null; mmCtx = null; gmCtx = null;
+    CH.clear(); gpuCtx = null; cduCtx = null; pmCtx = null; umCtx = null; pwCtx = null; npCtx = null; nwCtx = null; nvCtx = null; mmCtx = null; gmCtx = null;
     if (shTimer && r.view !== "site") { clearInterval(shTimer); shTimer = null; }
     if (r.view === "site") siteView(r.hour, seq);
     else if (r.view === "rack") rackView(r.rack, r.hour, seq);
@@ -2825,6 +2969,10 @@ __SITENAV__
     else if (r.view === "tapoff") tapView(r.dev, r.minute, seq);
     else if (r.view === "power-fields") powerFields();
     else if (r.view === "power-agreements") powerAgreements();
+    else if (r.view === "utility") utilityOverview(seq);
+    else if (r.view === "main") r.minute == null ? mainView(r.dev, seq) : mainMinuteView(r.dev, r.minute, seq);
+    else if (r.view === "utility-fields") utilityFields();
+    else if (r.view === "utility-agreements") utilityAgreements();
     else if (r.view === "network") networkOverview(seq);
     else if (r.view === "leaf") leafView(r.leaf, seq);
     else if (r.view === "port") portView(r.lid, r.minute, seq);
