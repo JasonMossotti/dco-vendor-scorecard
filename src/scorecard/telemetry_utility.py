@@ -143,9 +143,11 @@ def agreements(t: UtilityData, cfg: dict[str, Any], pcfg: dict[str, Any]) -> lis
             kw = x["kw"][m] / 10
             want = kw * 1000 / (math.sqrt(3) * v * pf)
             got = (x["a_a"][m] + x["a_b"][m] + x["a_c"][m]) / 30
-            kvar = kw * math.sqrt(max(1 - pf * pf, 0.0)) / pf
-            c(abs(got - want) <= want * ck["amps_tolerance_pct"] / 100 + 0.1 and abs(x["kvar"][m] / 10 - kvar) <= kw * 0.003 + 0.5,
-              f"{b} minute {m}: {got:.1f} A against {want:.1f} A")
+            # PF is published to 0.001, so the kVAR it implies spans the PF's rounding interval (wide near unity)
+            q = [kw * math.sqrt(max(1 - e * e, 0.0)) / e for e in (min(pf + 0.0005, 1.0), pf - 0.0005)]
+            kvar = x["kvar"][m] / 10
+            c(abs(got - want) <= want * ck["amps_tolerance_pct"] / 100 + 0.1 and q[0] - 0.2 <= kvar <= q[1] + 0.2,
+              f"{b} minute {m}: {got:.1f} A against {want:.1f} A, {kvar:.1f} kVAr against {q[0]:.1f} to {q[1]:.1f}")
     checks.append(c)
 
     c = Check("quality", "Voltage stays inside the service band, and frequency matches every UPS input's, while the main is live")
