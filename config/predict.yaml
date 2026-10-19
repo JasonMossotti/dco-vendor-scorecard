@@ -1,0 +1,112 @@
+# =============================================================================
+# Predictive maintenance configuration
+# -----------------------------------------------------------------------------
+# Two halves. "condition" shapes the synthetic condition history that
+# scripts/generate_predict.py writes into data/predict/ (its own random stream,
+# on the failure history in data/history/, so nothing else changes). "detectors"
+# holds every threshold the detectors in src/scorecard/predict/ use; a real site
+# edits only this half. Every value carries its basis: a published limit, another
+# config file in this repository, or "assumption".
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Condition history (synthetic). Same window and hall as config/history.yaml.
+# -----------------------------------------------------------------------------
+condition:
+  optics:                           # daily DOM per module: worst-lane laser bias, transmit power, receive power
+    bias_ma: [6.0, 8.0]             # healthy laser bias (basis: assumption)
+    noise: {bias_ma: 0.05, tx_dbm: 0.05, rx_dbm: 0.10}   # day-to-day scatter of the daily worst lane (basis: assumption)
+    precursor_probability: 0.6      # module failures that wear out visibly first; the rest fail suddenly (basis: assumption)
+    precursor_days: [8, 35]         # how long the wear-out shows before the module's own alarm (basis: assumption)
+    shape: 2.0                      # wear accelerates: the drift grows as (elapsed / precursor)^shape
+    step_decoys: 8                  # links whose receive power steps down 1 to 3 dB and stays (a disturbed connector), no failure
+    step_db: [1.0, 3.0]
+    fiber_dip_db: [3.0, 6.0]        # a fiber fault: both ends read low on the day of the fault, then clean or replace
+  gpu_memory:                       # daily corrected errors and remapped rows, in the GPU Health layer's columns
+    precursor_probability: 0.5      # config/gpu_health.yaml plants.precursor_probability
+    precursor_days: [4, 10]         # config/gpu_health.yaml plants.precursor_days
+    sbe_start: [110, 160]           # corrected errors on the first day of the rise
+    sbe_growth: [1.25, 1.6]         # day over day
+    stable_remap_fraction: 0.01     # config/gpu_health.yaml background.stable_remap_fraction
+    sbe_burst_decoys_per_week: 0.5  # config/gpu_health.yaml background.sbe_burst_decoys (2 a month)
+  cdu:
+    reading_hours: 4                # the history's CDU readings are 4-hour averages (config/history.yaml cdu)
+    filter_fouling_kpa: 16.0        # the planted fouling (config/history.yaml planted.cdu_drift) adds this much
+                                    # pressure drop at its peak, growing with the supply rise (basis: assumption)
+    pump_noise_pct: 0.10            # speed scatter in a 4-hour average (basis: assumption)
+    pump_wear:                      # one pump wears out: it needs more speed for the same flow until it fails
+      cdu: CDU-A2
+      pump: 1
+      fails_at: "2026-07-14T09:40:00Z"
+      wear_days: 42                 # how long the wear shows before the failure
+      peak_pct: 5.0                 # extra speed needed just before it fails (basis: assumption)
+      shape: 1.5
+      replaced_after_h: [20, 60]    # the Landlord replaces the pump; the standby carries the loop meanwhile
+    sudden_pump_failure:            # a pump that fails with no warning (as CDU-B3 did in the sample month)
+      cdu: CDU-A4
+      pump: 2
+      fails_at: "2026-05-02T16:15:00Z"
+      replaced_after_h: [20, 60]
+
+# -----------------------------------------------------------------------------
+# Detectors. Pure functions in src/scorecard/predict/detectors.py read these.
+# -----------------------------------------------------------------------------
+detectors:
+  optics:
+    # Each module's CMIS threshold page sets its own limits; these follow config/telemetry_network.yaml
+    # optics.thresholds (mlxlink's example module) with the warning 3 dB inside the alarm.
+    limits:
+      rx_dbm: {warn: -10.4, alarm: -13.4, bad: low}
+      tx_dbm: {warn: -8.4, alarm: -11.4, bad: low}
+      bias_ma: {warn: 11.0, alarm: 13.0, bad: high}   # basis: assumption (not in the mlxlink example)
+    baseline_days: 14               # each module's own level and scatter, from its first days in service
+    sigma_floor: 0.1                # the readings' resolution as stored (0.1 mA, 0.1 dB): no scatter is taken as smaller
+    screen_sigma: 4.0               # cheap screen: today is this many of its own deviations from its baseline,
+                                    # or has moved that far within the trend window (wear already under way at the start)
+    trend_days: 5                   # confirm: a consistent trend over the last days, not a step
+    trend_consistent: 4             # day-to-day moves in the bad direction, of trend_days - 1
+    max_step_share: 0.6             # and no single day's move is more than this share of the whole (a step is not wear)
+    act_days: 14                    # projected to reach the warning within this many days: replace at the next window
+    watch_days: 45
+    lead_hours: 24                  # a warning counts only if it came this long before the module's own alarm
+  gpu_memory:
+    # The GPU Health tab's early-warning rule, reused as is (config/gpu_health.yaml checks); only the
+    # lead time is restated here so the backtest scores it the same way.
+    lead_hours: 24
+  cdu_filter:
+    design_flow_lpm: 1800           # site/site.yaml secondary_flow_lpm: pressure drop is compared at this flow
+    change_kpa: 28.0                # change limit: twice the clean pressure drop (config/telemetry_cdu.yaml filter.clean_kpa;
+                                    # basis: a common rule of thumb; the filter maker's terminal pressure drop governs)
+    service_days: 91                # config/telemetry_cdu.yaml filter.rated_service_days (the quarterly schedule)
+    step_kpa: 2.0                   # a drop this large is a filter change (config/telemetry_cdu.yaml checks.filter_step_kpa)
+    trend_days: 7                   # the slope is fitted on this many days since the last change
+    min_days: 3                     # no forecast in the first days after a change
+    act_days: 30                    # limit reached before the next scheduled change and within this many days
+    lead_days: 7                    # a warning counts only if it came this long before the limit
+    horizon_days: 60                # backtest: a work request the limit does not follow within this many days is a false alarm
+  cdu_pump:
+    design_flow_lpm: 1800
+    duty_speed_pct: 82.0            # config/telemetry_cdu.yaml unit.duty_speed_pct (speed at design flow)
+    baseline_days: 10               # each pump's own speed-for-flow, from its first days on duty
+    min_baseline_readings: 12
+    min_running_pct: 40.0           # a reading below this (or with both pumps running) is a rotation or a test
+    cusum_k_sigma: 0.5              # one-sided CUSUM on the residual: allowance
+    cusum_h_sigma: 8.0              # and decision interval, in baseline deviations: a watch
+    act_pct: 1.0                    # speed this far above what the flow needs (median of the last three readings, about
+                                    # ten times the reading scatter): a work request (basis: assumption)
+    lead_days: 7
+    horizon_days: 60                # backtest: a work request no failure follows within this many days is a false alarm
+
+# -----------------------------------------------------------------------------
+# Proposed work requests: one per device that reaches "act". The owner is the component's
+# Interface Agreement RACI row (Landlord for CDUs, the IT Partner for optics and GPU trays).
+# -----------------------------------------------------------------------------
+work_requests:
+  prefix: PDM                       # PDM-#### (predictive maintenance request)
+  # Owner per detector: the component's row in the Interface Agreement RACI (sla/interface_agreement.yaml);
+  # the request goes to the party that does the work (R), and the accountable party (A) is shown beside it.
+  raci:
+    optics: "Back-end fabric optics, cables, and fiber"
+    gpu_memory: "Compute tray (GPU, CPU, memory, cold plate)"
+    cdu_filter: "CDUs and the hall secondary header"
+    cdu_pump: "CDUs and the hall secondary header"

@@ -32,8 +32,10 @@ table.conn, table.inside { border-collapse:collapse; width:100%; font-size:14px;
 table.conn th, table.inside th { text-align:left; color:var(--muted); font-weight:600; padding:4px 12px 4px 0; vertical-align:top; white-space:nowrap; }
 table.conn td, table.inside td { padding:4px 12px 4px 0; vertical-align:top; border-top:1px solid #edf0f3; }
 table.inside thead th { border-bottom:1px solid var(--line); }
-table.conn a, table.inside a, .intro a { color:var(--it); }
+table.conn a, table.inside a, .intro a, .pred a { color:var(--it); }
 .note { color:var(--muted); }
+.pred { background:var(--panel); border-left:3px solid var(--it); padding:6px 10px; font-size:14px; }
+.pred b { margin-right:4px; }
 tr.hit td { background:#fff4cc; }
 .fig { margin-top:6px; }
 .empty { color:var(--muted); padding:20px 0; }
@@ -162,7 +164,8 @@ __SITENAV__
     let h = `<div class="kind">${esc(KIND[e.kind])}</div><h1>${esc(e.title || name)}</h1>`;
     if (e.title && e.title !== name) h += `<div class="sub">${esc(name)}</div>`;
     const tl = (D.telemetry || {})[name];
-    h += `<p>${esc(e.text)}</p>` + (tl ? `<p><a class="tel" href="../telemetry/${esc(tl)}">Telemetry ↗</a> <span class="note">this device's readings for the month</span></p>` : "") + `<h2 class="sec">Connected to</h2><table class="conn"><tbody>`;
+    const pm = (D.predict || {})[name];
+    h += `<p>${esc(e.text)}</p>` + (pm ? `<p class="pred"><b>Predicted</b> ${esc(pm)} <a href="../patterns/#predict">Predictive maintenance ↗</a></p>` : "") + (tl ? `<p><a class="tel" href="../telemetry/${esc(tl)}">Telemetry ↗</a> <span class="note">this device's readings for the month</span></p>` : "") + `<h2 class="sec">Connected to</h2><table class="conn"><tbody>`;
     h += e.conn.map(([rel, n, note]) => `<tr><th scope="row">${esc(rel)}</th><td>${link(n)}${n && note ? " " : ""}<span class="note">${esc(note)}</span></td></tr>`).join("");
     h += `</tbody></table>`;
     h += `<h2 class="sec">On the drawings</h2><div class="fig" id="fig"></div>`;

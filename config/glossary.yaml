@@ -74,6 +74,7 @@ terms:
   # --- Acronyms: operations and contracts
   - {term: CAP, type: acronym, expansion: Corrective action plan, text: "A plan the partner owes after a serious breach or finding: cause, fix, owner, and a date, tracked to verified closure."}
   - {term: CSL, type: acronym, expansion: Critical service level, text: "A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA, OT-CSL-01 and up in the Landlord SLA, and SEC-CSL-01 and up in the Security SLA."}
+  - {term: CUSUM, type: acronym, expansion: Cumulative sum, text: "A drift test: it adds up each reading's excess over a pump's own baseline (less a small allowance) and raises a watch when the total passes a set limit, so a small steady rise shows long before any one reading looks wrong."}
   - {term: DCO, type: acronym, expansion: Data center operations, text: "The Customer's site operations team, which runs the Telemetry of Record and manages both partners."}
   - {term: EHS, type: acronym, expansion: Environment, health, and safety, text: "The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits."}
   - {term: CAB, type: acronym, expansion: Change advisory board, text: "The Customer's board that reviews and approves the IT Partner's change records before work starts."}
@@ -399,6 +400,10 @@ families:
      text: "A fire protection impairment notice as the Customer received it: before planned work, on an unplanned impairment, for an extension, or on restoration (FPI-1, FPI-2, FPI-4, FPI-5)."}
   - {key: FLS-N, label: "FLS-#", pattern: 'FLS-\d{1,2}', type: record, title: Fire protection finding, example: FLS-1, see: "telemetry/#fire",
      text: "A finding of the daily reconciliation of the Landlord's impairment log with the fire panel's history: an impairment logged restored while the panel shows it out of service, or protection out of service with no impairment logged."}
+  - {key: PDM, label: "PDM-####", pattern: 'PDM-\d{4}', type: record, title: Predictive maintenance work request, example: PDM-0001, see: "patterns/#predict",
+     text: "A work request the predictive maintenance detectors propose when a device is projected to reach its limit soon (an optic's DOM warning, a GPU's memory errors, a CDU filter's change limit, a worn CDU pump), with the evidence, a due-by date, and the party that does the work under the Interface Agreement RACI. A forecast, not a finding: it changes no SLA result."}
+  - {key: SER-OPT, label: "OS + 8 characters", pattern: 'OS[A-Z0-9]{8}', type: record, title: Optic module serial number, example: OSG7QMGE90, see: "patterns/#predict",
+     text: "The serial number of an 800G optic module, as the module's own identity page reports it (CMIS) and the IT Partner's inventory holds it, with its lot."}
   - {key: AT-TAG, label: "AT-######", pattern: 'AT-\d{6}', type: record, title: Asset tag, example: AT-004079, see: "devices/#assets",
      text: "An asset's tag in the Customer's asset register: one per serial, from receipt to disposal (REG-1)."}
   - {key: EW-CERT, label: "EW-#####", pattern: 'EW-\d{5}', type: record, title: Disposal certificate, example: EW-00504, see: "devices/#assets",
@@ -546,6 +551,8 @@ plain:   # capitalised text that is not a code
     - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
     - {terms: [MB, GB, TB, PB, EB], why: "Units of data size: megabytes, gigabytes, terabytes, petabytes, and exabytes."}
     - {terms: [FAN], why: "The sensor class a switch fan reports under in ENTITY-SENSOR-MIB (the field reference names it beside the reading)."}
+    - {terms: [RX, TX], why: "Receive and transmit, in an optic module's own alarm names (RX power low, TX bias high), set in capitals as the module reports them."}
+    - {terms: [README], why: "A file name (docs/predict/README.md)."}
     - {terms: [GET], why: "The HTTP method a Redfish client uses to read a resource."}
     - {terms: [HELP, TYPE], why: "Keywords of the Prometheus text format: each field's description and its metric type (gauge or counter)."}
     - {terms: [ALARM, LOADED, LOADING, MTN, "OFF", "ON", STARTING, UNLOADED, UNLOADING], why: "Values of the V1C compressor status, set in capitals as Vertiv's points list writes them (MTN: maintenance)."}

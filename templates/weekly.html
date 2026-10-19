@@ -144,6 +144,10 @@ function render(w) {
     const en = w.energy, f3 = v => Number(v).toFixed(3);
     h += `<p class="note" id="energy-line">Energy: PUE this week <b>${esc(f3(en.week.pue))}</b> (cooling pPUE ${esc(f3(en.week.ppue_cooling))}, power pPUE ${esc(f3(en.week.ppue_power))}); month to date ${esc(f3(en.mtd.pue))} over ${esc((en.mtd.facility_kwh / 1000).toLocaleString("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1}))} MWh. Detail in the <a href="../energy/">PUE report</a>.</p>`;
   }
+  if (w.predict) {
+    const p = w.predict, f = p.filters, pu = p.pumps;
+    h += `<p class="note" id="predict-line">Predictive maintenance: CDU filters <b>${esc(f.healthy)} of ${esc(f.of)}</b> healthy by condition${f.act.length ? ` (work request: ${esc(f.act.join(", "))})` : ""}${f.watch.length ? ` (watch: ${esc(f.watch.join(", "))})` : ""}${f.due_by_calendar.length ? `; ${esc(f.due_by_calendar.join(", "))} due by the calendar but still clean` : ""}; CDU pumps <b>${esc(pu.healthy)} of ${esc(pu.of)}</b> healthy${pu.not_healthy.length ? ` (${esc(pu.not_healthy.join(", "))} not)` : ""}; GPU memory watch list: ${esc(p.gpu_watch.join(", ") || "none")}. Detail on the <a href="../patterns/#predict">Failure Patterns tab</a>.</p>`;
+  }
 
   const e = w.ehs;
   h += `<h2>8. Safety (EHS)</h2><ul><li><b>Injuries this week:</b> ${esc(e.injuries)}</li>` +

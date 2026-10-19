@@ -207,6 +207,8 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 - The history (`data/history/`) is generated on its own random stream by `scripts/generate_history.py`. Root causes, lessons, and standard-work changes are written in `patterns/lessons.yaml` and tested against the facts.
 - Scored on 60 generated histories with the patterns moved each time: optic lot 60 of 60, CDU drift 60 of 60, reseat 41 of 60, decoys 0 of 60.
 
+**Predictive maintenance** (`/patterns/#predict`). Four detectors read condition data a site already collects and say, per device, healthy, watch, or raise a work request, with the evidence and a projected date: optic modules trending toward their own DOM warning (a robust Theil-Sen trend, with a step or a far-end fault told apart from wear), GPU memory errors building toward an uncorrectable XID (the GPU Health tab's rule), CDU filters reaching their change limit before the next scheduled change (pressure drop corrected to design flow), and CDU pumps needing more speed for the same flow (a CUSUM drift test against each pump's own baseline). A backtest over the half-year history warned 69 of 108 optic failures (median 10.0 days ahead), 36 of 68 GPU memory errors (4.6 days), the fouled filter (29.5 days), and the worn pump (28.7 days), with no false alarms; the failures with no warning gave no sign in the readings. Each work request (PDM-####) goes to the party that does the work under the Interface Agreement RACI. A prediction is a forecast, not a finding: it changes no SLA result. `scripts/predict.py` runs the same detectors on a site's own exports (the input contract and a model card per detector are in [`docs/predict/`](docs/predict/README.md)), for a 90-day shadow-mode pilot before anyone acts on it.
+
 ## Energy and PUE
 
 ![Energy and PUE: tiles and the 52-week chart](docs/images/energy.png)
@@ -407,6 +409,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Related-record suggestions | 20 of 20 links recovered, 0 of 732 decoys, 11 pairs suggested | 604 of 604 links, 0 of 45,580 decoys (same place far apart, same time other hall, same fault only), 21.4 pairs a month |
 | Fire protection impairments | 2 of 2, 40 of 40 cases | 120 of 120, 0 false positives; every agreement holds |
 | Asset register | 3 of 3, 123,989 of 123,989 cases | 180 of 180, 0 false positives; every agreement holds (installed 7,212,525 of 7,212,525) |
+| Predictive maintenance (planted wear-outs warned in time) | optics 69 of 69, GPU memory 36 of 36, filter 1 of 1, pump 1 of 1; 0 false alarms | optics 3,723 of 3,723 (1 through the far end), GPU memory 2,208 of 2,208, filter 60 of 60, pump 60 of 60; 0 false alarms |
 | Detail-sheet parts and device names | | parts 7,926/7,926, names 13,076/13,076, leaf port events 77,728/77,728 |
 
 ```bash
@@ -424,6 +427,7 @@ python scripts/render_deployments.py --robustness 60
 python scripts/render_availability.py --robustness 60
 python scripts/render_assets.py --robustness 60 --jobs 4
 python scripts/render_fire.py --robustness 60 --jobs 4
+python scripts/render_predict.py --robustness 60
 ```
 
 ## Toward live data: the read-only collector
@@ -437,7 +441,7 @@ python scripts/render_fire.py --robustness 60 --jobs 4
 
 ## Tests and deployment
 
-- **729 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **747 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -450,13 +454,13 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/run_engine.py && python scripts/build_scorecard.py && python scripts/run_landlord.py \
   && python scripts/generate_security.py && python scripts/run_security.py \
   && python scripts/generate_incident_comms.py && python scripts/render_pir.py && python scripts/render_weekly.py \
-  && python scripts/generate_history.py && python scripts/render_patterns.py \
+  && python scripts/generate_history.py && python scripts/generate_predict.py && python scripts/render_patterns.py \
   && python scripts/generate_changes.py && python scripts/render_alarms.py \
   && python scripts/generate_gpu_health.py && python scripts/render_gpu_health.py \
   && python scripts/generate_telemetry.py && python scripts/generate_energy.py && python scripts/render_energy.py \
   && python scripts/render_weekly.py && python scripts/generate_fire.py && python scripts/render_fire.py && python scripts/render_glossary.py \
   && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
-  && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py
+  && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py
 pytest -q                                   # the full suite takes a while; pytest -q tests/test_hub.py runs one file
 python scripts/build_site.py --out _site    # the whole site; serve it with: python -m http.server -d _site
 streamlit run app/streamlit_app.py          # the "Try another month" app on its own

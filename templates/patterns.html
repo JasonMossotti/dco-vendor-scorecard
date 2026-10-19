@@ -22,6 +22,13 @@ h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; 
 .card { background:var(--panel); border-radius:8px; padding:12px 14px; cursor:pointer; } .card h3 { margin:0 0 6px; } .card .big { font-size:22px; font-weight:700; }
 .chip { display:inline-block; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; color:#fff; white-space:nowrap; }
 .chip.Landlord { background:var(--ll); } .chip.IT { background:var(--it); } .chip.Customer { background:var(--cu); }
+.st { display:inline-block; padding:1px 8px; border-radius:10px; font-size:12px; font-weight:600; white-space:nowrap; }
+.st.healthy { background:#e6f4ea; color:#1d7a46; } .st.watch { background:#fff4e0; color:#a15c00; } .st.act { background:#fdecea; color:#b42318; }
+.filters button { font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:3px 10px; border-radius:12px; cursor:pointer; margin:0 4px 6px 0; }
+.filters button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+.cards.four { grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+.minis { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:12px; }
+.minis figure { background:var(--panel); border-radius:8px; padding:8px 10px; margin:0; }
 table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
 th { background:var(--panel); font-weight:600; } .nw { white-space:nowrap; }
 ul.facts li { margin:3px 0; } .followup { background:#fdf0ef; border-left:4px solid var(--bad); padding:8px 12px; border-radius:4px; font-size:13px; }
@@ -136,12 +143,164 @@ function watchAndMethod() {
   return h + `<p class="note">Synthetic data for a portfolio demonstration; all names and events are fictional.</p>`;
 }
 
-const VIEWS = [["summary", "Summary", summary], ...D.patterns.map(p => [p.number, p.number, () => pattern(p)]), ["method", "Watch and method", watchAndMethod]];
+
+// ---------------------------------------------------------------- Predictive maintenance
+const P = D.predict;
+const DAYMS = 86400000;
+const st = s => `<span class="st ${esc(s)}">${esc({healthy: "Healthy", watch: "Watch", act: "Work request"}[s] || s)}</span>`;
+const owner = o => o.accountable === o.responsible ? chip(o.accountable) : `${chip(o.responsible)} <span class="note">for</span> ${chip(o.accountable)}`;
+const dayOf = (iso, start) => (Date.parse(iso.length === 10 ? iso + "T00:00:00Z" : iso) - Date.parse(start + "T00:00:00Z")) / DAYMS;
+const mdt = iso => md(iso);
+
+// One line chart: x in days from `start`; lines of [x, y] points; horizontal references; vertical marks.
+function lineChart(o) {
+  const W = o.w || 1000, H = o.h || 200, l = 44, r = 12, t = 12, b = 26;
+  const xs = o.lines.flatMap(L => L.pts.map(p => p[0])).concat((o.marks || []).map(m => m.x));
+  const ys = o.lines.flatMap(L => L.pts.map(p => p[1]).filter(v => v !== null)).concat((o.refs || []).map(f => f.y));
+  const x0 = o.x0 ?? Math.min(...xs), x1 = o.x1 ?? Math.max(...xs);
+  const pad = (Math.max(...ys) - Math.min(...ys)) * 0.08 || 1;
+  const y0 = o.y0 ?? Math.min(...ys) - pad, y1 = o.y1 ?? Math.max(...ys) + pad;
+  const X = v => l + (W - l - r) * (v - x0) / ((x1 - x0) || 1), Y = v => H - b - (H - b - t) * (v - y0) / ((y1 - y0) || 1);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(o.label)}">`;
+  const step = o.ystep || Math.max(0.1, +((y1 - y0) / 4).toPrecision(1));
+  for (let v = Math.ceil(y0 / step) * step; v <= y1; v += step) s += `<line x1="${l}" x2="${W - r}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="#eef1f4"/><text x="${l - 6}" y="${(Y(v) + 4).toFixed(1)}" text-anchor="end">${esc(+v.toFixed(2))}</text>`;
+  const ticks = o.xticks || 30;
+  for (let d = Math.ceil(x0 / ticks) * ticks; d <= x1; d += ticks) {
+    const iso = new Date(Date.parse(o.start + "T00:00:00Z") + d * DAYMS).toISOString();
+    s += `<text x="${X(d).toFixed(1)}" y="${H - 8}" text-anchor="middle">${esc(md(iso))}</text>`;
+  }
+  (o.refs || []).forEach(f => s += `<line x1="${l}" x2="${W - r}" y1="${Y(f.y).toFixed(1)}" y2="${Y(f.y).toFixed(1)}" stroke="${f.color}" stroke-dasharray="5 4"/><text x="${W - r - 2}" y="${(Y(f.y) - 5).toFixed(1)}" text-anchor="end">${esc(f.label)}</text>`);
+  o.lines.forEach(L => {
+    let d = "", pen = false;
+    L.pts.forEach(p => { if (p[1] === null) { pen = false; return; } d += `${pen ? "L" : "M"}${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`; pen = true; });
+    s += `<path d="${d}" fill="none" stroke="${L.color}" stroke-width="${L.w || 2}"><title>${esc(L.name)}</title></path>`;
+  });
+  (o.marks || []).forEach(m => {
+    const right = X(m.x) > W - 170;   // near the right edge: the label goes on the left of its line
+    s += `<g><title>${esc(m.title || m.label)}</title><line x1="${X(m.x).toFixed(1)}" x2="${X(m.x).toFixed(1)}" y1="${t}" y2="${H - b}" stroke="${m.color}" stroke-width="2"/><text x="${(X(m.x) + (right ? -4 : 4)).toFixed(1)}" y="${t + 10 + (m.row || 0) * 13}" text-anchor="${right ? "end" : "start"}" style="fill:${m.color}">${esc(m.label)}</text></g>`;
+  });
+  s += `<line x1="${l}" x2="${W - r}" y1="${H - b}" y2="${H - b}" stroke="#9aa5b1"/></svg>`;
+  const legend = o.lines.filter(L => L.name).map(L => `<span><i style="background:${L.color}"></i>${esc(L.name)}</span>`).join("");
+  return `<figure><div class="legend">${legend}</div>${s}${o.caption ? `<figcaption>${esc(o.caption)}</figcaption>` : ""}</figure>`;
+}
+
+const PALETTE = ["#b45309", "#1f5fbf", "#1d7a46", "#7c3aed"];
+function filterChart() {
+  const F = P.filter_chart, start = F.start;
+  const lines = Object.entries(F.cdus).map(([cdu, vals], i) => ({ name: cdu, color: PALETTE[i % 4], pts: vals.map((v, j) => [j + 1, v]) }));
+  const marks = [];
+  Object.entries(F.acts).forEach(([cdu, acts]) => acts.forEach(a => marks.push({ x: dayOf(a.flagged, start), color: "var(--warn)", label: `Work request ${md(a.flagged)}`, title: `${cdu}: projected to reach ${P.limits.change_kpa} kPa on ${a.limit_on}, before its next scheduled change` })));
+  F.crossings.forEach(c => marks.push({ x: dayOf(c.at, start), color: "var(--bad)", row: 1, label: `${c.cdu} at the limit ${md(c.at)}` }));
+  return lineChart({ label: "CDU filter pressure drop at design flow", start, lines, marks, refs: [{ y: P.limits.change_kpa, color: "var(--bad)", label: `Change limit ${P.limits.change_kpa} kPa` }], y0: 12, ystep: 4,
+    caption: "Filter pressure drop corrected to design flow, end of each day. It rises as the filter loads and falls at each change." });
+}
+
+function pumpChart(c) {
+  const start = P.window.start.slice(0, 10);
+  const pts = [];   // the pump runs every other week: no line across the weeks it stands by
+  c.points.forEach((p, i) => { const x = dayOf(p.t, start); if (i && x - pts[pts.length - 1][0] > 1) pts.push([x, null]); pts.push([x, p.r]); });
+  const marks = c.failures.map(f => ({ x: dayOf(f, start), color: "var(--bad)", row: 1, label: `Failed ${md(f)}` }))
+    .concat(c.acts.map(a => ({ x: dayOf(a.t, start), color: "var(--warn)", label: `Work request ${md(a.t)}` })))
+    .concat(c.replaced.map(f => ({ x: dayOf(f, start), color: "var(--cu)", row: 2, label: "Replaced" })));
+  return lineChart({ label: `${c.cdu} pump ${c.pump} speed residual`, start, lines: [{ name: `${c.cdu} pump ${c.pump}: speed above what the flow needs (%)`, color: "var(--ll)", pts }],
+    marks, refs: [{ y: P.limits.act_pct, color: "var(--warn)", label: `Work request at ${P.limits.act_pct}%` }, { y: 0, color: "#9aa5b1", label: "Its own baseline" }], x0: 0, x1: 182, h: 180,
+    caption: c.warned ? "Readings while it was the duty pump (it rotates weekly with its partner). The extra speed grew for weeks before it failed." : "No drift before it failed: nothing in the readings could have warned of it." });
+}
+
+function opticChart(e) {
+  const pts = e.values.map((v, j) => [j, v]);
+  const marks = [];
+  if (e.act) marks.push({ x: dayOf(e.act.flagged, e.first_day), color: "var(--warn)", label: `Work request ${md(e.act.flagged)}` });
+  if (e.alarm_at) marks.push({ x: dayOf(e.alarm_at, e.first_day), color: "var(--bad)", row: 1, label: `Alarm ${md(e.alarm_at)}` });
+  if (e.step_from) marks.push({ x: dayOf(e.step_from, e.first_day), color: "#9aa5b1", label: "Stepped down" });
+  const title = { warned: `${e.alarm}: warned ${(e.lead_h / 24).toFixed(1)} days ahead`, sudden: `${e.alarm}: failed with no warning`, step: "A connector disturbed: a step, not wear; left alone" }[e.kind];
+  return `<div><h3>${esc(title)}</h3><p class="note">${esc(e.location)} · module ${esc(e.serial)}</p>` + lineChart({ label: `${e.name} of ${e.location}`, start: e.first_day, w: 460, h: 230,
+    lines: [{ name: `${e.name} (${e.unit}), daily worst lane`, color: "var(--it)", pts }], marks, xticks: 60,
+    refs: [{ y: e.warn, color: "var(--warn)", label: `Warning ${e.warn}` }, { y: e.alarm_level, color: "var(--bad)", label: `Alarm ${e.alarm_level}` }] }) + `</div>`;
+}
+
+function gpuChart(g) {
+  const start = g.series[0].date;
+  const pts = g.series.map(x => [dayOf(x.date, start), x.remapped]);
+  const marks = [{ x: dayOf(g.flagged, start), color: "var(--warn)", label: `Work request ${md(g.flagged)}` }, { x: dayOf(g.xid_after.at, start), color: "var(--bad)", row: 1, label: `XID ${g.xid_after.xid} ${md(g.xid_after.at)}` }];
+  return lineChart({ label: `Remapped rows on ${g.host} GPU ${g.gpu}`, start, h: 170, xticks: 2, lines: [{ name: `${g.host} GPU ${g.gpu}: remapped rows`, color: "var(--it)", pts }], marks, y0: 0, ystep: 2,
+    caption: `${g.why[0].toUpperCase() + g.why.slice(1)}; corrected errors peaked at ${Math.max(...g.series.map(x => x.sbe)).toLocaleString("en-US")} a day.` });
+}
+
+let reqFilter = "all";
+function requestsTable() {
+  const rows = P.requests.filter(r => reqFilter === "all" || r.detector === reqFilter);
+  const btn = (k, label) => `<button data-req="${esc(k)}" class="${reqFilter === k ? "on" : ""}">${esc(label)} (${k === "all" ? P.requests.length : P.requests.filter(r => r.detector === k).length})</button>`;
+  return `<div class="filters">${btn("all", "All")}${Object.entries(P.names).map(([k, n]) => btn(k, n.split(" (")[0])).join("")}</div>` +
+    table(["ID", "Raised", "Device", "Failure mode", "Evidence", "Due by", "Owner", "What happened"],
+      rows.map(r => tr([`<span class="nw">${esc(r.id)}</span>`, `<span class="nw">${esc(md(r.flagged))}</span>`, `<span class="nw">${esc(r.device)}</span>`, esc(r.mode), esc(r.evidence),
+        `<span class="nw">${esc(md(r.due_by))}</span>`, owner(r.owner), esc(r.outcome)])));
+}
+
+function predict() {
+  const S = P.summary, N = P.now, F = P.fleet;
+  let h = `<h1>Predictive maintenance</h1>`;
+  h += `<p class="sub">Site AUS-1 (fictional), Hall A · backtest over the condition history, ${esc(P.window_txt)} · now: the sample month as of ${esc(N.as_of_txt)}</p>`;
+  h += `<div class="banner">A prediction is a forecast that proposes work. It is not a finding and changes no SLA result. The backtest runs the detectors over the history as if they had been running then; nobody acted on the warnings, so every failure in the records still happens.</div>`;
+  h += `<h2>Backtest: warnings that came in time</h2><div class="cards four">` + ["optics", "gpu_memory", "cdu_filter", "cdu_pump"].map(k => {
+    const x = S[k], base = x.scored ?? x.failures;
+    return `<div class="card" data-jump="pd-${k}"><h3>${esc(P.names[k])}</h3>${owner(P.owners[k])}
+      <p><span class="big">${esc(x.warned)} of ${esc(base)}</span> <span class="note">${esc(P.fails[k])} warned at least ${esc(x.lead_rule)} ahead${x.median_lead_days !== null ? ` · median ${esc(x.median_lead_days)} days` : ""}</span></p>
+      <p class="note">${esc(x.false_alarms)} false alarm${x.false_alarms === 1 ? "" : "s"}${x.too_early ? ` · ${esc(x.too_early)} more in the first ${esc(P.limits.trend_days)} days of data, too early to judge` : ""}${k === "gpu_memory" ? " · the GPU Health tab's early-warning rule" : ""}</p></div>`;
+  }).join("") + `</div><p class="note">Failures with no warning gave no sign in the readings each detector watches (a module that fails at once, a pump that stops without wearing first).</p>`;
+
+  h += `<h2>Now: the sample month as of ${esc(N.as_of_txt)}</h2><h3>CDU filters</h3>`;
+  h += table(["CDU", "Pressure drop at design flow", "Rising", `Reaches ${P.limits.change_kpa} kPa`, "Since last change", "Next scheduled change", "State"],
+    N.cdu_filter.map(x => tr([`<span data-loc="${esc(x.cdu)}">${esc(x.cdu)}</span>`, `${esc(x.level.toFixed(1))} kPa`, `${esc(x.slope_per_day.toFixed(2))} kPa a day`, x.limit_on ? esc(md(x.limit_on) + ", " + x.limit_on.slice(0, 4)) : "not rising",
+      x.since_change_days !== null ? `${esc(Math.round(x.since_change_days))} days` : "no change on record",
+      x.next_change ? esc(md(x.next_change)) + (x.overdue ? ` <span class="st watch">overdue by the schedule</span>` : "") : "not on record", st(x.state)])));
+  h += `<p class="note">Condition and schedule can disagree: a filter past its quarterly change can still be far from its limit, which is what a condition-based interval would use.</p>`;
+  const pf = N.cdu_pump.filter(x => x.failures.length);
+  h += `<h3>CDU pumps</h3><p>${esc(N.cdu_pump.filter(x => x.state === "healthy").length)} of ${esc(N.cdu_pump.length)} pumps healthy; none drifted from its own speed-for-flow. ` +
+    pf.map(x => `${esc(x.cdu)} pump ${esc(x.pump)} failed ${esc(md(x.failures[0]))} with no drift before it.`).join(" ") + `</p>`;
+  const watch = N.gpu_memory.filter(g => !g.xid_before && !g.xid_after);
+  h += `<h3>GPU memory</h3><p>` + (watch.length ? `On the watch list (remapped rows rising, no uncorrectable error yet): ` + watch.map(g => `<strong>${esc(g.host)} GPU ${esc(g.gpu)}</strong> (flagged ${esc(md(g.flagged))}, ${esc(g.remapped_rows)} remapped rows)`).join(", ") + `. Drain and replace at the next window. ` : "No GPU on the watch list. ") +
+    `<a href="../gpu/">GPU Health</a> runs the same rule.</p>`;
+  h += `<h3>Optics</h3><p class="note">The sample month keeps optic readings only in the minute windows around events, so there is no daily series to trend. A live deployment polls each module's DOM once a day.</p>`;
+
+  h += `<h2 id="pd-optics">Optics: each module's own readings, trended</h2><p class="note">Daily worst-lane laser bias, transmit power, and receive power. A steady move toward the warning raises a work request when the warning is ${esc(P.limits.act_days_optics)} days away or less; a step or a one-day dip does not.</p>`;
+  h += `<div class="minis">` + P.optic_examples.map(opticChart).join("") + `</div>`;
+  if (P.gpu_example) h += `<h2 id="pd-gpu_memory">GPU memory: remapped rows before an uncorrectable error</h2>` + gpuChart(P.gpu_example);
+  h += `<h2 id="pd-cdu_filter">CDU filters: pressure drop to the change limit</h2>` + filterChart();
+  h += `<h2 id="pd-cdu_pump">CDU pumps: more speed for the same flow</h2>` + P.pump_charts.map(pumpChart).join("");
+
+  const o = F.optics, g = F.gpu_memory;
+  h += `<h2>Fleet outlook: the next ${esc(F.horizon_days)} days</h2>` + table(["Part", "Model", "Expected", "Range (90%)", "Shelf minimum per hall"], [
+    tr(["800G OSFP optic", `Weibull fit on ${esc(o.fit.units.toLocaleString("en-US"))} modules and ${esc(o.fit.failures)} failures: shape ${esc(o.fit.beta)} (${o.fit.beta >= 0.85 && o.fit.beta <= 1.2 ? "about 1, failures random in time at this age" : o.fit.beta > 1.2 ? "wear-out" : "early life"})`, `${esc(o.expected)} failures`, `${esc(o.range[0])} to ${esc(o.range[1])}`, esc(o.shelf_minimum)]),
+    tr(["Compute tray (GPU memory)", `${esc(g.failures)} uncorrectable memory XIDs on ${esc(g.gpus.toLocaleString("en-US"))} GPUs in ${esc(g.days)} days (${esc(g.per_1000_gpu_months)} per 1,000 GPU-months); ${esc(g.swap_share_pct)}% ended in a tray replacement`, `${esc(g.expected)} XIDs, ${esc(g.expected_swaps)} trays`, `${esc(g.range[0])} to ${esc(g.range[1])} XIDs`, esc(g.shelf_minimum)])]);
+  h += `<h3>Optic failure rate by lot</h3>` + table(["Lot", "Installed now", "Failures", "Per module-year", `Expected in ${F.horizon_days} days`],
+    o.lots.map(x => tr([esc(x.lot), esc(x.installed_now), esc(x.failures), esc(x.per_module_year), esc(x.expected)])));
+
+  h += `<h2>Proposed work requests (backtest)</h2><p class="note">What the detectors would have raised, each to the party that does the work (Interface Agreement RACI). Nobody acted on them here.</p><div id="reqs">${requestsTable()}</div>`;
+  h += `<h2>Method and deployment</h2><ul>
+    <li><strong>Three simple methods.</strong> A robust trend (Theil-Sen) projected to a published limit; a pump's speed against its own baseline with a CUSUM drift test; a Weibull fit for the fleet. Every threshold and its basis is in <code>config/predict.yaml</code>.</li>
+    <li><strong>Read-only inputs a site already has.</strong> DOM from the fabric manager, DCGM counters, Redfish CDU readings and pump events. The detectors take plain rows (the input contract in <code>docs/predict/README.md</code>) and use the Python standard library only.</li>
+    <li><strong>One command.</strong> <code>python scripts/predict.py --source &lt;folder&gt; --out &lt;folder&gt;</code> writes the watch list and proposed work requests as CSV for any maintenance system.</li>
+    <li><strong>Shadow mode first.</strong> Run it for 90 days, log every prediction, and score it against what actually failed with the same code as this backtest, before anyone acts on it.</li>
+    <li><strong>Honest limits.</strong> The history is synthetic and the wear-outs are planted; lead times and false-alarm rates say nothing about real equipment until shadow mode has run. Each detector's blind spots are in its <a href="https://github.com/JasonMossotti/dco-vendor-scorecard/tree/main/docs/predict">model card</a>.</li></ul>`;
+  return h + `<p class="note">Synthetic data for a portfolio demonstration; all names and events are fictional.</p>`;
+}
+
+const VIEWS = [["summary", "Summary", summary], ...D.patterns.map(p => [p.number, p.number, () => pattern(p)]), ["method", "Watch and method", watchAndMethod], ["predict", "Predictive maintenance", predict]];
 function show(id) {
   const v = VIEWS.find(v => v[0] === id) || VIEWS[0];
   document.getElementById("doc").innerHTML = v[2]();
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.view === v[0]));
   document.querySelectorAll("[data-go]").forEach(c => c.addEventListener("click", () => go(c.dataset.go)));
+  document.querySelectorAll("[data-jump]").forEach(c => c.addEventListener("click", () => document.getElementById(c.dataset.jump).scrollIntoView({ behavior: "smooth" })));
+  wireRequests();
+}
+function wireRequests() {
+  document.querySelectorAll("[data-req]").forEach(b => b.addEventListener("click", () => {
+    reqFilter = b.dataset.req;
+    document.getElementById("reqs").innerHTML = requestsTable();
+    wireRequests();
+  }));
 }
 function go(id) { history.replaceState(null, "", "#" + id); show(id); }
 document.getElementById("tabs").innerHTML = VIEWS.map(v => `<button data-view="${v[0]}">${esc(v[1])}</button>`).join("");

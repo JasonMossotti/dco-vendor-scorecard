@@ -32,6 +32,8 @@ jobs:
         run: python scripts/render_weekly.py --check
       - name: Failure pattern review is current
         run: python scripts/render_patterns.py --check
+      - name: Predictive maintenance report is current
+        run: python scripts/render_predict.py --check
       - name: Change-aware alarm review is current
         run: python scripts/render_alarms.py --check
       - name: PUE report is current

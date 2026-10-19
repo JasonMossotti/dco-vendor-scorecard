@@ -19,6 +19,7 @@ ok(t().includes("PIR-2026-001") && d.querySelector('a[href="../pir/"]'), "the A0
 ok(t().includes("D1") && t().includes("Q3"), "decisions and asks shown");
 ok(d.getElementById("energy-line") && d.getElementById("energy-line").textContent.includes("PUE this week") && d.querySelector('#energy-line a[href="../energy/"]'), "the energy line links to the PUE report");
 ok(d.getElementById("deploy-line") && d.getElementById("deploy-line").textContent.includes("work orders completed this week") && d.querySelector('#deploy-line a[href="../deployments/#checks"]'), "the deployment line links to the record checks");
+ok(d.getElementById("predict-line") && d.getElementById("predict-line").textContent.includes("CDU filters 8 of 8") && d.getElementById("predict-line").textContent.includes("a13-ct10 GPU 3") && d.querySelector('#predict-line a[href="../patterns/#predict"]'), "the predictive maintenance line (W38) names the GPU memory watch list and links to the view");
 ok(d.getElementById("avail-line") && d.getElementById("avail-line").textContent.includes("GPU-hours lost this week") && d.querySelector('#avail-line a[href="../availability/"]'), "the availability line links to the Availability tab");
 ok(t().includes("Priorities for next week") && d.querySelectorAll("main ol li").length === 5, "next week's priorities shown for each partner");
 ok(t().includes("never a weekly credit"), "weekly results are framed as early warnings");
