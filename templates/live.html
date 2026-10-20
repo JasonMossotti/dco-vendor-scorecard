@@ -49,6 +49,8 @@ svg.spark { display:block; } svg text { font:10px "Inter","Segoe UI",Helvetica,A
 .cnt { display:flex; gap:10px; flex-wrap:wrap; margin:4px 0 8px; } .cnt div { background:var(--panel); border-radius:6px; padding:6px 10px; font-size:12px; color:var(--muted); }
 .cnt b { display:block; font-size:22px; color:var(--ink); font-variant-numeric:tabular-nums; }
 .loading { color:var(--muted); font-style:italic; }
+.stale { background:var(--badbg); color:var(--bad); border:1px solid #f3c2bd; border-radius:8px; padding:8px 12px; margin:8px 0; font-weight:600; }
+.badge.feed { color:#1d7a46; }
 </style>
 </head>
 <body>
@@ -92,6 +94,31 @@ __SITENAV__
   const fmt = (t, off, sec) => { const d = new Date(t + off); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}${sec ? ":" + p2(d.getUTCSeconds()) : ""}`; };
   const mss = s => s == null || s < 0 ? "–" : `${Math.floor(s / 60)}:${p2(Math.round(s % 60))}`;
   const P = D.power, CAP = P.runtime_cap_s, SRC = {3: "online", 4: "on bypass", 5: "on battery"}, GST = {0: "Stopped", 1: "Starting", 2: "Running", 3: "Cooldown"};
+
+  // ------------------------------------------------------------------ a feed (docs/live/NOW_SCHEMA.md)
+  // ?feed=<a path on this site to now.json>: the page shows the site now from the file a collector writes every poll,
+  // instead of the simulated clock. The power section is drawn by the same code from the same fields, so a replay of a
+  // sample minute (data/now_sample.json) reads exactly as the clock does at that minute.
+  const FEED = (() => { const f = new URLSearchParams(location.search).get("feed"); return f && /^[\w./-]+$/.test(f) && !f.startsWith("//") ? f : null; })();
+  const SCHEMA = "aus1-live-now/1", F = {doc: null, day: null, err: null, at: null, timer: null};
+  const OUTC = {normal: 3, bypass: 4, battery: 5}, GENC = {stopped: 0, starting: 1, running: 2, cooldown: 3}, STC = {not_in_service: -1, normal: 0, degraded: 1, lost: 2};
+  // a feed document as a one-day file whose last minute is now (the last hour of each main's kW before it), so power() reads it unchanged
+  function feedDay(doc) {
+    const n = D.history_min, last = n - 1, col = v => { const a = new Array(n).fill(null); a[last] = v ?? null; return a; };
+    const brk = b => b == null ? null : b === "closed" ? 1 : 0, x = {from: 0, mains: {}, ups: {}, gen: {}, ride: {}};
+    for (const [b, r] of Object.entries(doc.mains)) {
+      const kw = new Array(n).fill(null), h = (r.kw_last_hour || []).slice(-n);
+      h.forEach((v, i) => { kw[n - h.length + i] = v; }); kw[last] = r.kw;
+      x.mains[b] = {v: col(r.v_ll), a: col(r.i_avg), kw, pf: col(r.pf), hz: col(r.hz), brk: col(brk(r.breaker))};
+    }
+    for (const [u, r] of Object.entries(doc.ups)) x.ups[u] = {kw: col(r.load_kw), src: col(OUTC[r.output] ?? null), rt: col(r.runtime_s), soc: col(r.charge_pct)};
+    for (const [g, r] of Object.entries(doc.generators)) x.gen[g] = {st: col(GENC[r.state] ?? null), kw: col(r.kw), brk: col(brk(r.breaker)), fuel: col(r.fuel_pct)};
+    for (const [s, r] of Object.entries(doc.ride_through)) x.ride[s] = {s: col(r.s == null ? -1 : r.s), k: col(r.set_by == null ? -1 : (P.scopes[s] || []).indexOf(r.set_by))};
+    return x;
+  }
+  const has = (kind, id) => !FEED || !!(F.day && F.day[kind][id]);
+  // a device's Telemetry link: at this minute on the clock or a replay; a collector's feed links the device itself
+  const DL = (id, m) => { const k = FEED ? F.doc.source.minute : m; return `../telemetry/#${id}${k == null ? "" : "/" + k}`; };
   const OUT = P.outages[0] || null, BRIDGE = OUT ? OUT.bridge_s : null;
 
   // ------------------------------------------------------------------ the clock
@@ -110,6 +137,7 @@ __SITENAV__
   // ------------------------------------------------------------------ the day files
   const DAYS = {}, LOADING = {};
   function day(d) {
+    if (FEED) return d === 0 ? F.day : null;
     if (d < 0 || d >= D.days) return null;
     if (DAYS[d]) return DAYS[d];
     if (!LOADING[d]) LOADING[d] = fetch(`data/day_${p2(d)}.json`).then(r => r.ok ? r.json() : null).then(j => {
@@ -128,14 +156,15 @@ __SITENAV__
 
   // ------------------------------------------------------------------ the page
   const main = document.getElementById("main");
+  const POWER_HTML = `<h2>Power</h2><div class="grid2"><div><div class="src" id="lv-src"></div><h3>Utility mains (13.8 kV)</h3><div class="scroll" id="lv-mains"></div>`
+    + `<h3>UPSs</h3><div class="scroll" id="lv-ups"></div></div><div><h3>UPS ride-through if the utility failed now</h3><div id="lv-ride"></div><h3>Generators</h3><div class="scroll" id="lv-gen"></div><h3>Busway this hour</h3><div id="lv-bw"></div></div></div>`;
   function frame() {
     let h = `<h1>Live status</h1><p class="sub">${esc(D.framing)} A simulated live feed: the synthetic sample month runs on your clock, re-dated to today, the same feed as the Alarm Board's <a href="../alarms/#live">Live Events</a>. Nothing here comes from a real system.</p>`;
     h += `<div class="bar" id="bar"><span class="clock"><span id="now"></span><span class="utc" id="utc"></span></span><span class="badge" id="badge"></span><span id="site"></span>`
       + `<button id="pause">Pause</button><select id="speed" aria-label="Speed">${D.speeds.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select>`
       + D.jumps.map(j => `<button data-jump="${esc(j.m)}">${esc(j.label)}</button>`).join("") + `<button id="golive">Live now</button></div>`;
     h += `<p class="note" id="where"></p>`;
-    h += `<h2>Power</h2><div class="grid2"><div><div class="src" id="lv-src"></div><h3>Utility mains (13.8 kV)</h3><div class="scroll" id="lv-mains"></div>`
-      + `<h3>UPSs</h3><div class="scroll" id="lv-ups"></div></div><div><h3>UPS ride-through if the utility failed now</h3><div id="lv-ride"></div><h3>Generators</h3><div class="scroll" id="lv-gen"></div><h3>Busway this hour</h3><div id="lv-bw"></div></div></div>`;
+    h += POWER_HTML;
     h += `<h2>Device families</h2><div class="fams" id="lv-fam"></div>`;
     h += `<h2>Redundancy</h2><p class="note">Units in service against the units the design needs, at this minute. Amber: running at N, with no redundant unit; red: below N.</p><div id="lv-red"></div>`;
     h += `<h2>Alarm Board and Incident Portal now</h2><div class="ops" id="lv-ops"></div>`;
@@ -151,6 +180,7 @@ __SITENAV__
       + `<li><b>Resolution.</b> The utility mains, ride-through, UPSs, and generators are read minute by minute. A family's state comes from Site health's conditions: one read from a recorded state change (a breaker, a UPS on bypass, a pump, a fan, a switch, a storage node) holds for its exact minutes; one read from an hourly row (a temperature, a drained node, a GPU not reporting) holds for its whole hour, as do the readings in each tile and the rack colours.</li>`
       + `<li><b>States.</b> Site health's, with its thresholds (config/site_health.yaml): the worst minute of every hour here equals Site health's state for that hour. Fire protection uses Site health's fire rule (${esc(D.fire.rule)}); security is read, not judged (${esc(D.security.note)}).</li>`
       + `<li><b>Ride-through.</b> The shortest runtime (upsAdvBatteryRunTimeRemaining) among the UPSs in scope carrying load: the site keeps its critical load until the first of them runs out. The network management card caps the runtime it reports at ${esc(mss(CAP))} at light load. Take-load time: ${BRIDGE == null ? "no outage this month" : `${esc(BRIDGE)} s, measured at the ${esc(fmt(ms(OUT.trip), OFF, false))} CDT utility trip (EPMS trip to generator ties closed)`}; NFPA 110 Type 10 (${esc(P.design_take_load_s)} s) is a design reference, not a requirement here.</li>`
+      + `<li><b>A real site.</b> The same page reads a collector's file instead of the clock: <a href="?feed=data/now_sample.json">the feed contract, replaying the minute after the 09-24 trip</a> (docs/live/NOW_SCHEMA.md).</li>`
       + `<li><b>No findings.</b> This page reports state; the Telemetry, Scorecards, and Alarm Board pages judge it.</li></ul>`;
   }
 
@@ -184,12 +214,12 @@ __SITENAV__
   }
   function history(m, f) { const out = []; for (let i = Math.max(0, m - D.history_min + 1); i <= m; i++) out.push(at(i, f)); return out; }
   function power(m) {
-    const mains = Object.keys(P.mains), ld = at(m, () => true);
+    const mains = Object.keys(P.mains).filter(b => has("mains", b)), ld = at(m, () => true);
     if (!ld) {
       for (const id of ["lv-src", "lv-mains", "lv-ups", "lv-ride", "lv-gen"]) document.getElementById(id).innerHTML = `<span class="loading">Loading this day's readings…</span>`;
     } else {
       const live = mains.filter(b => at(m, (d, i) => d.mains[b].brk[i] === 1 && d.mains[b].v[i] > 0));
-      const gens = P.generators.map(g => ({g, st: at(m, (d, i) => d.gen[g].st[i]), brk: at(m, (d, i) => d.gen[g].brk[i]), kw: at(m, (d, i) => d.gen[g].kw[i]), fuel: at(m, (d, i) => d.gen[g].fuel[i])}));
+      const gens = P.generators.filter(g => has("gen", g)).map(g => ({g, st: at(m, (d, i) => d.gen[g].st[i]), brk: at(m, (d, i) => d.gen[g].brk[i]), kw: at(m, (d, i) => d.gen[g].kw[i]), fuel: at(m, (d, i) => d.gen[g].fuel[i])}));
       const onLoad = gens.filter(x => x.brk === 1 && x.kw > 0), running = gens.filter(x => x.st === 2 || x.st === 3);
       const site = mains.reduce((a, b) => a + at(m, (d, i) => d.mains[b].kw[i]), 0);
       document.getElementById("lv-src").innerHTML = live.length === mains.length
@@ -198,37 +228,38 @@ __SITENAV__
         : `${tag("lost", "bad")} <b>On generators</b>: both mains dead; ${esc(onLoad.length)} of ${esc(gens.length)} generators on the bus carrying ${esc(num(onLoad.reduce((a, x) => a + x.kw, 0) / 1000, 2))} MW.`;
       document.getElementById("lv-mains").innerHTML = `<table><thead><tr><th>Main</th><th class="n">Voltage (Vll avg)</th><th class="n">Current (I avg)</th><th class="n">kW tot</th><th class="n">PF</th><th class="n">Freq</th><th>Breaker</th><th>kW, last hour</th></tr></thead><tbody>`
         + mains.map(b => { const v = k => at(m, (d, i) => d.mains[b][k][i]), dead = v("v") === 0;
-          return `<tr><td><a href="../telemetry/#${esc(b)}/${esc(m)}">${esc(b)}</a></td><td class="n">${dead ? tag("dead", "bad") : esc(num(v("v") / 1000, 2)) + " kV"}</td><td class="n">${esc(num(v("a"), 1))} A</td><td class="n">${esc(num(v("kw"), 1))}</td><td class="n">${dead ? "–" : esc(num(v("pf"), 3))}</td><td class="n">${dead ? "–" : esc(num(v("hz"), 2)) + " Hz"}</td><td>${v("brk") === 1 ? tag("closed", "ok") : tag("open", "bad")}</td><td>${spark(history(m, (d, i) => d.mains[b].kw[i]))}</td></tr>`; }).join("")
+          return `<tr><td><a href="${esc(DL(b, m))}">${esc(b)}</a></td><td class="n">${dead ? tag("dead", "bad") : esc(num(v("v") / 1000, 2)) + " kV"}</td><td class="n">${esc(num(v("a"), 1))} A</td><td class="n">${esc(num(v("kw"), 1))}</td><td class="n">${dead ? "–" : esc(num(v("pf"), 3))}</td><td class="n">${dead ? "–" : esc(num(v("hz"), 2)) + " Hz"}</td><td>${v("brk") === 1 ? tag("closed", "ok") : tag("open", "bad")}</td><td>${spark(history(m, (d, i) => d.mains[b].kw[i]))}</td></tr>`; }).join("")
         + `</tbody></table><p class="note">Schneider PowerLogic ION9000 on the utility side of each main breaker, read once a minute through the Landlord's Power Monitoring Expert. <a href="../telemetry/#utility">Utility and ride-through ↗</a></p>`;
-      const ups = Object.keys(P.ups);
+      const ups = Object.keys(P.ups).filter(u => has("ups", u));
       document.getElementById("lv-ups").innerHTML = `<table><thead><tr><th>UPS</th><th>Serves</th><th class="n">Load</th><th>Output</th><th class="n">Runtime</th><th class="n">Charge</th></tr></thead><tbody>`
         + ups.map(u => { const x = P.ups[u], kw = at(m, (d, i) => d.ups[u].kw[i]), src = at(m, (d, i) => d.ups[u].src[i]), rt = at(m, (d, i) => d.ups[u].rt[i]), soc = at(m, (d, i) => d.ups[u].soc[i]);
-          const pct = kw * 100 / x.rating_kw, lc = pct >= D.thresholds.ups.load_red_pct ? "bad" : pct >= D.thresholds.ups.load_amber_pct && x.kind === "it" ? "warn" : "ok";
-          return `<tr><td><a href="../telemetry/#${esc(u)}/${esc(m)}">${esc(u)}</a></td><td>${esc(hallName(x.hall))} ${esc(x.kind === "it" ? "IT" : "mechanical")}</td><td class="n">${tag(num(pct, 1) + "%", lc)} ${esc(num(kw, 0))} kW</td><td>${tag(SRC[src] || "?", src === 3 ? "ok" : src === 5 ? "bad" : "warn")}</td><td class="n">${rt >= CAP ? esc(mss(CAP)) + "+" : esc(mss(rt))}</td><td class="n">${esc(num(soc))}%</td></tr>`; }).join("") + `</tbody></table>`;
+          const pct = kw == null ? null : kw * 100 / x.rating_kw, lc = pct >= D.thresholds.ups.load_red_pct ? "bad" : pct >= D.thresholds.ups.load_amber_pct && x.kind === "it" ? "warn" : "ok";
+          return `<tr><td><a href="${esc(DL(u, m))}">${esc(u)}</a></td><td>${esc(hallName(x.hall))} ${esc(x.kind === "it" ? "IT" : "mechanical")}</td><td class="n">${tag(num(pct, 1) + "%", lc)} ${esc(num(kw, 0))} kW</td><td>${tag(SRC[src] || "?", src === 3 ? "ok" : src === 5 ? "bad" : "warn")}</td><td class="n">${rt == null ? "–" : rt >= CAP ? esc(mss(CAP)) + "+" : esc(mss(rt))}</td><td class="n">${soc == null ? "–" : esc(num(soc)) + "%"}</td></tr>`; }).join("") + `</tbody></table>`;
       document.getElementById("lv-ride").innerHTML = ride(m);
       document.getElementById("lv-gen").innerHTML = `<table><thead><tr><th>Generator</th><th>State</th><th>On the bus</th><th class="n">kW</th><th class="n">Fuel</th></tr></thead><tbody>`
-        + gens.map(x => `<tr><td><a href="../telemetry/#${esc(x.g)}/${esc(m)}">${esc(x.g)}</a></td><td>${tag(GST[x.st] || "?", x.st === 0 ? "off" : "ok")}</td><td>${x.brk === 1 ? tag("closed", "ok") : tag("open", "off")}</td><td class="n">${esc(num(x.kw, 0))}</td><td class="n">${tag(num(x.fuel, 0) + "%", x.fuel < D.thresholds.generator.fuel_amber_pct ? "warn" : "ok")}</td></tr>`).join("") + `</tbody></table>`;
+        + gens.map(x => `<tr><td><a href="${esc(DL(x.g, m))}">${esc(x.g)}</a></td><td>${tag(GST[x.st] || "?", x.st === 0 ? "off" : "ok")}</td><td>${x.brk === 1 ? tag("closed", "ok") : tag("open", "off")}</td><td class="n">${esc(num(x.kw, 0))}</td><td class="n">${x.fuel == null ? "–" : tag(num(x.fuel, 0) + "%", x.fuel < D.thresholds.generator.fuel_amber_pct ? "warn" : "ok")}</td></tr>`).join("") + `</tbody></table>`;
     }
-    const bw = P.busway.hours[Math.floor(m / 60)];
+    const bw = FEED ? null : P.busway.hours[Math.floor(m / 60)];
     document.getElementById("lv-bw").innerHTML = bw ? `<table><tbody><tr><td>Most loaded run</td><td><a href="../telemetry/#${esc(bw[0])}">${esc(bw[0])}</a></td><td class="n">${esc(num(bw[1], 0))} A, ${esc(num(bw[1] * 100 / P.busway.rating_a, 0))}% of ${esc(num(P.busway.rating_a))} A</td></tr>`
-      + `<tr><td>Warmest enclosure</td><td><a href="../telemetry/#${esc(bw[2])}">${esc(bw[2])}</a></td><td class="n">${esc(num(bw[3], 1))} °C</td></tr></tbody></table><p class="note">Hourly peaks from the busway monitors (the busway publishes hourly here).</p>` : "";
+      + `<tr><td>Warmest enclosure</td><td><a href="../telemetry/#${esc(bw[2])}">${esc(bw[2])}</a></td><td class="n">${esc(num(bw[3], 1))} °C</td></tr></tbody></table><p class="note">Hourly peaks from the busway monitors (the busway publishes hourly here).</p>` : FEED ? `<p class="note">The busway is not in this feed (docs/live/NOW_SCHEMA.md).</p>` : "";
   }
   function ride(m) {
-    const scope = s => at(m, (d, i) => ({s: d.ride[s].s[i], k: d.ride[s].k[i]}));
+    const scope = s => at(m, (d, i) => d.ride[s] ? {s: d.ride[s].s[i], k: d.ride[s].k[i]} : null);
+    const BR = FEED ? F.doc.take_load_s : BRIDGE;
     const ups = (s, k) => k >= 0 ? P.scopes[s][k] : null;
-    const onBatt = Object.keys(P.ups).filter(u => at(m, (d, i) => d.ups[u].src[i]) === 5);
+    const onBatt = Object.keys(P.ups).filter(u => has("ups", u) && at(m, (d, i) => d.ups[u].src[i]) === 5);
     const card = (s, label, big) => {
       const r = scope(s), u = r ? ups(s, r.k) : null, capped = r && r.s >= CAP;
-      const cls = !r || r.s < 0 ? "off" : BRIDGE != null && r.s <= BRIDGE ? "bad" : "ok";
+      const cls = !r || r.s < 0 ? "off" : BR != null && r.s <= BR ? "bad" : "ok";
       return `<div class="rt ${esc(cls)}${big ? " big" : ""}"><div class="k">${esc(label)}</div><div class="v">${!r || r.s < 0 ? "–" : esc(mss(r.s)) + (capped ? "+" : "")}</div>`
-        + `<div class="s">${!r || r.s < 0 ? "no UPS in scope carrying load" : `${capped ? "at the runtime card's cap; " : ""}set by <a href="../telemetry/#${esc(u)}/${esc(m)}">${esc(u)}</a>`}</div></div>`;
+        + `<div class="s">${!r || r.s < 0 ? "no UPS in scope carrying load" : `${capped ? "at the runtime card's cap; " : ""}set by <a href="${esc(DL(u, m))}">${esc(u)}</a>`}</div></div>`;
     };
     const it = scope("SITE-IT");
     let h = `<div class="ride">${card("SITE-IT", "IT load (min:sec)", true)}${card("SITE-COOLING", "Cooling (mechanical UPSs)", true)}</div>`
       + `<div class="ride">${D.halls.map(x => card(x.id, hallName(x.id) + " IT", false)).join("")}</div>`;
-    if (BRIDGE != null && it && it.s >= 0) {
-      const margin = it.s - BRIDGE;
-      h += `<p>Generators take the load in <b>${esc(BRIDGE)} s</b> (measured at the ${esc(fmt(ms(OUT.trip), OFF, false))} CDT trip; NFPA 110 Type 10 design reference ${esc(P.design_take_load_s)} s). Margin now: <b>${esc(mss(margin))}</b>${margin > 0 ? "" : " " + tag("none", "bad")}.</p>`;
+    if (BR != null && it && it.s >= 0) {
+      const margin = it.s - BR;
+      h += `<p>Generators take the load in <b>${esc(BR)} s</b> (${FEED && F.doc.source.kind === "collector" ? "the site's take-load time from the collector's config" : `measured at the ${esc(fmt(ms(OUT.trip), OFF, false))} CDT trip`}; NFPA 110 Type 10 design reference ${esc(P.design_take_load_s)} s). Margin now: <b>${esc(mss(margin))}</b>${margin > 0 ? "" : " " + tag("none", "bad")}.</p>`;
     }
     if (onBatt.length) h += `<p>${tag("on battery now", "bad")} ${esc(onBatt.join(", "))}: the generators are taking the load; the runtimes above are what is left.</p>`;
     return h;
@@ -292,7 +323,7 @@ __SITENAV__
   }
 
   // ------------------------------------------------------------------ redundancy and operations
-  function redundancy(m) {
+  function redundancy(m, get = g => ({avail: g.avail[m], total: g.total[m], state: g.state[m]})) {
     const cols = [null, ...D.halls.map(x => x.id)];
     let t = `<div class="scroll"><table><thead><tr><th>System</th>${cols.map(c => `<th>${esc(c ? hallName(c) : "Site")}</th>`).join("")}</tr></thead><tbody>`;
     const names = [...new Set(G.map(g => g.name))];
@@ -300,8 +331,10 @@ __SITENAV__
       t += `<tr><td>${esc(name)}</td>` + cols.map(c => {
         const g = G.find(x => x.name === name && x.hall === c);
         if (!g) return `<td></td>`;
-        const s = g.state[m], title = `${name}${c ? ", " + hallName(c) : ""}: ${g.avail[m]} of ${g.total[m]}${g.unit_word ? " " + g.unit_word : ""}; design ${g.scheme}. ${stTxt[s]}`;
-        return `<td><a class="chip ${esc(stCls[s])}" href="../telemetry/#${esc(tlink(g.link, m))}" title="${esc(title)}"><b>${s === -1 ? "–" : `${esc(g.avail[m])} of ${esc(g.total[m])}`}</b><span>${esc(g.scheme)}</span></a></td>`;
+        const v = get(g);
+        if (!v) return `<td></td>`;
+        const s = v.state, title = `${name}${c ? ", " + hallName(c) : ""}: ${v.avail} of ${v.total}${g.unit_word ? " " + g.unit_word : ""}; design ${g.scheme}. ${stTxt[s]}`;
+        return `<td><a class="chip ${esc(stCls[s])}" href="../telemetry/#${esc(FEED ? g.link : tlink(g.link, m))}" title="${esc(title)}"><b>${s === -1 ? "–" : `${esc(v.avail)} of ${esc(v.total)}`}</b><span>${esc(g.scheme)}</span></a></td>`;
       }).join("") + `</tr>`;
     }
     return t + `</tbody></table></div>`;
@@ -317,11 +350,82 @@ __SITENAV__
       + (tk.length ? `<table><tbody>${recent(tk).map(k => `<tr><td><a href="../tickets/#${esc(encodeURIComponent(k.id))}" target="_blank" rel="noopener">${esc(k.id)}</a></td><td>${esc(k.partner)}</td><td>${esc(k.device)}</td><td>${esc(k.summary)}</td></tr>`).join("")}</tbody></table>` : `<p class="note">No trouble ticket open.</p>`) + `</div>`;
   }
 
-  frame();
-  route();
-  window.addEventListener("hashchange", () => { route(); S.minute = -1; tick(); });
-  tick();
-  S.timer = setInterval(tick, 1000);
+  // ------------------------------------------------------------------ feed mode
+  const FLAST = D.history_min - 1;      // the feed day's minute that is now
+  function feedFrame() {
+    let h = `<h1>Live status</h1><p class="sub">The site now from a feed: where the power comes from, how long the UPS batteries would carry the site if the utility failed now, each device family's conditions, and which devices are answering. Reading <code>${esc(FEED)}</code>, a file in the Live page's feed contract (docs/live/NOW_SCHEMA.md). <a href="./">Back to the simulated clock</a></p>`;
+    h += `<div class="bar" id="bar"><span class="clock"><span id="now"></span><span class="utc" id="utc"></span></span><span class="badge feed" id="badge"></span><span id="site"></span><span class="note" id="age"></span></div><div id="lv-stale"></div>`;
+    h += `<p class="note" id="where"></p>` + POWER_HTML;
+    h += `<h2>Device families</h2><div class="fams" id="lv-fam"></div>`;
+    h += `<h2>Redundancy</h2><div id="lv-red"></div>`;
+    h += `<h2>Feeds</h2><div id="lv-feeds"></div>`;
+    h += `<h2>How this page works</h2><ul class="note"><li><b>The feed.</b> The page reads the file every poll interval it names. A site's collector (scripts/collect.py --now) writes it from its read-only polls; the demo's file replays one sample minute (scripts/render_live.py).</li>`
+      + `<li><b>Stale.</b> A collector's file older than its stale_after_s is shown with a red banner: the values are the last known, not the site now. A device that stops answering is listed under Feeds and as a degraded condition in its family.</li>`
+      + `<li><b>States.</b> A collector sets degraded and lost from a short published rule list (docs/live/NOW_SCHEMA.md); a replay carries Site health's own conditions and redundancy for that minute. Redundancy needs Site health's group rules, which a collector does not run yet.</li>`
+      + `<li><b>No findings.</b> This page reports state; the Telemetry, Scorecards, and Alarm Board pages judge it.</li></ul>`;
+    main.innerHTML = h;
+  }
+  function feedFamily(f) {
+    const doc = F.doc, cs = doc.conditions.filter(c => c.family === f.key);
+    const covered = doc.source.kind === "replay" || doc.feeds.some(x => x.family === f.key);
+    const s = !covered ? -1 : cs.reduce((a, c) => Math.max(a, STC[c.state] ?? 0), 0);
+    const t = `<div class="fam ${esc(stCls[s])}" data-fam="${esc(f.key)}"><div class="hd"><a href="../telemetry/#${esc(f.link)}">${esc(f.name)}</a>${covered ? stTag(s) : tag("not in this feed", "off")}</div>`;
+    if (!covered) return t + `<p class="note">No ${esc(f.name)} device in this feed yet.</p></div>`;
+    if (!cs.length) return t + `<div class="ok-line">Nothing degraded or lost now.</div></div>`;
+    return t + `<ul>${cs.slice(0, 5).map(c => `<li class="${esc(stCls[STC[c.state]])}">${c.dir ? `<b>${esc(c.dir === "ew" ? "East-West" : "North-South")}:</b> ` : ""}${c.device ? `<a href="../telemetry/#${esc(c.device)}">${esc(c.text)}</a>` : esc(c.text)} <span class="note">since ${esc(fmt(Date.parse(c.since), OFF, false).slice(-5))}</span></li>`).join("")}`
+      + `${cs.length > 5 ? `<li>${esc(cs.length - 5)} more</li>` : ""}</ul></div>`;
+  }
+  function feedRender() {
+    const doc = F.doc;
+    if (!doc) {
+      for (const id of ["lv-src", "lv-mains", "lv-ups", "lv-ride", "lv-gen"]) document.getElementById(id).innerHTML = `<span class="loading">Waiting for the feed…</span>`;
+      return feedAge();
+    }
+    const t = Date.parse(doc.generated_at), worst = doc.conditions.reduce((a, c) => Math.max(a, STC[c.state] ?? 0), 0);
+    document.getElementById("now").textContent = `${fmt(t, OFF, true)} CDT`;
+    document.getElementById("utc").textContent = `${fmt(t, 0, true)} UTC`;
+    document.getElementById("badge").textContent = doc.source.kind === "replay" ? `● FEED · replay of sample minute ${doc.source.minute}` : "● FEED · collector";
+    document.getElementById("site").innerHTML = worst === 0 ? tag("Site normal", "ok") : tag(`Site ${stTxt[worst]}`, stCls[worst]);
+    document.getElementById("where").innerHTML = `Site ${esc(doc.site)}, updated ${esc(fmt(t, OFF, false))} CDT; the page reads the feed every ${esc(Math.min(60, Math.max(5, +doc.source.poll_interval_s || 15)))} s.${doc.source.note ? " " + esc(doc.source.note) : ""}`;
+    power(FLAST);
+    document.getElementById("lv-fam").innerHTML = D.families.map(feedFamily).join("");
+    document.getElementById("lv-red").innerHTML = doc.groups
+      ? redundancy(FLAST, g => { const x = doc.groups.find(y => y.key === g.key && y.hall === g.hall); return x ? {avail: x.avail, total: x.total, state: STC[x.state]} : null; })
+      : `<p class="note">Not in this feed: redundancy needs Site health's group rules, which the collector does not run yet.</p>`;
+    document.getElementById("lv-feeds").innerHTML = doc.feeds.length
+      ? `<div class="scroll"><table><thead><tr><th>Device</th><th>Family</th><th>Protocol</th><th>Answering</th><th>Last good poll</th><th>Error</th></tr></thead><tbody>`
+        + doc.feeds.map(x => `<tr><td>${esc(x.site_id || x.device)}</td><td>${esc((D.families.find(f => f.key === x.family) || {name: x.family}).name)}</td><td>${esc(x.protocol)}</td><td>${x.ok ? tag("yes", "ok") : tag("no", "bad")}</td><td>${x.last_ok ? esc(fmt(Date.parse(x.last_ok), OFF, true)) + " CDT" : "never"}</td><td>${esc(x.error || "")}</td></tr>`).join("") + `</tbody></table></div>`
+      : `<p class="note">${doc.source.kind === "replay" ? "A replay has no device feeds: every value comes from the sample month." : "No device in this feed."}</p>`;
+    feedAge();
+  }
+  function feedAge() {
+    const doc = F.doc, el = document.getElementById("lv-stale"), age = doc ? (Date.now() - Date.parse(doc.generated_at)) / 1000 : null;
+    const stale = doc && doc.source.kind === "collector" && age > doc.stale_after_s;
+    document.getElementById("age").textContent = doc && doc.source.kind === "collector" ? `${mss(Math.max(0, age))} ago` : "";
+    el.innerHTML = (stale ? `<div class="stale">Feed stale: the last update was ${esc(mss(age))} (min:sec) ago, past its ${esc(doc.stale_after_s)} s limit. The values below are the last known, not the site now.</div>` : "")
+      + (F.err ? `<div class="stale">The feed did not answer (${esc(F.err)})${doc ? "; showing the last update" : ""}.</div>` : "");
+  }
+  function startFeed() {
+    feedFrame();
+    const poll = () => fetch(FEED, {cache: "no-store"}).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }).then(doc => {
+      if (!doc || doc.schema !== SCHEMA) throw new Error(`schema ${doc && doc.schema}, and this page reads ${SCHEMA}`);
+      Object.assign(F, {doc, day: feedDay(doc), err: null, at: Date.now()});
+      feedRender();
+      clearTimeout(F.timer); F.timer = setTimeout(poll, Math.min(60, Math.max(5, +doc.source.poll_interval_s || 15)) * 1000);
+    }).catch(e => { F.err = String(e && e.message || e); feedRender(); clearTimeout(F.timer); F.timer = setTimeout(poll, 15000); });
+    feedRender();
+    poll();
+    setInterval(feedAge, 1000);
+  }
+
+  if (FEED) startFeed();
+  else {
+    frame();
+    route();
+    window.addEventListener("hashchange", () => { route(); S.minute = -1; tick(); });
+    tick();
+    S.timer = setInterval(tick, 1000);
+  }
 })();
 </script>
 </body>

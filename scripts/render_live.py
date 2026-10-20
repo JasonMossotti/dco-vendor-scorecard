@@ -50,13 +50,15 @@ def html_page(idx: dict | None = None) -> str:
 
 
 def write_site(out: Path, built: tuple | None = None) -> None:
-    """out/index.html, out/data/index.json (the Telemetry pages' live strips read it), and out/data/day_NN.json."""
+    """out/index.html, out/data/index.json (the Telemetry pages' live strips read it), out/data/day_NN.json, and
+    out/data/now_sample.json (a sample minute in the feed contract, docs/live/NOW_SCHEMA.md)."""
     idx, day_files, _ = built or prepare()
     (out / "data").mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_text(html_page(idx), encoding="utf-8", newline="\n")
     (out / "data" / "index.json").write_text(LS.dumps(idx), encoding="utf-8", newline="\n")
     for d in day_files:
         (out / "data" / f"day_{d['day']:02d}.json").write_text(LS.dumps(d), encoding="utf-8", newline="\n")
+    (out / "data" / "now_sample.json").write_text(LS.dumps(LS.now_doc(idx, day_files, LS.sample_minute(idx))), encoding="utf-8", newline="\n")
 
 
 def manifest_text(built: tuple | None = None) -> str:

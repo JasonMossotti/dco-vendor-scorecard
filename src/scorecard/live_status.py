@@ -231,6 +231,65 @@ def days(power, util) -> list[dict[str, Any]]:
     return out
 
 
+# ---------------------------------------------------------------------------------------------- now.json (replay)
+STATE_WORD = {-1: "not_in_service", 0: "normal", 1: "degraded", 2: "lost"}
+SOURCE_WORD = {3: "normal", 4: "bypass", 5: "battery"}
+GEN_WORD = {0: "stopped", 1: "starting", 2: "running", 3: "cooldown"}
+
+
+def now_doc(idx: dict[str, Any], day_files: list[dict[str, Any]], m: int) -> dict[str, Any]:
+    """The sample month at minute m in the Live page's feed contract (docs/live/NOW_SCHEMA.md), the same document a
+    site's collector writes: the page renders it through the same code, so feed mode and the clock must agree."""
+    from .telemetry_power import unpack
+    d = day_files[m // DAY]
+    sc, i = d["scales"], m - d["from"]
+    lo = max(0, i - idx["history_min"] + 1)
+
+    def val(x, k, grp):
+        return float(unpack(x[k])[i] / sc[grp][k])
+    start = datetime.fromisoformat(idx["window"]["start"].replace("Z", "+00:00"))
+    mains = {}
+    for b, x in d["mains"].items():
+        dead = val(x, "v", "mains") == 0
+        mains[b] = {"v_ll": val(x, "v", "mains"), "i_avg": val(x, "a", "mains"), "kw": val(x, "kw", "mains"),
+                    "pf": None if dead else val(x, "pf", "mains"), "hz": None if dead else val(x, "hz", "mains"),
+                    "breaker": "closed" if val(x, "brk", "mains") == 1 else "open",
+                    "kw_last_hour": [float(v / sc["mains"]["kw"]) for v in unpack(x["kw"])[lo:i + 1]]}
+    ups = {}
+    for u, x in d["ups"].items():
+        kw = val(x, "kw", "ups")
+        ups[u] = {"output": SOURCE_WORD.get(int(val(x, "src", "ups")), "other"), "load_kw": kw,
+                  "load_pct": round(kw * 100 / idx["power"]["ups"][u]["rating_kw"], 1),
+                  "runtime_s": val(x, "rt", "ups"), "charge_pct": val(x, "soc", "ups")}
+    ride = {}
+    for s, x in d["ride"].items():
+        sec, k = int(unpack(x["s"])[i]), int(unpack(x["k"])[i])
+        ride[s] = {"s": None if sec < 0 else sec, "set_by": None if k < 0 else idx["power"]["scopes"][s][k]}
+    gens = {g: {"state": GEN_WORD.get(int(val(x, "st", "gen")), "other"), "kw": val(x, "kw", "gen"),
+                "breaker": "closed" if val(x, "brk", "gen") == 1 else "open", "fuel_pct": val(x, "fuel", "gen")}
+            for g, x in d["gen"].items()}
+    conds = [{"family": c["family"], "hall": c["hall"], "state": STATE_WORD[c["state"]], "text": c["text"], "device": c["link"],
+              "since": (start + timedelta(minutes=c["a"])).strftime("%Y-%m-%dT%H:%M:%SZ"), **({"dir": c["dir"]} if "dir" in c else {})}
+             for c in idx["conditions"] if c["a"] <= m < c["b"]]
+    conds.sort(key=lambda c: (-{"degraded": 1, "lost": 2}[c["state"]], c["since"], c["text"]))
+    groups = [{"key": g["key"], "hall": g["hall"], "avail": int(SH.unrle(g["avail"])[m]), "total": int(SH.unrle(g["total"])[m]),
+               "state": STATE_WORD[int(SH.unrle(g["state"])[m])]} for g in idx["groups"]]
+    return {"schema": "aus1-live-now/1", "site": "AUS-1", "generated_at": (start + timedelta(minutes=m)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "source": {"kind": "replay", "poll_interval_s": 60, "minute": m,
+                       "note": "Replayed from the synthetic sample month (scripts/render_live.py); nothing here comes from a real system."},
+            "stale_after_s": 180, "take_load_s": (idx["power"]["outages"][0]["bridge_s"] if idx["power"]["outages"] else None),
+            "mains": mains, "ups": ups, "ride_through": ride, "generators": gens, "conditions": conds, "groups": groups, "feeds": []}
+
+
+def sample_minute(idx: dict[str, Any]) -> int:
+    """The demo feed's minute: the first reading after the utility trip (on generators), or the month's last minute."""
+    if not idx["power"]["outages"]:
+        return idx["minutes"] - 1
+    start = datetime.fromisoformat(idx["window"]["start"].replace("Z", "+00:00"))
+    trip = datetime.fromisoformat(idx["power"]["outages"][0]["trip"].replace("Z", "+00:00"))
+    return int((trip - start).total_seconds() // 60) + 1
+
+
 def dumps(obj: Any) -> str:
     return json.dumps(obj, separators=(",", ":"), sort_keys=True) + "\n"
 
@@ -240,6 +299,7 @@ def manifest(idx: dict[str, Any], day_files: list[dict[str, Any]], checks: list)
     files = {"index.json": hashlib.sha256(dumps(idx).encode()).hexdigest()}
     for d in day_files:
         files[f"day_{d['day']:02d}.json"] = hashlib.sha256(dumps(d).encode()).hexdigest()
+    files["now_sample.json"] = hashlib.sha256(dumps(now_doc(idx, day_files, sample_minute(idx))).encode()).hexdigest()
     return {"window": idx["window"], "minutes": idx["minutes"], "conditions": len(idx["conditions"]),
             "files": files, "agreements": [{"name": c.name, "title": c.title, "checked": c.checked, "misses": len(c.misses)} for c in checks]}
 

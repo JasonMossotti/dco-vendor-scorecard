@@ -549,13 +549,13 @@ plain:   # capitalised text that is not a code
   words:
     - {terms: [DO, NOT, EDIT, BY, HAND, FILE, GENERATED], why: "The generated-file banner at the top of each contract."}
     - {terms: [MOCK, ILLUSTRATIVE], why: "The contracts' status banner: fictional and illustrative."}
-    - {terms: [ONLY, OK, LIVE], why: "Words set in capitals for emphasis or as a status label."}
+    - {terms: [ONLY, OK, LIVE, FEED], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
     - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
     - {terms: [MB, GB, TB, PB, EB], why: "Units of data size: megabytes, gigabytes, terabytes, petabytes, and exabytes."}
     - {terms: [FAN], why: "The sensor class a switch fan reports under in ENTITY-SENSOR-MIB (the field reference names it beside the reading)."}
     - {terms: [RX, TX], why: "Receive and transmit, in an optic module's own alarm names (RX power low, TX bias high), set in capitals as the module reports them."}
-    - {terms: [README], why: "A file name (docs/predict/README.md)."}
+    - {terms: [README, NOW_SCHEMA], why: "File names (docs/predict/README.md, docs/live/NOW_SCHEMA.md)."}
     - {terms: [GET], why: "The HTTP method a Redfish client uses to read a resource."}
     - {terms: [HELP, TYPE], why: "Keywords of the Prometheus text format: each field's description and its metric type (gauge or counter)."}
     - {terms: [ALARM, LOADED, LOADING, MTN, "OFF", "ON", STARTING, UNLOADED, UNLOADING], why: "Values of the V1C compressor status, set in capitals as Vertiv's points list writes them (MTN: maintenance)."}
