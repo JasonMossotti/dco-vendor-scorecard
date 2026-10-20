@@ -1,0 +1,71 @@
+{
+ "agreements": [
+  {
+   "checked": 14784,
+   "misses": 0,
+   "name": "families",
+   "title": "The worst minute of every hour equals Site health's state for that hour, for every family, site-wide and per hall"
+  },
+  {
+   "checked": 18816,
+   "misses": 0,
+   "name": "groups",
+   "title": "The worst minute of every hour equals each redundancy group's state for that hour"
+  },
+  {
+   "checked": 14784,
+   "misses": 0,
+   "name": "units",
+   "title": "Each group counted unit by unit has, at its worst minute of the hour, Site health's units for that hour"
+  },
+  {
+   "checked": 224,
+   "misses": 0,
+   "name": "mains",
+   "title": "The day files carry each main's published minutes unchanged"
+  },
+  {
+   "checked": 112,
+   "misses": 0,
+   "name": "ride_through",
+   "title": "The day files carry the published ride-through for every scope and minute"
+  }
+ ],
+ "conditions": 436,
+ "files": {
+  "day_00.json": "f143833485d32c66fc946cc5a36ea5d46906c46a9a11c16c1ca3b13f1fd654f8",
+  "day_01.json": "414440c7d5037695ae0a5955f0ab4c1592338c6a0810b5e1a9304198699dd9f9",
+  "day_02.json": "63cfb1e5fcb41cddd87f9d60a52b18bf4641a6368e2ec8af1b1b5a91042c7fd1",
+  "day_03.json": "c5c453804c9e64fbd58211bd2e6023e000c8d79d5da6dcbd5c3b925c8f603344",
+  "day_04.json": "21dce71d95099d2e9e03eaddfacc16e9faa84efda0b07207373ff391fc8e47c3",
+  "day_05.json": "4cf6c0dfa22bca545ef3492440ddc2f2914ca426f623ab75a0a2dacf5aae864a",
+  "day_06.json": "f70bccc767f60f7ca84f7781500dc398599ad4304616b22a235fd8f5a3a13540",
+  "day_07.json": "292eaf95d9b7bedcda31f59e7872c231fec2b518f82cc9f6bd0e65da63c9dc64",
+  "day_08.json": "0a55609f3e6d51057055cdc6fb56c1ae8fbb4324e8a71e22fc8e499cd67b716e",
+  "day_09.json": "922a8b26f7f65436269a4be3ba93fa8569e4917cfc4a313dd8afcb0a8a2c8f2c",
+  "day_10.json": "83f1c005a699302015a28149b0d3a43cae373629ca81e9bf1333085111e1ac84",
+  "day_11.json": "a3f1960034c36275ec13b7ad9a982273eb2d73d06bf11cd8859a577a64516509",
+  "day_12.json": "0082ebbeee272b7c71f737430f149a48b21497629973ec94a0aca5719ef84c68",
+  "day_13.json": "7974b9297490de4dbc8bd78cd0bc07915e06e5f531e5b4c66acb5868307cf714",
+  "day_14.json": "15ee243ff277fabff5951451f5799f8f5797d7b2e7120143ede5756be0c7d480",
+  "day_15.json": "632fe7565d7ea1b43117a437b6238fe0d9a3a5620875efa4d91533bdbf1edf1f",
+  "day_16.json": "f8072f7d155d3e0dddd6692391a74093350dba51931288b40055de3636c7ab26",
+  "day_17.json": "5536c3b768f66cbcfe46736942b915e0f17e7e11d563cc8fa2fa6aa7826acfc7",
+  "day_18.json": "202677bd83a56389d14a899259042deaa8de3b08758a3dfe089d97dc18db4c75",
+  "day_19.json": "d26fe578aa8636a577d018b915809a1723790c08e5d861bbd9e7f3cfdee12f0c",
+  "day_20.json": "6bd6665bb8f39dc13126f6ee163b781968ac1512b4d0f80435f1f99c2e57dfff",
+  "day_21.json": "4e1207db1c87623aab3ee029329a38e2db91069d5178478ba7de3d5dd04d3200",
+  "day_22.json": "d40e77cee49a5e93ef1afaf65332b3bea7003dec48fb3f070278bb099fd433da",
+  "day_23.json": "0648d38806ec515e80878ba51c1a07688d053d386c37c75ad05f456e77597e96",
+  "day_24.json": "22aa00dfe0f5c6832f43a1dfa575df2bc77afbd9a3a02745fb30789a0385b931",
+  "day_25.json": "858ca200eb66059426e0ae3075650f6627369f083512a2490c99327166d91243",
+  "day_26.json": "f59b19c7eed21ea0a1a80b4b06a1ae1fa75153967b9b0c7adc38941cf71ff14e",
+  "day_27.json": "5b119aa56bfd388358e13367ce82c9a1b92e1c25f1d9707a7cc4bdf88597dea7",
+  "index.json": "a400973445f4610c0ab738811cf0f8968c3fa20d939d4eac0f9662b8dc93e156"
+ },
+ "minutes": 40320,
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "start": "2026-08-31T00:00:00Z"
+ }
+}

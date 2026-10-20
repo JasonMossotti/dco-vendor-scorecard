@@ -121,6 +121,8 @@ def test_robustness_one_month(capsys):
 def test_interactive_page_builds_and_works(tmp_path, regenerated):
     out = tmp_path / "telemetry"
     render_telemetry.write_site(out)
+    import render_live
+    render_live.write_site(tmp_path / "live")       # the live strips read ../live/data/index.json
     html = (out / "index.html").read_text(encoding="utf-8")
     assert "__DATA__" not in html and "</script" not in html.split('id="data"')[1].split("</script>")[0]
     assert (out / "data" / "racks.json").exists() and len(list((out / "data" / "gpu").glob("*.json"))) == 46

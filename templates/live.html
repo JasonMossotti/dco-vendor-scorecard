@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --bad:#c62828; --good:#2e9e5b; --warn:#e0a100;
+        --badbg:#fdecea; --okbg:#e7f4ec; --warnbg:#fff4d6; --grid:#eef1f4; --off:#d9dee4; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+main { max-width:1280px; margin:16px auto; background:var(--bg); padding:24px 32px 32px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:26px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:12px 0 6px; }
+a { color:#1f5fbf; } .sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.bar { position:sticky; top:0; z-index:4; display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 12px; margin:10px 0 4px; }
+.clock { display:flex; flex-direction:column; min-width:170px; font-weight:600; font-variant-numeric:tabular-nums; line-height:1.25; }
+.clock .utc { color:var(--muted); font-weight:500; font-size:13px; }
+.badge { font-weight:700; } .badge.live { color:var(--bad); } .badge.paused { color:var(--muted); } .badge.fast { color:#7a4fd0; }
+.bar button, .bar select { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--ink); padding:4px 10px; border-radius:6px; cursor:pointer; }
+.bar button.on { background:var(--ink); color:#fff; }
+.tag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; white-space:nowrap; vertical-align:1px; }
+.tag.ok { background:var(--okbg); color:#1d7a46; } .tag.warn { background:var(--warnbg); color:#8a5d00; } .tag.bad { background:var(--badbg); color:var(--bad); } .tag.off { background:var(--grid); color:var(--muted); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:5px 8px; border-bottom:1px solid var(--line); vertical-align:middle; }
+th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.scroll { overflow-x:auto; }
+.grid2 { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:18px; } @media (max-width:980px) { .grid2 { grid-template-columns:1fr; } }
+.src { font-size:15px; margin:4px 0 10px; } .src b { font-size:17px; }
+.ride { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin:6px 0 10px; }
+.rt { background:var(--panel); border-radius:8px; padding:10px 12px; border-left:5px solid var(--good); }
+.rt.big .v { font-size:40px; } .rt .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.rt .v { font-size:28px; font-weight:700; line-height:1.15; font-variant-numeric:tabular-nums; } .rt .s { font-size:12px; color:var(--muted); }
+.rt.warn { border-left-color:var(--warn); } .rt.bad { border-left-color:var(--bad); } .rt.off { border-left-color:var(--off); }
+.fams { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:12px; }
+.fam { border:1px solid var(--line); border-top:5px solid var(--good); border-radius:8px; padding:10px 12px; background:#fff; }
+.fam.warn { border-top-color:var(--warn); } .fam.bad { border-top-color:var(--bad); } .fam.off { border-top-color:var(--off); }
+.fam .hd { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:4px; } .fam .hd a { font-weight:700; text-decoration:none; color:var(--ink); }
+.fam table { table-layout:auto; } .fam table td { padding:3px 6px; font-size:12.5px; } .fam table td.n { white-space:normal; } .fam ul { margin:6px 0 0; padding-left:18px; font-size:12.5px; } .fam li.bad { color:var(--bad); } .fam li.warn { color:#8a5d00; }
+.fam .ok-line { font-size:12.5px; color:#1d7a46; margin-top:6px; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; }
+.chip { display:flex; flex-direction:column; min-width:118px; padding:5px 8px; border-radius:6px; text-decoration:none; color:var(--ink); background:var(--okbg); border:1px solid #cfe8d8; font-size:12px; }
+.chip b { font-size:14px; font-variant-numeric:tabular-nums; } .chip.warn { background:var(--warnbg); border-color:#f1dc9b; } .chip.bad { background:var(--badbg); border-color:#f3c2bd; } .chip.off { background:var(--grid); border-color:var(--line); color:var(--muted); }
+.map { display:grid; gap:2px; margin-top:6px; } .map span, .map a { display:block; height:13px; border-radius:2px; background:var(--good); }
+.map .warn { background:var(--warn); } .map .bad { background:var(--bad); } .map .off { background:var(--off); }
+.map .com { background-image:repeating-linear-gradient(45deg, rgba(255,255,255,.55) 0 2px, transparent 2px 5px); }
+svg.spark { display:block; } svg text { font:10px "Inter","Segoe UI",Helvetica,Arial,sans-serif; fill:var(--muted); }
+.ops { display:grid; grid-template-columns:1fr 1fr; gap:18px; } @media (max-width:900px) { .ops { grid-template-columns:1fr; } }
+.cnt { display:flex; gap:10px; flex-wrap:wrap; margin:4px 0 8px; } .cnt div { background:var(--panel); border-radius:6px; padding:6px 10px; font-size:12px; color:var(--muted); }
+.cnt b { display:block; font-size:22px; color:var(--ink); font-variant-numeric:tabular-nums; }
+.loading { color:var(--muted); font-style:italic; }
+</style>
+</head>
+<body>
+__SITENAV__
+<main id="main"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const num = (v, d = 0) => v == null || Number.isNaN(v) ? "–" : Number(v).toLocaleString("en-US", {minimumFractionDigits: d, maximumFractionDigits: d});
+  const p2 = n => String(n).padStart(2, "0");
+  const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const MIN = 60e3, HOUR = 60 * MIN, DAYMS = 24 * HOUR, OFF = D.offset_h * HOUR;
+  const W0 = Date.parse(D.window.start), W1 = Date.parse(D.window.end);
+  const SPAN = Math.floor((W1 - W0) / DAYMS) * DAYMS;      // whole days of sample the simulated live feed cycles through
+  const M = D.minutes;
+  // The same simulated live clock as the Alarm Board's Live Events board: the sample re-dated to the viewer's clock
+  // in whole days, so the time of day is the sample's.
+  const liveShift = wall => wall - (W0 + ((wall - W0) % SPAN + SPAN) % SPAN);
+  const unrle = r => { const o = []; for (const [v, n] of r) for (let i = 0; i < n; i++) o.push(v); return o; };
+  function unpack(arr, sc) {      // first value, then minute-to-minute steps; [n] is n minutes unchanged
+    const out = []; let s = 0;
+    for (const x of arr) { if (Array.isArray(x)) { for (let i = 0; i < x[0]; i++) out.push(s / sc); } else { s += x; out.push(s / sc); } }
+    return out;
+  }
+  const FS = Object.fromEntries(Object.entries(D.family_state).map(([k, v]) => [k, unrle(v)]));
+  const HS = Object.fromEntries(Object.entries(D.hall_state).map(([h, x]) => [h, Object.fromEntries(Object.entries(x).map(([k, v]) => [k, unrle(v)]))]));
+  const SS = unrle(D.site_state);
+  const G = D.groups.map(g => ({...g, avail: unrle(g.avail), total: unrle(g.total), state: unrle(g.state)}));
+  const RD = Object.fromEntries(Object.entries(D.readings).map(([f, d]) => [f, Object.fromEntries(Object.entries(d).map(([s, x]) => [s, Object.fromEntries(Object.entries(x).map(([k, v]) => [k, unrle(v)]))]))]));
+  const RK = Object.fromEntries(Object.entries(D.racks).map(([k, x]) => [k, {...x, state: unrle(x.state), why: unrle(x.why)}]));
+  const ms = iso => iso == null || iso === "" ? null : Date.parse(iso);
+  const AL = D.alarms.map(a => ({...a, t: ms(a.t), tc: ms(a.tc)})), TK = D.tickets.map(k => ({...k, t: ms(k.t), tc: ms(k.tc)}));
+  const FO = D.fire.out.map(s => ({...s, a: ms(s.start), b: ms(s.end)}));
+  const DOORS = D.security.doors.map(x => ({...x, a: ms(x.timestamp), b: ms(x.cleared_at)}));
+  const POSTS = D.security.posts.map(x => ({...x, a: ms(x.from), b: ms(x.to)})), VIS = D.security.visits.map(x => ({...x, a: ms(x.in), b: ms(x.out)}));
+  const stCls = {"-1": "off", 0: "ok", 1: "warn", 2: "bad"}, stTxt = {"-1": "not in service", 0: "normal", 1: "degraded", 2: "lost"};
+  const tag = (t, c) => `<span class="tag ${esc(c)}">${esc(t)}</span>`, stTag = s => tag(stTxt[s], stCls[s]);
+  const hallName = id => (D.halls.find(x => x.id === id) || {name: "Site"}).name;
+  const fmt = (t, off, sec) => { const d = new Date(t + off); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}${sec ? ":" + p2(d.getUTCSeconds()) : ""}`; };
+  const mss = s => s == null || s < 0 ? "–" : `${Math.floor(s / 60)}:${p2(Math.round(s % 60))}`;
+  const P = D.power, CAP = P.runtime_cap_s, SRC = {3: "online", 4: "on bypass", 5: "on battery"}, GST = {0: "Stopped", 1: "Starting", 2: "Running", 3: "Cooldown"};
+  const OUT = P.outages[0] || null, BRIDGE = OUT ? OUT.bridge_s : null;
+
+  // ------------------------------------------------------------------ the clock
+  // T(): the sample time shown. Running: t0 + (wall - w0) x speed, cycling the month's whole days. Paused: t0.
+  const S = {t0: 0, w0: 0, speed: 1, paused: false, live: true, minute: -1, timer: null};
+  const wrap = t => W0 + (((t - W0) % SPAN) + SPAN) % SPAN;
+  const T = () => wrap(S.paused ? S.t0 : S.t0 + (Date.now() - S.w0) * S.speed);
+  function goLive() { const now = Date.now(); Object.assign(S, {t0: now - liveShift(now), w0: now, speed: 1, paused: false, live: true}); }
+  function goTo(t, paused) { Object.assign(S, {t0: t, w0: Date.now(), paused: !!paused, live: false}); }
+  function route() {
+    const h = location.hash.slice(1);
+    if (/^\d+$/.test(h)) { const m = Math.min(M - 1, +h); goTo(W0 + m * MIN, true); S.speed = 1; }
+    else goLive();
+  }
+
+  // ------------------------------------------------------------------ the day files
+  const DAYS = {}, LOADING = {};
+  function day(d) {
+    if (d < 0 || d >= D.days) return null;
+    if (DAYS[d]) return DAYS[d];
+    if (!LOADING[d]) LOADING[d] = fetch(`data/day_${p2(d)}.json`).then(r => r.ok ? r.json() : null).then(j => {
+      if (!j) return;
+      const sc = j.scales, x = {from: j.from};
+      x.mains = Object.fromEntries(Object.entries(j.mains).map(([b, f]) => [b, Object.fromEntries(Object.entries(f).map(([k, v]) => [k, unpack(v, sc.mains[k])]))]));
+      x.ride = Object.fromEntries(Object.entries(j.ride).map(([s, f]) => [s, {s: unpack(f.s, 1), k: unpack(f.k, 1)}]));
+      x.ups = Object.fromEntries(Object.entries(j.ups).map(([u, f]) => [u, Object.fromEntries(Object.entries(f).map(([k, v]) => [k, unpack(v, sc.ups[k])]))]));
+      x.gen = Object.fromEntries(Object.entries(j.gen).map(([g, f]) => [g, Object.fromEntries(Object.entries(f).map(([k, v]) => [k, unpack(v, sc.gen[k])]))]));
+      DAYS[d] = x; S.minute = -1; tick();
+    }).catch(() => { LOADING[d] = null; });
+    return null;
+  }
+  // a minute's value from the day files (null while the day loads)
+  function at(m, f) { const d = day(Math.floor(m / 1440)); return d ? f(d, m - d.from) : null; }
+
+  // ------------------------------------------------------------------ the page
+  const main = document.getElementById("main");
+  function frame() {
+    let h = `<h1>Live status</h1><p class="sub">${esc(D.framing)} A simulated live feed: the synthetic sample month runs on your clock, re-dated to today, the same feed as the Alarm Board's <a href="../alarms/#live">Live Events</a>. Nothing here comes from a real system.</p>`;
+    h += `<div class="bar" id="bar"><span class="clock"><span id="now"></span><span class="utc" id="utc"></span></span><span class="badge" id="badge"></span><span id="site"></span>`
+      + `<button id="pause">Pause</button><select id="speed" aria-label="Speed">${D.speeds.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select>`
+      + D.jumps.map(j => `<button data-jump="${esc(j.m)}">${esc(j.label)}</button>`).join("") + `<button id="golive">Live now</button></div>`;
+    h += `<p class="note" id="where"></p>`;
+    h += `<h2>Power</h2><div class="grid2"><div><div class="src" id="lv-src"></div><h3>Utility mains (13.8 kV)</h3><div class="scroll" id="lv-mains"></div>`
+      + `<h3>UPSs</h3><div class="scroll" id="lv-ups"></div></div><div><h3>UPS ride-through if the utility failed now</h3><div id="lv-ride"></div><h3>Generators</h3><div class="scroll" id="lv-gen"></div><h3>Busway this hour</h3><div id="lv-bw"></div></div></div>`;
+    h += `<h2>Device families</h2><div class="fams" id="lv-fam"></div>`;
+    h += `<h2>Redundancy</h2><p class="note">Units in service against the units the design needs, at this minute. Amber: running at N, with no redundant unit; red: below N.</p><div id="lv-red"></div>`;
+    h += `<h2>Alarm Board and Incident Portal now</h2><div class="ops" id="lv-ops"></div>`;
+    h += `<h2>How this page works</h2>` + rules();
+    main.innerHTML = h;
+    document.getElementById("pause").onclick = () => { const t = T(); if (S.paused) { goTo(t, false); } else { goTo(t, true); } S.live = false; S.minute = -1; tick(); };
+    document.getElementById("speed").onchange = e => { const t = T(); S.speed = +e.target.value; goTo(t, S.paused); S.live = false; S.minute = -1; tick(); };
+    document.getElementById("golive").onclick = () => { goLive(); document.getElementById("speed").value = "1"; try { history.replaceState(null, "", "#live"); } catch (e) { /* file:// */ } S.minute = -1; tick(); };
+    main.querySelectorAll("button[data-jump]").forEach(b => b.onclick = () => { goTo(W0 + +b.dataset.jump * MIN, false); S.minute = -1; tick(); });
+  }
+  function rules() {
+    return `<ul class="note"><li><b>The clock.</b> The sample month (${esc(fmt(W0, OFF, false))} to ${esc(fmt(W1, OFF, false))} CDT) cycles on your clock in whole days. Pause, a faster speed, or a jump leaves the live feed; <i>Live now</i> returns to it. A link with a minute (#${esc(M - 60)}) opens paused at that minute.</li>`
+      + `<li><b>Resolution.</b> The utility mains, ride-through, UPSs, and generators are read minute by minute. A family's state comes from Site health's conditions: one read from a recorded state change (a breaker, a UPS on bypass, a pump, a fan, a switch, a storage node) holds for its exact minutes; one read from an hourly row (a temperature, a drained node, a GPU not reporting) holds for its whole hour, as do the readings in each tile and the rack colours.</li>`
+      + `<li><b>States.</b> Site health's, with its thresholds (config/site_health.yaml): the worst minute of every hour here equals Site health's state for that hour. Fire protection uses Site health's fire rule (${esc(D.fire.rule)}); security is read, not judged (${esc(D.security.note)}).</li>`
+      + `<li><b>Ride-through.</b> The shortest runtime (upsAdvBatteryRunTimeRemaining) among the UPSs in scope carrying load: the site keeps its critical load until the first of them runs out. The network management card caps the runtime it reports at ${esc(mss(CAP))} at light load. Take-load time: ${BRIDGE == null ? "no outage this month" : `${esc(BRIDGE)} s, measured at the ${esc(fmt(ms(OUT.trip), OFF, false))} CDT utility trip (EPMS trip to generator ties closed)`}; NFPA 110 Type 10 (${esc(P.design_take_load_s)} s) is a design reference, not a requirement here.</li>`
+      + `<li><b>No findings.</b> This page reports state; the Telemetry, Scorecards, and Alarm Board pages judge it.</li></ul>`;
+  }
+
+  function tick() {
+    const t = T(), m = Math.max(0, Math.min(M - 1, Math.floor((t - W0) / MIN)));
+    const shown = S.live ? t + liveShift(Date.now()) : t;      // live: the viewer's own date; otherwise the sample's
+    document.getElementById("now").textContent = `${fmt(shown, OFF, true)} CDT`;
+    document.getElementById("utc").textContent = `${fmt(shown, 0, true)} UTC`;
+    const b = document.getElementById("badge");
+    b.className = "badge " + (S.paused ? "paused" : S.speed > 1 ? "fast" : S.live ? "live" : "");
+    b.textContent = S.paused ? "❚❚ Paused" : S.live ? "● LIVE · simulated feed" : S.speed > 1 ? `▶ Replay · ${(D.speeds.find(x => x[0] === S.speed) || [0, ""])[1]}` : "▶ Replay";
+    document.getElementById("pause").textContent = S.paused ? "Play" : "Pause";
+    if (m === S.minute) return;
+    S.minute = m;
+    const hr = Math.floor(m / 60);
+    document.getElementById("site").innerHTML = SS[m] === 0 ? tag("Site normal", "ok") : tag(`Site ${stTxt[SS[m]]}`, stCls[SS[m]]);
+    document.getElementById("where").innerHTML = `Sample time ${esc(fmt(W0 + m * MIN, OFF, false))} CDT (minute ${esc(m)} of the month). <a href="../telemetry/#site/${esc(hr)}">Site health at this hour ↗</a>`;
+    power(m);
+    document.getElementById("lv-fam").innerHTML = D.families.map(f => family(f, m)).join("") + fire(t) + security(t);
+    document.getElementById("lv-red").innerHTML = redundancy(m);
+    document.getElementById("lv-ops").innerHTML = ops(t);
+  }
+
+  // ------------------------------------------------------------------ power
+  function spark(vals, w = 140, hgt = 26) {
+    const v = vals.filter(x => x != null);
+    if (!v.length) return "";
+    const lo = Math.min(...v), hi = Math.max(...v), r = hi - lo || 1;
+    const pts = vals.map((x, i) => x == null ? null : `${(i / Math.max(1, vals.length - 1) * (w - 2) + 1).toFixed(1)},${(hgt - 2 - (x - lo) / r * (hgt - 4)).toFixed(1)}`).filter(Boolean).join(" ");
+    return `<svg class="spark" width="${esc(w)}" height="${esc(hgt)}" viewBox="0 0 ${esc(w)} ${esc(hgt)}" role="img" aria-label="last hour"><polyline points="${esc(pts)}" fill="none" stroke="#1f5fbf" stroke-width="1.4"/></svg>`;
+  }
+  function history(m, f) { const out = []; for (let i = Math.max(0, m - D.history_min + 1); i <= m; i++) out.push(at(i, f)); return out; }
+  function power(m) {
+    const mains = Object.keys(P.mains), ld = at(m, () => true);
+    if (!ld) {
+      for (const id of ["lv-src", "lv-mains", "lv-ups", "lv-ride", "lv-gen"]) document.getElementById(id).innerHTML = `<span class="loading">Loading this day's readings…</span>`;
+    } else {
+      const live = mains.filter(b => at(m, (d, i) => d.mains[b].brk[i] === 1 && d.mains[b].v[i] > 0));
+      const gens = P.generators.map(g => ({g, st: at(m, (d, i) => d.gen[g].st[i]), brk: at(m, (d, i) => d.gen[g].brk[i]), kw: at(m, (d, i) => d.gen[g].kw[i]), fuel: at(m, (d, i) => d.gen[g].fuel[i])}));
+      const onLoad = gens.filter(x => x.brk === 1 && x.kw > 0), running = gens.filter(x => x.st === 2 || x.st === 3);
+      const site = mains.reduce((a, b) => a + at(m, (d, i) => d.mains[b].kw[i]), 0);
+      document.getElementById("lv-src").innerHTML = live.length === mains.length
+        ? `${tag("normal", "ok")} <b>On utility</b>: both 13.8 kV mains in, ${esc(num(site / 1000, 2))} MW from the utility${running.length ? `; ${esc(running.length)} generator${running.length > 1 ? "s" : ""} running unloaded (exercise or cooldown)` : ""}.`
+        : live.length ? `${tag("degraded", "warn")} <b>One main</b>: ${esc(live.join(", "))} in, the other open.`
+        : `${tag("lost", "bad")} <b>On generators</b>: both mains dead; ${esc(onLoad.length)} of ${esc(gens.length)} generators on the bus carrying ${esc(num(onLoad.reduce((a, x) => a + x.kw, 0) / 1000, 2))} MW.`;
+      document.getElementById("lv-mains").innerHTML = `<table><thead><tr><th>Main</th><th class="n">Voltage (Vll avg)</th><th class="n">Current (I avg)</th><th class="n">kW tot</th><th class="n">PF</th><th class="n">Freq</th><th>Breaker</th><th>kW, last hour</th></tr></thead><tbody>`
+        + mains.map(b => { const v = k => at(m, (d, i) => d.mains[b][k][i]), dead = v("v") === 0;
+          return `<tr><td><a href="../telemetry/#${esc(b)}/${esc(m)}">${esc(b)}</a></td><td class="n">${dead ? tag("dead", "bad") : esc(num(v("v") / 1000, 2)) + " kV"}</td><td class="n">${esc(num(v("a"), 1))} A</td><td class="n">${esc(num(v("kw"), 1))}</td><td class="n">${dead ? "–" : esc(num(v("pf"), 3))}</td><td class="n">${dead ? "–" : esc(num(v("hz"), 2)) + " Hz"}</td><td>${v("brk") === 1 ? tag("closed", "ok") : tag("open", "bad")}</td><td>${spark(history(m, (d, i) => d.mains[b].kw[i]))}</td></tr>`; }).join("")
+        + `</tbody></table><p class="note">Schneider PowerLogic ION9000 on the utility side of each main breaker, read once a minute through the Landlord's Power Monitoring Expert. <a href="../telemetry/#utility">Utility and ride-through ↗</a></p>`;
+      const ups = Object.keys(P.ups);
+      document.getElementById("lv-ups").innerHTML = `<table><thead><tr><th>UPS</th><th>Serves</th><th class="n">Load</th><th>Output</th><th class="n">Runtime</th><th class="n">Charge</th></tr></thead><tbody>`
+        + ups.map(u => { const x = P.ups[u], kw = at(m, (d, i) => d.ups[u].kw[i]), src = at(m, (d, i) => d.ups[u].src[i]), rt = at(m, (d, i) => d.ups[u].rt[i]), soc = at(m, (d, i) => d.ups[u].soc[i]);
+          const pct = kw * 100 / x.rating_kw, lc = pct >= D.thresholds.ups.load_red_pct ? "bad" : pct >= D.thresholds.ups.load_amber_pct && x.kind === "it" ? "warn" : "ok";
+          return `<tr><td><a href="../telemetry/#${esc(u)}/${esc(m)}">${esc(u)}</a></td><td>${esc(hallName(x.hall))} ${esc(x.kind === "it" ? "IT" : "mechanical")}</td><td class="n">${tag(num(pct, 1) + "%", lc)} ${esc(num(kw, 0))} kW</td><td>${tag(SRC[src] || "?", src === 3 ? "ok" : src === 5 ? "bad" : "warn")}</td><td class="n">${rt >= CAP ? esc(mss(CAP)) + "+" : esc(mss(rt))}</td><td class="n">${esc(num(soc))}%</td></tr>`; }).join("") + `</tbody></table>`;
+      document.getElementById("lv-ride").innerHTML = ride(m);
+      document.getElementById("lv-gen").innerHTML = `<table><thead><tr><th>Generator</th><th>State</th><th>On the bus</th><th class="n">kW</th><th class="n">Fuel</th></tr></thead><tbody>`
+        + gens.map(x => `<tr><td><a href="../telemetry/#${esc(x.g)}/${esc(m)}">${esc(x.g)}</a></td><td>${tag(GST[x.st] || "?", x.st === 0 ? "off" : "ok")}</td><td>${x.brk === 1 ? tag("closed", "ok") : tag("open", "off")}</td><td class="n">${esc(num(x.kw, 0))}</td><td class="n">${tag(num(x.fuel, 0) + "%", x.fuel < D.thresholds.generator.fuel_amber_pct ? "warn" : "ok")}</td></tr>`).join("") + `</tbody></table>`;
+    }
+    const bw = P.busway.hours[Math.floor(m / 60)];
+    document.getElementById("lv-bw").innerHTML = bw ? `<table><tbody><tr><td>Most loaded run</td><td><a href="../telemetry/#${esc(bw[0])}">${esc(bw[0])}</a></td><td class="n">${esc(num(bw[1], 0))} A, ${esc(num(bw[1] * 100 / P.busway.rating_a, 0))}% of ${esc(num(P.busway.rating_a))} A</td></tr>`
+      + `<tr><td>Warmest enclosure</td><td><a href="../telemetry/#${esc(bw[2])}">${esc(bw[2])}</a></td><td class="n">${esc(num(bw[3], 1))} °C</td></tr></tbody></table><p class="note">Hourly peaks from the busway monitors (the busway publishes hourly here).</p>` : "";
+  }
+  function ride(m) {
+    const scope = s => at(m, (d, i) => ({s: d.ride[s].s[i], k: d.ride[s].k[i]}));
+    const ups = (s, k) => k >= 0 ? P.scopes[s][k] : null;
+    const onBatt = Object.keys(P.ups).filter(u => at(m, (d, i) => d.ups[u].src[i]) === 5);
+    const card = (s, label, big) => {
+      const r = scope(s), u = r ? ups(s, r.k) : null, capped = r && r.s >= CAP;
+      const cls = !r || r.s < 0 ? "off" : BRIDGE != null && r.s <= BRIDGE ? "bad" : "ok";
+      return `<div class="rt ${esc(cls)}${big ? " big" : ""}"><div class="k">${esc(label)}</div><div class="v">${!r || r.s < 0 ? "–" : esc(mss(r.s)) + (capped ? "+" : "")}</div>`
+        + `<div class="s">${!r || r.s < 0 ? "no UPS in scope carrying load" : `${capped ? "at the runtime card's cap; " : ""}set by <a href="../telemetry/#${esc(u)}/${esc(m)}">${esc(u)}</a>`}</div></div>`;
+    };
+    const it = scope("SITE-IT");
+    let h = `<div class="ride">${card("SITE-IT", "IT load (min:sec)", true)}${card("SITE-COOLING", "Cooling (mechanical UPSs)", true)}</div>`
+      + `<div class="ride">${D.halls.map(x => card(x.id, hallName(x.id) + " IT", false)).join("")}</div>`;
+    if (BRIDGE != null && it && it.s >= 0) {
+      const margin = it.s - BRIDGE;
+      h += `<p>Generators take the load in <b>${esc(BRIDGE)} s</b> (measured at the ${esc(fmt(ms(OUT.trip), OFF, false))} CDT trip; NFPA 110 Type 10 design reference ${esc(P.design_take_load_s)} s). Margin now: <b>${esc(mss(margin))}</b>${margin > 0 ? "" : " " + tag("none", "bad")}.</p>`;
+    }
+    if (onBatt.length) h += `<p>${tag("on battery now", "bad")} ${esc(onBatt.join(", "))}: the generators are taking the load; the runtimes above are what is left.</p>`;
+    return h;
+  }
+
+  // ------------------------------------------------------------------ families
+  const condAt = m => D.conditions.filter(c => c.a <= m && m < c.b);
+  const tlink = (link, m) => RK[link] ? `${link}/${Math.floor(m / 60)}` : link;
+  const fv = (v, d = 0, u = "") => v == null ? "–" : `${num(v, d)}${u}`;
+  const ROWS = {
+    gpu: [["Racks in service", (r, h) => fv(r.racks[h])], ["GPUs reporting", (r, h) => fv(r.gpus[h])], ["Mean utilization", (r, h) => fv(r.util[h], 1, "%")], ["Peak GPU temperature", (r, h) => fv(r.temp[h], 0, " °C")]],
+    cdu: [["Warmest coolant supply", (r, h) => fv(r.supply[h], 1, " °C")], ["Coolant flow", (r, h) => fv(r.flow[h], 0, " L/min")], ["Heat removed", (r, h) => fv(r.heat_kw[h], 0, " kW")]],
+    power: [["IT load (UPS output)", (r, h) => fv(r.it_kw[h], 0, " kW")], ["Highest IT UPS load", (r, h) => fv(r.load_max[h], 1, "%")], ["Lowest battery charge", (r, h) => fv(r.soc_min[h], 0, "%")]],
+    network: [["Links up all hour", (r, h) => `${fv(r.up[h])} of ${fv(r.cabled[h])}`], ["Mean rail utilization", (r, h) => fv(r.util[h], 1, "%")], ["NVLink trays reporting", (r, h) => `${fv(r.trays[h])} of ${fv(r.trays_total[h])}`]],
+    mechanical: [["Warmest supply air", (r, h) => fv(r.air_max[h], 1, " °C")]],
+    mgmt: [["BMCs answering", (r, h) => `${fv(r.answering[h])} of ${fv(r.bmcs[h])}`], ["Management switches down", (r, h) => `${fv(r.switches_down[h])} of ${fv(r.switches[h])}`]],
+    storage: [["Protection (nodes it could lose)", (r, h) => `${fv(r.protection[h])} of ${fv(r.tolerates[h])}`], ["Drives failed, pulled, rebuilding", (r, h) => fv(r.drives_out[h])], ["Reads", (r, h) => fv(r.read_gbps[h], 1, " GB/s")]],
+  };
+  const SITE = {
+    power: [["Generators running", (r, h) => fv(r.gens_running[h])], ["Lowest generator fuel", (r, h) => fv(r.fuel_min[h], 0, "%")]],
+    mechanical: [["Facility water supply / return", (r, h) => `${fv(r.supply[h], 1)} / ${fv(r.ret[h], 1)} °C`], ["Chillers running / needed", (r, h) => `${fv(r.running[h])} / ${fv(r.needed[h])}`]],
+  };
+  function condList(n, m) {
+    if (!n.length) return `<div class="ok-line">Nothing degraded or lost now.</div>`;
+    n = [...n].sort((x, y) => y.state - x.state || x.a - y.a);      // lost before degraded, then the oldest first
+    return `<ul>${n.slice(0, 5).map(c => `<li class="${esc(stCls[c.state])}">${c.dir ? `<b>${esc(c.dir === "ew" ? "East-West" : "North-South")}:</b> ` : ""}<a href="../telemetry/#${esc(tlink(c.link, m))}">${esc(c.text)}</a> <span class="note">since ${esc(fmt(W0 + c.a * MIN, OFF, false).slice(-5))}</span></li>`).join("")}${n.length > 5 ? `<li>${esc(n.length - 5)} more on <a href="../telemetry/#site/${esc(Math.floor(m / 60))}">Site health</a></li>` : ""}</ul>`;
+  }
+  function family(f, m) {
+    const s = FS[f.key][m], h = Math.floor(m / 60), R = RD[f.key], halls = D.halls.map(x => x.id).filter(x => R[x]);
+    let t = `<div class="fam ${esc(stCls[s])}" data-fam="${esc(f.key)}"><div class="hd"><a href="../telemetry/#${esc(f.link)}">${esc(f.name)}</a>${stTag(s)}</div>`;
+    if (SITE[f.key] && R.site) t += `<table>` + SITE[f.key].map(([k, fn]) => `<tr><td>${esc(k)}</td><td class="n">${esc(fn(R.site, h))}</td></tr>`).join("") + `</table>`;
+    t += `<table>`;
+    if (halls.length) t += `<tr><td></td>${halls.map(x => `<td class="n"><b>${esc(hallName(x))}</b> ${HS[x][f.key][m] > 0 ? stTag(HS[x][f.key][m]) : ""}</td>`).join("")}</tr>`
+      + (ROWS[f.key] || []).map(([k, fn]) => `<tr><td>${esc(k)}</td>${halls.map(x => `<td class="n">${esc(fn(R[x], h))}</td>`).join("")}</tr>`).join("");
+    t += `</table>`;
+    if (f.key === "gpu") t += D.halls.map(x => hallMap(x, h)).join("");
+    return t + condList(condAt(m).filter(c => c.family === f.key), m) + `</div>`;
+  }
+  function hallMap(x, h) {
+    let t = `<div class="note" style="margin-top:6px">${esc(x.name)} racks this hour</div><div class="map" style="grid-template-columns:repeat(${esc(x.per_row)},1fr)">`;
+    for (let row = 1; row <= x.rows; row++) for (let p = 1; p <= x.per_row; p++) {
+      const id = Object.keys(RK).find(k => RK[k].hall === x.id && RK[k].row === row && RK[k].pos === p), r = RK[id], s = r.state[h];
+      const com = s !== -1 && (r.handoff == null || h < r.handoff), title = `${id}: ${s === -1 ? "not installed yet" : stTxt[s]}${r.why[h] ? "; " + r.why[h] : ""}`;
+      t += s === -1 ? `<span class="off" title="${esc(title)}"></span>` : `<a class="${esc(stCls[s])}${com ? " com" : ""}" href="../telemetry/#${esc(id)}/${esc(h)}" title="${esc(title)}" aria-label="${esc(title)}"></a>`;
+    }
+    return t + `</div>`;
+  }
+  function fire(t) {
+    const out = FO.filter(s => s.a <= t && t < s.b), st = out.length ? 1 : 0;
+    return `<div class="fam ${esc(stCls[st])}" data-fam="fire"><div class="hd"><a href="../telemetry/#fire">Fire protection</a>${stTag(st)}</div>`
+      + (out.length ? `<ul>${out.map(s => `<li class="warn">${esc(s.device)}: ${esc(s.text)} <span class="note">since ${esc(fmt(s.a, OFF, false).slice(-5))}${s.logged ? ", " : ""}</span>${s.logged ? `<a href="../tickets/#${esc(s.logged)}" target="_blank" rel="noopener">${esc(s.logged)}</a>` : ""}</li>`).join("")}</ul>`
+        : `<div class="ok-line">Every detector, pre-action zone, and clean agent system in service (FACP-1).</div>`) + `</div>`;
+  }
+  function security(t) {
+    const doors = DOORS.filter(x => x.a <= t && (x.b == null || t < x.b)), posts = POSTS.filter(x => x.a <= t && t < x.b), vis = VIS.filter(x => x.a <= t && (x.b == null || t < x.b));
+    const staffed = posts.filter(x => x.reported === "Staffed").length, st = doors.length ? 1 : 0;
+    return `<div class="fam ${esc(stCls[st])}" data-fam="security"><div class="hd"><a href="../app/#security">Security</a>${stTag(st)}</div><table>`
+      + `<tr><td>Posts reported staffed</td><td class="n">${esc(staffed)} of ${esc(posts.length)}</td></tr><tr><td>Door alarms open</td><td class="n">${esc(doors.length)}</td></tr><tr><td>Visitors signed in</td><td class="n">${esc(vis.length)}</td></tr></table>`
+      + (doors.length ? `<ul>${doors.map(x => `<li class="warn">${esc(x.door)}: ${esc(x.event)} (${esc(x.priority)}) <span class="note">since ${esc(fmt(x.a, OFF, true).slice(-8))}</span></li>`).join("")}</ul>` : `<div class="ok-line">No door alarm open.</div>`)
+      + `<p class="note">${esc(D.security.note)}</p></div>`;
+  }
+
+  // ------------------------------------------------------------------ redundancy and operations
+  function redundancy(m) {
+    const cols = [null, ...D.halls.map(x => x.id)];
+    let t = `<div class="scroll"><table><thead><tr><th>System</th>${cols.map(c => `<th>${esc(c ? hallName(c) : "Site")}</th>`).join("")}</tr></thead><tbody>`;
+    const names = [...new Set(G.map(g => g.name))];
+    for (const name of names) {
+      t += `<tr><td>${esc(name)}</td>` + cols.map(c => {
+        const g = G.find(x => x.name === name && x.hall === c);
+        if (!g) return `<td></td>`;
+        const s = g.state[m], title = `${name}${c ? ", " + hallName(c) : ""}: ${g.avail[m]} of ${g.total[m]}${g.unit_word ? " " + g.unit_word : ""}; design ${g.scheme}. ${stTxt[s]}`;
+        return `<td><a class="chip ${esc(stCls[s])}" href="../telemetry/#${esc(tlink(g.link, m))}" title="${esc(title)}"><b>${s === -1 ? "–" : `${esc(g.avail[m])} of ${esc(g.total[m])}`}</b><span>${esc(g.scheme)}</span></a></td>`;
+      }).join("") + `</tr>`;
+    }
+    return t + `</tbody></table></div>`;
+  }
+  function ops(t) {
+    const al = AL.filter(a => a.t <= t && (a.tc == null || a.tc > t)), tk = TK.filter(k => k.t <= t && (k.tc == null || k.tc > t));
+    const by = (xs, k) => xs.reduce((o, x) => (o[x[k]] = (o[x[k]] || 0) + 1, o), {});
+    const sev = by(al, "severity"), pri = by(tk, "priority");
+    const recent = xs => [...xs].sort((a, b) => b.t - a.t).slice(0, 6);
+    return `<div><h3><a href="../alarms/#live">Active alarms</a></h3><div class="cnt"><div><b>${esc(al.length)}</b>active</div>${["critical", "major", "minor"].map(s => `<div><b>${esc(sev[s] || 0)}</b>${esc(s)}</div>`).join("")}</div>`
+      + (al.length ? `<table><tbody>${recent(al).map(a => `<tr><td>${tag(a.severity, a.severity === "critical" ? "bad" : a.severity === "major" ? "warn" : "off")}</td><td>${esc(a.device)}</td><td>${esc(a.summary)}</td><td class="n">${esc(fmt(a.t, OFF, false).slice(-5))}</td></tr>`).join("")}</tbody></table>` : `<p class="note">No alarm active.</p>`) + `</div>`
+      + `<div><h3><a href="../tickets/">Open trouble tickets</a></h3><div class="cnt"><div><b>${esc(tk.length)}</b>open</div>${Object.keys(pri).sort().map(p => `<div><b>${esc(pri[p])}</b>${esc(p)}</div>`).join("")}</div>`
+      + (tk.length ? `<table><tbody>${recent(tk).map(k => `<tr><td><a href="../tickets/#${esc(encodeURIComponent(k.id))}" target="_blank" rel="noopener">${esc(k.id)}</a></td><td>${esc(k.partner)}</td><td>${esc(k.device)}</td><td>${esc(k.summary)}</td></tr>`).join("")}</tbody></table>` : `<p class="note">No trouble ticket open.</p>`) + `</div>`;
+  }
+
+  frame();
+  route();
+  window.addEventListener("hashchange", () => { route(); S.minute = -1; tick(); });
+  tick();
+  S.timer = setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

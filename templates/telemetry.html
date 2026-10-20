@@ -59,6 +59,8 @@ code { font-size:13px; background:var(--panel); padding:0 4px; border-radius:3px
 .tag.ok { color:var(--ok); border-color:#b7dfc4; background:#eef8f1; } .tag.bad { color:var(--bad); border-color:#f3c1bc; background:#fdf1f0; }
 .tag.warn { color:var(--warn); border-color:#ecd59a; background:#fdf8e8; } .tag.it { color:var(--it); border-color:#bfd3f2; background:#e8f0fc; }
 .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:12px 0; }
+.livestrip { display:flex; flex-wrap:wrap; gap:4px 10px; align-items:center; font-size:13px; padding:6px 10px; margin:0 0 12px; border:1px solid var(--line); border-left:5px solid var(--ok); border-radius:6px; background:var(--panel); }
+.livestrip:empty { display:none; } .livestrip.warn { border-left-color:var(--warn); } .livestrip.bad { border-left-color:var(--bad); } .livestrip b { color:var(--bad); } .livestrip .lvgo { margin-left:auto; }
 .tile { background:var(--panel); border-radius:8px; padding:10px 12px; }
 .tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
 .tile .v { font-size:24px; font-weight:700; line-height:1.25; } .tile .s { font-size:12px; color:var(--muted); overflow-wrap:anywhere; }
@@ -340,7 +342,7 @@ __SITENAV__
        + `<div class="btns" id="hm-btns">${METRICS.filter(m => m.rack).map(m => `<button data-m="${esc(m.k)}" class="${m.k === hmMetric ? "on" : ""}">${esc(m.label)}</button>`).join("")}</div>`
        + `<div id="hm">Loading the rack hours…</div>`;
     h += `<h2 class="sec">Notable events</h2>` + eventsTable(B.events.filter(e => e.kind === "xid" || (e.kind === "dark" && e.gpu == null)), true);
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("gpu", "") + h; fillStrip();
     loadRacks().then(rj => { if (seq === current) { heatmap(rj); } }).catch(e => { if (seq === current) document.getElementById("hm").innerHTML = errBox(e, "data/racks.json"); });
   }
   function tile(k, v, s) { return `<div class="tile"><div class="k">${esc(k)}</div><div class="v">${v}</div><div class="s">${s}</div></div>`; }
@@ -711,7 +713,7 @@ __SITENAV__
     }
     h += cduAgreeTile();
     h += `<h2 class="sec">Events</h2><p class="note">Every CDU state change the Redfish events published, and the rack outages that moved heat off a hall header. Record ids open the Incident Portal.</p>` + cduEventsTable(C.events);
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("cdu", "") + h; fillStrip();
     Promise.all(C.cdus.map(c => loadCdu(c.id).then(j => [c.id, j]))).then(rs => {
       if (seq !== current) return;
       for (const [id, j] of rs) { const el = document.getElementById("sp-" + id); if (el) el.innerHTML = spark(j.series.heat_kwh); }
@@ -1026,7 +1028,7 @@ __SITENAV__
     h += pAgreeTile();
     const evs = P.events.filter(e => e.kind !== "battery" && e.kind !== "outage");
     h += `<h2 class="sec">Events</h2><p class="note">Every state change the power records published, with the records that explain it. The utility outage put every UPS on battery for 11 to 14 seconds and started all ${esc(P.gens.length)} generators: those rows are on each device's own view. Record ids open the Incident Portal.</p>` + pEventsTable(evs, true);
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("power", "") + h; fillStrip();
     Promise.all(P.ups.map(u => loadPw(u.id).then(j => [u.id, j]))).then(rs => {
       if (seq !== current) return;
       for (const [id, j] of rs) { const el = document.getElementById("sp-" + id); if (el) el.innerHTML = spark(j.series.load_avg_pct); }
@@ -1454,7 +1456,7 @@ __SITENAV__
       + UT.outages.map(x => `<tr><td class="n">${esc(at(x.trip))}</td><td class="n">${esc(at(x.ties_closed))}</td><td class="n">${esc(at(x.back))}</td><td class="n">${num(x.bridge_s)} s</td><td class="n">${esc(mss(x.ride_it_s))}</td><td class="n">${esc(mss(x.ride_cooling_s))}</td><td><a class="b" href="#MV-A/${esc(Math.max(0, minOf(x.trip) - 10))}">Minute detail</a></td></tr>`).join("") + `</tbody></table></div>` : `<p class="note">None this month.</p>`);
     h += `<div class="tiles"><div class="tile"><div class="k">Agreement with the records</div><div class="v"><a href="#utility-agreements">${num(agree)} of ${num(tot)}</a></div><div class="s">cases agree across ${esc(UT.agreements.length)} checks: the energy meters, the EPMS breaker events, every UPS's input, frequency, battery, and runtime</div></div></div>`;
     h += `<p><a href="#utility-fields">Points and sources</a> · <a href="#power">Power overview</a></p>`;
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("power", "") + h; fillStrip();
     const n = P.hours, X = {...HX, n, bands: UT.outages.map(x => ({a: hourOf(x.trip), b: hourOf(x.back) + 1, label: `${at(x.trip)}: utility outage`, color: PEVC.utility}))};
     const toMin = v => v.map(x => x == null ? null : x / 60);
     document.getElementById("uride").innerHTML = chart({...X, title: "Ride-through, the lowest each hour (minutes)", unit: "min", d: 1, lo: 0,
@@ -1647,7 +1649,7 @@ __SITENAV__
     h += `<h2 class="sec">NVLink</h2><p class="note">Each NVL72 rack's GPUs talk to each other over NVLink through nine switch trays; NMX-T reads every tray once a minute. ${num(N.nvlink.length)} racks, ${num(N.nvlink.reduce((a, x) => a + x.trays.length, 0))} trays.</p>`
       + `<div class="btns">${N.nvlink.map(x => `<a class="b" href="#nvlink-${esc(x.rack)}">${esc(x.rack)}${(NEV[x.trays.find(t => NEV[t])] || []).length ? " ⚠" : ""}</a>`).join("")}</div>`;
     h += `<h2 class="sec">Events</h2><p class="note">Every fabric record, summarized: each link's fault with its tickets and what each repair did, each rack power loss, each Hall B rack's cabling, each NVLink tray failure. Record ids open the Incident Portal; a finding id is the IT Partner scorecard's.</p>` + nEventsTable(N.events);
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("network", "ew") + h; fillStrip();
     const nc = document.getElementById("nc"), X = {...HX, n: HOURS};
     nc.innerHTML = NHALLS.map(hall => {
       const S = N.halls[hall].hourly;
@@ -2008,7 +2010,7 @@ __SITENAV__
     }
     h += mAgreeTile();
     h += `<h2 class="sec">Events</h2><p class="note">Every alarm, BMS write, inhibit, and lockout the mechanical records hold, with what the readings show over it. Record ids open the Incident Portal; findings are the Landlord scorecard's and the PUE report's.</p>` + mEventsTable(M.events);
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("mechanical", "") + h; fillStrip();
     const X = {...HX, n: M.hours, bands: mBands(M.events.filter(e => e.kind === "trip" || e.kind === "outage"), M.hours)};
     document.getElementById("mp").innerHTML = chart({...X, title: "Outdoor air and facility water (°C)", unit: "°C", d: 1, series: [{v: Pl.outdoor, color: "var(--s4)", name: "Outdoor", w: 1}, {v: Pl.return, color: "var(--s2)", name: "Return header"}, {v: Pl.supply, color: "var(--s1)", name: "Supply header"}],
       hlines: [{y: M.free_cooling_c[1], label: `free cooling starts below ${num(M.free_cooling_c[1])} °C`, color: "var(--ok)"}]})
@@ -2302,7 +2304,7 @@ __SITENAV__
     }
     h += `<h2 class="sec">Events</h2><p class="note">Every BMC that stopped answering for longer than ${esc(G.checks.gap_min)} minutes, every switch outage and uplink drop, and every poller restart, with the record that explains it. Short BMC self-resets are counted in the failed polls, not listed.</p>` + gEventsTable(G.events);
     h += `<h2 class="sec">Console sessions</h2><p class="note">The console servers' session log: who opened which serial port, and the login prompt the device on the line printed.</p>` + gSessions(G.sessions);
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("mgmt", "") + h; fillStrip();
     document.getElementById("gm-ch").innerHTML = GHALLS.map(k => chart({...HX, n: G.hours, title: `${G.halls[k].name}: BMCs answering at the worst minute of each hour, and in service`, unit: "", lo: 0,
       bands: G.events.filter(e => e.kind === "switch" && GRACK[e.rack] && GRACK[e.rack].hall === k).map(e => ({a: hourOf(e.t), b: e.end ? hourOf(e.end) + 1 : G.hours, label: `${at(e.t)}: ${e.text}`, color: GEVC.switch})),
       series: [{v: G.halls[k].in_service, color: "var(--s2)", name: "In service"}, {v: G.halls[k].answering, color: "var(--s1)", name: "Answering"}]})).join("")
@@ -2511,7 +2513,7 @@ __SITENAV__
         + `</tbody></table></div>`;
     }
     h += `<h2 class="sec">Events</h2><p class="note">Every drive failure, pull, rebuild, and warning, and every storage node reboot, with the record that explains it.</p>` + sgEventsTable(SG.events.filter(e => SGN[e.device]));
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("storage", "") + h; fillStrip();
     document.getElementById("sg-ch").innerHTML = SGCL.map(k => { const c = SG.clusters[k];
       return chart({...HX, n: SG.hours, title: `${k}: reads and writes, GB/s (hourly average)`, unit: " GB/s", d: 1, lo: 0, series: [{v: c.read_gbps, color: "var(--s1)", name: "Read"}, {v: c.write_gbps, color: "var(--s3)", name: "Write"}]})
         + chart({...HX, n: SG.hours, H: 110, title: `${k}: protection (more nodes it could lose), lowest in the hour`, unit: "", lo: 0, hi: c.tolerates, series: [{v: c.protection, color: "var(--s2)", name: "Protection"}]}); }).join("")
@@ -2658,7 +2660,7 @@ __SITENAV__
       + FP.panel.map(e => `<tr><td class="n">${esc(at(e.timestamp))}</td><td>${esc(e.device)}</td><td>${esc(e.point)}</td><td>${esc(e.signal)}</td><td>${esc(e.state)}</td><td>${esc(e.text)}</td></tr>`).join("") + `</tbody></table></div>`;
     h += `<h2 class="sec">Agreement with the records</h2><table><thead><tr><th>Check</th><th class="n">Agrees</th><th class="n">Explained by a finding</th></tr></thead><tbody>` + FP.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${num(a.checked - a.misses)} of ${num(a.checked)}</td><td class="n">${num(a.explained)}</td></tr>`).join("") + `</tbody></table>`;
     h += `<p class="note">The same checks, and both planted findings, run on 60 generated months (scripts/render_fire.py --robustness 60); the report is reports/fire_protection.md. <a href="../agreements/">Agreements</a> · <a href="../devices/#FACP-1">FACP-1 in the device directory</a></p>`;
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("fire", "") + h; fillStrip();
   }
   function storageSpares() {
     const S = SG.shelf, hn = x => (Object.values(SG.clusters).find(c => c.hall === x) || {}).hall_name || x, pct = x => x[1] ? (100 * x[0] / x[1]).toFixed(1) + "%" : "n/a";
@@ -2725,7 +2727,44 @@ __SITENAV__
     h += `<h2 class="sec">Storage and in-band Ethernet switches</h2>` + sgSwTable(SG.switches);
     h += `<h2 class="sec">Fabric events</h2>` + sgEventsTable(ev);
     h += `<h2 class="sec">Elsewhere</h2><ul><li>${link("storage", "The storage clusters, their nodes and drives")}</li><li>${link("management", "The management network: every BMC, management switch, and console server")}</li></ul>`;
-    main.innerHTML = h;
+    main.innerHTML = liveStrip("network", "ns") + h; fillStrip();
+  }
+
+  // ------------------------------------------------------------- live strip
+  // Each family page's "now" on the simulated live clock the Live tab and the Alarm Board's Live Events board share
+  // (the sample month re-dated to the viewer's clock in whole days), read from the Live tab's ../live/data/index.json.
+  let LV = null, lvTimer = null;
+  const lvUnrle = r => { const o = []; for (const [v, n] of r) for (let i = 0; i < n; i++) o.push(v); return o; };
+  const lvLoad = () => LV || (LV = fetch("../live/data/index.json").then(r => r.ok ? r.json() : null).then(d => {
+    if (!d) return null;
+    const W0 = Date.parse(d.window.start), span = Math.floor((Date.parse(d.window.end) - W0) / 864e5) * 864e5;
+    return {...d, W0, span, fs: Object.fromEntries(Object.entries(d.family_state).map(([k, v]) => [k, lvUnrle(v)]))};
+  }).catch(() => null));
+  function liveStrip(fam, dir) { return `<div class="livestrip" id="lvstrip" data-fam="${esc(fam)}" data-dir="${esc(dir || "")}"></div>`; }
+  function fillStrip() {
+    if (!lvTimer) lvTimer = setInterval(() => { if (document.getElementById("lvstrip")) fillStrip(); }, 30000);
+    lvLoad().then(L => {
+      const el = document.getElementById("lvstrip");
+      if (!el || !L) return;
+      const now = Date.now(), t = L.W0 + ((now - L.W0) % L.span + L.span) % L.span, m = Math.max(0, Math.min(L.minutes - 1, Math.floor((t - L.W0) / 6e4)));
+      const fam = el.dataset.fam, dir = el.dataset.dir, off = L.offset_h * 36e5, d = new Date(now + off);
+      const clock = `${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()]} ${d.getUTCDate()} ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} CDT`;
+      let st, items;
+      if (fam === "fire") {
+        const out = L.fire.out.filter(x => Date.parse(x.start) <= t && t < Date.parse(x.end));
+        st = out.length ? 1 : 0;
+        items = out.map(x => ({state: 1, text: `${x.device}: ${x.text}`, link: "fire"}));
+      } else {
+        items = L.conditions.filter(c => c.family === fam && c.a <= m && m < c.b && (!dir || c.dir === dir));
+        st = dir ? Math.max(0, ...items.map(c => c.state)) : L.fs[fam][m];
+      }
+      const cls = {0: "ok", 1: "warn", 2: "bad"}[st], txt = {0: "normal", 1: "degraded", 2: "lost"}[st];
+      el.className = "livestrip " + cls;
+      el.innerHTML = `<b>● Live now</b> <span class="note">${esc(clock)} · simulated feed</span> ${tag(txt, cls)} `
+        + (items.length ? items.slice(0, 3).map(c => `<a href="#${esc(SHR[c.link] ? `${c.link}/${Math.floor(m / 60)}` : c.link)}">${esc(c.text)}</a>`).join(" · ") + (items.length > 3 ? ` · ${esc(items.length - 3)} more` : "")
+          : `<span>Nothing degraded or lost now.</span>`)
+        + ` <a class="lvgo" href="../live/">Open the Live page ↗</a>`;
+    });
   }
 
   // ------------------------------------------------------------- site health

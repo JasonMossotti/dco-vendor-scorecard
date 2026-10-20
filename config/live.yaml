@@ -1,0 +1,34 @@
+# Live status: the whole site minute by minute (the Live tab, /live/; scripts/render_live.py, src/scorecard/live_status.py).
+# PR B of the live status plan (/mnt/project-files/live-status/PLAN.md).
+#
+# Nothing new is generated and nothing is judged. The page replays what the telemetry already publishes on a simulated
+# live clock, the same one the Alarm Board's Live Events board runs on: the sample month re-dated to the viewer's own
+# clock in whole days, so the time of day is the sample's and both pages show the same minute.
+#
+# States are Site health's (config/site_health.yaml): the same conditions, each held for the minutes it lasts. A
+# condition read from an hourly row (a temperature, a drained node) holds for its whole hour; one read from a recorded
+# state change (a breaker, a UPS on bypass, a pump, a fan, a switch, a storage node) holds for its exact minutes. The
+# worst minute of every hour equals Site health's state for that hour (tests/test_live_status.py).
+
+framing: >-
+  The whole site now, on one page: where the power comes from, how long the UPS batteries would carry the site if the
+  utility failed now, each device family's state and readings, the redundancy each system still has, and what is open
+  on the Alarm Board and in the Incident Portal.
+
+clock:
+  speeds: [[1, "Real time"], [60, "1 min per second"], [600, "10 min per second"]]
+  jumps:                              # minutes from the window start are found from the records, not typed here
+    - {key: trip, label: "The 09-24 utility trip", lead_min: 3}
+    - {key: a07, label: "The rack A07 outage", lead_min: 10}
+  history_min: 60                     # the sparklines show the last hour
+
+power:
+  busway_rating_a: 1200               # Starline 1200T5 (site/site.yaml), the busway's continuous rating
+
+# Fire protection and security are not Site health families: their tiles show what the records say now, with a state
+# from the rule below (the same rule Site health's fire protection section uses; security is read, not judged).
+fire:
+  out_of_service: "A disabled point on the panel, or a supervisory signal on a pre-action zone or a clean agent system, from FACP-1's history."
+security:
+  shift_h: 12                         # post log shifts (day and night)
+  note: "Posts as the post log reports them; the Security scorecard checks the log against badge reads."

@@ -1741,7 +1741,7 @@ def markdown(f: dict) -> str:
 
 
 def robustness_month(k: int, keep: Path | None = None) -> dict:
-    """Every GPU, CDU, power, network, mechanical, management, storage, and site health agreement on generated month k (its own dataset, GPU Health layer,
+    """Every GPU, CDU, power, utility, network, mechanical, management, storage, site health, and live agreement on generated month k (its own dataset, GPU Health layer,
     telemetry, and energy meters, in a temporary folder, or in keep to look at afterwards)."""
     import contextlib
     from scorecard.sla_model import load_sla
@@ -1776,7 +1776,8 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         pchecks = TP.agreements(pdata, pcfg, ccfg["rack_rest"], ecfg)
         util = TUS.UtilityTelemetry(power, pout, ucfg)
         TUS.write_utility(util, util.run(), d / "utility", "", d / "util_min")
-        uchecks = TU.agreements(TU.load(d / "utility", d / "util_min", pdata), ucfg, pcfg)
+        udata = TU.load(d / "utility", d / "util_min", pdata)
+        uchecks = TU.agreements(udata, ucfg, pcfg)
         del pout
         net = TNS.NetworkTelemetry(pub.tel, pub, ncfg)
         TNS.write_network(net, net.run(), d / "network", "", d / "net_min")
@@ -1796,6 +1797,8 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         stscore = TST.score(stfs, json.loads((d / "storage" / "answer_key.json").read_text(encoding="utf-8")))
         sh, shd = SH.build(SH.Dirs(d / "telemetry", d / "cdu", d / "power", d / "network", d / "mechanical", d, d / "mgmt", d / "storage"))
         schecks = SH.agreements(sh, shd)
+        from scorecard import live_status as LS
+        lchecks = LS.agreements(sh, shd, LS.states(sh, shd), LS.days(pdata, udata), udata)
     conflicts = [f"records disagree with each other: {pub.conflicts[:3]}"] * bool(pub.conflicts) \
         + [f"CDU records disagree with each other: {layer.conflicts[:3]}"] * bool(layer.conflicts) \
         + [f"power records disagree with each other: {power.conflicts[:3]}"] * bool(power.conflicts) \
@@ -1803,7 +1806,7 @@ def robustness_month(k: int, keep: Path | None = None) -> dict:
         + [f"mechanical records disagree with each other: {mech.conflicts[:3]}"] * bool(mech.conflicts)
     pack = lambda cs: {c.name: [c.checked - len(c.misses), c.checked, c.misses[:3]] for c in cs}      # noqa: E731
     return {"month": k, "gpu": pack(checks), "cdu": pack(cchecks), "power": pack(pchecks), "utility": pack(uchecks), "network": pack(nchecks), "mechanical": pack(mchecks),
-            "mgmt": pack(gchecks), "mgmt_findings": gscore, "storage": pack(stchecks), "storage_findings": stscore, "site": pack(schecks),
+            "mgmt": pack(gchecks), "mgmt_findings": gscore, "storage": pack(stchecks), "storage_findings": stscore, "site": pack(schecks), "live": pack(lchecks),
             "conflicts": conflicts}
 
 
@@ -1837,7 +1840,7 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
     bad = 0
     ok = True
     for fam, title, w in (("gpu", "GPU", 12), ("cdu", "CDU", 15), ("power", "Power", 12), ("utility", "Utility", 12), ("network", "Network", 14),
-                         ("mechanical", "Mechanical", 12), ("mgmt", "Management", 12), ("storage", "Storage", 12), ("site", "Site health", 12)):
+                         ("mechanical", "Mechanical", 12), ("mgmt", "Management", 12), ("storage", "Storage", 12), ("site", "Site health", 12), ("live", "Live", 12)):
         tot: dict[str, list[int]] = {}
         for k in range(n):
             if fam not in done[k]:
@@ -1849,7 +1852,7 @@ def robustness(n: int, jobs: int = 1, resume: Path | None = None) -> int:
                 x[0], x[1] = x[0] + a, x[1] + b
                 for m in misses:
                     print(f"  month {k}: {fam} {name}: {m}")
-        print(f"{title}{'' if fam == 'site' else ' telemetry'} agreements on {n} generated months:")
+        print(f"{title}{'' if fam in ('site', 'live') else ' telemetry'} agreements on {n} generated months:")
         for name, (a, b) in tot.items():
             print(f"  {name:<{w}} {a:,}/{b:,}")
         ok = ok and all(a == b for a, b in tot.values())

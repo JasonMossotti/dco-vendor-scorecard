@@ -338,16 +338,26 @@ class SiteHealth:
     def build(self) -> dict[str, Any]:
         H, thr = self.H, self.cfg["thresholds"]
         issues: list[tuple[int, str, str | None, int, str, str]] = []      # (hour, family, hall, state, text, link)
+        # The same conditions minute by minute, for the Live page (src/scorecard/live_status.py): each with the minutes of its
+        # hour it holds (None: the whole hour, for a condition read from an hourly row). A minute-only record (hourly
+        # False) is a lesser state inside an hour whose worst minute is already an issue; it never reaches the hour.
+        self.minute_issues: list[tuple[int, str, str | None, int, str, str, np.ndarray | None]] = []
+        self.group_minutes: dict[str, tuple[np.ndarray, np.ndarray]] = {}     # key -> (units available, state), per minute
 
-        def issue(h: int, fam: str, hall: str | None, s: int, text: str, link: str) -> None:
-            issues.append((h, fam, hall, s, text, link))
+        def issue(h: int, fam: str, hall: str | None, s: int, text: str, link: str, mins: np.ndarray | None = None,
+                  hourly: bool = True) -> None:
+            if hourly:
+                issues.append((h, fam, hall, s, text, link))
+            if mins is None or mins.any():
+                self.minute_issues.append((h, fam, hall, s, text, link, mins))
 
         # ---- rack feeds and rack states
         nv = self.hourly(_csv(self.d.network / "nvlink_hourly.csv"), "rack")
         feeds_out: dict[str, np.ndarray] = {}
+        feeds_cnt: dict[str, np.ndarray] = {}
         for rid in self.racks:
             cnt = self.unit_out(f"FEED:{rid}:A").astype(int) + self.unit_out(f"FEED:{rid}:B").astype(int)
-            feeds_out[rid] = self.hour_max(cnt)
+            feeds_out[rid], feeds_cnt[rid] = self.hour_max(cnt), cnt
         racks = {}
         for rid, x in self.racks.items():
             st, why = self.rack_state(rid, feeds_out[rid], nv)
@@ -358,7 +368,10 @@ class SiteHealth:
                         continue
                     fam = "power" if "feed" in w else "network" if "NVLink" in w else "gpu"
                     s = RED if w in ("no GPUs reporting", "both power feeds lost") else AMBER
-                    issue(h, fam, x["hall"], s, f"{rid}: {w}", rid if fam != "power" else rid)
+                    seg = feeds_cnt[rid][h * 60:(h + 1) * 60] if fam == "power" else None
+                    issue(h, fam, x["hall"], s, f"{rid}: {w}", rid, None if seg is None else seg >= (2 if s == RED else 1))
+                    if seg is not None and s == RED:
+                        issue(h, fam, x["hall"], AMBER, f"{rid}: one power feed lost (no redundancy)", rid, seg == 1, hourly=False)
 
         def in_service(h: int, hall: str | None = None) -> list[str]:
             return [r for r, x in racks.items() if x["state"][h] != OFF and (hall is None or x["hall"] == hall)]
@@ -375,12 +388,25 @@ class SiteHealth:
             state = [OFF if t == 0 else RED if a < n else AMBER if a < t else GREEN for a, t, n in zip(avail, tot, need_l)]
             groups.append({"key": key, "name": name, "scheme": scheme, "hall": hall, "family": family, "link": link,
                            "units": units, "unit_word": unit_word, "need": need_l, "avail": avail, "total": tot, "state": state})
+            am = len(units) - cnt
+            sm = np.full(self.M, OFF) if not units else np.where(am < need, RED, np.where(am < len(units), AMBER, GREEN))
+            self.group_minutes[key] = (am, sm)
+
+            def text(h: int, s: int, a: int, downs: list[str]) -> str:
+                detail = "; ".join(f"{self.label(u)} {self.why(u, h)}" for u in downs) if downs else ""
+                txt = f"{name}{' (' + self.hall_name(hall) + ')' if hall else ''}: {a} of {tot[h]}{' ' + unit_word if unit_word else ''}, {('site on generators' if key == 'utility' else 'below N') if s == RED else 'no redundant unit'}"
+                return txt + (f" ({detail})" if detail else "")
+
             for h in range(H):
                 if state[h] in (AMBER, RED):
                     downs = [u for u in units if self.unit_out(u)[h * 60:(h + 1) * 60].any()]
-                    detail = "; ".join(f"{self.label(u)} {self.why(u, h)}" for u in downs) if downs else ""
-                    txt = f"{name}{' (' + self.hall_name(hall) + ')' if hall else ''}: {avail[h]} of {tot[h]}{' ' + unit_word if unit_word else ''}, {('site on generators' if key == 'utility' else 'below N') if state[h] == RED else 'no redundant unit'}"
-                    issue(h, family, hall, state[h], txt + (f" ({detail})" if detail else ""), downs[0] if downs and not downs[0].startswith("MV:") else link)
+                    seg = sm[h * 60:(h + 1) * 60]
+                    issue(h, family, hall, state[h], text(h, state[h], avail[h], downs), downs[0] if downs and not downs[0].startswith("MV:") else link, seg == state[h])
+                    if state[h] == RED and (seg == AMBER).any():
+                        mk = seg == AMBER
+                        dn = [u for u in units if self.unit_out(u)[h * 60:(h + 1) * 60][mk].any()]
+                        issue(h, family, hall, AMBER, text(h, AMBER, int(am[h * 60:(h + 1) * 60][mk].min()), dn),
+                              dn[0] if dn and not dn[0].startswith("MV:") else link, mk, hourly=False)
 
         buses = self.site["plants"]["mv_switchgear"]["buses"]
         group("utility", "Utility feeds", "2N", None, "power", [f"MV:{b}" for b in buses], 1, "power")
@@ -403,6 +429,11 @@ class SiteHealth:
             groups.append({"key": f"feeds-{hid}", "name": "Rack feeds", "scheme": "2N", "hall": hid, "family": "power",
                            "link": "power", "units": rk, "unit_word": "racks with both feeds", "need": tot, "avail": both,
                            "total": tot, "state": st})
+            ins = {r: np.repeat(np.array([racks[r]["state"][h] != OFF for h in range(H)]), 60) for r in rk}
+            tot_m = sum(ins[r].astype(int) for r in rk)
+            both_m = sum((ins[r] & (feeds_cnt[r] == 0)).astype(int) for r in rk)
+            red_m = np.logical_or.reduce([ins[r] & (feeds_cnt[r] >= 2) for r in rk])
+            self.group_minutes[f"feeds-{hid}"] = (both_m, np.where(tot_m == 0, OFF, np.where(red_m, RED, np.where(both_m < tot_m, AMBER, GREEN))))
             # CDUs (unit level) and their pumps
             C = hall["cooling"]
             cdus = sorted(c for c, x in self.cdu_dev.items() if x["hall"] == hid)
@@ -413,12 +444,22 @@ class SiteHealth:
             groups.append({"key": f"pumps-{hid}", "name": "CDU pumps", "scheme": "N+1 in each CDU", "hall": hid, "family": "cdu",
                            "link": "cdus", "units": cdus, "unit_word": "CDUs with a spare pump", "need": [len(cdus)] * H,
                            "avail": spare, "total": [len(cdus)] * H, "state": st})
+            pc = {c: self.unit_out(f"PUMP:{c}:1").astype(int) + self.unit_out(f"PUMP:{c}:2").astype(int) for c in cdus}
+            spare_m = sum((pc[c] == 0).astype(int) for c in cdus)
+            self.group_minutes[f"pumps-{hid}"] = (spare_m, np.where(np.logical_or.reduce([pc[c] >= 2 for c in cdus]), RED,
+                                                                     np.where(spare_m < len(cdus), AMBER, GREEN)))
             for h in range(H):
                 for c in cdus:
                     downs = [p for p in (1, 2) if self.unit_out(f"PUMP:{c}:{p}")[h * 60:(h + 1) * 60].any()]
                     if downs:
+                        seg = pc[c][h * 60:(h + 1) * 60]
+                        # red when both pumps were out in the hour; minute by minute, red while both are out together
+                        mk = seg >= 2 if len(downs) == 2 and (seg >= 2).any() else seg >= 1
                         issue(h, "cdu", hid, RED if len(downs) == 2 else AMBER,
-                              f"{c}: {'; '.join(self.why(f'PUMP:{c}:{p}', h) for p in downs)}, no spare pump", c)
+                              f"{c}: {'; '.join(self.why(f'PUMP:{c}:{p}', h) for p in downs)}, no spare pump", c, mk)
+                        if len(downs) == 2 and (seg >= 2).any() and (seg == 1).any():
+                            one = [p for p in (1, 2) if self.unit_out(f"PUMP:{c}:{p}")[h * 60:(h + 1) * 60][seg == 1].any()]
+                            issue(h, "cdu", hid, AMBER, f"{c}: {'; '.join(self.why(f'PUMP:{c}:{p}', h) for p in one)}, no spare pump", c, seg == 1, hourly=False)
             walls = sorted(w for w, x in self.mech_dev.items() if x["family"] == "wall" and x.get("hall") == hid)
             if walls:
                 group(f"walls-{hid}", "Thermal walls", f"N+{C['thermal_wall_redundancy']}", hid, "mechanical", walls,
@@ -433,11 +474,15 @@ class SiteHealth:
                            "family": "mechanical", "link": walls[0] if walls else "mechanical", "units": walls,
                            "unit_word": "walls with every fan", "need": [len(walls)] * H, "avail": full, "total": [len(walls)] * H,
                            "state": [AMBER if a < len(walls) else GREEN for a in full]})
+            fo = {w: np.logical_or.reduce([self.unit_out(f"FAN:{w}:{f}") for f in range(1, fans + 1)]) for w in walls}
+            full_m = sum((~fo[w]).astype(int) for w in walls) if walls else np.zeros(self.M, dtype=int)
+            self.group_minutes[f"fans-{hid}"] = (full_m, np.where(full_m < len(walls), AMBER, GREEN))
             for h in range(H):
                 for w in walls:
                     downs = [f for f in range(1, fans + 1) if self.unit_out(f"FAN:{w}:{f}")[h * 60:(h + 1) * 60].any()]
                     if downs:
-                        issue(h, "mechanical", hid, AMBER, f"{w}: {'; '.join(self.why(f'FAN:{w}:{f}', h) for f in downs)}, {fans - len(downs)} of {fans} fans", w)
+                        issue(h, "mechanical", hid, AMBER, f"{w}: {'; '.join(self.why(f'FAN:{w}:{f}', h) for f in downs)}, {fans - len(downs)} of {fans} fans", w,
+                              fo[w][h * 60:(h + 1) * 60])
         hr = self.site["plants"]["heat_rejection"]
         chillers = sorted(c for c, x in self.mech_dev.items() if x["family"] == "chiller")
         group("chillers", "Chillers", f"N+{hr['chiller_redundancy']}", None, "mechanical", chillers, len(chillers) - hr["chiller_redundancy"], "mechanical")
@@ -473,10 +518,10 @@ class SiteHealth:
                 c["supply"].append(round(sup, 1))
                 c["flow"].append(round(sum(float(r["flow_lpm"]) for r in rows)))
                 c["heat_kw"].append(round(sum(float(r["heat_kwh"]) for r in rows)))
-                lk = [(cd, note) for cd in cdus for m, note in self.leak.get(cd, []) if m[h * 60:(h + 1) * 60].any()]
+                lk = [(cd, note, m[h * 60:(h + 1) * 60]) for cd in cdus for m, note in self.leak.get(cd, []) if m[h * 60:(h + 1) * 60].any()]
                 c["leaks"].append(len(lk))
-                for cd, note in lk:
-                    issue(h, "cdu", hid, RED, f"{cd}: leak detected{' (' + note + ')' if note else ''}", cd)
+                for cd, note, seg in lk:
+                    issue(h, "cdu", hid, RED, f"{cd}: leak detected{' (' + note + ')' if note else ''}", cd, seg)
                 hot = [(x, float(cdu_h[x][h]["supply_max_c"])) for x in cdus]
                 for x, v in hot:
                     if v >= thr["cdu"]["supply_amber_c"]:
@@ -609,11 +654,22 @@ class SiteHealth:
             state = [RED if a < 1 else AMBER if a < len(aggs) else GREEN for a in avail]
             groups.append({"key": f"oob-{hid}", "name": "Management aggregation", "scheme": f"N+{len(aggs) - 1}", "hall": hid, "family": "mgmt",
                            "link": "management", "units": aggs, "unit_word": "", "need": [1] * H, "avail": avail, "total": [len(aggs)] * H, "state": state})
+            am = len(aggs) - cnt
+            sm = np.where(am < 1, RED, np.where(am < len(aggs), AMBER, GREEN))
+            self.group_minutes[f"oob-{hid}"] = (am, sm)
             for h in range(H):
                 if state[h] > GREEN:
-                    downs = [a for a in aggs if self.unit_out(a)[h * 60:(h + 1) * 60].any()]
-                    issue(h, "mgmt", hid, state[h], f"Management aggregation ({self.hall_name(hid)}): {avail[h]} of {len(aggs)}, "
-                          f"{'below N' if state[h] == RED else 'no redundant unit'} ({'; '.join(f'{a} {self.why(a, h)}' for a in downs)})", downs[0] if downs else "management")
+                    seg = sm[h * 60:(h + 1) * 60]
+                    for s in (state[h], AMBER) if state[h] == RED else (state[h],):
+                        mk = seg == s
+                        if s != state[h] and not mk.any():
+                            continue
+                        downs = [a for a in aggs if self.unit_out(a)[h * 60:(h + 1) * 60][mk].any()] if s != state[h] else \
+                            [a for a in aggs if self.unit_out(a)[h * 60:(h + 1) * 60].any()]
+                        a_ = avail[h] if s == state[h] else int(am[h * 60:(h + 1) * 60][mk].min())
+                        issue(h, "mgmt", hid, s, f"Management aggregation ({self.hall_name(hid)}): {a_} of {len(aggs)}, "
+                              f"{'below N' if s == RED else 'no redundant unit'} ({'; '.join(f'{a} {self.why(a, h)}' for a in downs)})", downs[0] if downs else "management",
+                              mk, hourly=s == state[h])
             racks = sorted({x["rack"] for x in devs.values() if x["family"] == "bmc" and x["hall"] == hid})
             sws = sorted(s for s, x in devs.items() if x["family"] == "rack" and x["hall"] == hid)
             r = {k: [0] * H for k in ("bmcs", "answering", "failed", "switches", "switches_down")}
@@ -631,19 +687,20 @@ class SiteHealth:
                 if rid in self.mg_loss:
                     a, b = self.mg_loss[rid]
                     lost[a:b + 15] = True
-                own = self.hour_any(o["dark"] & ~lost)
+                own_m = o["dark"] & ~lost
+                own = self.hour_any(own_m)
                 for h in range(H):
                     r["switches"][h] += int(ins[h])
                     r["switches_down"][h] += int(dn[h])
                     if own[h]:
                         n = sum(1 for x in devs.values() if x["family"] == "bmc" and x["rack"] == rid)
                         what = f"its {n} BMCs unreachable" if devs[s]["role"] == "oob" else "in-band management (NVLink tray eth0, host ports) unreachable"
-                        issue(h, "mgmt", hid, AMBER, f"{s} down: rack {rid}, {what}", s)
+                        issue(h, "mgmt", hid, AMBER, f"{s} down: rack {rid}, {what}", s, own_m[h * 60:(h + 1) * 60])
                 for p in (49, 50):
                     if p in o["ports"]:
-                        flap = self.hour_any((o["ports"][p] == 0) & (o["up"] == 1) & booted)
-                        for h in np.flatnonzero(flap).tolist():
-                            issue(h, "mgmt", hid, AMBER, f"{s}: uplink swp{p} down (no redundant uplink)", s)
+                        flap_m = (o["ports"][p] == 0) & (o["up"] == 1) & booted
+                        for h in np.flatnonzero(self.hour_any(flap_m)).tolist():
+                            issue(h, "mgmt", hid, AMBER, f"{s}: uplink swp{p} down (no redundant uplink)", s, flap_m[h * 60:(h + 1) * 60])
             for g in mg.gaps:
                 n = g["endpoint"]
                 if devs[n]["hall"] != hid or (g["minutes"] or 0) <= cfg["checks"]["gap_min"]:
@@ -654,10 +711,12 @@ class SiteHealth:
                 if rep[sw]["dark"][a:b].any() or (rid in self.mg_loss and self.mg_loss[rid][0] - 2 <= a <= self.mg_loss[rid][1]):
                     continue
                 for h in range(a // 60, min(H, (b - 1) // 60 + 1)):
-                    issue(h, "mgmt", hid, AMBER, f"{n}: BMC not answering", f"mgmt-{rid}")
+                    mk = np.zeros(60, dtype=bool)
+                    mk[max(0, a - h * 60):max(0, min(60, b - h * 60))] = True
+                    issue(h, "mgmt", hid, AMBER, f"{n}: BMC not answering", f"mgmt-{rid}", mk if mk.any() else None)
             R["mgmt"][hid] = r
         for h in np.flatnonzero(self.hour_any(self.mg_unpolled)).tolist():
-            issue(h, "mgmt", None, AMBER, "Telemetry of Record poller restarted: no BMC polled", "management")
+            issue(h, "mgmt", None, AMBER, "Telemetry of Record poller restarted: no BMC polled", "management", self.mg_unpolled[h * 60:(h + 1) * 60])
 
     def _storage(self, groups: list[dict], R: dict[str, Any], issue) -> None:
         t, H = self.sg, self.H
@@ -668,9 +727,13 @@ class SiteHealth:
             if hid not in self.hall_ids:
                 continue
             deg = {n: self.sg_degraded(n) for n in nodes}
-            worst = self.hour_max(sum(d.astype(int) for d in deg.values()))
+            dcnt = sum(d.astype(int) for d in deg.values())
+            worst = self.hour_max(dcnt)
             avail = [tol - int(v) for v in worst]
             state = [RED if a < 0 else AMBER if a < tol else GREEN for a in avail]
+            am = tol - dcnt
+            sm = np.where(am < 0, RED, np.where(am < tol, AMBER, GREEN))
+            self.group_minutes[f"stg-{hid}"] = (am, sm)
             ec = cl["erasure_coding"]
             groups.append({"key": f"stg-{hid}", "name": "Storage cluster", "cluster": cname, "scheme": f"erasure coding {ec[0]}+{ec[1]}", "hall": hid,
                            "family": "storage", "link": "storage", "units": nodes, "unit_word": "more nodes it could lose",
@@ -687,12 +750,18 @@ class SiteHealth:
                         for b in np.flatnonzero((self.sg_bays[n][:, sl] != 0).any(1)).tolist():
                             st = int(self.sg_bays[n][b, sl].max())
                             why.append(f"{n} Bay{b + 1:02d} {({1: 'failed', 2: 'pulled', 3: 'rebuilding'}).get(st, 'not OK')}")
-                    issue(h, "storage", hid, state[h], f"{cname}: protection {avail[h]} of {tol} ({'; '.join(why)})", "storage")
+                    seg = sm[sl]
+                    issue(h, "storage", hid, state[h], f"{cname}: protection {avail[h]} of {tol} ({'; '.join(why)})", "storage", seg == state[h])
+                    if state[h] == RED and (seg == AMBER).any():
+                        issue(h, "storage", hid, AMBER, f"{cname}: protection {int(am[sl][seg == AMBER].min())} of {tol} ({'; '.join(why)})", "storage",
+                              seg == AMBER, hourly=False)
             for role, word in (("spine", "Storage fabric spines"), ("storage_leaf", "Storage leaves")):
                 sws = sorted(s for s, x in devs.items() if x["family"] == role and x["hall"] == hid)
                 dark = {s: np.logical_and.reduce([self.sg_links[(s, i)] == 0 for i in devs[s]["ports"]]) for s in sws}
-                cnt = self.hour_max(sum(d.astype(int) for d in dark.values()))
+                dk = sum(d.astype(int) for d in dark.values())
+                cnt = self.hour_max(dk)
                 av = [len(sws) - int(v) for v in cnt]
+                self.group_minutes[f"{role}-{hid}"] = (len(sws) - dk, np.where(len(sws) - dk < 1, RED, np.where(dk > 0, AMBER, GREEN)))
                 groups.append({"key": f"{role}-{hid}", "name": word, "scheme": f"N+{len(sws) - 1}", "hall": hid, "family": "network",
                                "link": sws[0], "units": sws, "unit_word": "", "need": [1] * H, "avail": av, "total": [len(sws)] * H,
                                "state": [RED if a < 1 else AMBER if a < len(sws) else GREEN for a in av]})
@@ -712,14 +781,17 @@ class SiteHealth:
             x = devs[f["switch"]]
             for h in range(f["a"] // 60, min(H, (f["b"] - 1) // 60 + 1)):
                 flap_at.add((f["switch"], f["ifName"], h))
-                issue(h, "network", x["hall"], AMBER, f"{f['switch']} {f['ifName']} flapping: storage clients behind it stall", f["switch"])
+                mk = np.zeros(60, dtype=bool)
+                mk[max(0, f["a"] - h * 60):max(0, min(60, f["b"] - h * 60))] = True
+                issue(h, "network", x["hall"], AMBER, f"{f['switch']} {f['ifName']} flapping: storage clients behind it stall", f["switch"], mk if mk.any() else None)
         for (sw, ifn), v in self.sg_links.items():
             x = devs[sw]
             if x["family"] == "spine" or x["ports"][ifn][0] != "uplink" or v.all():
                 continue
             for h in np.flatnonzero(self.hour_any(v == 0)).tolist():
                 if (sw, ifn, h) not in flap_at:
-                    issue(h, "network", x["hall"], AMBER, f"{sw}: uplink {ifn} down ({len([p for p in x['ports'].values() if p[0] == 'uplink']) - 1} others carry it)", sw)
+                    issue(h, "network", x["hall"], AMBER, f"{sw}: uplink {ifn} down ({len([p for p in x['ports'].values() if p[0] == 'uplink']) - 1} others carry it)", sw,
+                          (v == 0)[h * 60:(h + 1) * 60])
 
     def _issue_spans(self, issues: list[tuple]) -> list[dict]:
         """Identical conditions in consecutive hours merge into one span (the page filters by hour)."""
