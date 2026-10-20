@@ -56,6 +56,7 @@ from scorecard.synthetic.telemetry import GpuTelemetry, Published, write_telemet
 from scorecard.synthetic.energy import EnergyLayer, follow_devices, history, write_energy  # noqa: E402
 from scorecard.synthetic.telemetry_cdu import CduTelemetry, write_cdu  # noqa: E402
 from scorecard.synthetic.telemetry_power import PowerTelemetry, write_power  # noqa: E402
+from scorecard.synthetic.telemetry_utility import UtilityTelemetry, write_utility  # noqa: E402
 from scorecard.synthetic.telemetry_network import NetworkTelemetry, write_network  # noqa: E402
 from scorecard.synthetic.telemetry_mechanical import MechanicalTelemetry, write_mechanical  # noqa: E402
 from scorecard.synthetic.telemetry_mgmt import MgmtTelemetry, write_mgmt  # noqa: E402
@@ -69,6 +70,8 @@ OUT_CDU = ROOT / "data" / "telemetry" / "cdu"
 MINUTES_CDU = ROOT / "build" / "telemetry" / "cdu_minutes"
 OUT_POWER = ROOT / "data" / "telemetry" / "power"
 MINUTES_POWER = ROOT / "build" / "telemetry" / "power_minutes"
+OUT_UTIL = ROOT / "data" / "telemetry" / "utility"
+MINUTES_UTIL = ROOT / "build" / "telemetry" / "utility_minutes"
 OUT_NET = ROOT / "data" / "telemetry" / "network"
 MINUTES_NET = ROOT / "build" / "telemetry" / "network_hourly"
 OUT_MECH = ROOT / "data" / "telemetry" / "mechanical"
@@ -111,6 +114,9 @@ def generate(dest: Path = OUT, hourly: Path | None = HOURLY) -> dict:
         raise SystemExit("power records disagree with each other: " + "; ".join(power.conflicts))
     man["power"] = write_power(power, pout, Path(dest).parent / "power",
                                "data/sample + data/energy + GPU telemetry", build / "power_minutes" if build else None)
+    util = UtilityTelemetry(power, pout)
+    man["utility"] = write_utility(util, util.run(), Path(dest).parent / "utility", "data/sample + data/energy + power telemetry",
+                                   build / "utility_minutes" if build else None)
     net = NetworkTelemetry(pub.tel, pub)
     nout = net.run()
     if net.conflicts:
@@ -136,6 +142,7 @@ def hourly_current(dest: Path = OUT, hourly: Path = HOURLY) -> bool:
     pairs = [(dest / "manifest.json", "gpu_hourly", hourly),
              (dest.parent / "cdu" / "manifest.json", "minutes", hourly.parent / "cdu_minutes"),
              (dest.parent / "power" / "manifest.json", "minutes", hourly.parent / "power_minutes"),
+             (dest.parent / "utility" / "manifest.json", "minutes", hourly.parent / "utility_minutes"),
              (dest.parent / "network" / "manifest.json", "minutes", hourly.parent / "network_hourly"),
              (dest.parent / "mechanical" / "manifest.json", "minutes", hourly.parent / "mechanical_minutes")]
     for mpath, key, folder in pairs:
@@ -156,10 +163,11 @@ def ensure_hourly(hourly: Path = HOURLY) -> Path:
         committed = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
         committed_cdu = json.loads((OUT_CDU / "manifest.json").read_text(encoding="utf-8"))
         committed_power = json.loads((OUT_POWER / "manifest.json").read_text(encoding="utf-8"))
+        committed_util = json.loads((OUT_UTIL / "manifest.json").read_text(encoding="utf-8"))
         committed_net = json.loads((OUT_NET / "manifest.json").read_text(encoding="utf-8"))
         committed_mech = json.loads((OUT_MECH / "manifest.json").read_text(encoding="utf-8"))
         if (man["gpu_hourly"] != committed["gpu_hourly"] or man["cdu"]["minutes"] != committed_cdu["minutes"]
-                or man["power"]["minutes"] != committed_power["minutes"] or man["network"]["minutes"] != committed_net["minutes"]
+                or man["power"]["minutes"] != committed_power["minutes"] or man["utility"]["minutes"] != committed_util["minutes"] or man["network"]["minutes"] != committed_net["minutes"]
                 or man["mechanical"]["minutes"] != committed_mech["minutes"]):
             raise SystemExit("data/telemetry is out of date. Run: python scripts/generate_telemetry.py")
     return hourly
@@ -191,6 +199,12 @@ def main() -> int:
         print(f"  {rel:<28} {n:>6}")
     print(f"  one-minute readings (not committed) -> {MINUTES_POWER.relative_to(ROOT)}: "
           f"{sum(m['bytes'] for m in p['minutes'].values()) / 1e6:.1f} MB")
+    u = man["utility"]
+    print(f"Utility mains and ride-through -> {OUT_UTIL.relative_to(ROOT)}: {len(u['mains'])} mains, {len(u['scopes'])} ride-through scopes")
+    for rel, k in u["files"].items():
+        print(f"  {rel:<28} {k:>6}")
+    print(f"  one-minute readings (not committed) -> {MINUTES_UTIL.relative_to(ROOT)}: "
+          f"{sum(m['bytes'] for m in u['minutes'].values()) / 1e6:.1f} MB")
     n = man["network"]
     fam = {}
     for x in n["devices"].values():

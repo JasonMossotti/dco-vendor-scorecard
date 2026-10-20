@@ -353,12 +353,15 @@ class PowerTelemetry:
         return out
 
     # ----------------------------------------------------------------- UPS output voltage and frequency
+    def utility_hz(self) -> np.ndarray:
+        """The utility's frequency each minute (the UPS inputs see it, and the mains meters read it)."""
+        return self.cfg["electrical"]["hz"] + _ar(_rng(self.seed, "utility", "hz"), self.M, 0.012, 0.9)
+
     def ups_bus(self) -> dict[str, dict[str, np.ndarray]]:
         """Utility-side and output voltage and frequency per UPS (the hall's MV bus feeds its UPSs)."""
         el = self.cfg["electrical"]
         out = {}
-        hz_rng = _rng(self.seed, "utility", "hz")
-        hz = el["hz"] + _ar(hz_rng, self.M, 0.012, 0.9)
+        hz = self.utility_hz()
         for o in self.outages():
             on = self.overlap(o["ties_closed"], o["back"]) > 0
             hz = np.where(on, el["hz"] + _ar(_rng(self.seed, "gen", "hz"), self.M, 0.035, 0.7), hz)

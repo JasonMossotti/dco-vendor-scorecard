@@ -131,6 +131,7 @@ terms:
   # --- Acronyms: facility (Landlord side)
   - {term: BMS, type: acronym, expansion: Building management system, text: "The Landlord's system that monitors and controls cooling, chillers, CDUs, thermal walls, fire and leak detection. The Customer reads it."}
   - {term: EPMS, type: acronym, expansion: Electrical power monitoring system, text: "The system that records switchgear, UPS, and meter data for the electrical plant."}
+  - {term: THD, type: acronym, expansion: Total harmonic distortion, text: "How far a voltage or current wave is from a clean sine wave, as a percent. IEEE 519 limits voltage THD to 5% at 13.8 kV."}
   - {term: DCIM, type: acronym, expansion: Data center infrastructure management, text: "Software that tracks power, capacity, and assets across the facility."}
   - {term: DNS, type: acronym, expansion: Domain Name System, text: "Turns names into network addresses. A Customer-owned core network service at this site; the Interface Agreement names its owner and models no data for it."}
   - {term: DHCP, type: acronym, expansion: Dynamic Host Configuration Protocol, text: "Hands out network addresses to devices as they join. A Customer-owned core network service; named in the ownership matrix, not modeled."}
@@ -301,6 +302,8 @@ terms:
   - {term: AP9644, type: product, title: "Network management card 4", text: "The UPS's monitoring card (the NMC), the source of SNMP traps."}
   - {term: MVSST, type: product, title: "Medium-voltage solid-state transformer", text: "Converts 13.8 kV directly to 800 VDC for the planned 800 VDC racks."}
   - {term: PME, type: product, title: "Power Monitoring Expert", text: "The electrical power monitoring software (EPMS) that records switchgear and meter data."}
+  - {term: ION, type: product, title: "ION (Schneider PowerLogic meter architecture)", text: "The measurement architecture of Schneider's PowerLogic ION meters. Its measurement labels (Vll ab, I a, kW tot, PF sign tot, Freq) are the point names the utility mains use here.", see: "telemetry/#utility-fields"}
+  - {term: ION9000, type: product, title: "PowerLogic ION9000", text: "Schneider Electric's power quality and revenue meter. The Landlord's meters on the two 13.8 kV mains are ION9000s, read through PME.", see: "telemetry/#utility"}
   - {term: AFC, type: product, title: "Liebert AFC chiller", text: "The air-cooled free-cooling chiller model in the central plant."}
   - {term: CWA, type: product, title: "Liebert CWA thermal wall", text: "The chilled-water fan wall that cools the halls' air."}
   - {term: CW, type: product, title: "Liebert CW CRAH", text: "The perimeter air handler model for the electrical rooms."}
