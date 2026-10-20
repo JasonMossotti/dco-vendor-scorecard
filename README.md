@@ -40,6 +40,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
 | [GPU Health](#gpu-health) | Which GPUs are failing, or about to, and whose side is it on? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/gpu/) |
 | [Telemetry](#telemetry) | Does every system still have its redundant unit right now, and what is every GPU, CDU, UPS, busway, generator, chiller, network link, management port, and storage drive reading, minute by minute? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/telemetry/) |
+| [Live](#live) | What is the whole site doing right now, where is the power coming from, and how long would the UPS batteries carry it if the utility failed this minute? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/live/) |
 | [Deployments](#deployments) | Where is the Hall B rollout, is Hall C ready for first compute, and do the records of both hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to, and who owns which fault? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
@@ -289,6 +290,19 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 ![Fire protection: impairments reconciled against the fire panel's history log](docs/images/fire-protection.png)
 
+## Live
+
+![Live: the site on generators a minute after the Sep 24 utility trip, with the UPS ride-through in minutes and seconds](docs/images/live.png)
+
+One page for the whole site now, minute by minute, on a simulated live feed: the sample month runs on your clock, re-dated to today in whole days, the same feed as the Alarm Board's Live Events board, so both show the same minute. Pause, a faster replay, and jumps to the Sep 24 utility trip and the rack A07 outage leave the live feed; *Live now* returns to it, and a link with a minute (`/live/#35836`) opens paused there.
+
+- **Power.** Where the power comes from (on utility, one main, or on generators), each 13.8 kV main's voltage, current, kW, power factor, frequency, and breaker with its last hour, every UPS's load, output source, runtime, and charge, every generator's state, bus breaker, output, and fuel, and the busway's most loaded run and warmest enclosure this hour.
+- **UPS ride-through if the utility failed now**, in minutes and seconds: the shortest runtime among the UPSs carrying load, for the IT load, the cooling (mechanical UPSs), and each hall, with the UPS that sets it, against the 12 seconds the generators took on Sep 24 (NFPA 110 Type 10's 10 s shown as a design reference). Around 9:20 to 9:50 for the IT load at the trip, so a margin of over 9 minutes.
+- **A tile per device family** (GPUs with a map of every rack, CDUs, Power, Network East-West and North-South, Mechanical, Management network, Storage, Fire protection, Security) with its state and the conditions behind it now, each linking into its Telemetry page at the same minute; the redundancy of all 28 systems at this minute; and the alarms active and trouble tickets open now.
+- Every Telemetry family page gets a **live strip** at the top: that family's state and conditions now, on the same clock, with a link to the Live page.
+
+It generates nothing and judges nothing. States are Site health's, each condition held for the minutes it lasts: one read from a recorded state change (a breaker, a UPS on bypass, a pump, a fan, a switch, a storage node) holds for its exact minutes, one read from an hourly row for its whole hour. The worst minute of every hour equals Site health's state for that hour, for every family and every redundancy group (14,784 of 14,784 family-hours and 18,816 of 18,816 group-hours on the sample), and the day files carry the published utility and ride-through minutes unchanged. `scripts/render_live.py`, `src/scorecard/live_status.py`, `config/live.yaml`.
+
 ## Deployments
 
 ![Deployments: the Hall B GB300 rollout with gate status and record checks](docs/images/deployments.png)
@@ -403,6 +417,8 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Management network telemetry | 4 of 4 planted, 132,944 of 132,944 cases | 240 of 240, 0 false positives; 7,977,564 of 7,977,564 cases |
 | Storage and storage fabric telemetry | 4 of 4 planted, 928,339 of 928,339 cases | 240 of 240, 0 false positives; 55,697,867 of 55,697,867 cases |
 | Site health agreement with each section's hourly figures | 162,730 of 162,730 cases | 9,762,844 of 9,762,844 cases on 60 generated months |
+| Utility mains and ride-through agreement with the records | 496,451 of 496,451 cases | 29,785,596 of 29,785,596 cases on 60 generated months |
+| Live page equals Site health hour by hour | 48,720 of 48,720 cases | LIVE_ROBUST |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Hall C readiness record checks | 4 of 4 | 240 of 240, 0 false positives |
@@ -460,7 +476,7 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/generate_telemetry.py && python scripts/generate_energy.py && python scripts/render_energy.py \
   && python scripts/render_weekly.py && python scripts/generate_fire.py && python scripts/render_fire.py && python scripts/render_glossary.py \
   && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
-  && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py
+  && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py && python scripts/render_live.py
 pytest -q                                   # the full suite takes a while; pytest -q tests/test_hub.py runs one file
 python scripts/build_site.py --out _site    # the whole site; serve it with: python -m http.server -d _site
 streamlit run app/streamlit_app.py          # the "Try another month" app on its own
@@ -499,6 +515,7 @@ src/scorecard/scorecards_page.py Prebuilt Scorecards page data (three engines on
 src/scorecard/availability.py    Availability rollup: scheduler, GPU-hours lost by owner, the bridge, repair stages, spares
 src/scorecard/telemetry*.py      Telemetry checks per section (GPU, CDU, power, network, mechanical, management, storage)
 src/scorecard/site_health.py     Site health: redundancy against the design at any hour
+src/scorecard/live_status.py     Live: the whole site minute by minute, reconciled with Site health
 src/scorecard/fire.py            Fire protection impairments reconciled against the fire panel
 src/scorecard/assets.py          Asset register reconciled against the devices, ledger, RMA, custody, and certificates
 src/scorecard/readiness.py       Hall C readiness: commissioning, readiness gates, forecast, record checks

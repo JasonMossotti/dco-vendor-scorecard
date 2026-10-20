@@ -37,6 +37,7 @@ TABS = [
     ("energy", "Energy", "energy/"),
     ("gpu", "GPU Health", "gpu/"),
     ("telemetry", "Telemetry", "telemetry/"),
+    ("live", "Live", "live/"),
     ("deployments", "Deployments", "deployments/"),
 ]
 REFERENCE_TABS = [
@@ -60,7 +61,7 @@ CSS = """
 .usm-main { background:#26323d; border-top:1px solid #34414d; padding:0 14px; }
 .usm-src { color:#aab6c3; font-size:12px; text-decoration:none; white-space:nowrap; }
 .usm-src:hover { color:#fff; }
-@media (max-width:1240px) { .usm-tabs a { padding:10px 8px 8px; } .usm-main { padding:0 8px; } }
+@media (max-width:1340px) { .usm-tabs a { padding:10px 6px 8px; } .usm-main { padding:0 8px; } }
 @media (max-width:700px) { .usm-in { padding:0 10px; gap:0 12px; } .usm-brand span, .usm-src { display:none; } .usm-tabs a { padding:8px 8px 6px; font-size:13px; } .usm-main { padding:0 2px; } }
 @media print { .usm { display:none !important; } }
 """

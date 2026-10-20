@@ -11,6 +11,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from collections import Counter
 from html import escape
@@ -133,6 +134,7 @@ def facts() -> dict:
                    "findings": [x["title"] for x in en["findings"]]},
         "gpu": {"gpus": gh["gpus"], "fail": gh["watches"]["fail"], "warned": gh["warned"], "memory": len(gh["memory"]),
                 "findings": [x["title"] for x in gh["findings"]]},
+        "live": _live(tm),
         "telemetry": {"gpus": tm["gpus"], "racks": len(tm["racks"]),
                       "agree": sum(a["checked"] - a["misses"] for a in tm["agreements"]), "cases": sum(a["checked"] for a in tm["agreements"]),
                       "halls": [(h["name"], h["util_avg"], h["at_cap_pct"]) for h in tm["halls"].values()],
@@ -167,6 +169,16 @@ def md_inline(s: str) -> str:
     return "".join(f"<b>{p}</b>" if i % 2 else p for i, p in enumerate(parts))
 
 
+def _live(tm: dict) -> dict:
+    """The Live tab's reconciliation (data/live/manifest.json, scripts/render_live.py) and the month's ride-through."""
+    man = json.loads((ROOT / "data" / "live" / "manifest.json").read_text(encoding="utf-8"))
+    ride = tm["power"]["utility"]["ride"]
+    o = tm["power"]["utility"]["outages"][0]
+    return {"agree": sum(a["checked"] - a["misses"] for a in man["agreements"] if a["name"] in ("families", "groups")),
+            "cases": sum(a["checked"] for a in man["agreements"] if a["name"] in ("families", "groups")),
+            "it_min": ride["SITE-IT"]["min_s"], "cool_min": ride["SITE-COOLING"]["min_s"], "bridge": o["bridge_s"]}
+
+
 def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: list[tuple[str, str]], note: str = "") -> str:
     st = "".join(f'<div class="stat"><b>{escape(v)}</b><span>{escape(k)}</span></div>' for v, k in stats)
     # A link to one record opens the Incident Portal in its own tab, as ticket numbers do on every page.
@@ -182,6 +194,7 @@ def body(f: dict) -> str:
     tm = f["telemetry"]
     av = f["availability"]
     dp = f["deploy"]
+    lv = f["live"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
         '<div class="partners">'
@@ -284,6 +297,14 @@ def body(f: dict) -> str:
               ("Fire protection", "telemetry/#fire")],
              "Mean GPU utilization: " + ", ".join(f"{n} {u}%" for n, u, _c in tm["halls"])
              + f"; {tm['halls'][-1][0]} at the power limit {tm['halls'][-1][2]}% of samples."),
+        tile("live", "Live",
+             "The whole site now, minute by minute on the simulated live feed: where the power comes from, the utility mains' "
+             "voltage and current, how long the UPS batteries would carry the site if the utility failed now, and every device "
+             "family's state, with a live strip on each Telemetry page.",
+             [(f"{lv['it_min'] // 60}:{lv['it_min'] % 60:02d}", "lowest IT ride-through (min:sec)"), (f"{lv['bridge']} s", "generators took the load (09-24)"),
+              (f"{lv['agree']:,} of {lv['cases']:,}", "hours equal Site health")],
+             [("Open Live", "live/"), ("The 09-24 utility trip", "telemetry/#utility")],
+             f"Cooling (mechanical UPSs) lowest {lv['cool_min'] // 60}:{lv['cool_min'] % 60:02d}. The same feed as the Alarm Board's Live Events; nothing here comes from a real system."),
         tile("deployments", "Deployments",
              f"The {dp['hall']} GB300 rollout: gates, steps, calculations, permits, and one work order per task from both "
              "partners' Jira projects, complete only when signed and inspected.",

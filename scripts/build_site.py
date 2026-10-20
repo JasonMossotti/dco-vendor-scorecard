@@ -9,6 +9,7 @@ Output (default _site/):
     app/lab/app_bundle.zip  Python package, SLA, generator config, and datasets
     alarms/ pir/ weekly/ patterns/ energy/ gpu/ deployments/ availability/  the static pages, each with the same tab bar
     telemetry/              GPU telemetry (scripts/render_telemetry.py) and the data it fetches (telemetry/data/)
+    live/                   the Live tab (scripts/render_live.py): index.html, data/index.json, data/day_NN.json
     tickets/                the Incident Portal: both partners' tickets, changes, and work orders (scripts/render_tickets.py)
     agreements/             the Interface Agreement and both SLAs, readable (scripts/render_agreements.py)
     glossary/               every code, acronym, and record ID (scripts/render_glossary.py)
@@ -154,6 +155,8 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     # The reference tabs: the contracts, the glossary, and the device directory.
     import render_telemetry
     render_telemetry.write_site(out / "telemetry")      # the page plus the per-GPU hourly tier it fetches
+    import render_live
+    render_live.write_site(out / "live")                # the Live tab, its day files, and the index the strips read
     import render_agreements
     import render_devices
     import render_glossary

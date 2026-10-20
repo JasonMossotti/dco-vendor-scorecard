@@ -44,6 +44,8 @@ jobs:
         run: python scripts/render_gpu_health.py --check
       - name: GPU telemetry report is current (rebuilds the per-GPU hourly tier and checks its checksums)
         run: python scripts/render_telemetry.py --check
+      - name: Live tab is current (its files' checksums and the reconciliation with Site health)
+        run: python scripts/render_live.py --check
       - name: Asset register reconciliation is current
         run: python scripts/render_assets.py --check
       - name: Fire protection report is current

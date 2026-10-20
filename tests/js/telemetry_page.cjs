@@ -610,6 +610,20 @@ async function until(fn, what, ms = 8000) {
   await until(() => d.querySelectorAll(".gg button[data-host]").length === 72, "A12 grid after the file returns");
   ok(d.querySelectorAll(".gg button[data-host]").length === 72, "the rack loads once the file is back (no stale failure cached)");
 
+  // ---- the live strip on every family page (the Live tab's index, beside this page as ../live/)
+  if (fs.existsSync(path.join(site, "..", "live", "data", "index.json"))) {
+    for (const [hash, fam] of [["#gpus", "gpu"], ["#cdus", "cdu"], ["#power", "power"], ["#utility", "power"], ["#network", "network"], ["#north-south", "network"],
+                               ["#mechanical", "mechanical"], ["#management", "mgmt"], ["#storage", "storage"], ["#fire", "fire"]]) {
+      await go(hash);
+      await until(() => d.getElementById("lvstrip") && d.getElementById("lvstrip").textContent.includes("Live now"), "live strip on " + hash);
+      const el = d.getElementById("lvstrip");
+      ok(el && el.dataset.fam === fam && el.textContent.includes("Live now") && el.querySelector('a.lvgo[href="../live/"]') && /\b(ok|warn|bad)\b/.test(el.className), "live strip on " + hash);
+    }
+    ok(fetches.filter(f => f.includes("live/data/index.json")).length === 1, "the live index is fetched once");
+    await go("#site");
+    ok(!d.getElementById("lvstrip"), "no live strip on Site health (it has its own clock)");
+  } else console.log("note: no ../live folder beside the page; live strip not tested");
+
   // ---- deep link and back
   const dom2 = new JSDOM(html, opts);
   await sleep(50);
