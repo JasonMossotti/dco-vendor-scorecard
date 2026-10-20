@@ -1,0 +1,51 @@
+record,partner,item,result,reading,note,inspected_at,inspector
+PM-0017,landlord,pm_tag,,2026-08-06,Maintenance tag on VESDA-B1 is dated 2026-08-06.,2026-09-28T14:48:51Z,Customer site lead
+PM-0017,landlord,site,pass,,No tools or packaging left; blanking in place.,2026-09-28T14:51:51Z,Customer site lead
+PM-0018,landlord,pm_tag,,2026-09-05,Tag present and dated.,2026-09-28T14:56:42Z,Customer site lead
+PM-0018,landlord,site,pass,,No tools or packaging left; blanking in place.,2026-09-28T14:59:42Z,Customer site lead
+INC3100918,it,site,pass,,Clean; blanking in place.,2026-09-28T15:16:43Z,Customer site lead
+INC3100799,it,serial,,CT2C0C43HJ,Scanned the label of the Compute tray at a14-ct14.,2026-09-28T19:30:25Z,Customer site lead
+INC3100799,it,custody,,CTU04P32H5,Checked against the RMA ledger and the cage scan.,2026-09-28T19:33:25Z,Customer site lead
+INC3100799,it,qd,fail,,"No witness marks on the supply and return quick-disconnects of the replaced part; fittings dry, drip tray clean.",2026-09-28T19:36:25Z,Customer site lead
+INC3100799,it,site,pass,,No tools or packaging left; blanking in place.,2026-09-28T19:39:25Z,Customer site lead
+PM-0004,landlord,pm_tag,,2026-09-12,Tag present and dated.,2026-09-28T21:46:28Z,Customer site lead
+PM-0004,landlord,site,pass,,Area clean.,2026-09-28T21:49:28Z,Customer site lead
+INC3100272,it,custody,,OPBQGGXAZQ,Checked against the RMA ledger and the cage scan.,2026-09-29T14:02:20Z,Customer site lead
+INC3100272,it,label,,a30-ct15:mlx5_0 <-> leaf-a15-r0:swp33,Label at both ends of the cable names the link.,2026-09-29T14:05:20Z,Customer site lead
+INC3100272,it,dressing,pass,,Bend radius kept; routed in the manager.,2026-09-29T14:08:20Z,Customer site lead
+INC3100272,it,site,pass,,Clean; blanking in place.,2026-09-29T14:11:20Z,Customer site lead
+INC3100323,it,serial,,PUBE85GK9Y,Scanned the label of the PSU (5.5 kW) at PSU 3 in A02 power shelf 3.,2026-09-29T14:47:15Z,Customer site lead
+INC3100323,it,custody,,PUK63Q924H,Checked against the RMA ledger and the cage scan.,2026-09-29T14:50:15Z,Customer site lead
+INC3100323,it,site,pass,,Area clean.,2026-09-29T14:53:15Z,Customer site lead
+PM-0009,landlord,pm_tag,,2026-09-20,Tag present and dated.,2026-09-29T16:28:37Z,Customer site lead
+PM-0009,landlord,site,pass,,Area clean.,2026-09-29T16:31:37Z,Customer site lead
+INC3101156,it,serial,,CT8YSKS5OG,Scanned the label of the Compute tray at a30-ct08.,2026-09-29T16:58:19Z,Customer site lead
+INC3101156,it,custody,,CTW4PJ9FZ0,Checked against the RMA ledger and the cage scan.,2026-09-29T17:01:19Z,Customer site lead
+INC3101156,it,qd,pass,,Marks present; fittings and drip tray dry.,2026-09-29T17:04:19Z,Customer site lead
+INC3101156,it,site,pass,,Area clean.,2026-09-29T17:07:19Z,Customer site lead
+INC3100034,it,custody,,OPMJOTDRDK,Checked against the RMA ledger and the cage scan.,2026-09-29T20:41:38Z,Customer site lead
+INC3100034,it,label,,a23-ct07:mlx5_0 <-> leaf-a12-r0:swp7,Label at both ends of the cable names the link.,2026-09-29T20:44:38Z,Customer site lead
+INC3100034,it,dressing,pass,,Dressed and strapped; no strain on the optic.,2026-09-29T20:47:38Z,Customer site lead
+INC3100034,it,site,pass,,No tools or packaging left; blanking in place.,2026-09-29T20:50:38Z,Customer site lead
+INC3100833,it,serial,,CTOWTIOY08,Scanned the label of the Compute tray at a23-ct04.,2026-09-30T14:48:38Z,Customer site lead
+INC3100833,it,custody,,CTZO363BHD,Checked against the RMA ledger and the cage scan.,2026-09-30T14:51:38Z,Customer site lead
+INC3100833,it,qd,pass,,Marks present; fittings and drip tray dry.,2026-09-30T14:54:38Z,Customer site lead
+INC3100833,it,site,pass,,No tools or packaging left; blanking in place.,2026-09-30T14:57:38Z,Customer site lead
+PM-0015,landlord,pm_tag,,2026-09-13,Tag present and dated.,2026-09-30T16:29:40Z,Customer site lead
+PM-0015,landlord,site,pass,,Area clean.,2026-09-30T16:32:40Z,Customer site lead
+WO-41031,landlord,nameplate,,CHX-P24761,Read from the replaced part's nameplate.,2026-09-30T18:12:38Z,Customer site lead
+WO-41031,landlord,site,pass,,Clean; blanking in place.,2026-09-30T18:15:38Z,Customer site lead
+WO-41035,landlord,site,pass,,No tools or packaging left; blanking in place.,2026-09-30T18:39:19Z,Customer site lead
+INC3100714,it,qd,pass,,Marks present; fittings and drip tray dry.,2026-09-30T21:09:03Z,Customer site lead
+INC3100714,it,site,pass,,Area clean.,2026-09-30T21:12:03Z,Customer site lead
+INC3100969,it,serial,,PU4CZWGPYU,Scanned the label of the PSU (5.5 kW) at PSU 1 in A04 power shelf 7.,2026-10-01T15:16:17Z,Customer site lead
+INC3100969,it,custody,,PUYJNR5UBT,Found on the RMA cage shelf during the scan.,2026-10-01T15:19:17Z,Customer site lead
+INC3100969,it,site,pass,,Clean; blanking in place.,2026-10-01T15:22:17Z,Customer site lead
+WO-41041,landlord,site,pass,,Area clean.,2026-10-01T16:53:41Z,Customer site lead
+WO-41023,landlord,site,pass,,No tools or packaging left; blanking in place.,2026-10-01T19:26:59Z,Customer site lead
+INC3101190,it,custody,,OP84UJYL3Z,Checked against the RMA ledger and the cage scan.,2026-10-01T20:30:38Z,Customer site lead
+INC3101190,it,label,,a26-ct11:mlx5_1 <-> leaf-a13-r1:swp28,Cable label at the replaced optic reads a26-ct11:mlx5_1 <-> leaf-a13-r1:swp28.,2026-10-01T20:33:38Z,Customer site lead
+INC3101190,it,dressing,pass,,Bend radius kept; routed in the manager.,2026-10-01T20:36:38Z,Customer site lead
+INC3101190,it,site,pass,,Area clean.,2026-10-01T20:39:38Z,Customer site lead
+PM-0008,landlord,pm_tag,,2026-09-11,Tag present and dated.,2026-10-01T21:14:41Z,Customer site lead
+PM-0008,landlord,site,pass,,Clean; blanking in place.,2026-10-01T21:17:41Z,Customer site lead

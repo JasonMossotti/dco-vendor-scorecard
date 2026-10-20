@@ -390,6 +390,18 @@ Derived by `scripts/generate_fire.py` from `data/sample/` (window, VESDA events,
 | `answer_key.json` | Planted findings (an impairment logged restored inside its window while the panel shows it out for hours after; a control valve closed with nothing logged). The checks never read it |
 | `manifest.json` | Window, seed, source, counts |
 
+## Quality audit (`data/audit/`)
+
+Derived by `scripts/generate_audit.py` from `data/sample/` (window, the IT Partner's tickets, the Landlord's work orders and PM records, the BMC inventory, and the RMA ledger) with its own random stream (`{seed}:audit`); the sample is never written. Settings in `config/audit.yaml`; the sample size and workmanship target are the contract's (`sla/common.yaml`, measurement.audit).
+
+| File | What it represents |
+|---|---|
+| `sample.json` | The Customer's draw after the month closes: the published seed, when it was drawn, each partner's pool size, and the sampled record IDs (anyone can reproduce them with `python scripts/render_audit.py --sample <seed>`) |
+| `walkdown.csv` | One row per checklist item per sampled record: what the inspector read (a serial at the location, a cable label, a maintenance tag's date, a nameplate) or observed (pass or fail with a note), when, and the inspector's role |
+| `rma_cage_scan.csv` | The RMA cage scanned once before the first walk-down: every failed part on a shelf |
+| `answer_key.json` | Planted defects (a failed part the ledger shipped found in the cage; a cable label naming the next tray; a wet-mate with no witness marks; a maintenance tag older than its PM record). The checks never read it |
+| `manifest.json` | Window, source, counts |
+
 ## Predictive maintenance (`data/predict/`)
 
 Derived by `scripts/generate_predict.py` from `data/history/` (racks, inventory, links, failures, Landlord PM records), the topology, and the CDU settings, with its own random stream (`predict-{seed}`); no other layer is written. Settings in `config/predict.yaml` (the `condition` section shapes this history; the detectors use only the `detectors` section). The detectors in `src/scorecard/predict/` never read the answer key; `scripts/predict.py` runs them on a site's own exports (`docs/predict/README.md`).
@@ -437,6 +449,7 @@ python scripts/generate_fire.py                  # data/fire
 python scripts/generate_deployments.py           # data/deployments
 python scripts/generate_readiness.py             # data/readiness
 python scripts/generate_assets.py                # data/assets
+python scripts/generate_audit.py                 # data/audit
 ```
 
 The tests fail when a committed layer is stale.

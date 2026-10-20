@@ -257,7 +257,7 @@ The Supplier may dispute a measurement within 5 business days of the weekly scor
 
 ### 5.7 Audit
 
-Each month the Customer audits a random 5% of closed tickets or work orders (minimum 10) end to end against raw telemetry, badge, and inventory records. Audit findings count toward CSL-11.
+Each month the Customer audits a random 5% of closed tickets or work orders (minimum 10) end to end against raw telemetry, badge, and inventory records. Audit findings count toward CSL-11. The Customer draws the sample after the month closes and publishes the seed with the result, so the sample can be reproduced and cannot be predicted. The audit also inspects the work in place against the Customer's workmanship checklist (serials, chain of custody, labels, cable dressing, liquid fittings, maintenance tags, MOP sign-off, and the work area); a sampled record passes when every item that applies to it passes. The workmanship pass rate is reported each month against a target of 95%. It carries no service credit; each failed item opens a corrective action under the corrective action plan requirements.
 
 ### 5.8 Records access
 

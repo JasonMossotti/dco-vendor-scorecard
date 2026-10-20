@@ -401,6 +401,8 @@ families:
      text: "The Landlord's impairment log entry for a time all or part of a fire alarm, detection, or suppression system was out of service: why, the window, the restoration, and the fire watch (Interface Agreement section 12). The fire panel's history is the evidence."}
   - {key: FPN, label: "FPN-####", pattern: 'FPN-\d{4}', type: record, title: Impairment notice, example: FPN-0006, see: "telemetry/#fire",
      text: "A fire protection impairment notice as the Customer received it: before planned work, on an unplanned impairment, for an extension, or on restoration (FPI-1, FPI-2, FPI-4, FPI-5)."}
+  - {key: QA-N, label: "QA-#", pattern: 'QA-\d{1,2}', type: record, title: Quality audit finding, example: QA-1, see: "app/#audit",
+     text: "A finding of the Customer's monthly quality audit: on a record drawn in the random sample, the work in place and the records do not reconcile (a failed part on the RMA cage shelf after the ledger shipped it, a cable label naming a different tray, a maintenance tag older than its maintenance record) or the inspector saw work not done to standard. Each opens a corrective action."}
   - {key: FLS-N, label: "FLS-#", pattern: 'FLS-\d{1,2}', type: record, title: Fire protection finding, example: FLS-1, see: "telemetry/#fire",
      text: "A finding of the daily reconciliation of the Landlord's impairment log with the fire panel's history: an impairment logged restored while the panel shows it out of service, or protection out of service with no impairment logged."}
   - {key: PDM, label: "PDM-####", pattern: 'PDM-\d{4}', type: record, title: Predictive maintenance work request, example: PDM-0001, see: "patterns/#predict",

@@ -45,6 +45,7 @@ PLACES = {
     "reports/security_discrepancy_report.md": ("Scorecards", "app/"),
     "reports/attribution_report.md": ("Scorecards", "app/"),
     "reports/site_summary.md": ("Scorecards", "app/"),
+    "reports/quality_audit.md": ("Scorecards", "app/#audit"),
     "reports/change_alarms.md": ("Alarm Board", "alarms/"),
     "reports/failure_patterns.md": ("Failure Patterns", "patterns/"),
     "reports/pue_report.md": ("Energy", "energy/"),

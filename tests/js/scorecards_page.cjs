@@ -14,7 +14,8 @@ const shown = sel => [...d.querySelectorAll(sel)].filter(x => !x.hidden);
 
 ok(errors.length === 0, "no script errors " + errors.join(";"));
 ok(!html.includes("stlite.js") && d.querySelector('a[href="lab/"]'), "no Python runtime on this page; Try another month links to the lab");
-ok(d.querySelectorAll("#views button").length === 5 && d.querySelector("#views button.on").dataset.view === "site", "five views, opening on the site summary");
+ok(d.querySelectorAll("#views button").length === 6 && d.querySelector("#views button.on").dataset.view === "site", "six views, opening on the site summary");
+ok(t().includes("Quality audit: the Customer walked down 20 closed records") && d.querySelector('#doc a[href="#audit"]'), "the site summary points to the quality audit");
 ok(t().includes("three partners, one set of records") && d.querySelectorAll(".card").length === 3, "the site summary with a card per partner");
 ok(t().includes("$307,176"), "the three partners' credits added up ($188,700 + $106,200 + $12,276)");
 ok(t().includes("Rack A07 went dark for 3.4 hours") && d.querySelector("#doc b"), "the crossing outage, in bold where the app had it");
@@ -90,6 +91,41 @@ change(d.getElementById("cp"), "landlord");
 ok(d.getElementById("cpay").textContent === "$106,200" && d.querySelectorAll("#ct tbody tr").length === D.terms.landlord.csl.length, "switch partner: the Landlord's service levels and this month's credit");
 nav("#credits/security");
 ok(d.getElementById("cp").value === "security" && d.getElementById("cpay").textContent === "$12,276", "deep link to one partner's credits");
+
+nav("#audit");
+const A = S.audit;
+ok(d.querySelector("#views button.on").dataset.view === "audit" && t().includes("Quality audit") && d.querySelectorAll(".subtabs a").length === 4, "Quality audit view, four sections");
+ok(t().includes("7 of 10") && t().includes("9 of 10") && t().includes("target 95%") && d.querySelectorAll(".tile.bad").length === 3, "workmanship by partner against the contract's target, both missed, and the findings tile");
+ok(d.querySelectorAll('#doc a[href^="#audit/findings/QA-"]').length === 4 && t().includes("CSL-06") && t().includes("KM-18"), "the four findings and the engine's quality measures");
+ok(t().includes("does not count them again") && t().includes("monthly service review"), "engine findings are not counted twice; actions go to the monthly review");
+
+nav("#audit/sample");
+ok(shown("#qlist details").length === 20 && d.getElementById("qcount").textContent === "20 of 20 records", "every sampled record");
+change(d.getElementById("qr"), "failed");
+ok(shown("#qlist details").length === 4 && shown("#qlist details").every(x => x.dataset.res === "failed"), "filter to the records that failed workmanship");
+change(d.getElementById("qr"), "");
+change(d.getElementById("qp"), "landlord");
+ok(shown("#qlist details").length === 10 && shown("#qlist details").every(x => x.dataset.partner === "landlord"), "filter by partner");
+change(d.getElementById("qp"), "");
+const qq = d.getElementById("qq");
+qq.value = "PUYJNR5UBT"; qq.dispatchEvent(new w.Event("input"));
+ok(shown("#qlist details").length === 1, "search by serial");
+qq.value = ""; qq.dispatchEvent(new w.Event("input"));
+
+const fail = A.findings.find(f => f.kind === "custody");
+nav("#audit/sample/" + fail.record);
+const rec = d.getElementById("qa-" + fail.record);
+ok(rec.open && rec.querySelectorAll(".qa-items tbody tr").length === A.records.find(x => x.id === fail.record).items.length, "a record's deep link opens its checklist");
+ok(rec.querySelector("tr.default .flag.bad") && rec.textContent.includes("RMA cage shelf") && rec.querySelectorAll(".qa-ev li").length >= 3, "the failed item, and the trail through the Customer's systems");
+const withEng = A.records.find(x => x.engine.length);
+nav("#audit/sample/" + withEng.id);
+ok(d.querySelector(`#qa-${withEng.id} a[href="#${withEng.partner}/findings/${withEng.engine[0].id}"]`), "an engine finding on a sampled record links to that scorecard's finding");
+
+nav("#audit/findings/QA-4");
+ok(d.getElementById("qf-QA-4").open && t().includes("Corrective action") && t().includes("not by itself proof of intent"), "a finding's deep link, its action, and the framing");
+
+nav("#audit/how");
+ok(t().includes(`--sample ${A.seed}`) && t().includes("publishes") && d.querySelectorAll("table").length === 3, "how the sample is drawn, both checklists, and the agreements");
 
 nav("#it/levels");
 ok(d.querySelector('a[href="#credits/it"]'), "each scorecard links to how its credits are worked out");
