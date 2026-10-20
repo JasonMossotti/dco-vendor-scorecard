@@ -20,6 +20,7 @@ data/*
 !data/assets/
 !data/fire/
 !data/predict/
+!data/live/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/
