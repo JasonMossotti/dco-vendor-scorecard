@@ -418,7 +418,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Storage and storage fabric telemetry | 4 of 4 planted, 928,339 of 928,339 cases | 240 of 240, 0 false positives; 55,697,867 of 55,697,867 cases |
 | Site health agreement with each section's hourly figures | 162,730 of 162,730 cases | 9,762,844 of 9,762,844 cases on 60 generated months |
 | Utility mains and ride-through agreement with the records | 496,451 of 496,451 cases | 29,785,596 of 29,785,596 cases on 60 generated months |
-| Live page equals Site health hour by hour | 48,720 of 48,720 cases | LIVE_ROBUST |
+| Live page equals Site health hour by hour | 48,720 of 48,720 cases | 2,923,200 of 2,923,200 |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Hall C readiness record checks | 4 of 4 | 240 of 240, 0 false positives |
