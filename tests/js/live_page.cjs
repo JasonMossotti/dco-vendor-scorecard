@@ -1,5 +1,7 @@
 // node tests/js/live_page.cjs <site>/live
-// <site>/live is the folder scripts/render_live.py write_site() wrote: index.html plus data/index.json and data/day_NN.json.
+// <site>/live is the folder scripts/render_live.py write_site() wrote: index.html plus data/index.json, data/day_NN.json,
+// and data/now_sample.json. tests/test_live_status.py adds data/now_collector.json (written by the collector's NowWriter
+// from in-process simulators) and data/now_stale.json (the same, an hour old).
 const { JSDOM, VirtualConsole } = require("jsdom");
 const fs = require("fs");
 const path = require("path");
@@ -22,8 +24,8 @@ async function until(fn, what, ms = 8000) {
   console.log("timed out waiting for", what);
   return false;
 }
-const open = hash => new JSDOM(html, {
-  runScripts: "dangerously", url: "https://example.test/live/" + (hash ? "#" + hash : ""),
+const open = (hash, query) => new JSDOM(html, {
+  runScripts: "dangerously", url: "https://example.test/live/" + (query ? "?" + query : "") + (hash ? "#" + hash : ""),
   virtualConsole: new VirtualConsole().on("jsdomError", e => errors.push(String(e && e.stack || e))),
   beforeParse(window) { window.fetch = fakeFetch; },
 });
@@ -99,4 +101,54 @@ const open = hash => new JSDOM(html, {
   ok([...d.querySelectorAll('a[href^="../tickets/#"]')].every(a => a.target === "_blank" && a.rel === "noopener"), "ticket links open the Incident Portal in a new tab");
   ok(errors.length === 0, "no script errors " + errors.join(";"));
   w.close();
+
+  // ---- the feed contract: the sample minute replayed as now.json reads exactly as the clock at that minute
+  const sample = JSON.parse(fs.readFileSync(path.join(dir, "data", "now_sample.json"), "utf8"));
+  const clock = open(String(sample.source.minute)), cd = clock.window.document, c$ = id => cd.getElementById(id);
+  await until(() => !c$("lv-mains").textContent.includes("Loading"), "the clock at the sample minute");
+  const feed = open("", "feed=data/now_sample.json"), fd = feed.window.document, f$ = id => fd.getElementById(id);
+  await until(() => f$("lv-mains").querySelector("table"), "the sample feed");
+  ok(f$("badge").textContent.includes("FEED") && f$("badge").textContent.includes(String(sample.source.minute)) && !f$("pause"), "?feed= reads the file, with no clock controls");
+  for (const id of ["lv-src", "lv-mains", "lv-ups", "lv-gen"]) ok(f$(id).innerHTML === c$(id).innerHTML, `feed and clock agree: ${id}`);
+  const cards = x => [...x.querySelectorAll("#lv-ride .rt")].map(e => e.outerHTML).join("");
+  ok(cards(fd) && cards(fd) === cards(cd), "feed and clock agree: every ride-through card");
+  const famState = x => [...x.querySelectorAll("#lv-fam .fam")].filter(e => e.dataset.fam !== "fire" && e.dataset.fam !== "security").map(e => e.dataset.fam + ":" + e.className).join(",");
+  ok(famState(fd) === famState(cd), "feed and clock agree: every family's state " + famState(fd));
+  const chips = x => [...x.querySelectorAll("#lv-red a.chip")].map(a => a.className + a.textContent).join("|");
+  ok(chips(fd) === chips(cd), "feed and clock agree: every redundancy chip");
+  ok(f$("site").textContent === c$("site").textContent, "feed and clock agree: the site's state");
+  ok(!f$("lv-stale").textContent, "a replay is never stale");
+  clock.window.close(); feed.window.close();
+
+  // ---- a collector's file (tests/test_live_status.py writes it from the simulators)
+  if (fs.existsSync(path.join(dir, "data", "now_collector.json"))) {
+    const cdoc = JSON.parse(fs.readFileSync(path.join(dir, "data", "now_collector.json"), "utf8"));
+    const col = open("", "feed=data/now_collector.json"), kd = col.window.document, k$ = id => kd.getElementById(id);
+    await until(() => k$("lv-mains").querySelector("table"), "the collector's feed");
+    ok(k$("badge").textContent.includes("collector"), "a collector's feed is named");
+    ok([...kd.querySelectorAll("#lv-mains tbody tr")].length === Object.keys(cdoc.mains).length, "one row per main in the feed");
+    ok([...kd.querySelectorAll("#lv-ups tbody tr")].length === Object.keys(cdoc.ups).length, "one row per UPS in the feed, none for the rest");
+    ok(kd.querySelector('#lv-mains a[href="../telemetry/#MV-A"]'), "a collector's devices link without a minute");
+    ok(/^\d+:\d\d$/.test(kd.querySelector("#lv-ride .rt .v").textContent), "ride-through from the collector in min:sec");
+    ok(kd.querySelector('#lv-fam .fam[data-fam="gpu"]').textContent.includes("not in this feed"), "a family with no device in the feed says so");
+    const bad = cdoc.feeds.filter(f => !f.ok);
+    ok(bad.length && k$("lv-feeds").textContent.includes(bad[0].site_id || bad[0].device) && k$("lv-feeds").querySelector(".tag.bad"), "a device not answering is listed under Feeds");
+    ok(!k$("lv-stale").textContent, "a fresh collector file is not stale");
+    ok(k$("lv-red").textContent.includes("Not in this feed"), "redundancy says it is not in a collector's feed");
+    ok(!/[<>]/.test([...kd.querySelectorAll("#lv-fam li")].map(x => x.textContent).join("")), "feed condition text is escaped");
+    col.window.close();
+    const st = open("", "feed=data/now_stale.json"), sd = st.window.document;
+    await until(() => sd.getElementById("lv-mains").querySelector("table"), "the stale feed");
+    ok(sd.getElementById("lv-stale").textContent.includes("Feed stale"), "a collector file past stale_after_s carries the stale banner");
+    st.window.close();
+    const no = open("", "feed=data/missing.json"), nd = no.window.document;
+    await until(() => nd.getElementById("lv-stale").textContent.includes("did not answer"), "the missing feed");
+    ok(nd.getElementById("lv-stale").textContent.includes("did not answer"), "a feed that does not answer says so");
+    no.window.close();
+    const bs = open("", "feed=https://evil.test/now.json"), bd = bs.window.document;
+    ok(bd.getElementById("pause"), "a feed URL off this site is ignored (the clock runs)");
+    bs.window.close();
+  }
+  ok(errors.length === 0, "no script errors in feed mode " + errors.join(";"));
+  process.exit();
 })();

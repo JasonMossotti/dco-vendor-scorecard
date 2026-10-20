@@ -302,6 +302,7 @@ One page for the whole site now, minute by minute, on a simulated live feed: the
 - **UPS ride-through if the utility failed now**, in minutes and seconds: the shortest runtime among the UPSs carrying load, for the IT load, the cooling (mechanical UPSs), and each hall, with the UPS that sets it, against the 12 seconds the generators took on Sep 24 (NFPA 110 Type 10's 10 s shown as a design reference). Around 9:20 to 9:50 for the IT load at the trip, so a margin of over 9 minutes.
 - **A tile per device family** (GPUs with a map of every rack, CDUs, Power, Network East-West and North-South, Mechanical, Management network, Storage, Fire protection, Security) with its state and the conditions behind it now, each linking into its Telemetry page at the same minute; the redundancy of all 28 systems at this minute; and the alarms active and trouble tickets open now.
 - Every Telemetry family page gets a **live strip** at the top: that family's state and conditions now, on the same clock, with a link to the Live page.
+- **Ready for a real feed.** Given `?feed=now.json`, the page shows the site now from the file the read-only collector writes every poll, instead of the clock, with a red banner when the file is older than its staleness limit and a Feeds table of every device and whether it answers. The contract is [`docs/live/NOW_SCHEMA.md`](docs/live/NOW_SCHEMA.md) (JSON Schema). The demo's [feed replays the minute after the Sep 24 trip](https://jasonmossotti.github.io/dco-vendor-scorecard/live/?feed=data/now_sample.json), and a test proves it reads exactly as the clock shows that minute.
 
 It generates nothing and judges nothing. States are Site health's, each condition held for the minutes it lasts: one read from a recorded state change (a breaker, a UPS on bypass, a pump, a fan, a switch, a storage node) holds for its exact minutes, one read from an hourly row for its whole hour. The worst minute of every hour equals Site health's state for that hour, for every family and every redundancy group (14,784 of 14,784 family-hours and 18,816 of 18,816 group-hours on the sample), and the day files carry the published utility and ride-through minutes unchanged. `scripts/render_live.py`, `src/scorecard/live_status.py`, `config/live.yaml`.
 
@@ -453,14 +454,15 @@ python scripts/render_audit.py --robustness 60 --jobs 4
 
 `scripts/collect.py` reads real facility equipment and writes the same files the synthetic generator writes, so the engines, scorecards, and pages run on live data without changes.
 
-- **Four protocols:** Redfish (CDUs, DMTF `ThermalEquipment`), Modbus TCP (generator controllers, busway monitors, leak controllers), SNMPv3 with authentication and AES privacy (UPS management cards), and BACnet/IP (BMS points, with overrides read from the priority array).
+- **Four protocols:** Redfish (CDUs, DMTF `ThermalEquipment`), Modbus TCP (generator controllers, busway monitors, leak controllers, the utility mains' meters), SNMPv3 with authentication and AES privacy (UPS management cards, with battery runtime and charge), and BACnet/IP (BMS points, with overrides read from the priority array).
+- **The Live page's feed:** `scripts/collect.py --now` also writes `now.json` every poll (`src/scorecard/live/now.py`): the mains, every UPS, the ride-through, the generators, the conditions it can see, and which devices answer. A test runs the collector against the simulators, checks the file against the schema, and renders it on the Live page.
 - **Read-only by construction:** only Redfish GET and Modbus read requests (function codes 3 and 4). A test scans the collector's code and fails on any write-capable call, and the simulators record every request to prove it.
 - **Tested against device simulators** in CI (a Redfish server, pymodbus, a pysnmp SNMPv3 agent, a bacpypes3 BACnet device), including end-to-end runs of a CDU pump failure and a BMS override into the unchanged Landlord engine. [`docs/LIVE_READINESS.md`](docs/LIVE_READINESS.md) lists what is proven and what a real deployment still needs.
 - Credentials stay in named environment variables, and a device that stops answering becomes a measured feed gap, not a silent one.
 
 ## Tests and deployment
 
-- **776 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **781 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -557,7 +559,7 @@ scripts/run_landlord.py          Landlord engine -> Landlord and attribution rep
 scripts/run_security.py          Security Partner engine -> Security reports
 scripts/build_scorecard.py       Scorecard -> reports/
 scripts/build_site.py            The static GitHub Pages site
-scripts/collect.py               Read-only live collector
+scripts/collect.py               Read-only live collector (--now writes the Live page's feed, docs/live/NOW_SCHEMA.md)
 docs/                            Generated contracts, drawings, reviews, packs, glossary; guides
 data/                            Committed synthetic sample and every layer derived from it (see docs/DATA_MODEL.md)
 reports/                         Generated scorecards, findings, and reviews (Markdown and JSON)

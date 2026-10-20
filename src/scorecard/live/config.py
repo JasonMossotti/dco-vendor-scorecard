@@ -15,7 +15,7 @@ from typing import Any
 import yaml
 
 PROTOCOLS = {"redfish", "modbus", "snmp", "bacnet"}
-KINDS = {"cdu", "generator", "busway", "leak", "ups", "bms"}
+KINDS = {"cdu", "generator", "busway", "leak", "ups", "bms", "mains"}
 
 
 class ConfigError(ValueError):

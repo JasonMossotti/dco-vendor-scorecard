@@ -7,6 +7,9 @@ What it would take to run this project against real equipment at a partner-opera
 ```
 devices (read-only) ──► collector (scripts/collect.py) ──► dataset folder ──► engines, scorecards, reports, app
                           src/scorecard/live/                (docs/DATA_MODEL.md)   (unchanged)
+                                   │
+                                   └──► now.json every poll ──► Live page (/live/?feed=now.json)
+                                        (docs/live/NOW_SCHEMA.md)
 ```
 
 The dataset contract in `docs/DATA_MODEL.md` has two producers: the synthetic generator and the live collector. Everything downstream reads the contract, so nothing downstream changes when the source does.
@@ -16,11 +19,46 @@ The dataset contract in `docs/DATA_MODEL.md` has two producers: the synthetic ge
 | Protocol | Equipment | Reads | Simulator in the tests |
 |---|---|---|---|
 | Redfish (HTTPS GET) | CDUs (DMTF `ThermalEquipment/CDUs`) | Pump health and state, `PumpRedundancy`, secondary connector temperature, flow, pressure | Local HTTP server with basic authentication |
-| Modbus TCP (function codes 3, 4) | Generator controllers, busway monitors, leak controllers | Engine state, kW; voltage and tap-off breakers; leak alarm and distance | pymodbus `SimDevice`, whose hook logs every function code |
-| SNMPv3 authPriv (GET) | UPS network management cards | PowerNet MIB `upsBasicOutputStatus` | pysnmp agent with a read-only USM user and a custom MIB controller that logs every operation |
+| Modbus TCP (function codes 3, 4) | Generator controllers, busway monitors, leak controllers, utility main meters | Engine state, kW, fuel; voltage and tap-off breakers; leak alarm and distance; each main's voltage, current, kW, PF, frequency, breaker | pymodbus `SimDevice`, whose hook logs every function code |
+| SNMPv3 authPriv (GET) | UPS network management cards | PowerNet MIB `upsBasicOutputStatus`, `upsAdvBatteryRunTimeRemaining`, `upsAdvBatteryCapacity` | pysnmp agent with a read-only USM user and a custom MIB controller that logs every operation |
 | BACnet/IP (ReadProperty) | BMS points | Present value, priority array (overrides in manual slots), out-of-service | bacpypes3 device with a commandable object |
 
 Library versions were checked on PyPI in October 2026 and are pinned in `requirements-live.txt`.
+
+## The Live page
+
+The Live tab replays the sample month on a clock. Given a feed (`/live/?feed=now.json`), it shows the site now from the
+file the collector writes every poll (`scripts/collect.py --now`, `src/scorecard/live/now.py`), in the contract in
+`docs/live/NOW_SCHEMA.md` (JSON Schema `docs/live/now.schema.json`). The demo's feed replays the minute after the 09-24
+trip from the sample month (`/live/?feed=data/now_sample.json`), and a browser test proves the page reads it exactly
+as the clock shows that minute. Another test runs the collector against the simulators, writes the file, checks it
+against the schema, and renders it, including a device that does not answer and a file past its staleness limit.
+
+| Live page part | Source | Protocol | Adapter | Status |
+|---|---|---|---|---|
+| Utility mains (kV, A, kW, PF, Hz, breaker, last hour) | Revenue meter on each 13.8 kV main (PowerLogic ION9000), or the Landlord's PME | Modbus TCP read | `mains` | Built and tested; register addresses are placeholders (the ION9000 map is an attachment to Schneider FAQ FA362601 that could not be opened from here) |
+| UPS output, load, runtime, charge | Each UPS's network management card | SNMPv3 GET (PowerNet MIB) | `ups` with `battery: true` | Built and tested; `load_oid` to be verified against the card's MIB revision |
+| Ride-through (IT, cooling, per hall) and margin | Computed from the UPS runtimes; take-load time from the config | None | `NowWriter` | Built and tested |
+| Generators (state, kW, fuel, breaker) | EMCP 4.4 controllers | Modbus TCP read | `generator` | Built and tested; fuel and breaker points optional, addresses placeholders |
+| Busway | Busway monitors | Modbus TCP read | `busway` | Read for out-of-tolerance and open tap-offs (conditions); the hourly peak tile is not in the feed |
+| CDUs and leaks | CDU Redfish services, leak controllers | Redfish GET, Modbus read | `cdu`, `leak` | Built and tested (conditions) |
+| Mechanical | BMS server | BACnet ReadProperty | `bms` | Built and tested (overrides and out-of-service as conditions); temperatures and chillers not in the feed |
+| GPUs, network, management network, storage | DCGM exporter, fabric manager, BMCs, storage nodes | HTTP, Redfish, SNMP | None | Not in the feed: the tiles say "not in this feed" |
+| Redundancy chips | Site health's group rules | None | None | Not in a collector's feed (a replay carries them) |
+| Alarm Board and Incident Portal | The alarm system, the partners' records APIs | Read-only APIs | None | Not in the feed |
+
+What a deployment of the Live page still needs, beyond the steps listed below for the collector:
+
+- **A small web server** on the monitoring network that serves the built Live page and the collector's file from the same
+  site (the page refuses a feed from another site). A file share behind a static server is enough; the page holds no
+  credentials and the file holds no secrets.
+- **Refresh and staleness:** the page re-reads the file every `poll_interval_s` (60 s by default, clamped to 5 to 60 s)
+  and marks it stale past `stale_after_s` (three polls by default). Alerting on a stale feed belongs in the site's
+  monitoring, not the page.
+- **Site acceptance:** confirm each tile against the device it reads during the same tests as the collector (a planned
+  UPS bypass, a generator test, a leak cable test, and a utility transfer if one is scheduled).
+- **The rest of the page:** Site health's states and redundancy for every family need the other layers' live feeds
+  (the table further down) and a small service that runs `site_health.py` on them; until then those tiles say so.
 
 ## Safety properties, and how each is proven
 

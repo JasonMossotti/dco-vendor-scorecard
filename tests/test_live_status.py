@@ -87,6 +87,26 @@ def test_network_conditions_name_a_direction(built):
             assert c["dir"] in ("ew", "ns")
 
 
+def test_the_sample_feed_satisfies_the_contract(built):
+    """data/now_sample.json is the minute after the trip in the feed contract, with the day files' values."""
+    from scorecard.live.now import validate
+    from scorecard.telemetry_power import unpack
+    idx, days, _ = built
+    m = LS.sample_minute(idx)
+    doc = LS.now_doc(idx, days, m)
+    validate(doc)
+    d = days[m // 1440]
+    i = m - d["from"]
+    assert doc["source"] == {"kind": "replay", "poll_interval_s": 60, "minute": m, "note": doc["source"]["note"]}
+    assert all(x["v_ll"] == 0 and x["breaker"] == "open" for x in doc["mains"].values()), "the minute after the trip: both mains dead"
+    assert doc["ups"]["UPS-A1"]["runtime_s"] == unpack(d["ups"]["UPS-A1"]["rt"])[i]
+    assert len(doc["mains"]["MV-A"]["kw_last_hour"]) == idx["history_min"]
+    assert next(g for g in doc["groups"] if g["key"] == "utility")["state"] == "lost"
+    assert doc["conditions"][0]["text"].startswith("Utility feeds: 0 of 2, site on generators")
+    man = json.loads((ROOT / "data" / "live" / "manifest.json").read_text(encoding="utf-8"))
+    assert "now_sample.json" in man["files"]
+
+
 def test_live_tab_is_on_every_page():
     from scorecard import sitenav
     assert ("live", "Live", "live/") in sitenav.TABS
