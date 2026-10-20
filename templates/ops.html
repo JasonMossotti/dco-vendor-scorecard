@@ -101,6 +101,8 @@ const isFwd = d => IDX[d] >= C.past_days;
 const inFreeze = d => d >= C.freeze[0] && d <= C.freeze[1];
 const jobDays = j => { const a = lday(j.start), b = lday(new Date(Date.parse(j.end) - 1000).toISOString()); return a === b ? [a] : [a, b]; };
 const FILT = {source: "all", owner: "all", hall: "all", reduce: false, items: true};
+const OPTS = {source: [["all", "All"], ...Object.entries(C.sources)], owner: [["all", "All"], ["IT Partner", "IT Partner"], ["Landlord", "Landlord"]],
+  hall: [["all", "All"], ["HALL-A", "Hall A"], ["HALL-B", "Hall B"], ["site", "Site-wide"]]};
 
 function jobLink(id) { return `<a class="job" href="#calendar/job/${esc(id)}">${esc(id)}</a>`; }
 function findLink(id) { return `<a class="fnd" href="#calendar/finding/${esc(id)}">${esc(id)}</a>`; }
@@ -130,7 +132,7 @@ function viewCalendar(sel) {
     const cls = ["day", isFwd(d) ? "fwd" : "", inFreeze(d) ? "freeze" : "", d === C.as_of ? "asof" : "", d === sel ? "sel" : ""].join(" ");
     const dt = new Date(d + "T12:00:00Z");
     const label = dt.getUTCDate() === 1 || d === C.days[0] ? `${MON[dt.getUTCMonth()]} ${dt.getUTCDate()}` : String(dt.getUTCDate());
-    cells += `<div class="${cls}" data-day="${esc(d)}" title="${esc(md(d))}${C.surge[d] ? " · surge day, " + C.surge[d] + " Hall B energizations" : ""}${inFreeze(d) ? " · first-compute freeze" : ""}">
+    cells += `<div class="${esc(cls)}" data-day="${esc(d)}" title="${esc(md(d))}${C.surge[d] ? " · surge day, " + esc(C.surge[d]) + " Hall B energizations" : ""}${inFreeze(d) ? " · first-compute freeze" : ""}">
       <div class="dn"><span>${esc(label)}</span>${C.surge[d] ? `<span class="sg">Surge ${esc(C.surge[d])}</span>` : ""}</div>
       ${js.slice(0, 5).map(j => `<span class="chip ${ownCls(j.owner)} ${j.findings.length ? "red" : ""} ${j.status === "deferred" ? "off" : ""} ${j.takes === "none" ? "dn" : ""}" title="${esc(j.id + ": " + j.title)}">${esc(j.id)}</span>`).join("")}
       ${js.length > 5 ? `<span class="chip items">+${esc(js.length - 5)} more</span>` : ""}
@@ -148,9 +150,9 @@ function viewCalendar(sel) {
     <div class="tile"><div class="k">First-compute freeze</div><div class="v">${esc(md(C.freeze[0]))} to ${esc(md(C.freeze[1]))}</div><div class="s">${esc(C.freeze_days)} days, site-wide groups and Hall C</div></div>
   </div>
   <div class="filters">
-    <label>Source ${opt("source", [["all", "All"], ...Object.entries(C.sources)])}</label>
-    <label>Owner ${opt("owner", [["all", "All"], ["IT Partner", "IT Partner"], ["Landlord", "Landlord"]])}</label>
-    <label>Where ${opt("hall", [["all", "All"], ["HALL-A", "Hall A"], ["HALL-B", "Hall B"], ["site", "Site-wide"]])}</label>
+    <label>Source ${opt("source", OPTS.source)}</label>
+    <label>Owner ${opt("owner", OPTS.owner)}</label>
+    <label>Where ${opt("hall", OPTS.hall)}</label>
     <label><input type="checkbox" data-f="reduce"${FILT.reduce ? " checked" : ""}> Only jobs that take a unit out</label>
     <label><input type="checkbox" data-f="items"${FILT.items ? " checked" : ""}> Hall B milestones and Hall C scripts</label>
   </div>
@@ -249,9 +251,15 @@ function route() {
 
 function wire() {
   document.querySelectorAll("#cal .day").forEach(el => el.addEventListener("click", () => { location.hash = "calendar/" + el.dataset.day; }));
-  document.querySelectorAll("[data-f]").forEach(el => el.addEventListener("change", () => {
-    FILT[el.dataset.f] = el.type === "checkbox" ? el.checked : el.value; route();
-  }));
+  // Each filter keeps a value from its own option list (never the control's text), so nothing typed reaches the page.
+  for (const k of Object.keys(FILT)) {
+    const el = document.querySelector(`[data-f="${k}"]`);
+    if (!el) continue;
+    el.addEventListener("change", () => {
+      FILT[k] = OPTS[k] ? (OPTS[k].find(([v]) => v === el.value) || OPTS[k][0])[0] : !!el.checked;
+      route();
+    });
+  }
   document.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", () => { location.hash = "calendar"; }));
 }
 
