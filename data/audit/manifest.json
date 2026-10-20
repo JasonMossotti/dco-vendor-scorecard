@@ -1,0 +1,15 @@
+{
+ "disclaimer": "Synthetic quality audit sample, walk-down readings, and RMA cage scan for a portfolio demonstration. All records are fictional.",
+ "files": {
+  "rma_cage_scan.csv": 11,
+  "sample.json": 20,
+  "walkdown.csv": 50
+ },
+ "source": "data/sample",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "seed": 2026,
+  "start": "2026-08-31T00:00:00Z",
+  "weeks": 4
+ }
+}

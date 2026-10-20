@@ -1,0 +1,68 @@
+# Quality audit: the Customer's monthly audit of a random sample of closed records (data/audit/, own random
+# stream "<seed>:audit"). Read by src/scorecard/synthetic/audit.py (generation) and src/scorecard/audit.py (checks).
+# The sample rule (5%, at least 10) and the workmanship target are the contract's (sla/common.yaml, audit); the
+# checks read them from there.
+
+# When the sample is drawn and walked down: the day after the month closes, in working hours (Central time).
+drawn_hours_after_close: [13, 13.75]    # the morning after the last day, 8 to 8:45 a.m. CDT
+walkdown_days: 4                        # the walk-downs run that day and the next three
+walkdown_utc_hours: [14, 22]            # 9 a.m. to 5 p.m. CDT; the RMA cage is scanned before the first one
+
+# The checklist. Each item says which records it applies to; "check" names how the item is judged:
+#   serial  : the serial read at the location, against the ticket and the BMC inventory
+#   custody : the failed part, against the RMA ledger and the RMA cage scan
+#   label   : the cable label at the replaced part, against the ticket's location
+#   pm_tag  : the maintenance tag on the asset, against the PM record's completion date
+#   nameplate: the serial on a replaced facility part's nameplate, against the work order
+#   observe : an inspector's observation, pass or fail with a note
+checklist:
+  it:
+    - {key: serial, title: "Serial at the location matches the ticket and the BMC inventory", check: serial,
+       applies: "a tracked part (compute tray, NVLink switch tray, PSU, power shelf) was replaced"}
+    - {key: custody, title: "Failed part in chain of custody (shipped to the OEM, or in the RMA cage)", check: custody,
+       applies: "a part was removed"}
+    - {key: label, title: "Cable label at the replaced optic names the ticket's link (tray and switch port)", check: label,
+       applies: "an optic was replaced"}
+    - {key: dressing, title: "Cable dressing: bend radius kept, no strain on the optic, routed in the manager", check: observe,
+       applies: "an optic was replaced"}
+    - {key: qd, title: "Quick-disconnects: witness marks present, fittings dry, drip tray clean", check: observe,
+       applies: "a compute tray, NVLink switch tray, or manifold part was replaced (a wet-mate)"}
+    - {key: site, title: "Work area: blanking panels in place, no tools or packaging left, ESD practice kept", check: observe,
+       applies: "every record"}
+  landlord:
+    - {key: pm_tag, title: "Maintenance tag on the asset carries the maintenance record's completion date", check: pm_tag,
+       applies: "a preventive maintenance task"}
+    - {key: nameplate, title: "Nameplate serial of the replaced part matches the work order", check: nameplate,
+       applies: "a work order that records a part installed"}
+    - {key: mop, title: "MOP on file with every step initialed and the sign-off", check: observe,
+       applies: "a work order under a MOP"}
+    - {key: site, title: "Work area: panels closed, covers refitted, no tools or debris left", check: observe,
+       applies: "every record"}
+
+# Notes an inspector writes when an observation passes (one is picked per item)
+pass_notes:
+  dressing: ["Bend radius kept; routed in the manager.", "Dressed and strapped; no strain on the optic."]
+  qd: ["Witness marks on every fitting; dry.", "Marks present; fittings and drip tray dry."]
+  site: ["Clean; blanking in place.", "No tools or packaging left; blanking in place.", "Area clean."]
+  mop: ["MOP on file, every step initialed and signed off.", "Initialed throughout; sign-off present."]
+
+# Each finding opens a corrective action under the contract's CAP rules (sla/common.yaml, cap_requirements).
+action_due_business_days: 10
+actions:
+  custody: "Reconcile the RMA ledger with the cage by serial; ship or correct the record; add a cage scan to the shipment step."
+  label: "Relabel to the cabling standard; audit the labels of the other optics that technician's shift replaced this month."
+  qd: "Re-torque and witness-mark the fittings under a leak check; add the witness-mark photo to the tray swap checklist."
+  pm_tag: "Explain the tag date with the work order and the technician's time record; retag, and re-perform the task if the record cannot be supported."
+  serial: "Reconcile the serial at the location with the ticket and the BMC inventory; correct the record."
+  nameplate: "Reconcile the nameplate serial with the work order and the OEM's delivery record; correct the record."
+  dressing: "Re-dress the cable to the cabling standard; brief the shift."
+  mop: "Recover the initialed MOP or record why it is missing; brief the engineers on the MOP sign-off rule."
+  site: "Clear the area and refit the blanking; brief the shift."
+
+# Planted defects (the answer key is written beside the data; the checks never read it). Each lands on a sampled
+# record the item applies to; a month whose sample holds no such record plants none of that kind.
+planted:
+  custody: 1        # the RMA ledger says shipped; the walk-down finds the part in the RMA cage
+  label: 1          # the label at the replaced optic names the next tray in the rack
+  qd: 1             # a wet-mate with no witness marks on its quick-disconnects
+  pm_tag: 1         # the maintenance tag carries an older date than the PM record says the task was done

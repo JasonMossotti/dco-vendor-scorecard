@@ -5,8 +5,8 @@ shipped dataset when the site is built, so the page opens without starting Pytho
 itself stays at ``/app/lab/`` for generating a new random month.
 
 ``build()`` returns plain JSON: the datasets (each with the IT Partner, Landlord, Security Partner, and site
-views) and the commercial terms of each contract, which the Service credits view explains and its calculator
-applies.
+views, and for the sample month the quality audit) and the commercial terms of each contract, which the Service
+credits view explains and its calculator applies.
 """
 
 from __future__ import annotations
@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from scorecard import app_support as A
+from scorecard import audit as AU
 from scorecard.sla_model import PARTNER_FILES, get_csl, load_sla
 
 ROOT = A.ROOT
@@ -146,10 +147,19 @@ def terms() -> dict[str, Any]:
     return out
 
 
+def audit_view(root: Path, data_dir: Path) -> dict[str, Any] | None:
+    """The month's quality audit (data/audit/), which the Customer walks down for the sample month only."""
+    a = root / "data" / "audit"
+    if not (a / "manifest.json").exists():
+        return None
+    return AU.page_data(AU.load(a, data_dir), data_dir)
+
+
 def build(root: Path = ROOT) -> dict[str, Any]:
     sets = []
     for label, d in A.available_datasets(root).items():
         key = "sample" if Path(d).name == "sample" else "latest"
         sets.append(dataset(label, key, Path(d)))
+        sets[-1]["audit"] = audit_view(root, Path(d)) if key == "sample" else None
     return {"datasets": sets, "terms": terms()}
 

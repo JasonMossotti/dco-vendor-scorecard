@@ -91,7 +91,7 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 
 ![IT Partner scorecard: vendor reported vs. measured from telemetry](docs/images/scorecards.png)
 
-**What it shows.** Five views: a **site summary** (a card per partner, the credits across all three contracts, the outage that crossed the demarcation, and what attribution changed), the **IT Partner**, **Landlord**, and **Security Partner** scorecards, and **Service credits**. Each scorecard shows service levels reported vs. measured, credits, the severity log, corrective action plans, every Ticket of Record, and every finding with its evidence, with filters, search, sortable tables, and a link to any finding (`#it/findings/F-001`). **Service credits** explains in plain words what a credit is, works out this month's credits for each partner step by step from the contract terms, and has a calculator for defaults, repeat months, and earnback. A dataset picker switches between the committed sample and the latest 4 weeks (regenerated every Monday by GitHub Actions); **Try another month** opens the Python version, which scores a brand-new month generated from any seed.
+**What it shows.** Six views: a **site summary** (a card per partner, the credits across all three contracts, the outage that crossed the demarcation, and what attribution changed), the **IT Partner**, **Landlord**, and **Security Partner** scorecards, **Service credits**, and the **Quality audit**. Each scorecard shows service levels reported vs. measured, credits, the severity log, corrective action plans, every Ticket of Record, and every finding with its evidence, with filters, search, sortable tables, and a link to any finding (`#it/findings/F-001`). **Service credits** explains in plain words what a credit is, works out this month's credits for each partner step by step from the contract terms, and has a calculator for defaults, repeat months, and earnback. A dataset picker switches between the committed sample and the latest 4 weeks (regenerated every Monday by GitHub Actions); **Try another month** opens the Python version, which scores a brand-new month generated from any seed.
 
 <img src="docs/images/finding.png" alt="A finding with its evidence: a repeat failure logged as a new ticket to restart the clock" width="860">
 
@@ -100,6 +100,8 @@ Every page is a static HTML file with its data embedded as JSON, so it loads ins
 <img src="docs/images/service-credits.png" alt="Service credits: what a credit is, then each partner's credits worked out step by step" width="860">
 
 *Service credits in plain words: what a credit is, then each partner's month worked out from the contract terms, with a calculator.*
+
+**Quality audit** (`/app/#audit`). The contract has the Customer audit a random 5% of each partner's closed records every month (at least 10). The view shows the month's sample, drawn after the close from a published seed (`python scripts/render_audit.py --sample <seed>` reproduces it), and each record's walk-down: the serial in the slot against the ticket and the BMC inventory, the failed part against the RMA ledger and the cage scan, the cable label, the liquid fittings, the maintenance tag against the PM record, and the work area. Beside the walk-down is the record's trail through the Customer's systems and any engine finding that already cites it. This month the IT Partner passed 7 of 10 and the Landlord 9 of 10 against a 95% target, with four findings (QA-1 to QA-4), each opening a corrective action. Workmanship carries no service credit; it is reported and corrected. Data in `data/audit/` (own random stream), checks in `src/scorecard/audit.py`, report `reports/quality_audit.md`.
 
 **How it works.**
 - The page is prebuilt like the other tabs: `scripts/render_scorecards.py` (`src/scorecard/scorecards_page.py`) runs the three engines on each shipped dataset when the site is built, so it opens at once. The commercial terms the Service credits view uses come from the SLA YAML.
@@ -444,6 +446,7 @@ python scripts/render_availability.py --robustness 60
 python scripts/render_assets.py --robustness 60 --jobs 4
 python scripts/render_fire.py --robustness 60 --jobs 4
 python scripts/render_predict.py --robustness 60
+python scripts/render_audit.py --robustness 60 --jobs 4
 ```
 
 ## Toward live data: the read-only collector
@@ -457,7 +460,7 @@ python scripts/render_predict.py --robustness 60
 
 ## Tests and deployment
 
-- **747 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **776 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -476,7 +479,8 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/generate_telemetry.py && python scripts/generate_energy.py && python scripts/render_energy.py \
   && python scripts/render_weekly.py && python scripts/generate_fire.py && python scripts/render_fire.py && python scripts/render_glossary.py \
   && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
-  && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py && python scripts/render_live.py
+  && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py && python scripts/render_live.py \
+  && python scripts/generate_audit.py && python scripts/render_audit.py
 pytest -q                                   # the full suite takes a while; pytest -q tests/test_hub.py runs one file
 python scripts/build_site.py --out _site    # the whole site; serve it with: python -m http.server -d _site
 streamlit run app/streamlit_app.py          # the "Try another month" app on its own
@@ -517,6 +521,7 @@ src/scorecard/telemetry*.py      Telemetry checks per section (GPU, CDU, power, 
 src/scorecard/site_health.py     Site health: redundancy against the design at any hour
 src/scorecard/live_status.py     Live: the whole site minute by minute, reconciled with Site health
 src/scorecard/fire.py            Fire protection impairments reconciled against the fire panel
+src/scorecard/audit.py           Monthly quality audit: the random sample, the walk-down, and the records check
 src/scorecard/assets.py          Asset register reconciled against the devices, ledger, RMA, custody, and certificates
 src/scorecard/readiness.py       Hall C readiness: commissioning, readiness gates, forecast, record checks
 src/scorecard/relations.py       Related-record suggestions, scored and explained

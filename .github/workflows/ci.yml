@@ -50,6 +50,8 @@ jobs:
         run: python scripts/render_assets.py --check
       - name: Fire protection report is current
         run: python scripts/render_fire.py --check
+      - name: Quality audit report is current
+        run: python scripts/render_audit.py --check
       - name: Glossary is current and explains every code
         run: python scripts/render_glossary.py --check
       - name: Install jsdom for the review page's browser test
