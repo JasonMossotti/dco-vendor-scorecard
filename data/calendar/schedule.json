@@ -1,0 +1,458 @@
+[
+ {
+  "id": "MOP-501",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B19 for a new rack (HO-4)",
+  "window_start": "2026-09-28T18:15:00Z",
+  "window_end": "2026-09-28T20:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-502",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B20 for a new rack (HO-4)",
+  "window_start": "2026-09-29T18:15:00Z",
+  "window_end": "2026-09-29T20:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-503",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B21 for a new rack (HO-4)",
+  "window_start": "2026-10-01T16:45:00Z",
+  "window_end": "2026-10-01T19:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "CHG2050001",
+  "owner": "IT Partner",
+  "title": "Compute tray firmware 1.3.7 -> 1.3.8 on rack A32",
+  "window_start": "2026-10-02T06:00:00Z",
+  "window_end": "2026-10-02T10:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-504",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B22 for a new rack (HO-4)",
+  "window_start": "2026-10-02T13:45:00Z",
+  "window_end": "2026-10-02T16:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1001",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-6",
+  "window_start": "2026-10-02T16:00:00Z",
+  "window_end": "2026-10-02T16:40:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1002",
+  "owner": "Landlord",
+  "title": "Infrared thermography under load: Hall B electrical room",
+  "window_start": "2026-10-02T17:00:00Z",
+  "window_end": "2026-10-02T19:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-505",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B23 for a new rack (HO-4)",
+  "window_start": "2026-10-03T17:15:00Z",
+  "window_end": "2026-10-03T19:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1003",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-5",
+  "window_start": "2026-10-04T14:30:00Z",
+  "window_end": "2026-10-04T15:10:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-506",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B24 for a new rack (HO-4)",
+  "window_start": "2026-10-05T17:00:00Z",
+  "window_end": "2026-10-05T19:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-507",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B25 for a new rack (HO-4)",
+  "window_start": "2026-10-06T16:15:00Z",
+  "window_end": "2026-10-06T18:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1004",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-4",
+  "window_start": "2026-10-06T20:00:00Z",
+  "window_end": "2026-10-06T20:40:00Z",
+  "note": ""
+ },
+ {
+  "id": "CHG2050002",
+  "owner": "IT Partner",
+  "title": "Compute tray firmware 1.3.7 -> 1.3.8 on rack A26",
+  "window_start": "2026-10-07T06:00:00Z",
+  "window_end": "2026-10-07T10:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-508",
+  "owner": "Landlord",
+  "title": "Preventive maintenance and battery health check: UPS-A4",
+  "window_start": "2026-10-07T16:00:00Z",
+  "window_end": "2026-10-07T20:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1005",
+  "owner": "Landlord",
+  "title": "Preventive maintenance: CH-05",
+  "window_start": "2026-10-07T16:30:00Z",
+  "window_end": "2026-10-07T19:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-509",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B26 for a new rack (HO-4)",
+  "window_start": "2026-10-08T12:30:00Z",
+  "window_end": "2026-10-08T14:45:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-510",
+  "owner": "Landlord",
+  "title": "Retorque B-side tap-off for rack A22",
+  "window_start": "2026-10-08T13:45:00Z",
+  "window_end": "2026-10-08T16:45:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-511",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B27 for a new rack (HO-4)",
+  "window_start": "2026-10-09T13:45:00Z",
+  "window_end": "2026-10-09T16:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-512",
+  "owner": "Landlord",
+  "title": "VESDA inspection and smoke test: VESDA-A2",
+  "window_start": "2026-10-09T15:45:00Z",
+  "window_end": "2026-10-09T18:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-513",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B28 for a new rack (HO-4)",
+  "window_start": "2026-10-10T18:15:00Z",
+  "window_end": "2026-10-10T20:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-514",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-B1",
+  "window_start": "2026-10-11T15:45:00Z",
+  "window_end": "2026-10-11T17:45:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-515",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B29 for a new rack (HO-4)",
+  "window_start": "2026-10-12T16:30:00Z",
+  "window_end": "2026-10-12T18:45:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-516",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-B3",
+  "window_start": "2026-10-12T18:30:00Z",
+  "window_end": "2026-10-12T20:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-517",
+  "owner": "Landlord",
+  "title": "Preventive maintenance and battery health check: UPS-B2",
+  "window_start": "2026-10-13T13:15:00Z",
+  "window_end": "2026-10-13T17:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1006",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-3",
+  "window_start": "2026-10-13T16:15:00Z",
+  "window_end": "2026-10-13T16:55:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-518",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B30 for a new rack (HO-4)",
+  "window_start": "2026-10-13T16:45:00Z",
+  "window_end": "2026-10-13T19:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1007",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-2",
+  "window_start": "2026-10-14T13:30:00Z",
+  "window_end": "2026-10-14T14:10:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-519",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B31 for a new rack (HO-4)",
+  "window_start": "2026-10-15T19:00:00Z",
+  "window_end": "2026-10-15T21:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-520",
+  "owner": "Landlord",
+  "title": "Energize tap-off TO-B32 for a new rack (HO-4)",
+  "window_start": "2026-10-16T13:15:00Z",
+  "window_end": "2026-10-16T15:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-521",
+  "owner": "Landlord",
+  "title": "Retorque A-side tap-off for rack A17",
+  "window_start": "2026-10-19T12:45:00Z",
+  "window_end": "2026-10-19T15:45:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1008",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-7",
+  "window_start": "2026-10-19T15:45:00Z",
+  "window_end": "2026-10-19T16:25:00Z",
+  "note": ""
+ },
+ {
+  "id": "CHG2050003",
+  "owner": "IT Partner",
+  "title": "Compute tray firmware 1.3.7 -> 1.3.8 on rack A19",
+  "window_start": "2026-10-21T06:00:00Z",
+  "window_end": "2026-10-21T10:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1009",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-1",
+  "window_start": "2026-10-21T19:00:00Z",
+  "window_end": "2026-10-21T19:40:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1010",
+  "owner": "Landlord",
+  "title": "Preventive maintenance: CH-08",
+  "window_start": "2026-10-24T14:30:00Z",
+  "window_end": "2026-10-24T17:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-522",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-A2",
+  "window_start": "2026-10-26T18:15:00Z",
+  "window_end": "2026-10-26T20:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-523",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-A4",
+  "window_start": "2026-10-29T14:00:00Z",
+  "window_end": "2026-10-29T16:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1011",
+  "owner": "Landlord",
+  "title": "Preventive maintenance: CH-09",
+  "window_start": "2026-10-30T16:30:00Z",
+  "window_end": "2026-10-30T19:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1012",
+  "owner": "Landlord",
+  "title": "Preventive maintenance: CH-06",
+  "window_start": "2026-10-30T17:00:00Z",
+  "window_end": "2026-10-30T20:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-524",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-A1",
+  "window_start": "2026-10-31T12:30:00Z",
+  "window_end": "2026-10-31T14:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1013",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-2",
+  "window_start": "2026-11-03T18:15:00Z",
+  "window_end": "2026-11-03T18:55:00Z",
+  "note": ""
+ },
+ {
+  "id": "CHG2050004",
+  "owner": "IT Partner",
+  "title": "Compute tray firmware 1.3.7 -> 1.3.8 on rack A20",
+  "window_start": "2026-11-04T07:00:00Z",
+  "window_end": "2026-11-04T11:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1014",
+  "owner": "Landlord",
+  "title": "Preventive maintenance: CH-10",
+  "window_start": "2026-11-04T15:00:00Z",
+  "window_end": "2026-11-04T18:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-525",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-B2",
+  "window_start": "2026-11-05T20:00:00Z",
+  "window_end": "2026-11-05T22:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "CHG2050005",
+  "owner": "IT Partner",
+  "title": "Compute tray firmware 1.3.7 -> 1.3.8 on rack A23",
+  "window_start": "2026-11-07T07:00:00Z",
+  "window_end": "2026-11-07T11:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1015",
+  "owner": "Landlord",
+  "title": "Preventive maintenance: CH-06",
+  "window_start": "2026-11-08T15:15:00Z",
+  "window_end": "2026-11-08T18:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1016",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-5",
+  "window_start": "2026-11-09T20:15:00Z",
+  "window_end": "2026-11-09T20:55:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1017",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-3",
+  "window_start": "2026-11-10T18:00:00Z",
+  "window_end": "2026-11-10T18:40:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-526",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-B3",
+  "window_start": "2026-11-11T16:15:00Z",
+  "window_end": "2026-11-11T18:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-527",
+  "owner": "Landlord",
+  "title": "Preventive maintenance and battery health check: UPS-B4",
+  "window_start": "2026-11-13T16:00:00Z",
+  "window_end": "2026-11-13T20:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1018",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-4",
+  "window_start": "2026-11-14T17:45:00Z",
+  "window_end": "2026-11-14T18:25:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-528",
+  "owner": "Landlord",
+  "title": "Retorque A-side tap-off for rack A06",
+  "window_start": "2026-11-15T17:30:00Z",
+  "window_end": "2026-11-15T20:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-529",
+  "owner": "Landlord",
+  "title": "Retorque B-side tap-off for rack A06",
+  "window_start": "2026-11-15T18:15:00Z",
+  "window_end": "2026-11-15T21:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1019",
+  "owner": "Landlord",
+  "title": "Infrared thermography under load: Hall B electrical room",
+  "window_start": "2026-11-15T19:30:00Z",
+  "window_end": "2026-11-15T21:30:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1020",
+  "owner": "Landlord",
+  "title": "Preventive maintenance: CH-03",
+  "window_start": "2026-11-16T17:15:00Z",
+  "window_end": "2026-11-16T20:15:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-530",
+  "owner": "Landlord",
+  "title": "VESDA inspection and smoke test: VESDA-B1",
+  "window_start": "2026-11-21T14:30:00Z",
+  "window_end": "2026-11-21T16:45:00Z",
+  "note": ""
+ },
+ {
+  "id": "MOP-531",
+  "owner": "Landlord",
+  "title": "Filter change and coolant sample: CDU-A3",
+  "window_start": "2026-11-21T17:00:00Z",
+  "window_end": "2026-11-21T19:00:00Z",
+  "note": ""
+ },
+ {
+  "id": "PM-1021",
+  "owner": "Landlord",
+  "title": "Monthly loaded exercise: GEN-1",
+  "window_start": "2026-11-22T18:15:00Z",
+  "window_end": "2026-11-22T18:55:00Z",
+  "note": ""
+ }
+]

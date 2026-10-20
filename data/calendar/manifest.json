@@ -1,0 +1,12 @@
+{
+ "disclaimer": "Synthetic forward maintenance and change schedule for a portfolio demonstration. All records are fictional.",
+ "files": {
+  "schedule.json": 57
+ },
+ "forward": {
+  "end": "2026-11-22",
+  "start": "2026-09-28"
+ },
+ "note": "Own random stream; answer_key.json is the answer key and the checks never read it.",
+ "seed": 2026
+}

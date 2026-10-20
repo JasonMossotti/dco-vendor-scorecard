@@ -1,0 +1,64 @@
+# Maintenance and change calendar: every booked job at the site on one calendar, checked for conflicts against the
+# redundancy groups Site health uses (src/scorecard/change_calendar.py; page /ops/#calendar).
+#
+# The four data weeks come from the records as they are (CAB changes, Landlord MOPs, the change-approval queue, PM
+# records, Hall B Jira milestones, Hall C commissioning scripts); conflicts there are reported as found. The forward
+# schedule to first compute is new data on its own random stream (data/calendar/, src/scorecard/synthetic/
+# change_calendar.py) with planted conflicts; the checks never read the answer key.
+
+forward:
+  start: "2026-09-28"                  # the first day after the data weeks (local dates, Central time)
+  end: "2026-11-22"                    # Hall C first compute (data/readiness/program.json committed_first_compute)
+
+# Check 3: a day with this many Hall B energizations (Interface Agreement HO-4 tap-off energizations plus rack
+# power-ons, Jira R-HO4 and R-M4) or more is a deployment surge day. Assumption: more than one rack coming onto the
+# hall's power and cooling in a day.
+surge_min_energizations: 2
+
+# Check 4: no work that takes a redundant unit out of a site-wide system, and no Hall C work outside the
+# commissioning plan, in the days before first compute. Assumption: 7 days.
+freeze_days: 7
+
+# How a job affects redundancy, matched on its title. `takes` names what one job takes out of service:
+#   pump    : one pump of the named CDU (each CDU has two, N+1)
+#   ups     : the named IT UPS (each hall's four make three)
+#   chiller : the named chiller (N+1)
+#   feed    : one feed (side A or B) of the named rack (2N)
+#   none    : nothing in a redundancy group (a new rack's tap-off, a test, a firmware change on one rack)
+# `type` is the Interface Agreement impact declaration's type where the change layer declares one
+# (data/changes/impact_declarations.json); the calendar's "takes a unit out" must equal its redundancy_reduced.
+work_types:
+  - {type: cdu_filter, match: '^Filter change and coolant sample: (?P<asset>CDU-[A-Z]\d+)$', takes: pump, owner: Landlord, minutes: 30, mop: true}
+  - {type: ups_pm, match: '^Preventive maintenance and battery health check: (?P<asset>UPS-[A-Z]\d+)$', takes: ups, owner: Landlord, minutes: 150, mop: true}
+  - {type: chiller_pm, match: '^Preventive maintenance: (?P<asset>CH-\d+)$', takes: chiller, owner: Landlord, minutes: 180, mop: false}
+  - {type: tapoff_work, match: '^Retorque (?P<side>[AB])-side tap-off for rack (?P<rack>[A-Z]\d+)$', takes: feed, owner: Landlord, minutes: 90, mop: true}
+  - {type: tapoff_energize, match: '^Energize tap-off (?P<asset>TO-[A-Z]\d+) for a new rack', takes: none, owner: Landlord, minutes: 45, mop: true}
+  - {type: vesda_test, match: '^VESDA inspection and smoke test: (?P<asset>VESDA-[A-Z]\d+)$', takes: none, owner: Landlord, minutes: 45, mop: true}
+  - {type: gen_exercise, match: '^Monthly loaded exercise: (?P<asset>GEN-\d+)$', takes: none, owner: Landlord, minutes: 40, mop: false}
+  - {type: thermography, match: '^Infrared thermography under load: (?P<asset>Hall [A-Z] electrical room)$', takes: none, owner: Landlord, minutes: 120, mop: false}
+  - {type: tray_firmware, match: '^Compute tray firmware \S+ -> \S+ on rack (?P<rack>[A-Z]\d+)$', takes: none, owner: IT Partner, minutes: 240, mop: false, hours: [1, 1]}
+
+# The forward schedule (generation only): how many of each job a month, and the working hours they are booked in.
+# Jobs are placed the way a careful planner would: one job at a time in each redundancy group, never both feeds of a
+# rack, no work that takes a unit out on a surge day in Hall B or a site-wide system, none in the freeze.
+schedule:
+  local_hours: [8, 15]                # a job starts between 8 a.m. and 3 p.m. Central (a work type's `hours` overrides it:
+                                      # firmware changes start at 1 a.m., as the CAB's changes in the data weeks do)
+  mop_margin_min: [30, 60]            # a MOP window opens 30 minutes before the work and closes an hour after it
+  per_month:
+    gen_exercise: 7                   # every generator, monthly
+    ups_pm: 2
+    cdu_filter: 4
+    chiller_pm: 3
+    vesda_test: 1
+    thermography: 1
+    tapoff_work: 2                    # follow-ups from the thermography survey (retorque a warm tap-off)
+    tray_firmware: 3                  # Customer CAB firmware changes, one rack each
+  # Hall B HO-4 energizations follow the Landlord's Jira R-HO4 due dates.
+
+# Planted conflicts in the forward schedule (one of each check). The answer key is written beside the data.
+planted:
+  overlap: 1          # a second job in the same redundancy group inside another's window (below N)
+  both_feeds: 1       # work on the other feed of a rack while its first feed is out
+  surge: 1            # a job that takes a unit out of a Hall B or site-wide group on a surge day
+  freeze: 1           # a job that takes a site-wide unit out inside the first-compute freeze

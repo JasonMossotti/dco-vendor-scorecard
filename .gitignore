@@ -22,6 +22,7 @@ data/*
 !data/predict/
 !data/live/
 !data/audit/
+!data/calendar/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/

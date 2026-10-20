@@ -116,6 +116,7 @@ terms:
   - {term: SMTP, type: acronym, expansion: Simple Mail Transfer Protocol, text: "The protocol for sending email; an SMTP relay is the minimum email channel for notifications."}
   - {term: UTC, type: acronym, expansion: Coordinated Universal Time, link: false, text: "The time standard every record is stamped in. The site is in US Central time (UTC minus 5 in summer)."}
   - {term: CDT, type: acronym, expansion: Central Daylight Time, link: false, text: "US Central time in summer, UTC minus 5 hours: the site's local time."}
+  - {term: CST, type: acronym, expansion: Central Standard Time, link: false, text: "US Central time in winter, UTC minus 6 hours: the site's local time from the first Sunday of November."}
   - {term: IT, type: acronym, expansion: Information technology, link: false, text: "Here, the data hall equipment and the IT Partner that works on it."}
   - {term: ID, type: acronym, expansion: Identifier, link: false, text: "A record's unique code."}
   - {term: LLC, type: acronym, expansion: Limited liability company, link: false, text: "A US company form; both partners are fictional LLCs."}
@@ -403,6 +404,8 @@ families:
      text: "A fire protection impairment notice as the Customer received it: before planned work, on an unplanned impairment, for an extension, or on restoration (FPI-1, FPI-2, FPI-4, FPI-5)."}
   - {key: QA-N, label: "QA-#", pattern: 'QA-\d{1,2}', type: record, title: Quality audit finding, example: QA-1, see: "app/#audit",
      text: "A finding of the Customer's monthly quality audit: on a record drawn in the random sample, the work in place and the records do not reconcile (a failed part on the RMA cage shelf after the ledger shipped it, a cable label naming a different tray, a maintenance tag older than its maintenance record) or the inspector saw work not done to standard. Each opens a corrective action."}
+  - {key: CAL-N, label: "CAL-#", pattern: 'CAL-\d{1,2}', type: record, title: Calendar finding, example: CAL-1, see: "ops/#calendar",
+     text: "A finding of the maintenance and change calendar: two jobs in one redundancy group at once (below N), work on both feeds of one rack at once, a unit out on a deployment surge day, work inside the first-compute freeze, or work a device shows running past its booked window. Each starts a planning action."}
   - {key: FLS-N, label: "FLS-#", pattern: 'FLS-\d{1,2}', type: record, title: Fire protection finding, example: FLS-1, see: "telemetry/#fire",
      text: "A finding of the daily reconciliation of the Landlord's impairment log with the fire panel's history: an impairment logged restored while the panel shows it out of service, or protection out of service with no impairment logged."}
   - {key: PDM, label: "PDM-####", pattern: 'PDM-\d{4}', type: record, title: Predictive maintenance work request, example: PDM-0001, see: "patterns/#predict",
@@ -443,7 +446,7 @@ families:
      text: "A step of a gate, with its procedure, acceptance criteria, records, sign-off roles, and inspections (config/deployments.yaml)."}
   - {key: DEP-RSTEP, label: "R-M#", pattern: 'R-M[1-7]', type: record, title: Rack deployment step, example: R-M3, see: "deployments/#gate/G2",
      text: "A step done once per rack, following the IT Partner SLA's milestones M1 (received) to M7 (Validated Handoff)."}
-  - {key: CX-L, label: "L1 to L5", pattern: 'L[1-5]', type: safety, title: Commissioning level, example: L4, pages: [deployments],
+  - {key: CX-L, label: "L1 to L5", pattern: 'L[1-5]', type: safety, title: Commissioning level, example: L4, pages: [deployments, ops],
      text: "The commissioning levels: L1 factory witness test, L2 receipt inspection, L3 installation and start-up checks, L4 functional test of each system, L5 integrated systems test."}
   - {key: RDY-GATE, label: "R0 to R4", pattern: 'R[0-4]', type: record, title: Hall C readiness gate, example: R1, pages: [deployments], see: "deployments/#hallc",
      text: "A gate of the Customer's readiness for Hall C: R0 commissioning accepted, R1 spares and logistics, R2 security and access, R3 people and process, R4 first compute. Done when every item in it is done."}
@@ -578,6 +581,7 @@ plain:   # capitalised text that is not a code
     - {pattern: 'L-N', why: "Line to neutral: a voltage measured between one phase and neutral (277 V on a 480 V system).", pages: [telemetry]}
     - {pattern: 'A1', why: "ASHRAE class A1 (an air-cooled equipment class), named with its envelope on the Site health page.", pages: [telemetry]}
     - {pattern: 'E1', why: "Part of E1.S, a solid-state drive form factor.", pages: [agreements, availability]}
-    - {pattern: 'MVS-C[12]|ESS-C|DCB-C-[AB]|LD-C|BMS-C|HALL-C', why: "A Hall C system in the readiness tracker (planned hall, not yet in the device directory); its page lists its commissioning.", pages: [deployments]}
+    - {pattern: 'MVS-C[12]|ESS-C|DCB-C-[AB]|LD-C|BMS-C|HALL-C', why: "A Hall C system in the readiness tracker (planned hall, not yet in the device directory); its page lists its commissioning.", pages: [deployments, ops]}
+    - {pattern: 'CX-C-[A-Z0-9-]+-L[1-5]', why: "A Hall C commissioning script in the readiness tracker: the system, then the level (CX-C-CDU-C1-L3 is CDU-C1's level 3 script).", pages: [ops]}
     - {pattern: 'A[1-4]', why: "Shorthand for CDU-A1 to CDU-A4 in the site model's cooling path.", pages: [site]}
     - {pattern: 'B[1-4]', why: "Shorthand for CDU-B1 to CDU-B4 in a deployment step.", pages: [deployments]}

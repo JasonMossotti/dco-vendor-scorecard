@@ -18,7 +18,7 @@ from scorecard import sitenav
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-PAGES = {"": "overview", "app/": "scorecards", "availability/": "availability", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns", "energy/": "energy", "gpu/": "gpu", "telemetry/": "telemetry",
+PAGES = {"": "overview", "app/": "scorecards", "availability/": "availability", "alarms/": "alarms", "pir/": "pir", "weekly/": "weekly", "patterns/": "patterns", "energy/": "energy", "gpu/": "gpu", "telemetry/": "telemetry", "ops/": "ops",
          "agreements/": "agreements", "agreements/interface-agreement/": "agreements", "agreements/it-partner-sla/": "agreements",
          "agreements/landlord-sla/": "agreements", "agreements/security-sla/": "agreements", "glossary/": "glossary"}
 

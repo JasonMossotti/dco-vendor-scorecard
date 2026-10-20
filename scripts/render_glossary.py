@@ -46,6 +46,7 @@ PLACES = {
     "reports/attribution_report.md": ("Scorecards", "app/"),
     "reports/site_summary.md": ("Scorecards", "app/"),
     "reports/quality_audit.md": ("Scorecards", "app/#audit"),
+    "reports/change_calendar.md": ("Operations", "ops/#calendar"),
     "reports/change_alarms.md": ("Alarm Board", "alarms/"),
     "reports/failure_patterns.md": ("Failure Patterns", "patterns/"),
     "reports/pue_report.md": ("Energy", "energy/"),
@@ -60,7 +61,8 @@ PLACES = {
 PAGES = [("hub", "Overview", ""), ("alarms", "Alarm Board", "alarms/"), ("tickets", "Incident Portal", "tickets/"),
          ("pir", "Post-Incident Review", "pir/"), ("weekly", "Weekly Review", "weekly/"), ("patterns", "Failure Patterns", "patterns/"),
          ("energy", "Energy", "energy/"), ("gpu", "GPU Health", "gpu/"), ("telemetry", "Telemetry", "telemetry/"),
-         ("deployments", "Deployments", "deployments/"), ("availability", "Availability", "availability/"), ("live", "Live", "live/")]
+         ("deployments", "Deployments", "deployments/"), ("availability", "Availability", "availability/"), ("live", "Live", "live/"),
+         ("ops", "Operations", "ops/")]
 
 
 def _strings(o):
@@ -120,6 +122,7 @@ def corpus() -> dict[str, tuple[str, str, str]]:
     import render_gpu_health
     import render_hub
     import render_live
+    import render_ops
     import render_patterns
     import render_pir
     import render_telemetry
@@ -127,7 +130,7 @@ def corpus() -> dict[str, tuple[str, str, str]]:
     import render_weekly
     mods = {"hub": render_hub, "alarms": render_alarms, "tickets": render_tickets, "pir": render_pir, "weekly": render_weekly,
             "patterns": render_patterns, "energy": render_energy, "gpu": render_gpu_health, "telemetry": render_telemetry,
-            "deployments": render_deployments, "availability": render_availability, "live": render_live}
+            "deployments": render_deployments, "availability": render_availability, "live": render_live, "ops": render_ops}
     out = {}
     for rel, (label, link) in PLACES.items():
         out[rel] = (label, link, (ROOT / rel).read_text(encoding="utf-8"))
@@ -150,7 +153,7 @@ def page_key(src: str) -> str:
     return {"Alarm Board": "alarms", "Failure Patterns": "patterns", "Post-Incident Review": "pir",
             "Weekly Review": "weekly", "Scorecards": "scorecards", "Energy": "energy", "GPU Health": "gpu", "Telemetry": "telemetry",
             "Deployments": "deployments", "Availability": "availability", "Live": "live", "Asset Register": "devices",
-            "Fire protection": "telemetry"}[PLACES[src][0] if src in PLACES else
+            "Fire protection": "telemetry", "Operations": "ops"}[PLACES[src][0] if src in PLACES else
                                                                   ("Post-Incident Review" if "/pir/" in src else "Weekly Review")]
 
 
