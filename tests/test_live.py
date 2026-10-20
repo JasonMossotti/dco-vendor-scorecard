@@ -216,7 +216,7 @@ def test_modbus_reader_refuses_tables_it_could_write_to():
 # --------------------------------------------------------------------------- #
 def test_example_config_loads_and_keeps_secrets_out():
     cfg = load_config(ROOT / "config" / "collector.example.yaml")
-    assert {d["kind"] for d in cfg["devices"]} == {"cdu", "generator", "busway", "leak", "ups", "bms"}
+    assert {d["kind"] for d in cfg["devices"]} == {"cdu", "generator", "busway", "leak", "ups", "bms", "mains"}, "the example shows every device kind"
     text = (ROOT / "config" / "collector.example.yaml").read_text(encoding="utf-8")
     assert "PLACEHOLDER" in text and "password:" not in text
 
@@ -584,3 +584,122 @@ def test_a_bacnet_error_is_contained_to_its_device(redfish, bms):
     health = {h["device"]: (h["ok"], h["error"]) for h in out["collector/feed_health.jsonl"]}
     assert health["ebo"][0] is False and ("BACnet error" in health["ebo"][1] or "Timeout" in health["ebo"][1])
     assert health["cdu-a1"][0] is True
+
+
+# --------------------------------------------------------------------------- #
+# now.json: the Live page's feed (docs/live/NOW_SCHEMA.md)
+# --------------------------------------------------------------------------- #
+def mains_points(base: int) -> list[dict]:
+    return [{"name": n, "register": base + 2 * i, "type": "float32"}
+            for i, n in enumerate(("voltage_ll_avg", "current_avg", "kw_total", "pf_total", "frequency"))] + [{"name": "breaker", "register": base + 10}]
+
+
+def mains_regs(v, a, kw, pf, hz, brk, base=500) -> dict[int, int]:
+    regs = {}
+    for i, x in enumerate((v, a, kw, pf, hz)):
+        regs[base + 2 * i], regs[base + 2 * i + 1] = float32(x)
+    regs[base + 10] = brk
+    return regs
+
+
+def mains_device(sim, site_id="MV-A", base=500):
+    """pymodbus runs one simulator server per process, so several meters share it at different registers."""
+    return {"name": site_id.lower(), "kind": "mains", "protocol": "modbus", "site_id": site_id, "host": "127.0.0.1",
+            "port": sim.port, "points": mains_points(base)}
+
+
+def test_mains_meter_is_read_each_poll_with_read_codes_only():
+    sim = ModbusSim(mains_regs(13812.0, 402.5, 9500.0, 0.991, 60.01, 1))
+    try:
+        c = Collector(config(mains_device(sim)), clock=Clock())
+        (rec,) = c.poll_once()["facility/utility_mains.jsonl"]
+        assert rec["main"] == "MV-A" and rec["v_ll"] == 13812.0 and rec["kw"] == 9500.0 and rec["breaker"] == "closed"
+        assert c.latest["MV-A"]["pf"] == 0.991 and c.latest["MV-A"]["hz"] == 60.01
+        assert set(sim.codes) <= {3, 4}
+    finally:
+        sim.stop()
+
+
+def test_ups_battery_runtime_and_charge_over_snmpv3(ups):
+    from scorecard.live.snmp import UPS_ADV_BATTERY_CAPACITY, UPS_ADV_BATTERY_RUNTIME
+    ups.values.update({UPS_ADV_BATTERY_RUNTIME: 58000, UPS_ADV_BATTERY_CAPACITY: 99, "1.3.6.1.4.1.318.1.1.1.4.2.3.0": 52})
+    dev = {**ups_device(ups), "battery": True, "load_oid": "1.3.6.1.4.1.318.1.1.1.4.2.3.0"}
+    c = Collector(config(dev), clock=Clock())
+    (row,) = c.poll_once()["facility/ups_status.jsonl"]
+    assert row["runtime_s"] == 580 and row["charge_pct"] == 99 and row["load_pct"] == 52, "TimeTicks are hundredths of a second"
+    assert set(ups.ops) == {"get"}
+
+
+def test_now_json_from_the_collector(tmp_path, ups):
+    collector_feed(tmp_path, ups)
+
+
+def collector_feed(tmp_path, ups) -> dict:
+    """Two mains, a UPS with its battery, a generator, and a device that does not answer, through NowWriter: the file
+    satisfies the schema, ride-through is the UPS's runtime, and every condition the rules name appears."""
+    from scorecard.live.now import NowWriter, validate
+    from scorecard.live.snmp import UPS_ADV_BATTERY_CAPACITY, UPS_ADV_BATTERY_RUNTIME
+    sim = ModbusSim({**mains_regs(13812.0, 402.5, 9500.0, 0.991, 60.01, 1), **mains_regs(13790.0, 399.0, 9400.0, 0.990, 60.01, 1, base=600),
+                     100: 0, 102: 0, 103: 0, 104: 92})
+    try:
+        ups.values.update({UPS_ADV_BATTERY_RUNTIME: 58000, UPS_ADV_BATTERY_CAPACITY: 99, "1.3.6.1.4.1.318.1.1.1.4.2.3.0": 52})
+        cfg = config(mains_device(sim), mains_device(sim, "MV-B", 600),
+                     {**ups_device(ups), "battery": True, "load_oid": "1.3.6.1.4.1.318.1.1.1.4.2.3.0", "rating_kw": 1500,
+                      "role": "it", "hall": "HALL-A"},
+                     {"name": "gen-1", "kind": "generator", "protocol": "modbus", "site_id": "GEN-1", "host": "127.0.0.1",
+                      "port": sim.port, "rated_kw": 3000, "engine_state_codes": {0: "Stopped", 2: "Running"},
+                      "points": [{"name": "engine_operating_state", "register": 100}, {"name": "gen_total_kw", "register": 102, "type": "int32"},
+                                 {"name": "fuel_pct", "register": 104}]},
+                     {"name": "cdu-b1", "kind": "cdu", "protocol": "redfish", "site_id": "CDU-B1", "base_url": f"http://127.0.0.1:{free_port()}",
+                      "cdu_id": "1"})
+        cfg["now"] = {"site": "AUS-1", "take_load_s": 12}
+        clock = Clock()
+        c, w = Collector(cfg, clock=clock), NowWriter(cfg, tmp_path / "now.json")
+        c.poll_once()
+        doc = w.build(c, clock())
+        validate(doc)
+        assert doc["source"]["kind"] == "collector" and doc["stale_after_s"] == 180
+        assert doc["ride_through"]["SITE-IT"] == {"s": 580, "set_by": "UPS-A1"} and doc["ride_through"]["HALL-A"]["s"] == 580
+        assert doc["ups"]["UPS-A1"] == {"output": "normal", "load_kw": 780.0, "load_pct": 52.0, "runtime_s": 580, "charge_pct": 99.0}
+        assert doc["generators"]["GEN-1"]["state"] == "stopped" and doc["generators"]["GEN-1"]["fuel_pct"] == 92
+        assert [x["text"] for x in doc["conditions"]] == ["CDU-B1: not answering (redfish); its last values are shown"]
+        assert {f["device"]: f["ok"] for f in doc["feeds"]} == {"mv-a": True, "mv-b": True, "ups-a1": True, "gen-1": True, "cdu-b1": False}
+        # the utility trips: both mains dead, the UPS on battery, the generator running
+        sim.regs.update({**mains_regs(0.0, 0.0, 0.0, 0.0, 0.0, 0), **mains_regs(0.0, 0.0, 0.0, 0.0, 0.0, 0, base=600)})
+        ups.values[UpsCardSim.OID] = 3
+        sim.regs.update({100: 2, 103: 2400})
+        clock.tick()
+        c.poll_once()
+        trip = w.build(c, clock())
+        validate(trip)
+        texts = [x["text"] for x in trip["conditions"]]
+        assert texts[0] == "Site on generators: every utility main dead or open" and trip["conditions"][0]["state"] == "lost"
+        assert "UPS-A1: on battery" in texts and trip["generators"]["GEN-1"]["state"] == "running"
+        assert trip["mains"]["MV-A"]["kw_last_hour"] == [9500.0, 0.0], "the last hour of each main's kW, oldest first"
+        cdu = next(x for x in trip["conditions"] if x["device"] == "CDU-B1")
+        assert cdu["since"] == doc["generated_at"], "a condition keeps the time it was first seen"
+        p = w.write(trip)
+        assert json.loads(p.read_text()) == trip and not (tmp_path / "now.json.tmp").exists()
+        return trip
+    finally:
+        sim.stop()
+
+
+def test_the_live_page_renders_a_collector_written_file(tmp_path, ups):
+    """The plan's promise: the Live page reads a file the collector wrote (tests/js/live_page.cjs, feed section)."""
+    import shutil
+    import subprocess
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT / "scripts"))
+    import render_live
+    trip = collector_feed(tmp_path, ups)
+    out = tmp_path / "live"
+    render_live.write_site(out)
+    fresh = {**trip, "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    (out / "data" / "now_collector.json").write_text(json.dumps(fresh))
+    (out / "data" / "now_stale.json").write_text(json.dumps({**trip, "generated_at": (datetime.now(UTC) - timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")}))
+    node = shutil.which("node")
+    if not node or subprocess.run([node, "-e", "require('jsdom')"], capture_output=True, cwd=ROOT / "tests" / "js").returncode:
+        pytest.skip("node and jsdom not installed (CI runs this check)")
+    proc = subprocess.run([node, "live_page.cjs", str(out)], capture_output=True, text=True, cwd=ROOT / "tests" / "js")
+    assert proc.returncode == 0 and "FAIL" not in proc.stdout and "a collector file past stale_after_s" in proc.stdout, proc.stdout + proc.stderr

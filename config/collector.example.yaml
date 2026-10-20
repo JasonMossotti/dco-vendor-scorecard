@@ -17,7 +17,28 @@ poll_interval_s: 60
 timeout_s: 5
 max_backoff_s: 900
 
+now:                                      # the Live page's feed (scripts/collect.py --now; docs/live/NOW_SCHEMA.md)
+  site: AUS-1
+  take_load_s: 12                         # the generators' measured take-load time (the 09-24 trip); margin = ride-through minus this
+  stale_after_s: 180                      # the page marks the feed stale past this (default 3 poll intervals)
+  fuel_amber_pct: 50                      # Site health's generator fuel threshold (config/site_health.yaml)
+
 devices:
+  - name: mv-a
+    kind: mains
+    protocol: modbus
+    site_id: MV-A                         # the 13.8 kV main's revenue meter (PowerLogic ION9000), utility side of the main breaker
+    host: mv-a-meter.mon.example.invalid  # or the Landlord's PME Modbus gateway, under the Interface Agreement's data access clause
+    port: 502
+    device_id: 1
+    points:                               # PLACEHOLDER addresses: Schneider publishes the ION9000 map only as an attachment to FAQ FA362601
+      - {name: voltage_ll_avg, register: 500, type: float32, table: holding}
+      - {name: current_avg, register: 502, type: float32, table: holding}
+      - {name: kw_total, register: 504, type: float32, table: holding}
+      - {name: pf_total, register: 506, type: float32, table: holding}
+      - {name: frequency, register: 508, type: float32, table: holding}
+      - {name: breaker, register: 510, type: uint16, table: holding}    # from the EPMS breaker status, if the meter does not carry it
+
   - name: cdu-a1
     kind: cdu
     protocol: redfish
@@ -80,6 +101,10 @@ devices:
     auth_key_env: UPS_A1_AUTH_KEY
     priv_key_env: UPS_A1_PRIV_KEY
     # load_oid: 1.3.6.1.4.1.318.1.1.1.4.2.3.0   # PLACEHOLDER: verify against the card's PowerNet MIB revision
+    battery: true                         # read upsAdvBatteryRunTimeRemaining and upsAdvBatteryCapacity (PowerNet MIB)
+    rating_kw: 1500                       # for the Live page: load in kW from the load percentage
+    role: it                              # it (IT ride-through) or cooling (a mechanical UPS)
+    hall: HALL-A
 
   - name: ebo-bms
     kind: bms

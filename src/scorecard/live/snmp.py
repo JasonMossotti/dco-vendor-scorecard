@@ -1,8 +1,9 @@
 """SNMPv3 reader (GET only, authPriv only) for UPS network management cards.
 
-Reads PowerNet MIB ``upsBasicOutputStatus`` (1.3.6.1.4.1.318.1.1.1.4.1.1.0) and
-any other configured OIDs. SNMPv1 and v2c are refused: community strings are
-cleartext. Requires a read-only USM user on the card (no write view).
+Reads PowerNet MIB ``upsBasicOutputStatus`` (1.3.6.1.4.1.318.1.1.1.4.1.1.0), the
+battery's runtime and charge when the device asks for them, and any other
+configured OIDs. SNMPv1 and v2c are refused: community strings are cleartext.
+Requires a read-only USM user on the card (no write view).
 """
 
 from __future__ import annotations
@@ -16,6 +17,9 @@ from pysnmp.hlapi.v3arch.asyncio import (
 )
 
 UPS_BASIC_OUTPUT_STATUS = "1.3.6.1.4.1.318.1.1.1.4.1.1.0"
+# PowerNet MIB upsAdvBatteryRunTimeRemaining (TimeTicks) and upsAdvBatteryCapacity (%), as config/telemetry_power.yaml lists them.
+UPS_ADV_BATTERY_RUNTIME = "1.3.6.1.4.1.318.1.1.1.2.2.3.0"
+UPS_ADV_BATTERY_CAPACITY = "1.3.6.1.4.1.318.1.1.1.2.2.1.0"
 # PowerNet MIB upsBasicOutputStatus values. Verify against the MIB revision on the card's firmware.
 OUTPUT_STATUS = {1: "unknown", 2: "onLine", 3: "onBattery", 4: "onSmartBoost", 5: "timedSleeping", 6: "softwareBypass",
                  7: "off", 8: "rebooting", 9: "switchedBypass", 10: "hardwareFailureBypass",
