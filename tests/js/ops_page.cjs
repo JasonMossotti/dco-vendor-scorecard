@@ -10,7 +10,24 @@ const C = JSON.parse(d.getElementById("data").textContent).calendar;
 const go = h => { w.location.hash = h; w.dispatchEvent(new w.HashChangeEvent("hashchange")); };
 
 ok(errors.length === 0, "no script errors " + errors.join(";"));
-ok(t().includes("Maintenance and change calendar") && d.querySelector('.views a.on').dataset.view === "calendar", "opens on the Calendar view");
+// Daily standup (the opening view)
+const U = JSON.parse(d.getElementById("data").textContent).standup;
+ok(t().includes("Daily standup") && d.querySelector('.views a.on').dataset.view === "standup" && t().includes("Sun Sep 27, 07:30 CDT"), "opens on the Daily standup for the latest day");
+ok(d.querySelectorAll(".strip a.sd").length === 28 && d.querySelector(".strip a.sd.sel").getAttribute("href") === "#standup/2026-09-27", "a day strip with all 28 days, today selected");
+ok(d.querySelectorAll("ol.top3 li").length === 3 && U.days.at(-1).top3.every(x => t().includes(x.text)), "today's top three, each with its text");
+go("standup/2026-09-14");
+ok(t().includes("Mon Sep 14") && d.querySelector("ol.top3 li .flag.bad").textContent === "At risk" && t().includes("FC-LEAK"), "a day with a P1 at risk puts it first");
+ok(d.querySelector(".clk .bar.lock") && t().includes("restore by"), "the open incident shows its restore clock");
+go("standup/2026-09-04");
+ok(d.querySelector('a.job[href="#calendar/job/MOP-303"]') && d.querySelector('a.fnd[href="#calendar/finding/CAL-1"]') && d.querySelector('a.job[href="#ehs/permit/PTW-26004"]'), "work links to the Calendar, conflicts to their finding, permits to Safety");
+ok(t().includes("Staffing: roster against badge-ins") && t().includes("Ops engineer 1") && t().includes("weekend on call"), "staffing and who is on call, tonight included");
+ok(d.querySelector('a[href="../weekly/#2026-W36"]') && d.getElementById("wtd").textContent.includes("Week's pack"), "links the week's pack and shows the week to date against it");
+go("standup/2026-09-06");
+const wtd = [...d.querySelectorAll("#wtd tr")].slice(1).map(r => [...r.querySelectorAll("td.n")].map(x => x.textContent));
+ok(wtd.every(([a, b]) => a === b), "on the seventh day the week to date equals the pack");
+ok(errors.length === 0, "no script errors on the standup " + errors.join(";"));
+go("calendar");
+ok(t().includes("Maintenance and change calendar") && d.querySelector('.views a.on').dataset.view === "calendar", "the Calendar view");
 ok(d.querySelectorAll("#cal .day").length === C.days.length && C.days.length === 84 && C.days[0] === "2026-08-31" && C.days.at(-1) === C.first_compute, "twelve weeks of days, Aug 31 to first compute");
 ok(d.querySelectorAll("#cal .day.fwd").length === C.days.length - C.past_days && d.querySelector(`#cal .day[data-day="${C.as_of}"]`).classList.contains("asof"), "the forward schedule is shaded from the as-of day");
 ok(d.querySelectorAll("#cal .day.freeze").length === 8 && Object.keys(C.surge).every(s => d.querySelector(`#cal .day[data-day="${s}"] .sg`)), "the freeze days are shaded and every surge day is marked");

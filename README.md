@@ -198,6 +198,18 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 ## Operations
 
+<img src="docs/images/ops-standup.png" alt="Daily standup for one day: the day strip, top three today, open incidents with their restore clocks, overnight, work windows, and staffing" width="860">
+
+**What it shows.** The **daily standup** (`/ops/`, the tab's opening view): one page per day of the month for the contract's 15-minute daily forum, as the records stood at 07:30. It opens on the latest day; the strip above picks any other. Each page has:
+- **Top three today**, by a stated rule (`config/standup.yaml`): an open P1 or P2 with at least half its restore time used, then a redundancy group reduced at the standup, then a deployment step past its due date on a rack due for handoff within 7 days (one per rack)
+- open P1 and P2 incidents with their restore clocks, and redundancy at the standup (Site health's groups)
+- overnight: records opened by all three partners, redundancy reduced, and reported safety events since the 19:00 handover
+- today's work windows from the Calendar with its conflicts, Hall B deployment steps due or overdue, Hall C scripts, and permits open or issued
+- spares below their contract minimum, each shift's roster against the badge records, and who is on call (the Customer's rota, the shift leads, the duty managers)
+- the day close at 19:00, and the week to date against its weekly pack
+
+**How it works.** `src/scorecard/standup.py` runs the same engines and layers as the weekly pack. The operations day runs from one night shift handover to the next, the boundary the weekly packs use, so the seven days of every week add up to its pack: P1 and P2 incidents opened, findings raised, permits issued, and CSL-10 technician hours. Changes worked add up to the Calendar's data weeks. `python scripts/render_standup.py --robustness 60 --jobs 4` reconciles the days of 60 generated months with their weeks. Nothing on the standup is a finding. Report: [`reports/standup.md`](reports/standup.md).
+
 <img src="docs/images/ops-calendar.png" alt="Maintenance and change calendar: twelve weeks of booked jobs with surge days, the freeze, and conflicts marked" width="860">
 
 **What it shows.** The **maintenance and change calendar** (`/ops/#calendar`): every booked job at the site on one calendar, from the first data week to Hall C first compute. It holds the Customer CAB's changes, the Landlord's MOPs, the change-approval queue, the Landlord's maintenance, both partners' Hall B rack milestones, and the Hall C commissioning scripts. Click a day for its timeline, a job for what it takes out of service, or a finding for the overlap drawn against what the devices recorded. Four checks run against the redundancy groups Site health uses:
@@ -208,7 +220,7 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 The data weeks are reported as found: four jobs took a unit out on a surge day, and MOP-310 ran 2 h 06 min past its window while the rack's other feed was open (the A07 outage). The forward schedule has four planted conflicts, one of each kind.
 
-**How it works.** `src/scorecard/change_calendar.py` reads the records and the forward schedule (`data/calendar/`, own random stream, `scripts/generate_calendar.py`), works out from each job's title what it takes out (`config/calendar.yaml`), and checks that against the impact declarations and against the devices: every device action on a job's equipment that starts in its window must end inside it. The forward schedule is placed by its own planner rules, not by the checks, so the robustness run (`python scripts/render_calendar.py --robustness 60`) tests the checks against an independent plan. Report: [`reports/change_calendar.md`](reports/change_calendar.md). The Operations tab will also hold the daily standup.
+**How it works.** `src/scorecard/change_calendar.py` reads the records and the forward schedule (`data/calendar/`, own random stream, `scripts/generate_calendar.py`), works out from each job's title what it takes out (`config/calendar.yaml`), and checks that against the impact declarations and against the devices: every device action on a job's equipment that starts in its window must end inside it. The forward schedule is placed by its own planner rules, not by the checks, so the robustness run (`python scripts/render_calendar.py --robustness 60`) tests the checks against an independent plan. Report: [`reports/change_calendar.md`](reports/change_calendar.md).
 
 <img src="docs/images/ops-ehs.png" alt="Safety (EHS): the monthly EHS report by partner, the work permits, and the record findings" width="860">
 
@@ -479,6 +491,7 @@ python scripts/render_predict.py --robustness 60
 python scripts/render_audit.py --robustness 60 --jobs 4
 python scripts/render_calendar.py --robustness 60
 python scripts/render_ehs.py --robustness 60 --jobs 4
+python scripts/render_standup.py --robustness 60 --jobs 4
 ```
 
 ## Toward live data: the read-only collector
@@ -493,7 +506,7 @@ python scripts/render_ehs.py --robustness 60 --jobs 4
 
 ## Tests and deployment
 
-- **804 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **814 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -514,7 +527,7 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
   && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py && python scripts/render_live.py \
   && python scripts/generate_audit.py && python scripts/render_audit.py \
-  && python scripts/generate_calendar.py && python scripts/render_calendar.py && python scripts/render_ehs.py
+  && python scripts/generate_calendar.py && python scripts/render_calendar.py && python scripts/render_ehs.py && python scripts/render_standup.py
 pytest -q                                   # the full suite takes a while; pytest -q tests/test_hub.py runs one file
 python scripts/build_site.py --out _site    # the whole site; serve it with: python -m http.server -d _site
 streamlit run app/streamlit_app.py          # the "Try another month" app on its own
