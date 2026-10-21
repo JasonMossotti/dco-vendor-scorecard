@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emergency · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --ll:#b45309; --it:#1f5fbf; --cu:#4b5563; --sp:#6d28d9; --ok:#1d7a46; --bad:#b42318; --warn:#9a6700; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:14px 24px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+header.top strong { font-size:16px; }
+.tabs button, .tools button { font:inherit; border:1px solid var(--line); background:#fff; color:var(--ink); padding:6px 14px; border-radius:6px; cursor:pointer; }
+.tabs button.on { background:var(--it); color:#fff; border-color:var(--it); }
+main { max-width:1080px; margin:20px auto; background:var(--bg); padding:32px 40px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+@media (max-width:700px) { main { padding:20px 16px; margin:0; border-radius:0; } header.top { padding:12px 16px; } }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:28px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); } h3 { font-size:14px; margin:14px 0 4px; }
+.sub { color:var(--muted); margin:0 0 16px; } .note { font-size:12px; color:var(--muted); }
+a { color:var(--it); }
+.first { border-left:4px solid var(--bad); background:#fdf3f2; padding:10px 14px; border-radius:4px; } .first ul { margin:4px 0 0; padding-left:20px; }
+.box { border-left:4px solid var(--it); background:#eef4fc; padding:10px 14px; border-radius:4px; margin:8px 0; }
+.plain { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+.card { background:var(--panel); border-radius:8px; padding:12px 14px; } .card h3 { margin:0 0 6px; font-size:15px; } .card p { margin:4px 0; font-size:13px; }
+.strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:12px; }
+.stat { border:1px solid var(--line); border-radius:8px; padding:10px 12px; } .stat .v { font-size:20px; font-weight:700; } .stat .l { font-size:12px; color:var(--muted); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.num { white-space:nowrap; }
+.tag { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; color:#fff; white-space:nowrap; }
+.Landlord { background:var(--ll); } .IT { background:var(--it); } .Customer { background:var(--cu); } .Security { background:var(--sp); } .External { background:#0f766e; }
+.met { color:var(--ok); font-weight:600; } .missed { color:var(--bad); font-weight:600; } .stale { color:var(--bad); font-weight:600; }
+.btn { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--it); padding:4px 10px; border-radius:6px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-block; }
+.pill { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px; background:#fff; border:1px solid var(--line); margin:1px 2px 1px 0; white-space:nowrap; }
+.stepper { border:1px solid var(--line); border-radius:10px; padding:16px 18px; background:#fff; }
+.stepper .q { font-size:18px; font-weight:700; margin:0 0 4px; } .stepper .opts { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.stepper .opts button { font:inherit; text-align:left; border:1px solid var(--line); background:var(--panel); padding:10px 14px; border-radius:8px; cursor:pointer; }
+.stepper .opts button:hover { border-color:var(--it); }
+.trail { font-size:12px; color:var(--muted); margin-bottom:8px; } .trail b { color:var(--ink); font-weight:600; }
+.leaf { border-left:4px solid var(--ok); background:#eef8f1; padding:10px 14px; border-radius:4px; }
+.outline, .outline ul { list-style:none; margin:0; padding-left:18px; } .outline { padding-left:0; }
+.outline li { position:relative; padding:3px 0 3px 14px; font-size:13px; } .outline li::before { content:""; position:absolute; left:0; top:13px; width:9px; border-top:1px solid var(--muted); }
+.outline ul { border-left:1px solid var(--muted); margin-left:4px; } .outline .ql { font-weight:600; } .outline .to { font-weight:700; }
+ol.acts { margin:0; padding-left:22px; } ol.acts li { margin:5px 0; }
+ul.gate { list-style:none; padding:0; margin:0; } ul.gate li { padding:3px 0 3px 26px; position:relative; } ul.gate li::before { content:""; position:absolute; left:2px; top:7px; width:13px; height:13px; border:1.5px solid var(--ink); border-radius:2px; }
+.cols { display:grid; grid-template-columns:1fr 1fr; gap:0 28px; } @media (max-width:800px) { .cols { grid-template-columns:1fr; } }
+.matrix td, .matrix th { text-align:center; } .matrix td:first-child, .matrix th:first-child { text-align:left; }
+.matrix td.now { background:#fdf3f2; font-weight:600; }
+.crit { margin:0; padding-left:16px; font-size:12px; }
+.tree { list-style:none; margin:0; padding:0; } .tree li { display:flex; gap:12px; padding:6px 0; border-bottom:1px solid var(--line); } .tree .at { min-width:64px; font-weight:700; }
+.steps { margin:0; padding-left:22px; } .steps li { margin:4px 0; } .steps .due { color:var(--muted); font-size:12px; white-space:nowrap; }
+pre.tpl { white-space:pre-wrap; font:13px/1.45 ui-monospace,Consolas,monospace; background:#fffef6; border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin:6px 0; }
+tr.step td { background:var(--panel); font-weight:600; } tr.why td { font-size:12px; background:#fdf3f2; }
+.printonly { display:none; }
+@media print {
+  @page { margin:12mm; }
+  .usm, header.top, .noprint { display:none !important; } .printonly { display:block; }
+  body { background:#fff; font-size:10.5px; line-height:1.35; } .tag, .first, .box { -webkit-print-color-adjust:exact; print-color-adjust:exact; } td .note, .pnote { display:none; } .first ul { margin:0; } .box { margin:4px 0; padding:4px 8px; } main { box-shadow:none; margin:0; max-width:none; padding:0; }
+  h1 { font-size:16px; } h2 { font-size:12px; margin:8px 0 4px; } h3 { font-size:11px; margin:6px 0 2px; } .sub { margin:0 0 6px; }
+  .cols { grid-template-columns:1fr 1fr; } table { font-size:9.5px; } th, td { padding:2px 4px; } .first { padding:4px 8px; } ol.acts li { margin:1px 0; }
+  a { color:inherit; text-decoration:none; } h2, h3 { break-after:avoid; } tr, li { break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <div><strong>Emergency</strong> <span class="note">Site AUS-1 · the Customer's procedures</span></div>
+  <div class="tabs"><button id="t-procedures" class="on">Procedures</button> <button id="t-contacts">Call lists</button> <button id="t-command">Command</button></div>
+  <div class="tools"><button id="print">Print / save PDF</button></div>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const partyCls = p => p === "IT Partner" ? "IT" : p === "Security Partner" ? "Security" : esc(p);
+const TYPES = Object.fromEntries(DATA.types.map(t => [t.id, t]));
+const EVENTS = Object.fromEntries(DATA.events.map(e => [e.id, e]));
+const CONTACT = Object.fromEntries(DATA.contacts.map(c => [c.id, c]));
+const when = m => m === 0 ? "at once" : `within ${m} min`;
+let mode = "procedures", proc = "", trail = [];     // trail: [[node, option index], ...] in the decision tree
+
+// ---- Procedures: the tree as a step-through, the whole tree, and one card per event type
+function firstBox() {
+  return `<div class="first"><b>Always first</b><ul>${DATA.always_first.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`;
+}
+function stepper() {
+  let node = DATA.tree.start, path = [];
+  for (const [n, i] of trail) { const o = DATA.tree.nodes[n].options[i]; path.push([DATA.tree.nodes[n].q, o.label]); node = o.to; }
+  const tr = path.length ? `<div class="trail">${path.map(([q, a]) => `${esc(q)} <b>${esc(a)}</b>`).join(" · ")}</div>` : "";
+  if (node.startsWith("type:")) {
+    const t = TYPES[node.slice(5)];
+    return `<div class="stepper" id="stepper">${tr}<div class="leaf"><div class="q">${esc(t.name)}</div><p style="margin:4px 0">${esc(t.priority)}</p>` +
+      `<a class="btn" href="#proc/${esc(t.id)}">Open the procedure</a> <button class="btn" id="restart">Start over</button></div></div>`;
+  }
+  const n = DATA.tree.nodes[node];
+  return `<div class="stepper" id="stepper">${tr}<div class="q">${esc(n.q)}</div>${n.help ? `<div class="note">${esc(n.help)}</div>` : ""}` +
+    `<div class="opts">${n.options.map((o, i) => `<button data-node="${esc(node)}" data-opt="${i}">${esc(o.label)}</button>`).join("")}</div>` +
+    (trail.length ? `<p style="margin:10px 0 0"><button class="btn" id="back">Back</button> <button class="btn" id="restart">Start over</button></p>` : "") + `</div>`;
+}
+function outline(node) {
+  const n = DATA.tree.nodes[node];
+  return `<span class="ql">${esc(n.q)}</span><ul>` + n.options.map(o => `<li>${esc(o.label)}: ` +
+    (o.to.startsWith("type:") ? `<a class="to" href="#proc/${esc(o.to.slice(5))}">${esc(TYPES[o.to.slice(5)].name)}</a>` : outline(o.to)) + `</li>`).join("") + `</ul>`;
+}
+function evLine(e, date = true) {
+  return `${e.records.map(esc).join(" and ")} ${date ? `<span class="note">${esc(e.start.slice(0, 10))}</span> ` : ""}${esc(e.summary)}`;
+}
+function renderProcedures() {
+  let h = `<h1>Emergency procedures</h1><p class="sub">${esc(DATA.intro)}</p>${firstBox()}`;
+  h += `<h2>Which procedure?</h2><p class="note">Answer one question at a time. Every path ends at a procedure.</p>${stepper()}`;
+  h += `<h2>Procedures</h2><div class="plain">` + DATA.types.map(t => `<div class="card" id="card-${esc(t.id)}"><h3><a href="#proc/${esc(t.id)}">${esc(t.name)}</a></h3>` +
+    `<p>${esc(t.priority)}</p><p class="note">Leads on the bridge: ${t.leads.map(esc).join(", ")}</p>` +
+    `<p class="note">${t.samples.length ? `In the sample month: ${t.samples.map(id => EVENTS[id].records.map(esc).join(" and ")).join("; ")}` : "No P1 of this type in the sample month."}</p></div>`).join("") + `</div>`;
+  h += `<h2>The whole tree</h2><ul class="outline"><li style="padding-left:0">${outline(DATA.tree.start)}</li></ul>`;
+  h += `<h2>P1 events in the sample month</h2><p class="note">Every P1 record in the Incident Portal, by event: records joined by a confirmed relation are one event, so one event opens one response.</p>` +
+    `<div style="overflow-x:auto"><table><tr><th>Event</th><th>Records</th><th>Parties</th><th>Procedure</th></tr>` +
+    DATA.events.map(e => `<tr><td class="num">${esc(e.start.slice(0, 16).replace("T", " "))} UTC</td><td>${evLine(e, false)}</td><td>${e.partners.map(p => `<span class="tag ${partyCls(p)}">${esc(p)}</span>`).join(" ")}</td>` +
+      `<td>${e.types.map(t => `<a href="#proc/${esc(t)}">${esc(TYPES[t].name)}</a>`).join(", ")}</td></tr>`).join("") + `</table></div>`;
+  return h;
+}
+
+// One procedure: what to do, what to ask, the return-to-service gate, who is told. Prints on one page.
+const KEY_CONTACTS = ["emergency", "ic", "landlord_duty", "it_duty", "sec_console"];
+function renderProc(t) {
+  const b = DATA.bridge;
+  let h = `<p class="noprint note"><a href="#procedures">All procedures</a></p><h1>${esc(t.name)}</h1><p class="sub">${esc(t.priority)}</p>${firstBox()}`;
+  h += `<div class="box"><b>Bridge:</b> ${esc(b.dial_in)}, passcode ${esc(b.passcode)}. ${esc(b.video)}. <b>Leads:</b> ${t.leads.map(esc).join(", ")}.` +
+    `<br><b>Call:</b> ${KEY_CONTACTS.map(id => `${esc(CONTACT[id].role)} ${esc(CONTACT[id].phone)}`).join(" · ")}</div>`;
+  h += `<div class="cols"><div>` + t.phases.map(ph => {
+    const acts = t.actions.filter(a => a.phase === ph.id);
+    return `<h2>${esc(ph.name)}</h2><ol class="acts">${acts.map(a => `<li><span class="tag ${partyCls(a.owner)}">${esc(a.owner)}</span> ${esc(a.text)}</li>`).join("")}</ol>`;
+  }).join("") + `</div><div><h2>Questions for the bridge</h2><ol class="acts">${t.questions.map(q => `<li>${esc(q)}</li>`).join("")}</ol>` +
+    `<h2>Before anything returns to service</h2><ul class="gate">${t.rts.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
+    `<h2>Who is told</h2><table><tr><th>Who</th><th>When</th><th>Phone</th></tr>${t.notify.map(n => `<tr><td><b>${esc(n.name)}</b><br><span class="note">${esc(n.why)}</span></td><td class="num">${esc(when(n.within_min))}</td><td class="num">${esc(n.phone)}</td></tr>`).join("")}</table></div></div>`;
+  h += `<h2>Partner documents</h2><p class="note pnote">The partners act under their own procedures, which the Customer requires and this page names rather than rewrites.</p><ul>${t.partner_docs.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  const ev = t.samples.map(id => EVENTS[id]);
+  h += `<div class="noprint"><h2>In the sample month</h2>${ev.length ? `<ul>${ev.map(e => `<li>${evLine(e)}</li>`).join("")}</ul>` : `<p class="note">No P1 record of this type in the sample month.</p>`}` +
+    `<p>${t.links.map(l => `<a class="btn" href="../${esc(l.href)}">${esc(l.label)}</a>`).join(" ")}</p></div>`;
+  h += `<p class="printonly note">Site AUS-1 emergency card, printed from the Emergency tab. Fictional contacts. Synthetic data for a portfolio demonstration.</p>`;
+  return h;
+}
+
+// ---- Call lists: the bridge, every contact with its currency, the on-call rota, the paging tree, and the tiers
+function renderContacts() {
+  const b = DATA.bridge, s = DATA.site;
+  const stale = DATA.contacts.filter(c => c.stale);
+  let h = `<h1>Call lists</h1><p class="sub">Who to call, in what order, and by when. Roles only; every number and address is fictional. In production the contacts live in the paging platform, never in a repository.</p>`;
+  h += `<div class="strip"><div class="stat"><div class="v">${esc(DATA.contacts.length)}</div><div class="l">Contacts</div></div>` +
+    `<div class="stat"><div class="v ${stale.length ? "stale" : "met"}">${esc(stale.length)}</div><div class="l">Not verified in ${esc(DATA.verify_within_days)} days (as of ${esc(DATA.as_of)})</div></div>` +
+    `<div class="stat"><div class="v">${esc(b.dial_in)}</div><div class="l">Bridge, passcode ${esc(b.passcode)}</div></div></div>`;
+  h += `<h2>The bridge</h2><div class="box"><b>${esc(b.name)}.</b> Dial-in ${esc(b.dial_in)}, passcode ${esc(b.passcode)}. Backup: ${esc(b.backup)}. Video: ${esc(b.video)}. ${esc(b.chat)}.</div>` +
+    `<ul>${b.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ul>` +
+    `<div style="overflow-x:auto"><table><tr><th>Role</th><th>Who</th><th>Does</th></tr>${b.roles.map(r => `<tr><td><b>${esc(r.role)}</b></td><td>${esc(r.who)}</td><td>${esc(r.does)}</td></tr>`).join("")}</table></div>` +
+    `<p class="note">Roll call: ${b.roll_call.map(esc).join(", ")}.</p>`;
+  h += `<h2>Contacts</h2><p class="note">${esc(s.name)}, ${esc(s.address)}. ${esc(s.responders)} ${esc(s.assembly)}</p><div style="overflow-x:auto"><table id="contacts"><tr><th>Group</th><th>Role</th><th>Phone</th><th>Email</th><th>Last verified</th></tr>` +
+    DATA.contacts.map(c => `<tr${c.stale ? ' class="stale-row"' : ""}><td><span class="tag ${partyCls(c.group)}">${esc(c.group)}</span></td><td><b>${esc(c.role)}</b>${c.note ? `<br><span class="note">${esc(c.note)}</span>` : ""}</td>` +
+      `<td class="num">${c.rota ? `By rota, below` : esc(c.phone)}</td><td>${esc(c.email || "")}</td>` +
+      `<td class="num">${esc(c.verified)}${c.stale ? `<br><span class="stale">Overdue: ${esc(c.age_days)} days</span>` : ""}</td></tr>`).join("") + `</table></div>`;
+  const p = DATA.paging;
+  h += `<h2>On call</h2><div style="overflow-x:auto"><table><tr><th>Shift (${esc(p.timezone)})</th><th>Days</th><th>Hours</th><th>Primary</th><th>Secondary</th></tr>` +
+    CONTACT.oncall_primary.rota_shifts.map((x, i) => { const y = CONTACT.oncall_secondary.rota_shifts[i];
+      return `<tr><td>${esc(x.label)}</td><td>${esc(x.days.join(", "))}</td><td class="num">${esc(x.start)} to ${esc(x.end)}</td><td>${esc(x.who)}<br><span class="note">${esc(x.phone)}</span></td><td>${esc(y.who)}<br><span class="note">${esc(y.phone)}</span></td></tr>`; }).join("") + `</table></div>`;
+  h += `<h2>Paging tree for a critical alarm</h2><ul class="tree">` + p.levels.map(l => `<li><span class="at">${l.min ? "+" + esc(l.min) + " min" : "At once"}</span><span><b>${esc(l.who)}</b><br><span class="note">${esc(l.via)}</span></span></li>`).join("") + `</ul>`;
+  h += `<h2>Leadership notification tiers</h2><p class="note">Who beyond the site team is told, by event type. Site leadership's notice follows the runbook's ${esc(DATA.facts.first_notice_min)}-minute clock for every type; the other minutes are the Customer's judgment.</p>` +
+    `<div style="overflow-x:auto"><table class="matrix" id="tiers"><tr><th>Tier</th>${DATA.types.map(t => `<th><a href="#proc/${esc(t.id)}">${esc(t.short)}</a></th>`).join("")}</tr>` +
+    DATA.tiers.map(tr => `<tr><td><b>${esc(tr.name)}</b><br><span class="note">${esc(tr.why)}</span></td>` + DATA.types.map(t => { const n = t.notify.find(x => x.tier === tr.id);
+      return `<td class="num${n && n.within_min === 0 ? " now" : ""}">${n ? esc(n.within_min === 0 ? "At once" : n.within_min + " min") : ""}</td>`; }).join("") + `</tr>`).join("") + `</table></div>`;
+  h += `<h2>Sources</h2><ul class="note">${DATA.sources.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  return h;
+}
+
+// ---- Command: the Customer's Incident Commander runbook, then the replay of past incidents against it.
+const hm = m => m == null ? "—" : m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? " " + String(m % 60).padStart(2, "0") + " min" : ""}` : `${m} min`;
+const result = met => met == null ? "—" : met ? `<span class="met">Met</span>` : `<span class="missed">Missed</span>`;
+function renderCommand() {
+  const C = DATA.command, rb = C.runbook, sv = rb.severity;
+  let h = `<h1>Incident Commander runbook</h1><p class="sub">${esc(rb.intro)}</p>`;
+  h += `<div class="box" style="border-color:var(--ll);background:#fdf6ec"><b>Who commands.</b> ${esc(rb.commander)}<br>${rb.roles.map(esc).join("<br>")}<br><b>Bridge.</b> ${esc(rb.bridge_rule)}</div>`;
+  h += `<p class="note">The runbook is the Customer's. A missed step is a process finding for the post-incident review, not an SLA default, and carries no credit. The procedures for each type of event are under <a href="#procedures">Procedures</a>.</p>`;
+  h += `<h2>Severity and command</h2><p class="note">Each SLA's priority with the stricter of the two clocks, and how the Customer commands at that priority.</p><div style="overflow-x:auto"><table><tr><th>Priority</th><th>IT Partner SLA</th><th>Landlord SLA</th><th>Acknowledge</th><th>On site</th><th>Restore</th><th>Updates</th><th>Command</th></tr>` +
+    sv.priorities.map(p => `<tr><td><b>${esc(p.id)}</b></td>` + ["IT Partner", "Landlord"].map(k => `<td><b>${esc(p.names[k])}</b><ul class="crit">${p.criteria[k].map(c => `<li>${esc(c)}</li>`).join("")}</ul></td>`).join("") +
+      `<td class="num">${esc(hm(p.acknowledge_min))}</td><td class="num">${esc(hm(p.engaged_on_site_min))}</td><td class="num">${esc(hm(p.restore_min))}</td><td class="num">${esc(p.update_cadence_min ? "every " + hm(p.update_cadence_min) : "—")}</td><td>${esc(p.command)}</td></tr>`).join("") + `</table></div>`;
+  h += `<p class="note">The Customer's internal severity (not shared with the partners) sets how far a breach is escalated.</p><div style="overflow-x:auto"><table><tr><th>Internal</th><th>Escalation</th></tr>` +
+    sv.internal.map(x => `<tr><td class="num"><b>${esc(x.id)}</b> ${esc(x.name)}</td><td>${esc(x.escalation)}</td></tr>`).join("") + `</table></div>`;
+  h += `<h2>Paging tree for a critical alarm</h2><ul class="tree">` + rb.paging.levels.map(l => `<li><span class="at">${l.min ? "+" + esc(l.min) + " min" : "At once"}</span><span><b>${esc(l.who)}</b><br><span class="note">${esc(l.via)}</span></span></li>`).join("") + `</ul>` +
+    `<p class="note">On-call by shift (${esc(rb.paging.timezone)}): ` + rb.paging.shifts.map(x => `${esc(x.label)} ${esc(x.days.join(", "))} ${esc(x.start)} to ${esc(x.end)}: ${esc(x.primary)}, then ${esc(x.secondary)}`).join("; ") + `. Numbers under <a href="#contacts">Call lists</a>.</p>`;
+  h += `<h2>The steps</h2>` + rb.phases.map(ph => `<h3>${esc(ph.name)}</h3><ol class="steps">` +
+    rb.steps.filter(s => s.phase === ph.id).map(s => `<li>${esc(s.text)} <span class="due">Clock: ${esc(s.due)}</span></li>`).join("") + `</ol>`).join("");
+  h += `<div class="box"><b>Restoration handoff (${esc(rb.handoff.id)}).</b> ${esc(rb.handoff.rule)}<br><b>Afterwards.</b> ${esc(rb.post_incident)}</div>`;
+  h += `<h2>Status-update templates</h2><div class="plain">` + rb.templates.map(t => `<div class="card"><h3>${esc(t.name)}</h3><span class="note">${esc(t.when)}</span><pre class="tpl">${esc(t.body)}</pre><ul class="crit">${t.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>`).join("") + `</div>`;
+  C.replays.forEach(r => {
+    h += `<h2 id="replay">Replay: ${esc(r.title)}</h2><p class="note">${esc(r.ref)} held against the runbook from the alarms, the busway, the scheduler, the partners' page log, and the bridge's comms log. The review is <a href="../pir/#${esc(r.review)}">${esc(r.review)}</a>.</p>`;
+    h += `<div class="strip"><div class="stat"><div class="v">${esc(r.summary.steps)}</div><div class="l">Steps</div></div><div class="stat"><div class="v met">${esc(r.summary.met)}</div><div class="l">Met</div></div><div class="stat"><div class="v missed">${esc(r.summary.missed)}</div><div class="l">Missed: process findings</div></div></div>`;
+    h += `<div style="overflow-x:auto;margin-top:12px"><table><tr><th>Check</th><th>From (UTC)</th><th>At (UTC)</th><th>Elapsed</th><th>Target</th><th>Result</th></tr>` +
+      r.steps.map((s, i) => `<tr class="step"><td colspan="5">${esc(i + 1)}. ${esc(s.text)}</td><td>${result(s.met)}</td></tr>` +
+        s.checks.map(c => `<tr><td>${esc(c.label)}${c.detail ? `<br><span class="note">${esc(c.detail)}</span>` : ""}</td><td class="num">${esc(c.from ? (c.from.length > 10 ? c.from.slice(11, 19) : c.from) : "—")}</td><td class="num">${esc(c.at ? (c.at.length > 10 ? c.at.slice(11, 19) : c.at) : "none")}</td><td class="num">${esc(c.elapsed || "—")}</td><td class="num">${c.target == null ? "—" : esc(c.minutes == null && c.elapsed ? c.target + " business days" : c.target + " min")}</td><td>${result(c.met)}</td></tr>`).join("") +
+        (s.note ? `<tr class="why"><td colspan="6"><b>Why:</b> ${esc(s.note)}</td></tr>` : "")).join("") + `</table></div>`;
+    h += `<h2>Bridge comms log</h2><p class="note">The joint bridge as recorded: who joined, each lead's updates to the Incident Commander, and the Incident Commander's updates to leadership. Times in UTC and Central (CDT).</p><div style="overflow-x:auto"><table><tr><th>UTC</th><th>Central</th><th>Party</th><th>Who</th><th>Said</th></tr>` +
+      r.log.map(e => `<tr><td class="num">${esc(e.t.slice(11, 19))}</td><td class="num">${esc(e.local)}</td><td><span class="tag ${partyCls(e.party)}">${esc(e.party)}</span></td><td>${esc(e.role)}${e.to ? `<br><span class="note">to ${esc(e.to)}</span>` : ""}</td><td>${esc(e.text)}</td></tr>`).join("") + `</table></div>`;
+  });
+  return h;
+}
+
+function show() {
+  const doc = document.getElementById("doc");
+  doc.innerHTML = mode === "contacts" ? renderContacts() : mode === "command" ? renderCommand() : proc ? renderProc(TYPES[proc]) : renderProcedures();
+  ["procedures", "contacts", "command"].forEach(k => document.getElementById("t-" + k).classList.toggle("on", k === mode));
+  doc.querySelectorAll("#stepper [data-node]").forEach(el => el.onclick = () => { trail.push([el.dataset.node, +el.dataset.opt]); refreshStepper(); });
+  wireStepper();
+}
+function wireStepper() {
+  const back = document.getElementById("back"), restart = document.getElementById("restart");
+  if (back) back.onclick = () => { trail.pop(); refreshStepper(); };
+  if (restart) restart.onclick = () => { trail = []; refreshStepper(); };
+}
+function refreshStepper() {
+  const el = document.getElementById("stepper");
+  el.outerHTML = stepper();
+  document.querySelectorAll("#stepper [data-node]").forEach(b => b.onclick = () => { trail.push([b.dataset.node, +b.dataset.opt]); refreshStepper(); });
+  wireStepper();
+}
+function setMode(m, opt) {   // #procedures, #proc/<type>, #contacts, #command, #replay
+  mode = m; proc = m === "procedures" && TYPES[opt] ? opt : "";
+  const hash = m === "command" ? (opt === "replay" ? "#replay" : "#command") : m === "contacts" ? "#contacts" : proc ? "#proc/" + proc : "#procedures";
+  if (location.hash !== hash) history.replaceState(null, "", hash);
+  show();
+  const rp = document.getElementById("replay");
+  if (opt === "replay" && rp && rp.scrollIntoView) rp.scrollIntoView();
+}
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h === "contacts") setMode("contacts");
+  else if (h === "command" || h === "replay") setMode("command", h);
+  else if (h.startsWith("proc/")) { setMode("procedures", h.slice(5)); document.documentElement.scrollTop = 0; }
+  else setMode("procedures");
+}
+document.getElementById("t-procedures").onclick = () => setMode("procedures");
+document.getElementById("t-contacts").onclick = () => setMode("contacts");
+document.getElementById("t-command").onclick = () => { setMode("command"); document.documentElement.scrollTop = 0; };
+document.getElementById("print").onclick = () => window.print();
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>

@@ -76,6 +76,7 @@ terms:
   - {term: CSL, type: acronym, expansion: Critical service level, text: "A service level with money attached: missing its minimum earns the Customer a credit. Numbered CSL-01 and up in the IT Partner SLA, OT-CSL-01 and up in the Landlord SLA, and SEC-CSL-01 and up in the Security SLA."}
   - {term: CUSUM, type: acronym, expansion: Cumulative sum, text: "A drift test: it adds up each reading's excess over a pump's own baseline (less a small allowance) and raises a watch when the total passes a set limit, so a small steady rise shows long before any one reading looks wrong."}
   - {term: DCO, type: acronym, expansion: Data center operations, text: "The Customer's site operations team, which runs the Telemetry of Record and manages both partners."}
+  - {term: EMS, type: acronym, expansion: Emergency medical services, text: "Ambulance and paramedics, called with fire and police on 911. The Emergency tab says where they are met (the north vehicle gate)."}
   - {term: EHS, type: acronym, expansion: Environment, health, and safety, text: "The safety terms every party working at the site signs, with their own rules (EHS-R), violation classes (EHS-C), and credits."}
   - {term: CAB, type: acronym, expansion: Change advisory board, text: "The Customer's board that reviews and approves the IT Partner's change records before work starts."}
   - {term: CHG, type: acronym, expansion: Change record, text: "The prefix of the IT Partner's change records (CHG + 7 digits)."}
@@ -486,7 +487,7 @@ families:
   - {key: PIR-A, label: "A# (post-incident review)", pattern: 'A\d', type: record, title: Post-incident review action, example: A3,
      pages: [pir, weekly], text: "An owned, dated action from the post-incident review, carried into the weekly pack until done."}
   - {key: PIR-F, label: "F# (post-incident review)", pattern: 'F\d', type: record, title: Post-incident review contributing factor, example: F5,
-     pages: [pir, alarms], text: "A contributing factor the post-incident review found, such as an inadequate procedure or a missing alert."}
+     pages: [pir, alarms, emergency], text: "A contributing factor the post-incident review found, such as an inadequate procedure or a missing alert."}
   - {key: WK-D, label: "D# (weekly review)", pattern: 'D\d', type: record, title: Weekly review decision, example: D1,
      pages: [weekly], text: "A decision recorded in the weekly operations review's meeting notes."}
   - {key: WK-Q, label: "Q# (weekly review)", pattern: 'Q\d', type: record, title: Weekly review ask, example: Q1,
