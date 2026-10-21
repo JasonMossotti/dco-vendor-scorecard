@@ -245,7 +245,7 @@ def body(f: dict) -> str:
              "Each partner measured against its own SLA from the Customer's telemetry, beside what the partner reported.",
              [(str(it["defaults"]), "IT Partner Minimum defaults"), (money(it["credits"]), "IT Partner credits"),
               (str(ll["defaults"]), "Landlord Minimum defaults"), (money(ll["credits"]), "Landlord credits")],
-             [("Open the scorecards", "app/")],
+             [("Open the scorecards", "app/"), ("Quarterly review", "app/#qbr")],
              f"Engine self-check: IT Partner {check(it)}, Landlord {check(ll)}, Security Partner {check(sec)} planted discrepancies found. "
              "Service credits explained in plain words, with a calculator."),
         tile("security", "Security",

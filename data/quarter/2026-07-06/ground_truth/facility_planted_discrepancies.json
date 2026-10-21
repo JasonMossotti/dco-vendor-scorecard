@@ -1,0 +1,53 @@
+[
+  {
+    "anomaly_id": "FPD-001",
+    "at": "2026-07-09T15:53:29Z",
+    "busway": "BW-B-R4-PG-B5-B",
+    "evidence": "Breaker operated with no approved MOP",
+    "tapoff": "TO-B11",
+    "type": "critical_work_no_mop",
+    "wo": "WO-41018"
+  },
+  {
+    "anomaly_id": "FPD-002",
+    "device": "TW-B3",
+    "hours": 56.7,
+    "point": "High supply air temperature alarm",
+    "set_at": "2026-07-27T10:58:45Z",
+    "type": "bms_override_unrecorded"
+  },
+  {
+    "anomaly_id": "FPD-003",
+    "device": "TW-A4",
+    "hours": 40.1,
+    "point": "High supply air temperature alarm",
+    "set_at": "2026-07-15T16:26:59Z",
+    "type": "bms_override_unrecorded"
+  },
+  {
+    "anomaly_id": "FPD-004",
+    "asset": "Hall A electrical room",
+    "claimed_complete": "2026-07-07T18:30:42Z",
+    "evidence": "No badge entry and no device signal",
+    "task": "PM-0018",
+    "type": "pm_without_evidence"
+  },
+  {
+    "anomaly_id": "FPD-005",
+    "evidence": "Acknowledged in the BMS; no badge entry before the alarm cleared",
+    "gt_id": "FGT-0011",
+    "t0": "2026-07-19T18:17:04Z",
+    "type": "alarm_acked_no_dispatch",
+    "wo": "WO-41084",
+    "wo_unit": "CH-09"
+  },
+  {
+    "anomaly_id": "FPD-006",
+    "evidence": "Acknowledged in the BMS; no badge entry before the alarm cleared",
+    "gt_id": "FGT-0012",
+    "t0": "2026-07-11T04:28:05Z",
+    "type": "alarm_acked_no_dispatch",
+    "wo": "WO-41088",
+    "wo_unit": "CH-03"
+  }
+]

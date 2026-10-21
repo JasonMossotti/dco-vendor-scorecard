@@ -1,0 +1,6 @@
+{"message": "NVLink switch tray unreachable; NVLink domain degraded", "rack": "A25", "state": "failed", "timestamp": "2026-07-25T12:04:01Z", "unit": "NVLink switch tray a25-nvsw5"}
+{"message": "NVLink domain healthy", "rack": "A25", "state": "healthy", "timestamp": "2026-07-25T14:05:54Z", "unit": "NVLink switch tray a25-nvsw5"}
+{"message": "NVLink switch tray unreachable; NVLink domain degraded", "rack": "A18", "state": "failed", "timestamp": "2026-07-29T00:10:50Z", "unit": "NVLink switch tray a18-nvsw7"}
+{"message": "NVLink domain healthy", "rack": "A18", "state": "healthy", "timestamp": "2026-07-29T02:36:26Z", "unit": "NVLink switch tray a18-nvsw7"}
+{"message": "NVLink switch tray unreachable; NVLink domain degraded", "rack": "A05", "state": "failed", "timestamp": "2026-07-31T16:16:34Z", "unit": "NVLink switch tray a05-nvsw8"}
+{"message": "NVLink domain healthy", "rack": "A05", "state": "healthy", "timestamp": "2026-07-31T18:28:11Z", "unit": "NVLink switch tray a05-nvsw8"}

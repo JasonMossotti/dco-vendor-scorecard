@@ -1,0 +1,23 @@
+[
+  {
+    "evidence": "Post log says staffed; no badge-in at the post reader during the shift",
+    "guard_id": "LGP-011",
+    "post": "POST-HA",
+    "shift_start": "2026-07-08T12:00:00Z",
+    "type": "post_reported_unstaffed"
+  },
+  {
+    "alarm_id": "ACS-00014",
+    "door": "HALL-B",
+    "evidence": "Dispatch log closed; no guard badge at the door between the alarm and the close",
+    "sir": "SIR-00014",
+    "type": "door_alarm_closed_no_response"
+  },
+  {
+    "drive_serial": "E1SKCKJ894S9",
+    "evidence": "Tray shipped; the drive has no handover and no destruction certificate",
+    "ticket": "INC3100187",
+    "tray_serial": "CTAO1E941Z",
+    "type": "media_shipped_without_destruction"
+  }
+]

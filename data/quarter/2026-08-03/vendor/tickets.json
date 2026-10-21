@@ -1,0 +1,4132 @@
+[
+  {
+    "acknowledged_at": "2026-08-03T05:51:16Z",
+    "assigned_to": "RSS-021",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a06-ct01",
+    "hall": "HALL-A",
+    "number": "INC3100017",
+    "opened_at": "2026-08-03T05:29:09Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPL12QO13D",
+        "location": "a06-ct01 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPA6HO5V0C"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A06",
+    "reported_outage_start": "2026-08-03T05:29:09Z",
+    "resolved_at": "2026-08-03T08:38:01Z",
+    "short_description": "Link a06-ct01:mlx5_0 <-> leaf-a03-r0:swp19",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-03T05:51:16Z",
+        "author": "Casey Hale",
+        "text": "Acknowledged. Assigned to Casey Hale."
+      },
+      {
+        "at": "2026-08-03T07:39:28Z",
+        "author": "Casey Hale",
+        "text": "On site at rack A06 (HALL-A)."
+      },
+      {
+        "at": "2026-08-03T07:59:55Z",
+        "author": "Casey Hale",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPA6HO5V0C, installed SN OPL12QO13D. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-03T08:38:01Z",
+        "author": "Casey Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-03T11:44:49Z",
+    "assigned_to": "RSS-023",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a16-ct10",
+    "hall": "HALL-A",
+    "number": "INC3100034",
+    "opened_at": "2026-08-03T11:33:19Z",
+    "parts_used": [
+      {
+        "installed_serial": "CT4US4APPL",
+        "location": "a16-ct10",
+        "part": "Compute tray",
+        "removed_serial": "CT6XKQMR3Y"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A16",
+    "reported_outage_start": "2026-08-03T11:33:19Z",
+    "resolved_at": "2026-08-03T15:13:34Z",
+    "short_description": "Compute tray a16-ct10: XID 94",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-03T11:44:49Z",
+        "author": "Sasha Abbott",
+        "text": "Acknowledged. Assigned to Sasha Abbott."
+      },
+      {
+        "at": "2026-08-03T11:56:55Z",
+        "author": "Sasha Abbott",
+        "text": "On site at rack A16 (HALL-A)."
+      },
+      {
+        "at": "2026-08-03T12:51:46Z",
+        "author": "Sasha Abbott",
+        "text": "Replaced compute tray. Removed SN CT6XKQMR3Y, installed SN CT4US4APPL. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-03T15:13:34Z",
+        "author": "Sasha Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-03T17:01:46Z",
+    "assigned_to": "RSS-008",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a07-ct17",
+    "hall": "HALL-A",
+    "number": "INC3100051",
+    "opened_at": "2026-08-03T16:56:11Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTWBWJ2AWR",
+        "location": "a07-ct17",
+        "part": "Compute tray",
+        "removed_serial": "CT7OH2S0TD"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A07",
+    "reported_outage_start": "2026-08-03T16:56:11Z",
+    "resolved_at": "2026-08-03T21:15:10Z",
+    "short_description": "Compute tray a07-ct17: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-03T17:01:46Z",
+        "author": "Noel Petrov",
+        "text": "Acknowledged. Assigned to Noel Petrov."
+      },
+      {
+        "at": "2026-08-03T17:15:15Z",
+        "author": "Noel Petrov",
+        "text": "On site at rack A07 (HALL-A)."
+      },
+      {
+        "at": "2026-08-03T18:55:32Z",
+        "author": "Noel Petrov",
+        "text": "Replaced compute tray. Removed SN CT7OH2S0TD, installed SN CTWBWJ2AWR. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-03T21:15:10Z",
+        "author": "Noel Petrov",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-04T11:08:46Z",
+    "assigned_to": "RSS-022",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 6 in A21 power shelf 5",
+    "hall": "HALL-A",
+    "number": "INC3100068",
+    "opened_at": "2026-08-04T10:57:23Z",
+    "parts_used": [
+      {
+        "installed_serial": "PUN09YRCIG",
+        "location": "PSU 6 in A21 power shelf 5",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PUDWSSSKL9"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A21",
+    "reported_outage_start": "2026-08-04T10:57:23Z",
+    "resolved_at": "2026-08-04T17:25:07Z",
+    "short_description": "PSU 6 in A21 power shelf 5",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-04T11:08:46Z",
+        "author": "Alex Yamada",
+        "text": "Acknowledged. Assigned to Alex Yamada."
+      },
+      {
+        "at": "2026-08-04T11:32:29Z",
+        "author": "Alex Yamada",
+        "text": "On site at rack A21 (HALL-A)."
+      },
+      {
+        "at": "2026-08-04T17:17:53Z",
+        "author": "Alex Yamada",
+        "text": "Replaced psu (5.5 kw). Removed SN PUDWSSSKL9, installed SN PUN09YRCIG. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-04T17:25:07Z",
+        "author": "Alex Yamada",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-04T18:46:39Z",
+    "assigned_to": "RSS-008",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a14-ct15",
+    "hall": "HALL-A",
+    "number": "INC3100085",
+    "opened_at": "2026-08-04T18:40:17Z",
+    "parts_used": [
+      {
+        "installed_serial": "OP7HN1G2O7",
+        "location": "a14-ct15 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPWV6M5IQU"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A14",
+    "reported_outage_start": "2026-08-04T18:40:17Z",
+    "resolved_at": "2026-08-04T19:58:39Z",
+    "short_description": "Link a14-ct15:mlx5_2 <-> leaf-a07-r2:swp33",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-04T18:46:39Z",
+        "author": "Noel Petrov",
+        "text": "Acknowledged. Assigned to Noel Petrov."
+      },
+      {
+        "at": "2026-08-04T18:53:59Z",
+        "author": "Noel Petrov",
+        "text": "On site at rack A14 (HALL-A)."
+      },
+      {
+        "at": "2026-08-04T19:22:15Z",
+        "author": "Noel Petrov",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPWV6M5IQU, installed SN OP7HN1G2O7. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-04T19:58:39Z",
+        "author": "Noel Petrov",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-05T21:01:33Z",
+    "assigned_to": "RSS-007",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a22-ct02",
+    "hall": "HALL-A",
+    "number": "INC3100102",
+    "opened_at": "2026-08-05T20:50:36Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A22",
+    "reported_outage_start": "2026-08-05T20:50:36Z",
+    "resolved_at": "2026-08-05T22:03:53Z",
+    "short_description": "Link a22-ct02:mlx5_3 <-> leaf-a11-r3:swp20",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-05T21:01:33Z",
+        "author": "Casey Osei",
+        "text": "Acknowledged. Assigned to Casey Osei."
+      },
+      {
+        "at": "2026-08-05T21:03:59Z",
+        "author": "Casey Osei",
+        "text": "On site at rack A22 (HALL-A)."
+      },
+      {
+        "at": "2026-08-05T21:25:22Z",
+        "author": "Casey Osei",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-05T22:03:53Z",
+        "author": "Casey Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-06T12:17:39Z",
+    "assigned_to": "RSS-016",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a01-ct05",
+    "hall": "HALL-A",
+    "number": "INC3100119",
+    "opened_at": "2026-08-06T12:06:47Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTPQ5QCSX8",
+        "location": "a01-ct05",
+        "part": "Compute tray",
+        "removed_serial": "CTKINES10E"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A01",
+    "reported_outage_start": "2026-08-06T12:06:47Z",
+    "resolved_at": "2026-08-06T15:49:33Z",
+    "short_description": "Compute tray a01-ct05: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-06T12:17:39Z",
+        "author": "Cameron Sato",
+        "text": "Acknowledged. Assigned to Cameron Sato."
+      },
+      {
+        "at": "2026-08-06T12:26:38Z",
+        "author": "Cameron Sato",
+        "text": "On site at rack A01 (HALL-A)."
+      },
+      {
+        "at": "2026-08-06T13:34:21Z",
+        "author": "Cameron Sato",
+        "text": "Replaced compute tray. Removed SN CTKINES10E, installed SN CTPQ5QCSX8. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-06T15:49:33Z",
+        "author": "Cameron Sato",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-06T13:55:09Z",
+    "assigned_to": "RSS-014",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a32-ct06",
+    "hall": "HALL-A",
+    "number": "INC3100136",
+    "opened_at": "2026-08-06T13:49:29Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPHCU6FZ3Y",
+        "location": "a32-ct06 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPE8M73GRC"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A32",
+    "reported_outage_start": "2026-08-06T13:49:29Z",
+    "resolved_at": "2026-08-06T15:11:55Z",
+    "short_description": "Link a32-ct06:mlx5_0 <-> leaf-a16-r0:swp24",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-06T13:55:09Z",
+        "author": "Marlowe Chen",
+        "text": "Acknowledged. Assigned to Marlowe Chen."
+      },
+      {
+        "at": "2026-08-06T14:07:06Z",
+        "author": "Marlowe Chen",
+        "text": "On site at rack A32 (HALL-A)."
+      },
+      {
+        "at": "2026-08-06T14:35:52Z",
+        "author": "Marlowe Chen",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPE8M73GRC, installed SN OPHCU6FZ3Y. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-06T15:11:55Z",
+        "author": "Marlowe Chen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-06T19:30:48Z",
+    "assigned_to": "RSS-018",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 5 in A19 power shelf 3",
+    "hall": "HALL-A",
+    "number": "INC3100153",
+    "opened_at": "2026-08-06T19:07:34Z",
+    "parts_used": [
+      {
+        "installed_serial": "PUL16N4C88",
+        "location": "PSU 5 in A19 power shelf 3",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PUMP10FROH"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A19",
+    "reported_outage_start": "2026-08-06T19:07:34Z",
+    "resolved_at": "2026-08-06T22:18:07Z",
+    "short_description": "PSU 5 in A19 power shelf 3",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-06T19:30:48Z",
+        "author": "Parker Kim",
+        "text": "Acknowledged. Assigned to Parker Kim."
+      },
+      {
+        "at": "2026-08-06T21:52:55Z",
+        "author": "Parker Kim",
+        "text": "On site at rack A19 (HALL-A)."
+      },
+      {
+        "at": "2026-08-06T22:06:24Z",
+        "author": "Parker Kim",
+        "text": "Replaced psu (5.5 kw). Removed SN PUMP10FROH, installed SN PUL16N4C88. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-06T22:18:07Z",
+        "author": "Parker Kim",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-07T10:15:03Z",
+    "assigned_to": "RSS-027",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a31-ct04",
+    "hall": "HALL-A",
+    "number": "INC3100170",
+    "opened_at": "2026-08-07T10:05:51Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPZY3QJ63F",
+        "location": "a31-ct04 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP0ZNXMUDN"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A31",
+    "reported_outage_start": "2026-08-07T10:05:51Z",
+    "resolved_at": "2026-08-07T11:44:04Z",
+    "short_description": "Link a31-ct04:mlx5_1 <-> leaf-a16-r1:swp4",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-07T10:15:03Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-07T10:28:01Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A31 (HALL-A)."
+      },
+      {
+        "at": "2026-08-07T11:04:11Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OP0ZNXMUDN, installed SN OPZY3QJ63F. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-07T11:44:04Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-08T02:43:20Z",
+    "assigned_to": "RSS-027",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a20-ct16",
+    "hall": "HALL-A",
+    "number": "INC3100187",
+    "opened_at": "2026-08-08T02:36:30Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTQJQP1OTA",
+        "location": "a20-ct16",
+        "part": "Compute tray",
+        "removed_serial": "CT0O86S2L0"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A20",
+    "reported_outage_start": "2026-08-08T02:36:30Z",
+    "resolved_at": "2026-08-08T06:32:02Z",
+    "short_description": "Compute tray a20-ct16: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-08T02:43:20Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-08T02:56:11Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A20 (HALL-A)."
+      },
+      {
+        "at": "2026-08-08T04:10:02Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced compute tray. Removed SN CT0O86S2L0, installed SN CTQJQP1OTA. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-08T06:32:02Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-08T07:15:36Z",
+    "assigned_to": "RSS-030",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a31-ct17",
+    "hall": "HALL-A",
+    "number": "INC3100204",
+    "opened_at": "2026-08-08T07:05:29Z",
+    "parts_used": [
+      {
+        "installed_serial": "CT8X8YMMNU",
+        "location": "a31-ct17",
+        "part": "Compute tray",
+        "removed_serial": "CTNSOE8P8T"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A31",
+    "reported_outage_start": "2026-08-08T07:05:29Z",
+    "resolved_at": "2026-08-08T15:03:18Z",
+    "short_description": "Compute tray a31-ct17: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-08T07:15:36Z",
+        "author": "Emerson Moreau",
+        "text": "Acknowledged. Assigned to Emerson Moreau."
+      },
+      {
+        "at": "2026-08-08T07:16:36Z",
+        "author": "Emerson Moreau",
+        "text": "On site at rack A31 (HALL-A)."
+      },
+      {
+        "at": "2026-08-08T12:44:12Z",
+        "author": "Emerson Moreau",
+        "text": "Replaced compute tray. Removed SN CTNSOE8P8T, installed SN CT8X8YMMNU. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-08T15:03:18Z",
+        "author": "Emerson Moreau",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-08T11:50:21Z",
+    "assigned_to": "RSS-012",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 3 in A04 power shelf 2",
+    "hall": "HALL-A",
+    "number": "INC3100221",
+    "opened_at": "2026-08-08T11:18:55Z",
+    "parts_used": [
+      {
+        "installed_serial": "PU3W9EGKE1",
+        "location": "PSU 3 in A04 power shelf 2",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PUHKDV4N40"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A04",
+    "reported_outage_start": "2026-08-08T11:18:55Z",
+    "resolved_at": "2026-08-08T12:50:59Z",
+    "short_description": "PSU 3 in A04 power shelf 2",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-08T11:50:21Z",
+        "author": "Sasha Walsh",
+        "text": "Acknowledged. Assigned to Sasha Walsh."
+      },
+      {
+        "at": "2026-08-08T12:20:21Z",
+        "author": "Sasha Walsh",
+        "text": "On site at rack A04 (HALL-A)."
+      },
+      {
+        "at": "2026-08-08T12:45:11Z",
+        "author": "Sasha Walsh",
+        "text": "Replaced psu (5.5 kw). Removed SN PUHKDV4N40, installed SN PU3W9EGKE1. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-08T12:50:59Z",
+        "author": "Sasha Walsh",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-08T12:23:36Z",
+    "assigned_to": "RSS-014",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a13-ct11",
+    "hall": "HALL-A",
+    "number": "INC3100238",
+    "opened_at": "2026-08-08T12:20:30Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A13",
+    "reported_outage_start": "2026-08-08T12:20:30Z",
+    "resolved_at": "2026-08-08T19:06:47Z",
+    "short_description": "Compute tray a13-ct11: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-08T12:23:36Z",
+        "author": "Marlowe Chen",
+        "text": "Acknowledged. Assigned to Marlowe Chen."
+      },
+      {
+        "at": "2026-08-08T12:39:01Z",
+        "author": "Marlowe Chen",
+        "text": "On site at rack A13 (HALL-A)."
+      },
+      {
+        "at": "2026-08-08T16:48:49Z",
+        "author": "Marlowe Chen",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-08T19:06:47Z",
+        "author": "Marlowe Chen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-08T19:45:39Z",
+    "assigned_to": "RSS-011",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a13-ct11",
+    "hall": "HALL-A",
+    "number": "INC3100272",
+    "opened_at": "2026-08-08T19:35:44Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A13",
+    "reported_outage_start": "2026-08-08T19:35:44Z",
+    "resolved_at": "2026-08-08T22:42:06Z",
+    "short_description": "Compute tray a13-ct11: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-08T19:45:39Z",
+        "author": "Quinn Duarte",
+        "text": "Acknowledged. Assigned to Quinn Duarte."
+      },
+      {
+        "at": "2026-08-08T19:55:37Z",
+        "author": "Quinn Duarte",
+        "text": "On site at rack A13 (HALL-A)."
+      },
+      {
+        "at": "2026-08-08T20:22:44Z",
+        "author": "Quinn Duarte",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-08T22:42:06Z",
+        "author": "Quinn Duarte",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-08T20:09:55Z",
+    "assigned_to": "RSS-015",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a13-ct07",
+    "hall": "HALL-A",
+    "number": "INC3100255",
+    "opened_at": "2026-08-08T19:59:42Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTN9ZBOY1W",
+        "location": "a13-ct07",
+        "part": "Compute tray",
+        "removed_serial": "CT3TIZAGE7"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A13",
+    "reported_outage_start": "2026-08-08T19:59:42Z",
+    "resolved_at": "2026-08-09T03:38:06Z",
+    "short_description": "Compute tray a13-ct07: XID 94",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-08T20:09:55Z",
+        "author": "Emerson Vargas",
+        "text": "Acknowledged. Assigned to Emerson Vargas."
+      },
+      {
+        "at": "2026-08-08T20:15:30Z",
+        "author": "Emerson Vargas",
+        "text": "On site at rack A13 (HALL-A)."
+      },
+      {
+        "at": "2026-08-09T01:18:09Z",
+        "author": "Emerson Vargas",
+        "text": "Replaced compute tray. Removed SN CT3TIZAGE7, installed SN CTN9ZBOY1W. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-09T03:38:06Z",
+        "author": "Emerson Vargas",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-08T23:16:05Z",
+    "assigned_to": "RSS-029",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a25-ct08",
+    "hall": "HALL-A",
+    "number": "INC3100289",
+    "opened_at": "2026-08-08T22:34:22Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPB6STX4W4",
+        "location": "a25-ct08 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP1UH5AF2L"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A25",
+    "reported_outage_start": "2026-08-08T22:34:22Z",
+    "resolved_at": "2026-08-09T01:08:10Z",
+    "short_description": "Link a25-ct08:mlx5_1 <-> leaf-a13-r1:swp8",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-08T23:16:05Z",
+        "author": "Finley Abbott",
+        "text": "Acknowledged. Assigned to Finley Abbott."
+      },
+      {
+        "at": "2026-08-09T00:10:09Z",
+        "author": "Finley Abbott",
+        "text": "On site at rack A25 (HALL-A)."
+      },
+      {
+        "at": "2026-08-09T00:32:39Z",
+        "author": "Finley Abbott",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OP1UH5AF2L, installed SN OPB6STX4W4. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-09T01:08:10Z",
+        "author": "Finley Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-09T07:11:35Z",
+    "assigned_to": "RSS-027",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a05-ct04",
+    "hall": "HALL-A",
+    "number": "INC3100306",
+    "opened_at": "2026-08-09T07:04:32Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPZ2Y54VN0",
+        "location": "a05-ct04 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP02RIUH4S"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A05",
+    "reported_outage_start": "2026-08-09T07:04:32Z",
+    "resolved_at": "2026-08-09T08:32:33Z",
+    "short_description": "Link a05-ct04:mlx5_1 <-> leaf-a03-r1:swp4",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-09T07:11:35Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-09T07:21:44Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A05 (HALL-A)."
+      },
+      {
+        "at": "2026-08-09T07:50:21Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OP02RIUH4S, installed SN OPZ2Y54VN0. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-09T08:32:33Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-09T09:53:37Z",
+    "assigned_to": "RSS-028",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a21-ct10",
+    "hall": "HALL-A",
+    "number": "INC3100323",
+    "opened_at": "2026-08-09T09:47:26Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTP59WF7DW",
+        "location": "a21-ct10",
+        "part": "Compute tray",
+        "removed_serial": "CTBFRZOWJI"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A21",
+    "reported_outage_start": "2026-08-09T09:47:26Z",
+    "resolved_at": "2026-08-09T13:28:27Z",
+    "short_description": "Compute tray a21-ct10: XID 94",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-09T09:53:37Z",
+        "author": "Jordan Kim",
+        "text": "Acknowledged. Assigned to Jordan Kim."
+      },
+      {
+        "at": "2026-08-09T10:04:41Z",
+        "author": "Jordan Kim",
+        "text": "On site at rack A21 (HALL-A)."
+      },
+      {
+        "at": "2026-08-09T11:09:06Z",
+        "author": "Jordan Kim",
+        "text": "Replaced compute tray. Removed SN CTBFRZOWJI, installed SN CTP59WF7DW. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-09T13:28:27Z",
+        "author": "Jordan Kim",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-09T14:54:24Z",
+    "assigned_to": "RSS-013",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a27-ct17",
+    "hall": "HALL-A",
+    "number": "INC3100340",
+    "opened_at": "2026-08-09T14:42:37Z",
+    "parts_used": [],
+    "priority": "P3",
+    "rack": "A27",
+    "reported_outage_start": "2026-08-09T14:42:37Z",
+    "resolved_at": "2026-08-09T16:55:15Z",
+    "short_description": "Link a27-ct17:mlx5_0 <-> leaf-a14-r0:swp17",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-09T14:54:24Z",
+        "author": "Shay Larsen",
+        "text": "Acknowledged. Assigned to Shay Larsen."
+      },
+      {
+        "at": "2026-08-09T15:58:37Z",
+        "author": "Shay Larsen",
+        "text": "On site at rack A27 (HALL-A)."
+      },
+      {
+        "at": "2026-08-09T16:17:40Z",
+        "author": "Shay Larsen",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-09T16:55:15Z",
+        "author": "Shay Larsen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-09T19:50:49Z",
+    "assigned_to": "RSS-013",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a05-ct05",
+    "hall": "HALL-A",
+    "number": "INC3100357",
+    "opened_at": "2026-08-09T19:46:21Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A05",
+    "reported_outage_start": "2026-08-09T19:46:21Z",
+    "resolved_at": "2026-08-09T21:02:31Z",
+    "short_description": "Link a05-ct05:mlx5_1 <-> leaf-a03-r1:swp5",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-09T19:50:49Z",
+        "author": "Shay Larsen",
+        "text": "Acknowledged. Assigned to Shay Larsen."
+      },
+      {
+        "at": "2026-08-09T20:01:39Z",
+        "author": "Shay Larsen",
+        "text": "On site at rack A05 (HALL-A)."
+      },
+      {
+        "at": "2026-08-09T20:22:46Z",
+        "author": "Shay Larsen",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-09T21:02:31Z",
+        "author": "Shay Larsen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-09T22:27:58Z",
+    "assigned_to": "RSS-014",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 1 in A25 power shelf 2",
+    "hall": "HALL-A",
+    "number": "INC3100374",
+    "opened_at": "2026-08-09T21:59:18Z",
+    "parts_used": [
+      {
+        "installed_serial": "PU037WX9RN",
+        "location": "PSU 1 in A25 power shelf 2",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PU5ZISSHQM"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A25",
+    "reported_outage_start": "2026-08-09T21:59:18Z",
+    "resolved_at": "2026-08-10T00:01:57Z",
+    "short_description": "PSU 1 in A25 power shelf 2",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-09T22:27:58Z",
+        "author": "Marlowe Chen",
+        "text": "Acknowledged. Assigned to Marlowe Chen."
+      },
+      {
+        "at": "2026-08-09T23:29:07Z",
+        "author": "Marlowe Chen",
+        "text": "On site at rack A25 (HALL-A)."
+      },
+      {
+        "at": "2026-08-09T23:51:01Z",
+        "author": "Marlowe Chen",
+        "text": "Replaced psu (5.5 kw). Removed SN PU5ZISSHQM, installed SN PU037WX9RN. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-10T00:01:57Z",
+        "author": "Marlowe Chen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-10T02:08:40Z",
+    "assigned_to": "RSS-027",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a09-ct09",
+    "hall": "HALL-A",
+    "number": "INC3100391",
+    "opened_at": "2026-08-10T02:02:42Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTI0ZF54M2",
+        "location": "a09-ct09",
+        "part": "Compute tray",
+        "removed_serial": "CTPKUNE8CD"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A09",
+    "reported_outage_start": "2026-08-10T02:02:42Z",
+    "resolved_at": "2026-08-10T06:21:08Z",
+    "short_description": "Compute tray a09-ct09: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-10T02:08:40Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-10T02:13:39Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A09 (HALL-A)."
+      },
+      {
+        "at": "2026-08-10T04:00:14Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced compute tray. Removed SN CTPKUNE8CD, installed SN CTI0ZF54M2. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-10T06:21:08Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-10T07:31:29Z",
+    "assigned_to": "RSS-026",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a27-ct05",
+    "hall": "HALL-A",
+    "number": "INC3100408",
+    "opened_at": "2026-08-10T07:20:37Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTV4FQV4M4",
+        "location": "a27-ct05",
+        "part": "Compute tray",
+        "removed_serial": "CTGZFJYDPO"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A27",
+    "reported_outage_start": "2026-08-10T07:20:37Z",
+    "resolved_at": "2026-08-10T10:45:38Z",
+    "short_description": "Compute tray a27-ct05: XID 94",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-10T07:31:29Z",
+        "author": "Harper Sato",
+        "text": "Acknowledged. Assigned to Harper Sato."
+      },
+      {
+        "at": "2026-08-10T07:35:26Z",
+        "author": "Harper Sato",
+        "text": "On site at rack A27 (HALL-A)."
+      },
+      {
+        "at": "2026-08-10T08:25:56Z",
+        "author": "Harper Sato",
+        "text": "Replaced compute tray. Removed SN CTGZFJYDPO, installed SN CTV4FQV4M4. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-10T10:45:38Z",
+        "author": "Harper Sato",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-10T08:49:56Z",
+    "assigned_to": "RSS-026",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a05-ct04",
+    "hall": "HALL-A",
+    "number": "INC3100425",
+    "opened_at": "2026-08-10T08:39:22Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPAT9WA4VP",
+        "location": "a05-ct04 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPHDX4FKH2"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A05",
+    "reported_outage_start": "2026-08-10T08:39:22Z",
+    "resolved_at": "2026-08-10T11:26:47Z",
+    "short_description": "Link a05-ct04:mlx5_1 <-> leaf-a03-r1:swp4",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-10T08:49:56Z",
+        "author": "Harper Sato",
+        "text": "Acknowledged. Assigned to Harper Sato."
+      },
+      {
+        "at": "2026-08-10T10:17:57Z",
+        "author": "Harper Sato",
+        "text": "On site at rack A05 (HALL-A)."
+      },
+      {
+        "at": "2026-08-10T10:44:21Z",
+        "author": "Harper Sato",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPHDX4FKH2, installed SN OPAT9WA4VP. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-10T11:26:47Z",
+        "author": "Harper Sato",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-10T09:28:23Z",
+    "assigned_to": "RSS-027",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a14-ct03",
+    "hall": "HALL-A",
+    "number": "INC3100442",
+    "opened_at": "2026-08-10T09:17:02Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPTLN1PWVZ",
+        "location": "a14-ct03 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP2THNPUZV"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A14",
+    "reported_outage_start": "2026-08-10T09:17:02Z",
+    "resolved_at": "2026-08-10T10:39:53Z",
+    "short_description": "Link a14-ct03:mlx5_1 <-> leaf-a07-r1:swp21",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-10T09:28:23Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-10T09:32:12Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A14 (HALL-A)."
+      },
+      {
+        "at": "2026-08-10T10:01:49Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OP2THNPUZV, installed SN OPTLN1PWVZ. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-10T10:39:53Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-10T17:14:41Z",
+    "assigned_to": "RSS-003",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a10-ct18",
+    "hall": "HALL-A",
+    "number": "INC3100459",
+    "opened_at": "2026-08-10T17:04:56Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A10",
+    "reported_outage_start": "2026-08-10T17:04:56Z",
+    "resolved_at": "2026-08-10T20:11:20Z",
+    "short_description": "Compute tray a10-ct18: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-10T17:14:41Z",
+        "author": "Dakota Haddad",
+        "text": "Acknowledged. Assigned to Dakota Haddad."
+      },
+      {
+        "at": "2026-08-10T17:18:58Z",
+        "author": "Dakota Haddad",
+        "text": "On site at rack A10 (HALL-A)."
+      },
+      {
+        "at": "2026-08-10T17:52:36Z",
+        "author": "Dakota Haddad",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-10T20:11:20Z",
+        "author": "Dakota Haddad",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-11T02:29:21Z",
+    "assigned_to": "RSS-021",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 1 in A30 power shelf 8",
+    "hall": "HALL-A",
+    "number": "INC3100476",
+    "opened_at": "2026-08-11T01:46:33Z",
+    "parts_used": [
+      {
+        "installed_serial": "PUZUSAWQMY",
+        "location": "PSU 1 in A30 power shelf 8",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PUTI3RL17H"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A30",
+    "reported_outage_start": "2026-08-11T01:46:33Z",
+    "resolved_at": "2026-08-11T03:53:18Z",
+    "short_description": "PSU 1 in A30 power shelf 8",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-11T02:29:21Z",
+        "author": "Casey Hale",
+        "text": "Acknowledged. Assigned to Casey Hale."
+      },
+      {
+        "at": "2026-08-11T03:28:00Z",
+        "author": "Casey Hale",
+        "text": "On site at rack A30 (HALL-A)."
+      },
+      {
+        "at": "2026-08-11T03:43:12Z",
+        "author": "Casey Hale",
+        "text": "Replaced psu (5.5 kw). Removed SN PUTI3RL17H, installed SN PUZUSAWQMY. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-11T03:53:18Z",
+        "author": "Casey Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-11T05:38:04Z",
+    "assigned_to": "RSS-021",
+    "category": "power_shelf",
+    "close_code": "Hardware replaced",
+    "configuration_item": "A07 power shelf 5",
+    "hall": "HALL-A",
+    "number": "INC3100493",
+    "opened_at": "2026-08-11T05:31:33Z",
+    "parts_used": [
+      {
+        "installed_serial": "PSVW47HNYT",
+        "location": "A07 power shelf 5",
+        "part": "Power shelf",
+        "removed_serial": "PSSMAZIA5L"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A07",
+    "reported_outage_start": "2026-08-11T05:31:33Z",
+    "resolved_at": "2026-08-11T06:32:31Z",
+    "short_description": "A07 power shelf 5",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-11T05:38:04Z",
+        "author": "Casey Hale",
+        "text": "Acknowledged. Assigned to Casey Hale."
+      },
+      {
+        "at": "2026-08-11T05:43:56Z",
+        "author": "Casey Hale",
+        "text": "On site at rack A07 (HALL-A)."
+      },
+      {
+        "at": "2026-08-11T06:22:23Z",
+        "author": "Casey Hale",
+        "text": "Replaced power shelf. Removed SN PSSMAZIA5L, installed SN PSVW47HNYT. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-11T06:32:31Z",
+        "author": "Casey Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-11T08:36:58Z",
+    "assigned_to": "RSS-022",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a06-ct08",
+    "hall": "HALL-A",
+    "number": "INC3100510",
+    "opened_at": "2026-08-11T08:29:13Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A06",
+    "reported_outage_start": "2026-08-11T08:29:13Z",
+    "resolved_at": "2026-08-11T11:43:00Z",
+    "short_description": "Compute tray a06-ct08: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-11T08:36:58Z",
+        "author": "Alex Yamada",
+        "text": "Acknowledged. Assigned to Alex Yamada."
+      },
+      {
+        "at": "2026-08-11T08:40:58Z",
+        "author": "Alex Yamada",
+        "text": "On site at rack A06 (HALL-A)."
+      },
+      {
+        "at": "2026-08-11T09:24:15Z",
+        "author": "Alex Yamada",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-11T11:43:00Z",
+        "author": "Alex Yamada",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-11T18:46:29Z",
+    "assigned_to": "RSS-002",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a13-ct13",
+    "hall": "HALL-A",
+    "number": "INC3100527",
+    "opened_at": "2026-08-11T18:16:16Z",
+    "parts_used": [],
+    "priority": "P3",
+    "rack": "A13",
+    "reported_outage_start": "2026-08-11T18:16:16Z",
+    "resolved_at": "2026-08-12T00:54:26Z",
+    "short_description": "Link a13-ct13:mlx5_2 <-> leaf-a07-r2:swp13",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-11T18:46:29Z",
+        "author": "Dakota Osei",
+        "text": "Acknowledged. Assigned to Dakota Osei."
+      },
+      {
+        "at": "2026-08-11T23:40:55Z",
+        "author": "Dakota Osei",
+        "text": "On site at rack A13 (HALL-A)."
+      },
+      {
+        "at": "2026-08-12T00:15:53Z",
+        "author": "Dakota Osei",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-12T00:54:26Z",
+        "author": "Dakota Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-11T19:23:39Z",
+    "assigned_to": "RSS-006",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a11-ct04",
+    "hall": "HALL-A",
+    "number": "INC3100544",
+    "opened_at": "2026-08-11T18:57:57Z",
+    "parts_used": [
+      {
+        "installed_serial": "OP6B382WZL",
+        "location": "a11-ct04 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPX07JM5D7"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A11",
+    "reported_outage_start": "2026-08-11T18:57:57Z",
+    "resolved_at": "2026-08-11T22:23:30Z",
+    "short_description": "Link a11-ct04:mlx5_1 <-> leaf-a06-r1:swp4",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-11T19:23:39Z",
+        "author": "Jamie Larsen",
+        "text": "Acknowledged. Assigned to Jamie Larsen."
+      },
+      {
+        "at": "2026-08-11T21:09:13Z",
+        "author": "Jamie Larsen",
+        "text": "On site at rack A11 (HALL-A)."
+      },
+      {
+        "at": "2026-08-11T21:46:57Z",
+        "author": "Jamie Larsen",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPX07JM5D7, installed SN OP6B382WZL. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-11T22:23:30Z",
+        "author": "Jamie Larsen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-12T02:30:49Z",
+    "assigned_to": "RSS-024",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a10-ct03",
+    "hall": "HALL-A",
+    "number": "INC3100561",
+    "opened_at": "2026-08-12T02:19:12Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A10",
+    "reported_outage_start": "2026-08-12T02:19:12Z",
+    "resolved_at": "2026-08-12T03:31:27Z",
+    "short_description": "Link a10-ct03:mlx5_1 <-> leaf-a05-r1:swp21",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-12T02:30:49Z",
+        "author": "Parker Mensah",
+        "text": "Acknowledged. Assigned to Parker Mensah."
+      },
+      {
+        "at": "2026-08-12T02:35:33Z",
+        "author": "Parker Mensah",
+        "text": "On site at rack A10 (HALL-A)."
+      },
+      {
+        "at": "2026-08-12T02:53:20Z",
+        "author": "Parker Mensah",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-12T03:31:27Z",
+        "author": "Parker Mensah",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-12T06:14:53Z",
+    "assigned_to": "RSS-024",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a20-ct01",
+    "hall": "HALL-A",
+    "number": "INC3100578",
+    "opened_at": "2026-08-12T06:03:34Z",
+    "parts_used": [
+      {
+        "installed_serial": "CT5ABGOM1R",
+        "location": "a20-ct01",
+        "part": "Compute tray",
+        "removed_serial": "CTJF3RPKPR"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A20",
+    "reported_outage_start": "2026-08-12T06:03:34Z",
+    "resolved_at": "2026-08-12T10:40:27Z",
+    "short_description": "Compute tray a20-ct01: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-12T06:14:53Z",
+        "author": "Parker Mensah",
+        "text": "Acknowledged. Assigned to Parker Mensah."
+      },
+      {
+        "at": "2026-08-12T06:26:47Z",
+        "author": "Parker Mensah",
+        "text": "On site at rack A20 (HALL-A)."
+      },
+      {
+        "at": "2026-08-12T08:25:22Z",
+        "author": "Parker Mensah",
+        "text": "Replaced compute tray. Removed SN CTJF3RPKPR, installed SN CT5ABGOM1R. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-12T10:40:27Z",
+        "author": "Parker Mensah",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-12T07:19:09Z",
+    "assigned_to": "RSS-022",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a01-ct17",
+    "hall": "HALL-A",
+    "number": "INC3100595",
+    "opened_at": "2026-08-12T07:11:23Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPCQBD87DY",
+        "location": "a01-ct17 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP488HT4GB"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A01",
+    "reported_outage_start": "2026-08-12T07:11:23Z",
+    "resolved_at": "2026-08-12T09:15:37Z",
+    "short_description": "Link a01-ct17:mlx5_0 <-> leaf-a01-r0:swp17",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-12T07:19:09Z",
+        "author": "Alex Yamada",
+        "text": "Acknowledged. Assigned to Alex Yamada."
+      },
+      {
+        "at": "2026-08-12T07:51:28Z",
+        "author": "Alex Yamada",
+        "text": "On site at rack A01 (HALL-A)."
+      },
+      {
+        "at": "2026-08-12T08:33:13Z",
+        "author": "Alex Yamada",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OP488HT4GB, installed SN OPCQBD87DY. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-12T09:15:37Z",
+        "author": "Alex Yamada",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-12T11:05:12Z",
+    "assigned_to": "RSS-021",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a14-ct12",
+    "hall": "HALL-A",
+    "number": "INC3100612",
+    "opened_at": "2026-08-12T10:59:18Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPSMKQIW4Z",
+        "location": "a14-ct12 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP1FBHYTYA"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A14",
+    "reported_outage_start": "2026-08-12T10:59:18Z",
+    "resolved_at": "2026-08-12T12:27:06Z",
+    "short_description": "Link a14-ct12:mlx5_3 <-> leaf-a07-r3:swp30",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-12T11:05:12Z",
+        "author": "Casey Hale",
+        "text": "Acknowledged. Assigned to Casey Hale."
+      },
+      {
+        "at": "2026-08-12T11:20:51Z",
+        "author": "Casey Hale",
+        "text": "On site at rack A14 (HALL-A)."
+      },
+      {
+        "at": "2026-08-12T11:49:43Z",
+        "author": "Casey Hale",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OP1FBHYTYA, installed SN OPSMKQIW4Z. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-12T12:27:06Z",
+        "author": "Casey Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-12T15:35:04Z",
+    "assigned_to": "RSS-004",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a15-ct04",
+    "hall": "HALL-A",
+    "number": "INC3100629",
+    "opened_at": "2026-08-12T15:31:28Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTUHWPVMQX",
+        "location": "a15-ct04",
+        "part": "Compute tray",
+        "removed_serial": "CT7WRN3CZ0"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A15",
+    "reported_outage_start": "2026-08-12T15:31:28Z",
+    "resolved_at": "2026-08-12T19:52:16Z",
+    "short_description": "Compute tray a15-ct04: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-12T15:35:04Z",
+        "author": "Riley Mbeki",
+        "text": "Acknowledged. Assigned to Riley Mbeki."
+      },
+      {
+        "at": "2026-08-12T15:55:25Z",
+        "author": "Riley Mbeki",
+        "text": "On site at rack A15 (HALL-A)."
+      },
+      {
+        "at": "2026-08-12T17:36:19Z",
+        "author": "Riley Mbeki",
+        "text": "Replaced compute tray. Removed SN CT7WRN3CZ0, installed SN CTUHWPVMQX. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-12T19:52:16Z",
+        "author": "Riley Mbeki",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-12T19:55:02Z",
+    "assigned_to": "RSS-006",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a32-ct07",
+    "hall": "HALL-A",
+    "number": "INC3100646",
+    "opened_at": "2026-08-12T19:46:29Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTA6P3JMV8",
+        "location": "a32-ct07",
+        "part": "Compute tray",
+        "removed_serial": "CT85STU42R"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A32",
+    "reported_outage_start": "2026-08-12T19:46:29Z",
+    "resolved_at": "2026-08-12T23:12:02Z",
+    "short_description": "Compute tray a32-ct07: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-12T19:55:02Z",
+        "author": "Jamie Larsen",
+        "text": "Acknowledged. Assigned to Jamie Larsen."
+      },
+      {
+        "at": "2026-08-12T19:56:48Z",
+        "author": "Jamie Larsen",
+        "text": "On site at rack A32 (HALL-A)."
+      },
+      {
+        "at": "2026-08-12T20:51:43Z",
+        "author": "Jamie Larsen",
+        "text": "Replaced compute tray. Removed SN CT85STU42R, installed SN CTA6P3JMV8. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-12T23:12:02Z",
+        "author": "Jamie Larsen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-12T23:21:36Z",
+    "assigned_to": "RSS-023",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a15-ct11",
+    "hall": "HALL-A",
+    "number": "INC3100663",
+    "opened_at": "2026-08-12T22:52:49Z",
+    "parts_used": [],
+    "priority": "P3",
+    "rack": "A15",
+    "reported_outage_start": "2026-08-12T22:52:49Z",
+    "resolved_at": "2026-08-13T02:31:20Z",
+    "short_description": "Link a15-ct11:mlx5_2 <-> leaf-a08-r2:swp11",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-12T23:21:36Z",
+        "author": "Sasha Abbott",
+        "text": "Acknowledged. Assigned to Sasha Abbott."
+      },
+      {
+        "at": "2026-08-13T01:15:44Z",
+        "author": "Sasha Abbott",
+        "text": "On site at rack A15 (HALL-A)."
+      },
+      {
+        "at": "2026-08-13T01:49:17Z",
+        "author": "Sasha Abbott",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-13T02:31:20Z",
+        "author": "Sasha Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-13T01:07:17Z",
+    "assigned_to": "RSS-023",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a03-ct06",
+    "hall": "HALL-A",
+    "number": "INC3100680",
+    "opened_at": "2026-08-13T01:03:27Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A03",
+    "reported_outage_start": "2026-08-13T01:03:27Z",
+    "resolved_at": "2026-08-13T04:17:44Z",
+    "short_description": "Compute tray a03-ct06: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-13T01:07:17Z",
+        "author": "Sasha Abbott",
+        "text": "Acknowledged. Assigned to Sasha Abbott."
+      },
+      {
+        "at": "2026-08-13T01:19:23Z",
+        "author": "Sasha Abbott",
+        "text": "On site at rack A03 (HALL-A)."
+      },
+      {
+        "at": "2026-08-13T01:58:32Z",
+        "author": "Sasha Abbott",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-13T04:17:44Z",
+        "author": "Sasha Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-13T02:07:51Z",
+    "assigned_to": "RSS-023",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a04-ct02",
+    "hall": "HALL-A",
+    "number": "INC3100697",
+    "opened_at": "2026-08-13T01:56:11Z",
+    "parts_used": [
+      {
+        "installed_serial": "CT9LY4KIMY",
+        "location": "a04-ct02",
+        "part": "Compute tray",
+        "removed_serial": "CTU0QRM0LO"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A04",
+    "reported_outage_start": "2026-08-13T01:56:11Z",
+    "resolved_at": "2026-08-13T05:32:04Z",
+    "short_description": "Compute tray a04-ct02: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-13T02:07:51Z",
+        "author": "Sasha Abbott",
+        "text": "Acknowledged. Assigned to Sasha Abbott."
+      },
+      {
+        "at": "2026-08-13T02:12:59Z",
+        "author": "Sasha Abbott",
+        "text": "On site at rack A04 (HALL-A)."
+      },
+      {
+        "at": "2026-08-13T03:13:02Z",
+        "author": "Sasha Abbott",
+        "text": "Replaced compute tray. Removed SN CTU0QRM0LO, installed SN CT9LY4KIMY. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-13T05:32:04Z",
+        "author": "Sasha Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-13T02:57:02Z",
+    "assigned_to": "RSS-024",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a06-ct08",
+    "hall": "HALL-A",
+    "number": "INC3100714",
+    "opened_at": "2026-08-13T02:50:49Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTN14H89O9",
+        "location": "a06-ct08",
+        "part": "Compute tray",
+        "removed_serial": "CT0QM1HSZ8"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A06",
+    "reported_outage_start": "2026-08-13T02:50:49Z",
+    "resolved_at": "2026-08-13T07:02:15Z",
+    "short_description": "Compute tray a06-ct08: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-13T02:57:02Z",
+        "author": "Parker Mensah",
+        "text": "Acknowledged. Assigned to Parker Mensah."
+      },
+      {
+        "at": "2026-08-13T03:09:17Z",
+        "author": "Parker Mensah",
+        "text": "On site at rack A06 (HALL-A)."
+      },
+      {
+        "at": "2026-08-13T04:44:13Z",
+        "author": "Parker Mensah",
+        "text": "Replaced compute tray. Removed SN CT0QM1HSZ8, installed SN CTN14H89O9. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-13T07:02:15Z",
+        "author": "Parker Mensah",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-13T10:37:40Z",
+    "assigned_to": "RSS-024",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a11-ct13",
+    "hall": "HALL-A",
+    "number": "INC3100731",
+    "opened_at": "2026-08-13T10:25:59Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPV7K1UZ3G",
+        "location": "a11-ct13 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPU9J1PZE4"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A11",
+    "reported_outage_start": "2026-08-13T10:25:59Z",
+    "resolved_at": "2026-08-13T11:37:09Z",
+    "short_description": "Link a11-ct13:mlx5_2 <-> leaf-a06-r2:swp13",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-13T10:37:40Z",
+        "author": "Parker Mensah",
+        "text": "Acknowledged. Assigned to Parker Mensah."
+      },
+      {
+        "at": "2026-08-13T10:38:40Z",
+        "author": "Parker Mensah",
+        "text": "On site at rack A11 (HALL-A)."
+      },
+      {
+        "at": "2026-08-13T10:55:50Z",
+        "author": "Parker Mensah",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPU9J1PZE4, installed SN OPV7K1UZ3G. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-13T11:37:09Z",
+        "author": "Parker Mensah",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-13T19:13:36Z",
+    "assigned_to": "RSS-009",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a28-ct10",
+    "hall": "HALL-A",
+    "number": "INC3100748",
+    "opened_at": "2026-08-13T19:09:27Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTDFJ54UGS",
+        "location": "a28-ct10",
+        "part": "Compute tray",
+        "removed_serial": "CTX29GPYP7"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A28",
+    "reported_outage_start": "2026-08-13T19:09:27Z",
+    "resolved_at": "2026-08-13T23:09:11Z",
+    "short_description": "Compute tray a28-ct10: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-13T19:13:36Z",
+        "author": "Harper Abbott",
+        "text": "Acknowledged. Assigned to Harper Abbott."
+      },
+      {
+        "at": "2026-08-13T19:28:12Z",
+        "author": "Harper Abbott",
+        "text": "On site at rack A28 (HALL-A)."
+      },
+      {
+        "at": "2026-08-13T20:51:34Z",
+        "author": "Harper Abbott",
+        "text": "Replaced compute tray. Removed SN CTX29GPYP7, installed SN CTDFJ54UGS. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-13T23:09:11Z",
+        "author": "Harper Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-13T20:27:45Z",
+    "assigned_to": "RSS-007",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a01-ct11",
+    "hall": "HALL-A",
+    "number": "INC3100765",
+    "opened_at": "2026-08-13T20:22:35Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A01",
+    "reported_outage_start": "2026-08-13T20:22:35Z",
+    "resolved_at": "2026-08-13T22:05:32Z",
+    "short_description": "Link a01-ct11:mlx5_3 <-> leaf-a01-r3:swp11",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-13T20:27:45Z",
+        "author": "Casey Osei",
+        "text": "Acknowledged. Assigned to Casey Osei."
+      },
+      {
+        "at": "2026-08-13T20:44:55Z",
+        "author": "Casey Osei",
+        "text": "On site at rack A01 (HALL-A)."
+      },
+      {
+        "at": "2026-08-13T21:23:29Z",
+        "author": "Casey Osei",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-13T22:05:32Z",
+        "author": "Casey Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-14T02:03:58Z",
+    "assigned_to": "RSS-024",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a22-ct10",
+    "hall": "HALL-A",
+    "number": "INC3100782",
+    "opened_at": "2026-08-14T01:58:35Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A22",
+    "reported_outage_start": "2026-08-14T01:58:35Z",
+    "resolved_at": "2026-08-14T08:50:56Z",
+    "short_description": "Compute tray a22-ct10: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-14T02:03:58Z",
+        "author": "Parker Mensah",
+        "text": "Acknowledged. Assigned to Parker Mensah."
+      },
+      {
+        "at": "2026-08-14T02:06:58Z",
+        "author": "Parker Mensah",
+        "text": "On site at rack A22 (HALL-A)."
+      },
+      {
+        "at": "2026-08-14T06:35:32Z",
+        "author": "Parker Mensah",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-14T08:50:56Z",
+        "author": "Parker Mensah",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-14T09:38:51Z",
+    "assigned_to": "RSS-023",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a22-ct10",
+    "hall": "HALL-A",
+    "number": "INC3100799",
+    "opened_at": "2026-08-14T09:29:14Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A22",
+    "reported_outage_start": "2026-08-14T09:29:14Z",
+    "resolved_at": "2026-08-14T12:29:20Z",
+    "short_description": "Compute tray a22-ct10: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-14T09:38:51Z",
+        "author": "Sasha Abbott",
+        "text": "Acknowledged. Assigned to Sasha Abbott."
+      },
+      {
+        "at": "2026-08-14T09:42:01Z",
+        "author": "Sasha Abbott",
+        "text": "On site at rack A22 (HALL-A)."
+      },
+      {
+        "at": "2026-08-14T10:13:06Z",
+        "author": "Sasha Abbott",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-14T12:29:20Z",
+        "author": "Sasha Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-14T22:29:33Z",
+    "assigned_to": "RSS-017",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a29-ct02",
+    "hall": "HALL-A",
+    "number": "INC3100816",
+    "opened_at": "2026-08-14T22:24:50Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTH4ORVX2O",
+        "location": "a29-ct02",
+        "part": "Compute tray",
+        "removed_serial": "CTQFYKJ81J"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A29",
+    "reported_outage_start": "2026-08-14T22:24:50Z",
+    "resolved_at": "2026-08-15T02:17:43Z",
+    "short_description": "Compute tray a29-ct02: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-14T22:29:33Z",
+        "author": "Finley Hale",
+        "text": "Acknowledged. Assigned to Finley Hale."
+      },
+      {
+        "at": "2026-08-14T22:39:10Z",
+        "author": "Finley Hale",
+        "text": "On site at rack A29 (HALL-A)."
+      },
+      {
+        "at": "2026-08-14T23:59:51Z",
+        "author": "Finley Hale",
+        "text": "Replaced compute tray. Removed SN CTQFYKJ81J, installed SN CTH4ORVX2O. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-15T02:17:43Z",
+        "author": "Finley Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-15T02:08:00Z",
+    "assigned_to": "RSS-027",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a03-ct06",
+    "hall": "HALL-A",
+    "number": "INC3100833",
+    "opened_at": "2026-08-15T02:02:33Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTT5STS28W",
+        "location": "a03-ct06",
+        "part": "Compute tray",
+        "removed_serial": "CT6G56PU3D"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A03",
+    "reported_outage_start": "2026-08-15T02:02:33Z",
+    "resolved_at": "2026-08-15T06:18:48Z",
+    "short_description": "Compute tray a03-ct06: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-15T02:08:00Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-15T02:14:04Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A03 (HALL-A)."
+      },
+      {
+        "at": "2026-08-15T03:56:46Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced compute tray. Removed SN CT6G56PU3D, installed SN CTT5STS28W. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-15T06:18:48Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-15T23:39:32Z",
+    "assigned_to": "RSS-013",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a06-ct17",
+    "hall": "HALL-A",
+    "number": "INC3100850",
+    "opened_at": "2026-08-15T23:28:33Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A06",
+    "reported_outage_start": "2026-08-15T23:28:33Z",
+    "resolved_at": "2026-08-16T02:39:49Z",
+    "short_description": "Compute tray a06-ct17: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-15T23:39:32Z",
+        "author": "Shay Larsen",
+        "text": "Acknowledged. Assigned to Shay Larsen."
+      },
+      {
+        "at": "2026-08-15T23:43:24Z",
+        "author": "Shay Larsen",
+        "text": "On site at rack A06 (HALL-A)."
+      },
+      {
+        "at": "2026-08-16T00:18:01Z",
+        "author": "Shay Larsen",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-16T02:39:49Z",
+        "author": "Shay Larsen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-16T15:14:23Z",
+    "assigned_to": "RSS-018",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a30-ct02",
+    "hall": "HALL-A",
+    "number": "INC3100867",
+    "opened_at": "2026-08-16T15:03:00Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTT4RB37MV",
+        "location": "a30-ct02",
+        "part": "Compute tray",
+        "removed_serial": "CT4OSF1OPF"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A30",
+    "reported_outage_start": "2026-08-16T15:03:00Z",
+    "resolved_at": "2026-08-16T16:54:13Z",
+    "short_description": "Compute tray a30-ct02: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-16T15:14:23Z",
+        "author": "Parker Kim",
+        "text": "Acknowledged. Assigned to Parker Kim."
+      },
+      {
+        "at": "2026-08-16T15:17:18Z",
+        "author": "Parker Kim",
+        "text": "On site at rack A30 (HALL-A)."
+      },
+      {
+        "at": "2026-08-16T16:43:20Z",
+        "author": "Parker Kim",
+        "text": "Replaced compute tray. Removed SN CT4OSF1OPF, installed SN CTT4RB37MV. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-16T16:54:13Z",
+        "author": "Parker Kim",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-16T16:32:14Z",
+    "assigned_to": "RSS-014",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a29-ct08",
+    "hall": "HALL-A",
+    "number": "INC3100884",
+    "opened_at": "2026-08-16T16:27:27Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTDZ6REWGR",
+        "location": "a29-ct08",
+        "part": "Compute tray",
+        "removed_serial": "CT7F7NAJSE"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A29",
+    "reported_outage_start": "2026-08-16T16:27:27Z",
+    "resolved_at": "2026-08-16T20:48:05Z",
+    "short_description": "Compute tray a29-ct08: XID 48",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-16T16:32:14Z",
+        "author": "Marlowe Chen",
+        "text": "Acknowledged. Assigned to Marlowe Chen."
+      },
+      {
+        "at": "2026-08-16T17:12:53Z",
+        "author": "Marlowe Chen",
+        "text": "On site at rack A29 (HALL-A)."
+      },
+      {
+        "at": "2026-08-16T18:28:13Z",
+        "author": "Marlowe Chen",
+        "text": "Replaced compute tray. Removed SN CT7F7NAJSE, installed SN CTDZ6REWGR. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-16T20:48:05Z",
+        "author": "Marlowe Chen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-16T19:58:46Z",
+    "assigned_to": "RSS-012",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a12-ct16",
+    "hall": "HALL-A",
+    "number": "INC3100901",
+    "opened_at": "2026-08-16T19:51:46Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A12",
+    "reported_outage_start": "2026-08-16T19:51:46Z",
+    "resolved_at": "2026-08-16T23:06:49Z",
+    "short_description": "Compute tray a12-ct16: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-16T19:58:46Z",
+        "author": "Sasha Walsh",
+        "text": "Acknowledged. Assigned to Sasha Walsh."
+      },
+      {
+        "at": "2026-08-16T20:13:05Z",
+        "author": "Sasha Walsh",
+        "text": "On site at rack A12 (HALL-A)."
+      },
+      {
+        "at": "2026-08-16T20:47:37Z",
+        "author": "Sasha Walsh",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-16T23:06:49Z",
+        "author": "Sasha Walsh",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-16T23:05:28Z",
+    "assigned_to": "RSS-011",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a04-ct01",
+    "hall": "HALL-A",
+    "number": "INC3100918",
+    "opened_at": "2026-08-16T22:54:38Z",
+    "parts_used": [
+      {
+        "installed_serial": "OP3ZGEHLSK",
+        "location": "a04-ct01 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPZPZ8TDG2"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A04",
+    "reported_outage_start": "2026-08-16T22:54:38Z",
+    "resolved_at": "2026-08-17T00:32:36Z",
+    "short_description": "Link a04-ct01:mlx5_3 <-> leaf-a02-r3:swp19",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-16T23:05:28Z",
+        "author": "Quinn Duarte",
+        "text": "Acknowledged. Assigned to Quinn Duarte."
+      },
+      {
+        "at": "2026-08-16T23:18:38Z",
+        "author": "Quinn Duarte",
+        "text": "On site at rack A04 (HALL-A)."
+      },
+      {
+        "at": "2026-08-16T23:54:40Z",
+        "author": "Quinn Duarte",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPZPZ8TDG2, installed SN OP3ZGEHLSK. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-17T00:32:36Z",
+        "author": "Quinn Duarte",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-17T20:49:07Z",
+    "assigned_to": "RSS-013",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a21-ct06",
+    "hall": "HALL-A",
+    "number": "INC3100935",
+    "opened_at": "2026-08-17T20:38:34Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A21",
+    "reported_outage_start": "2026-08-17T20:38:34Z",
+    "resolved_at": "2026-08-17T21:38:06Z",
+    "short_description": "Compute tray a21-ct06: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-17T20:49:07Z",
+        "author": "Shay Larsen",
+        "text": "Acknowledged. Assigned to Shay Larsen."
+      },
+      {
+        "at": "2026-08-17T20:50:56Z",
+        "author": "Shay Larsen",
+        "text": "On site at rack A21 (HALL-A)."
+      },
+      {
+        "at": "2026-08-17T21:25:20Z",
+        "author": "Shay Larsen",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-17T21:38:06Z",
+        "author": "Shay Larsen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-18T12:30:00Z",
+    "assigned_to": "RSS-002",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a16-ct09",
+    "hall": "HALL-A",
+    "number": "INC3100952",
+    "opened_at": "2026-08-18T12:25:27Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTNXUS3K8S",
+        "location": "a16-ct09",
+        "part": "Compute tray",
+        "removed_serial": "CTHCAIV4KE"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A16",
+    "reported_outage_start": "2026-08-18T12:25:27Z",
+    "resolved_at": "2026-08-18T16:39:43Z",
+    "short_description": "Compute tray a16-ct09: XID 48",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-18T12:30:00Z",
+        "author": "Dakota Osei",
+        "text": "Acknowledged. Assigned to Dakota Osei."
+      },
+      {
+        "at": "2026-08-18T12:34:52Z",
+        "author": "Dakota Osei",
+        "text": "On site at rack A16 (HALL-A)."
+      },
+      {
+        "at": "2026-08-18T14:19:26Z",
+        "author": "Dakota Osei",
+        "text": "Replaced compute tray. Removed SN CTHCAIV4KE, installed SN CTNXUS3K8S. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-18T16:39:43Z",
+        "author": "Dakota Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-18T15:00:45Z",
+    "assigned_to": "RSS-002",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a24-ct14",
+    "hall": "HALL-A",
+    "number": "INC3100969",
+    "opened_at": "2026-08-18T14:50:01Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPE8WEBM6H",
+        "location": "a24-ct14 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPHCR9CFQU"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A24",
+    "reported_outage_start": "2026-08-18T14:50:01Z",
+    "resolved_at": "2026-08-18T16:01:54Z",
+    "short_description": "Link a24-ct14:mlx5_2 <-> leaf-a12-r2:swp32",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-18T15:00:45Z",
+        "author": "Dakota Osei",
+        "text": "Acknowledged. Assigned to Dakota Osei."
+      },
+      {
+        "at": "2026-08-18T15:01:45Z",
+        "author": "Dakota Osei",
+        "text": "On site at rack A24 (HALL-A)."
+      },
+      {
+        "at": "2026-08-18T15:26:35Z",
+        "author": "Dakota Osei",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPHCR9CFQU, installed SN OPE8WEBM6H. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-18T16:01:54Z",
+        "author": "Dakota Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-18T23:25:38Z",
+    "assigned_to": "RSS-002",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a18-ct04",
+    "hall": "HALL-A",
+    "number": "INC3100986",
+    "opened_at": "2026-08-18T23:13:49Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A18",
+    "reported_outage_start": "2026-08-18T23:13:49Z",
+    "resolved_at": "2026-08-19T00:43:59Z",
+    "short_description": "Link a18-ct04:mlx5_2 <-> leaf-a09-r2:swp22",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-18T23:25:38Z",
+        "author": "Dakota Osei",
+        "text": "Acknowledged. Assigned to Dakota Osei."
+      },
+      {
+        "at": "2026-08-18T23:26:38Z",
+        "author": "Dakota Osei",
+        "text": "On site at rack A18 (HALL-A)."
+      },
+      {
+        "at": "2026-08-19T00:03:18Z",
+        "author": "Dakota Osei",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-19T00:43:59Z",
+        "author": "Dakota Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-18T23:31:40Z",
+    "assigned_to": "RSS-009",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a04-ct16",
+    "hall": "HALL-A",
+    "number": "INC3101003",
+    "opened_at": "2026-08-18T23:20:34Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPJOJZ54VL",
+        "location": "a04-ct16 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPC6G73MKX"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A04",
+    "reported_outage_start": "2026-08-18T23:20:34Z",
+    "resolved_at": "2026-08-19T00:37:55Z",
+    "short_description": "Link a04-ct16:mlx5_2 <-> leaf-a02-r2:swp34",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-18T23:31:40Z",
+        "author": "Harper Abbott",
+        "text": "Acknowledged. Assigned to Harper Abbott."
+      },
+      {
+        "at": "2026-08-18T23:41:25Z",
+        "author": "Harper Abbott",
+        "text": "On site at rack A04 (HALL-A)."
+      },
+      {
+        "at": "2026-08-19T00:00:45Z",
+        "author": "Harper Abbott",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPC6G73MKX, installed SN OPJOJZ54VL. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-19T00:37:55Z",
+        "author": "Harper Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-19T06:26:41Z",
+    "assigned_to": "RSS-023",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a24-ct14",
+    "hall": "HALL-A",
+    "number": "INC3101020",
+    "opened_at": "2026-08-19T05:43:56Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPL762SH03",
+        "location": "a24-ct14 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPIEOBB5O6"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A24",
+    "reported_outage_start": "2026-08-19T05:43:56Z",
+    "resolved_at": "2026-08-19T09:01:33Z",
+    "short_description": "Link a24-ct14:mlx5_2 <-> leaf-a12-r2:swp32",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-19T06:26:41Z",
+        "author": "Sasha Abbott",
+        "text": "Acknowledged. Assigned to Sasha Abbott."
+      },
+      {
+        "at": "2026-08-19T07:47:18Z",
+        "author": "Sasha Abbott",
+        "text": "On site at rack A24 (HALL-A)."
+      },
+      {
+        "at": "2026-08-19T08:25:32Z",
+        "author": "Sasha Abbott",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPIEOBB5O6, installed SN OPL762SH03. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-19T09:01:33Z",
+        "author": "Sasha Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-19T13:40:14Z",
+    "assigned_to": "RSS-002",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a28-ct05",
+    "hall": "HALL-A",
+    "number": "INC3101037",
+    "opened_at": "2026-08-19T13:31:47Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A28",
+    "reported_outage_start": "2026-08-19T13:31:47Z",
+    "resolved_at": "2026-08-19T14:57:10Z",
+    "short_description": "Link a28-ct05:mlx5_2 <-> leaf-a14-r2:swp23",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-19T13:40:14Z",
+        "author": "Dakota Osei",
+        "text": "Acknowledged. Assigned to Dakota Osei."
+      },
+      {
+        "at": "2026-08-19T13:50:20Z",
+        "author": "Dakota Osei",
+        "text": "On site at rack A28 (HALL-A)."
+      },
+      {
+        "at": "2026-08-19T14:20:33Z",
+        "author": "Dakota Osei",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-19T14:57:10Z",
+        "author": "Dakota Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-19T16:21:06Z",
+    "assigned_to": "RSS-007",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a22-ct08",
+    "hall": "HALL-A",
+    "number": "INC3101054",
+    "opened_at": "2026-08-19T16:10:22Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTPAOC7MY2",
+        "location": "a22-ct08",
+        "part": "Compute tray",
+        "removed_serial": "CT25TEKC5Y"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A22",
+    "reported_outage_start": "2026-08-19T16:10:22Z",
+    "resolved_at": "2026-08-19T20:13:34Z",
+    "short_description": "Compute tray a22-ct08: XID 48",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-19T16:21:06Z",
+        "author": "Casey Osei",
+        "text": "Acknowledged. Assigned to Casey Osei."
+      },
+      {
+        "at": "2026-08-19T16:25:11Z",
+        "author": "Casey Osei",
+        "text": "On site at rack A22 (HALL-A)."
+      },
+      {
+        "at": "2026-08-19T17:54:43Z",
+        "author": "Casey Osei",
+        "text": "Replaced compute tray. Removed SN CT25TEKC5Y, installed SN CTPAOC7MY2. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-19T20:13:34Z",
+        "author": "Casey Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-20T20:25:01Z",
+    "assigned_to": "RSS-023",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 6 in A08 power shelf 6",
+    "hall": "HALL-A",
+    "number": "INC3101071",
+    "opened_at": "2026-08-20T19:52:11Z",
+    "parts_used": [
+      {
+        "installed_serial": "PU4Q161L2K",
+        "location": "PSU 6 in A08 power shelf 6",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PUTZYESFGI"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A08",
+    "reported_outage_start": "2026-08-20T19:52:11Z",
+    "resolved_at": "2026-08-21T01:58:11Z",
+    "short_description": "PSU 6 in A08 power shelf 6",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-20T20:25:01Z",
+        "author": "Sasha Abbott",
+        "text": "Acknowledged. Assigned to Sasha Abbott."
+      },
+      {
+        "at": "2026-08-21T01:33:11Z",
+        "author": "Sasha Abbott",
+        "text": "On site at rack A08 (HALL-A)."
+      },
+      {
+        "at": "2026-08-21T01:52:44Z",
+        "author": "Sasha Abbott",
+        "text": "Replaced psu (5.5 kw). Removed SN PUTZYESFGI, installed SN PU4Q161L2K. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-21T01:58:11Z",
+        "author": "Sasha Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-20T21:32:42Z",
+    "assigned_to": "RSS-004",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a13-ct01",
+    "hall": "HALL-A",
+    "number": "INC3101088",
+    "opened_at": "2026-08-20T21:28:00Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPRY2XE60P",
+        "location": "a13-ct01 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPEBA6H3Z5"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A13",
+    "reported_outage_start": "2026-08-20T21:28:00Z",
+    "resolved_at": "2026-08-21T01:29:22Z",
+    "short_description": "Link a13-ct01:mlx5_1 <-> leaf-a07-r1:swp1",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-20T21:32:42Z",
+        "author": "Riley Mbeki",
+        "text": "Acknowledged. Assigned to Riley Mbeki."
+      },
+      {
+        "at": "2026-08-20T21:45:35Z",
+        "author": "Riley Mbeki",
+        "text": "On site at rack A13 (HALL-A)."
+      },
+      {
+        "at": "2026-08-21T00:48:21Z",
+        "author": "Riley Mbeki",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPEBA6H3Z5, installed SN OPRY2XE60P. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-21T01:29:22Z",
+        "author": "Riley Mbeki",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-21T04:10:12Z",
+    "assigned_to": "RSS-020",
+    "category": "tray_gpu",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a26-ct12",
+    "hall": "HALL-A",
+    "number": "INC3101105",
+    "opened_at": "2026-08-21T04:05:14Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A26",
+    "reported_outage_start": "2026-08-21T04:05:14Z",
+    "resolved_at": "2026-08-21T07:57:21Z",
+    "short_description": "Compute tray a26-ct12: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-21T04:10:12Z",
+        "author": "Morgan Doyle",
+        "text": "Acknowledged. Assigned to Morgan Doyle."
+      },
+      {
+        "at": "2026-08-21T04:57:01Z",
+        "author": "Morgan Doyle",
+        "text": "On site at rack A26 (HALL-A)."
+      },
+      {
+        "at": "2026-08-21T05:35:02Z",
+        "author": "Morgan Doyle",
+        "text": "Reseated compute tray and verified quick-disconnects. No part replaced."
+      },
+      {
+        "at": "2026-08-21T07:57:21Z",
+        "author": "Morgan Doyle",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-21T13:08:11Z",
+    "assigned_to": "RSS-005",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a07-ct03",
+    "hall": "HALL-A",
+    "number": "INC3101122",
+    "opened_at": "2026-08-21T13:00:31Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPFJYDR5C0",
+        "location": "a07-ct03 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPIK7OIWKG"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A07",
+    "reported_outage_start": "2026-08-21T13:00:31Z",
+    "resolved_at": "2026-08-21T14:42:14Z",
+    "short_description": "Link a07-ct03:mlx5_3 <-> leaf-a04-r3:swp3",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-21T13:08:11Z",
+        "author": "Skyler Kim",
+        "text": "Acknowledged. Assigned to Skyler Kim."
+      },
+      {
+        "at": "2026-08-21T13:15:19Z",
+        "author": "Skyler Kim",
+        "text": "On site at rack A07 (HALL-A)."
+      },
+      {
+        "at": "2026-08-21T14:00:18Z",
+        "author": "Skyler Kim",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPIK7OIWKG, installed SN OPFJYDR5C0. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-21T14:42:14Z",
+        "author": "Skyler Kim",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-21T22:06:11Z",
+    "assigned_to": "RSS-005",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a09-ct10",
+    "hall": "HALL-A",
+    "number": "INC3101139",
+    "opened_at": "2026-08-21T21:54:38Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTI4GR2325",
+        "location": "a09-ct10",
+        "part": "Compute tray",
+        "removed_serial": "CTM3UKUBSL"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A09",
+    "reported_outage_start": "2026-08-21T21:54:38Z",
+    "resolved_at": "2026-08-22T01:55:06Z",
+    "short_description": "Compute tray a09-ct10: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-21T22:06:11Z",
+        "author": "Skyler Kim",
+        "text": "Acknowledged. Assigned to Skyler Kim."
+      },
+      {
+        "at": "2026-08-21T22:10:15Z",
+        "author": "Skyler Kim",
+        "text": "On site at rack A09 (HALL-A)."
+      },
+      {
+        "at": "2026-08-21T23:36:40Z",
+        "author": "Skyler Kim",
+        "text": "Replaced compute tray. Removed SN CTM3UKUBSL, installed SN CTI4GR2325. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-22T01:55:06Z",
+        "author": "Skyler Kim",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-22T02:58:44Z",
+    "assigned_to": "RSS-022",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a32-ct08",
+    "hall": "HALL-A",
+    "number": "INC3101156",
+    "opened_at": "2026-08-22T02:34:51Z",
+    "parts_used": [
+      {
+        "installed_serial": "OP9SZYO1F4",
+        "location": "a32-ct08 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPNQMC69YH"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A32",
+    "reported_outage_start": "2026-08-22T02:34:51Z",
+    "resolved_at": "2026-08-22T04:48:10Z",
+    "short_description": "Link a32-ct08:mlx5_2 <-> leaf-a16-r2:swp26",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-22T02:58:44Z",
+        "author": "Alex Yamada",
+        "text": "Acknowledged. Assigned to Alex Yamada."
+      },
+      {
+        "at": "2026-08-22T03:50:04Z",
+        "author": "Alex Yamada",
+        "text": "On site at rack A32 (HALL-A)."
+      },
+      {
+        "at": "2026-08-22T04:09:03Z",
+        "author": "Alex Yamada",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPNQMC69YH, installed SN OP9SZYO1F4. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-22T04:48:10Z",
+        "author": "Alex Yamada",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-22T14:31:00Z",
+    "assigned_to": "RSS-017",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a26-ct07",
+    "hall": "HALL-A",
+    "number": "INC3101173",
+    "opened_at": "2026-08-22T14:23:17Z",
+    "parts_used": [
+      {
+        "installed_serial": "OP38OB0KXS",
+        "location": "a26-ct07 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPP5CCMD3N"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A26",
+    "reported_outage_start": "2026-08-22T14:23:17Z",
+    "resolved_at": "2026-08-22T16:34:45Z",
+    "short_description": "Link a26-ct07:mlx5_3 <-> leaf-a13-r3:swp25",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-22T14:31:00Z",
+        "author": "Finley Hale",
+        "text": "Acknowledged. Assigned to Finley Hale."
+      },
+      {
+        "at": "2026-08-22T14:47:29Z",
+        "author": "Finley Hale",
+        "text": "On site at rack A26 (HALL-A)."
+      },
+      {
+        "at": "2026-08-22T15:59:30Z",
+        "author": "Finley Hale",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPP5CCMD3N, installed SN OP38OB0KXS. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-22T16:34:45Z",
+        "author": "Finley Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-23T01:33:14Z",
+    "assigned_to": "RSS-026",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a19-ct03",
+    "hall": "HALL-A",
+    "number": "INC3101190",
+    "opened_at": "2026-08-23T01:27:52Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPQ6H7PGEP",
+        "location": "a19-ct03 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP9USCAK0G"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A19",
+    "reported_outage_start": "2026-08-23T01:27:52Z",
+    "resolved_at": "2026-08-23T02:50:39Z",
+    "short_description": "Link a19-ct03:mlx5_0 <-> leaf-a10-r0:swp3",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-23T01:33:14Z",
+        "author": "Harper Sato",
+        "text": "Acknowledged. Assigned to Harper Sato."
+      },
+      {
+        "at": "2026-08-23T01:40:58Z",
+        "author": "Harper Sato",
+        "text": "On site at rack A19 (HALL-A)."
+      },
+      {
+        "at": "2026-08-23T02:13:51Z",
+        "author": "Harper Sato",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OP9USCAK0G, installed SN OPQ6H7PGEP. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-23T02:50:39Z",
+        "author": "Harper Sato",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-23T04:27:38Z",
+    "assigned_to": "RSS-027",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a31-ct16",
+    "hall": "HALL-A",
+    "number": "INC3101207",
+    "opened_at": "2026-08-23T04:22:12Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPSNKDP2AT",
+        "location": "a31-ct16 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPK5E11N99"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A31",
+    "reported_outage_start": "2026-08-23T04:22:12Z",
+    "resolved_at": "2026-08-23T06:21:36Z",
+    "short_description": "Link a31-ct16:mlx5_0 <-> leaf-a16-r0:swp16",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-23T04:27:38Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-23T05:17:04Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A31 (HALL-A)."
+      },
+      {
+        "at": "2026-08-23T05:41:52Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPK5E11N99, installed SN OPSNKDP2AT. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-23T06:21:36Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-23T07:13:15Z",
+    "assigned_to": "RSS-027",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a30-ct11",
+    "hall": "HALL-A",
+    "number": "INC3101224",
+    "opened_at": "2026-08-23T07:05:58Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPVFRA5N7R",
+        "location": "a30-ct11 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPE97FVSXT"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A30",
+    "reported_outage_start": "2026-08-23T07:05:58Z",
+    "resolved_at": "2026-08-23T08:25:58Z",
+    "short_description": "Link a30-ct11:mlx5_2 <-> leaf-a15-r2:swp29",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-23T07:13:15Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-23T07:14:16Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A30 (HALL-A)."
+      },
+      {
+        "at": "2026-08-23T07:50:25Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPE97FVSXT, installed SN OPVFRA5N7R. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-23T08:25:58Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-23T18:02:00Z",
+    "assigned_to": "RSS-015",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a17-ct15",
+    "hall": "HALL-A",
+    "number": "INC3101241",
+    "opened_at": "2026-08-23T17:54:14Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTEQGW2QDY",
+        "location": "a17-ct15",
+        "part": "Compute tray",
+        "removed_serial": "CTZK8HTHI5"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A17",
+    "reported_outage_start": "2026-08-23T17:54:14Z",
+    "resolved_at": "2026-08-23T22:36:08Z",
+    "short_description": "Compute tray a17-ct15: XID 94",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-23T18:02:00Z",
+        "author": "Emerson Vargas",
+        "text": "Acknowledged. Assigned to Emerson Vargas."
+      },
+      {
+        "at": "2026-08-23T18:44:38Z",
+        "author": "Emerson Vargas",
+        "text": "On site at rack A17 (HALL-A)."
+      },
+      {
+        "at": "2026-08-23T20:16:10Z",
+        "author": "Emerson Vargas",
+        "text": "Replaced compute tray. Removed SN CTZK8HTHI5, installed SN CTEQGW2QDY. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-23T22:36:08Z",
+        "author": "Emerson Vargas",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-24T01:40:44Z",
+    "assigned_to": "RSS-030",
+    "category": "switch_tray",
+    "close_code": "Hardware replaced",
+    "configuration_item": "NVLink switch tray a24-nvsw1",
+    "hall": "HALL-A",
+    "number": "INC3101258",
+    "opened_at": "2026-08-24T01:38:26Z",
+    "parts_used": [
+      {
+        "installed_serial": "NSUSC15MIJ",
+        "location": "NVLink switch tray a24-nvsw1",
+        "part": "NVLink switch tray",
+        "removed_serial": "NSBEK618HV"
+      }
+    ],
+    "priority": "P1",
+    "rack": "A24",
+    "reported_outage_start": "2026-08-24T01:38:26Z",
+    "resolved_at": "2026-08-24T04:50:33Z",
+    "short_description": "NVLink switch tray a24-nvsw1",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-24T01:40:44Z",
+        "author": "Emerson Moreau",
+        "text": "Acknowledged. Assigned to Emerson Moreau."
+      },
+      {
+        "at": "2026-08-24T01:43:59Z",
+        "author": "Emerson Moreau",
+        "text": "On site at rack A24 (HALL-A)."
+      },
+      {
+        "at": "2026-08-24T03:30:06Z",
+        "author": "Emerson Moreau",
+        "text": "Replaced nvlink switch tray. Removed SN NSBEK618HV, installed SN NSUSC15MIJ. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-24T04:50:33Z",
+        "author": "Emerson Moreau",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-24T15:02:09Z",
+    "assigned_to": "RSS-013",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a18-ct14",
+    "hall": "HALL-A",
+    "number": "INC3101275",
+    "opened_at": "2026-08-24T14:51:39Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTUKRJQ376",
+        "location": "a18-ct14",
+        "part": "Compute tray",
+        "removed_serial": "CT8SNEX6Y3"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A18",
+    "reported_outage_start": "2026-08-24T14:51:39Z",
+    "resolved_at": "2026-08-24T18:52:58Z",
+    "short_description": "Compute tray a18-ct14: XID 149",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-24T15:02:09Z",
+        "author": "Shay Larsen",
+        "text": "Acknowledged. Assigned to Shay Larsen."
+      },
+      {
+        "at": "2026-08-24T15:08:08Z",
+        "author": "Shay Larsen",
+        "text": "On site at rack A18 (HALL-A)."
+      },
+      {
+        "at": "2026-08-24T16:34:38Z",
+        "author": "Shay Larsen",
+        "text": "Replaced compute tray. Removed SN CT8SNEX6Y3, installed SN CTUKRJQ376. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-24T18:52:58Z",
+        "author": "Shay Larsen",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-24T20:54:16Z",
+    "assigned_to": "RSS-018",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a20-ct09",
+    "hall": "HALL-A",
+    "number": "INC3101292",
+    "opened_at": "2026-08-24T20:48:37Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTOX156T9R",
+        "location": "a20-ct09",
+        "part": "Compute tray",
+        "removed_serial": "CTTVEZ1P5Q"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A20",
+    "reported_outage_start": "2026-08-24T20:48:37Z",
+    "resolved_at": "2026-08-25T00:51:41Z",
+    "short_description": "Compute tray a20-ct09: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-24T20:54:16Z",
+        "author": "Parker Kim",
+        "text": "Acknowledged. Assigned to Parker Kim."
+      },
+      {
+        "at": "2026-08-24T21:00:54Z",
+        "author": "Parker Kim",
+        "text": "On site at rack A20 (HALL-A)."
+      },
+      {
+        "at": "2026-08-24T22:32:12Z",
+        "author": "Parker Kim",
+        "text": "Replaced compute tray. Removed SN CTTVEZ1P5Q, installed SN CTOX156T9R. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-25T00:51:41Z",
+        "author": "Parker Kim",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-24T23:13:54Z",
+    "assigned_to": "RSS-011",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a26-ct12",
+    "hall": "HALL-A",
+    "number": "INC3101309",
+    "opened_at": "2026-08-24T23:06:23Z",
+    "parts_used": [
+      {
+        "installed_serial": "CT9ELC88IX",
+        "location": "a26-ct12",
+        "part": "Compute tray",
+        "removed_serial": "CTC328YN25"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A26",
+    "reported_outage_start": "2026-08-24T23:06:23Z",
+    "resolved_at": "2026-08-25T02:53:37Z",
+    "short_description": "Compute tray a26-ct12: XID 79",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-24T23:13:54Z",
+        "author": "Quinn Duarte",
+        "text": "Acknowledged. Assigned to Quinn Duarte."
+      },
+      {
+        "at": "2026-08-24T23:15:13Z",
+        "author": "Quinn Duarte",
+        "text": "On site at rack A26 (HALL-A)."
+      },
+      {
+        "at": "2026-08-25T00:30:57Z",
+        "author": "Quinn Duarte",
+        "text": "Replaced compute tray. Removed SN CTC328YN25, installed SN CT9ELC88IX. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-25T02:53:37Z",
+        "author": "Quinn Duarte",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-25T06:01:54Z",
+    "assigned_to": "RSS-029",
+    "category": "power_shelf",
+    "close_code": "Hardware replaced",
+    "configuration_item": "A04 power shelf 7",
+    "hall": "HALL-A",
+    "number": "INC3101326",
+    "opened_at": "2026-08-25T05:56:02Z",
+    "parts_used": [
+      {
+        "installed_serial": "PS6BHHZV4G",
+        "location": "A04 power shelf 7",
+        "part": "Power shelf",
+        "removed_serial": "PSZ66G10PV"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A04",
+    "reported_outage_start": "2026-08-25T05:56:02Z",
+    "resolved_at": "2026-08-25T13:16:38Z",
+    "short_description": "A04 power shelf 7",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-25T06:01:54Z",
+        "author": "Finley Abbott",
+        "text": "Acknowledged. Assigned to Finley Abbott."
+      },
+      {
+        "at": "2026-08-25T06:07:17Z",
+        "author": "Finley Abbott",
+        "text": "On site at rack A04 (HALL-A)."
+      },
+      {
+        "at": "2026-08-25T12:58:49Z",
+        "author": "Finley Abbott",
+        "text": "Replaced power shelf. Removed SN PSZ66G10PV, installed SN PS6BHHZV4G. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-25T13:16:38Z",
+        "author": "Finley Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-25T08:27:38Z",
+    "assigned_to": "RSS-027",
+    "category": "switch_tray",
+    "close_code": "Hardware replaced",
+    "configuration_item": "NVLink switch tray a31-nvsw1",
+    "hall": "HALL-A",
+    "number": "INC3101343",
+    "opened_at": "2026-08-25T08:23:48Z",
+    "parts_used": [
+      {
+        "installed_serial": "NS1EJBC801",
+        "location": "NVLink switch tray a31-nvsw1",
+        "part": "NVLink switch tray",
+        "removed_serial": "NSG5RVPMB6"
+      }
+    ],
+    "priority": "P1",
+    "rack": "A31",
+    "reported_outage_start": "2026-08-25T08:23:48Z",
+    "resolved_at": "2026-08-25T11:13:51Z",
+    "short_description": "NVLink switch tray a31-nvsw1",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-25T08:27:38Z",
+        "author": "Cameron Abbott",
+        "text": "Acknowledged. Assigned to Cameron Abbott."
+      },
+      {
+        "at": "2026-08-25T08:29:01Z",
+        "author": "Cameron Abbott",
+        "text": "On site at rack A31 (HALL-A)."
+      },
+      {
+        "at": "2026-08-25T09:58:00Z",
+        "author": "Cameron Abbott",
+        "text": "Replaced nvlink switch tray. Removed SN NSG5RVPMB6, installed SN NS1EJBC801. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-25T11:13:51Z",
+        "author": "Cameron Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-25T09:21:54Z",
+    "assigned_to": "RSS-028",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 5 in A03 power shelf 5",
+    "hall": "HALL-A",
+    "number": "INC3101360",
+    "opened_at": "2026-08-25T09:10:06Z",
+    "parts_used": [
+      {
+        "installed_serial": "PUDA792J3N",
+        "location": "PSU 5 in A03 power shelf 5",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PUXS722UOO"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A03",
+    "reported_outage_start": "2026-08-25T09:10:06Z",
+    "resolved_at": "2026-08-25T11:08:59Z",
+    "short_description": "PSU 5 in A03 power shelf 5",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-25T09:21:54Z",
+        "author": "Jordan Kim",
+        "text": "Acknowledged. Assigned to Jordan Kim."
+      },
+      {
+        "at": "2026-08-25T10:44:10Z",
+        "author": "Jordan Kim",
+        "text": "On site at rack A03 (HALL-A)."
+      },
+      {
+        "at": "2026-08-25T10:58:09Z",
+        "author": "Jordan Kim",
+        "text": "Replaced psu (5.5 kw). Removed SN PUXS722UOO, installed SN PUDA792J3N. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-25T11:08:59Z",
+        "author": "Jordan Kim",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-25T11:44:24Z",
+    "assigned_to": "RSS-029",
+    "category": "optic_link",
+    "close_code": "Cleaned/reseated",
+    "configuration_item": "a12-ct01",
+    "hall": "HALL-A",
+    "number": "INC3101377",
+    "opened_at": "2026-08-25T11:33:21Z",
+    "parts_used": [],
+    "priority": "P2",
+    "rack": "A12",
+    "reported_outage_start": "2026-08-25T11:33:21Z",
+    "resolved_at": "2026-08-25T12:42:04Z",
+    "short_description": "Link a12-ct01:mlx5_0 <-> leaf-a06-r0:swp19",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-25T11:44:24Z",
+        "author": "Finley Abbott",
+        "text": "Acknowledged. Assigned to Finley Abbott."
+      },
+      {
+        "at": "2026-08-25T11:45:24Z",
+        "author": "Finley Abbott",
+        "text": "On site at rack A12 (HALL-A)."
+      },
+      {
+        "at": "2026-08-25T12:03:04Z",
+        "author": "Finley Abbott",
+        "text": "Inspected and cleaned fiber on both ends. No part replaced."
+      },
+      {
+        "at": "2026-08-25T12:42:04Z",
+        "author": "Finley Abbott",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-25T21:24:08Z",
+    "assigned_to": "RSS-017",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a23-ct09",
+    "hall": "HALL-A",
+    "number": "INC3101394",
+    "opened_at": "2026-08-25T21:16:30Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTYR8AR8CB",
+        "location": "a23-ct09",
+        "part": "Compute tray",
+        "removed_serial": "CTCEOZ2FSA"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A23",
+    "reported_outage_start": "2026-08-25T21:16:30Z",
+    "resolved_at": "2026-08-26T01:35:16Z",
+    "short_description": "Compute tray a23-ct09: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-25T21:24:08Z",
+        "author": "Finley Hale",
+        "text": "Acknowledged. Assigned to Finley Hale."
+      },
+      {
+        "at": "2026-08-25T21:49:25Z",
+        "author": "Finley Hale",
+        "text": "On site at rack A23 (HALL-A)."
+      },
+      {
+        "at": "2026-08-25T23:16:44Z",
+        "author": "Finley Hale",
+        "text": "Replaced compute tray. Removed SN CTCEOZ2FSA, installed SN CTYR8AR8CB. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-26T01:35:16Z",
+        "author": "Finley Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-26T02:14:59Z",
+    "assigned_to": "RSS-026",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a25-ct07",
+    "hall": "HALL-A",
+    "number": "INC3101411",
+    "opened_at": "2026-08-26T02:07:40Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPHE4VLPSB",
+        "location": "a25-ct07 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPXNV5SUD5"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A25",
+    "reported_outage_start": "2026-08-26T02:07:40Z",
+    "resolved_at": "2026-08-26T03:35:45Z",
+    "short_description": "Link a25-ct07:mlx5_3 <-> leaf-a13-r3:swp7",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-26T02:14:59Z",
+        "author": "Harper Sato",
+        "text": "Acknowledged. Assigned to Harper Sato."
+      },
+      {
+        "at": "2026-08-26T02:23:57Z",
+        "author": "Harper Sato",
+        "text": "On site at rack A25 (HALL-A)."
+      },
+      {
+        "at": "2026-08-26T03:00:25Z",
+        "author": "Harper Sato",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OPXNV5SUD5, installed SN OPHE4VLPSB. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-26T03:35:45Z",
+        "author": "Harper Sato",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-26T14:50:17Z",
+    "assigned_to": "RSS-007",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a27-ct13",
+    "hall": "HALL-A",
+    "number": "INC3101428",
+    "opened_at": "2026-08-26T14:31:18Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPFF9GD8T4",
+        "location": "a27-ct13 (switch side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OPI3VJNUU4"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A27",
+    "reported_outage_start": "2026-08-26T14:31:18Z",
+    "resolved_at": "2026-08-26T17:02:19Z",
+    "short_description": "Link a27-ct13:mlx5_3 <-> leaf-a14-r3:swp13",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-26T14:50:17Z",
+        "author": "Casey Osei",
+        "text": "Acknowledged. Assigned to Casey Osei."
+      },
+      {
+        "at": "2026-08-26T15:56:35Z",
+        "author": "Casey Osei",
+        "text": "On site at rack A27 (HALL-A)."
+      },
+      {
+        "at": "2026-08-26T16:25:27Z",
+        "author": "Casey Osei",
+        "text": "Replaced 800g osfp optic (switch side). Removed SN OPI3VJNUU4, installed SN OPFF9GD8T4. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-26T17:02:19Z",
+        "author": "Casey Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-26T15:33:26Z",
+    "assigned_to": "RSS-007",
+    "category": "power_shelf",
+    "close_code": "Hardware replaced",
+    "configuration_item": "A08 power shelf 4",
+    "hall": "HALL-A",
+    "number": "INC3101445",
+    "opened_at": "2026-08-26T15:29:49Z",
+    "parts_used": [
+      {
+        "installed_serial": "PSF1HBCUO1",
+        "location": "A08 power shelf 4",
+        "part": "Power shelf",
+        "removed_serial": "PSVS2HNG0Z"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A08",
+    "reported_outage_start": "2026-08-26T15:29:49Z",
+    "resolved_at": "2026-08-26T16:44:45Z",
+    "short_description": "A08 power shelf 4",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-26T15:33:26Z",
+        "author": "Casey Osei",
+        "text": "Acknowledged. Assigned to Casey Osei."
+      },
+      {
+        "at": "2026-08-26T15:44:37Z",
+        "author": "Casey Osei",
+        "text": "On site at rack A08 (HALL-A)."
+      },
+      {
+        "at": "2026-08-26T16:27:55Z",
+        "author": "Casey Osei",
+        "text": "Replaced power shelf. Removed SN PSVS2HNG0Z, installed SN PSF1HBCUO1. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-26T16:44:45Z",
+        "author": "Casey Osei",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-27T16:20:27Z",
+    "assigned_to": "RSS-008",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 5 in A16 power shelf 3",
+    "hall": "HALL-A",
+    "number": "INC3101462",
+    "opened_at": "2026-08-27T15:41:44Z",
+    "parts_used": [
+      {
+        "installed_serial": "PUP0R38LR9",
+        "location": "PSU 5 in A16 power shelf 3",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PUE66V8EIK"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A16",
+    "reported_outage_start": "2026-08-27T15:41:44Z",
+    "resolved_at": "2026-08-27T17:40:44Z",
+    "short_description": "PSU 5 in A16 power shelf 3",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-27T16:20:27Z",
+        "author": "Noel Petrov",
+        "text": "Acknowledged. Assigned to Noel Petrov."
+      },
+      {
+        "at": "2026-08-27T17:07:54Z",
+        "author": "Noel Petrov",
+        "text": "On site at rack A16 (HALL-A)."
+      },
+      {
+        "at": "2026-08-27T17:32:36Z",
+        "author": "Noel Petrov",
+        "text": "Replaced psu (5.5 kw). Removed SN PUE66V8EIK, installed SN PUP0R38LR9. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-27T17:40:44Z",
+        "author": "Noel Petrov",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-28T03:26:59Z",
+    "assigned_to": "RSS-024",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a23-ct10",
+    "hall": "HALL-A",
+    "number": "INC3101479",
+    "opened_at": "2026-08-28T03:19:30Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTP1M47I80",
+        "location": "a23-ct10",
+        "part": "Compute tray",
+        "removed_serial": "CTLF15KXTI"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A23",
+    "reported_outage_start": "2026-08-28T03:19:30Z",
+    "resolved_at": "2026-08-28T08:19:58Z",
+    "short_description": "Compute tray a23-ct10: XID 145",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-28T03:26:59Z",
+        "author": "Parker Mensah",
+        "text": "Acknowledged. Assigned to Parker Mensah."
+      },
+      {
+        "at": "2026-08-28T03:44:13Z",
+        "author": "Parker Mensah",
+        "text": "On site at rack A23 (HALL-A)."
+      },
+      {
+        "at": "2026-08-28T06:04:09Z",
+        "author": "Parker Mensah",
+        "text": "Replaced compute tray. Removed SN CTLF15KXTI, installed SN CTP1M47I80. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-28T08:19:58Z",
+        "author": "Parker Mensah",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-28T04:23:39Z",
+    "assigned_to": "RSS-021",
+    "category": "psu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "PSU 5 in A02 power shelf 6",
+    "hall": "HALL-A",
+    "number": "INC3101496",
+    "opened_at": "2026-08-28T04:04:53Z",
+    "parts_used": [
+      {
+        "installed_serial": "PUUX991BHD",
+        "location": "PSU 5 in A02 power shelf 6",
+        "part": "PSU (5.5 kW)",
+        "removed_serial": "PU8S2X4OUS"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A02",
+    "reported_outage_start": "2026-08-28T04:04:53Z",
+    "resolved_at": "2026-08-28T07:04:40Z",
+    "short_description": "PSU 5 in A02 power shelf 6",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-28T04:23:39Z",
+        "author": "Casey Hale",
+        "text": "Acknowledged. Assigned to Casey Hale."
+      },
+      {
+        "at": "2026-08-28T06:38:41Z",
+        "author": "Casey Hale",
+        "text": "On site at rack A02 (HALL-A)."
+      },
+      {
+        "at": "2026-08-28T06:56:25Z",
+        "author": "Casey Hale",
+        "text": "Replaced psu (5.5 kw). Removed SN PU8S2X4OUS, installed SN PUUX991BHD. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-28T07:04:40Z",
+        "author": "Casey Hale",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-28T06:21:17Z",
+    "assigned_to": "RSS-020",
+    "category": "optic_link",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a19-ct16",
+    "hall": "HALL-A",
+    "number": "INC3101513",
+    "opened_at": "2026-08-28T06:09:07Z",
+    "parts_used": [
+      {
+        "installed_serial": "OPNDQEB28T",
+        "location": "a19-ct16 (host side)",
+        "part": "800G OSFP optic",
+        "removed_serial": "OP0EMBOH7M"
+      }
+    ],
+    "priority": "P3",
+    "rack": "A19",
+    "reported_outage_start": "2026-08-28T06:09:07Z",
+    "resolved_at": "2026-08-28T07:57:27Z",
+    "short_description": "Link a19-ct16:mlx5_2 <-> leaf-a10-r2:swp16",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-28T06:21:17Z",
+        "author": "Morgan Doyle",
+        "text": "Acknowledged. Assigned to Morgan Doyle."
+      },
+      {
+        "at": "2026-08-28T06:50:55Z",
+        "author": "Morgan Doyle",
+        "text": "On site at rack A19 (HALL-A)."
+      },
+      {
+        "at": "2026-08-28T07:14:40Z",
+        "author": "Morgan Doyle",
+        "text": "Replaced 800g osfp optic (host side). Removed SN OP0EMBOH7M, installed SN OPNDQEB28T. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-28T07:57:27Z",
+        "author": "Morgan Doyle",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-29T04:19:59Z",
+    "assigned_to": "RSS-020",
+    "category": "tray_gpu",
+    "close_code": "Hardware replaced",
+    "configuration_item": "a23-ct06",
+    "hall": "HALL-A",
+    "number": "INC3101530",
+    "opened_at": "2026-08-29T04:09:49Z",
+    "parts_used": [
+      {
+        "installed_serial": "CTDT52IO0E",
+        "location": "a23-ct06",
+        "part": "Compute tray",
+        "removed_serial": "CT1XF0KY3U"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A23",
+    "reported_outage_start": "2026-08-29T04:09:49Z",
+    "resolved_at": "2026-08-29T08:11:39Z",
+    "short_description": "Compute tray a23-ct06: XID 119",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-29T04:19:59Z",
+        "author": "Morgan Doyle",
+        "text": "Acknowledged. Assigned to Morgan Doyle."
+      },
+      {
+        "at": "2026-08-29T04:20:59Z",
+        "author": "Morgan Doyle",
+        "text": "On site at rack A23 (HALL-A)."
+      },
+      {
+        "at": "2026-08-29T05:52:36Z",
+        "author": "Morgan Doyle",
+        "text": "Replaced compute tray. Removed SN CT1XF0KY3U, installed SN CTDT52IO0E. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-29T08:11:39Z",
+        "author": "Morgan Doyle",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  },
+  {
+    "acknowledged_at": "2026-08-29T10:39:18Z",
+    "assigned_to": "RSS-020",
+    "category": "power_shelf",
+    "close_code": "Hardware replaced",
+    "configuration_item": "A07 power shelf 3",
+    "hall": "HALL-A",
+    "number": "INC3101547",
+    "opened_at": "2026-08-29T10:33:39Z",
+    "parts_used": [
+      {
+        "installed_serial": "PSA08V5GFR",
+        "location": "A07 power shelf 3",
+        "part": "Power shelf",
+        "removed_serial": "PSRSVY9F24"
+      }
+    ],
+    "priority": "P2",
+    "rack": "A07",
+    "reported_outage_start": "2026-08-29T10:33:39Z",
+    "resolved_at": "2026-08-29T11:32:57Z",
+    "short_description": "A07 power shelf 3",
+    "state": "Closed",
+    "validation_attached": true,
+    "work_notes": [
+      {
+        "at": "2026-08-29T10:39:18Z",
+        "author": "Morgan Doyle",
+        "text": "Acknowledged. Assigned to Morgan Doyle."
+      },
+      {
+        "at": "2026-08-29T10:41:32Z",
+        "author": "Morgan Doyle",
+        "text": "On site at rack A07 (HALL-A)."
+      },
+      {
+        "at": "2026-08-29T11:15:54Z",
+        "author": "Morgan Doyle",
+        "text": "Replaced power shelf. Removed SN PSRSVY9F24, installed SN PSA08V5GFR. Failed part tagged for RMA."
+      },
+      {
+        "at": "2026-08-29T11:32:57Z",
+        "author": "Morgan Doyle",
+        "text": "Validation complete; all return-to-service checks passed. Returned to production."
+      }
+    ]
+  }
+]

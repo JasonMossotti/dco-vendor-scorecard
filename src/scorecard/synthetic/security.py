@@ -56,8 +56,9 @@ def _csv_rows(path: Path) -> list[dict]:
 
 
 class SecurityLayer:
-    def __init__(self, data_dir: str | Path, seed: int, cfg: dict | None = None):
+    def __init__(self, data_dir: str | Path, seed: int, cfg: dict | None = None, plants: set[str] | None = None):
         self.data = Path(data_dir)
+        self.plants = set(PLANTED_TYPES) if plants is None else set(plants)    # the quarter's earlier months plant a subset
         self.cfg = cfg or yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
         self.sla = load_sla(PARTNER_FILES["security"])
         self.rng = random.Random(f"{seed}:security")
@@ -287,6 +288,16 @@ class SecurityLayer:
     # ------------------------------------------------------------------ plants and decoys
     def plant(self, post_log, post_badges, alarms, dispatch, door_badges, visits, visitor_badges, entries, trays, drives, custody, certs):
         rng = self.rng
+        if "post_reported_unstaffed" in self.plants:
+            self._plant_post(rng, post_badges)
+        if "door_alarm_closed_no_response" in self.plants:
+            self._plant_door(rng, post_log, alarms, dispatch, door_badges)
+        if "visitor_without_escort" in self.plants:
+            self._plant_visit(rng, visits, visitor_badges, entries)
+        if "media_shipped_without_destruction" in self.plants:
+            self._plant_media(rng, trays, drives, custody, certs)
+
+    def _plant_post(self, rng, post_badges):
         # 1. A post logged staffed with no badge-in at the post reader for the whole shift.
         cand = [b for b in post_badges if b["_post"] in ("POST-HA", "POST-HB", "POST-DOCK")]
         b = rng.choice(cand)
@@ -295,6 +306,8 @@ class SecurityLayer:
                          "evidence": "Post log says staffed; no badge-in at the post reader during the shift"})
         decoy = rng.choice([x for x in post_badges if x["_post"] != b["_post"] or x["_shift"] != b["_shift"]])
         decoy["timestamp"] = iso(parse(decoy["_shift"]) + timedelta(minutes=rng.uniform(9, 14)))   # late relief, still staffed
+
+    def _plant_door(self, rng, post_log, alarms, dispatch, door_badges):
         # 2. A door held alarm closed in the dispatch log with no guard at the door.
         held = [a for a in alarms if a["priority"] == "P2"]
         a = rng.choice(held)
@@ -307,6 +320,8 @@ class SecurityLayer:
                          "evidence": "Dispatch log closed; no guard badge at the door between the alarm and the close"})
         other = rng.choice([x for x in dispatch if x["alarm_id"] != a["alarm_id"]])
         other["dispatched"] = rng.choice(sorted({r["guard_id"] for r in post_log if r["guard_id"] != other["dispatched"]}))
+
+    def _plant_visit(self, rng, visits, visitor_badges, entries):
         # 3. A visitor in a hall with the named escort nowhere near the door.
         def escort_near(v, t):
             return any(e["person"] == v["escort"] and f"HALL-{e['hall']}" == v["hall"] and abs((e["t"] - t).total_seconds()) <= 120
@@ -326,6 +341,8 @@ class SecurityLayer:
                  and 0 < (parse(next(x for x in visitor_badges if x["_visit"] == v["visit_id"] and x["direction"] == "in")["timestamp"]) - e["t"]).total_seconds() <= 120)
         ins = next(x for x in visitor_badges if x["_visit"] == v["visit_id"] and x["direction"] == "in")
         ins["timestamp"] = iso(e["t"] - timedelta(seconds=rng.randint(30, 100)))    # escort a step behind, inside 2 minutes
+
+    def _plant_media(self, rng, trays, drives, custody, certs):
         # 4. A drive serial in a shipped tray with no chain of custody and no certificate.
         if trays:
             dr = rng.choice(drives)

@@ -1,0 +1,434 @@
+[
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-01",
+    "covers_door": true,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-02",
+    "covers_door": true,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-03",
+    "covers_door": true,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-04",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-05",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-06",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-07",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-08",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-09",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-10",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-11",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-12",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-13",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-14",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-15",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-16",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-17",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-18",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-19",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-20",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-21",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall A",
+    "camera": "CAM-A-22",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-01",
+    "covers_door": true,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-02",
+    "covers_door": true,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-03",
+    "covers_door": true,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-04",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-05",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-06",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-07",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-08",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-09",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-10",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-11",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-12",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-13",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-14",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-15",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-16",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-17",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-18",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-19",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-20",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-21",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Hall B",
+    "camera": "CAM-B-22",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Spares cage",
+    "camera": "CAM-S-01",
+    "covers_door": true,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Spares cage",
+    "camera": "CAM-S-02",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Spares cage",
+    "camera": "CAM-S-03",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Spares cage",
+    "camera": "CAM-S-04",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Spares cage",
+    "camera": "CAM-S-05",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Spares cage",
+    "camera": "CAM-S-06",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Receiving dock",
+    "camera": "CAM-D-01",
+    "covers_door": true,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Receiving dock",
+    "camera": "CAM-D-02",
+    "covers_door": true,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Receiving dock",
+    "camera": "CAM-D-03",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Receiving dock",
+    "camera": "CAM-D-04",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Receiving dock",
+    "camera": "CAM-D-05",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Receiving dock",
+    "camera": "CAM-D-06",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-01",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-02",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-03",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-04",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-05",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-06",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-07",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-08",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-09",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-10",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-11",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-12",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-13",
+    "covers_door": false,
+    "recorder": "NVR-1"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-14",
+    "covers_door": false,
+    "recorder": "NVR-2"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-15",
+    "covers_door": false,
+    "recorder": "NVR-3"
+  },
+  {
+    "area": "Corridors to the hall doors",
+    "camera": "CAM-C-16",
+    "covers_door": false,
+    "recorder": "NVR-4"
+  }
+]

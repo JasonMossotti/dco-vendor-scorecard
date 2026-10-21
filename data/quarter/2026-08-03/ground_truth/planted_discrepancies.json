@@ -1,0 +1,326 @@
+[
+  {
+    "anomaly_id": "PD-001",
+    "crew": "N1",
+    "detect_with": [
+      "vendor/roster.csv",
+      "access/badge_events.csv"
+    ],
+    "evidence": "Vendor roster lists these technicians as on shift; access control has no badge-in for them.",
+    "missing_person_ids": [
+      "RSS-023",
+      "RSS-024"
+    ],
+    "shift": "night",
+    "shift_date": "2026-08-28",
+    "shift_end": "2026-08-29T12:00:00Z",
+    "shift_start": "2026-08-29T00:00:00Z",
+    "sla_refs": [
+      "CSL-10"
+    ],
+    "type": "staffing_gap"
+  },
+  {
+    "anomaly_id": "PD-002",
+    "crew": "D2",
+    "detect_with": [
+      "vendor/roster.csv",
+      "access/badge_events.csv"
+    ],
+    "evidence": "Vendor roster lists these technicians as on shift; access control has no badge-in for them.",
+    "missing_person_ids": [
+      "RSS-014",
+      "RSS-015"
+    ],
+    "shift": "day",
+    "shift_date": "2026-08-24",
+    "shift_end": "2026-08-25T00:00:00Z",
+    "shift_start": "2026-08-24T12:00:00Z",
+    "sla_refs": [
+      "CSL-10"
+    ],
+    "type": "staffing_gap"
+  },
+  {
+    "anomaly_id": "PD-003",
+    "crew": "N1",
+    "detect_with": [
+      "vendor/roster.csv",
+      "access/badge_events.csv"
+    ],
+    "evidence": "Vendor roster lists these technicians as on shift; access control has no badge-in for them.",
+    "missing_person_ids": [
+      "RSS-022",
+      "RSS-023"
+    ],
+    "shift": "night",
+    "shift_date": "2026-08-27",
+    "shift_end": "2026-08-28T12:00:00Z",
+    "shift_start": "2026-08-28T00:00:00Z",
+    "sla_refs": [
+      "CSL-10"
+    ],
+    "type": "staffing_gap"
+  },
+  {
+    "anomaly_id": "PD-004",
+    "detect_with": [
+      "telemetry/dcgm_xid_events.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Ticket closed as resolved (reseat); same nvlink fault recurred on a06-ct08 39 hours after return to service, inside the 7-day recurrence window (TR-5): a First-Time Fix failure.",
+    "gt_id": "GT-0005",
+    "recurrence_gt_id": "GT-0085",
+    "recurrence_ticket": "INC3100714",
+    "sla_refs": [
+      "CSL-06",
+      "CSL-08"
+    ],
+    "ticket": "INC3100510",
+    "type": "phantom_fix",
+    "unit": "Compute tray a06-ct08"
+  },
+  {
+    "anomaly_id": "PD-005",
+    "detect_with": [
+      "telemetry/dcgm_xid_events.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Ticket closed as resolved (reseat); same bus fault recurred on a26-ct12 87 hours after return to service, inside the 7-day recurrence window (TR-5): a First-Time Fix failure.",
+    "gt_id": "GT-0033",
+    "recurrence_gt_id": "GT-0086",
+    "recurrence_ticket": "INC3101309",
+    "sla_refs": [
+      "CSL-06",
+      "CSL-08"
+    ],
+    "ticket": "INC3101105",
+    "type": "phantom_fix",
+    "unit": "Compute tray a26-ct12"
+  },
+  {
+    "anomaly_id": "PD-006",
+    "detect_with": [
+      "telemetry/dcgm_xid_events.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Ticket closed as resolved (reseat); same gsp fault recurred on a03-ct06 46 hours after return to service, inside the 7-day recurrence window (TR-5): a First-Time Fix failure.",
+    "gt_id": "GT-0018",
+    "recurrence_gt_id": "GT-0087",
+    "recurrence_ticket": "INC3100833",
+    "sla_refs": [
+      "CSL-06",
+      "CSL-08"
+    ],
+    "ticket": "INC3100680",
+    "type": "phantom_fix",
+    "unit": "Compute tray a03-ct06"
+  },
+  {
+    "anomaly_id": "PD-007",
+    "detect_with": [
+      "telemetry/health_checks.jsonl",
+      "telemetry/scheduler_node_states.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Node returned to the scheduler with no validation health checks recorded; ticket notes still claim validation passed.",
+    "gt_id": "GT-0014",
+    "sla_refs": [
+      "CSL-07",
+      "CSL-11"
+    ],
+    "ticket": "INC3100935",
+    "type": "skipped_validation",
+    "unit": "Compute tray a21-ct06"
+  },
+  {
+    "anomaly_id": "PD-008",
+    "detect_with": [
+      "telemetry/health_checks.jsonl",
+      "telemetry/scheduler_node_states.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Node returned to the scheduler with no validation health checks recorded; ticket notes still claim validation passed.",
+    "gt_id": "GT-0029",
+    "sla_refs": [
+      "CSL-07",
+      "CSL-11"
+    ],
+    "ticket": "INC3100867",
+    "type": "skipped_validation",
+    "unit": "Compute tray a30-ct02"
+  },
+  {
+    "anomaly_id": "PD-009",
+    "detect_with": [
+      "telemetry/dcgm_xid_events.jsonl",
+      "telemetry/scheduler_node_states.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "GPU telemetry shows the fault 128 minutes before the ticket was opened. Measured from ticket open the repair met the 8-hour target; measured from T0 it took 9.7 hours.",
+    "gt_id": "GT-0031",
+    "sla_refs": [
+      "CSL-04",
+      "CSL-11"
+    ],
+    "ticket": "INC3100255",
+    "type": "clock_shift",
+    "unit": "Compute tray a13-ct07"
+  },
+  {
+    "anomaly_id": "PD-010",
+    "detect_with": [
+      "telemetry/dcgm_xid_events.jsonl",
+      "telemetry/scheduler_node_states.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Tray faulted again 36 minutes after return to service and the vendor opened a new ticket, restarting the clock. Separately the tickets look on time (7.0 and 3.0 hours); under TR-1 the restore is continuous: 10.6 hours against the 8-hour target.",
+    "gt_id": "GT-0025",
+    "recurrence_gt_id": "GT-0088",
+    "recurrence_ticket": "INC3100799",
+    "sla_refs": [
+      "TR-1",
+      "TR-6",
+      "CSL-04",
+      "CSL-11"
+    ],
+    "ticket": "INC3100782",
+    "type": "ticket_split",
+    "unit": "Compute tray a22-ct10"
+  },
+  {
+    "anomaly_id": "PD-011",
+    "detect_with": [
+      "telemetry/dcgm_xid_events.jsonl",
+      "telemetry/scheduler_node_states.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Tray faulted again 29 minutes after return to service and the vendor opened a new ticket, restarting the clock. Separately the tickets look on time (6.8 and 3.1 hours); under TR-1 the restore is continuous: 10.3 hours against the 8-hour target.",
+    "gt_id": "GT-0026",
+    "recurrence_gt_id": "GT-0089",
+    "recurrence_ticket": "INC3100272",
+    "sla_refs": [
+      "TR-1",
+      "TR-6",
+      "CSL-04",
+      "CSL-11"
+    ],
+    "ticket": "INC3100238",
+    "type": "ticket_split",
+    "unit": "Compute tray a13-ct11"
+  },
+  {
+    "anomaly_id": "PD-012",
+    "detect_with": [
+      "vendor/tickets.json",
+      "access/badge_events.csv"
+    ],
+    "evidence": "Ticket work note claims technician on site within the 30-minute target; the assigned technician's first badge-in to the hall came later.",
+    "gt_id": "GT-0024",
+    "sla_refs": [
+      "KM-01",
+      "CSL-11"
+    ],
+    "ticket": "INC3101479",
+    "type": "ghost_engagement",
+    "unit": "Compute tray a23-ct10"
+  },
+  {
+    "anomaly_id": "PD-013",
+    "detect_with": [
+      "vendor/tickets.json",
+      "access/badge_events.csv"
+    ],
+    "evidence": "Ticket work note claims technician on site within the 30-minute target; the assigned technician's first badge-in to the hall came later.",
+    "gt_id": "GT-0063",
+    "sla_refs": [
+      "KM-01",
+      "CSL-11"
+    ],
+    "ticket": "INC3101173",
+    "type": "ghost_engagement",
+    "unit": "Link a26-ct07:mlx5_3 <-> leaf-a13-r3:swp25"
+  },
+  {
+    "anomaly_id": "PD-014",
+    "detect_with": [
+      "vendor/tickets.json",
+      "access/badge_events.csv"
+    ],
+    "evidence": "Ticket work note claims technician on site within the 30-minute target; the assigned technician's first badge-in to the hall came later.",
+    "gt_id": "GT-0032",
+    "sla_refs": [
+      "KM-01",
+      "CSL-11"
+    ],
+    "ticket": "INC3100578",
+    "type": "ghost_engagement",
+    "unit": "Compute tray a20-ct01"
+  },
+  {
+    "anomaly_id": "PD-015",
+    "detect_with": [
+      "telemetry/ufm_port_events.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Switch-side optic replaced and ticket closed; symbol errors on the same link continued until the host-side optic was replaced 14+ hours later (GT-0090).",
+    "gt_id": "GT-0062",
+    "recurrence_gt_id": "GT-0090",
+    "recurrence_ticket": "INC3101020",
+    "sla_refs": [
+      "CSL-06",
+      "CSL-08"
+    ],
+    "ticket": "INC3100969",
+    "type": "wrong_end_optic",
+    "unit": "Link a24-ct14:mlx5_2 <-> leaf-a12-r2:swp32"
+  },
+  {
+    "anomaly_id": "PD-016",
+    "detect_with": [
+      "telemetry/ufm_port_events.jsonl",
+      "vendor/tickets.json"
+    ],
+    "evidence": "Switch-side optic replaced and ticket closed; symbol errors on the same link continued until the host-side optic was replaced 24+ hours later (GT-0091).",
+    "gt_id": "GT-0049",
+    "recurrence_gt_id": "GT-0091",
+    "recurrence_ticket": "INC3100425",
+    "sla_refs": [
+      "CSL-06",
+      "CSL-08"
+    ],
+    "ticket": "INC3100306",
+    "type": "wrong_end_optic",
+    "unit": "Link a05-ct04:mlx5_1 <-> leaf-a03-r1:swp4"
+  },
+  {
+    "anomaly_id": "PD-017",
+    "detect_with": [
+      "telemetry/redfish_inventory_changes.jsonl",
+      "customer/cab_changes.json"
+    ],
+    "evidence": "Firmware changed on all 18 trays of rack A27 with no approved change record covering that rack and time.",
+    "observed_from": "2026-08-11T08:18:34Z",
+    "rack": "A27",
+    "sla_refs": [
+      "KM-10"
+    ],
+    "type": "unauthorized_change",
+    "unit": "Rack A27 compute trays"
+  },
+  {
+    "anomaly_id": "PD-018",
+    "detect_with": [
+      "telemetry/redfish_inventory_changes.jsonl",
+      "customer/cab_changes.json"
+    ],
+    "evidence": "Firmware changed on all 18 trays of rack A05 with no approved change record covering that rack and time.",
+    "observed_from": "2026-08-18T08:05:49Z",
+    "rack": "A05",
+    "sla_refs": [
+      "KM-10"
+    ],
+    "type": "unauthorized_change",
+    "unit": "Rack A05 compute trays"
+  }
+]

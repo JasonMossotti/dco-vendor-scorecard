@@ -128,12 +128,14 @@ const VIEWS = [
   {key: "security", label: "Security Partner (Llano Gate)", color: "var(--sec)"},
   {key: "credits", label: "Service credits", color: "var(--good)"},
   {key: "audit", label: "Quality audit", color: "var(--qa)"},
+  {key: "qbr", label: "Quarterly review", color: "var(--accent)"},
 ];
 const SUBTABS = {
   it: [["overview", "Overview"], ["levels", "Service levels"], ["findings", "Findings"], ["actions", "Corrective actions"], ["incidents", "Incidents"], ["about", "About"]],
   landlord: [["overview", "Overview"], ["levels", "Service levels"], ["findings", "Findings"], ["events", "Facility events"], ["about", "About"]],
   security: [["overview", "Overview"], ["levels", "Service levels"], ["findings", "Findings"], ["about", "About"]],
   audit: [["overview", "Overview"], ["sample", "Sampled records"], ["findings", "Findings"], ["how", "How the audit works"]],
+  qbr: [["it", "IT Partner"], ["landlord", "Landlord"], ["security", "Security Partner"], ["roadmap", "Roadmap and lessons"], ["how", "How the pack is built"]],
 };
 const FRAME = "Each finding is a place where the partner's records do not reconcile with the Customer's own systems. A finding starts a review; it is not by itself proof of intent.";
 const FOOT = "Synthetic data for a portfolio demonstration; all names and events are fictional.";
@@ -451,6 +453,12 @@ function viewSite(ds) {
     h += `<div class="box">Quality audit: the Customer walked down <b>${num(n)}</b> closed records this month and found <b>${num(a.findings.length)}</b> where the work in place and the records do not reconcile.
       <a href="${hashOf({...S, view: "audit", sub: "", item: ""})}">Open the audit</a>.</div>`;
   }
+  if (qbrOn(ds)) {
+    const P = D.qbr.packs, tot = Object.values(P).reduce((t, p) => t + p.credits.quarter_payable, 0);
+    h += `<div class="box">Quarterly business review, ${esc(D.qbr.quarter)}: <b>${usd(tot)}</b> in service credits across the three months, and
+      <b>${num(Object.values(P).reduce((t, p) => t + p.chronic.cf1.length, 0))}</b> service levels below Minimum three months running.
+      <a href="${hashOf({...S, view: "qbr", sub: "", item: ""})}">Open the quarterly review</a>.</div>`;
+  }
   if (!s) return h + `<p class="note">This dataset has no facility data, so only the IT Partner view is available.</p>`;
   h += `<h2>Every partner, measured</h2>${table(s.rows)}
     <h2>Outages that crossed the demarcation</h2>${(s.crossing.length ? s.crossing : ["No outage crossed the demarcation in this window."]).map(x => `<p>${bold(x)}</p>`).join("")}
@@ -659,22 +667,116 @@ function wireAudit() {
   }
 }
 
+// ---- Quarterly business review ------------------------------------------------------------------------------------
+const Q_STATUS = {met_expected: ["Met", "ok"], below_expected: ["Below Expected", "warn"], below_minimum: ["Below Minimum", "bad"],
+                  deep_below_minimum: ["Below Minimum", "bad"], no_events: ["n/a", "na"], not_applicable: ["n/a", "na"]};
+const Q_RULES = {corrective_action_plan: "Corrective action plan", review_measure: "Review the measure", tighten: "Tighten"};
+const Q_EARN = {lost: "bad", ineligible: "na", pending: "na", "on track": "ok", earned: "ok"};
+const Q_DEFAULT = new Set(["below_minimum", "deep_below_minimum"]);
+function qThr(lv, v) { return (lv.direction === "higher_is_better" ? "≥ " : "≤ ") + esc(v) + esc(lv.unit); }
+function qPct(v) { return v == null ? "n/a" : esc((+v).toFixed(3)) + "%"; }
+function qFlag(st) { const [t, c] = Q_STATUS[st] || ["n/a", "na"]; return `<span class="flag ${c}">${esc(t)}</span>`; }
+function qTrend(t) { return t === "better" ? '<span class="flag ok">Better</span>' : t === "worse" ? '<span class="flag bad">Worse</span>' : `<span class="flag na">${t === "same" ? "Same" : "n/a"}</span>`; }
+function qHead(Q) { return Q.months.map(m => `<th class="n">${esc(m.label)}</th>`).join(""); }
+function viewQBR(ds) {
+  const Q = D.qbr, sub = S.sub || "it";
+  let h = `<h1>Quarterly business review, ${esc(Q.quarter)}</h1><p class="sub">${esc(Q.months[0].label.split(" to ")[0])} to ${esc(Q.months[Q.months.length - 1].label.split(" to ")[1])}, three 4-week months · ${esc(FOOT)}</p>` + subtabs("qbr");
+  if (Q.packs[sub]) return h + qbrPack(Q, Q.packs[sub]);
+  if (sub === "roadmap") {
+    const b = Q.roadmap.hall_b, c = Q.roadmap.hall_c, N = Q.notes;
+    h += `<h2>Roadmap and capacity</h2><div class="tiles">
+      ${tile("Hall B racks handed off", `${num(b.handed_off)} of ${num(b.racks)}`, `by ${esc(md(b.as_of))}; last committed handoff ${esc(md(b.last_committed))}`)}
+      ${tile("Hall B on time", `${num(b.on_time)} of ${num(b.due)}`, "racks due by then that reached Validated Handoff by the committed date", b.on_time < b.due ? "bad" : "")}
+      ${tile("Hall C first compute", esc(md(c.forecast)), `forecast; committed ${esc(md(c.committed))} (${num(c.slip_days)} day${c.slip_days === 1 ? "" : "s"} late, critical path starts with ${esc(c.critical_path.toLowerCase())})`, c.slip_days > 0 ? "bad" : "")}</div>
+      <p class="note">From the <a href="../deployments/">Deployments</a> tab (Hall B) and its <a href="../deployments/#hallc">Hall C readiness</a> view.</p>`;
+    if (N && N.lessons) h += `<h2>Program-wide lessons</h2><ul>${N.lessons.map(x => `<li>${esc(x)}</li>`).join("")}</ul><p class="note">Written by the review (${esc(N.chair)}, ${esc(N.meeting)}); tested against the quarter's facts.</p>`;
+    return h;
+  }
+  return h + `<div class="box"><p><b>What this is.</b> The contract's quarterly business review (sla/common.yaml, governance): the partners' executive sponsors and the Customer's
+    data center operations leadership look at the quarter's trend, the service levels that need to change, and the roadmap. One pack per partner.</p>
+    <p><b>Where the numbers come from.</b> Each month is measured by the same engines as the monthly scorecards, so each month's column is that month's published scorecard.
+    The last month is the committed sample. The two before it are generated by the same site generator with their own seeds, their planted problems drawn by chance around their usual rates.
+    September's stories (the rack A07 outage, the Hall B rollout, the audit and EHS cases) are in September only, and Hall B racks start arriving Aug 31.</p>
+    <p><b>The rules that need more than one month.</b> A third consecutive Minimum default on the same service level doubles its credit; a credit is earned back by meeting Expected in each of the 3 months after the default;
+    a Minimum default on the same service level in 3 consecutive months is a chronic failure (CF-1). The record starts with the quarter, so an earnback can only be on track, pending, or lost here.
+    A doubling is shown as an adjustment beside the published month: the published scorecard does not change.</p>
+    <p><b>SLA change proposals come from a rule</b> (config/qbr.yaml): a corrective action plan when a service level is below Minimum in ${num(Q.rule.cap_min_defaults)} months or more;
+    review the measure when the partner's own report met Expected while the measurement did not in every month; tighten when Expected was met every month with the worst month beyond Expected
+    by at least ${esc(Q.rule.tighten_margin_share)} of the gap between Expected and Minimum. What each one means is the review's judgment, written in qbr/notes/ and tested against the facts.</p></div>
+    <p><b>Read more:</b> <a href="${esc(REPO)}/blob/main/reports/qbr.md">Quarterly review report</a> · <a href="../agreements/">Agreements</a> · <a href="../weekly/">Weekly operations review</a></p>`;
+}
+function qbrPack(Q, p) {
+  const c = p.credits, ch = p.chronic, N = Q.notes || {}, n = Q.months.length;
+  const defaults = Q.months.map((_, i) => p.levels.filter(lv => Q_DEFAULT.has(lv.months[i].status)).length);
+  const note = (N.summary || {})[p.key];
+  let h = `<p class="sub">${esc(p.supplier)}</p>
+    <div class="tiles">${tile("Credits for the quarter", usd(c.quarter_payable), `as published; at risk ${usd(c.quarter_at_risk)}`)}
+    ${tile("With the repeat-default rule", usd(c.quarter_adjusted), c.adjustments.length ? `an adjustment of ${usd(c.quarter_adjusted - c.quarter_payable)}` : "no doubling this quarter", c.adjustments.length ? "bad" : "")}
+    ${tile("Minimum defaults by month", defaults.map(num).join(" · "), Q.months.map(m => esc(m.label.split(" to ")[0])).join(" · "), defaults.some(x => x) ? "bad" : "")}
+    ${tile("Chronic failure (CF-1)", num(ch.cf1.length), ch.cf1.map(x => esc(x.csl)).join(", ") || "none", ch.cf1.length ? "bad" : "")}
+    ${tile("SLA change proposals", num(p.proposals.length), "by the stated rule")}</div>`;
+  if (note) h += `<div class="box key">${esc(note)}<p class="note">${esc(N.chair)}, at the review on ${esc(N.meeting)}.</p></div>`;
+  h += `<h2>Service levels by month</h2><p class="note">Each month's column is that month's published scorecard. The trend compares the last month with the first.</p>
+    <div class="wide"><table class="sort" id="qbr-levels"><thead><tr><th>ID</th><th>Service level</th><th class="n">Expected</th><th class="n">Minimum</th>${qHead(Q)}<th>Trend</th></tr></thead><tbody>
+    ${p.levels.map(lv => `<tr${lv.defaults ? ' class="default"' : ""} data-csl="${esc(lv.id)}"><td class="nw">${esc(lv.id)}</td><td>${esc(lv.name)}</td><td class="n">${qThr(lv, lv.expected)}</td><td class="n">${qThr(lv, lv.minimum)}</td>
+      ${lv.months.map(m => `<td class="n">${m.actual == null ? "n/a" : `${esc(m.measured)}<br>${qFlag(m.status)}`}</td>`).join("")}<td>${qTrend(lv.trend)}</td></tr>`).join("")}</tbody></table></div>`;
+  h += `<h2>Service credits</h2><p class="note">At-risk cap ${usd(c.at_risk)} a month (${esc(p.terms.at_risk_pct)}% of ${usd(p.terms.monthly_charges)}).</p>
+    <div class="wide"><table id="qbr-credits"><thead><tr><th>Month</th><th>Below Minimum</th><th class="n">Uncapped</th><th class="n">Payable</th><th>Capped</th></tr></thead><tbody>
+    ${c.months.map((m, i) => `<tr><td class="nw">${esc(Q.months[i].label)}</td><td>${esc(m.items.join(", ") || "none")}</td><td class="n">${usd(m.uncapped)}</td><td class="n">${usd(m.payable)}</td><td>${m.capped ? "Yes" : "No"}</td></tr>`).join("")}
+    <tr class="tot"><td>Quarter, as published</td><td></td><td></td><td class="n">${usd(c.quarter_payable)}</td><td class="note">of ${usd(c.quarter_at_risk)} at risk</td></tr>
+    ${c.adjustments.map(a => `<tr class="default"><td>Repeat-default adjustment, ${esc(Q.months.find(m => m.id === a.month).label)}</td><td>${esc(a.csls.map(x => x.csl).join(", "))} doubled</td><td class="n">${usd(a.uncapped)}</td><td class="n">+${usd(a.adjustment)}</td><td>${a.capped ? "Held to the cap" : "No"}</td></tr>`).join("")}
+    ${c.adjustments.length ? `<tr class="tot"><td>Quarter, with the adjustment</td><td></td><td></td><td class="n">${usd(c.quarter_adjusted)}</td><td></td></tr>` : ""}</tbody></table></div>`;
+  h += `<h2>The rules that need more than one month</h2>`;
+  h += c.adjustments.length ? c.adjustments.map(a => `<p><b>Repeat-default doubling.</b> ${a.csls.map(x => `${esc(x.csl)} was below Minimum ${num(x.run)} months running: ${usd(x.published)} doubles to ${usd(x.doubled)}`).join("; ")}.
+      Doubled, the month comes to ${usd(a.uncapped)}${a.capped ? `, held to the ${usd(c.at_risk)} cap` : ""}: an adjustment of <b>${usd(a.adjustment)}</b> beside the published ${usd(a.published)}, which stays as published.</p>`).join("")
+    : `<p><b>Repeat-default doubling.</b> No service level was below Minimum ${num(p.terms.doubling_after)} months running.</p>`;
+  h += `<h3>Earnback</h3>${p.earnback.length ? `<div class="wide"><table id="qbr-earnback"><thead><tr><th>Default in</th><th>Service level</th><th class="n">Credit</th><th>Earnback</th><th>Why</th></tr></thead><tbody>
+    ${p.earnback.map(e => `<tr><td class="nw">${esc(Q.months.find(m => m.id === e.month).label)}</td><td class="nw">${esc(e.csl)}</td><td class="n">${usd(e.credit)}</td><td><span class="flag ${Q_EARN[e.state] || "na"}">${esc(e.state)}</span></td><td>${esc(e.why)}</td></tr>`).join("")}</tbody></table></div>` : "<p>No defaults this quarter.</p>"}`;
+  h += `<h3>Chronic failure</h3><ul>
+    <li><b>CF-1</b>, below Minimum on the same service level in 3 consecutive months: ${ch.cf1.length ? ch.cf1.map(x => `<span class="flag bad">${esc(x.csl)}</span>`).join(" ") : "none"}.</li>
+    <li><b>CF-2</b>, 4 of 6 rolling months: ${ch.cf2.length ? ch.cf2.map(x => `${esc(x.csl)} ${num(x.defaults)} of ${num(n)} this quarter`).join("; ") : "no defaults this quarter"}.</li>
+    <li><b>CF-3</b>, credits over half the at-risk amount in 6 rolling months (${usd(ch.cf3.threshold)}): ${usd(ch.cf3.credits)} this quarter, ${num(Math.round(ch.cf3.share * 100))}% of it.</li>
+    <li><b>CF-4</b>, deliberate falsification, is a determination people make. A finding means records do not reconcile, so the pack does not apply it.</li></ul>`;
+  const over = p.self_report.filter(s => s.overstated);
+  h += `<h2>Self-report against measurement</h2><p>Service levels where the partner's own report met Expected while the measurement did not: <b>${p.overstated_by_month.map(num).join(" · ")}</b> by month.</p>
+    ${over.length ? `<div class="wide"><table id="qbr-self"><thead><tr><th>ID</th>${qHead(Q)}</tr></thead><tbody>${over.map(s => `<tr><td class="nw">${esc(s.id)}</td>${s.months.map(x => `<td class="n">${qPct(x.reported)} reported<br>${qPct(x.actual)} measured${x.overstated ? '<br><span class="flag bad">Overstated</span>' : ""}</td>`).join("")}</tr>`).join("")}</tbody></table></div>` : "<p>None.</p>"}`;
+  h += `<h2>Findings by type</h2><p class="note">${esc(FRAME)} A type seen in two months or more repeats: the same kind of record keeps failing to reconcile.</p>
+    <div class="wide"><table class="sort" id="qbr-findings"><thead><tr><th>Finding</th>${qHead(Q)}<th class="n">Quarter</th><th>Repeat</th></tr></thead><tbody>
+    ${p.findings.map(f => `<tr><td>${esc(f.title)}</td>${f.months.map(x => `<td class="n">${num(x)}</td>`).join("")}<td class="n">${num(f.total)}</td><td>${f.repeat ? '<span class="flag warn">Repeat</span>' : ""}</td></tr>`).join("")}</tbody></table></div>`;
+  const a = p.actions.summary;
+  h += `<h2>Corrective actions</h2><div class="wide"><table id="qbr-caps"><thead><tr><th>Month</th><th class="n">${p.key === "it" ? "Plans drafted at the month's review" : "S1 findings (each needs a plan)"}</th>${p.key === "it" ? '<th class="n">Due inside the quarter</th>' : ""}</tr></thead><tbody>
+    ${p.caps.map((x, i) => `<tr><td class="nw">${esc(Q.months[i].label)}</td><td class="n">${num(x.opened)}</td>${p.key === "it" ? `<td class="n">${num(x.due_in_quarter)}</td>` : ""}</tr>`).join("")}</tbody></table></div>
+    <p>September's programs: post-incident review actions <b>${num(a.pir)}</b> (${num(a.pir_complete)} complete), quality audit findings <b>${num(a.audit)}</b>, EHS actions <b>${num(a.ehs)}</b>
+    (${num(a.ehs_closed)} closed, ${num(a.ehs_on_time)} on time${a.ehs_median_days == null ? "" : `, median ${num(a.ehs_median_days)} days to close`}).</p>
+    <p class="note">Closure of the monthly plans is not in the records; on-time closure is computed only where a record carries its close date (EHS actions).</p>`;
+  const st = p.staffing;
+  h += `<h2>Staffing fill</h2><div class="wide"><table id="qbr-staffing"><thead><tr><th>Month</th><th class="n">${esc(st.id)} ${esc(st.name)}</th><th>Status</th><th>Basis</th></tr></thead><tbody>
+    ${st.months.map((m, i) => `<tr><td class="nw">${esc(Q.months[i].label)}</td><td class="n">${esc(m.measured)}</td><td>${qFlag(m.status)}</td><td>${esc(st.detail[i])}</td></tr>`).join("")}</tbody></table></div>`;
+  const said = {};
+  (N.proposals || []).filter(x => x.partner === p.key).forEach(x => { said[x.csl + "|" + x.rule] = x.text; });
+  h += `<h2>SLA change proposals</h2>${p.proposals.length ? `<div class="wide"><table id="qbr-proposals"><thead><tr><th>Rule</th><th>Service level</th><th>The fact</th><th>What the review said</th></tr></thead><tbody>
+    ${p.proposals.map(x => `<tr><td class="nw">${esc(Q_RULES[x.rule])}</td><td class="nw">${esc(x.csl)}</td><td>${esc(x.fact)}</td><td>${esc(said[x.csl + "|" + x.rule] || "")}</td></tr>`).join("")}</tbody></table></div>` : "<p>None this quarter.</p>"}`;
+  return h;
+}
+
 // ---- Page -------------------------------------------------------------------------------------------------------
+// The quarter ends with the committed sample month, so the review opens with that dataset only.
+function qbrOn(ds) { return !!D.qbr && ds.key === "sample"; }
 function winText(ds) { return `${md(ds.start)} to ${md(lastDay(ds.end))}, ${lastDay(ds.end).slice(0, 4)}`; }
 function show() {
   S = parse();
   const ds = DS();
-  if ((S.view === "landlord" && !ds.landlord) || (S.view === "security" && !ds.security) || (S.view === "audit" && !ds.audit)) S.view = "site";
+  if ((S.view === "landlord" && !ds.landlord) || (S.view === "security" && !ds.security) || (S.view === "audit" && !ds.audit) || (S.view === "qbr" && !qbrOn(ds))) S.view = "site";
   if (S.sub && SUBTABS[S.view] && !SUBTABS[S.view].some(x => x[0] === S.sub)) S.sub = "";
   document.getElementById("ds").value = ds.key;
   document.getElementById("window").textContent = winText(ds);
-  document.getElementById("views").innerHTML = VIEWS.map(v => `<button data-view="${v.key}" class="${v.key === S.view ? "on" : ""}"${(v.key === "landlord" && !ds.landlord) || (v.key === "security" && !ds.security) || (v.key === "audit" && !ds.audit) ? " disabled" : ""}${v.key === "audit" && !ds.audit ? ' title="The Customer walks down the sample month"' : ""}><span class="dot" style="background:${v.color}"></span>${esc(v.label)}</button>`).join("");
+  document.getElementById("views").innerHTML = VIEWS.map(v => `<button data-view="${v.key}" class="${v.key === S.view ? "on" : ""}"${(v.key === "landlord" && !ds.landlord) || (v.key === "security" && !ds.security) || (v.key === "audit" && !ds.audit) || (v.key === "qbr" && !qbrOn(ds)) ? " disabled" : ""}${v.key === "audit" && !ds.audit ? ' title="The Customer walks down the sample month"' : ""}${v.key === "qbr" && !qbrOn(ds) ? ' title="The quarter ends with the sample month"' : ""}><span class="dot" style="background:${v.color}"></span>${esc(v.label)}</button>`).join("");
   const main = document.getElementById("doc");
   // Record numbers link to the Incident Portal only for the month it holds; a newer month reuses the numbers.
   if (ds.key === "sample") main.removeAttribute("data-tk-skip"); else main.setAttribute("data-tk-skip", "");
-  // An explicit choice, not a lookup by the hash's text (parse() already accepts only the six views).
+  // An explicit choice, not a lookup by the hash's text (parse() already accepts only the listed views).
   const render = S.view === "it" ? viewIT : S.view === "landlord" ? viewLandlord : S.view === "security" ? viewSecurity
-    : S.view === "credits" ? viewCredits : S.view === "audit" ? viewAudit : viewSite;
+    : S.view === "credits" ? viewCredits : S.view === "audit" ? viewAudit : S.view === "qbr" ? viewQBR : viewSite;
   main.innerHTML = render(ds);
   wireFindings(); wireIncidents(); wireEvents(); wireCredits(); wireAudit();
   document.title = `${VIEWS.find(v => v.key === S.view).label} · Scorecards · Unified Site Management`;

@@ -14,7 +14,8 @@ const shown = sel => [...d.querySelectorAll(sel)].filter(x => !x.hidden);
 
 ok(errors.length === 0, "no script errors " + errors.join(";"));
 ok(!html.includes("stlite.js") && d.querySelector('a[href="lab/"]'), "no Python runtime on this page; Try another month links to the lab");
-ok(d.querySelectorAll("#views button").length === 6 && d.querySelector("#views button.on").dataset.view === "site", "six views, opening on the site summary");
+ok(d.querySelectorAll("#views button").length === 7 && d.querySelector("#views button.on").dataset.view === "site", "seven views, opening on the site summary");
+ok(t().includes("Quarterly business review, 2026-Q3: $732,748") && d.querySelector('#doc a[href="#qbr"]'), "the site summary points to the quarterly review");
 ok(t().includes("Quality audit: the Customer walked down 20 closed records") && d.querySelector('#doc a[href="#audit"]'), "the site summary points to the quality audit");
 ok(t().includes("three partners, one set of records") && d.querySelectorAll(".card").length === 3, "the site summary with a card per partner");
 ok(t().includes("$307,176"), "the three partners' credits added up ($188,700 + $106,200 + $12,276)");
@@ -126,6 +127,28 @@ ok(d.getElementById("qf-QA-4").open && t().includes("Corrective action") && t().
 
 nav("#audit/how");
 ok(t().includes(`--sample ${A.seed}`) && t().includes("publishes") && d.querySelectorAll("table").length === 3, "how the sample is drawn, both checklists, and the agreements");
+
+// Quarterly business review
+const Q = D.qbr;
+nav("#qbr");
+ok(d.querySelector("#views button.on").dataset.view === "qbr" && d.querySelector(".subtabs a.on").dataset.sub === "it", "the quarterly review opens on the IT Partner's pack");
+ok(d.querySelectorAll("#qbr-levels tbody tr").length === Q.packs.it.levels.length && d.querySelectorAll("#qbr-levels thead th").length === 8, "every service level, a column per month");
+const sepIT = Object.fromEntries(S.it.csl.map(r => [r.row.ID, r.row.Measured]));
+ok([...d.querySelectorAll("#qbr-levels tbody tr")].every(tr => { const v = sepIT[tr.dataset.csl]; return v === "n/a" ? tr.cells[6].textContent === "n/a" : tr.cells[6].textContent.startsWith(v); }),
+   "September's column equals the published IT Partner scorecard");
+ok(t().includes("$477,300") && t().includes("$510,600") && t().includes("+$33,300") && t().includes("Held to the cap"), "quarter credits, and the doubling as an adjustment line");
+ok(d.querySelectorAll("#qbr-earnback tbody tr").length === Q.packs.it.earnback.length && t().includes("pending"), "earnback for every default");
+ok(t().includes("CF-1") && d.querySelectorAll(".flag.bad").length > 3 && t().includes("does not apply it"), "chronic failure triggers, CF-4 left to people");
+ok(d.querySelectorAll("#qbr-proposals tbody tr").length === Q.packs.it.proposals.length && [...d.querySelectorAll("#qbr-proposals tbody tr")].every(tr => tr.cells[3].textContent.trim()), "every proposal carries the review's note");
+ok(t().includes("not by itself proof of intent"), "findings by type keep the framing");
+nav("#qbr/landlord");
+ok(t().includes("$224,200") && t().includes("+$11,800") && d.querySelectorAll("#qbr-levels tbody tr").length === Q.packs.landlord.levels.length, "the Landlord's pack");
+nav("#qbr/security");
+ok(t().includes("$31,248") && t().includes("+$6,696") && t().includes("chain-of-custody failure"), "the Security Partner's pack");
+nav("#qbr/roadmap");
+ok(t().includes("13 of 32") && t().includes("10 of 13") && t().includes("Nov 23") && d.querySelectorAll("#doc li").length === Q.notes.lessons.length, "roadmap and lessons");
+nav("#qbr/how");
+ok(t().includes("committed sample") && t().includes("config/qbr.yaml"), "how the pack is built");
 
 nav("#it/levels");
 ok(d.querySelector('a[href="#credits/it"]'), "each scorecard links to how its credits are worked out");

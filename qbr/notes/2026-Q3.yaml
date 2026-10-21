@@ -1,0 +1,148 @@
+# Quarterly business review: what people wrote at the review. Every fact in the pack (service levels, credits, the
+# multi-month rules, findings, proposals) comes from the three months' scorecards via src/scorecard/qbr.py. Tests check
+# that every proposal has exactly one note here, that every service level and number named below is in the quarter's
+# facts, and that no individual is named.
+quarter: 2026-Q3
+meeting: "2026-10-08"
+chair: "Customer Site Lead"
+attendees: ["Customer Site Lead", "Customer data center operations leadership", "IT Partner executive sponsor (Ridgeline Site Services)",
+            "Landlord executive sponsor (Caprock Critical Facilities)", "Security Partner executive sponsor (Llano Gate Protective Services)"]
+summary:
+  it: >-
+    Availability met Expected in every month and closed the quarter at 99.93%. Three service levels were below Minimum in
+    all three months: validated return to service (CSL-07), repeat failures (CSL-08), and record integrity (CSL-11). That
+    is a chronic failure trigger, and the repeat-default rule doubles their September credits, which the at-risk cap holds
+    to an adjustment of $33,300. Deployment adherence (CSL-09) was below Minimum in September, the first month with Hall B
+    racks due.
+  landlord: >-
+    Cooling and alarm response met Expected every month; rack power availability (OT-CSL-01) was below Minimum in
+    September, the month of the rack A07 outage. Preventive maintenance evidence (OT-CSL-06) was below Minimum in all three
+    months, a chronic failure trigger, and critical work under an approved MOP (OT-CSL-07) and record integrity (OT-CSL-08)
+    in two. The doubled September credit adds $11,800, held to the cap.
+  security: >-
+    Guard post coverage, camera availability, and leaver badges met Expected every month. Media destruction before
+    shipment (SEC-CSL-06) was below Minimum in all three months, a chronic failure trigger, and visitor escorts (SEC-CSL-03)
+    in two. The doubled September credit adds $6,696.
+proposals:
+  - partner: it
+    csl: CSL-01
+    rule: tighten
+    text: >-
+      Proposed for the contract review: raise Expected toward what was delivered (the worst month was 99.89%), with
+      Minimum unchanged until Hall B's racks are in the measure.
+  - partner: it
+    csl: CSL-04
+    rule: review_measure
+    text: >-
+      The partner's P2 restoration figure met Expected every month while the measurement was 94.81%, 92.54%, and 92.31%.
+      Both sides walk through where each clock starts and stops before the next quarter's first service review.
+  - partner: it
+    csl: CSL-05
+    rule: tighten
+    text: >-
+      No change: P3 restoration was 100% in all three months, but the review would rather tighten P2 restoration first,
+      once it is met.
+  - partner: it
+    csl: CSL-07
+    rule: corrective_action_plan
+    text: >-
+      A recovery plan sponsored by the partner's executive sponsor, as the chronic failure terms provide: every return to
+      service passes all four checks before the ticket closes, with the Customer replaying a sample each week.
+  - partner: it
+    csl: CSL-07
+    rule: review_measure
+    text: >-
+      The partner reported 100% every month. The partner's report counts a return to service when the ticket closes; the
+      measurement counts it only when the checks ran. The recovery plan settles one definition.
+  - partner: it
+    csl: CSL-08
+    rule: corrective_action_plan
+    text: >-
+      Repeat failures rose every month (7.37%, 8.05%, 9.72%). The plan ties each repeat to its first repair and to the
+      first-time fix rate (CSL-06), which slipped below Expected in August and September.
+  - partner: it
+    csl: CSL-11
+    rule: corrective_action_plan
+    text: >-
+      Record integrity fell every month (87.37%, 84.61%, 82.67%). Its credits cannot be earned back. The plan starts with the
+      repeat finding types: engagements with no badge-in, fixes that did not hold, and staffing gaps.
+  - partner: landlord
+    csl: OT-CSL-04
+    rule: tighten
+    text: >-
+      No change: three months without a late critical alarm response is a small sample to tighten on.
+  - partner: landlord
+    csl: OT-CSL-06
+    rule: corrective_action_plan
+    text: >-
+      A recovery plan sponsored by the Landlord's executive sponsor: every preventive maintenance task closes with the
+      evidence the measure checks, and the Customer audits a sample each month.
+  - partner: landlord
+    csl: OT-CSL-06
+    rule: review_measure
+    text: >-
+      The Landlord's report counts a task done when its work order closes; the measurement also needs the evidence the
+      contract names. The plan uses the measurement's definition.
+  - partner: landlord
+    csl: OT-CSL-07
+    rule: corrective_action_plan
+    text: >-
+      Below Minimum in July and September. The plan covers the MOP template revision already open from PIR-2026-001.
+  - partner: landlord
+    csl: OT-CSL-08
+    rule: corrective_action_plan
+    text: >-
+      Below Minimum in July and September, below Expected in August. Its credits cannot be earned back. The plan starts with
+      overrides left in place without a change reference, one of two finding types seen in all three months.
+  - partner: landlord
+    csl: OT-CSL-08
+    rule: review_measure
+    text: >-
+      The Landlord reported meeting Expected every month. Both sides agree which work orders the measure covers before the
+      next service review.
+  - partner: landlord
+    csl: OT-CSL-09
+    rule: tighten
+    text: >-
+      No change: qualified staffing was full every month, and the review keeps the margin while Hall C commissioning draws
+      on the same engineers.
+  - partner: landlord
+    csl: OT-CSL-10
+    rule: tighten
+    text: >-
+      No change: worst-hall cooling held every month, but Hall B's load is still ramping; revisit once Hall B is fully
+      handed off.
+  - partner: security
+    csl: SEC-CSL-02
+    rule: review_measure
+    text: >-
+      Door alarm response was below Expected every month (95.238%, 95.000%, 96.296%) while the Security Partner reported it
+      met. Both sides agree that a response counts only with a guard badged at the door's reader.
+  - partner: security
+    csl: SEC-CSL-03
+    rule: corrective_action_plan
+    text: >-
+      Below Minimum in August and September. The plan re-briefs how an escort is handed from one guard to another.
+  - partner: security
+    csl: SEC-CSL-06
+    rule: corrective_action_plan
+    text: >-
+      A recovery plan sponsored by the Security Partner's executive sponsor: no failed part leaves the site until its
+      drive serials match a certificate of destruction. Its credits cannot be earned back.
+  - partner: security
+    csl: SEC-CSL-06
+    rule: review_measure
+    text: >-
+      The Security Partner reported every drive destroyed in every month. The chain-of-custody log and the certificates
+      are reconciled serial by serial before each shipment.
+lessons:
+  - >-
+    Every partner's own report met Expected on service levels the measurement had below it, in every month of the
+    quarter. From October the monthly service review shows the two side by side for each service level.
+  - >-
+    Record integrity was below Minimum for the IT Partner in all three months and for the Landlord in two. The same kinds
+    of records keep failing to reconcile, so the corrective plans start with the repeat finding types, not with single
+    findings.
+  - >-
+    Once several service levels are chronic, the at-risk cap, not the doubling, decides the amount: the IT Partner's
+    doubled September credits came to $333,000 and the cap held them to $222,000.
