@@ -1,0 +1,455 @@
+# Emergency procedures, the decision tree, and the call lists: the Customer's, not any partner's.
+#
+# Judgment written by people, reviewed and changed like the SLAs. What the contracts set is read from them, never
+# restated: a {name} in any text below is filled by src/scorecard/emergency.py from the agreements, the runbook
+# (config/incident_command.yaml), the routing file (config/customer_notifications.yaml), or the site model:
+#   {bridge_min}         the joint bridge's clock (Interface Agreement, incident command)
+#   {page_min}           the partners' page under NT-1 (Interface Agreement section 10)
+#   {lead_cadence_min}   each lead's update cadence, the stricter of the SLAs' P1 terms
+#   {pir_business_days}  the joint review's clock (Interface Agreement, incident command)
+#   {first_notice_min}   the first notice to Customer leadership (the runbook's clock)
+#   {fuel_hours}         generator fuel at full load (site model)
+#
+# The procedures say what the Customer checks, asks, and decides. The partners act under the RACI and their own
+# emergency operating procedures and methods of procedure, which are named here, not rewritten. An action that names
+# a RACI component must belong to a party that is Responsible for it (tests/test_emergency.py checks).
+#
+# Every contact is fictional: example.com addresses and 555-01xx numbers. In production the real contacts live in the
+# paging platform, never in this repository. Roles only; no individual is named.
+
+intro: >-
+  What to do in the first minutes of an emergency at Site AUS-1, by type of event: who acts, what the Customer checks
+  and asks on the bridge, who is told and by when, and what must be true before equipment returns to service. Start with
+  the decision tree if the type is not yet clear. Life safety always comes first.
+
+sources:
+  - "Federal workplace injury reporting, 29 CFR 1904.39 (fatality within 8 hours; in-patient hospitalization, amputation, or loss of an eye within 24 hours): https://www.osha.gov/report"
+  - "29 CFR 1904.39 text: https://www.ecfr.gov/current/title-29/subtitle-B/chapter-XVII/part-1904/subpart-E/section-1904.39"
+
+# Shown above every procedure and on every print card.
+always_first:
+  - "If anyone is hurt or in danger, call 911 first. Then call the Security Partner console so a guard meets the responders at the gate and walks them in."
+  - "Nobody enters a hall with an evacuation alarm sounding or after a clean agent release until the fire department or the Landlord says it is safe."
+  - "The Customer coordinates; it does not operate a partner's equipment. The party the RACI makes Responsible does the work."
+  - "Check for change work on the equipment or its redundant pair before anyone touches anything (the A07 lesson)."
+
+site:
+  name: "Site AUS-1 (fictional)"
+  address: "1200 Example Ranch Road, Central Texas (fictional)"
+  responders: "Send fire, EMS, and police to the north vehicle gate; the Security Partner meets them there."
+  assembly: "Assembly point: the north parking lot, row A, upwind of the generator yard."
+
+# The standing bridge. Opened by the Incident Commander for every P1; joined by each party the event involves.
+bridge:
+  name: "AUS-1 standing incident bridge"
+  dial_in: "+1 512 555 0150"
+  passcode: "4471 0915 #"
+  backup: "+1 512 555 0151 (same passcode), if the primary bridge is down"
+  video: "https://bridge.example.com/aus1-incident"
+  chat: "Incident channel #aus1-incident (the scribe posts each decision there too)"
+  rules:
+    - "Opened by the Incident Commander within {bridge_min} minutes of a multi-party P1 (Interface Agreement, incident command); for a one-party P1 the Customer opens it anyway, so the clock never depends on judging how many parties are involved."
+    - "Roll call at the start and each time someone joins: name the role, not the person."
+    - "One conversation. Side work happens off the bridge and comes back as a report."
+    - "Each lead reports every {lead_cadence_min} minutes until their part is done, using the runbook's template."
+    - "Decisions are said out loud, repeated by the Incident Commander, and written down by the scribe with the time."
+  roles:
+    - {role: "Incident Commander", who: "Customer Site Lead; the on-call primary holds command until the Site Lead joins", does: "Priorities, decisions, and every message to Customer leadership. Does not work the fault."}
+    - {role: "Scribe", who: "Customer on-call secondary, or the next Customer engineer on the bridge", does: "Keeps the timeline and the decision log as it happens; times every join, report, and decision."}
+    - {role: "Communications lead", who: "Customer Communications, joined by the Incident Commander when a tier calls for it", does: "Drafts anything that leaves the site team: leadership summaries, tenant notices, and any outside statement."}
+    - {role: "Landlord lead", who: "Landlord chief engineer or duty manager", does: "Facility status, isolation, and restoration (Interface Agreement roles)."}
+    - {role: "IT Partner lead", who: "IT Partner site manager or duty lead", does: "Rack protection, controlled shutdowns, and return-to-service validation."}
+    - {role: "Security Partner lead", who: "Security Partner shift supervisor", does: "Guard posts, door control, escorts, responder access, and chain of custody for any media."}
+  roll_call: ["Incident Commander", "Scribe", "Landlord lead", "IT Partner lead", "Security Partner lead", "Communications lead"]
+
+# How current a call list must be. Each contact carries the date it was last checked by a test call or message; the
+# page flags anything older than this, measured at the end of the sample month (as_of).
+verify_within_days: 90
+as_of: "2026-09-27"
+
+# Call lists. "rota: primary" or "rota: secondary" means the person on call now, from config/customer_notifications.yaml.
+contacts:
+  # Customer
+  - {id: ic, group: Customer, role: "Incident Commander (Customer Site Lead)", phone: "+1 512 555 0110", email: "site-lead@example.com", verified: "2026-09-02"}
+  - {id: oncall_primary, group: Customer, role: "On-call primary", rota: primary, verified: "2026-09-21"}
+  - {id: oncall_secondary, group: Customer, role: "On-call secondary", rota: secondary, verified: "2026-09-21"}
+  - {id: facilities, group: Customer, role: "Facilities engineering", phone: "+1 512 555 0111", email: "facilities-eng@example.com", verified: "2026-08-30"}
+  - {id: it_ops, group: Customer, role: "IT operations", phone: "+1 512 555 0112", email: "it-ops@example.com", verified: "2026-08-30"}
+  - {id: site_leadership, group: Customer, role: "Site leadership", phone: "+1 512 555 0190", email: "site-leadership@example.com", verified: "2026-09-02"}
+  - {id: regional, group: Customer, role: "Regional data center operations leadership", phone: "+1 512 555 0113", email: "regional-dco@example.com", verified: "2026-08-11"}
+  - {id: executive, group: Customer, role: "Executive, infrastructure", phone: "+1 512 555 0114", email: "infra-exec@example.com", verified: "2026-07-15"}
+  - {id: capacity, group: Customer, role: "Capacity and research scheduling owner", phone: "+1 512 555 0115", email: "capacity@example.com", verified: "2026-09-09"}
+  - {id: comms, group: Customer, role: "Communications", phone: "+1 512 555 0116", email: "comms-oncall@example.com", verified: "2026-08-04"}
+  - {id: legal, group: Customer, role: "Legal", phone: "+1 512 555 0117", email: "legal-oncall@example.com", verified: "2026-07-28"}
+  - {id: ehs, group: Customer, role: "Customer EHS", phone: "+1 512 555 0118", email: "ehs@example.com", verified: "2026-09-16"}
+  - {id: corp_security, group: Customer, role: "Corporate security", phone: "+1 512 555 0119", email: "corp-security@example.com", verified: "2026-08-19"}
+  # Partners
+  - {id: landlord_duty, group: Landlord, role: "Landlord duty manager (24 x 7)", phone: "+1 512 555 0120", email: "duty@landlord.example.com", verified: "2026-09-12"}
+  - {id: landlord_chief, group: Landlord, role: "Landlord chief engineer", phone: "+1 512 555 0121", email: "chief-engineer@landlord.example.com", verified: "2026-09-12"}
+  - {id: it_duty, group: IT Partner, role: "IT Partner duty lead (24 x 7)", phone: "+1 512 555 0130", email: "duty@itpartner.example.com", verified: "2026-09-05"}
+  - {id: it_manager, group: IT Partner, role: "IT Partner site manager", phone: "+1 512 555 0131", email: "site-manager@itpartner.example.com", verified: "2026-09-05"}
+  - {id: sec_console, group: Security Partner, role: "Security Partner console (24 x 7)", phone: "+1 512 555 0140", email: "console@security.example.com", verified: "2026-09-19"}
+  - {id: sec_supervisor, group: Security Partner, role: "Security Partner shift supervisor", phone: "+1 512 555 0141", email: "supervisor@security.example.com", verified: "2026-09-19"}
+  - {id: sec_account, group: Security Partner, role: "Security Partner account manager", phone: "+1 512 555 0142", email: "account@security.example.com", verified: "2026-08-22"}
+  # External
+  - {id: emergency, group: External, role: "Fire, EMS, and police", phone: "911", verified: "2026-09-27", note: "Give the site address and send responders to the north vehicle gate."}
+  - {id: utility, group: External, role: "Electric utility transmission operations (fictional)", phone: "+1 512 555 0160", verified: "2026-05-20", note: "The Landlord calls the utility; the Customer calls only if the Landlord cannot be reached."}
+  - {id: fuel, group: External, role: "Diesel fuel supplier, emergency delivery (fictional)", phone: "+1 512 555 0161", verified: "2026-07-01", note: "Called by the Landlord under its fuel contract."}
+  - {id: oem_power, group: External, role: "UPS and busway OEM service line (fictional)", phone: "+1 512 555 0170", verified: "2026-08-25", note: "Opened by the Landlord; the Customer asks for the case number on the bridge."}
+  - {id: oem_compute, group: External, role: "Compute and fabric OEM support line (fictional)", phone: "+1 512 555 0171", verified: "2026-08-25", note: "Opened by the IT Partner; the Customer asks for the case number on the bridge."}
+  - {id: weather, group: External, role: "Weather service for the site's county (public alerts)", phone: "none: alerts by subscription", verified: "2026-09-01", note: "Watches and warnings arrive in the incident channel."}
+
+# Who in Customer leadership and beyond is told, and by when. Each event type picks its tiers and minutes below;
+# "0" means at once. The site leadership notice uses the runbook's clock for every type (tested).
+tiers:
+  - {id: site_leadership, contact: site_leadership, name: "Site leadership", why: "Every P1: what the Customer has lost, the estimate, and the next update time."}
+  - {id: capacity, contact: capacity, name: "Capacity and research scheduling", why: "Racks or GPUs lost: jobs to move and capacity to hold back."}
+  - {id: regional, contact: regional, name: "Regional data center operations leadership", why: "Every P1: a second site may need to absorb work; partner executives may need a call."}
+  - {id: executive, contact: executive, name: "Executive, infrastructure", why: "Not restored within the hour, or at once for injury, fire, more than one rack, or anything that may become public."}
+  - {id: ehs, contact: ehs, name: "Customer EHS", why: "Any injury, spill, or safety finding; owns regulator reporting."}
+  - {id: comms, contact: comms, name: "Communications", why: "Injury, fire, a security breach, or anything visible outside the site."}
+  - {id: legal, contact: legal, name: "Legal", why: "Injury, a security breach involving media or data, or any contact from a regulator or the press."}
+  - {id: corp_security, contact: corp_security, name: "Corporate security", why: "Any forced entry, intruder, or missing media."}
+
+phases:
+  - {id: first15, name: "First 15 minutes"}
+  - {id: during, name: "While it lasts"}
+  - {id: restore, name: "Return to service and close"}
+
+# The decision tree. Each option leads to another node or to an event type ("type:<id>").
+tree:
+  start: safety
+  nodes:
+    safety:
+      q: "Is anyone hurt or in danger?"
+      help: "Life safety first. Call 911 before anything else."
+      options:
+        - {label: "Yes, someone is hurt or trapped", to: "type:injury"}
+        - {label: "No", to: fire}
+    fire:
+      q: "Is there a fire alarm, smoke, a suppression release, or an evacuation alarm?"
+      options:
+        - {label: "Yes", to: "type:fire"}
+        - {label: "No", to: what}
+    what:
+      q: "What is affected?"
+      options:
+        - {label: "Power: a rack, a busway, a UPS, or the whole site", to: power}
+        - {label: "Cooling or liquid", to: liquid}
+        - {label: "Compute or network: GPUs, trays, switches, optics", to: "type:compute"}
+        - {label: "Security: a forced door, an intruder, missing media", to: "type:security"}
+        - {label: "Fire protection out of service (an impairment)", to: "type:fire"}
+        - {label: "A severe weather watch or warning", to: "type:weather"}
+    power:
+      q: "Has the utility feed been lost, or is the site running on generators?"
+      options:
+        - {label: "Yes, site-wide", to: "type:power_utility"}
+        - {label: "No, it is a rack, busway, or UPS", to: "type:power_rack"}
+    liquid:
+      q: "Is coolant or water escaping, or is a leak sensor in alarm?"
+      options:
+        - {label: "Yes", to: "type:leak"}
+        - {label: "No, cooling capacity is lost or falling", to: "type:cooling"}
+
+# The event types. "match" ties records in the Incident Portal to a type (by record type, and a pattern on its
+# category or device); every P1 record in the sample must match exactly one type (tested).
+types:
+  - id: power_rack
+    name: "Rack, busway, or UPS power loss"
+    short: "Power loss"
+    priority: "P1 under both SLAs when a rack loses both feeds or a UPS drops load; P2 when one feed is lost and the rack runs on the other."
+    match:
+      - {type: wo, category: "^OT-FC-(PWR|UPS)$"}
+      - {type: inc, category: "^rack_facility$"}
+    leads: ["Landlord lead", "IT Partner lead"]
+    actions:
+      - {phase: first15, owner: Customer, text: "Confirm from telemetry which feeds are open and which racks have no power (Live, Telemetry power)."}
+      - {phase: first15, owner: Landlord, raci: "Busway, tap-off units, and tap-off breakers", text: "Make the faulted section safe and report what is open, what is locked out, and under whose locks (EHS-R2)."}
+      - {phase: first15, owner: IT Partner, raci: "Rack power shelves, PSUs, and whips from the tap-off output", text: "Drain affected nodes in the scheduler and protect racks running on one feed."}
+      - {phase: first15, owner: Customer, text: "List every change window on the faulted equipment and its redundant pair; hold anything not yet started."}
+      - {phase: during, owner: Customer, text: "Before an approved window on the affected equipment expires, decide on the bridge to extend it or close the work, and log the decision (A07 factor F5)."}
+      - {phase: during, owner: Landlord, raci: "UPS, batteries, unit substations, and switchgear", text: "Give a restoration estimate and the parts needed; open the OEM case if a part has failed."}
+      - {phase: restore, owner: Landlord, raci: "Busway, tap-off units, and tap-off breakers", text: "Declare restoration on the bridge, not only in the work order (HO-1)."}
+      - {phase: restore, owner: IT Partner, raci: "Rack power shelves, PSUs, and whips from the tap-off output", text: "Power on and validate each rack only after the Customer confirms restoration."}
+    questions:
+      - "Which feeds are open right now, and which racks are on one feed or none?"
+      - "Is any change work running on this busway, its redundant pair, or the UPS upstream? Under which MOP or change?"
+      - "What is locked out, and under whose locks?"
+      - "What does one more failure take down? Which groups are now at N?"
+      - "Is a spare on site for the failed part? If not, when does it arrive?"
+      - "What is the restoration estimate, and what could make it slip?"
+    rts:
+      - "Every feed to each affected rack closed and in tolerance in telemetry, not one of two (A07 factor F6)."
+      - "Every change on the affected equipment closed or formally extended."
+      - "All locks removed and accounted for."
+      - "The IT Partner's validation passed for each rack before it returns to the scheduler."
+    partner_docs:
+      - "Landlord emergency operating procedure: busway, tap-off, and UPS faults"
+      - "Landlord method of procedure for the work under way, if any"
+      - "IT Partner runbook: rack drain, controlled shutdown, and return to service"
+    notify: {site_leadership: 15, capacity: 15, regional: 30, executive: 60}
+    links:
+      - {label: "Live", href: "live/"}
+      - {label: "Power telemetry", href: "telemetry/#power"}
+      - {label: "Change calendar", href: "ops/#calendar"}
+
+  - id: power_utility
+    name: "Utility outage or generator run"
+    short: "Utility outage"
+    priority: "P1 under the Landlord SLA from the loss of the utility feed, even when the generators carry the site."
+    match:
+      - {type: wo, device: "utility"}
+    leads: ["Landlord lead", "IT Partner lead"]
+    actions:
+      - {phase: first15, owner: Customer, text: "Confirm from telemetry that the UPSs rode through and the generators took load; note the lowest ride-through margin (Telemetry, utility)."}
+      - {phase: first15, owner: Landlord, raci: "Generators, paralleling controls, and fuel", text: "Report generators running, load on each, any that failed to start, and fuel on hand in hours."}
+      - {phase: first15, owner: Landlord, raci: "UPS, batteries, unit substations, and switchgear", text: "Call the utility for the cause and an estimate. The Landlord runs the site's switchgear and is the utility's contact; the utility owns its substation and is the one that restores it."}
+      - {phase: first15, owner: Customer, text: "Freeze all change work site-wide until the utility is back and retransfer is complete."}
+      - {phase: during, owner: Landlord, raci: "Generators, paralleling controls, and fuel", text: "Order fuel when on hand drops below half of the design's {fuel_hours} hours at full load."}
+      - {phase: during, owner: Customer, text: "Decide on the bridge whether to shed load (Hall B ramp first) if a generator fails and N+1 is lost."}
+      - {phase: restore, owner: Landlord, raci: "UPS, batteries, unit substations, and switchgear", text: "Retransfer to utility under the Landlord's procedure, at a time agreed on the bridge, and confirm batteries recharging."}
+    questions:
+      - "How many generators are running, and how many are needed for the load? Is any in alarm?"
+      - "What is the fuel on hand in hours at the current load?"
+      - "What did the utility say: cause, estimate, and whether it is one feed or the area?"
+      - "Did every UPS ride through? Which had the lowest margin?"
+      - "When will we retransfer, and who confirms the batteries have recharged?"
+    rts:
+      - "Utility stable for the period the Landlord's procedure requires before retransfer."
+      - "Retransfer complete with no load drop; generators cooled down and back in auto."
+      - "UPS batteries recharging; ride-through margin back to design."
+      - "Fuel topped up or on order."
+    partner_docs:
+      - "Landlord emergency operating procedure: utility loss and generator operation"
+      - "Landlord fuel contract and refuelling procedure"
+    notify: {site_leadership: 15, regional: 30, executive: 60}
+    links:
+      - {label: "Utility and ride-through", href: "telemetry/#utility"}
+      - {label: "Live", href: "live/"}
+
+  - id: leak
+    name: "Liquid leak"
+    short: "Leak"
+    priority: "P1 when coolant is escaping at or near live equipment; P2 for a contained weep with the loop isolated."
+    match:
+      - {type: inc, category: "^leak$"}
+      - {type: wo, category: "^OT-FC-LEAK$"}
+    leads: ["Landlord lead", "IT Partner lead"]
+    actions:
+      - {phase: first15, owner: Customer, text: "Find the leak on the sensor map and the racks below or downstream of it (Telemetry, CDU; Devices)."}
+      - {phase: first15, owner: IT Partner, raci: "Rack manifold, isolation valves, quick-disconnects", text: "Isolate at the rack manifold valves if the leak is at or after them (HO-3), and drain and power down the rack if coolant reaches electrical parts."}
+      - {phase: first15, owner: Landlord, raci: "CDUs and the hall secondary header", text: "Isolate at the header if the leak is upstream of the rack valves (HO-3)."}
+      - {phase: first15, owner: Landlord, raci: "Building leak detection (cable and controllers)", text: "Confirm the leak detection cable is still reporting after the spill is cleaned; a wet cable can hide a second leak."}
+      - {phase: during, owner: Customer, text: "Confirm the spill procedure is followed (EHS-R5) and decide whether neighbouring racks are drained as a precaution."}
+      - {phase: restore, owner: Customer, text: "Confirm the loop is refilled, pressure and flow are in band, and no sensor is in alarm before racks return."}
+    questions:
+      - "Where exactly is it: rack manifold, quick-disconnect, CDU, or header? Primary or secondary loop?"
+      - "Is it isolated? At which valves, and who closed them?"
+      - "Has coolant reached any electrical part? Which racks are below or downstream?"
+      - "How much coolant was lost, and does the CDU have enough to keep the other racks in band?"
+      - "Is the leak detection cable still reporting, or is it wet and blind?"
+    rts:
+      - "Leak repaired and the joint pressure-tested."
+      - "Loop refilled; pressure and flow in band at the CDU."
+      - "Spill cleaned and leak detection cable dry and reporting."
+      - "Each drained rack validated by the IT Partner before it returns."
+    partner_docs:
+      - "Site spill procedure (EHS-R5)"
+      - "IT Partner runbook: rack isolation and drain"
+      - "Landlord emergency operating procedure: CDU and header isolation"
+    notify: {site_leadership: 15, capacity: 15, regional: 30, executive: 60, ehs: 30}
+    links:
+      - {label: "CDU telemetry", href: "telemetry/#cdus"}
+      - {label: "Live", href: "live/"}
+
+  - id: cooling
+    name: "Cooling loss"
+    short: "Cooling"
+    priority: "P1 when supply temperature leaves its band or a CDU loses flow to running racks; P2 when redundancy is lost but temperatures hold."
+    match:
+      - {type: wo, category: "^OT-FC-(CDU|CHW|AIR)$"}
+    leads: ["Landlord lead", "IT Partner lead"]
+    actions:
+      - {phase: first15, owner: Customer, text: "Check supply temperatures and GPU temperatures in the affected hall, and which redundancy groups are now at N (Telemetry, Site health)."}
+      - {phase: first15, owner: Landlord, raci: "CDUs and the hall secondary header", text: "Report the failed unit, the standby that took over, and the temperature trend."}
+      - {phase: first15, owner: Landlord, raci: "Chillers, facility water, and pumps", text: "Bring standby chillers or pumps online and report capacity against load."}
+      - {phase: during, owner: IT Partner, raci: "Compute tray (GPU, CPU, memory, cold plate)", text: "Be ready to throttle or drain racks in the order the Customer sets if temperatures keep rising."}
+      - {phase: during, owner: Customer, text: "Set the shed order and the temperature at which it starts, and say both on the bridge."}
+      - {phase: restore, owner: Customer, text: "Confirm temperatures are back in band for 30 minutes and redundancy restored before closing."}
+    questions:
+      - "Which unit failed, and did the standby take over?"
+      - "What is the supply temperature now, and how fast is it moving?"
+      - "Which groups are at N, and what does one more failure take down?"
+      - "If we must shed load, which racks go first, and at what temperature?"
+      - "Is any change work running on the cooling plant?"
+    rts:
+      - "Temperatures in band for 30 minutes."
+      - "Redundancy restored, or the reduced state accepted on the bridge with a date."
+      - "Throttled or drained racks returned and validated."
+    partner_docs:
+      - "Landlord emergency operating procedure: loss of cooling"
+      - "IT Partner runbook: thermal throttling and controlled shutdown"
+    notify: {site_leadership: 15, capacity: 15, regional: 30, executive: 60}
+    links:
+      - {label: "Site health", href: "telemetry/"}
+      - {label: "Mechanical telemetry", href: "telemetry/#mechanical"}
+
+  - id: compute
+    name: "Compute or network fabric failure"
+    short: "Compute or fabric"
+    priority: "P1 when a failure takes down a rack's NVLink domain or a fabric segment that strands jobs; most single-part failures are P2."
+    match:
+      - {type: inc, category: "^(tray_gpu|optic_link|switch_tray|psu|power_shelf)$"}
+    leads: ["IT Partner lead"]
+    actions:
+      - {phase: first15, owner: Customer, text: "Confirm the scope from telemetry and the scheduler: racks, GPUs, and jobs affected (Telemetry, network; Availability)."}
+      - {phase: first15, owner: IT Partner, raci: "NVLink switch tray and NVLink backplane", text: "Drain the affected NVLink domain and report the failed part and the spare on hand."}
+      - {phase: first15, owner: IT Partner, raci: "Leaf and spine switches (physical replacement)", text: "For a fabric switch, confirm the redundant path is carrying traffic and report any stranded nodes."}
+      - {phase: during, owner: IT Partner, raci: "Spares cage, inventory, and RMA shipments", text: "Replace from site spares, or open the OEM case and give the delivery time."}
+      - {phase: during, owner: Customer, text: "If a part has storage drives, confirm they go to the Security Partner under chain of custody before the part ships (HO-5)."}
+      - {phase: restore, owner: IT Partner, raci: "Compute tray (GPU, CPU, memory, cold plate)", text: "Run the validation (NVLink acceptance, collective tests) and return nodes to the scheduler."}
+    questions:
+      - "How many GPUs and jobs are affected? Is it one NVLink domain or more?"
+      - "Is a spare on site? If not, what is the OEM's delivery time?"
+      - "Is the redundant fabric path carrying the traffic?"
+      - "Is this a repeat on the same rack or part (Failure Patterns)?"
+      - "Does the failed part hold any storage media?"
+    rts:
+      - "Failed part replaced and its serial recorded in the asset register."
+      - "Validation passed and nodes back in the scheduler."
+      - "Any drives destroyed and certified before the part shipped (HO-5)."
+    partner_docs:
+      - "IT Partner runbook: tray and switch replacement"
+      - "IT Partner RMA procedure"
+    notify: {site_leadership: 15, capacity: 15, regional: 30, executive: 60}
+    links:
+      - {label: "Network telemetry", href: "telemetry/#network"}
+      - {label: "Availability", href: "availability/"}
+
+  - id: fire
+    name: "Fire alarm, smoke, or fire protection out of service"
+    short: "Fire"
+    priority: "Life safety for any alarm, smoke, or release; P1 for an unplanned impairment of detection or suppression in a hall."
+    match:
+      - {type: imp, category: "."}
+      - {type: wo, category: "^OT-FC-FIRE$"}
+    leads: ["Landlord lead", "Security Partner lead", "IT Partner lead"]
+    actions:
+      - {phase: first15, owner: Customer, text: "For an alarm, smoke, or release: evacuate the affected area, call 911, and account for everyone at the assembly point using the badge records."}
+      - {phase: first15, owner: Security Partner, raci: "Guard posts and patrols in the Customer halls", text: "Meet the fire department at the gate, hold the halls closed to everyone else, and keep the door log."}
+      - {phase: first15, owner: Landlord, raci: "Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression", text: "Report the panel's state, the zone, and whether any suppression released; for an impairment, start the fire watch and the impairment notices (EHS-R11)."}
+      - {phase: during, owner: Customer, text: "Nobody re-enters a hall until the fire department or the Landlord clears it; for a clean agent release, not before the room is ventilated."}
+      - {phase: during, owner: Customer, text: "For an impairment, confirm the fire watch is in place every hour and that no hot work runs in the zone."}
+      - {phase: restore, owner: Landlord, raci: "Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression", text: "Restore the system, test it, and close the impairment; recharge any released agent."}
+    questions:
+      - "Is everyone accounted for at the assembly point?"
+      - "Which zone and which detector? Did any suppression release?"
+      - "Has the fire department arrived, and who is meeting them?"
+      - "For an impairment: what is out of service, since when, and who is the fire watch?"
+      - "Is any hot work or change work running in the zone? Stop it."
+    rts:
+      - "Fire department or Landlord has cleared the area."
+      - "System restored, tested, and the impairment closed in the log."
+      - "Any released agent recharged or a date set."
+    partner_docs:
+      - "Landlord emergency operating procedure: fire alarm and suppression"
+      - "Landlord impairment procedure and fire watch (EHS-R11)"
+      - "Security Partner post orders: emergency responder access"
+    notify: {site_leadership: 15, regional: 30, executive: 0, ehs: 0, comms: 0}
+    links:
+      - {label: "Fire protection", href: "telemetry/#fire"}
+
+  - id: security
+    name: "Security breach"
+    short: "Security"
+    priority: "P1 for a forced door, an intruder, or missing media until a guard on scene says otherwise; stood down when the cause is benign."
+    match:
+      - {type: sir, category: "^Door forced$"}
+    leads: ["Security Partner lead"]
+    actions:
+      - {phase: first15, owner: Security Partner, raci: "Customer hall door alarms (forced and held) and guard response", text: "Send a guard to the door and report what they find; hold the scene."}
+      - {phase: first15, owner: Security Partner, raci: "Cameras and video recorders covering the Customer halls", text: "Pull the camera footage for the door and preserve it."}
+      - {phase: first15, owner: Customer, text: "Check the badge records for who was in the hall at the time."}
+      - {phase: during, owner: Customer, text: "If anyone unknown was in the hall or media is missing, call 911 and Corporate security, and keep everyone out of the area until police clear it."}
+      - {phase: during, owner: Security Partner, raci: "Storage media destruction from failed parts", text: "If media could be involved, check the chain of custody and the destruction tray by serial."}
+      - {phase: restore, owner: Customer, text: "Stand down once the guard's finding and the footage agree on a benign cause, and log the reason."}
+    questions:
+      - "What did the guard find at the door, and when did they arrive?"
+      - "Who badged into the hall in the last hour?"
+      - "Does the footage agree with the guard's account?"
+      - "Is any storage media or equipment missing?"
+      - "Is it safe to stand down, and who decides?"
+    rts:
+      - "Door secured and the alarm cleared."
+      - "Footage preserved with the security incident record."
+      - "Cause recorded: benign with evidence, or handed to Corporate security."
+    partner_docs:
+      - "Security Partner post orders: door alarm response"
+      - "Security Partner chain of custody procedure (HO-5)"
+    notify: {site_leadership: 15, regional: 30, corp_security: 0, legal: 60, comms: 60}
+    links:
+      - {label: "Incident Portal, security incidents", href: "tickets/"}
+
+  - id: injury
+    name: "Injury or medical emergency"
+    short: "Injury"
+    priority: "Life safety. Outranks any equipment event: the response goes to the person first."
+    match: []
+    leads: ["Security Partner lead", "Landlord lead", "IT Partner lead"]
+    actions:
+      - {phase: first15, owner: Customer, text: "Call 911. Give the address and send responders to the north vehicle gate."}
+      - {phase: first15, owner: Customer, text: "If electrical contact is suspected, nobody touches the person until the Landlord confirms the source is de-energized."}
+      - {phase: first15, owner: Security Partner, raci: "Guard posts and patrols in the Customer halls", text: "Meet responders at the gate and escort them in; clear the route."}
+      - {phase: first15, owner: Customer, text: "Stop all work in the area and keep the scene as found for the investigation."}
+      - {phase: during, owner: Customer, text: "Customer EHS starts the investigation and decides on regulator reporting: fatality within 8 hours; in-patient hospitalization, amputation, or loss of an eye within 24 hours (29 CFR 1904.39)."}
+      - {phase: restore, owner: Customer, text: "Work in the area restarts only when Customer EHS agrees, after a briefing on what happened."}
+    questions:
+      - "Is the person conscious and breathing? Has 911 been called, and by whom?"
+      - "Was electricity, coolant, a fall, or a heavy load involved?"
+      - "Who is with the person now, and who is meeting the responders?"
+      - "Which permit and which partner was the work under?"
+      - "Is the scene preserved?"
+    rts:
+      - "Customer EHS agrees the area is safe and work may restart."
+      - "Regulator reporting decided and, where required, made within its deadline."
+      - "Investigation opened under the EHS reporting rules."
+    partner_docs:
+      - "Each partner's emergency action plan and first aid arrangements"
+      - "Site EHS rules (EHS-R1 to EHS-R12)"
+    notify: {site_leadership: 15, regional: 30, executive: 0, ehs: 0, comms: 0, legal: 0}
+    links:
+      - {label: "Safety (EHS)", href: "ops/#ehs"}
+
+  - id: weather
+    name: "Severe weather"
+    short: "Weather"
+    priority: "Not a P1 by itself: a watch starts the preparation; a warning or damage at the site makes it one."
+    match: []
+    leads: ["Landlord lead", "IT Partner lead", "Security Partner lead"]
+    phases:
+      - {id: first15, name: "When a watch is issued"}
+      - {id: during, name: "When a warning is issued, or during the event"}
+      - {id: restore, name: "After it passes"}
+    actions:
+      - {phase: first15, owner: Landlord, raci: "Generators, paralleling controls, and fuel", text: "Top up fuel toward the design's {fuel_hours} hours at full load and confirm the supplier's delivery time if roads close."}
+      - {phase: first15, owner: Customer, text: "Freeze change work for the watch period and confirm staffing for the next 72 hours, including who stays on site if roads close."}
+      - {phase: first15, owner: Landlord, raci: "Generators, paralleling controls, and fuel", text: "Run a generator readiness check: block heaters, batteries, and any unit out of service."}
+      - {phase: during, owner: Customer, text: "Tornado warning: everyone to the interior shelter rooms; no one in the generator or chiller yards. Winter storm: confirm freeze protection on the plant. Flood: check access roads and the yard drains."}
+      - {phase: during, owner: Security Partner, raci: "Guard posts and patrols in the Customer halls", text: "Keep posts manned from inside; report any damage seen on patrol."}
+      - {phase: restore, owner: Landlord, raci: "Chillers, facility water, and pumps", text: "Walk the yards and roof for damage before equipment is restarted or the freeze is lifted."}
+    questions:
+      - "What does the alert say, and for how long?"
+      - "Fuel on hand in hours, and when can the supplier deliver if roads close?"
+      - "Who is on site for the next 72 hours, and who can relieve them?"
+      - "Is any equipment out of service that would leave us without redundancy?"
+      - "Where is everyone sheltering?"
+    rts:
+      - "Damage walk-down done and any damage on a work order."
+      - "Freeze lifted on the bridge."
+      - "Fuel back above half of the design's hours."
+    partner_docs:
+      - "Landlord severe weather plan"
+      - "Each partner's emergency action plan (shelter and accountability)"
+    notify: {site_leadership: 15, regional: 30}
+    links:
+      - {label: "Change calendar", href: "ops/#calendar"}

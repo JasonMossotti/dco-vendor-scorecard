@@ -122,9 +122,9 @@ def test_replay_notes_agree_with_the_facts(a07):
 
 
 def test_markdown_runbook_is_current():
-    import render_pir
-    md = render_pir.outputs()[ROOT / "docs" / "pir" / "incident-command.md"]
-    assert md == (ROOT / "docs" / "pir" / "incident-command.md").read_text(encoding="utf-8")
+    import render_emergency
+    md = render_emergency.outputs()[ROOT / "docs" / "emergency" / "incident-command.md"]
+    assert md == (ROOT / "docs" / "emergency" / "incident-command.md").read_text(encoding="utf-8")
     assert "9 of 14 steps met, 5 missed" in md
 
 

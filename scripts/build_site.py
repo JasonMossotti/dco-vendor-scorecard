@@ -7,6 +7,7 @@ Output (default _site/):
     app/lab/index.html      "Try another month": the scorecard app, run in the browser by stlite, which can generate a new month
     app/lab/streamlit_app.py    the app entrypoint
     app/lab/app_bundle.zip  Python package, SLA, generator config, and datasets
+    emergency/              the Emergency tab: procedures, decision tree, call lists, Incident Commander runbook (scripts/render_emergency.py)
     alarms/ pir/ weekly/ patterns/ energy/ gpu/ deployments/ availability/ ops/  the static pages, each with the same tab bar
     telemetry/              GPU telemetry (scripts/render_telemetry.py) and the data it fetches (telemetry/data/)
     live/                   the Live tab (scripts/render_live.py): index.html, data/index.json, data/day_NN.json
@@ -141,6 +142,7 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_alarms
     import render_availability
     import render_deployments
+    import render_emergency
     import render_energy
     import render_gpu_health
     import render_ops
@@ -150,7 +152,8 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_weekly
     for path, mod in (("pir", render_pir), ("weekly", render_weekly), ("patterns", render_patterns), ("alarms", render_alarms),
                       ("tickets", render_tickets), ("energy", render_energy), ("gpu", render_gpu_health),
-                      ("deployments", render_deployments), ("availability", render_availability), ("ops", render_ops)):
+                      ("deployments", render_deployments), ("availability", render_availability), ("ops", render_ops),
+                      ("emergency", render_emergency)):
         (out / path).mkdir(parents=True, exist_ok=True)
         (out / path / "index.html").write_text(mod.html_page(), encoding="utf-8", newline="\n")
     # The reference tabs: the contracts, the glossary, and the device directory.

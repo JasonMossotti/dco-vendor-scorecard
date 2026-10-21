@@ -31,6 +31,7 @@ TABS = [
     ("availability", "Availability", "availability/"),
     ("alarms", "Alarm Board", "alarms/"),
     ("tickets", "Incident Portal", "tickets/"),
+    ("emergency", "Emergency", "emergency/"),
     ("pir", "Post-Incident Review", "pir/"),
     ("ops", "Operations", "ops/"),
     ("weekly", "Weekly Review", "weekly/"),

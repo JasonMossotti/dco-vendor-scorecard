@@ -28,6 +28,8 @@ jobs:
         run: python scripts/run_security.py --check
       - name: Check the post-incident review is current
         run: python scripts/render_pir.py --check
+      - name: Emergency procedures and the Incident Commander runbook are current
+        run: python scripts/render_emergency.py --check
       - name: Weekly review packs are current
         run: python scripts/render_weekly.py --check
       - name: Failure pattern review is current
