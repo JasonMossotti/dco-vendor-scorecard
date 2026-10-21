@@ -412,6 +412,18 @@ Derived by `scripts/generate_calendar.py` from the site model, the device lists 
 | `answer_key.json` | Planted conflicts, one of each kind (two jobs in one redundancy group, both feeds of a rack, a unit out on a surge day, work in the first-compute freeze). The checks never read it |
 | `manifest.json` | Seed, forward period, counts |
 
+## EHS permits, training, and safety events (`data/ehs/`)
+
+Derived by `scripts/generate_ehs.py` from the month's records (the Landlord's MOPs, maintenance records, work orders, and roster; the IT Partner's deployment milestones, personnel, and roster; the badge records; the device records of the tap-off breakers, UPS bypass, CDU pumps, and chiller lockouts) and the Security Partner's guards (`data/security/`), with its own random stream (`{seed}:ehs`); nothing else is read or changed.
+
+| File | What it represents |
+|---|---|
+| `permits.csv` | One work permit per job and type the records need (`config/ehs.yaml`): permit number, type (lockout/tagout, energized electrical work, working at height), job, partner, point (the tap-off, UPS, CDU pump, or chiller locked out or worked on), issued, the Customer's approval (energized work), lock on and off, closed, the named workers (person IDs, `;`-separated), the second person outside the boundary (energized work), and the issuer |
+| `training.csv` | Each person's completion of each course their role holds (site orientation, NFPA 70E qualified person, lockout/tagout, contact release, fall protection, heat illness, hazard communication, powered equipment, OSHA 30-hour): completed and expires |
+| `events.csv` | Reported near misses, stop-work uses, first aid cases, and recordables, with the corrective action and its due and closed dates. Never findings |
+| `answer_key.json` | The planted record problems (a job with its permit missing, a lockout recorded before the device isolated the circuit, a named person with a lapsed NFPA 70E qualification, a permit closed before the work ended) and the as-found case the dataset's own ground truth names. The checks never read it |
+| `manifest.json` | Seed, window, counts |
+
 ## Predictive maintenance (`data/predict/`)
 
 Derived by `scripts/generate_predict.py` from `data/history/` (racks, inventory, links, failures, Landlord PM records), the topology, and the CDU settings, with its own random stream (`predict-{seed}`); no other layer is written. Settings in `config/predict.yaml` (the `condition` section shapes this history; the detectors use only the `detectors` section). The detectors in `src/scorecard/predict/` never read the answer key; `scripts/predict.py` runs them on a site's own exports (`docs/predict/README.md`).
@@ -461,6 +473,7 @@ python scripts/generate_readiness.py             # data/readiness
 python scripts/generate_assets.py                # data/assets
 python scripts/generate_audit.py                 # data/audit
 python scripts/generate_calendar.py              # data/calendar
+python scripts/generate_ehs.py                   # data/ehs (after data/security)
 ```
 
 The tests fail when a committed layer is stale.

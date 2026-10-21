@@ -53,7 +53,8 @@ th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; 
 .tl .tr { position:relative; flex:1; height:16px; background:repeating-linear-gradient(90deg, #fff 0, #fff calc(100%/24 - 1px), var(--line) calc(100%/24 - 1px), var(--line) calc(100%/24)); border-radius:3px; }
 .tl .bar { position:absolute; top:0; height:100%; border-radius:3px; background:var(--muted); opacity:.85; }
 .tl .bar.it { background:var(--it); } .tl .bar.ll { background:var(--ll); } .tl .bar.red { box-shadow:0 0 0 2px var(--bad); }
-.tl .bar.dev { background:var(--ink); }
+.tl .bar.dev { background:var(--ink); } .tl .bar.permit { background:var(--good); } .tl .bar.lock { background:var(--warn); }
+.tl .bar.job { background:var(--muted); } .tl .bar.training { background:var(--fz); } .tl .bar.at { background:var(--bad); }
 .tl .bar.out { background-image:repeating-linear-gradient(45deg, rgba(255,255,255,.35) 0, rgba(255,255,255,.35) 4px, transparent 4px, transparent 8px); }
 .kv { display:grid; grid-template-columns:150px 1fr; gap:3px 12px; font-size:14px; } .kv div:nth-child(odd) { color:var(--muted); }
 a.job, a.fnd, a.dayl { color:var(--it); text-decoration:none; } a.job:hover, a.fnd:hover, a.dayl:hover { text-decoration:underline; }
@@ -67,7 +68,7 @@ ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:2px 0; }
 __SITENAV__
 <header class="top">
   <strong>Operations</strong>
-  <nav class="views" aria-label="Operations views"><a href="#calendar" data-view="calendar">Calendar</a></nav>
+  <nav class="views" aria-label="Operations views"><a href="#calendar" data-view="calendar">Calendar</a><a href="#ehs" data-view="ehs">Safety</a></nav>
 </header>
 <main id="doc"></main>
 <script id="data" type="application/json">__DATA__</script>
@@ -232,17 +233,160 @@ function findingPanel(id) {
     <div>Action</div><div>${esc(f.action)}</div></div></div>`;
 }
 
+// ---------------------------------------------------------------- Safety (EHS)
+const S = D.ehs;
+const PT = S.permit_types;
+const PERM = Object.fromEntries(S.permits.map(p => [p.permit, p]));
+const SFIND = Object.fromEntries(S.findings.map(f => [f.id, f]));
+const PERM_BY_JOB = {};
+for (const p of S.permits) (PERM_BY_JOB[p.job] = PERM_BY_JOB[p.job] || []).push(p);
+const FILT_E = {ptype: "all", partner: "all", flagged: false};
+const OPTS_E = {ptype: [["all", "All"], ...Object.entries(PT).filter(([k]) => S.permits.some(p => p.type === k)).map(([k, v]) => [k, v.name])],
+  partner: [["all", "All"], ["landlord", "Landlord"], ["it", "IT Partner"]]};
+const EVN = {near_miss: "Near miss", stop_work: "Stop-work use", first_aid: "First aid", recordable: "Recordable"};
+const num = (n, d = 0) => Number(n).toLocaleString("en-US", {minimumFractionDigits: d, maximumFractionDigits: d});
+const pcls = k => k === "it" ? "it" : k === "landlord" ? "ll" : "";
+
+function permLink(id) { return `<a class="job" href="#ehs/permit/${esc(id)}">${esc(id)}</a>`; }
+function sfLink(id) { return `<a class="fnd" href="#ehs/finding/${esc(id)}">${esc(id)}</a>`; }
+function refLink(r) { return PERM[r] ? permLink(r) : esc(r); }
+
+function rangeTl(rows) {
+  const t0 = Math.min(...rows.map(r => Date.parse(r.start))), t1 = Math.max(...rows.map(r => Date.parse(r.end)));
+  const pad = Math.max(15 * 60e3, (t1 - t0) * 0.06), a = t0 - pad, W = t1 + pad - a;
+  const long = W > 3 * 864e5;
+  const tick = t => { const iso = new Date(t).toISOString(); return long ? `${md(lday(iso))} ${lday(iso).slice(0, 4)}` : (W > 864e5 ? md(lday(iso)) + " " : "") + lhm(iso); };
+  const ax = [0.1, 0.3, 0.5, 0.7, 0.9].map(f => `<span style="left:${esc((f * 100).toFixed(1))}%">${esc(tick(a + f * W))}</span>`).join("");
+  const bar = r => { const s = (Date.parse(r.start) - a) / W * 100, w = Math.max(0.5, (Date.parse(r.end) - Date.parse(r.start)) / W * 100);
+    return `<span class="bar ${esc(r.cls)}" style="left:${esc(s.toFixed(2))}%;width:${esc(w.toFixed(2))}%" title="${esc(r.label + ": " + lt(r.start) + " to " + lt(r.end))}"></span>`; };
+  return `<div class="tl"><div class="ax">${ax}</div>${rows.map(r => `<div class="row"><div class="lb" title="${esc(r.label)}">${esc(r.label)}</div><div class="tr" style="background:#fff;border:1px solid var(--line)">${bar(r)}</div></div>`).join("")}</div>`;
+}
+
+function permitRows(p) {
+  const rows = [{label: `${p.permit} open`, start: p.issued, end: p.closed, cls: "permit"}];
+  if (p.lock_on) rows.push({label: "Lockout", start: p.lock_on, end: p.lock_off, cls: "lock"});
+  if (p.device) rows.push({label: `${p.point} isolated (device)`, start: p.device[0], end: p.device[1], cls: "dev"});
+  if (p.start) rows.push({label: `${p.job} work`, start: p.start, end: p.end, cls: "job"});
+  return rows;
+}
+
+function trainingList(rows) {
+  const by = {};
+  for (const r of rows) (by[r.person] = by[r.person] || []).push(r);
+  return Object.entries(by).map(([who, cs]) => `<div>${esc(who)} (${esc((S.people[who] || ["", ""])[1].replace("_", " "))}): ${cs.map(c =>
+    `${esc(c.name)} <span class="flag ${c.current ? "ok" : "bad"}">${c.current ? "current" + (c.expires ? ", expires " + esc(c.expires.slice(0, 10)) : "") : (c.expires ? "lapsed, expired " + esc(c.expires.slice(0, 10)) : "never recorded")}</span>`).join(" ")}</div>`).join("");
+}
+
+function permitPanel(id) {
+  const p = PERM[id]; if (!p) return "";
+  const t = PT[p.type];
+  return `<div class="panel" id="permitpanel"><button class="close" data-close="ehs">Close</button><h3>${esc(p.permit)}: ${esc(t.name)} permit ${p.findings.length ? `<span class="flag bad">In a finding</span>` : ""}</h3>
+    ${rangeTl(permitRows(p))}
+    <p class="note">Bars: the permit open (green), the lockout (amber), what the device recorded (dark), the job's work (grey).</p>
+    <div class="kv"><div>Job</div><div>${esc(p.job)}: ${esc(p.title)} (${esc(S.sources[p.source] || "")})</div>
+    <div>Partner</div><div>${esc(S.partners[p.partner])}</div><div>Rule</div><div>${esc(t.rule)}</div>
+    ${p.point ? `<div>Point</div><div>${esc(p.point)}${p.room ? " (" + esc(p.room) + ")" : ""}</div>` : ""}
+    <div>Issued</div><div>${esc(lt(p.issued))} by the ${esc(p.issuer)}${p.approved ? `; approved by the Customer ${esc(lt(p.approved))}` : ""}</div>
+    ${p.lock_on ? `<div>Lockout</div><div>${esc(lt(p.lock_on))} to ${esc(lt(p.lock_off))}</div>` : ""}
+    <div>Closed</div><div>${esc(lt(p.closed))}</div>
+    <div>Work</div><div>${esc(lt(p.start))} to ${esc(lt(p.end))}</div>
+    <div>Named</div><div>${trainingList(p.training)}${p.attendant ? `<div class="note">${esc(p.attendant)} is the second person outside the boundary.</div>` : ""}</div>
+    <div>Findings</div><div>${p.findings.length ? p.findings.map(f => sfLink(f) + ": " + esc(SFIND[f].title)).join("<br>") : "None"}</div></div></div>`;
+}
+
+function safetyFindingPanel(id) {
+  const f = SFIND[id]; if (!f) return "";
+  const ev = (f.evidence || []).map(e => ({label: e.label, start: e.start, end: e.end, cls: e.kind === "device" ? "dev" : e.kind}));
+  const work = f.kind === "untrained" ? f.refs.slice(1).map(r => PERM[r] ? {label: `${r} work`, start: PERM[r].start, end: PERM[r].end, cls: "at"} : null).filter(Boolean) : [];
+  return `<div class="panel" id="sfpanel"><button class="close" data-close="ehs">Close</button><h3>${esc(f.id)}: ${esc(f.title)}</h3>
+    <p>${esc(f.text)}</p>
+    ${ev.length || work.length ? rangeTl(ev.concat(work)) : ""}
+    ${f.badges && f.badges.length ? `<h3>Badge-ins that day</h3><ul class="tight">${f.badges.map(b => `<li>${esc(lt(b.at))}: ${esc(b.where)}</li>`).join("")}</ul>` : ""}
+    <div class="kv"><div>When</div><div>${esc(lt(f.at))}</div><div>Owner</div><div>${esc(f.owner)}</div>
+    <div>Records</div><div>${f.refs.map(refLink).join(", ")}</div>
+    <div>Action</div><div>${esc(f.action)}</div></div></div>`;
+}
+
+function shownPermit(p) {
+  if (FILT_E.ptype !== "all" && p.type !== FILT_E.ptype) return false;
+  if (FILT_E.partner !== "all" && p.partner !== FILT_E.partner) return false;
+  if (FILT_E.flagged && !p.findings.length) return false;
+  return true;
+}
+
+function viewEhs(sel) {
+  const R = S.report, P = S.partners, sm = S.summary;
+  const tot = k => Object.values(R).reduce((a, r) => a + r[k], 0);
+  const opt = (k, vals) => `<select data-fe="${esc(k)}">${vals.map(([v, t]) => `<option value="${esc(v)}"${FILT_E[k] === v ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+  const ps = S.permits.filter(shownPermit);
+  const byType = Object.entries(PT).map(([k, v]) => [v.name, S.permits.filter(p => p.type === k).length]).filter(x => x[1]);
+  const end = new Date(Date.parse(S.window.end) - 864e5).toISOString();
+  return `<h1>Safety (EHS)</h1>
+  <p class="sub">The contract's monthly EHS report by partner, ${esc(md(S.window.start.slice(0, 10)))} to ${esc(md(end.slice(0, 10)))}, and four checks of the work permits and training records against the job records, the badge records, and what the devices recorded. Times are Central.</p>
+  <div class="tiles">
+    <div class="tile"><div class="k">Hours worked</div><div class="v">${esc(num(tot("hours")))}</div><div class="s">${Object.entries(R).map(([k, r]) => esc(P[k]) + " " + esc(num(r.hours))).join(" · ")}</div></div>
+    <div class="tile"><div class="k">Recordables</div><div class="v">${esc(tot("recordables"))}</div><div class="s">TRIR ${esc((tot("recordables") * 200000 / tot("hours")).toFixed(2))} per 200,000 hours</div></div>
+    <div class="tile"><div class="k">Reported</div><div class="v">${esc(tot("near_miss") + tot("stop_work"))}</div><div class="s">${esc(tot("near_miss"))} near misses, ${esc(tot("stop_work"))} stop-work uses, ${esc(tot("first_aid"))} first aid; never findings</div></div>
+    <div class="tile"><div class="k">Permits</div><div class="v">${esc(sm.permits)}</div><div class="s">${byType.map(([n, c]) => esc(n) + " " + esc(c)).join(" · ")}</div></div>
+    <div class="tile"><div class="k">Records that do not reconcile</div><div class="v">${esc(sm.findings)}</div><div class="s">each opens a Customer EHS investigation</div></div>
+  </div>
+  <h2>Monthly EHS report</h2>
+  <div class="wide"><table><tr><th>Partner</th><th class="n">Hours worked</th><th class="n">Recordables</th><th class="n">TRIR</th><th class="n">DART rate</th><th class="n">Near misses</th><th class="n">Stop-work uses</th><th class="n">First aid</th><th class="n">Permits issued</th><th class="n">Open corrective actions</th></tr>
+  ${Object.entries(R).map(([k, r]) => `<tr><td>${esc(P[k])}</td><td class="n">${esc(num(r.hours, 1))}</td><td class="n">${esc(r.recordables)}</td><td class="n">${esc(r.trir.toFixed(2))}</td><td class="n">${esc(r.dart_rate.toFixed(2))}</td><td class="n">${esc(r.near_miss)}</td><td class="n">${esc(r.stop_work)}</td><td class="n">${esc(r.first_aid)}</td><td class="n">${esc(r.permits)}</td><td class="n">${esc(r.open_actions)}</td></tr>`).join("")}</table></div>
+  <p class="note">Hours worked come from the badge records: the IT Partner's main door in to out, each Landlord shift the engineer badged in for, each Security Partner post shift the guard badged in at the post for. Rates are per 200,000 hours.</p>
+  <h2>Work permits</h2>
+  <div class="filters">
+    <label>Type ${opt("ptype", OPTS_E.ptype)}</label>
+    <label>Partner ${opt("partner", OPTS_E.partner)}</label>
+    <label><input type="checkbox" data-fe="flagged"${FILT_E.flagged ? " checked" : ""}> Only permits in a finding</label>
+  </div>
+  <div class="wide" data-gl-skip><table id="permits"><tr><th>Permit</th><th>Type</th><th>Job</th><th>Work</th><th>Named</th><th>Findings</th></tr>
+  ${ps.map(p => `<tr${p.permit === sel ? ' style="background:#f0f5ff"' : ""}><td class="nw">${permLink(p.permit)}</td><td>${esc(PT[p.type].name)}</td>
+    <td><span class="chip ${pcls(p.partner)}" style="display:inline-block;margin:0 4px 0 0;vertical-align:baseline">${esc(p.job)}</span> ${esc(p.title)}</td><td class="nw">${esc(lt(p.start))} to ${esc(lhm(p.end))}</td>
+    <td>${esc(p.workers.join(", "))}${p.attendant ? "; second person " + esc(p.attendant) : ""}</td><td class="nw">${p.findings.map(sfLink).join(", ")}</td></tr>`).join("")}</table></div>
+  <p class="note">${esc(ps.length)} of ${esc(S.permits.length)} permits shown.</p>
+  <div id="detail"></div>
+  <h2>Findings</h2>
+  <p class="note">A finding means the permit, training, badge, and device records do not reconcile. It opens an investigation by Customer EHS, which decides any violation class; it is not a judgment of anyone.</p>
+  <div class="wide"><table><tr><th>ID</th><th>Kind</th><th>Records</th><th>When</th><th>Owner</th><th>What</th></tr>
+  ${S.findings.map(f => `<tr${f.id === sel ? ' style="background:#f0f5ff"' : ""}><td class="nw">${sfLink(f.id)}</td><td>${esc(f.title)}</td><td>${f.refs.map(refLink).join(", ")}</td><td class="nw">${esc(lt(f.at))}</td><td>${esc(f.owner)}</td><td>${esc(f.text)}</td></tr>`).join("")}</table></div>
+  <h2>Agreements with the records</h2>
+  <table><tr><th>Agreement</th><th class="n">Cases</th><th class="n">Agree</th><th class="n">Explained by a finding</th></tr>
+  ${S.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${esc(a.checked)}</td><td class="n">${esc(a.checked - a.misses.length)}</td><td class="n">${esc(a.explained)}</td></tr>`).join("")}</table>
+  <h2>Training records</h2>
+  <table><tr><th>Course</th><th class="n">Renewal</th><th class="n">People holding it</th><th class="n">Current at month end</th><th>Lapsed</th><th class="n">Expiring in 60 days</th></tr>
+  ${S.courses.map(c => `<tr><td>${esc(c.name)}</td><td class="n">${esc(c.months)} months</td><td class="n">${esc(c.holders)}</td><td class="n">${esc(c.current)}</td><td>${c.lapsed.length ? `<span class="flag bad">${esc(c.lapsed.join(", "))}</span>` : ""}</td><td class="n">${esc(c.expiring.length)}</td></tr>`).join("")}</table>
+  <h2>Reported events</h2>
+  <p class="note">Near misses, stop-work uses, first aid cases, and recordables are reported and counted. They are never findings and never count against anyone (29 CFR 1904.35).</p>
+  <div class="wide"><table><tr><th>Event</th><th>Kind</th><th>Partner</th><th>When</th><th>Where</th><th>What</th><th>Corrective action</th></tr>
+  ${S.events.map(x => `<tr><td class="nw">${esc(x.event)}</td><td>${esc(EVN[x.kind])}</td><td>${esc(P[x.partner])}</td><td class="nw">${esc(lt(x.at))}</td><td>${esc(x.where)}</td><td>${esc(x.what)}</td>
+    <td>${esc(x.action)} ${x.action_closed ? `<span class="flag ok">closed ${esc(md(x.action_closed.slice(0, 10)))}</span>` : `<span class="flag warn">open, due ${esc(md(x.action_due.slice(0, 10)))}</span>`}</td></tr>`).join("")}</table></div>
+  <h2>Post-incident reviews</h2>
+  <ul class="tight">${S.pir.map(p => `<li><b>${esc(p.pir)}</b> (${esc(p.injuries)} injuries) ${p.referred ? `<span class="flag warn">Referred to Customer EHS</span>` : ""}: ${esc(p.screening)} ${esc(p.referral)}</li>`).join("")}</ul>
+  <h2>How it works</h2>
+  <ul class="tight">
+    <li><b>Which jobs need a permit.</b> From the records: a tap-off retorque, a UPS maintenance, a CDU filter change, and a chiller maintenance need a lockout (EHS-R2); a new tap-off onto live busway needs an energized work permit approved in advance by the Customer, with a second person (EHS-R3), and a working-at-height permit (EHS-R9); a corrective work order on power or a UPS needs a lockout; the IT Partner's overhead cabling step needs a working-at-height permit.</li>
+    <li><b>The work.</b> What the device recorded where one records it (the tap-off breaker, the UPS bypass, the CDU pump, the chiller lockout), else the job record.</li>
+    <li><b>The four checks.</b> A job with no permit of a type it needs, or a tap-off breaker opened with no permit open on it. A lockout recorded outside the device's isolation (power present on a circuit recorded as locked out). A person named on a permit, or an electrical task's engineer, without a current completion of every course the work needs, with their badge-ins that day. A permit closed before the work ended.</li>
+    <li><b>Synthetic layer.</b> Permits, training, and events are generated on their own random stream with four planted record problems; the checks never read the answer key. Report: <code>reports/ehs.md</code>.</li>
+  </ul>`;
+}
+
 function route() {
   const h = decodeURIComponent(location.hash.slice(1)) || "calendar";
   const [view, a, b] = h.split("/");
-  document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === "calendar"));
+  const ehs = view === "ehs";
+  document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === (ehs ? "ehs" : "calendar")));
   let sel = null, panel = "";
-  if (view === "calendar") {
+  if (ehs) {
+    if (a === "permit" && PERM[b]) { panel = permitPanel(b); sel = b; }
+    else if (a === "finding" && SFIND[b]) { panel = safetyFindingPanel(b); sel = b; }
+  } else if (view === "calendar") {
     if (a === "job") { panel = jobPanel(b); sel = JOBS[b] ? lday(JOBS[b].start) : null; }
     else if (a === "finding") { panel = findingPanel(b); sel = FIND[b] ? FIND[b].date : null; }
     else if (a && IDX[a] !== undefined) { panel = dayPanel(a); sel = a; }
   }
-  document.getElementById("doc").innerHTML = viewCalendar(sel);
+  document.getElementById("doc").innerHTML = ehs ? viewEhs(sel) : viewCalendar(sel);
   document.getElementById("detail").innerHTML = panel;
   wire();
   const det = document.getElementById("detail");
@@ -260,7 +404,16 @@ function wire() {
       route();
     });
   }
-  document.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", () => { location.hash = "calendar"; }));
+  for (const k of Object.keys(FILT_E)) {
+    const el = document.querySelector(`[data-fe="${k}"]`);
+    if (!el) continue;
+    el.addEventListener("change", () => {
+      FILT_E[k] = OPTS_E[k] ? (OPTS_E[k].find(([v]) => v === el.value) || OPTS_E[k][0])[0] : !!el.checked;
+      route();
+    });
+  }
+  document.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", () => {
+    location.hash = el.dataset.close === "ehs" ? "ehs" : "calendar"; }));
 }
 
 window.addEventListener("hashchange", route);

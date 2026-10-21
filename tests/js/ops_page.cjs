@@ -47,4 +47,43 @@ const red = d.querySelector('input[data-f="reduce"]');
 red.checked = true; red.dispatchEvent(new w.Event("change"));
 const left = [...d.querySelectorAll("#cal .chip:not(.items)")].map(c => c.textContent);
 ok(left.length && left.every(id => { const j = C.jobs.find(x => x.id === id); return j.takes !== "none" && j.period === "forward"; }), "only forward jobs that take a unit out");
+// Safety (EHS)
+const S = JSON.parse(d.getElementById("data").textContent).ehs;
+go("ehs");
+ok(d.querySelector('.views a.on').dataset.view === "ehs" && t().includes("Safety (EHS)") && t().includes("Monthly EHS report"), "the Safety view opens with the monthly EHS report");
+ok(Object.keys(S.report).length === 3 && Object.values(S.partners).every(n => t().includes(n)), "the report has a row for each partner");
+ok(d.querySelectorAll("#permits tr").length - 1 === S.permits.length, "every permit is listed");
+ok(S.findings.length === 5 && S.findings.every(f => t().includes(f.id) && t().includes(f.text)), "every finding listed with its text");
+ok(S.agreements.every(a => t().includes(a.title) && a.checked - a.misses.length + a.explained === a.checked), "every agreement listed, and each holds or is explained");
+ok(t().includes("never findings") && S.events.every(x => t().includes(x.event + "")), "reported events are listed and are never findings");
+ok(t().includes("PIR-2026-001") && t().includes("Referred to Customer EHS"), "the A07 review's referral to Customer EHS is shown");
+// the as-found finding: the wrong tap-off
+const a07 = S.findings.find(f => f.refs.includes("TO-A07-B"));
+go("ehs/finding/" + a07.id);
+const sf = d.getElementById("sfpanel");
+ok(sf && sf.textContent.includes("no permit open on it") && sf.textContent.includes("10:42 CDT") && sf.querySelectorAll(".bar.dev").length === 1 && sf.querySelectorAll(".bar.permit").length === 1, "the wrong tap-off opened with no permit, beside the first permit on it");
+// a lockout recorded before the device isolated the circuit
+const lp = S.findings.find(f => f.kind === "lock_power");
+go("ehs/finding/" + lp.id);
+ok(d.getElementById("sfpanel").querySelectorAll(".bar.lock").length === 1 && d.getElementById("sfpanel").querySelectorAll(".bar.dev").length === 1, "a lockout finding shows the lockout beside the device's isolation");
+// untrained: badge-ins and the lapsed course
+const un = S.findings.find(f => f.kind === "untrained");
+go("ehs/finding/" + un.id);
+ok(d.getElementById("sfpanel").textContent.includes("Badge-ins that day") && d.getElementById("sfpanel").textContent.includes("NFPA 70E"), "a training finding shows the lapsed course and the badge-ins");
+// a permit
+const pf = S.permits.find(p => p.permit === un.refs[1]);
+go("ehs/permit/" + pf.permit);
+const pp = d.getElementById("permitpanel");
+ok(pp && pp.textContent.includes(pf.job) && pp.querySelector(".flag.bad") && pp.textContent.includes("lapsed") && pp.textContent.includes(un.id), "a permit names its job, its people's training, and its finding");
+// filters
+go("ehs");
+const ty = d.querySelector('select[data-fe="ptype"]');
+ty.value = "loto"; ty.dispatchEvent(new w.Event("change"));
+ok(d.querySelectorAll("#permits tr").length - 1 === S.permits.filter(p => p.type === "loto").length, "the type filter shows only lockouts");
+const fl = d.querySelector('input[data-fe="flagged"]');
+fl.checked = true; fl.dispatchEvent(new w.Event("change"));
+ok(d.querySelectorAll("#permits tr").length - 1 === S.permits.filter(p => p.type === "loto" && p.findings.length).length, "only lockouts in a finding");
+go("ehs/permit/" + pf.permit);
+d.querySelector('[data-close="ehs"]').click();
+ok(w.location.hash === "#ehs", "closing a panel stays on the Safety view");
 ok(errors.length === 0, "still no script errors " + errors.join(";"));

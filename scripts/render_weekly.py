@@ -234,6 +234,8 @@ def markdown(w: dict, n: dict | None) -> str:
     L += [f"- **Open investigation:** {x['pir']} action {x['action']}, due {x['due']}{' (**overdue**)' if x['overdue'] else ''}. {x['referral']}" for x in e["open_investigations"]]
     if not e["events"] and not e["open_investigations"]:
         L.append("- No events and no open investigations.")
+    if e.get("work"):
+        L.append("- " + ehs_work_text(e["work"]))
     L += ["", "## 9. Decisions, priorities, and asks", ""]
     if n:
         L += ["**Decisions**", ""] + [f"- **{x['id']}** ({x['owner']}): {x['text']}" for x in n["decisions"]]
@@ -246,6 +248,19 @@ def markdown(w: dict, n: dict | None) -> str:
         L += ["No meeting notes recorded for this week; the facts above stand on their own."]
     L += ["", "*Synthetic data for a portfolio demonstration; all names and events are fictional.*", ""]
     return "\n".join(L)
+
+
+PERMIT_NAMES = {"loto": "lockout/tagout", "eewp": "energized electrical work", "height": "working at height",
+                "hot": "hot work", "confined": "confined space"}
+
+
+def ehs_work_text(x: dict) -> str:
+    """The week's permits and reported events (data/ehs/), the same counts the Safety view sums to the month."""
+    kinds = ", ".join(f"{PERMIT_NAMES[k]} {n}" for k, n in x["by_type"].items())
+    return (f"**Permits issued:** {x['permits']}" + (f" ({kinds})" if kinds else "") + f". **Reported:** {x['near_miss']} near "
+            f"miss{'' if x['near_miss'] == 1 else 'es'}, {x['stop_work']} stop-work use{'' if x['stop_work'] == 1 else 's'}, "
+            f"{x['first_aid']} first aid, {x['recordable']} recordable{'' if x['recordable'] == 1 else 's'}; reported events are never "
+            "findings. Record checks on the Operations tab (Safety).")
 
 
 def markdown_brief(w: dict, b: dict | None) -> str:

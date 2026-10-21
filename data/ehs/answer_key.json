@@ -1,0 +1,36 @@
+[
+ {
+  "at": "2026-09-15T15:42:11Z",
+  "ground_truth": "FPD-004",
+  "kind": "no_permit",
+  "ref": "TO-A07-B",
+  "source": "dataset",
+  "wo": "WO-41023"
+ },
+ {
+  "kind": "no_permit",
+  "permit_type": "loto",
+  "ref": "MOP-305",
+  "source": "planted"
+ },
+ {
+  "job": "WO-41021",
+  "kind": "lock_power",
+  "minutes": 19,
+  "ref": "PTW-26016",
+  "source": "planted"
+ },
+ {
+  "course": "nfpa70e",
+  "expired": "2026-08-23T14:00:00Z",
+  "kind": "untrained",
+  "ref": "CCF-E08",
+  "source": "planted"
+ },
+ {
+  "job": "PM-0014",
+  "kind": "closed_early",
+  "ref": "PTW-26007",
+  "source": "planted"
+ }
+]

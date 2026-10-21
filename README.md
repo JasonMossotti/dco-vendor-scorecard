@@ -35,7 +35,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Alarm Board](#alarm-board) | Which alarms are expected from approved change work, and which are not? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/) |
 | [Incident Portal](#incident-portal) | What do the partners' own tickets, work orders, and dispatch records say, record by record? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/) |
 | [Post-Incident Review](#post-incident-review) | What happened in an event, why, and what are we doing about it? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) |
-| [Operations](#operations) | What work is booked between now and first compute, and does any of it leave a system without its redundant unit? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/ops/) |
+| [Operations](#operations) | What work is booked between now and first compute, and does any of it leave a system without its redundant unit? Is every permit, lockout, and training record in order? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/ops/) |
 | [Weekly Review](#weekly-operations-review) | What do we discuss with the partners this week, and what does leadership need to know? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) |
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
@@ -208,7 +208,19 @@ Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_
 
 The data weeks are reported as found: four jobs took a unit out on a surge day, and MOP-310 ran 2 h 06 min past its window while the rack's other feed was open (the A07 outage). The forward schedule has four planted conflicts, one of each kind.
 
-**How it works.** `src/scorecard/change_calendar.py` reads the records and the forward schedule (`data/calendar/`, own random stream, `scripts/generate_calendar.py`), works out from each job's title what it takes out (`config/calendar.yaml`), and checks that against the impact declarations and against the devices: every device action on a job's equipment that starts in its window must end inside it. The forward schedule is placed by its own planner rules, not by the checks, so the robustness run (`python scripts/render_calendar.py --robustness 60`) tests the checks against an independent plan. Report: [`reports/change_calendar.md`](reports/change_calendar.md). The Operations tab will also hold the daily standup and the safety view.
+**How it works.** `src/scorecard/change_calendar.py` reads the records and the forward schedule (`data/calendar/`, own random stream, `scripts/generate_calendar.py`), works out from each job's title what it takes out (`config/calendar.yaml`), and checks that against the impact declarations and against the devices: every device action on a job's equipment that starts in its window must end inside it. The forward schedule is placed by its own planner rules, not by the checks, so the robustness run (`python scripts/render_calendar.py --robustness 60`) tests the checks against an independent plan. Report: [`reports/change_calendar.md`](reports/change_calendar.md). The Operations tab will also hold the daily standup.
+
+<img src="docs/images/ops-ehs.png" alt="Safety (EHS): the monthly EHS report by partner, the work permits, and the record findings" width="860">
+
+**What it shows.** **Safety (EHS)** (`/ops/#ehs`): the contract's monthly EHS report by partner (hours worked from the badge records, recordables, TRIR and DART per 200,000 hours, near misses, stop-work uses, first aid, permits issued, open corrective actions), every work permit with its people's training, and four record checks:
+- work with no permit: a job the records say needs one, or a tap-off breaker operated with no permit open on it
+- a lockout recorded while the device shows the circuit energized
+- a person named on a permit, or an electrical task's engineer, without current training (with their badge-ins that day)
+- a permit closed before the work ended
+
+Click a permit for its timeline against the device and the job, or a finding for its evidence. The A07 outage shows up on its own: the B-side tap-off was opened before any job on it existed, so no permit covers it (PIR-2026-001 refers it to Customer EHS). Reported near misses and stop-work uses are counted and are never findings.
+
+**How it works.** `src/scorecard/ehs.py` works out from the records which jobs need which permit (`config/ehs.yaml`: a Landlord MOP or maintenance record by its work type, a corrective work order by its fault class, the IT Partner's overhead cabling step), takes the work from what the device recorded, and compares the permits and training records (`data/ehs/`, own random stream, `scripts/generate_ehs.py`) with them. Four record problems are planted; `python scripts/render_ehs.py --robustness 60 --jobs 4` scores 60 generated months. The weekly pack's section 8 counts the week's permits and reported events, which add up to the month. Report: [`reports/ehs.md`](reports/ehs.md).
 
 ## Failure Pattern Review
 
@@ -438,6 +450,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Utility mains and ride-through agreement with the records | 496,451 of 496,451 cases | 29,785,596 of 29,785,596 cases on 60 generated months |
 | Live page equals Site health hour by hour | 48,720 of 48,720 cases | 2,923,200 of 2,923,200 |
 | Change calendar | 4 of 4 planted (forward schedule), 72 of 72 cases agree or are explained | 240 of 240 on 60 forward schedules, 0 false positives |
+| EHS record checks | 4 of 4 planted, 1 of 1 as found, 135 of 135 cases agree or are explained | 240 of 240 planted, 60 of 60 as found, 0 false positives |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Hall C readiness record checks | 4 of 4 | 240 of 240, 0 false positives |
@@ -465,6 +478,7 @@ python scripts/render_fire.py --robustness 60 --jobs 4
 python scripts/render_predict.py --robustness 60
 python scripts/render_audit.py --robustness 60 --jobs 4
 python scripts/render_calendar.py --robustness 60
+python scripts/render_ehs.py --robustness 60 --jobs 4
 ```
 
 ## Toward live data: the read-only collector
@@ -479,7 +493,7 @@ python scripts/render_calendar.py --robustness 60
 
 ## Tests and deployment
 
-- **792 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **804 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -496,11 +510,11 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/generate_changes.py && python scripts/render_alarms.py \
   && python scripts/generate_gpu_health.py && python scripts/render_gpu_health.py \
   && python scripts/generate_telemetry.py && python scripts/generate_energy.py && python scripts/render_energy.py \
-  && python scripts/render_weekly.py && python scripts/generate_fire.py && python scripts/render_fire.py && python scripts/render_glossary.py \
+  && python scripts/generate_ehs.py && python scripts/render_weekly.py && python scripts/generate_fire.py && python scripts/render_fire.py && python scripts/render_glossary.py \
   && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
   && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py && python scripts/render_live.py \
   && python scripts/generate_audit.py && python scripts/render_audit.py \
-  && python scripts/generate_calendar.py && python scripts/render_calendar.py
+  && python scripts/generate_calendar.py && python scripts/render_calendar.py && python scripts/render_ehs.py
 pytest -q                                   # the full suite takes a while; pytest -q tests/test_hub.py runs one file
 python scripts/build_site.py --out _site    # the whole site; serve it with: python -m http.server -d _site
 streamlit run app/streamlit_app.py          # the "Try another month" app on its own
