@@ -402,6 +402,16 @@ Derived by `scripts/generate_audit.py` from `data/sample/` (window, the IT Partn
 | `answer_key.json` | Planted defects (a failed part the ledger shipped found in the cage; a cable label naming the next tray; a wet-mate with no witness marks; a maintenance tag older than its PM record). The checks never read it |
 | `manifest.json` | Window, source, counts |
 
+## Change calendar forward schedule (`data/calendar/`)
+
+Derived by `scripts/generate_calendar.py` from the site model, the device lists (`data/telemetry/*/manifest.json`), both partners' Hall B Jira milestones (`data/deployments/jira/`), and the Hall C commissioning plan (`data/readiness/`), with its own random stream (`{seed}:calendar`); nothing else is written. Settings in `config/calendar.yaml`. The data weeks need no layer: the calendar reads the CAB changes, MOPs, change-approval queue, and maintenance records where they are.
+
+| File | What it represents |
+|---|---|
+| `schedule.json` | The jobs booked from the end of the data weeks to Hall C first compute: ID (MOP, CAB change, or maintenance task), owner, title (the calendar reads what each job takes out of service from it), and the booked window in UTC |
+| `answer_key.json` | Planted conflicts, one of each kind (two jobs in one redundancy group, both feeds of a rack, a unit out on a surge day, work in the first-compute freeze). The checks never read it |
+| `manifest.json` | Seed, forward period, counts |
+
 ## Predictive maintenance (`data/predict/`)
 
 Derived by `scripts/generate_predict.py` from `data/history/` (racks, inventory, links, failures, Landlord PM records), the topology, and the CDU settings, with its own random stream (`predict-{seed}`); no other layer is written. Settings in `config/predict.yaml` (the `condition` section shapes this history; the detectors use only the `detectors` section). The detectors in `src/scorecard/predict/` never read the answer key; `scripts/predict.py` runs them on a site's own exports (`docs/predict/README.md`).
@@ -450,6 +460,7 @@ python scripts/generate_deployments.py           # data/deployments
 python scripts/generate_readiness.py             # data/readiness
 python scripts/generate_assets.py                # data/assets
 python scripts/generate_audit.py                 # data/audit
+python scripts/generate_calendar.py              # data/calendar
 ```
 
 The tests fail when a committed layer is stale.

@@ -135,6 +135,7 @@ def facts() -> dict:
         "gpu": {"gpus": gh["gpus"], "fail": gh["watches"]["fail"], "warned": gh["warned"], "memory": len(gh["memory"]),
                 "findings": [x["title"] for x in gh["findings"]]},
         "live": _live(tm),
+        "calendar": _calendar(),
         "telemetry": {"gpus": tm["gpus"], "racks": len(tm["racks"]),
                       "agree": sum(a["checked"] - a["misses"] for a in tm["agreements"]), "cases": sum(a["checked"] for a in tm["agreements"]),
                       "halls": [(h["name"], h["util_avg"], h["at_cap_pct"]) for h in tm["halls"].values()],
@@ -179,6 +180,14 @@ def _live(tm: dict) -> dict:
             "it_min": ride["SITE-IT"]["min_s"], "cool_min": ride["SITE-COOLING"]["min_s"], "bridge": o["bridge_s"]}
 
 
+def _calendar() -> dict:
+    from scorecard import change_calendar as CC
+    d = CC.page_data()
+    s = d["summary"]
+    return {"overrun_jobs": [j for f in d["findings"] if f["kind"] == "overrun" for j in f["jobs"]],"past": s["past"]["jobs"], "fwd": s["forward"]["jobs"], "past_found": s["past"]["findings"],
+            "fwd_found": s["forward"]["findings"], "overrun": s["past"]["by_kind"]["overrun"], "surge": s["past"]["by_kind"]["surge"]}
+
+
 def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: list[tuple[str, str]], note: str = "") -> str:
     st = "".join(f'<div class="stat"><b>{escape(v)}</b><span>{escape(k)}</span></div>' for v, k in stats)
     # A link to one record opens the Incident Portal in its own tab, as ticket numbers do on every page.
@@ -195,6 +204,7 @@ def body(f: dict) -> str:
     av = f["availability"]
     dp = f["deploy"]
     lv = f["live"]
+    cal = f["calendar"]
     check = lambda p: f"{p['detected']} of {p['planted']}" if p["planted"] is not None else "n/a"
     partners = (
         '<div class="partners">'
@@ -305,6 +315,15 @@ def body(f: dict) -> str:
               (f"{lv['agree']:,} of {lv['cases']:,}", "hours equal Site health")],
              [("Open Live", "live/"), ("The 09-24 utility trip", "telemetry/#utility")],
              f"Cooling (mechanical UPSs) lowest {lv['cool_min'] // 60}:{lv['cool_min'] % 60:02d}. The same feed as the Alarm Board's Live Events; nothing here comes from a real system."),
+        tile("ops", "Operations",
+             "Every booked job on one calendar to Hall C first compute: CAB changes, MOPs, maintenance, Hall B deployment "
+             "milestones, and Hall C commissioning, checked for two jobs in one redundancy group, both feeds of a rack, "
+             "work on a surge day, and work in the first-compute freeze.",
+             [(str(cal["past"] + cal["fwd"]), "jobs on the calendar"), (str(cal["fwd_found"]), "forward conflicts to move"),
+              (str(cal["past_found"]), "found in the data weeks")],
+             [("Open the calendar", "ops/#calendar")],
+             f"In the data weeks: {cal['surge']} jobs took a unit out on a surge day, and {cal['overrun']} ran past its booked window"
+             + (f" ({', '.join(cal['overrun_jobs'])})." if cal["overrun_jobs"] else ".")),
         tile("deployments", "Deployments",
              f"The {dp['hall']} GB300 rollout: gates, steps, calculations, permits, and one work order per task from both "
              "partners' Jira projects, complete only when signed and inspected.",

@@ -1,0 +1,18 @@
+[
+ {
+  "job": "MOP-529",
+  "kind": "both_feeds"
+ },
+ {
+  "job": "PM-1020",
+  "kind": "freeze"
+ },
+ {
+  "job": "PM-1012",
+  "kind": "overlap"
+ },
+ {
+  "job": "MOP-516",
+  "kind": "surge"
+ }
+]

@@ -35,6 +35,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Alarm Board](#alarm-board) | Which alarms are expected from approved change work, and which are not? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/alarms/) |
 | [Incident Portal](#incident-portal) | What do the partners' own tickets, work orders, and dispatch records say, record by record? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/tickets/) |
 | [Post-Incident Review](#post-incident-review) | What happened in an event, why, and what are we doing about it? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/pir/) |
+| [Operations](#operations) | What work is booked between now and first compute, and does any of it leave a system without its redundant unit? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/ops/) |
 | [Weekly Review](#weekly-operations-review) | What do we discuss with the partners this week, and what does leadership need to know? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/weekly/) |
 | [Failure Patterns](#failure-pattern-review) | Which failures cluster beyond chance, and who owns the fix? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/patterns/) |
 | [Energy](#energy-and-pue) | What is the site's PUE, and does the Landlord's report reconcile with the meters? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/energy/) |
@@ -194,6 +195,20 @@ The technical sections follow: response against targets, every alarm and event r
 <img src="docs/images/leadership-brief.png" alt="Leadership brief for week 39: four headline numbers, the top risks, and the decisions needed" width="860">
 
 Decisions and asks are written in `weekly/notes/2026-W38.yaml`; `scripts/render_weekly.py` writes the page and [`docs/weekly/`](docs/weekly/) (each week's pack and its brief).
+
+## Operations
+
+<img src="docs/images/ops-calendar.png" alt="Maintenance and change calendar: twelve weeks of booked jobs with surge days, the freeze, and conflicts marked" width="860">
+
+**What it shows.** The **maintenance and change calendar** (`/ops/#calendar`): every booked job at the site on one calendar, from the first data week to Hall C first compute. It holds the Customer CAB's changes, the Landlord's MOPs, the change-approval queue, the Landlord's maintenance, both partners' Hall B rack milestones, and the Hall C commissioning scripts. Click a day for its timeline, a job for what it takes out of service, or a finding for the overlap drawn against what the devices recorded. Four checks run against the redundancy groups Site health uses:
+- two jobs in one redundancy group at once, which leaves the group below N
+- work on both feeds of one rack at once
+- a unit out of a Hall B or site-wide group on a deployment surge day (two or more Hall B energizations)
+- work that takes a site-wide unit out in the 7 days before first compute
+
+The data weeks are reported as found: four jobs took a unit out on a surge day, and MOP-310 ran 2 h 06 min past its window while the rack's other feed was open (the A07 outage). The forward schedule has four planted conflicts, one of each kind.
+
+**How it works.** `src/scorecard/change_calendar.py` reads the records and the forward schedule (`data/calendar/`, own random stream, `scripts/generate_calendar.py`), works out from each job's title what it takes out (`config/calendar.yaml`), and checks that against the impact declarations and against the devices: every device action on a job's equipment that starts in its window must end inside it. The forward schedule is placed by its own planner rules, not by the checks, so the robustness run (`python scripts/render_calendar.py --robustness 60`) tests the checks against an independent plan. Report: [`reports/change_calendar.md`](reports/change_calendar.md). The Operations tab will also hold the daily standup and the safety view.
 
 ## Failure Pattern Review
 
@@ -422,6 +437,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Site health agreement with each section's hourly figures | 162,730 of 162,730 cases | 9,762,844 of 9,762,844 cases on 60 generated months |
 | Utility mains and ride-through agreement with the records | 496,451 of 496,451 cases | 29,785,596 of 29,785,596 cases on 60 generated months |
 | Live page equals Site health hour by hour | 48,720 of 48,720 cases | 2,923,200 of 2,923,200 |
+| Change calendar | 4 of 4 planted (forward schedule), 72 of 72 cases agree or are explained | 240 of 240 on 60 forward schedules, 0 false positives |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Hall C readiness record checks | 4 of 4 | 240 of 240, 0 false positives |
@@ -448,6 +464,7 @@ python scripts/render_assets.py --robustness 60 --jobs 4
 python scripts/render_fire.py --robustness 60 --jobs 4
 python scripts/render_predict.py --robustness 60
 python scripts/render_audit.py --robustness 60 --jobs 4
+python scripts/render_calendar.py --robustness 60
 ```
 
 ## Toward live data: the read-only collector
@@ -462,7 +479,7 @@ python scripts/render_audit.py --robustness 60 --jobs 4
 
 ## Tests and deployment
 
-- **781 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
+- **792 tests** (pytest) run on every push. They cover the contracts, the site model's capacity checks, the generators and every data layer, the three engines, the scorecards, every telemetry section's agreement with the records, the Python app (against `tests/fake_streamlit.py`), and the written reviews, notes, and briefs held to the facts. The pages (Scorecards, PIR, weekly, Telemetry, Availability, and others) are exercised in a real DOM with jsdom (`tests/js/`).
 - **Generated files are checked, not trusted:** CI runs each renderer with `--check` (contracts, drawings, reports, reviews, packs, patterns, alarms, telemetry, glossary), and the tests fail if any committed copy is stale.
 - **Deploy:** the "Deploy demo to GitHub Pages" workflow runs the tests, generates a fresh "latest 4 weeks" dataset, builds the static site with `scripts/build_site.py`, and publishes it. It also runs every Monday at 06:00 UTC so that dataset stays current.
 - To host on AWS instead (S3, EC2, or a production-shaped architecture), see [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md).
@@ -482,7 +499,8 @@ python scripts/render_sla.py && python scripts/render_site.py && python scripts/
   && python scripts/render_weekly.py && python scripts/generate_fire.py && python scripts/render_fire.py && python scripts/render_glossary.py \
   && python scripts/generate_deployments.py && python scripts/generate_readiness.py && python scripts/render_deployments.py && python scripts/render_telemetry.py \
   && python scripts/render_availability.py && python scripts/generate_assets.py && python scripts/render_assets.py && python scripts/render_predict.py && python scripts/render_live.py \
-  && python scripts/generate_audit.py && python scripts/render_audit.py
+  && python scripts/generate_audit.py && python scripts/render_audit.py \
+  && python scripts/generate_calendar.py && python scripts/render_calendar.py
 pytest -q                                   # the full suite takes a while; pytest -q tests/test_hub.py runs one file
 python scripts/build_site.py --out _site    # the whole site; serve it with: python -m http.server -d _site
 streamlit run app/streamlit_app.py          # the "Try another month" app on its own

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --bad:#b42318; --good:#1d7a46; --warn:#9a6700;
+        --grid:#eef1f4; --band:#fdecea; --it:#2a78d6; --ll:#eb6834; --fwd:#f7f9fc; --surge:#fff4d6; --freeze:#ece8fb; --fz:#6d4fc2; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:0 24px; display:flex; flex-wrap:wrap; gap:4px 18px; align-items:center; }
+header.top strong { font-size:16px; padding:12px 0; margin-right:10px; }
+.views a { display:inline-block; padding:12px 10px 9px; color:var(--muted); text-decoration:none; border-bottom:3px solid transparent; }
+.views a.on { color:var(--ink); font-weight:600; border-bottom-color:var(--it); }
+main { max-width:1240px; margin:20px auto; background:var(--bg); padding:28px 36px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:30px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:16px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:14px 0; }
+.tile { background:var(--panel); border-radius:8px; padding:12px 14px; }
+.tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.tile .v { font-size:26px; font-weight:700; line-height:1.2; } .tile .s { font-size:12px; color:var(--muted); }
+.flag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+.flag.bad { background:var(--band); color:var(--bad); } .flag.ok { background:#e7f4ec; color:var(--good); } .flag.warn { background:var(--surge); color:var(--warn); }
+.flag.fz { background:var(--freeze); color:var(--fz); } .flag.mute { background:var(--grid); color:var(--muted); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.nw { white-space:nowrap; } .wide { overflow-x:auto; }
+.filters { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; font-size:13px; margin:10px 0; }
+.filters select { font:inherit; font-size:13px; padding:3px 6px; border:1px solid var(--line); border-radius:6px; }
+.legend { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12px; color:var(--muted); margin:6px 0; align-items:center; }
+.legend i { display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:5px; vertical-align:-1px; border:1px solid var(--line); }
+.cal { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); border-left:1px solid var(--line); border-top:1px solid var(--line); }
+.cal .hd { font-size:12px; font-weight:600; color:var(--muted); padding:4px 6px; background:var(--panel); border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+.day { min-height:92px; padding:4px 5px 6px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); cursor:pointer; position:relative; font-size:12px; }
+.day:hover { background:#f0f5ff; } .day.fwd { background:var(--fwd); } .day.freeze { background:var(--freeze); } .day.sel { outline:2px solid var(--it); outline-offset:-2px; }
+.day.asof { border-left:3px solid var(--ink); }
+.day .dn { display:flex; justify-content:space-between; align-items:center; gap:4px; font-weight:600; }
+.day .dn .m { color:var(--muted); font-weight:400; }
+.day .sg { font-size:10px; font-weight:700; color:var(--warn); background:var(--surge); border-radius:8px; padding:0 5px; }
+.chip { display:block; margin-top:2px; padding:0 4px; border-radius:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-left:3px solid var(--muted); background:#fff; }
+.chip.it { border-left-color:var(--it); } .chip.ll { border-left-color:var(--ll); } .chip.red { background:var(--band); color:var(--bad); font-weight:600; }
+.chip.off { text-decoration:line-through; color:var(--muted); } .chip.dn { color:var(--muted); }
+.chip.items { border-left-color:transparent; color:var(--muted); background:transparent; padding-left:0; }
+.panel { background:var(--panel); border-radius:8px; padding:14px 16px; margin:14px 0; }
+.tl { position:relative; height:auto; margin:8px 0 4px; }
+.tl .ax { position:relative; height:18px; font-size:11px; color:var(--muted); margin-left:200px; }
+.tl .ax span { position:absolute; transform:translateX(-50%); }
+.tl .row { display:flex; align-items:center; height:24px; font-size:12px; }
+.tl .lb { width:200px; flex:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:8px; }
+.tl .tr { position:relative; flex:1; height:16px; background:repeating-linear-gradient(90deg, #fff 0, #fff calc(100%/24 - 1px), var(--line) calc(100%/24 - 1px), var(--line) calc(100%/24)); border-radius:3px; }
+.tl .bar { position:absolute; top:0; height:100%; border-radius:3px; background:var(--muted); opacity:.85; }
+.tl .bar.it { background:var(--it); } .tl .bar.ll { background:var(--ll); } .tl .bar.red { box-shadow:0 0 0 2px var(--bad); }
+.tl .bar.dev { background:var(--ink); }
+.tl .bar.out { background-image:repeating-linear-gradient(45deg, rgba(255,255,255,.35) 0, rgba(255,255,255,.35) 4px, transparent 4px, transparent 8px); }
+.kv { display:grid; grid-template-columns:150px 1fr; gap:3px 12px; font-size:14px; } .kv div:nth-child(odd) { color:var(--muted); }
+a.job, a.fnd, a.dayl { color:var(--it); text-decoration:none; } a.job:hover, a.fnd:hover, a.dayl:hover { text-decoration:underline; }
+.close { float:right; font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:2px 10px; cursor:pointer; }
+ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:2px 0; }
+@media (max-width:800px) { main { padding:18px 14px; } .day { min-height:64px; } .chip { font-size:10px; } .tl .lb { width:90px; } .tl .ax { margin-left:90px; } }
+@media print { header.top, .filters { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <strong>Operations</strong>
+  <nav class="views" aria-label="Operations views"><a href="#calendar" data-view="calendar">Calendar</a></nav>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const C = D.calendar;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const WD = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const md = d => { const [, m, dd] = d.split("-"); return `${MON[+m - 1]} ${+dd}`; };
+const TZ = "America/Chicago";
+const parts = iso => Object.fromEntries(new Intl.DateTimeFormat("en-US", {timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit",
+  hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short"}).formatToParts(new Date(iso)).map(p => [p.type, p.value]));
+const lday = iso => { const p = parts(iso); return `${p.year}-${p.month}-${p.day}`; };
+const lhm = iso => { const p = parts(iso); return `${p.hour}:${p.minute}`; };
+const lt = iso => { const p = parts(iso); return `${md(lday(iso))} ${p.hour}:${p.minute} ${p.timeZoneName}`; };
+const lmin = iso => { const p = parts(iso); return (+p.hour) * 60 + (+p.minute); };
+const JOBS = Object.fromEntries(C.jobs.map(j => [j.id, j]));
+const FIND = Object.fromEntries(C.findings.map(f => [f.id, f]));
+const hallName = h => h ? "Hall " + h.slice(-1) : "Site-wide";
+const groupName = j => {
+  if (j.takes === "feed") return `Rack ${j.rack} feeds, 2N`;
+  const g = C.groups[j.group]; if (!g) return "";
+  return `${g.name}${g.hall ? " (" + hallName(g.hall) + ")" : ""}, ${g.scheme}`;
+};
+const takes = j => j.takes === "pump" ? `Pump 2 of ${j.group.slice(6)}` : j.takes === "feed" ? `Feed ${j.unit.slice(-1)} of rack ${j.rack}`
+  : j.takes === "none" ? "Nothing in a redundancy group" : j.unit;
+const ownCls = o => o === "IT Partner" ? "it" : o === "Landlord" ? "ll" : "";
+const IDX = Object.fromEntries(C.days.map((d, i) => [d, i]));
+const isFwd = d => IDX[d] >= C.past_days;
+const inFreeze = d => d >= C.freeze[0] && d <= C.freeze[1];
+const jobDays = j => { const a = lday(j.start), b = lday(new Date(Date.parse(j.end) - 1000).toISOString()); return a === b ? [a] : [a, b]; };
+const FILT = {source: "all", owner: "all", hall: "all", reduce: false, items: true};
+const OPTS = {source: [["all", "All"], ...Object.entries(C.sources)], owner: [["all", "All"], ["IT Partner", "IT Partner"], ["Landlord", "Landlord"]],
+  hall: [["all", "All"], ["HALL-A", "Hall A"], ["HALL-B", "Hall B"], ["site", "Site-wide"]]};
+
+function jobLink(id) { return `<a class="job" href="#calendar/job/${esc(id)}">${esc(id)}</a>`; }
+function findLink(id) { return `<a class="fnd" href="#calendar/finding/${esc(id)}">${esc(id)}</a>`; }
+function dayLink(d) { return `<a class="dayl" href="#calendar/${esc(d)}">${esc(md(d))}</a>`; }
+
+function shown(j) {
+  if (FILT.source !== "all" && j.source !== FILT.source) return false;
+  if (FILT.owner !== "all" && j.owner !== FILT.owner) return false;
+  if (FILT.hall !== "all" && (FILT.hall === "site" ? j.hall !== null : j.hall !== FILT.hall)) return false;
+  if (FILT.reduce && (j.takes === "none" || j.status === "deferred")) return false;
+  return true;
+}
+
+function viewCalendar(sel) {
+  const s = C.summary;
+  const surgeFwd = Object.keys(C.surge).filter(isFwd).length, surgePast = Object.keys(C.surge).length - surgeFwd;
+  const byDay = {};
+  for (const j of C.jobs) if (shown(j)) for (const d of jobDays(j)) (byDay[d] = byDay[d] || []).push(j);
+  const itemsByDay = {};
+  for (const x of C.items) (itemsByDay[x.date] = itemsByDay[x.date] || []).push(x);
+  const finDays = new Set(C.findings.map(f => f.date));
+  let cells = WD.map(w => `<div class="hd">${esc(w)}</div>`).join("");
+  for (const d of C.days) {
+    const js = (byDay[d] || []).sort((a, b) => a.start < b.start ? -1 : 1);
+    const it = itemsByDay[d] || [];
+    const hb = it.filter(x => x.kind === "hallb").length, hc = it.filter(x => x.kind === "hallc").length;
+    const cls = ["day", isFwd(d) ? "fwd" : "", inFreeze(d) ? "freeze" : "", d === C.as_of ? "asof" : "", d === sel ? "sel" : ""].join(" ");
+    const dt = new Date(d + "T12:00:00Z");
+    const label = dt.getUTCDate() === 1 || d === C.days[0] ? `${MON[dt.getUTCMonth()]} ${dt.getUTCDate()}` : String(dt.getUTCDate());
+    cells += `<div class="${esc(cls)}" data-day="${esc(d)}" title="${esc(md(d))}${C.surge[d] ? " · surge day, " + esc(C.surge[d]) + " Hall B energizations" : ""}${inFreeze(d) ? " · first-compute freeze" : ""}">
+      <div class="dn"><span>${esc(label)}</span>${C.surge[d] ? `<span class="sg">Surge ${esc(C.surge[d])}</span>` : ""}</div>
+      ${js.slice(0, 5).map(j => `<span class="chip ${ownCls(j.owner)} ${j.findings.length ? "red" : ""} ${j.status === "deferred" ? "off" : ""} ${j.takes === "none" ? "dn" : ""}" title="${esc(j.id + ": " + j.title)}">${esc(j.id)}</span>`).join("")}
+      ${js.length > 5 ? `<span class="chip items">+${esc(js.length - 5)} more</span>` : ""}
+      ${FILT.items && hb ? `<span class="chip items">Hall B: ${esc(hb)} milestone${hb > 1 ? "s" : ""}</span>` : ""}
+      ${FILT.items && hc ? `<span class="chip items">Hall C: ${esc(hc)} script${hc > 1 ? "s" : ""}</span>` : ""}
+    </div>`;
+  }
+  const opt = (k, vals) => `<select data-f="${esc(k)}">${vals.map(([v, t]) => `<option value="${esc(v)}"${FILT[k] === v ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+  return `<h1>Maintenance and change calendar</h1>
+  <p class="sub">Every booked job at the site on one calendar, from ${esc(md(C.days[0]))} to Hall C first compute on ${esc(md(C.first_compute))}, checked against the redundancy groups Site health uses. Times are Central. The data weeks come from the records as they are; from ${esc(md(C.as_of))} on it is the forward schedule.</p>
+  <div class="tiles">
+    <div class="tile"><div class="k">Data weeks</div><div class="v">${esc(s.past.jobs)} jobs</div><div class="s">${esc(s.past.findings)} findings, as found</div></div>
+    <div class="tile"><div class="k">Forward look</div><div class="v">${esc(s.forward.jobs)} jobs</div><div class="s">${esc(s.forward.findings)} conflicts to move before they happen</div></div>
+    <div class="tile"><div class="k">Surge days</div><div class="v">${esc(surgePast + surgeFwd)}</div><div class="s">${esc(surgePast)} in the data weeks, ${esc(surgeFwd)} ahead (${esc(C.surge_min)}+ Hall B energizations)</div></div>
+    <div class="tile"><div class="k">First-compute freeze</div><div class="v">${esc(md(C.freeze[0]))} to ${esc(md(C.freeze[1]))}</div><div class="s">${esc(C.freeze_days)} days, site-wide groups and Hall C</div></div>
+  </div>
+  <div class="filters">
+    <label>Source ${opt("source", OPTS.source)}</label>
+    <label>Owner ${opt("owner", OPTS.owner)}</label>
+    <label>Where ${opt("hall", OPTS.hall)}</label>
+    <label><input type="checkbox" data-f="reduce"${FILT.reduce ? " checked" : ""}> Only jobs that take a unit out</label>
+    <label><input type="checkbox" data-f="items"${FILT.items ? " checked" : ""}> Hall B milestones and Hall C scripts</label>
+  </div>
+  <div class="legend"><span><i style="background:#fff;border-left:3px solid var(--it)"></i>IT Partner</span><span><i style="background:#fff;border-left:3px solid var(--ll)"></i>Landlord</span>
+    <span><i style="background:var(--band)"></i>In a finding</span><span><i style="background:var(--surge)"></i>Surge day</span><span><i style="background:var(--freeze)"></i>Freeze</span>
+    <span><i style="background:var(--fwd)"></i>Forward schedule</span><span>Grey text: takes nothing out · struck through: deferred</span></div>
+  <div class="cal" id="cal" data-gl-skip>${cells}</div>
+  <div id="detail"></div>
+  <h2>Findings</h2>
+  <p class="note">A finding means the bookings do not reconcile with each other or with what the devices recorded. It starts a planning action, not a judgment of anyone.</p>
+  <div class="wide"><table><tr><th>ID</th><th>Period</th><th>Kind</th><th>Jobs</th><th>When</th><th>Owner</th><th>What</th></tr>
+  ${C.findings.map(f => `<tr><td class="nw">${findLink(f.id)}</td><td>${f.period === "past" ? "Data weeks" : "Forward"}</td><td>${esc(f.title)}</td>
+    <td class="nw">${f.jobs.map(jobLink).join(", ")}</td><td class="nw">${esc(lt(f.at))}</td><td>${esc(f.owners.join(", "))}</td><td>${esc(f.text)}</td></tr>`).join("")}</table></div>
+  <h2>Agreements with the records (data weeks)</h2>
+  <table><tr><th>Agreement</th><th class="n">Cases</th><th class="n">Agree</th><th class="n">Explained by a finding</th></tr>
+  ${C.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${esc(a.checked)}</td><td class="n">${esc(a.checked - a.misses.length)}</td><td class="n">${esc(a.explained)}</td></tr>`).join("")}</table>
+  <h2>How it works</h2>
+  <ul class="tight">
+    <li><b>Sources.</b> The Customer CAB's changes, the Landlord's MOPs, the change-approval queue, the Landlord's maintenance records, both partners' Hall B Jira milestones, and the Hall C commissioning scripts. A MOP or CAB change keeps its approved window; maintenance without a MOP uses what the device recorded (the chiller's lockout in the BMS, the engine's run in the EMCP record).</li>
+    <li><b>What a job takes out.</b> Read from its title: a CDU filter change isolates one of the CDU's two pumps, UPS maintenance puts the UPS on maintenance bypass, chiller maintenance locks the chiller out, a tap-off retorque opens one feed of the rack. Where the change has an impact declaration, the two must agree.</li>
+    <li><b>The four checks.</b> Two jobs in one redundancy group at once, below N. Work on both feeds of one rack at once. A unit out of a Hall B or site-wide group on a surge day (${esc(C.surge_min)} or more Hall B energizations: HO-4 tap-offs and rack power-ons). Work that takes a site-wide unit out, or Hall C work outside the commissioning plan, in the ${esc(C.freeze_days)} days before first compute.</li>
+    <li><b>The devices.</b> In the data weeks, every device action on a job's equipment that starts inside the job's window must end inside it; one that runs past is a finding.</li>
+    <li><b>Forward schedule.</b> Placed by the planner's own rules with one planted conflict of each kind; the checks never read the answer key. Report: <code>reports/change_calendar.md</code>.</li>
+  </ul>`;
+}
+
+function span(a, start, end) {
+  const s0 = lday(start) === a ? lmin(start) : 0;
+  const e0 = lday(new Date(Date.parse(end) - 1000).toISOString()) === a ? lmin(end) || 1440 : 1440;
+  return `left:${(s0 / 14.4).toFixed(2)}%;width:${Math.max(0.6, (e0 - s0) / 14.4).toFixed(2)}%`;
+}
+
+function timeline(d, js, ev = []) {
+  const ax = Array.from({length: 6}, (_, i) => i * 4).map(h => `<span style="left:${esc(h / 24 * 100)}%">${esc(String(h).padStart(2, "0"))}:00</span>`).join("");
+  const rows = js.map(j => `<div class="row"><div class="lb">${jobLink(j.id)}</div><div class="tr"><span class="bar ${ownCls(j.owner)} ${j.findings.length ? "red" : ""} ${j.takes !== "none" ? "out" : ""}" style="${esc(span(d, j.start, j.end))}" title="${esc(j.id + " " + lhm(j.start) + " to " + lhm(j.end))}"></span></div></div>`).join("")
+    + ev.map(e => `<div class="row"><div class="lb" title="${esc(e.label)}">${esc(e.label)}</div><div class="tr"><span class="bar dev" style="${esc(span(d, e.start, e.end))}" title="${esc(e.label + " " + lhm(e.start) + " to " + lhm(e.end))}"></span></div></div>`).join("");
+  return `<div class="tl"><div class="ax">${ax}</div>${rows}</div>`;
+}
+
+function dayPanel(d) {
+  const js = C.jobs.filter(j => jobDays(j).includes(d)).sort((a, b) => a.start < b.start ? -1 : 1);
+  const it = C.items.filter(x => x.date === d);
+  const fs = C.findings.filter(f => f.date === d || f.jobs.some(id => jobDays(JOBS[id]).includes(d)));
+  const flags = [C.surge[d] ? `<span class="flag warn">Surge day: ${esc(C.surge[d])} Hall B energizations</span>` : "",
+                 inFreeze(d) ? `<span class="flag fz">First-compute freeze</span>` : "", isFwd(d) ? `<span class="flag mute">Forward schedule</span>` : ""].join(" ");
+  return `<div class="panel" id="daypanel"><button class="close" data-close>Close</button><h3>${esc(md(d))}, ${esc(d.slice(0, 4))} ${flags}</h3>
+    ${js.length ? timeline(d, js) : `<p class="note">No jobs booked.</p>`}
+    ${js.length ? `<table><tr><th>Job</th><th>Window</th><th>Owner</th><th>What</th><th>Takes out</th><th>Status</th></tr>${js.map(j => `<tr><td class="nw">${jobLink(j.id)}</td>
+      <td class="nw">${esc(lhm(j.start))} to ${esc(lhm(j.end))}</td><td>${esc(j.owner)}</td><td>${esc(j.title)}</td><td>${esc(takes(j))}</td><td>${esc(j.status)}</td></tr>`).join("")}</table>` : ""}
+    ${it.length ? `<h3>Hall B milestones and Hall C scripts</h3><ul class="tight">${it.map(x => `<li>${esc(x.id)}: ${esc(x.title)} (${esc(x.state)})${x.energization ? ` <span class="flag warn">energization</span>` : ""}</li>`).join("")}</ul>` : ""}
+    ${fs.length ? `<h3>Findings</h3><ul class="tight">${fs.map(f => `<li>${findLink(f.id)}: ${esc(f.text)}</li>`).join("")}</ul>` : ""}</div>`;
+}
+
+function jobPanel(id) {
+  const j = JOBS[id]; if (!j) return "";
+  const g = j.group && C.groups[j.group];
+  return `<div class="panel" id="jobpanel"><button class="close" data-close>Close</button><h3>${esc(j.id)}: ${esc(j.title)}</h3><div class="kv">
+    <div>Source</div><div>${esc(C.sources[j.source])}</div><div>Owner</div><div>${esc(j.owner)}</div>
+    <div>Window</div><div>${esc(lt(j.start))} to ${esc(lt(j.end))} (${dayLink(lday(j.start))})</div><div>Status</div><div>${esc(j.status)}</div>
+    <div>Takes out</div><div>${esc(takes(j))}</div>
+    ${j.takes !== "none" ? `<div>Redundancy group</div><div>${esc(groupName(j))}${g ? ` (${esc(g.units)} units, N = ${esc(g.need)})` : ""}</div>` : ""}
+    <div>Where</div><div>${esc(hallName(j.hall))}</div>
+    ${j.refs.length ? `<div>Records</div><div>${esc(j.refs.join(", "))}</div>` : ""}
+    ${j.note ? `<div>Note</div><div>${esc(j.note)}</div>` : ""}
+    <div>Findings</div><div>${j.findings.length ? j.findings.map(f => findLink(f) + ": " + esc(FIND[f].title)).join("<br>") : "None"}</div></div></div>`;
+}
+
+function findingPanel(id) {
+  const f = FIND[id]; if (!f) return "";
+  const js = f.jobs.map(x => JOBS[x]);
+  return `<div class="panel" id="findpanel"><button class="close" data-close>Close</button><h3>${esc(f.id)}: ${esc(f.title)} <span class="flag ${f.period === "past" ? "mute" : "bad"}">${f.period === "past" ? "Data weeks, as found" : "Forward schedule"}</span></h3>
+    <p>${esc(f.text)}</p>
+    ${timeline(f.date, js, f.evidence || [])}
+    ${f.evidence ? `<p class="note">Bars: the booked window, then what each device recorded (dark).</p>` : ""}
+    <div class="kv"><div>When</div><div>${esc(lt(f.at))} to ${esc(lt(f.until))} (${dayLink(f.date)})</div><div>Owner</div><div>${esc(f.owners.join(", "))}</div>
+    <div>Jobs</div><div>${js.map(j => `${jobLink(j.id)} ${esc(j.title)}, ${esc(lhm(j.start))} to ${esc(lhm(j.end))}`).join("<br>")}</div>
+    <div>Action</div><div>${esc(f.action)}</div></div></div>`;
+}
+
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1)) || "calendar";
+  const [view, a, b] = h.split("/");
+  document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === "calendar"));
+  let sel = null, panel = "";
+  if (view === "calendar") {
+    if (a === "job") { panel = jobPanel(b); sel = JOBS[b] ? lday(JOBS[b].start) : null; }
+    else if (a === "finding") { panel = findingPanel(b); sel = FIND[b] ? FIND[b].date : null; }
+    else if (a && IDX[a] !== undefined) { panel = dayPanel(a); sel = a; }
+  }
+  document.getElementById("doc").innerHTML = viewCalendar(sel);
+  document.getElementById("detail").innerHTML = panel;
+  wire();
+  const det = document.getElementById("detail");
+  if (panel && a && det.scrollIntoView) det.scrollIntoView({block: "nearest"});
+}
+
+function wire() {
+  document.querySelectorAll("#cal .day").forEach(el => el.addEventListener("click", () => { location.hash = "calendar/" + el.dataset.day; }));
+  // Each filter keeps a value from its own option list (never the control's text), so nothing typed reaches the page.
+  for (const k of Object.keys(FILT)) {
+    const el = document.querySelector(`[data-f="${k}"]`);
+    if (!el) continue;
+    el.addEventListener("change", () => {
+      FILT[k] = OPTS[k] ? (OPTS[k].find(([v]) => v === el.value) || OPTS[k][0])[0] : !!el.checked;
+      route();
+    });
+  }
+  document.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", () => { location.hash = "calendar"; }));
+}
+
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
