@@ -1,0 +1,15 @@
+{
+ "disclaimer": "Synthetic work permits, training records, and safety events for a portfolio demonstration. All records are fictional.",
+ "files": {
+  "events.csv": 13,
+  "permits.csv": 33,
+  "training.csv": 334
+ },
+ "source": "data/sample, data/security",
+ "window": {
+  "end": "2026-09-28T00:00:00Z",
+  "seed": 2026,
+  "start": "2026-08-31T00:00:00Z",
+  "weeks": 4
+ }
+}

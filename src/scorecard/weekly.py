@@ -95,6 +95,7 @@ class WeeklyData:
         self.pattern_review = self._pattern_review()
         self.energy = self._energy()
         self.deploy = self._deploy()
+        self.ehs = self._ehs_layer()
         self.predict_flags = self._predict_flags()
         from scorecard.availability import Rollup
         self.avail = Rollup(self.data_dir)
@@ -104,6 +105,12 @@ class WeeklyData:
         from scorecard import energy
         p = self.data_dir.parent / "energy"
         return energy.load(p) if (p / "meters_hourly.csv").exists() else None
+
+    def _ehs_layer(self):
+        """The EHS layer (data/ehs/, beside the sample: permits and reported events), if it has been generated."""
+        from scorecard import ehs
+        p = self.data_dir.parent / "ehs"
+        return ehs.load(p) if (p / "manifest.json").exists() else None
 
     def _deploy(self):
         """The deployment program record (data/deployments/, beside the sample), if it has been generated."""
@@ -344,7 +351,11 @@ def _ehs(d: WeeklyData, ws: datetime, we: datetime, actions: list[dict]) -> dict
                 if a["source"] == r["id"] and a["owner"] == "Customer EHS" and a["status"] != "Complete":
                     open_inv.append({"pir": r["id"], "action": a["id"], "due": a["due"], "overdue": a["overdue"],
                                      "referral": r["ehs"]["referral"]})
-    return {"injuries": injuries, "events": events, "open_investigations": open_inv}
+    work = None
+    if d.ehs is not None:
+        from scorecard import ehs
+        work = ehs.week_counts(d.ehs, ws, we)
+    return {"injuries": injuries, "events": events, "open_investigations": open_inv, "work": work}
 
 
 def _energy_line(d: WeeklyData, ws: datetime, we: datetime) -> dict | None:

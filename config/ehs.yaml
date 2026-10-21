@@ -1,0 +1,85 @@
+# EHS (safety): the contract's monthly EHS report by partner, the work permits, training records, and safety events
+# behind it, and four record checks (data/ehs/, own random stream "<seed>:ehs"). Read by
+# src/scorecard/synthetic/ehs.py (generation) and src/scorecard/ehs.py (checks; page /ops/#ehs).
+#
+# The rules are the contract's (sla/common.yaml, ehs): EHS-R2 hazardous energy control, EHS-R3 energized electrical
+# work, EHS-R9 working at height, EHS-R11 hot work, and the partner qualification list. Reported injuries, near misses,
+# and stop-work uses are never findings and never count against anyone. A finding means the permit, training, badge,
+# and device records do not reconcile; it opens an investigation by Customer EHS, which decides any violation class.
+
+# Permit types. `rule` is the site rule that requires the permit.
+permit_types:
+  loto:   {name: "Lockout/tagout", rule: "EHS-R2"}
+  eewp:   {name: "Energized electrical work", rule: "EHS-R3"}
+  height: {name: "Working at height", rule: "EHS-R9"}
+  hot:    {name: "Hot work", rule: "EHS-R11"}
+  confined: {name: "Confined space", rule: "OSHA-1910"}
+
+# Which jobs need a permit, from the records. A MOP or a maintenance record is matched on its title through the
+# calendar's work types (config/calendar.yaml); a work order on its fault class; an IT Partner deployment step on
+# its milestone. `lock` says what the lockout isolates, so the check can compare it with what the device recorded:
+#   tapoff  : the tap-off breaker named by the job (busway CPM breaker events)
+#   ups     : the UPS (UPS NMC maintenance bypass)
+#   pump    : one pump of the CDU (CDU Redfish pump state)
+#   chiller : the chiller (BMS chiller enable)
+#   none    : no device records the isolation
+# `electrical` jobs need NFPA 70E qualification as well as the permit's own training.
+jobs:
+  work_types:                       # by calendar work type
+    tapoff_work:     {permits: [loto], lock: tapoff, electrical: true}
+    ups_pm:          {permits: [loto], lock: ups, electrical: true}
+    cdu_filter:      {permits: [loto], lock: pump, electrical: false}
+    chiller_pm:      {permits: [loto], lock: chiller, electrical: false}
+    tapoff_energize: {permits: [eewp, height], lock: none, electrical: true}   # a new tap-off onto live busway, overhead
+    thermography:    {permits: [], lock: none, electrical: true}               # testing under load: qualified person, no permit
+  work_orders:                      # corrective work by fault class, or planned work by its notes
+    - {fault_class: OT-FC-PWR, permits: [loto], lock: tapoff, electrical: true}
+    - {fault_class: OT-FC-UPS, permits: [loto], lock: ups, electrical: true}
+    - {match: '^Tap-off TO-[A-Z]\d+(-[AB])? retorque', permits: [loto], lock: tapoff, electrical: true}
+  milestones:                       # IT Partner deployment steps
+    M5: {permits: [height], lock: none, electrical: false, hours: [3, 6]}      # cabling in the overhead trays
+
+# Training. `months` is how long a completion stays current. `for` names who holds it.
+courses:
+  orientation: {name: "Site orientation", months: 12, for: all}
+  nfpa70e:     {name: "NFPA 70E qualified person", months: 36, for: [landlord]}
+  loto:        {name: "Lockout/tagout (authorized)", months: 12, for: [landlord]}
+  release:     {name: "Contact release and emergency response", months: 12, for: [landlord]}
+  fall:        {name: "Fall protection", months: 24, for: [landlord, technician, shift_lead]}
+  heat:        {name: "Heat illness prevention", months: 12, for: all}
+  hazcom:      {name: "Hazard communication", months: 12, for: all}
+  powered:     {name: "Powered equipment operator", months: 36, for: [technician, shift_lead]}
+  osha30:      {name: "OSHA 30-hour", months: 60, for: [shift_lead]}
+
+# What each permit and task needs its named people to hold.
+required:
+  all: [orientation]
+  loto: [loto]
+  eewp: [nfpa70e]
+  eewp_attendant: [release]          # the second person outside the boundary (NFPA 70E 2027)
+  height: [fall]
+  electrical: [nfpa70e]
+
+# Generation only.
+generate:
+  issued_before_min: [10, 40]        # a permit is issued shortly before the work starts
+  eewp_approved_days_before: [1, 4]  # the Customer approves an energized work permit in advance
+  lock_after_min: [1, 6]             # the lock goes on after the device is isolated and comes off before it is restored
+  closed_after_min: [5, 30]          # the permit is closed after the work ends
+  training_margin_days: 45           # every completion stays current at least this long past the month end
+  shift_hours: 12                    # Landlord shifts (the roster records the start)
+  # Safety events per 10,000 hours worked, by kind, for each partner. Reported, never findings.
+  events_per_10k_hours:
+    near_miss: 4.0
+    stop_work: 2.0
+    first_aid: 0.8
+    recordable: 0.15
+  action_days: [5, 20]               # a corrective action is due this many days after the event
+  action_closed_share: 0.7
+
+# Planted record problems (one of each check). The answer key is written beside the data.
+planted:
+  no_permit: 1        # a job that needs a permit has none
+  lock_power: 1       # a lockout recorded while the device shows the circuit energized
+  untrained: 1        # a person named on an electrical permit whose NFPA 70E qualification had lapsed
+  closed_early: 1     # a permit closed before the work ended

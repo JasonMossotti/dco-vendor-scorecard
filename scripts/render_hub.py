@@ -136,6 +136,7 @@ def facts() -> dict:
                 "findings": [x["title"] for x in gh["findings"]]},
         "live": _live(tm),
         "calendar": _calendar(),
+        "ehs": _ehs(),
         "telemetry": {"gpus": tm["gpus"], "racks": len(tm["racks"]),
                       "agree": sum(a["checked"] - a["misses"] for a in tm["agreements"]), "cases": sum(a["checked"] for a in tm["agreements"]),
                       "halls": [(h["name"], h["util_avg"], h["at_cap_pct"]) for h in tm["halls"].values()],
@@ -186,6 +187,15 @@ def _calendar() -> dict:
     s = d["summary"]
     return {"overrun_jobs": [j for f in d["findings"] if f["kind"] == "overrun" for j in f["jobs"]],"past": s["past"]["jobs"], "fwd": s["forward"]["jobs"], "past_found": s["past"]["findings"],
             "fwd_found": s["forward"]["findings"], "overrun": s["past"]["by_kind"]["overrun"], "surge": s["past"]["by_kind"]["surge"]}
+
+
+def _ehs() -> dict:
+    from scorecard import ehs as E
+    d = E.page_data()
+    r = d["report"]
+    return {"permits": d["summary"]["permits"], "findings": d["summary"]["findings"], "hours": sum(x["hours"] for x in r.values()),
+            "recordables": sum(x["recordables"] for x in r.values()), "near_miss": sum(x["near_miss"] for x in r.values()),
+            "stop_work": sum(x["stop_work"] for x in r.values())}
 
 
 def tile(key: str, title: str, lead: str, stats: list[tuple[str, str]], links: list[tuple[str, str]], note: str = "") -> str:
@@ -318,12 +328,15 @@ def body(f: dict) -> str:
         tile("ops", "Operations",
              "Every booked job on one calendar to Hall C first compute: CAB changes, MOPs, maintenance, Hall B deployment "
              "milestones, and Hall C commissioning, checked for two jobs in one redundancy group, both feeds of a rack, "
-             "work on a surge day, and work in the first-compute freeze.",
+             "work on a surge day, and work in the first-compute freeze. Safety: the monthly EHS report by partner and "
+             "checks of the work permits, lockouts, and training against the job, badge, and device records.",
              [(str(cal["past"] + cal["fwd"]), "jobs on the calendar"), (str(cal["fwd_found"]), "forward conflicts to move"),
               (str(cal["past_found"]), "found in the data weeks")],
-             [("Open the calendar", "ops/#calendar")],
+             [("Open the calendar", "ops/#calendar"), ("Safety (EHS)", "ops/#ehs")],
              f"In the data weeks: {cal['surge']} jobs took a unit out on a surge day, and {cal['overrun']} ran past its booked window"
-             + (f" ({', '.join(cal['overrun_jobs'])})." if cal["overrun_jobs"] else ".")),
+             + (f" ({', '.join(cal['overrun_jobs'])})." if cal["overrun_jobs"] else ".")
+             + f" Safety: {f['ehs']['hours']:,.0f} hours worked, {f['ehs']['recordables']} recordables, {f['ehs']['near_miss']} near misses and "
+             f"{f['ehs']['stop_work']} stop-work uses reported, {f['ehs']['permits']} work permits, {f['ehs']['findings']} records that do not reconcile."),
         tile("deployments", "Deployments",
              f"The {dp['hall']} GB300 rollout: gates, steps, calculations, permits, and one work order per task from both "
              "partners' Jira projects, complete only when signed and inspected.",

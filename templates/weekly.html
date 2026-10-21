@@ -150,10 +150,12 @@ function render(w) {
   }
 
   const e = w.ehs;
+  const PERMIT_NAMES = {loto: "lockout/tagout", eewp: "energized electrical work", height: "working at height", hot: "hot work", confined: "confined space"};
   h += `<h2>8. Safety (EHS)</h2><ul><li><b>Injuries this week:</b> ${esc(e.injuries)}</li>` +
     e.events.map(x => `<li><b>Event:</b> <a href="../pir/">${esc(x.pir)}</a>: ${esc(x.screening)}</li>`).join("") +
     e.open_investigations.map(x => `<li><b>Open investigation:</b> ${esc(x.pir)} action ${esc(x.action)}, due ${esc(x.due)}${x.overdue ? ` <span class="over">overdue</span>` : ""}. ${esc(x.referral)}</li>`).join("") +
-    (!e.events.length && !e.open_investigations.length ? `<li>No events and no open investigations.</li>` : "") + `</ul>`;
+    (!e.events.length && !e.open_investigations.length ? `<li>No events and no open investigations.</li>` : "") +
+    (e.work ? `<li id="ehs-work"><b>Permits issued:</b> ${esc(e.work.permits)}${Object.keys(e.work.by_type).length ? ` (${Object.entries(e.work.by_type).map(([k, n]) => esc(PERMIT_NAMES[k] || k) + " " + esc(n)).join(", ")})` : ""}. <b>Reported:</b> ${esc(e.work.near_miss)} near miss${e.work.near_miss === 1 ? "" : "es"}, ${esc(e.work.stop_work)} stop-work use${e.work.stop_work === 1 ? "" : "s"}, ${esc(e.work.first_aid)} first aid, ${esc(e.work.recordable)} recordable${e.work.recordable === 1 ? "" : "s"}; reported events are never findings. Record checks on the <a href="../ops/#ehs">Operations tab (Safety)</a>.</li>` : "") + `</ul>`;
 
   h += `<h2>9. Decisions, priorities, and asks</h2>`;
   if (n) {
