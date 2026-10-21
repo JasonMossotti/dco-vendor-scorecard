@@ -1,0 +1,202 @@
+{"node": "a16-ct10", "reason": "XID 94", "state": "drain", "timestamp": "2026-08-03T11:32:54Z"}
+{"node": "a16-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-03T15:07:46Z"}
+{"node": "a07-ct17", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-03T16:52:56Z"}
+{"node": "a07-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-03T21:11:32Z"}
+{"node": "a14-ct15", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-04T18:38:36Z"}
+{"node": "a14-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-04T19:58:15Z"}
+{"node": "a22-ct02", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-05T20:49:20Z"}
+{"node": "a22-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-05T22:01:22Z"}
+{"node": "a01-ct05", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-06T12:03:25Z"}
+{"node": "a32-ct06", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-06T13:47:43Z"}
+{"node": "a32-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-06T15:11:52Z"}
+{"node": "a01-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-06T15:50:21Z"}
+{"node": "a31-ct04", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-07T10:02:10Z"}
+{"node": "a31-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-07T11:40:11Z"}
+{"node": "a20-ct16", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-08T02:34:26Z"}
+{"node": "a20-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-08T06:26:02Z"}
+{"node": "a31-ct17", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-08T07:04:14Z"}
+{"node": "a13-ct11", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-08T12:18:00Z"}
+{"node": "a31-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-08T15:00:12Z"}
+{"node": "a13-ct07", "reason": "XID 94", "state": "drain", "timestamp": "2026-08-08T17:52:43Z"}
+{"node": "a13-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-08T19:04:49Z"}
+{"node": "a13-ct11", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-08T19:33:57Z"}
+{"node": "a13-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-08T22:38:44Z"}
+{"node": "a13-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-09T03:34:09Z"}
+{"node": "a05-ct04", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-09T07:02:49Z"}
+{"node": "a05-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-09T08:26:21Z"}
+{"node": "a21-ct10", "reason": "XID 94", "state": "drain", "timestamp": "2026-08-09T09:43:49Z"}
+{"node": "a21-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-09T13:25:06Z"}
+{"node": "a05-ct05", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-09T19:42:42Z"}
+{"node": "a05-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-09T20:58:46Z"}
+{"node": "a09-ct09", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-10T01:58:53Z"}
+{"node": "a09-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-10T06:16:14Z"}
+{"node": "a27-ct05", "reason": "XID 94", "state": "drain", "timestamp": "2026-08-10T07:17:19Z"}
+{"node": "a14-ct03", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-10T09:16:26Z"}
+{"node": "a14-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-10T10:37:49Z"}
+{"node": "a27-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-10T10:41:56Z"}
+{"node": "a10-ct18", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-10T17:00:59Z"}
+{"node": "a10-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-10T20:08:36Z"}
+{"node": "a06-ct08", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-11T08:26:54Z"}
+{"node": "a06-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-11T11:40:15Z"}
+{"node": "a10-ct03", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-12T02:18:17Z"}
+{"node": "a10-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-12T03:29:20Z"}
+{"node": "a20-ct01", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-12T06:01:34Z"}
+{"node": "a01-ct17", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-12T07:06:43Z"}
+{"node": "a01-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-12T09:09:13Z"}
+{"node": "a20-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-12T10:41:22Z"}
+{"node": "a14-ct12", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-12T10:55:51Z"}
+{"node": "a14-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-12T12:25:43Z"}
+{"node": "a15-ct04", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-12T15:29:55Z"}
+{"node": "a32-ct07", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-12T19:41:57Z"}
+{"node": "a15-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-12T19:52:19Z"}
+{"node": "a32-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-12T23:07:43Z"}
+{"node": "a03-ct06", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-13T00:58:39Z"}
+{"node": "a04-ct02", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-13T01:53:42Z"}
+{"node": "a06-ct08", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-13T02:49:49Z"}
+{"node": "a03-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-13T04:14:32Z"}
+{"node": "a04-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-13T05:29:02Z"}
+{"node": "a06-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-13T07:00:13Z"}
+{"node": "a11-ct13", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-13T10:25:43Z"}
+{"node": "a11-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-13T11:31:50Z"}
+{"node": "a28-ct10", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-13T19:07:00Z"}
+{"node": "a01-ct11", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-13T20:21:17Z"}
+{"node": "a01-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-13T21:59:29Z"}
+{"node": "a28-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-13T23:07:34Z"}
+{"node": "a22-ct10", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-14T01:53:40Z"}
+{"node": "a22-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-14T08:51:32Z"}
+{"node": "a22-ct10", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-14T09:27:12Z"}
+{"node": "a22-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-14T12:29:06Z"}
+{"node": "a29-ct02", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-14T22:22:52Z"}
+{"node": "a03-ct06", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-15T02:00:21Z"}
+{"node": "a29-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-15T02:15:51Z"}
+{"node": "a03-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-15T06:12:46Z"}
+{"node": "a06-ct17", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-15T23:23:47Z"}
+{"node": "a06-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-16T02:34:01Z"}
+{"node": "a30-ct02", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-16T15:02:58Z"}
+{"node": "a29-ct08", "reason": "XID 48", "state": "drain", "timestamp": "2026-08-16T16:24:23Z"}
+{"node": "a30-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-16T16:54:32Z"}
+{"node": "a12-ct16", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-16T19:48:21Z"}
+{"node": "a29-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-16T20:44:13Z"}
+{"node": "a04-ct01", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-16T22:54:23Z"}
+{"node": "a12-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-16T23:03:37Z"}
+{"node": "a04-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-17T00:30:40Z"}
+{"node": "a21-ct06", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-17T20:36:39Z"}
+{"node": "a21-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-17T21:36:31Z"}
+{"node": "a16-ct09", "reason": "XID 48", "state": "drain", "timestamp": "2026-08-18T12:23:16Z"}
+{"node": "a24-ct14", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-18T14:46:39Z"}
+{"node": "a24-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-18T16:02:35Z"}
+{"node": "a16-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-18T16:35:26Z"}
+{"node": "a18-ct04", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-18T23:12:56Z"}
+{"node": "a04-ct16", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-18T23:18:38Z"}
+{"node": "a04-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-19T00:36:45Z"}
+{"node": "a18-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-19T00:39:18Z"}
+{"node": "a28-ct05", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-19T13:29:17Z"}
+{"node": "a28-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-19T14:56:33Z"}
+{"node": "a22-ct08", "reason": "XID 48", "state": "drain", "timestamp": "2026-08-19T16:08:57Z"}
+{"node": "a22-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-19T20:10:43Z"}
+{"node": "a13-ct01", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-20T21:25:50Z"}
+{"node": "a13-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-21T01:24:21Z"}
+{"node": "a26-ct12", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-21T04:03:39Z"}
+{"node": "a26-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-21T07:51:02Z"}
+{"node": "a07-ct03", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-21T12:59:28Z"}
+{"node": "a07-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-21T14:36:18Z"}
+{"node": "a09-ct10", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-21T21:54:03Z"}
+{"node": "a09-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-22T01:52:40Z"}
+{"node": "a26-ct07", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-22T14:21:08Z"}
+{"node": "a26-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-22T16:35:30Z"}
+{"node": "a19-ct03", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-23T01:23:57Z"}
+{"node": "a19-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-23T02:49:51Z"}
+{"node": "a31-ct16", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-23T04:22:01Z"}
+{"node": "a31-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-23T06:17:52Z"}
+{"node": "a30-ct11", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-23T07:03:56Z"}
+{"node": "a30-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-23T08:26:25Z"}
+{"node": "a17-ct15", "reason": "XID 94", "state": "drain", "timestamp": "2026-08-23T17:54:05Z"}
+{"node": "a17-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-23T22:32:10Z"}
+{"node": "a24-ct01", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct02", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct03", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct04", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct05", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct06", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct07", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct08", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct09", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct10", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct11", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct12", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct13", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct14", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct15", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct16", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct17", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct18", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-24T01:36:22Z"}
+{"node": "a24-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a24-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T04:46:06Z"}
+{"node": "a18-ct14", "reason": "XID 149", "state": "drain", "timestamp": "2026-08-24T14:50:18Z"}
+{"node": "a18-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-24T18:50:38Z"}
+{"node": "a20-ct09", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-24T20:44:55Z"}
+{"node": "a26-ct12", "reason": "XID 79", "state": "drain", "timestamp": "2026-08-24T23:02:14Z"}
+{"node": "a20-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T00:48:12Z"}
+{"node": "a26-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T02:46:57Z"}
+{"node": "a31-ct01", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct02", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct03", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct04", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct05", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct06", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct07", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct08", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct09", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct10", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct11", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct12", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct13", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct14", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct15", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct16", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct17", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct18", "reason": "NVLink domain degraded", "state": "drain", "timestamp": "2026-08-25T08:21:06Z"}
+{"node": "a31-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct02", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct03", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct04", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct05", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct08", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct11", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct12", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct13", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct14", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct15", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct16", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct17", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a31-ct18", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T11:14:00Z"}
+{"node": "a12-ct01", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-25T11:31:13Z"}
+{"node": "a12-ct01", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-25T12:39:04Z"}
+{"node": "a23-ct09", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-25T21:11:37Z"}
+{"node": "a23-ct09", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-26T01:32:44Z"}
+{"node": "a25-ct07", "reason": "IB link down", "state": "drain", "timestamp": "2026-08-26T02:06:57Z"}
+{"node": "a25-ct07", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-26T03:36:25Z"}
+{"node": "a23-ct10", "reason": "XID 145", "state": "drain", "timestamp": "2026-08-28T03:17:51Z"}
+{"node": "a23-ct10", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-28T08:20:09Z"}
+{"node": "a23-ct06", "reason": "XID 119", "state": "drain", "timestamp": "2026-08-29T04:08:47Z"}
+{"node": "a23-ct06", "reason": "returned to service", "state": "idle", "timestamp": "2026-08-29T08:08:36Z"}

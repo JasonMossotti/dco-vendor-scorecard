@@ -1,0 +1,30 @@
+[
+  {
+    "evidence": "Post log says staffed; no badge-in at the post reader during the shift",
+    "guard_id": "LGP-003",
+    "post": "POST-HB",
+    "shift_start": "2026-08-28T12:00:00Z",
+    "type": "post_reported_unstaffed"
+  },
+  {
+    "alarm_id": "ACS-00009",
+    "door": "DOCK-INNER",
+    "evidence": "Dispatch log closed; no guard badge at the door between the alarm and the close",
+    "sir": "SIR-00009",
+    "type": "door_alarm_closed_no_response"
+  },
+  {
+    "escort": "RSS-007",
+    "evidence": "Visitor badged into the hall; the named escort did not badge in within 2 minutes",
+    "hall": "HALL-A",
+    "type": "visitor_without_escort",
+    "visit_id": "VIS-0025"
+  },
+  {
+    "drive_serial": "E1SJNJ6KIEF6",
+    "evidence": "Tray shipped; the drive has no handover and no destruction certificate",
+    "ticket": "INC3100323",
+    "tray_serial": "CTBFRZOWJI",
+    "type": "media_shipped_without_destruction"
+  }
+]

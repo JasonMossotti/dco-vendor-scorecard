@@ -24,6 +24,7 @@ data/*
 !data/audit/
 !data/calendar/
 !data/ehs/
+!data/quarter/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/

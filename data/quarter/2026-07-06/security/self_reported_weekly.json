@@ -1,0 +1,58 @@
+[
+  {
+    "note": "All SLAs met. All posts staffed.",
+    "reported_by": "Llano Gate Protective Services, LLC",
+    "results": {
+      "SEC-CSL-01": 100.0,
+      "SEC-CSL-02": 100.0,
+      "SEC-CSL-03": 100.0,
+      "SEC-CSL-04": 99.96,
+      "SEC-CSL-05": 100.0,
+      "SEC-CSL-06": 100.0,
+      "SEC-CSL-07": 100.0
+    },
+    "week_start": "2026-07-06T00:00:00Z"
+  },
+  {
+    "note": "All SLAs met. All posts staffed.",
+    "reported_by": "Llano Gate Protective Services, LLC",
+    "results": {
+      "SEC-CSL-01": 100.0,
+      "SEC-CSL-02": 100.0,
+      "SEC-CSL-03": 100.0,
+      "SEC-CSL-04": 99.96,
+      "SEC-CSL-05": 100.0,
+      "SEC-CSL-06": 100.0,
+      "SEC-CSL-07": 100.0
+    },
+    "week_start": "2026-07-13T00:00:00Z"
+  },
+  {
+    "note": "All SLAs met. All posts staffed.",
+    "reported_by": "Llano Gate Protective Services, LLC",
+    "results": {
+      "SEC-CSL-01": 100.0,
+      "SEC-CSL-02": 100.0,
+      "SEC-CSL-03": 100.0,
+      "SEC-CSL-04": 99.96,
+      "SEC-CSL-05": 100.0,
+      "SEC-CSL-06": 100.0,
+      "SEC-CSL-07": 100.0
+    },
+    "week_start": "2026-07-20T00:00:00Z"
+  },
+  {
+    "note": "All SLAs met. All posts staffed.",
+    "reported_by": "Llano Gate Protective Services, LLC",
+    "results": {
+      "SEC-CSL-01": 100.0,
+      "SEC-CSL-02": 100.0,
+      "SEC-CSL-03": 100.0,
+      "SEC-CSL-04": 99.98,
+      "SEC-CSL-05": 100.0,
+      "SEC-CSL-06": 100.0,
+      "SEC-CSL-07": 100.0
+    },
+    "week_start": "2026-07-27T00:00:00Z"
+  }
+]

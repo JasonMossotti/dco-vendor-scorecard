@@ -1,0 +1,33 @@
+counted_at,fru,system_qty,counted_qty
+2026-08-09T23:00:00Z,800G OSFP optic,220,220
+2026-08-09T23:00:00Z,Compute tray,3,3
+2026-08-09T23:00:00Z,E1.S drive,30,30
+2026-08-09T23:00:00Z,Fiber and DAC cable kits,150,150
+2026-08-09T23:00:00Z,Manifold hose and quick-disconnect kit,15,15
+2026-08-09T23:00:00Z,NVLink switch tray,3,3
+2026-08-09T23:00:00Z,PSU (5.5 kW),33,33
+2026-08-09T23:00:00Z,Power shelf,6,6
+2026-08-16T23:00:00Z,800G OSFP optic,221,221
+2026-08-16T23:00:00Z,Compute tray,-1,-1
+2026-08-16T23:00:00Z,E1.S drive,30,30
+2026-08-16T23:00:00Z,Fiber and DAC cable kits,150,150
+2026-08-16T23:00:00Z,Manifold hose and quick-disconnect kit,15,15
+2026-08-16T23:00:00Z,NVLink switch tray,3,3
+2026-08-16T23:00:00Z,PSU (5.5 kW),35,35
+2026-08-16T23:00:00Z,Power shelf,5,5
+2026-08-23T23:00:00Z,800G OSFP optic,215,215
+2026-08-23T23:00:00Z,Compute tray,5,5
+2026-08-23T23:00:00Z,E1.S drive,30,30
+2026-08-23T23:00:00Z,Fiber and DAC cable kits,150,150
+2026-08-23T23:00:00Z,Manifold hose and quick-disconnect kit,15,15
+2026-08-23T23:00:00Z,NVLink switch tray,3,3
+2026-08-23T23:00:00Z,PSU (5.5 kW),35,35
+2026-08-23T23:00:00Z,Power shelf,6,6
+2026-08-30T23:00:00Z,800G OSFP optic,222,222
+2026-08-30T23:00:00Z,Compute tray,3,3
+2026-08-30T23:00:00Z,E1.S drive,30,30
+2026-08-30T23:00:00Z,Fiber and DAC cable kits,150,150
+2026-08-30T23:00:00Z,Manifold hose and quick-disconnect kit,15,15
+2026-08-30T23:00:00Z,NVLink switch tray,2,2
+2026-08-30T23:00:00Z,PSU (5.5 kW),33,33
+2026-08-30T23:00:00Z,Power shelf,3,3

@@ -5,8 +5,9 @@ shipped dataset when the site is built, so the page opens without starting Pytho
 itself stays at ``/app/lab/`` for generating a new random month.
 
 ``build()`` returns plain JSON: the datasets (each with the IT Partner, Landlord, Security Partner, and site
-views, and for the sample month the quality audit) and the commercial terms of each contract, which the Service
-credits view explains and its calculator applies.
+views, and for the sample month the quality audit), the commercial terms of each contract, which the Service
+credits view explains and its calculator applies, and the quarterly business review (``scorecard.qbr``) for the
+quarter that ends with the sample month.
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ from typing import Any
 
 from scorecard import app_support as A
 from scorecard import audit as AU
+from scorecard import qbr as QBR
 from scorecard.sla_model import PARTNER_FILES, get_csl, load_sla
 
 ROOT = A.ROOT
@@ -161,5 +163,6 @@ def build(root: Path = ROOT) -> dict[str, Any]:
         key = "sample" if Path(d).name == "sample" else "latest"
         sets.append(dataset(label, key, Path(d)))
         sets[-1]["audit"] = audit_view(root, Path(d)) if key == "sample" else None
-    return {"datasets": sets, "terms": terms()}
+    qbr = QBR.page_data(root) if (root / "config" / "qbr.yaml").exists() else None
+    return {"datasets": sets, "terms": terms(), "qbr": qbr}
 

@@ -1,0 +1,18 @@
+{"camera": "CAM-B-03", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-1", "timestamp": "2026-08-09T00:25:08Z"}
+{"camera": "CAM-B-03", "event": "Recording resumed", "reason": "", "recorder": "NVR-1", "timestamp": "2026-08-09T01:01:43Z"}
+{"camera": "CAM-B-19", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-1", "timestamp": "2026-08-11T00:29:01Z"}
+{"camera": "CAM-B-19", "event": "Recording resumed", "reason": "", "recorder": "NVR-1", "timestamp": "2026-08-11T01:13:33Z"}
+{"camera": "CAM-C-09", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-1", "timestamp": "2026-08-11T04:00:12Z"}
+{"camera": "CAM-C-09", "event": "Recording resumed", "reason": "", "recorder": "NVR-1", "timestamp": "2026-08-11T04:08:19Z"}
+{"camera": "CAM-S-02", "event": "Recording stopped", "reason": "Video loss", "recorder": "NVR-2", "timestamp": "2026-08-18T21:20:33Z"}
+{"camera": "CAM-S-02", "event": "Recording resumed", "reason": "", "recorder": "NVR-2", "timestamp": "2026-08-18T21:50:19Z"}
+{"camera": "CAM-S-01", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-1", "timestamp": "2026-08-22T00:53:49Z"}
+{"camera": "CAM-S-01", "event": "Recording resumed", "reason": "", "recorder": "NVR-1", "timestamp": "2026-08-22T01:16:23Z"}
+{"camera": "CAM-C-14", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-2", "timestamp": "2026-08-27T02:14:18Z"}
+{"camera": "CAM-C-14", "event": "Recording resumed", "reason": "", "recorder": "NVR-2", "timestamp": "2026-08-27T03:01:02Z"}
+{"camera": "CAM-B-15", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-1", "timestamp": "2026-08-28T04:01:10Z"}
+{"camera": "CAM-B-15", "event": "Recording resumed", "reason": "", "recorder": "NVR-1", "timestamp": "2026-08-28T04:08:02Z"}
+{"camera": "CAM-A-19", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-3", "timestamp": "2026-08-29T02:12:22Z"}
+{"camera": "CAM-A-19", "event": "Recording resumed", "reason": "", "recorder": "NVR-3", "timestamp": "2026-08-29T02:36:24Z"}
+{"camera": "CAM-B-14", "event": "Recording stopped", "reason": "Network timeout", "recorder": "NVR-4", "timestamp": "2026-08-29T20:46:36Z"}
+{"camera": "CAM-B-14", "event": "Recording resumed", "reason": "", "recorder": "NVR-4", "timestamp": "2026-08-29T21:56:02Z"}

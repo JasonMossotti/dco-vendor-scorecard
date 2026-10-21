@@ -1,0 +1,2 @@
+{"circuit": 7, "controller": "TTDM-B", "distance_m": 10.5, "event": "LEAK", "label": "Under CDU-B3", "timestamp": "2026-08-04T22:07:46Z"}
+{"circuit": 7, "controller": "TTDM-B", "distance_m": null, "event": "NORMAL", "label": "Under CDU-B3", "timestamp": "2026-08-05T04:29:31Z"}

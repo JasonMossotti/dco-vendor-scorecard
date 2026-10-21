@@ -1,0 +1,101 @@
+[
+  {
+    "approved_at": "2026-06-22T13:29:43Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "UPS-B2"
+    ],
+    "mop_id": "MOP-306",
+    "title": "Preventive maintenance and battery health check: UPS-B2",
+    "window_end": "2026-07-09T17:29:43Z",
+    "window_start": "2026-07-09T13:29:43Z"
+  },
+  {
+    "approved_at": "2026-06-19T18:41:27Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "CDU-B2"
+    ],
+    "mop_id": "MOP-301",
+    "title": "Filter change and coolant sample: CDU-B2",
+    "window_end": "2026-07-10T20:41:27Z",
+    "window_start": "2026-07-10T18:41:27Z"
+  },
+  {
+    "approved_at": "2026-07-04T17:19:03Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "VESDA-A1"
+    ],
+    "mop_id": "MOP-307",
+    "title": "VESDA inspection and smoke test: VESDA-A1",
+    "window_end": "2026-07-17T19:34:03Z",
+    "window_start": "2026-07-17T17:19:03Z"
+  },
+  {
+    "approved_at": "2026-07-01T15:45:31Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "CDU-B3"
+    ],
+    "mop_id": "MOP-302",
+    "title": "Filter change and coolant sample: CDU-B3",
+    "window_end": "2026-07-20T17:45:31Z",
+    "window_start": "2026-07-20T15:45:31Z"
+  },
+  {
+    "approved_at": "2026-07-03T16:01:00Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "CDU-A4"
+    ],
+    "mop_id": "MOP-304",
+    "title": "Filter change and coolant sample: CDU-A4",
+    "window_end": "2026-07-24T18:01:00Z",
+    "window_start": "2026-07-24T16:01:00Z"
+  },
+  {
+    "approved_at": "2026-07-03T16:18:18Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "BW-B-R3-PG-B4-B"
+    ],
+    "mop_id": "MOP-309",
+    "title": "Energize tap-off TO-B31 for a new rack (HO-4)",
+    "window_end": "2026-07-24T18:18:18Z",
+    "window_start": "2026-07-24T16:18:18Z"
+  },
+  {
+    "approved_at": "2026-07-11T14:21:43Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "CDU-A2"
+    ],
+    "mop_id": "MOP-303",
+    "title": "Filter change and coolant sample: CDU-A2",
+    "window_end": "2026-07-27T16:21:43Z",
+    "window_start": "2026-07-27T14:21:43Z"
+  },
+  {
+    "approved_at": "2026-07-07T14:15:41Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "BW-B-R3-PG-B3-A"
+    ],
+    "mop_id": "MOP-308",
+    "title": "Energize tap-off TO-B09 for a new rack (HO-4)",
+    "window_end": "2026-07-28T16:15:41Z",
+    "window_start": "2026-07-28T14:15:41Z"
+  },
+  {
+    "approved_at": "2026-07-18T15:42:30Z",
+    "approved_by": "Customer change board",
+    "assets": [
+      "UPS-A4"
+    ],
+    "mop_id": "MOP-305",
+    "title": "Preventive maintenance and battery health check: UPS-A4",
+    "window_end": "2026-07-30T19:42:30Z",
+    "window_start": "2026-07-30T15:42:30Z"
+  }
+]

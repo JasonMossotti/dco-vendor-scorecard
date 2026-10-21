@@ -1,0 +1,46 @@
+{"action": "set", "change_ref": "PM-0014", "device": "CH-11", "kind": "override", "point": "Chiller enable", "timestamp": "2026-07-06T16:34:36Z", "user": "CCF-E03", "value": "Off"}
+{"action": "release", "change_ref": "PM-0014", "device": "CH-11", "kind": "override", "point": "Chiller enable", "timestamp": "2026-07-06T19:34:36Z", "user": "CCF-E03", "value": "Auto"}
+{"alarm": "Detector fault: airflow low", "device": "VESDA-B2", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-09T03:31:21Z"}
+{"alarm": "Detector fault: airflow low", "device": "VESDA-B2", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-09T03:35:36Z", "user": "CCF-E10"}
+{"alarm": "Detector fault: airflow low", "device": "VESDA-B2", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-09T05:04:56Z"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-08", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-09T20:51:13Z"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-08", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-09T21:00:53Z", "user": "CCF-E05"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-08", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-09T22:54:05Z"}
+{"alarm": "Pump 2 fault", "device": "CDU-B2", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-10T11:33:31Z"}
+{"alarm": "Pump 2 fault", "device": "CDU-B2", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-10T11:39:14Z", "user": "CCF-E11"}
+{"alarm": "Pump 2 fault", "device": "CDU-B2", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-10T15:44:23Z"}
+{"action": "set", "change_ref": "PM-0015", "device": "CH-04", "kind": "override", "point": "Chiller enable", "timestamp": "2026-07-10T16:37:20Z", "user": "CCF-E07", "value": "Off"}
+{"action": "release", "change_ref": "PM-0015", "device": "CH-04", "kind": "override", "point": "Chiller enable", "timestamp": "2026-07-10T19:37:20Z", "user": "CCF-E07", "value": "Auto"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-03", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-11T04:28:05Z"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-03", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-11T04:33:22Z", "user": "CCF-E11"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-03", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-11T07:09:20Z"}
+{"alarm": "Utility power lost", "device": "MV switchgear", "kind": "alarm", "priority": "P1", "state": "active", "timestamp": "2026-07-13T18:40:27Z"}
+{"alarm": "Utility power lost", "device": "MV switchgear", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-13T18:43:45Z", "user": "CCF-E03"}
+{"alarm": "Utility power lost", "device": "MV switchgear", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-13T19:40:09Z"}
+{"action": "set", "change_ref": "", "device": "TW-A4", "kind": "inhibit", "point": "High supply air temperature alarm", "timestamp": "2026-07-15T16:26:59Z", "user": "CCF-E01", "value": "Inhibited"}
+{"alarm": "Utility power lost", "device": "MV switchgear", "kind": "alarm", "priority": "P1", "state": "active", "timestamp": "2026-07-15T18:09:57Z"}
+{"alarm": "Utility power lost", "device": "MV switchgear", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-15T18:11:14Z", "user": "CCF-E04"}
+{"alarm": "Utility power lost", "device": "MV switchgear", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-15T18:51:54Z"}
+{"action": "release", "change_ref": "", "device": "TW-A4", "kind": "inhibit", "point": "High supply air temperature alarm", "timestamp": "2026-07-17T08:31:57Z", "user": "CCF-E01", "value": "Auto"}
+{"alarm": "Fan 6 failure", "device": "TW-B2", "kind": "alarm", "priority": "P3", "state": "active", "timestamp": "2026-07-18T02:32:26Z"}
+{"alarm": "Fan 6 failure", "device": "TW-B2", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-18T02:38:43Z", "user": "CCF-E12"}
+{"alarm": "Fan 6 failure", "device": "TW-B2", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-18T11:23:10Z"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-09", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-19T18:17:04Z"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-09", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-19T18:27:28Z", "user": "CCF-E06"}
+{"alarm": "Compressor trip (high condenser pressure)", "device": "CH-09", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-19T22:05:31Z"}
+{"alarm": "Module 1 fault", "device": "UPS-A1", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-20T09:13:04Z"}
+{"alarm": "Module 1 fault", "device": "UPS-A1", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-20T09:18:16Z", "user": "CCF-E12"}
+{"alarm": "Pump 1 fault", "device": "CDU-A2", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-20T13:52:56Z"}
+{"alarm": "Pump 1 fault", "device": "CDU-A2", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-20T13:56:42Z", "user": "CCF-E06"}
+{"alarm": "Module 1 fault", "device": "UPS-A1", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-20T14:16:54Z"}
+{"alarm": "Pump 1 fault", "device": "CDU-A2", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-20T19:49:19Z"}
+{"action": "set", "change_ref": "PM-0016", "device": "CH-02", "kind": "override", "point": "Chiller enable", "timestamp": "2026-07-23T19:42:20Z", "user": "CCF-E01", "value": "Off"}
+{"action": "release", "change_ref": "PM-0016", "device": "CH-02", "kind": "override", "point": "Chiller enable", "timestamp": "2026-07-23T22:42:20Z", "user": "CCF-E01", "value": "Auto"}
+{"action": "set", "change_ref": "", "device": "TW-B3", "kind": "inhibit", "point": "High supply air temperature alarm", "timestamp": "2026-07-27T10:58:45Z", "user": "CCF-E11", "value": "Inhibited"}
+{"alarm": "Leak circuit 8 at 15.8 m", "device": "TTDM-B", "kind": "alarm", "priority": "P1", "state": "active", "timestamp": "2026-07-27T17:16:59Z"}
+{"alarm": "Leak circuit 8 at 15.8 m", "device": "TTDM-B", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-27T17:18:08Z", "user": "CCF-E06"}
+{"alarm": "Leak circuit 8 at 15.8 m", "device": "TTDM-B", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-27T19:53:13Z"}
+{"action": "release", "change_ref": "", "device": "TW-B3", "kind": "inhibit", "point": "High supply air temperature alarm", "timestamp": "2026-07-29T19:39:36Z", "user": "CCF-E11", "value": "Auto"}
+{"alarm": "Busway undervoltage", "device": "BW-B-R3-PG-B5-A", "kind": "alarm", "priority": "P2", "state": "active", "timestamp": "2026-07-30T14:54:19Z"}
+{"alarm": "Busway undervoltage", "device": "BW-B-R3-PG-B5-A", "kind": "alarm", "state": "acknowledged", "timestamp": "2026-07-30T15:00:00Z", "user": "CCF-E02"}
+{"alarm": "Busway undervoltage", "device": "BW-B-R3-PG-B5-A", "kind": "alarm", "state": "cleared", "timestamp": "2026-07-30T17:58:37Z"}

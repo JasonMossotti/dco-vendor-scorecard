@@ -1,0 +1,26 @@
+[
+  {
+    "anomaly_id": "FPD-001",
+    "device": "CH-05",
+    "hours": 53.6,
+    "point": "Condenser fan speed",
+    "set_at": "2026-08-06T05:00:24Z",
+    "type": "bms_override_unrecorded"
+  },
+  {
+    "anomaly_id": "FPD-002",
+    "device": "TW-A1",
+    "hours": 34.7,
+    "point": "High supply air temperature alarm",
+    "set_at": "2026-08-17T05:53:36Z",
+    "type": "bms_override_unrecorded"
+  },
+  {
+    "anomaly_id": "FPD-003",
+    "asset": "CH-02",
+    "claimed_complete": "2026-08-23T14:59:34Z",
+    "evidence": "No badge entry and no device signal",
+    "task": "PM-0018",
+    "type": "pm_without_evidence"
+  }
+]

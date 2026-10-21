@@ -1,0 +1,16 @@
+{"device": "MV-A main breaker", "event": "Trip (utility undervoltage)", "timestamp": "2026-07-13T18:40:27Z"}
+{"device": "MV-B main breaker", "event": "Trip (utility undervoltage)", "timestamp": "2026-07-13T18:40:27Z"}
+{"device": "Generator paralleling bus", "event": "Bus live (7 of 7 generators)", "timestamp": "2026-07-13T18:40:37Z"}
+{"device": "Generator tie breakers", "event": "Closed to MV-A and MV-B", "timestamp": "2026-07-13T18:40:39Z"}
+{"device": "MV-A main breaker", "event": "Closed (utility restored, closed-transition retransfer)", "timestamp": "2026-07-13T19:40:09Z"}
+{"device": "MV-B main breaker", "event": "Closed (utility restored, closed-transition retransfer)", "timestamp": "2026-07-13T19:40:09Z"}
+{"device": "Generator tie breakers", "event": "Open", "timestamp": "2026-07-13T19:40:14Z"}
+{"device": "MV-A main breaker", "event": "Trip (utility undervoltage)", "timestamp": "2026-07-15T18:09:57Z"}
+{"device": "MV-B main breaker", "event": "Trip (utility undervoltage)", "timestamp": "2026-07-15T18:09:57Z"}
+{"device": "Generator paralleling bus", "event": "Bus live (7 of 7 generators)", "timestamp": "2026-07-15T18:10:07Z"}
+{"device": "Generator tie breakers", "event": "Closed to MV-A and MV-B", "timestamp": "2026-07-15T18:10:09Z"}
+{"device": "MV-A main breaker", "event": "Closed (utility restored, closed-transition retransfer)", "timestamp": "2026-07-15T18:51:54Z"}
+{"device": "MV-B main breaker", "event": "Closed (utility restored, closed-transition retransfer)", "timestamp": "2026-07-15T18:51:54Z"}
+{"device": "Generator tie breakers", "event": "Open", "timestamp": "2026-07-15T18:51:59Z"}
+{"device": "UPS-B1 output feeder to BW-B-R3-PG-B5-A", "event": "Breaker trip (short-time overcurrent)", "timestamp": "2026-07-30T14:54:18Z"}
+{"device": "UPS-B1 output feeder to BW-B-R3-PG-B5-A", "event": "Breaker closed", "timestamp": "2026-07-30T17:58:17Z"}

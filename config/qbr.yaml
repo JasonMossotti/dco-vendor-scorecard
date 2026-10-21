@@ -1,0 +1,26 @@
+# Quarterly business review (Scorecards tab, /app/#qbr).
+#
+# The contract's quarterly forum (sla/common.yaml, governance): the Supplier executive sponsor and Customer DCO
+# leadership; inputs are trend analysis, SLA change proposals, the roadmap and capacity plan, and program-wide lessons.
+# The quarter is three 4-week Measurement Periods, each measured exactly as the sample month is.
+
+quarter: 2026-Q3
+months:
+  - {id: "2026-07", start: 2026-07-06, seed: 2607}     # generated (data/quarter/2026-07-06/)
+  - {id: "2026-08", start: 2026-08-03, seed: 2608}     # generated (data/quarter/2026-08-03/)
+  - {id: "2026-09", start: 2026-08-31, sample: true}   # the sample month (data/sample/, data/security/)
+
+# How the earlier months are generated: the same site generator and Security Partner layer, with each planted count
+# drawn by chance around its usual rate (Poisson, mean = the count in config/synthetic.yaml) on the month's own
+# stream ("<seed>:quarter"), and each Security Partner plant kept when a draw with mean 1 is above zero. Hall B racks
+# begin arriving Aug 31 (the deployment plan), so the earlier months receive none. The September stories (A07, the
+# Hall B rollout, the EHS and audit cases) stay in the sample month.
+generate:
+  deployment_racks: 0
+  plan_first_receipt: 2026-09-01   # the deployment plan's first Hall B receipt, as in the sample month
+
+# SLA change proposals, by rule. A person writes what each one means in qbr/notes/<quarter>.yaml.
+proposals:
+  tighten_margin_share: 0.5    # tighten: Expected met every month, the worst month beyond Expected by half the Expected-to-Minimum gap
+  cap_min_defaults: 2          # corrective action plan: a Minimum default in this many months or more
+  # review the measure: every month the partner's own report meets Expected while the measurement does not

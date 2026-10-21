@@ -1,0 +1,8 @@
+{"busway": "BW-B-R4-PG-B5-B", "event": "Breaker open", "point": "Tap-off breaker", "tapoff": "TO-B11", "timestamp": "2026-07-09T15:53:29Z"}
+{"busway": "BW-B-R4-PG-B5-B", "event": "Breaker closed", "point": "Tap-off breaker", "tapoff": "TO-B11", "timestamp": "2026-07-09T16:26:27Z"}
+{"busway": "BW-B-R3-PG-B4-B", "event": "Breaker open", "point": "Tap-off breaker", "tapoff": "TO-B31", "timestamp": "2026-07-24T16:48:18Z"}
+{"busway": "BW-B-R3-PG-B4-B", "event": "Breaker closed", "point": "Tap-off breaker", "tapoff": "TO-B31", "timestamp": "2026-07-24T17:16:41Z"}
+{"busway": "BW-B-R3-PG-B3-A", "event": "Breaker open", "point": "Tap-off breaker", "tapoff": "TO-B09", "timestamp": "2026-07-28T14:45:41Z"}
+{"busway": "BW-B-R3-PG-B3-A", "event": "Breaker closed", "point": "Tap-off breaker", "tapoff": "TO-B09", "timestamp": "2026-07-28T15:19:10Z"}
+{"busway": "BW-B-R3-PG-B5-A", "point": "Voltage L-L avg", "state": "out_of_tolerance", "timestamp": "2026-07-30T14:54:19Z", "value_v": 0.0}
+{"busway": "BW-B-R3-PG-B5-A", "point": "Voltage L-L avg", "state": "in_tolerance", "timestamp": "2026-07-30T17:58:37Z", "value_v": 478.7}

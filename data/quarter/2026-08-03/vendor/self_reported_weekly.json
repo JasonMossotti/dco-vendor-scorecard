@@ -1,0 +1,98 @@
+[
+  {
+    "first_time_fix_pct": 100.0,
+    "gpu_availability_pct": 99.945,
+    "notes": "All SLAs met. No open escalations.",
+    "restore_performance": {
+      "P1": {
+        "count": 0,
+        "within_target_pct": 100.0
+      },
+      "P2": {
+        "count": 15,
+        "within_target_pct": 100.0
+      },
+      "P3": {
+        "count": 7,
+        "within_target_pct": 100.0
+      }
+    },
+    "staffing_fill_pct": 100.0,
+    "tickets_closed": 22,
+    "validated_rts_pct": 100.0,
+    "week_end": "2026-08-10T00:00:00Z",
+    "week_start": "2026-08-03T00:00:00Z"
+  },
+  {
+    "first_time_fix_pct": 100.0,
+    "gpu_availability_pct": 99.914,
+    "notes": "All SLAs met. No open escalations.",
+    "restore_performance": {
+      "P1": {
+        "count": 0,
+        "within_target_pct": 100.0
+      },
+      "P2": {
+        "count": 27,
+        "within_target_pct": 100.0
+      },
+      "P3": {
+        "count": 5,
+        "within_target_pct": 100.0
+      }
+    },
+    "staffing_fill_pct": 100.0,
+    "tickets_closed": 32,
+    "validated_rts_pct": 100.0,
+    "week_end": "2026-08-17T00:00:00Z",
+    "week_start": "2026-08-10T00:00:00Z"
+  },
+  {
+    "first_time_fix_pct": 100.0,
+    "gpu_availability_pct": 99.959,
+    "notes": "All SLAs met. No open escalations.",
+    "restore_performance": {
+      "P1": {
+        "count": 0,
+        "within_target_pct": 100.0
+      },
+      "P2": {
+        "count": 16,
+        "within_target_pct": 100.0
+      },
+      "P3": {
+        "count": 3,
+        "within_target_pct": 100.0
+      }
+    },
+    "staffing_fill_pct": 100.0,
+    "tickets_closed": 19,
+    "validated_rts_pct": 100.0,
+    "week_end": "2026-08-24T00:00:00Z",
+    "week_start": "2026-08-17T00:00:00Z"
+  },
+  {
+    "first_time_fix_pct": 100.0,
+    "gpu_availability_pct": 99.859,
+    "notes": "All SLAs met. No open escalations.",
+    "restore_performance": {
+      "P1": {
+        "count": 2,
+        "within_target_pct": 100.0
+      },
+      "P2": {
+        "count": 11,
+        "within_target_pct": 100.0
+      },
+      "P3": {
+        "count": 5,
+        "within_target_pct": 100.0
+      }
+    },
+    "staffing_fill_pct": 100.0,
+    "tickets_closed": 18,
+    "validated_rts_pct": 100.0,
+    "week_end": "2026-08-31T00:00:00Z",
+    "week_start": "2026-08-24T00:00:00Z"
+  }
+]

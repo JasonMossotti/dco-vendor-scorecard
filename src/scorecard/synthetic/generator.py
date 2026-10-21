@@ -706,6 +706,8 @@ class SiteGenerator:
         cycle = self.sla["deployment"]["rack_cycle_target_days"]
         self.deploy_plan, self.deploy_events = [], []
         first = self._local(self.start).date() + timedelta(days=1)
+        if dcfg.get("plan_first_receipt"):              # an earlier month: the plan's receipts start later
+            first = date.fromisoformat(str(dcfg["plan_first_receipt"]))
         for i, rack in enumerate(hall_b):
             receipt_local = datetime.combine(first + timedelta(days=int(i * 1.4)), time(8), tzinfo=UTC)
             receipt = receipt_local - self.utc_offset
