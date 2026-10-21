@@ -326,13 +326,15 @@ def body(f: dict) -> str:
              [("Open Live", "live/"), ("The 09-24 utility trip", "telemetry/#utility")],
              f"Cooling (mechanical UPSs) lowest {lv['cool_min'] // 60}:{lv['cool_min'] % 60:02d}. The same feed as the Alarm Board's Live Events; nothing here comes from a real system."),
         tile("ops", "Operations",
+             "A daily standup page for every day of the month: top three by a stated rule, open incidents with their clocks, "
+             "overnight, today's work, permits, spares, staffing, and who is on call, adding up to the weekly pack. "
              "Every booked job on one calendar to Hall C first compute: CAB changes, MOPs, maintenance, Hall B deployment "
              "milestones, and Hall C commissioning, checked for two jobs in one redundancy group, both feeds of a rack, "
              "work on a surge day, and work in the first-compute freeze. Safety: the monthly EHS report by partner and "
              "checks of the work permits, lockouts, and training against the job, badge, and device records.",
              [(str(cal["past"] + cal["fwd"]), "jobs on the calendar"), (str(cal["fwd_found"]), "forward conflicts to move"),
               (str(cal["past_found"]), "found in the data weeks")],
-             [("Open the calendar", "ops/#calendar"), ("Safety (EHS)", "ops/#ehs")],
+             [("Daily standup", "ops/"), ("Calendar", "ops/#calendar"), ("Safety (EHS)", "ops/#ehs")],
              f"In the data weeks: {cal['surge']} jobs took a unit out on a surge day, and {cal['overrun']} ran past its booked window"
              + (f" ({', '.join(cal['overrun_jobs'])})." if cal["overrun_jobs"] else ".")
              + f" Safety: {f['ehs']['hours']:,.0f} hours worked, {f['ehs']['recordables']} recordables, {f['ehs']['near_miss']} near misses and "

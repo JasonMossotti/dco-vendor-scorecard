@@ -1,0 +1,28 @@
+# Daily operations standup (/ops/, the Operations tab's opening view).
+#
+# The contract's daily forum (sla/common.yaml, governance): 15 minutes, the partners' shift leads and the Customer
+# site lead; inputs are open P1 and P2 incidents, today's deployment plan, blockers, and spares alerts. Every line on
+# the page is computed from the records at the standup's time; this file holds only the meeting's times, the rule
+# that picks the day's top three, and who to call.
+
+# The operations day runs from a night shift handover (the rosters' shift start, 19:00 CDT) to the next one, the
+# same boundary the weekly pack's weeks use, so seven days add up to one week. Overnight ends at the day shift
+# handover; the standup follows it (07:30 CDT).
+shift_hours: 12
+standup_after_handover_min: 30
+
+# Top three today: the first three items in this order (at most three).
+#   1. an open P1 or P2 incident at risk of missing its restore clock (least time left first)
+#   2. a redundancy group with redundancy reduced at the standup (below N first)
+#   3. a deployment step past its due date on a rack due for handoff within the look-ahead, or already late
+top3:
+  at_risk_share: 0.5          # an open incident is at risk once half of its restore time is used
+  handoff_lookahead_days: 7
+
+# Partner duty managers: each partner's escalation contact for the week, by role (no individual is named).
+# The Customer's on-call primary and secondary come from config/customer_notifications.yaml, the
+# shift leads and engineers on shift from the partners' rosters.
+duty_managers:
+  it: [IT Partner site manager, IT Partner operations manager]
+  landlord: [Landlord chief engineer, Landlord facility manager]
+  security: [Security Partner account manager, Security Partner site supervisor]

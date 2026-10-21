@@ -60,6 +60,19 @@ th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; 
 a.job, a.fnd, a.dayl { color:var(--it); text-decoration:none; } a.job:hover, a.fnd:hover, a.dayl:hover { text-decoration:underline; }
 .close { float:right; font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:2px 10px; cursor:pointer; }
 ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:2px 0; }
+.strip { display:flex; flex-direction:column; gap:4px; margin:10px 0; }
+.strip .wk { display:grid; grid-template-columns:80px repeat(7, minmax(0,1fr)); gap:4px; align-items:stretch; }
+.strip .wl { font-size:12px; color:var(--muted); align-self:center; }
+.strip a.sd { display:block; font-size:12px; padding:3px 6px; border:1px solid var(--line); border-radius:6px; color:var(--ink); text-decoration:none; background:#fff; position:relative; white-space:nowrap; overflow:hidden; }
+.strip a.sd b { font-weight:600; color:var(--muted); } .strip a.sd:hover { background:#f0f5ff; } .strip a.sd.sel { outline:2px solid var(--it); outline-offset:-1px; }
+.strip a.sd i { font-style:normal; font-size:10px; font-weight:700; color:#fff; background:var(--bad); border-radius:8px; padding:0 5px; position:absolute; right:4px; top:4px; }
+ol.top3 { margin:6px 0; padding-left:24px; } ol.top3 li { margin:6px 0; font-size:15px; }
+.two { display:grid; grid-template-columns:1fr 1fr; gap:0 14px; } .two .panel { margin:14px 0; }
+.panel h3:first-child { margin-top:0; } .panel table { background:#fff; } .panel.sp { overflow-x:auto; }
+.clk { position:relative; height:10px; width:140px; background:#fff; border:1px solid var(--line); border-radius:3px; }
+.clk .bar { position:absolute; top:0; left:0; height:100%; border-radius:2px; } .clk .bar.permit { background:var(--good); } .clk .bar.lock { background:var(--warn); } .clk .bar.at { background:var(--bad); }
+.clk .half { position:absolute; left:50%; top:-2px; bottom:-2px; border-left:1px dashed var(--ink); }
+@media (max-width:800px) { .two { grid-template-columns:1fr; } .strip .wk { grid-template-columns:repeat(7, minmax(0,1fr)); } .strip .wl { grid-column:1 / -1; } .strip a.sd b, .strip a.sd .mo { display:none; } .strip a.sd { padding:3px 4px; } .strip a.sd i { position:static; margin-left:3px; } }
 @media (max-width:800px) { main { padding:18px 14px; } .day { min-height:64px; } .chip { font-size:10px; } .tl .lb { width:90px; } .tl .ax { margin-left:90px; } }
 @media print { header.top, .filters { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } }
 </style>
@@ -68,7 +81,7 @@ ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:2px 0; }
 __SITENAV__
 <header class="top">
   <strong>Operations</strong>
-  <nav class="views" aria-label="Operations views"><a href="#calendar" data-view="calendar">Calendar</a><a href="#ehs" data-view="ehs">Safety</a></nav>
+  <nav class="views" aria-label="Operations views"><a href="#standup" data-view="standup">Daily standup</a><a href="#calendar" data-view="calendar">Calendar</a><a href="#ehs" data-view="ehs">Safety</a></nav>
 </header>
 <main id="doc"></main>
 <script id="data" type="application/json">__DATA__</script>
@@ -372,21 +385,129 @@ function viewEhs(sel) {
   </ul>`;
 }
 
+// ------------------------------------------------------------------ Daily standup (the opening view)
+const U = D.standup;
+const UDAY = Object.fromEntries(U.days.map(d => [d.date, d]));
+const RULE = {1: ["At risk", "bad"], 2: ["Redundancy", "warn"], 3: ["Deployment", "fz"]};
+const PNAME = {loto: "Lockout", eewp: "Energized work", height: "Working at height", hot: "Hot work", confined: "Confined space"};
+const hm = m => { const h = Math.floor(Math.abs(m) / 60), r = Math.round(Math.abs(m) % 60); return h ? (r ? `${h} h ${String(r).padStart(2, "0")} min` : `${h} h`) : `${r} min`; };
+const pcl = p => p === "IT Partner" ? "it" : p === "Landlord" ? "ll" : "";
+function sdLink(d, text) { return `<a class="dayl" href="#standup/${esc(d)}">${esc(text || md(d))}</a>`; }
+
+function clockBar(i) {
+  const pct = Math.min(100, 100 * i.used_min / i.target_min);
+  const cls = i.missed ? "at" : i.at_risk ? "lock" : "permit";
+  return `<div class="clk" title="${esc(hm(i.used_min) + " of " + hm(i.target_min))}"><span class="bar ${cls}" style="width:${esc(pct.toFixed(1))}%"></span><span class="half"></span></div>`;
+}
+
+function staffCell(x, k) {
+  if (!x) return "<td>-</td>";
+  const ok = x.badged === x.rostered;
+  const miss = x.missing && x.missing.length ? `<div class="note">Not badged in: ${esc(x.missing.join(", "))}</div>` : "";
+  return `<td><span class="flag ${ok ? "ok" : "warn"}">${esc(x.badged)} of ${esc(x.rostered)}</span>${k === "it" && x.lead ? `<div class="note">Shift lead ${esc(x.lead)}</div>` : ""}${miss}</td>`;
+}
+
+function viewStandup(day) {
+  const d = UDAY[day] || UDAY[U.today];
+  const i = U.days.indexOf(d), prev = U.days[i - 1], next = U.days[i + 1];
+  const wk = U.weeks[d.week];
+  const wtd = U.days.filter(x => x.week === d.week && x.week_day <= d.week_day);
+  const sum = f => wtd.reduce((a, x) => a + f(x.close), 0);
+  const strip = Object.keys(U.weeks).map(w => `<div class="wk"><span class="wl">${esc(w)}</span>${U.days.filter(x => x.week === w).map(x =>
+    `<a class="sd${x.date === d.date ? " sel" : ""}${x.top3.length ? " has" : ""}" href="#standup/${esc(x.date)}" title="${esc(x.weekday + " " + md(x.date) + ": " + x.top3.length + " top-three item" + (x.top3.length === 1 ? "" : "s"))}"><b>${esc(x.weekday)}</b> <span class="mo">${esc(md(x.date).split(" ")[0])} </span>${esc(+x.date.slice(8))}${x.top3.length ? `<i>${esc(x.top3.length)}</i>` : ""}</a>`).join("")}</div>`).join("");
+  const o = d.overnight, c = d.close;
+  const top = d.top3.length ? `<ol class="top3">${d.top3.map(t => `<li><span class="flag ${esc(RULE[t.rule][1])}">${esc(RULE[t.rule][0])}</span> ${esc(t.text)} <span class="note">Owner: ${esc(t.owner)}</span></li>`).join("")}</ol>`
+    : `<p class="note">Nothing meets the rule today: no open P1 or P2 at risk, no redundancy group reduced at the standup, and no overdue deployment step on a rack due for handoff.</p>`;
+  const inc = d.incidents.length ? `<table><tr><th>Record</th><th>Priority</th><th>Owner</th><th>What</th><th>Restore clock</th><th class="n">Restore by</th></tr>
+    ${d.incidents.map(x => `<tr><td class="nw">${esc(x.refs.join(", ") || x.unit)}</td><td>${esc(x.priority)}</td><td>${esc(x.owner)}</td><td>${esc(x.what)}</td>
+      <td>${clockBar(x)}<div class="note">${esc(hm(x.used_min))} of ${esc(hm(x.target_min))}${x.missed ? ", past target" : x.at_risk ? ", at risk" : ""}</div></td><td class="n">${esc(lhm(x.due))}</td></tr>`).join("")}</table>`
+    : `<p class="note">None open at the standup.</p>`;
+  const red = d.redundancy.length ? `<ul class="tight">${d.redundancy.map(r => `<li><span class="flag ${r.state === 2 ? "bad" : "warn"}">${r.state === 2 ? "Below N" : "No redundant unit"}</span> ${esc(r.text)} <span class="note">(${esc(r.scheme)})</span></li>`).join("")}</ul>`
+    : `<p class="note">Every redundancy group at full redundancy in the hour before the standup.</p>`;
+  const recs = o.records.length ? `<table><tr><th class="n">Time</th><th>Record</th><th>Priority</th><th>Partner</th><th>What</th></tr>
+    ${o.records.map(r => `<tr><td class="n">${esc(lhm(r.at))}</td><td class="nw">${esc(r.ref)}</td><td>${esc(r.priority)}</td><td>${esc(r.partner)}</td><td>${esc(r.what)}${r.where ? ` <span class="note">${esc(r.where)}</span>` : ""}</td></tr>`).join("")}</table>`
+    : `<p class="note">No records opened overnight.</p>`;
+  const ovRed = o.redundancy.length ? `<ul class="tight">${o.redundancy.map(r => `<li>${esc(lhm(r.from))} to ${esc(lhm(r.to))}: ${esc(r.text)}</li>`).join("")}</ul>` : "";
+  const ovSafe = o.safety.length ? `<ul class="tight">${o.safety.map(x => `<li>${esc(lhm(x.at))} ${esc(x.ref)} ${esc(EVN[x.kind] || x.kind)} (${esc(x.partner)}): ${esc(x.what)}</li>`).join("")}</ul>` : "";
+  const work = d.work.length ? `<table><tr><th class="n">Window</th><th>Job</th><th>Owner</th><th>Work</th><th>Takes out</th><th>Calendar</th></tr>
+    ${d.work.map(j => `<tr><td class="n">${esc(lhm(j.start))} to ${esc(lhm(j.end))}${lday(j.start) !== d.date ? ` <span class="note">${esc(md(lday(j.start)))}</span>` : ""}</td><td class="nw">${jobLink(j.id)}</td><td>${esc(j.owner)}</td><td>${esc(j.title)}</td>
+      <td>${esc(j.takes === "none" ? "Nothing" : JOBS[j.id] ? takes(JOBS[j.id]) : j.unit)}</td><td class="nw">${j.conflicts.map(findLink).join(", ") || (j.status === "deferred" ? "Deferred" : "")}</td></tr>`).join("")}</table>`
+    : `<p class="note">No booked work between this standup and the next.</p>`;
+  const conf = d.conflicts.length ? `<ul class="tight">${d.conflicts.map(f => `<li>${findLink(f.id)} ${esc(f.title)}: ${esc(f.text)}</li>`).join("")}</ul>` : "";
+  const due = d.steps.filter(s => !s.overdue), late = d.steps.filter(s => s.overdue);
+  const stepRows = rows => rows.map(s => `<tr><td class="nw">${esc(s.key)}</td><td>${esc(s.partner)}</td><td>${esc(s.summary)}</td><td class="n">${esc(md(s.due))}</td>
+    <td>${s.done_before ? `<span class="flag ok">Done before the standup</span>` : s.done_today ? `<span class="flag ok">Done today</span>` : s.critical ? `<span class="flag bad">Rack due ${esc(md(s.committed_handoff.slice(0, 10)))}</span>` : `<span class="flag mute">Open</span>`}</td></tr>`).join("");
+  const steps = d.steps.length ? `<table><tr><th>Step</th><th>Partner</th><th>Work order</th><th class="n">Due</th><th>State</th></tr>${stepRows(due)}${late.length ? `<tr><td colspan="5"><b>Overdue (${esc(late.length)})</b></td></tr>` + stepRows(late) : ""}</table>`
+    : `<p class="note">No Hall B step due today or overdue.</p>`;
+  const hallc = d.hallc.length ? `<p class="note">Hall C commissioning scripts scheduled today: ${d.hallc.map(x => esc(x.id) + " (" + esc(x.state) + ")").join(", ")}.</p>` : "";
+  const perm = d.permits.length ? `<table><tr><th>Permit</th><th>Type</th><th>Job</th><th>Point</th><th class="n">Issued</th><th class="n">Closed</th></tr>
+    ${d.permits.map(p => `<tr><td class="nw">${permLink(p.permit)}</td><td>${esc(PNAME[p.type] || p.type)}</td><td class="nw">${esc(p.job)}</td><td>${esc(p.point)}</td>
+      <td class="n">${esc(lhm(p.issued))}${lday(p.issued) !== d.date ? ` <span class="note">${esc(md(lday(p.issued)))}</span>` : ""}</td><td class="n">${p.closed ? esc(lhm(p.closed)) : "open"}</td></tr>`).join("")}</table>`
+    : `<p class="note">No permit open at the standup or issued today.</p>`;
+  const spares = d.spares.length ? `<table><tr><th>Part</th><th>Where</th><th class="n">On hand</th><th class="n">Minimum</th></tr>
+    ${d.spares.map(s => `<tr><td>${esc(s.fru)}</td><td>${esc(s.where)}</td><td class="n"><span class="flag bad">${esc(s.balance)}</span></td><td class="n">${esc(s.minimum)}</td></tr>`).join("")}</table>`
+    : `<p class="note">Every spares class at or above its contract minimum.</p>`;
+  const st = d.staffing;
+  const staff = `<table><tr><th>Shift</th><th>IT Partner technicians</th><th>Landlord engineers</th><th>Security Partner posts</th></tr>
+    ${st.map(s => `<tr><td class="nw">${s.shift === "night" ? "Night" : "Day"}, from ${esc(lhm(s.start))}${s.complete ? "" : `<div class="note">badged in by the standup</div>`}</td>${staffCell(s.it, "it")}${staffCell(s.landlord, "ll")}${staffCell(s.security, "sec")}</tr>`).join("")}</table>`;
+  const oc = d.on_call;
+  const calls = `<div class="kv"><div>Customer on call</div><div>${esc(oc.now.primary)} (primary), ${esc(oc.now.secondary)} (secondary), ${esc(oc.now.label.toLowerCase())}</div>
+    <div>From ${esc(lhm(d.end))}</div><div>${esc(oc.tonight.primary)} (primary), ${esc(oc.tonight.secondary)} (secondary), ${esc(oc.tonight.label.toLowerCase())}</div>
+    <div>Shift leads</div><div>IT Partner ${esc(st[1].it.lead || "-")}; Landlord engineers on shift ${esc(st[1].landlord.engineers.join(", "))}</div>
+    <div>Duty managers</div><div>${Object.values(oc.duty_managers).map(esc).join("; ")}</div></div>`;
+  const pk = wk.pack;
+  return `<h1>Daily standup</h1>
+  <p class="sub">${esc(d.weekday)} ${esc(md(d.date))}, ${esc(lhm(d.standup))} ${esc(parts(d.standup).timeZoneName)}. ${esc(d.week)}, day ${esc(d.week_day)} of 7. The operations day runs from the night shift handover at ${esc(lhm(d.start))} to the next at ${esc(lhm(d.end))}; every line is computed from the records as they stood at the standup. Nothing here is a finding.</p>
+  <div class="strip" data-gl-skip>${strip}</div>
+  <p class="note">${prev ? sdLink(prev.date, "‹ " + prev.weekday + " " + md(prev.date)) : ""}${prev && next ? " · " : ""}${next ? sdLink(next.date, next.weekday + " " + md(next.date) + " ›") : ""} · <a class="dayl" href="../weekly/#${esc(d.week)}">Weekly review ${esc(d.week)}</a></p>
+  <h2>Top three today</h2>${top}
+  <p class="note">The rule (config/standup.yaml): an open P1 or P2 with at least half its restore time used, then a redundancy group reduced at the standup, then a deployment step past its due date on a rack due for handoff within ${esc(U.rule.handoff_lookahead_days)} days or already late (one per rack). At most three.</p>
+  <div class="panel sp"><h3>Open P1 and P2 incidents</h3>${inc}</div>
+  <div class="panel sp"><h3>Redundancy at the standup</h3>${red}</div>
+  <div class="panel sp"><h3>Overnight, ${esc(lhm(d.start))} to ${esc(lhm(d.overnight_end))}</h3>${recs}${ovRed ? "<h3>Redundancy reduced overnight</h3>" + ovRed : ""}${ovSafe ? "<h3>Reported safety events</h3>" + ovSafe : ""}</div>
+  <div class="panel sp"><h3>Today's work windows</h3>${work}${conf ? "<h3>Calendar conflicts</h3>" + conf : ""}</div>
+  <div class="panel sp"><h3>Deployment steps (Hall B)</h3>${steps}${hallc}</div>
+  <div class="two">
+    <div class="panel sp"><h3>Permits</h3>${perm}</div>
+    <div class="panel sp"><h3>Spares below minimum</h3>${spares}</div>
+  </div>
+  <div class="panel sp"><h3>Staffing: roster against badge-ins</h3>${staff}</div>
+  <div class="panel sp"><h3>On call</h3>${calls}</div>
+  <div id="detail"></div>
+  <h2>Day close, ${esc(lhm(d.end))}</h2>
+  <div class="tiles">
+    <div class="tile"><div class="k">P1 and P2 opened</div><div class="v">${esc(c.incidents.it + c.incidents.landlord)}</div><div class="s">IT Partner ${esc(c.incidents.it)}, Landlord ${esc(c.incidents.landlord)}</div></div>
+    <div class="tile"><div class="k">Findings raised</div><div class="v">${esc(c.findings.total)}</div><div class="s">${Object.entries(c.findings.by_partner).filter(([, n]) => n).map(([p, n]) => esc(p) + " " + esc(n)).join(", ") || "none"}</div></div>
+    <div class="tile"><div class="k">Changes worked</div><div class="v">${esc(c.changes.worked)}</div><div class="s">${c.changes.overrun.length ? "Overran: " + c.changes.overrun.map(esc).join(", ") : "None ran over"}</div></div>
+    <div class="tile"><div class="k">Permits issued</div><div class="v">${esc(c.permits)}</div><div class="s">Deployment steps done: ${esc(c.steps_done)}</div></div>
+    <div class="tile"><div class="k">Technician hours</div><div class="v">${esc(num(c.technician_hours.present))}</div><div class="s">of ${esc(num(c.technician_hours.committed))} committed, badge-verified</div></div>
+  </div>
+  ${c.findings.list.length ? `<div class="wide"><table><tr><th>Finding</th><th>Partner</th><th>Severity</th><th>What</th><th>Records</th><th class="n">Raised</th></tr>${c.findings.list.map(f => `<tr><td class="nw">${esc(f.id)}</td><td>${esc(f.partner)}</td><td>${esc(f.severity)}</td><td>${esc(f.title)}</td><td>${esc(f.refs.join(", "))}</td><td class="n">${esc(lhm(f.known))}</td></tr>`).join("")}</table></div>` : ""}
+  <h3>${esc(d.week)} to date against its pack</h3>
+  <table id="wtd"><tr><th></th><th class="n">Days 1 to ${esc(d.week_day)}</th><th class="n">Week's pack (all 7 days)</th></tr>
+    <tr><td>P1 and P2 opened, IT Partner</td><td class="n">${esc(sum(x => x.incidents.it))}</td><td class="n">${esc(pk.it_p12)}</td></tr>
+    <tr><td>P1 and P2 opened, Landlord</td><td class="n">${esc(sum(x => x.incidents.landlord))}</td><td class="n">${esc(pk.landlord_p12)}</td></tr>
+    <tr><td>Findings raised</td><td class="n">${esc(sum(x => x.findings.total))}</td><td class="n">${esc(pk.findings)}</td></tr>
+    <tr><td>Permits issued</td><td class="n">${esc(sum(x => x.permits))}</td><td class="n">${esc(pk.permits ?? "-")}</td></tr></table>
+  <p class="note">On day 7 the two columns are equal for every week (${U.reconcile.length ? "not reconciled: " + U.reconcile.map(esc).join("; ") : "they are"}). Report: <code>reports/standup.md</code>.</p>`;
+}
+
 function route() {
-  const h = decodeURIComponent(location.hash.slice(1)) || "calendar";
+  const h = decodeURIComponent(location.hash.slice(1)) || "standup";
   const [view, a, b] = h.split("/");
-  const ehs = view === "ehs";
-  document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === (ehs ? "ehs" : "calendar")));
+  const ehs = view === "ehs", cal = view === "calendar";
+  const which = ehs ? "ehs" : cal ? "calendar" : "standup";
+  document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === which));
   let sel = null, panel = "";
   if (ehs) {
     if (a === "permit" && PERM[b]) { panel = permitPanel(b); sel = b; }
     else if (a === "finding" && SFIND[b]) { panel = safetyFindingPanel(b); sel = b; }
-  } else if (view === "calendar") {
+  } else if (cal) {
     if (a === "job") { panel = jobPanel(b); sel = JOBS[b] ? lday(JOBS[b].start) : null; }
     else if (a === "finding") { panel = findingPanel(b); sel = FIND[b] ? FIND[b].date : null; }
     else if (a && IDX[a] !== undefined) { panel = dayPanel(a); sel = a; }
   }
-  document.getElementById("doc").innerHTML = ehs ? viewEhs(sel) : viewCalendar(sel);
+  document.getElementById("doc").innerHTML = ehs ? viewEhs(sel) : cal ? viewCalendar(sel) : viewStandup(a);
   document.getElementById("detail").innerHTML = panel;
   wire();
   const det = document.getElementById("detail");
