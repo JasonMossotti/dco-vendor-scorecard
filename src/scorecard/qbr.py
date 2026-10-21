@@ -320,11 +320,14 @@ def roadmap(root: Path = ROOT) -> dict[str, Any]:
     due = [r for r in rs if r["committed_handoff"] < asof]
     on_time = [r for r in due if r.get("measured_handoff") and r["measured_handoff"] <= r["committed_handoff"]]
     handed = [r for r in rs if r.get("measured_handoff")]
-    fc = R.build()["forecast"]
+    rb = R.build()
+    fc = rb["forecast"]
+    first = re.sub(r"^CX-C-|-L\d$", "", fc["critical_path"][0])
+    names = {x["id"]: x["name"].split(" (")[0] for x in rb["systems"]}
     return {"hall_b": {"racks": len(rs), "as_of": asof[:10], "handed_off": len(handed), "due": len(due), "on_time": len(on_time),
                        "last_committed": max(r["committed_handoff"] for r in rs)[:10]},
             "hall_c": {"committed": fc["committed"], "forecast": fc["first_compute"], "slip_days": fc["slip_days"],
-                       "critical_path": re.sub(r"^CX-C-|-L\d$", "", fc["critical_path"][0])}}
+                       "critical_path": names.get(first, first)}}   # a system's name: its ID is explained on the Deployments page
 
 
 # --------------------------------------------------------------------------- the whole pack

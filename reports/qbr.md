@@ -340,7 +340,7 @@ September's programs: post-incident review actions 0 (0 complete), quality audit
 
 Hall B: 13 of 32 racks handed off by Sep 28; 10 of the 13 due by then reached Validated Handoff on time. The last committed handoff is Oct 23.
 
-Hall C: first compute committed Nov 22, forecast Nov 23 (1 day late; the critical path starts at ESS-C).
+Hall C: first compute committed Nov 22, forecast Nov 23 (1 day late; the critical path starts with energy storage, 800 VDC).
 
 ## Program-wide lessons
 

@@ -687,7 +687,7 @@ function viewQBR(ds) {
     h += `<h2>Roadmap and capacity</h2><div class="tiles">
       ${tile("Hall B racks handed off", `${num(b.handed_off)} of ${num(b.racks)}`, `by ${esc(md(b.as_of))}; last committed handoff ${esc(md(b.last_committed))}`)}
       ${tile("Hall B on time", `${num(b.on_time)} of ${num(b.due)}`, "racks due by then that reached Validated Handoff by the committed date", b.on_time < b.due ? "bad" : "")}
-      ${tile("Hall C first compute", esc(md(c.forecast)), `forecast; committed ${esc(md(c.committed))} (${num(c.slip_days)} day${c.slip_days === 1 ? "" : "s"} late, critical path from ${esc(c.critical_path)})`, c.slip_days > 0 ? "bad" : "")}</div>
+      ${tile("Hall C first compute", esc(md(c.forecast)), `forecast; committed ${esc(md(c.committed))} (${num(c.slip_days)} day${c.slip_days === 1 ? "" : "s"} late, critical path starts with ${esc(c.critical_path.toLowerCase())})`, c.slip_days > 0 ? "bad" : "")}</div>
       <p class="note">From the <a href="../deployments/">Deployments</a> tab (Hall B) and its <a href="../deployments/#hallc">Hall C readiness</a> view.</p>`;
     if (N && N.lessons) h += `<h2>Program-wide lessons</h2><ul>${N.lessons.map(x => `<li>${esc(x)}</li>`).join("")}</ul><p class="note">Written by the review (${esc(N.chair)}, ${esc(N.meeting)}); tested against the quarter's facts.</p>`;
     return h;

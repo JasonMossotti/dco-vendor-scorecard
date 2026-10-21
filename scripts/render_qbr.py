@@ -162,7 +162,7 @@ def markdown(q: dict) -> str:
             f"Hall B: {hb['handed_off']} of {hb['racks']} racks handed off by {md(hb['as_of'])}; {hb['on_time']} of the {hb['due']} due by then "
             f"reached Validated Handoff on time. The last committed handoff is {md(hb['last_committed'])}.", "",
             f"Hall C: first compute committed {md(hc['committed'])}, forecast {md(hc['forecast'])} ({hc['slip_days']} day"
-            f"{'s' if hc['slip_days'] != 1 else ''} late; the critical path starts at {hc['critical_path']}).", ""]
+            f"{'s' if hc['slip_days'] != 1 else ''} late; the critical path starts with {hc['critical_path'][0].lower() + hc['critical_path'][1:]}).", ""]
     if notes and notes.get("lessons"):
         out += ["## Program-wide lessons", ""] + [f"- {x.strip()}" for x in notes["lessons"]] + [""]
     return "\n".join(out)
