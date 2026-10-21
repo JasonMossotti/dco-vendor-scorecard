@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 import pytest
 import yaml
@@ -20,6 +21,11 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from scorecard import command, emergency, tickets  # noqa: E402
+
+def _fictional(host: str) -> bool:
+    """A host in the reserved example.com domain (RFC 2606), matched as a whole name, never a substring."""
+    return host == "example.com" or host.endswith(".example.com")
+
 
 PHONE = re.compile(r"^(\+1 512 555 01\d\d|911|none: .+)$")
 
@@ -135,9 +141,9 @@ def test_contacts_are_fictional_roles_and_checked_on_time(built, cfg):
             assert all(re.match(r"^\+1 512 555 01\d\d$", s["phone"]) for s in c["rota_shifts"])
         else:
             assert PHONE.match(c["phone"]), c
-        assert not c.get("email") or c["email"].endswith("example.com"), c
+        assert not c.get("email") or _fictional(c["email"].rpartition("@")[2]), c
     b = built["bridge"]
-    assert PHONE.match(b["dial_in"]) and "example.com" in b["video"]
+    assert PHONE.match(b["dial_in"]) and _fictional(urlparse(b["video"]).hostname or "")
     stale = [c["id"] for c in built["contacts"] if c["stale"]]
     assert stale == ["utility"], "one contact is past its check date as of the sample month's end"
     assert all(c["age_days"] >= 0 for c in built["contacts"]), "no check is dated after the as-of date"
