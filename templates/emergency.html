@@ -226,7 +226,10 @@ const both = t => t == null ? "—" : `${clockStr(t, OFF)} ${CON.timezone} (${cl
 const dayStr = t => new Date(t + OFF).toISOString().slice(0, 10);
 const span = m => { m = Math.round(m); const a = Math.abs(m); return a >= 60 ? `${Math.floor(a / 60)} h ${p2(a % 60)} min` : `${a} min`; };
 function store() { try { return JSON.parse(localStorage.getItem(RKEY) || "{}") || {}; } catch (e) { return {}; } }
-function persist() { if (!RS || RS.mode === "replay") return; const s = store(); s[RS.id] = RS; try { localStorage.setItem(RKEY, JSON.stringify(s)); } catch (e) { /* private window */ } }
+// Saved responses are keyed by event id; only a known event's own key is ever read or written (never __proto__).
+const known = id => typeof id === "string" && id !== "__proto__" && id !== "constructor" && id !== "prototype" && Object.prototype.hasOwnProperty.call(RESP, id);
+function saved(id) { const s = store(); return known(id) && Object.prototype.hasOwnProperty.call(s, id) ? s[id] : null; }
+function persist() { if (!RS || RS.mode === "replay" || !known(RS.id)) return; const s = store(); s[RS.id] = RS; try { localStorage.setItem(RKEY, JSON.stringify(s)); } catch (e) { /* private window */ } }
 function rng(seed) { let h = 2166136261; for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; }; }
 let RS = null, TIMER = null, LASTSIG = "";
 
@@ -304,10 +307,10 @@ function message(e, n) {
 }
 
 function renderRespondList() {
-  const saved = store();
+  const kept = store();
   let h = `<h1>Emergency response</h1><p class="sub">Open the console for a P1 event: pre-filled facts, the notifications with acknowledgements and escalation, the bridge, and the event type's checklist. <b>Nothing is sent:</b> this is a demonstration, and every send, acknowledgement, and join is recorded in this browser only.</p>`;
   h += `<div style="overflow-x:auto"><table id="resp-list"><tr><th>Start</th><th>Event</th><th>Procedure</th><th>Response</th></tr>` +
-    DATA.events.map(x => { const e = RESP[x.id], s = saved[x.id];
+    DATA.events.map(x => { const e = RESP[x.id], s = kept[x.id];
       return `<tr><td class="num">${esc(e.start.slice(0, 10))} ${esc(cdt(ms(e.start)))}</td><td>${e.records.map(r => esc(r.id)).join(" and ")}<br><span class="note">${esc(e.summary)}</span></td>` +
         `<td>${e.types.map(t => esc(TYPES[t].name)).join(", ")}</td><td class="num"><a class="btn" href="#respond/${esc(x.id)}">${s ? (s.closed ? "Closed: view" : "Continue") : "Open response"}</a>${e.replay.length ? ` <a class="btn" href="#respond/${esc(x.id)}/replay">Replay the bridge</a>` : ""}</td></tr>`; }).join("") + `</table></div>`;
   h += `<p class="note">A P2 record can be escalated from the Incident Portal (Escalate to emergency response) when the runbook's rule is met: redundancy lost on both paths, or a second party involved.</p>`;
@@ -422,7 +425,7 @@ function wireRespond() {
   const act = f => { f(); persist(); redraw(); };
   document.getElementById("r-mode").value = RS.mode;
   document.getElementById("r-mode").onchange = ev => { const m = ev.target.value;
-    if (m === "replay") { RS = {...fresh(RS.id), mode: "replay"}; } else { RS = store()[RS.id] || fresh(RS.id); RS.mode = m; }
+    if (m === "replay") { RS = {...fresh(RS.id), mode: "replay"}; } else { RS = saved(RS.id) || fresh(RS.id); RS.mode = m; }
     persist(); history.replaceState(null, "", "#respond/" + RS.id + (m === "replay" ? "/replay" : "")); redraw(); };
   document.getElementById("r-speed").onchange = ev => { setClock(T(), RS.paused); RS.speed = +ev.target.value; persist(); };
   on("r-pause", () => act(() => setClock(T(), !RS.paused)));
@@ -465,7 +468,7 @@ function tickRespond() {
   if (sig() !== LASTSIG) { const a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.dataset.extra == null && a.id !== "r-cmd") return; redraw(); }
 }
 function openResponse(id, at, replay) {
-  const s = store()[id];
+  const s = saved(id);
   RS = replay ? {...fresh(id, at), mode: "replay"} : s || fresh(id, at);
   if (at && !replay && !s) setClock(at, false);
   if (replay && at) setClock(at, false);
@@ -505,10 +508,10 @@ function setMode(m, opt) {   // #procedures, #proc/<type>, #contacts, #command, 
 function route() {
   const h = decodeURIComponent(location.hash.slice(1));
   if (h === "respond" || h.startsWith("respond/")) {   // a record opens its event's response; a time (UTC, from Live) sets the clock
-    const [, rec, at] = h.split("/"), id = rec && (BYREC[rec.toUpperCase()] || (RESP[rec.toUpperCase()] && rec.toUpperCase()));
-    if (id) openResponse(id, at && at !== "replay" ? Date.parse(at) || null : null, at === "replay"); else RS = null;
+    const [, rec, at] = h.split("/"), up = (rec || "").toUpperCase(), id = Object.prototype.hasOwnProperty.call(BYREC, up) ? BYREC[up] : up;
+    if (known(id)) openResponse(id, at && at !== "replay" ? Date.parse(at) || null : null, at === "replay"); else RS = null;
     setMode("respond"); document.documentElement.scrollTop = 0;
-    if (rec && !id) document.getElementById("doc").insertAdjacentHTML("afterbegin", `<p class="missed">No P1 event or P2 record ${esc(rec)} in this dataset.</p>`);
+    if (rec && !known(id)) document.getElementById("doc").insertAdjacentHTML("afterbegin", `<p class="missed">No P1 event or P2 record ${esc(rec)} in this dataset.</p>`);
   }
   else if (h === "contacts") setMode("contacts");
   else if (h === "command" || h === "replay") setMode("command", h);
