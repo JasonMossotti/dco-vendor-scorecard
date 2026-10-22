@@ -231,6 +231,15 @@ def test_portal_in_a_browser(site, by_id):
     assert set(got["with_finding"]) == {r["id"] for r in recs if r["findings"]}
     assert set(got["hall_b"]) == {r["id"] for r in recs if r["hall"] == "HALL-B"}
     assert "INC3900001" in got["sep15"] and "MOP-310" in got["sep15"]
+    # Engineer notes: each type shows the hand-entered fields its system has, under the configured title
+    import yaml
+    cfg = yaml.safe_load((ROOT / "config" / "engineer_notes.yaml").read_text(encoding="utf-8"))["types"]
+    for ref, shown in got["en_open"].items():
+        t = by_id[ref]["type"]
+        assert shown["title"] == cfg[t]["title"], ref
+        assert shown["heads"] == [f["label"] for f in cfg[t]["fields"] if f["label"] in shown["heads"]] and len(shown["heads"]) >= len(cfg[t]["fields"]) - 1, ref
+    assert got["en_heads"] == [f["label"] for f in cfg["inc"]["fields"]]
+    assert s["engineer:nitrogen bottles"] == ["IMP-0006"]
 
 
 # ------------------------------------------------------------------ the app

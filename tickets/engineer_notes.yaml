@@ -1,0 +1,157 @@
+# Engineer notes written by hand for the records a reviewer is most likely to open: the P1 records and the A07
+# outage. Each entry replaces or adds fields of the composed note (src/scorecard/engineer_notes.py) in the same
+# shape: text fields {text}, logs {entries: [{at, by, text}]}, tables {rows}, checklists {items}, time {entries:
+# [{by, from, to, hours, what}]}. Times are UTC and must be times on the record; clock times in the text are
+# Central (CDT). People by person ID only. tests/test_engineer_notes.py holds every note to its record.
+#
+# Notes follow the partner's own record. They do not explain away a finding: where the Customer's measurement
+# differs (WO-41043, WO-41062), the record and its finding stay as they are.
+
+INC3900001:
+  comments:
+    entries:
+      - {at: "2026-09-15T15:48:04Z", by: RSS-004, text: "Rack A07 is down on both power feeds. The Landlord is working it under WO-41023; we are standing by at the rack for the handoff and will update at power-on."}
+      - {at: "2026-09-15T19:16:55Z", by: RSS-004, text: "Landlord handoff received; power restored at 14:06. Powering on rack A07 and running the return-to-service checks."}
+      - {at: "2026-09-15T20:01:36Z", by: RSS-004, text: "All return-to-service checks passed (rack_power_on, rack_nvlink_acceptance, nccl_allreduce_rack). Rack A07 is back in production."}
+  cause:
+    text: "Facility power loss, not an IT fault: both tap-off feeds to rack A07 were open at the same time during Landlord work (WO-41023, MOP-310). No IT hardware failed."
+  close_notes:
+    text: "Facility restored; validated. Landlord restored power at 14:06 under WO-41023. Rack powered on and validated: rack_power_on, rack_nvlink_acceptance, and nccl_allreduce_rack all passed. 18 of 18 nodes back in service at 15:01. No IT parts used."
+  time_worked:
+    entries:
+      - {by: RSS-004, from: "2026-09-15T19:13:02Z", to: "2026-09-15T20:01:36Z", hours: 0.81, what: "On site at the rack to validation complete (work notes)"}
+
+WO-41023:
+  long_description:
+    text: "Rack A07 lost both feeds during MOP-310. The A-side tap-off TO-A07-A was open for the retorque; the B-side tap-off TO-A07-B was opened at 10:42, leaving the rack with no input power. Unit Rack A07, Hall A."
+  work_log:
+    entries:
+      - {at: "2026-09-15T15:45:08Z", by: CCF-E02, text: "BMS alarm acknowledged: rack input power lost (both feeds). TO-A07-B found open alongside TO-A07-A, which was open for MOP-310."}
+      - {at: "2026-09-15T15:45:17Z", by: CCF-E02, text: "In Hall A at the busway. Stopped the MOP work. TO-A07-B is the B-side unit next to the A-side one being retorqued."}
+      - {at: "2026-09-15T19:06:55Z", by: CCF-E02, text: "B tap-off unit failed on reclose and was replaced. TO-A07-B closed; B-side feed to rack A07 restored. Handoff to the IT Partner (INC3900001)."}
+      - {at: "2026-09-15T19:22:05Z", by: CCF-E02, text: "Retorque finished; TO-A07-A closed. Both feeds live."}
+      - {at: "2026-09-15T19:27:55Z", by: CCF-E02, text: "Closed. Rack A07 on both feeds."}
+  failure:
+    rows:
+      - ["Failure class", "OT-FC-PWR"]
+      - ["Problem", "Rack lost both feeds"]
+      - ["Cause", "Wrong tap-off (TO-A07-B) opened while TO-A07-A was open under MOP-310; the B unit failed on reclose"]
+      - ["Remedy", "Replaced the B tap-off unit, closed TO-A07-B, finished the retorque, closed TO-A07-A"]
+  labor:
+    entries:
+      - {by: CCF-E02, from: "2026-09-15T15:45:17Z", to: "2026-09-15T19:22:05Z", hours: 3.61, what: "Engaged to both feeds closed (work order)"}
+
+MOP-310:
+  step_log:
+    items:
+      - {step: "Confirm the approved window and notify the Customer", result: "Done", at: "2026-09-15T14:46:03Z", by: CCF-E02}
+      - {step: "Open TO-A07-A on BW-A-R1-PG-A2-A (rack A07 stays on its B-side feed)", result: "Done", at: "2026-09-15T15:16:03Z", by: CCF-E02}
+      - {step: "Retorque the A-side tap-off connections", result: "Stopped: TO-A07-B opened at 10:42; work order WO-41023", at: "2026-09-15T15:42:11Z", by: CCF-E02}
+      - {step: "Close TO-A07-A and confirm the A-side feed live", result: "Done late, after the window", at: "2026-09-15T19:22:05Z", by: CCF-E02}
+      - {step: "Close the window", result: "Window closed at 12:16 with TO-A07-A still open", at: "2026-09-15T17:16:03Z", by: CCF-E02}
+  deviations:
+    text: "TO-A07-B on BW-A-R1-PG-A2-B was opened while TO-A07-A was open, which the MOP does not allow; rack A07 lost both feeds. Work moved to WO-41023. The window closed at 12:16 with TO-A07-A still open; it was closed at 14:22."
+  backout_used:
+    text: "No. The B unit failed on reclose and was replaced under WO-41023 before the B-side feed returned at 14:06."
+  as_left:
+    text: "TO-A07-A and TO-A07-B closed; rack A07 on both feeds."
+  completion_notes:
+    text: "Not completed as written. See WO-41023 and INC3900001."
+
+INC3101173:
+  comments:
+    entries:
+      - {at: "2026-09-25T08:15:12Z", by: RSS-022, text: "NVLink switch tray a15-nvsw3 is unreachable and the NVLink domain is degraded, so all of rack A15 is drained. Technician on site."}
+      - {at: "2026-09-25T10:10:26Z", by: RSS-022, text: "Switch tray replaced. Running the leak hold and NVLink acceptance before the rack returns."}
+      - {at: "2026-09-25T11:29:42Z", by: RSS-022, text: "Rack A15 validated and back in production."}
+  cause:
+    text: "NVLink switch tray a15-nvsw3 unreachable; NVLink domain degraded. Tray did not recover on a power cycle; switch tray at fault."
+  close_notes:
+    text: "Hardware replaced. NVLink switch tray a15-nvsw3: removed SN NSOM4K9ZBC, installed SN NS82PHK3SG. Failed part tagged for RMA. Checks passed: leak_hold_30m, nmx_tray_health, rack_nvlink_acceptance, nccl_allreduce_rack; validation attached to the ticket."
+
+INC3100714:
+  comments:
+    entries:
+      - {at: "2026-09-14T09:47:07Z", by: RSS-029, text: "Leak alarm at the rack A06 manifold. All 18 nodes in rack A06 are drained. Technician on the way."}
+      - {at: "2026-09-14T10:14:14Z", by: RSS-029, text: "Leak contained and cleaned up. Running the leak hold check before validation."}
+      - {at: "2026-09-14T12:35:59Z", by: RSS-029, text: "Leak hold and rack checks passed. Rack A06 is back in production."}
+  cause:
+    text: "Weep at a manifold hose quick-disconnect on rack A06; the rack leak detector and the A06 leak rope both tripped."
+  close_notes:
+    text: "Resolved. Loop to rack A06 isolated, fluid cleaned, manifold hose and quick-disconnect kit replaced. Checks passed: leak_hold_30m, rack_nvlink_acceptance, nccl_allreduce_rack; validation attached to the ticket."
+
+WO-41009:
+  long_description:
+    text: "Utility outage. Both mains (MV-A and MV-B) tripped on utility undervoltage at 16:14. All 7 generators carried the site; no IT impact."
+  work_log:
+    entries:
+      - {at: "2026-09-24T21:16:39Z", by: CCF-E03, text: "Acknowledged. Both mains open, generators on the paralleling bus, tie breakers closed to MV-A and MV-B."}
+      - {at: "2026-09-24T21:22:27Z", by: CCF-E03, text: "At the MV switchgear. Generators carrying the site. Called the utility for an estimate."}
+      - {at: "2026-09-24T21:56:06Z", by: CCF-E03, text: "Utility back. MV-A and MV-B main breakers closed on a closed-transition retransfer; generator tie breakers open after."}
+      - {at: "2026-09-24T22:18:14Z", by: CCF-E03, text: "Generators in cool-down and back to auto. Closed."}
+  failure:
+    rows:
+      - ["Failure class", "None (utility)"]
+      - ["Problem", "Utility outage"]
+      - ["Cause", "Utility undervoltage; both mains tripped"]
+      - ["Remedy", "Generators carried the load; closed-transition retransfer when the utility returned"]
+
+WO-41051:
+  long_description:
+    text: "Leak detected under CDU-A4: TTDM-A circuit 8 at 13.2 m. Fitting weep on the secondary header connection. Unit CDU-A4, Hall A."
+  work_log:
+    entries:
+      - {at: "2026-09-18T17:51:53Z", by: CCF-E01, text: "Acknowledged. Leak cable reports circuit 8 at 13.2 m, under CDU-A4."}
+      - {at: "2026-09-18T18:01:42Z", by: CCF-E01, text: "At CDU-A4. Weep at the secondary header connection; no spray. Placed absorbent and isolated the connection."}
+      - {at: "2026-09-18T19:25:35Z", by: CCF-E01, text: "Fitting re-made and tested; area dried; leak cable clear."}
+      - {at: "2026-09-18T20:22:59Z", by: CCF-E01, text: "No repeat alarm after monitoring. Closed."}
+
+WO-41043:
+  long_description:
+    text: "Busway BW-B-R3-PG-B4-B lost its feed: UPS-B4 output feeder breaker tripped on short-time overcurrent. Engineer's assessment: tenant whip fault on rack B21; Landlord equipment healthy."
+  work_log:
+    entries:
+      - {at: "2026-09-09T17:01:11Z", by: CCF-E03, text: "Acknowledged. BW-B-R3-PG-B4-B undervoltage; UPS-B4 output feeder breaker tripped."}
+      - {at: "2026-09-09T17:20:12Z", by: CCF-E03, text: "In Hall B. Inspecting the busway run and the tap-offs."}
+      - {at: "2026-09-09T19:08:24Z", by: CCF-E03, text: "Feeder breaker closed; busway voltage normal. Assessed as a tenant whip fault on rack B21; Landlord equipment healthy."}
+      - {at: "2026-09-09T20:14:18Z", by: CCF-E03, text: "Closed. Attributed to the IT Partner."}
+
+WO-41062:
+  long_description:
+    text: "CH-05 compressor trip on high condenser pressure. Unit CH-05, Chiller yard."
+  work_log:
+    entries:
+      - {at: "2026-09-16T11:03:57Z", by: CCF-E09, text: "Acknowledged the BMS alarm."}
+      - {at: "2026-09-16T11:13:11Z", by: CCF-E09, text: "Engineer attended and reset the unit."}
+      - {at: "2026-09-16T14:15:48Z", by: CCF-E09, text: "Alarm clear at the BMS."}
+      - {at: "2026-09-16T15:36:52Z", by: CCF-E09, text: "Closed."}
+
+IMP-0006:
+  tag:
+    entries:
+      - {at: "2026-09-23T07:26:00Z", by: CCF-E11, text: "PAZ-B1 air compressor failed; zone on low air. Impairment tag placed on PAZ-B1 and at the fire panel. Zone held on nitrogen bottles."}
+      - {at: "2026-09-23T10:11:00Z", by: CCF-E11, text: "Compressor back in service and air pressure normal. Tag removed."}
+  notes:
+    text: "Unplanned. Zone held on nitrogen bottles until the compressor was back. Pre-action valve stayed set throughout."
+
+SIR-00021:
+  narrative:
+    entries:
+      - {at: "2026-09-22T20:28:22Z", by: LGP-011, text: "Dispatched P1 to HALL-B-EXIT-N on a door forced alarm."}
+      - {at: "2026-09-22T20:29:00Z", by: LGP-011, text: "On scene. Door closed and latched; nobody in the corridor or outside."}
+      - {at: "2026-09-22T20:39:41Z", by: LGP-011, text: "Checked the door and contact: door had not opened; false trip on the door contact. Door secured."}
+  actions:
+    text: "Checked the corridor and the outside of the exit. Tested the door latched. Reviewed the camera on the exit with the console: no one at the door."
+  follow_up:
+    text: "Door contact referred to the Landlord for repair."
+
+SIR-00004:
+  narrative:
+    entries:
+      - {at: "2026-09-03T03:11:37Z", by: LGP-031, text: "Dispatched P1 to HALL-B-EXIT-N on a door forced alarm."}
+      - {at: "2026-09-03T03:11:52Z", by: LGP-031, text: "On scene. Door closed. A technician had used the emergency exit to leave Hall B."}
+      - {at: "2026-09-03T03:15:57Z", by: LGP-031, text: "Exit used by a technician leaving the hall; no entry; door secured."}
+  actions:
+    text: "Confirmed with the console camera that nobody entered. Reminded the technician that the north emergency exit is for emergencies only."
+  follow_up:
+    text: "Reported to the IT Partner's shift lead for a reminder to the shift."
