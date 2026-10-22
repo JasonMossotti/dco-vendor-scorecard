@@ -44,7 +44,7 @@ go("person/" + tech.person);
 ok(d.getElementById("personpanel").textContent.includes(tech.records[0]) && d.querySelector("#personpanel .flag.bad"), "a technician's work shows what was missing");
 // renewals
 go("renewals");
-ok(d.querySelectorAll(".letter[data-notice]").length === 3 && d.querySelector('.letter[data-notice="it"]').textContent.includes("training@itpartner.example.com"), "a drafted notice per partner");
+ok(d.querySelectorAll(".letter[data-notice]").length === 3 && d.querySelector('.letter[data-notice="it"]').textContent.match(/\btraining@itpartner\.example\.com\b/), "a drafted notice per partner");
 ok(d.querySelector('.letter[data-notice="security"]').textContent.includes("not sent"), "notices are drafted, never sent");
 const n = R.notices.find(x => x.stage);
 ok(n && [...d.querySelectorAll(".flag.warn")].some(x => x.textContent.startsWith("Due now")), "the notice due now is marked");

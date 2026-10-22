@@ -4,6 +4,7 @@ service levels recalculated with the qualification rule, renewal notices, and th
 
 import filecmp
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -180,7 +181,8 @@ def test_renewal_notices(f):
         exp = parse(n["expires"])
         due = [x["lead"] for x in n["notices"] if exp - timedelta(days=x["lead"]) <= as_of]
         assert n["stage"] == (min(due) if due else None)
-        assert n["to"].endswith("example.com") and n["cc"].endswith("example.com")
+        for addr in (n["to"], n["cc"]):   # reserved example domains only (RFC 2606)
+            assert re.fullmatch(r"[\w.-]+@(?:[\w-]+\.)*example\.com", addr), addr
 
 
 def test_bench_reads_the_forward_schedule(f):
