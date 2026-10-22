@@ -55,6 +55,27 @@ const reset = async () => { d.getElementById("f-reset").click(); await tick(); }
   if (rel) { w.location.hash = "#INC3900001"; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick(); }
   ok(head() === "INC3900001", "a related link opens that record");
   ok(d.querySelector("#detail").textContent.includes("PIR-2026-001"), "the reviewed incident links its post-incident review");
+  // engineer notes: a collapsed section on every record, opened by a click, escaped, and searchable
+  const en = () => d.querySelector("#detail details.enotes");
+  ok(en() && !en().open && en().querySelector("summary b").textContent === "Engineer notes", "the record has a collapsed Engineer notes section");
+  en().querySelector("summary").click(); await tick();
+  ok(en().open && en().textContent.includes("Additional comments") && en().textContent.includes("Customer-visible")
+     && en().textContent.includes("Facility power loss, not an IT fault"), "opening it shows the hand-entered fields");
+  result.en_heads = [...en().querySelectorAll("h3")].map(h => h.firstChild.textContent);
+  result.en_open = {};
+  for (const id of ["WO-41023", "PM-0008", "MOP-310", "SIR-00027", "IMP-0004", "CHG2040031"]) {
+    w.location.hash = "#" + id; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick();
+    result.en_open[id] = { title: en() && en().querySelector("summary b").textContent, heads: en() ? [...en().querySelectorAll("h3")].map(h => h.firstChild.textContent) : [] };
+  }
+  ok(result.en_open["WO-41023"].heads.includes("Work log"), "a work order shows its work log");
+  ok(result.en_open["SIR-00027"].title === "Officer notes", "a security record is titled Officer notes");
+  w.location.hash = "#MOP-310"; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick();
+  ok([...en().querySelectorAll("a.tk-link")].some(a => a.textContent === "WO-41023" && !a.target), "a ticket number in a note opens its record in place");
+  w.eval('EN["MOP-310"].fields[1].text = "<img src=x id=xss>"');
+  w.location.hash = "#INC3900001"; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick();
+  w.location.hash = "#MOP-310"; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick();
+  ok(!d.getElementById("xss") && en().textContent.includes("<img src=x id=xss>"), "note text is escaped");
+  await set("f-in", "engineer"); await set("f-q", "nitrogen bottles"); result.search["engineer:nitrogen bottles"] = ids(); await reset();
   w.location.hash = "#INC0000000"; w.dispatchEvent(new w.HashChangeEvent("hashchange")); await tick();
   ok(d.querySelector("#detail").textContent.includes("No record INC0000000"), "an unknown number says so");
   // people are shown by ID: open every record and look for names

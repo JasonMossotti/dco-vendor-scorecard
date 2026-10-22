@@ -48,6 +48,15 @@ td.num { white-space:nowrap; border-left:4px solid var(--it); } td.num.Landlord 
 .strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin-top:6px; }
 .stat { border:1px solid var(--line); border-radius:8px; padding:8px 10px; background:#fff; } .stat .v { font-size:17px; font-weight:700; } .stat .l { font-size:11px; color:var(--muted); }
 details summary { cursor:pointer; color:var(--muted); font-size:12px; } code.rec { display:block; white-space:pre-wrap; word-break:break-all; font-size:11px; background:#f7f7f2; padding:6px; border-radius:4px; }
+details.enotes { margin:12px 0 4px; border:1px solid var(--line, #ddd); border-radius:6px; background:#fbfbf7; }
+details.enotes > summary { padding:8px 12px; font-size:14px; color:inherit; }
+details.enotes > summary b { font-size:15px; }
+details.enotes[open] > summary { border-bottom:1px solid var(--line, #ddd); }
+details.enotes .ebody { padding:4px 12px 10px; }
+details.enotes h3 { font-size:13px; margin:12px 0 4px; }
+details.enotes h3 .vis { font-weight:normal; font-size:11px; margin-left:6px; padding:1px 6px; border-radius:8px; background:#e8eef7; color:#234; }
+details.enotes p.etext { margin:2px 0; white-space:pre-wrap; }
+details.enotes table td { vertical-align:top; }
 table.native td:first-child { color:var(--muted); white-space:nowrap; width:1%; font-family:ui-monospace,Consolas,monospace; font-size:12px; }
 .dhead { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:baseline; } .dhead h1 { margin-right:4px; }
 .empty { color:var(--muted); padding:30px 0; text-align:center; }
@@ -120,17 +129,47 @@ const partyCls = p => p === "IT Partner" ? "IT" : p === "Security Partner" ? "Se
 const badge = p => `<span class="badge ${partyCls(p)}">${esc(p)}</span>`;
 const PRI = {P1: 1, P2: 2, P3: 3, P4: 4};
 
+// ---- engineer notes: the fields a person fills in by hand in the partner's system (data/engineer_notes/)
+const EN = D.engineer || {};
+const enStrings = v => typeof v === "string" ? [v] : Array.isArray(v) ? v.flatMap(enStrings) : v && typeof v === "object" ? Object.values(v).flatMap(enStrings) : [];
+function enText(r) {
+  const n = EN[r.id]; if (!n) return [];
+  return n.fields.flatMap(f => [f.label, f.text, ...(f.entries || []).map(e => [e.by, e.text, e.what].join(" ")), ...enStrings(f.rows || []),
+    ...(f.items || []).map(i => [i.step, i.result, i.by].join(" "))]).filter(Boolean);
+}
+function engineerField(f) {
+  const vis = f.visibility === "customer" ? `<span class="vis">${esc(D.engineer_visibility.customer)}</span>` : "";
+  let b = "";
+  if (f.kind === "text") b = `<p class="etext">${esc(f.text)}</p>`;
+  else if (f.kind === "log") b = (f.entries || []).length ? `<table><tr><th>Central (CDT)</th><th>By</th><th>Entry</th></tr>` +
+    f.entries.map(e => `<tr><td class="nw">${esc(loc(e.at))}</td><td class="nw">${esc(e.by || "Implementer")}</td><td>${esc(e.text)}</td></tr>`).join("") + `</table>` : `<p class="etext note">No entries.</p>`;
+  else if (f.kind === "time") b = `<table><tr><th>By</th><th>From (CDT)</th><th>To (CDT)</th><th>Hours</th><th>Basis</th></tr>` +
+    (f.entries || []).map(e => `<tr><td class="nw">${esc(e.by)}</td><td class="nw">${esc(loc(e.from))}</td><td class="nw">${esc(loc(e.to))}</td><td>${esc(Number(e.hours).toFixed(2))}</td><td>${esc(e.what)}</td></tr>`).join("") + `</table>`;
+  else if (f.kind === "checklist") { const t = (f.items || []).some(i => i.at);
+    b = `<table><tr><th>#</th><th>Step</th><th>Result</th>${t ? "<th>Central (CDT)</th><th>By</th>" : ""}</tr>` +
+    f.items.map((i, k) => `<tr><td>${esc(k + 1)}</td><td>${esc(i.step)}</td><td>${esc(i.result)}</td>${t ? `<td class="nw">${esc(loc(i.at))}</td><td class="nw">${esc(i.by)}</td>` : ""}</tr>`).join("") + `</table>`; }
+  else if (f.kind === "table") b = `<table class="native">` + (f.rows || []).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("") + `</table>`;
+  return `<h3>${esc(f.label)}${vis}</h3>${b}`;
+}
+function engineerNotes(r) {
+  const n = EN[r.id]; if (!n) return "";
+  return `<details class="enotes" id="enotes"><summary><b>${esc(n.title)}</b> <span class="note">${esc(n.fields.length)} fields typed by hand in the ${esc(n.system)}</span></summary>` +
+    `<div class="ebody"><p class="note">As the partner's ${esc(r.type === "sir" ? "officer" : "engineer or technician")} entered them; field names are the system's own. People are shown by person ID.</p>` +
+    n.fields.map(engineerField).join("") + `</div></details>`;
+}
+
 // ---- what search can look in: each option is a list of the record's fields
 const FIELDS = {
   all: ["Every field", r => [r.id, r.type_label, r.partner, r.system, r.state, r.priority, r.summary, r.device, r.location, r.hall, r.rack,
     r.assigned, r.category, r.close_code, r.work_type, ...r.related, ...r.notes.map(n => n.by + " " + n.text), ...r.parts.map(p => Object.values(p).join(" ")),
     ...r.alarms.map(a => [a.id, a.device, a.summary, a.signal].join(" ")), ...r.findings.map(f => [f.id, f.title, f.summary, ...f.sla_refs].join(" ")),
-    JSON.stringify(r.native)]],
+    JSON.stringify(r.native), ...enText(r)]],
   id: ["Number", r => [r.id]],
   device: ["Device or item", r => [r.device]],
   summary: ["Summary", r => [r.summary]],
   location: ["Location or rack", r => [r.location, r.rack, r.hall]],
   notes: ["Work notes", r => r.notes.map(n => n.text)],
+  engineer: ["Engineer notes", r => enText(r)],
   parts: ["Part or serial", r => r.parts.map(p => Object.values(p).join(" "))],
   person: ["Person ID", r => [r.assigned, ...r.notes.map(n => n.by)]],
   category: ["Category or fault class", r => [r.category, r.close_code, r.work_type]],
@@ -376,6 +415,7 @@ function detail(id) {
     ["Device or item", r.device, "loc"], ["Location", r.location], ["Assigned (person ID)", r.assigned], ["Category or fault class", r.category],
     ["Close code", r.close_code], ["Work type", r.work_type]].filter(([, v]) => v)
     .map(([k, v, l]) => `<div class="kv"${l ? ` data-loc="${esc(v + (r.location && r.location !== v ? "|" + r.location : ""))}" data-part="${esc(r.summary)}"` : ""}><b>${esc(k)}</b>${esc(v)}</div>`).join("") + `</div>`;
+  h += engineerNotes(r);
   h += emergencyLine(r) + pirLine(r);
   h += measurement(r);
   if (r.findings.length) h += `<h2>Findings that name this record</h2>` + r.findings.map(f => `<div class="card bad"><h3><span class="badge ${esc(f.severity)}">${esc(f.severity)}</span> ${esc(f.id)} · ${esc(f.title)}</h3><div>${esc(f.summary)}</div><div class="note">SLA references: ${f.sla_refs.map(esc).join(", ")} · ${esc(f.partner)} scorecard</div></div>`).join("");

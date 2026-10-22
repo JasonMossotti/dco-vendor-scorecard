@@ -39,9 +39,18 @@ def reviewed(records: list[dict]) -> dict[str, str]:
     return out
 
 
+def engineer_notes() -> tuple[dict, dict]:
+    """The engineer notes for each record (data/engineer_notes/, scripts/generate_engineer_notes.py) and the labels."""
+    import yaml
+    notes = json.loads((ROOT / "data" / "engineer_notes" / "notes.json").read_text(encoding="utf-8"))["notes"]
+    cfg = yaml.safe_load((ROOT / "config" / "engineer_notes.yaml").read_text(encoding="utf-8"))
+    return notes, cfg["visibility"]
+
+
 def data() -> dict:
     d = T.build()
-    d.update(class_text=CLASS_TEXT, reviewed=reviewed(d["records"]))
+    notes, vis = engineer_notes()
+    d.update(class_text=CLASS_TEXT, reviewed=reviewed(d["records"]), engineer=notes, engineer_visibility=vis)
     return d
 
 
