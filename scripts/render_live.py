@@ -44,9 +44,12 @@ def prepare(dirs: SH.Dirs | None = None) -> tuple[dict, list[dict], list]:
 
 
 def html_page(idx: dict | None = None) -> str:
+    from scorecard import emergency
     idx = idx or prepare()[0]
+    p1 = [{k: e[k] for k in ("id", "records", "start", "end", "summary")} for e in emergency.events(emergency.load_config())]
+    page = {**idx, "p1": p1}   # the P1 banner; the page only, so index.json and the manifest are unchanged
     tpl = sitenav.inject((ROOT / "templates" / "live.html").read_text(encoding="utf-8"), "live")
-    return sitenav.finish(tpl.replace("__DATA__", json.dumps(idx, sort_keys=True).replace("</", "<\\/")))
+    return sitenav.finish(tpl.replace("__DATA__", json.dumps(page, sort_keys=True).replace("</", "<\\/")))
 
 
 def write_site(out: Path, built: tuple | None = None) -> None:
