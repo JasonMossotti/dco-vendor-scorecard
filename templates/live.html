@@ -51,6 +51,8 @@ svg.spark { display:block; } svg text { font:10px "Inter","Segoe UI",Helvetica,A
 .loading { color:var(--muted); font-style:italic; }
 .stale { background:var(--badbg); color:var(--bad); border:1px solid #f3c2bd; border-radius:8px; padding:8px 12px; margin:8px 0; font-weight:600; }
 .badge.feed { color:#1d7a46; }
+.p1 { border-left:4px solid var(--bad); background:#fdf3f2; padding:8px 12px; border-radius:4px; margin:6px 0; font-size:14px; }
+.p1btn { display:inline-block; margin-left:6px; background:var(--bad); color:#fff; font-weight:600; padding:3px 10px; border-radius:6px; text-decoration:none; }
 </style>
 </head>
 <body>
@@ -163,7 +165,7 @@ __SITENAV__
     h += `<div class="bar" id="bar"><span class="clock"><span id="now"></span><span class="utc" id="utc"></span></span><span class="badge" id="badge"></span><span id="site"></span>`
       + `<button id="pause">Pause</button><select id="speed" aria-label="Speed">${D.speeds.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select>`
       + D.jumps.map(j => `<button data-jump="${esc(j.m)}">${esc(j.label)}</button>`).join("") + `<button id="golive">Live now</button></div>`;
-    h += `<p class="note" id="where"></p>`;
+    h += `<p class="note" id="where"></p><div id="lv-p1"></div>`;
     h += POWER_HTML;
     h += `<h2>Device families</h2><div class="fams" id="lv-fam"></div>`;
     h += `<h2>Redundancy</h2><p class="note">Units in service against the units the design needs, at this minute. Amber: running at N, with no redundant unit; red: below N.</p><div id="lv-red"></div>`;
@@ -198,10 +200,20 @@ __SITENAV__
     const hr = Math.floor(m / 60);
     document.getElementById("site").innerHTML = SS[m] === 0 ? tag("Site normal", "ok") : tag(`Site ${stTxt[SS[m]]}`, stCls[SS[m]]);
     document.getElementById("where").innerHTML = `Sample time ${esc(fmt(W0 + m * MIN, OFF, false))} CDT (minute ${esc(m)} of the month). <a href="../telemetry/#site/${esc(hr)}">Site health at this hour ↗</a>`;
+    p1(t);
     power(m);
     document.getElementById("lv-fam").innerHTML = D.families.map(f => family(f, m)).join("") + fire(t) + security(t);
     document.getElementById("lv-red").innerHTML = redundancy(m);
     document.getElementById("lv-ops").innerHTML = ops(t);
+  }
+
+  // ------------------------------------------------------------------ a P1 in progress: the Emergency tab's response
+  // console, opened at this minute (the console's clock starts at the time the link names)
+  const P1 = (D.p1 || []).map(e => ({...e, a: ms(e.start), b: ms(e.end)}));
+  function p1(t) {
+    const on = P1.filter(e => e.a <= t && (e.b == null || t < e.b));
+    document.getElementById("lv-p1").innerHTML = on.map(e => `<div class="p1"><b>P1 in progress</b> since ${esc(fmt(e.a, OFF, false).slice(-5))} CDT: ${esc(e.records.join(" and "))} ${esc(e.summary)} `
+      + `<a class="p1btn" href="../emergency/#respond/${esc(encodeURIComponent(e.id))}/${esc(new Date(Math.floor(t / MIN) * MIN).toISOString().slice(0, 16))}Z">Open emergency response</a></div>`).join("");
   }
 
   // ------------------------------------------------------------------ power

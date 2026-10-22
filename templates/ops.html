@@ -419,7 +419,7 @@ function viewStandup(day) {
   const top = d.top3.length ? `<ol class="top3">${d.top3.map(t => `<li><span class="flag ${esc(RULE[t.rule][1])}">${esc(RULE[t.rule][0])}</span> ${esc(t.text)} <span class="note">Owner: ${esc(t.owner)}</span></li>`).join("")}</ol>`
     : `<p class="note">Nothing meets the rule today: no open P1 or P2 at risk, no redundancy group reduced at the standup, and no overdue deployment step on a rack due for handoff.</p>`;
   const inc = d.incidents.length ? `<table><tr><th>Record</th><th>Priority</th><th>Owner</th><th>What</th><th>Restore clock</th><th class="n">Restore by</th></tr>
-    ${d.incidents.map(x => `<tr><td class="nw">${esc(x.refs.join(", ") || x.unit)}</td><td>${esc(x.priority)}</td><td>${esc(x.owner)}</td><td>${esc(x.what)}</td>
+    ${d.incidents.map(x => `<tr><td class="nw">${esc(x.refs.join(", ") || x.unit)}</td><td>${esc(x.priority)}${x.priority === "P1" && x.refs.length ? `<br><a class="nw" href="../emergency/#respond/${esc(encodeURIComponent(x.refs[0]))}">Emergency response</a>` : ""}</td><td>${esc(x.owner)}</td><td>${esc(x.what)}</td>
       <td>${clockBar(x)}<div class="note">${esc(hm(x.used_min))} of ${esc(hm(x.target_min))}${x.missed ? ", past target" : x.at_risk ? ", at risk" : ""}</div></td><td class="n">${esc(lhm(x.due))}</td></tr>`).join("")}</table>`
     : `<p class="note">None open at the standup.</p>`;
   const red = d.redundancy.length ? `<ul class="tight">${d.redundancy.map(r => `<li><span class="flag ${r.state === 2 ? "bad" : "warn"}">${r.state === 2 ? "Below N" : "No redundant unit"}</span> ${esc(r.text)} <span class="note">(${esc(r.scheme)})</span></li>`).join("")}</ul>`

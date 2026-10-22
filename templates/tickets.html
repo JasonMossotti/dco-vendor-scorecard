@@ -60,6 +60,7 @@ table.native td:first-child { color:var(--muted); white-space:nowrap; width:1%; 
 .addrel input { font:inherit; padding:4px 6px; border:1px solid var(--line); border-radius:4px; width:190px; }
 .mine { font-size:11px; color:var(--ok); }
 .btn { font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; color:var(--it); padding:4px 10px; border-radius:6px; cursor:pointer; text-decoration:none; display:inline-block; }
+.btn.p1btn { background:#b42318; border-color:#b42318; color:#fff; font-weight:600; }
 .ro { font-size:12px; color:var(--muted); border:1px dashed var(--line); border-radius:6px; padding:6px 10px; margin-top:10px; }
 a.tk-link { color:var(--it); }
 @media print { header.top, .usm, #listview { display:none !important; } main { display:block; } #detail { position:static; max-height:none; box-shadow:none; } body { background:#fff; } }
@@ -270,6 +271,15 @@ function pirLine(r) {
     `${draft ? "A draft for this record is saved in this browser." : "Opens a review form filled from this record's facts: times, alarms, measurement, findings, and related records."}</p>`;
 }
 
+// Emergency response: a P1 opens its event's console on the Emergency tab (records that are one event open the same
+// response); a P2 can be escalated to one when the runbook's rule is met (redundancy lost on both paths, or a second party).
+function emergencyLine(r) {
+  if (r.priority !== "P1" && r.priority !== "P2") return "";
+  const p1 = r.priority === "P1";
+  return `<p class="note"><a class="btn${p1 ? " p1btn" : ""}" href="../emergency/#respond/${encodeURIComponent(r.id)}">${p1 ? "Open emergency response" : "Escalate to emergency response"}</a> ` +
+    `${p1 ? "Notifications with acknowledgements, the bridge, and this event type's checklist, pre-filled from the records. Nothing is sent." : "For a P2 that has lost redundancy on both paths or involves a second party."}</p>`;
+}
+
 // ---- related records: linked in the records, confirmed by a person, and suggested by the data
 function relRow(x, label, body) {
   return `<div class="rel"><div><a class="tk-link" href="#${esc(x.id)}">${esc(x.id)}</a> <span class="pill">${esc(x.type_label)}</span> ` +
@@ -366,7 +376,7 @@ function detail(id) {
     ["Device or item", r.device, "loc"], ["Location", r.location], ["Assigned (person ID)", r.assigned], ["Category or fault class", r.category],
     ["Close code", r.close_code], ["Work type", r.work_type]].filter(([, v]) => v)
     .map(([k, v, l]) => `<div class="kv"${l ? ` data-loc="${esc(v + (r.location && r.location !== v ? "|" + r.location : ""))}" data-part="${esc(r.summary)}"` : ""}><b>${esc(k)}</b>${esc(v)}</div>`).join("") + `</div>`;
-  h += pirLine(r);
+  h += emergencyLine(r) + pirLine(r);
   h += measurement(r);
   if (r.findings.length) h += `<h2>Findings that name this record</h2>` + r.findings.map(f => `<div class="card bad"><h3><span class="badge ${esc(f.severity)}">${esc(f.severity)}</span> ${esc(f.id)} · ${esc(f.title)}</h3><div>${esc(f.summary)}</div><div class="note">SLA references: ${f.sla_refs.map(esc).join(", ")} · ${esc(f.partner)} scorecard</div></div>`).join("");
   h += `<h2>Timeline at a glance</h2>${swimlane(r)}`;

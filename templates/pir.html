@@ -240,6 +240,17 @@ function prefill(f, a) {
   pl.who_was_affected = pl.who_was_affected || (f.impact.gpus ? `${f.impact.gpus} GPUs (${f.impact.gpu_hours_total} GPU-hours) were unavailable. Injuries: ${f.impact.injuries}.` : "No compute capacity was lost.");
   const det = f.metrics.find(m => m.measure.startsWith("Detect"));
   a.detection = a.detection || (det ? `${det.measure}: ${det.elapsed}.` : "");
+  // A closed emergency response for this record (the Emergency tab, saved in this browser) gives the review its
+  // communications, its Incident Commander, and its due date.
+  let rs = null;
+  try { rs = Object.values(JSON.parse(localStorage.getItem("usm.emergency.responses") || "{}") || {})
+    .find(x => x && x.closed && (x.records || []).some(id => [f.ref, f.ticket, f.work_order].includes(id))); } catch (e) { rs = null; }
+  if (rs) {
+    if (!a.communications.length) a.communications = Object.values(rs.sent || {}).sort((x, y) => x.t - y.t).map(x => ({local: x.local || "", to: x.to || "", message: x.text || ""}));
+    const ic = (rs.command || []).slice(-1)[0];
+    a.incident_commander = a.incident_commander || (ic ? ic.who : "");
+    a.review_meeting = a.review_meeting || (rs.pir_due ? `Due by ${rs.pir_due} (from the emergency response)` : "");
+  }
   return a;
 }
 

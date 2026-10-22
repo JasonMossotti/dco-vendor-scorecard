@@ -50,6 +50,16 @@ ul.gate { list-style:none; padding:0; margin:0; } ul.gate li { padding:3px 0 3px
 .steps { margin:0; padding-left:22px; } .steps li { margin:4px 0; } .steps .due { color:var(--muted); font-size:12px; white-space:nowrap; }
 pre.tpl { white-space:pre-wrap; font:13px/1.45 ui-monospace,Consolas,monospace; background:#fffef6; border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin:6px 0; }
 tr.step td { background:var(--panel); font-weight:600; } tr.why td { font-size:12px; background:#fdf3f2; }
+main.wide { max-width:1400px; padding:24px 28px; }
+.console { display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:0 22px; } @media (max-width:1100px) { .console { grid-template-columns:1fr; } }
+.console h2:first-child { margin-top:8px; } .console table.kv td:first-child { color:var(--muted); white-space:nowrap; width:1%; }
+.ctl { display:flex; flex-wrap:wrap; gap:10px; align-items:center; background:var(--panel); border-radius:8px; padding:8px 12px; position:sticky; top:0; z-index:5; }
+.ctl .clk { display:flex; flex-direction:column; min-width:210px; font-variant-numeric:tabular-nums; } .ctl select, .row input, .console textarea, .console input[type=text] { font:inherit; font-size:13px; padding:3px 6px; border:1px solid var(--line); border-radius:5px; }
+.safe { font-size:13px; border-left:4px solid var(--warn); background:#fff8e6; padding:6px 10px; border-radius:4px; }
+.row { display:flex; flex-wrap:wrap; gap:6px; } .row input { flex:1 1 120px; } .console textarea { width:100%; margin:4px 0; } .ans { width:100%; margin-top:3px; }
+.ntc { border:1px solid var(--line); border-left:4px solid var(--muted); border-radius:6px; padding:8px 10px; margin:8px 0; font-size:13px; } .ntc.sent { border-left-color:var(--warn); } .ntc.ack { border-left-color:var(--ok); } .ntc.esc { border-left-color:var(--bad); }
+.ntc .tpl { font-size:12px; margin:4px 0; } .pend { color:var(--warn); font-weight:600; } .bad { background:var(--bad); } .warnb { background:var(--warn); }
+ul.tight, ul.clocks { margin:0; padding-left:18px; font-size:13px; } ul.chk { list-style:none; padding:0; margin:0; font-size:13px; } ul.chk li { margin:4px 0; }
 .printonly { display:none; }
 @media print {
   @page { margin:12mm; }
@@ -65,7 +75,7 @@ tr.step td { background:var(--panel); font-weight:600; } tr.why td { font-size:1
 __SITENAV__
 <header class="top">
   <div><strong>Emergency</strong> <span class="note">Site AUS-1 · the Customer's procedures</span></div>
-  <div class="tabs"><button id="t-procedures" class="on">Procedures</button> <button id="t-contacts">Call lists</button> <button id="t-command">Command</button></div>
+  <div class="tabs"><button id="t-procedures" class="on">Procedures</button> <button id="t-contacts">Call lists</button> <button id="t-command">Command</button> <button id="t-respond">Response</button></div>
   <div class="tools"><button id="print">Print / save PDF</button></div>
 </header>
 <main id="doc"></main>
@@ -202,10 +212,276 @@ function renderCommand() {
   return h;
 }
 
+// ---- Response: the console for one P1 event (or an escalated P2). Nothing is ever sent: Send records the message and
+// the time in this browser. The console's clock is the event's own time: it starts at the event's start (or the
+// minute a Live link names) and runs at real speed or faster. Drill simulates acknowledgements and joins on a seeded
+// stream; Replay plays the bridge's recorded comms log where one exists.
+const RESP = DATA.responses.events, BYREC = DATA.responses.by_record, CON = DATA.console, RB = CON.runbook;
+const MIN = 60e3, OFF = CON.offset_h * 3600e3, RKEY = "usm.emergency.responses";
+const p2 = n => String(n).padStart(2, "0");
+const ms = s => s ? Date.parse(s) : null;
+const clockStr = (t, off) => { const d = new Date(t + off); return `${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`; };
+const cdt = t => t == null ? "—" : `${clockStr(t, OFF)} ${CON.timezone}`;
+const both = t => t == null ? "—" : `${clockStr(t, OFF)} ${CON.timezone} (${clockStr(t, 0)} UTC)`;
+const dayStr = t => new Date(t + OFF).toISOString().slice(0, 10);
+const span = m => { m = Math.round(m); const a = Math.abs(m); return a >= 60 ? `${Math.floor(a / 60)} h ${p2(a % 60)} min` : `${a} min`; };
+function store() { try { return JSON.parse(localStorage.getItem(RKEY) || "{}") || {}; } catch (e) { return {}; } }
+// Saved responses are keyed by event id; only a known event's own key is ever read or written (never __proto__).
+const known = id => typeof id === "string" && id !== "__proto__" && id !== "constructor" && id !== "prototype" && Object.prototype.hasOwnProperty.call(RESP, id);
+function saved(id) { const s = store(); return known(id) && Object.prototype.hasOwnProperty.call(s, id) ? s[id] : null; }
+function persist() { if (!RS || RS.mode === "replay" || !known(RS.id)) return; const s = store(); s[RS.id] = RS; try { localStorage.setItem(RKEY, JSON.stringify(s)); } catch (e) { /* private window */ } }
+function rng(seed) { let h = 2166136261; for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; }; }
+let RS = null, TIMER = null, LASTSIG = "";
+
+function fresh(id, at) {
+  const e = RESP[id], t0 = at || ms(e.start);
+  return {id, records: e.records.map(r => r.id), mode: "live", type: e.types[0] || "", t0, w0: Date.now(), speed: 1, paused: false, opened: t0,
+    sent: {}, extra: {}, engaged: {}, bridge: null, joins: {}, assign: {}, acts: {}, answers: {}, rts: {}, holds: {}, decisions: [], log: [{t: t0, text: "Response opened."}],
+    command: [{t: t0, who: "On-call primary (" + e.on_call.primary + ")"}], rtsAt: null, closed: null};
+}
+const T = () => RS.paused ? RS.t0 : RS.t0 + (Date.now() - RS.w0) * RS.speed;
+function setClock(t, paused) { RS.t0 = t; RS.w0 = Date.now(); RS.paused = paused; }
+function note(text, t) { RS.log.push({t: t ?? T(), text}); }
+
+// What the clock shows: the user's own entries, or the recorded log in Replay, and the simulated acknowledgements,
+// joins, and escalations (Drill), all as of the clock.
+function view() {
+  const e = RESP[RS.id], now = T(), type = TYPES[RS.type];
+  const tiers = type ? type.notify : [];
+  if (RS.mode === "replay") {
+    const L = e.replay.filter(x => ms(x.t) <= now), first = k => L.find(x => x.kind === k);
+    const lu = L.filter(x => x.kind === "leadership_update");
+    const sent = {}; if (lu.length && tiers[0]) sent[tiers[0].tier] = {t: ms(lu[0].t), text: lu[0].text};
+    const ack = {}; if (lu.length && tiers[0]) ack[tiers[0].tier] = ms(lu[0].t);
+    const joins = {}; L.filter(x => x.kind === "lead_joined").forEach(x => joins[x.role] = ms(x.t));
+    if (first("bridge_open")) joins["Incident Commander"] = ms(first("bridge_open").t);
+    const ic = first("ic_declared");
+    return {now, tiers, sent, ack: {}, acked: ack, bridge: first("bridge_open") ? ms(first("bridge_open").t) : null, joins,
+      command: ic ? [{t: ms(ic.t), who: ic.role + ": " + ic.text.split(".")[0]}] : [], leadership: lu.map(x => ms(x.t)),
+      log: L.map(x => ({t: ms(x.t), text: `${x.role}${x.to ? " to " + x.to : ""}: ${x.text}`})), esc: escalations(tiers, sent, ack, now),
+      engaged: {},
+      rts: L.some(x => x.kind === "rts_declared") ? ms(L.find(x => x.kind === "rts_declared").t) : null};
+  }
+  const acked = {}, joins = {...RS.joins}, log = RS.log.slice();
+  for (const [k, s] of Object.entries(RS.sent)) if (s.ack != null && s.ack <= now) acked[k] = s.ack;
+  if (RS.mode === "drill") {
+    const never = tiers.length ? tiers[Math.floor(rng(RS.id + "never")() * tiers.length)].tier : "";
+    for (const [k, s] of Object.entries(RS.sent)) {
+      if (acked[k] != null || k === never) continue;
+      const a = s.t + (1 + Math.floor(rng(RS.id + k)() * 12)) * MIN;
+      if (a <= now) { acked[k] = a; log.push({t: a, text: `Drill: ${tierName(k)} acknowledged.`}); }
+    }
+    if (RS.bridge != null) rollCall(e, type).forEach(r => {
+      if (joins[r] != null || r === "Incident Commander") return;
+      const j = RS.bridge + (1 + Math.floor(rng(RS.id + r)() * 9)) * MIN;
+      if (j <= now) { joins[r] = j; log.push({t: j, text: `Drill: ${r} joined the bridge.`}); }
+    });
+  }
+  const esc_ = escalations(tiers, RS.sent, acked, now);
+  esc_.forEach(x => log.push({t: x.t, text: `${tierName(x.tier)} not acknowledged after ${x.after_min} min: escalated to ${x.to}.`}));
+  const leadership = Object.entries(RS.sent).filter(([k]) => k === "site_leadership").map(([, s]) => s.t).concat(RS.log.filter(x => x.leadership).map(x => x.t));
+  return {now, tiers, sent: RS.sent, acked, bridge: RS.bridge, joins, command: RS.command, leadership: leadership.sort((a, b) => a - b),
+    log, esc: esc_, rts: RS.rtsAt, engaged: RS.engaged || {}};
+}
+function tierName(k) { const t = DATA.tiers.find(x => x.id === k); return t ? t.name : k; }
+function escalations(tiers, sent, acked, now) {
+  const out = [];
+  for (const n of tiers) { const s = sent[n.tier]; if (!s) continue;
+    for (const x of CON.escalate) { const t = s.t + x.after_min * MIN; if (t <= now && !(acked[n.tier] != null && acked[n.tier] <= t)) out.push({tier: n.tier, t, after_min: x.after_min, to: x.to}); } }
+  return out;
+}
+function rollCall(e, type) {
+  const want = new Set(["Incident Commander", "Scribe", ...(type ? type.leads : []), ...e.partners.map(p => p + " lead")]);
+  if (type && type.notify.some(n => n.tier === "comms")) want.add("Communications lead");
+  return DATA.bridge.roll_call.filter(r => want.has(r));
+}
+function due(at, now, done) {   // a clock against the console's time
+  if (done != null) return done <= at ? `<span class="met">Met ${esc(cdt(done))}</span>` : `<span class="missed">Late ${esc(cdt(done))}, ${esc(span((done - at) / MIN))} over</span>`;
+  return at >= now ? `<span class="pend">Due ${esc(cdt(at))}, in ${esc(span((at - now) / MIN))}</span>` : `<span class="missed">Overdue since ${esc(cdt(at))}</span>`;
+}
+function message(e, n) {
+  const st = ms(e.start), c = e.clocks.find(x => x.label.startsWith("Restore"));
+  return `${e.priority}: ${e.summary.replace(/\.?$/, ".")}` + (e.rack ? ` Rack ${e.rack}` + (e.gpus ? ` (${e.gpus} GPUs)` : "") + "." : "") +
+    ` Started ${cdt(st)}${e.location ? " in " + e.location : ""}.` + (c ? ` Restore target ${cdt(st + c.min * MIN)} (${c.label}).` : "") +
+    ` Bridge ${DATA.bridge.dial_in}, passcode ${DATA.bridge.passcode}. Next update by ${cdt(Math.max(T(), st) + RB.leadership_cadence_min * MIN)}.`;
+}
+
+function renderRespondList() {
+  const kept = store();
+  let h = `<h1>Emergency response</h1><p class="sub">Open the console for a P1 event: pre-filled facts, the notifications with acknowledgements and escalation, the bridge, and the event type's checklist. <b>Nothing is sent:</b> this is a demonstration, and every send, acknowledgement, and join is recorded in this browser only.</p>`;
+  h += `<div style="overflow-x:auto"><table id="resp-list"><tr><th>Start</th><th>Event</th><th>Procedure</th><th>Response</th></tr>` +
+    DATA.events.map(x => { const e = RESP[x.id], s = kept[x.id];
+      return `<tr><td class="num">${esc(e.start.slice(0, 10))} ${esc(cdt(ms(e.start)))}</td><td>${e.records.map(r => esc(r.id)).join(" and ")}<br><span class="note">${esc(e.summary)}</span></td>` +
+        `<td>${e.types.map(t => esc(TYPES[t].name)).join(", ")}</td><td class="num"><a class="btn" href="#respond/${esc(x.id)}">${s ? (s.closed ? "Closed: view" : "Continue") : "Open response"}</a>${e.replay.length ? ` <a class="btn" href="#respond/${esc(x.id)}/replay">Replay the bridge</a>` : ""}</td></tr>`; }).join("") + `</table></div>`;
+  h += `<p class="note">A P2 record can be escalated from the Incident Portal (Escalate to emergency response) when the runbook's rule is met: redundancy lost on both paths, or a second party involved.</p>`;
+  return h;
+}
+
+function renderRespond() {
+  const e = RESP[RS.id], v = view(), type = TYPES[RS.type], st = ms(e.start), now = v.now, ro = RS.mode === "replay" || RS.closed != null;
+  const end = ms(e.end), down = e.gpus ? e.gpus * Math.max(0, Math.min(now, end ?? now) - st) / 3600e3 : 0;
+  let h = `<p class="noprint note"><a href="#respond">All responses</a></p>`;
+  h += `<div class="ctl" id="ctl"><span class="clk"><b id="clk">${esc(both(now))}</b><span class="note" id="clk-rel">${esc(dayStr(now))}, ${esc(span((now - st) / MIN))} ${now >= st ? "since the start" : "before the start"}</span></span>` +
+    `<label>Mode <select id="r-mode"><option value="live">Response</option><option value="drill">Drill (simulated acknowledgements)</option>${e.replay.length ? `<option value="replay">Replay the recorded bridge</option>` : ""}</select></label>` +
+    `<label>Speed <select id="r-speed">${[[1, "Real time"], [10, "10×"], [60, "60×"]].map(([k, l]) => `<option value="${k}"${RS.speed === k ? " selected" : ""}>${l}</option>`).join("")}</select></label>` +
+    `<button class="btn" id="r-pause">${RS.paused ? "Resume" : "Pause"}</button> <button class="btn" id="r-fwd">+5 min</button> <button class="btn" id="r-reset">Reset</button></div>`;
+  h += `<p class="safe"><b>Nothing is sent.</b> Send records the message and the time in this browser only. ${RS.mode === "drill" ? "Drill: responders acknowledge and join on a seeded stream; one never acknowledges, so escalation shows." : RS.mode === "replay" ? "Replay: the bridge as recorded in the comms log, as of the clock." : "Mark acknowledgements and joins as they happen."}</p>`;
+  h += `<div class="console"><div class="col" id="c-event">`;
+  // 1. The event card
+  h += `<h2>${esc(e.priority)} event${e.priority === "P2" ? " (escalated)" : ""}</h2><p style="margin:0 0 6px"><b>${esc(e.summary)}</b></p>` +
+    `<table class="kv"><tr><td>Records</td><td>${e.records.map(r => `<a href="../tickets/#${esc(encodeURIComponent(r.id))}" target="_blank" rel="noopener">${esc(r.id)}</a> <span class="tag ${partyCls(r.partner)}">${esc(r.partner)}</span> ${esc(r.priority)}`).join("<br>")}</td></tr>` +
+    `<tr><td>Procedure</td><td>${ro ? (type ? `<a href="#proc/${esc(type.id)}">${esc(type.name)}</a>` : "None chosen") : `<select id="r-type"><option value="">Choose a procedure</option>${DATA.types.map(t => `<option value="${esc(t.id)}"${t.id === RS.type ? " selected" : ""}>${esc(t.name)}</option>`).join("")}</select>`}</td></tr>` +
+    `<tr><td>Started</td><td>${esc(e.start.slice(0, 10))} ${esc(both(st))}${e.alarms.length ? `<br><span class="note">Detected by ${esc(e.alarms[0].signal)} on ${esc(e.alarms[0].device)}</span>` : ""}</td></tr>` +
+    `<tr><td>Where</td><td>${esc(e.location)}${e.rack ? `, rack ${esc(e.rack)}` : ""}${e.devices.length ? `<br>${e.devices.map(d => `<a href="../devices/#${esc(encodeURIComponent(d))}">${esc(d)}</a>`).join(", ")}` : ""}</td></tr>` +
+    `<tr><td>Parties</td><td>${e.partners.map(p => `<span class="tag ${partyCls(p)}">${esc(p)}</span>`).join(" ")}</td></tr>` +
+    `<tr><td>On call</td><td>${esc(e.on_call.label)}: ${esc(e.on_call.primary)}, then ${esc(e.on_call.secondary)}</td></tr></table>`;
+  h += `<div class="strip"><div class="stat"><div class="v">${esc(e.gpus || "—")}</div><div class="l">GPUs affected${e.rack ? ` (rack ${esc(e.rack)})` : ""}</div></div>` +
+    `<div class="stat"><div class="v" id="impact">${e.gpus ? esc(down.toFixed(1)) : "—"}</div><div class="l">GPU-hours lost so far (GPUs × time down; Availability holds the final)</div></div></div>`;
+  h += `<h3>Contract clocks</h3><ul class="clocks">${e.clocks.map(c => { const party = c.label.match(/\((.*) SLA/)[1], rest = c.label.startsWith("Restore"), g = v.engaged[party];
+    return `<li>${esc(c.label)}: ${!rest && RS.mode === "replay" ? `due ${esc(cdt(st + c.min * MIN))} <span class="note">(not in the recorded log)</span>` : due(st + c.min * MIN, now, rest ? (end && end <= now ? end : null) : g ?? null)}${!rest && g == null && !ro ? ` <button class="btn" data-engaged="${esc(party)}">On site</button>` : ""}</li>`; }).join("") || "<li>None</li>"}</ul>` +
+    `<p class="note">Restore is met when the records close the event; on site is marked when the partner reports its people there.</p>`;
+  h += `<h3>What one more failure takes down</h3>${e.redundancy.length ? `<ul class="tight">${e.redundancy.map(g => `<li><span class="tag ${g.state === 2 ? "bad" : "warnb"}">${g.state === 2 ? "lost" : "reduced"}</span> ${esc(g.name)}: ${esc(g.text)} <a href="../telemetry/#site">Site health</a></li>`).join("")}</ul>` : `<p class="note">No redundancy group reduced in the first hour (Site health).</p>`}`;
+  h += `<h3>Change work in the next 24 hours</h3>${e.work.length ? `<table>${e.work.map(j => { const d = RS.holds[j.id];
+      return `<tr><td><a href="../tickets/#${esc(encodeURIComponent(j.id))}" target="_blank" rel="noopener">${esc(j.id)}</a> <span class="tag ${partyCls(j.owner)}">${esc(j.owner)}</span><br><span class="note">${esc(j.title)}, ${esc(cdt(ms(j.start)))} to ${esc(cdt(ms(j.end)))}</span></td>` +
+        `<td class="num">${d ? `<b>${esc(d.what)}</b> ${esc(cdt(d.t))}` : ro ? "" : `<button class="btn" data-hold="${esc(j.id)}" data-what="Hold">Hold</button> <button class="btn" data-hold="${esc(j.id)}" data-what="Proceed">Proceed</button>`}</td></tr>`; }).join("")}</table>` : `<p class="note">None on the Calendar.</p>`}`;
+  h += `<h3>Permits open</h3>${e.permits.length ? `<ul class="tight">${e.permits.map(p => `<li>${esc(p.permit)} ${esc(p.type.toUpperCase())} on ${esc(p.point)} (${esc(p.job)}, ${esc(p.partner)}), issued ${esc(cdt(ms(p.issued)))}</li>`).join("")}</ul>` : `<p class="note">No permit open (EHS).</p>`}`;
+  h += `<h3>Spares below minimum</h3>${e.spares.length ? `<ul class="tight">${e.spares.map(s => `<li>${esc(s.where)}: ${esc(s.fru)} ${esc(s.balance)} of ${esc(s.minimum)} <span class="note">(${esc(s.source)})</span></li>`).join("")}</ul>` : `<p class="note">Every spares shelf at or above its minimum.</p>`}`;
+  h += `<h3>Partner pages (NT-1, within ${esc(DATA.facts.page_min)} min)</h3>${e.pages.length ? `<ul class="tight">${e.pages.map(p => `<li><span class="tag ${partyCls(p.party)}">${esc(p.party)}</span> ${esc(p.channel)} ${esc(cdt(ms(p.sent_at)))}: ${esc(p.signal)} <span class="${p.late_min <= DATA.facts.page_min ? "met" : "missed"}">${esc(p.late_min)} min</span></li>`).join("")}</ul>` : `<p class="note">No partner page in the log for this event.</p>`}`;
+  h += e.related.length ? `<h3>Related records</h3><p>${e.related.map(r => `<a href="../tickets/#${esc(encodeURIComponent(r))}" target="_blank" rel="noopener">${esc(r)}</a>`).join(", ")}</p>` : "";
+  h += `</div><div class="col" id="c-notify">`;
+  // 2. Command and notifications
+  const cmd = v.command[v.command.length - 1];
+  h += `<h2>Command</h2><p>${cmd ? `<b>${esc(cmd.who)}</b> since ${esc(cdt(cmd.t))}` : "Not yet declared."} ${due(st + RB.declare_min * MIN, now, v.command.length ? v.command[0].t : null)}</p>` +
+    (ro ? "" : `<p class="row"><input type="text" id="r-cmd" placeholder="Hand over to (role)"><button class="btn" id="r-cmd-go">Hand over command</button></p>`) +
+    (v.command.length > 1 ? `<p class="note">${v.command.map(c => `${esc(cdt(c.t))} ${esc(c.who)}`).join(" · ")}</p>` : "");
+  h += `<h2>Notifications</h2><p class="note">Who is told for this procedure, by when (call lists). Unacknowledged after ${CON.escalate.map(x => `${esc(x.after_min)} min, ${esc(x.to)}`).join("; after ")} is told (routing file).</p>`;
+  if (!type) h += `<p class="note">Choose a procedure to list who is told.</p>`;
+  h += v.tiers.map(n => { const s = v.sent[n.tier], a = v.acked[n.tier], es = v.esc.filter(x => x.tier === n.tier), at = st + n.within_min * MIN;
+    return `<div class="ntc${s ? (a != null ? " ack" : es.length ? " esc" : " sent") : ""}" id="n-${esc(n.tier)}"><div class="nh"><b>${esc(n.name)}</b> <span class="note">${esc(n.contact)} ${esc(n.phone)}</span></div>` +
+      `<div class="note">${n.within_min === 0 ? "At once" : `Within ${esc(n.within_min)} min`}: ${RS.mode === "replay" && !s ? `due ${esc(cdt(at))}` : due(at, now, s ? s.t : null)}</div>` +
+      (s ? `<pre class="tpl">${esc(s.text)}</pre>` : RS.mode === "replay" ? `<p class="note">Not in the recorded log.</p>` : `<pre class="tpl">${esc(message(e, n))}</pre>` + (ro ? "" : `<textarea id="x-${esc(n.tier)}" data-extra="${esc(n.tier)}" rows="2" placeholder="Anything else to add">${esc(RS.extra[n.tier] || "")}</textarea><button class="btn" data-send="${esc(n.tier)}">Send</button>`)) +
+      (s ? `<div>${a != null ? `<span class="met">Acknowledged ${esc(cdt(a))}</span>` : `<span class="pend">Sent ${esc(cdt(s.t))}, not acknowledged</span>${ro || RS.mode === "drill" ? "" : ` <button class="btn" data-ack="${esc(n.tier)}">Mark acknowledged</button>`}`}</div>` : "") +
+      es.map(x => `<div class="missed">Escalated ${esc(cdt(x.t))}: ${esc(x.to)} told</div>`).join("") + `</div>`; }).join("");
+  const lastL = v.leadership.length ? v.leadership[v.leadership.length - 1] : null;
+  h += `<h3>Next leadership update</h3><p>${lastL == null ? due(st + RB.first_leadership_min * MIN, now, null) + " (first notice)" : due(lastL + RB.leadership_cadence_min * MIN, now, null) + ` (every ${esc(RB.leadership_cadence_min)} min)`}` +
+    (ro || lastL == null ? "" : ` <button class="btn" id="r-upd">Leadership update sent</button>`) + `</p>`;
+  h += `</div><div class="col" id="c-bridge">`;
+  // 3. The bridge and the procedure
+  const b = DATA.bridge, rc = rollCall(e, type);
+  h += `<h2>Bridge</h2><div class="box"><b>${esc(b.dial_in)}</b>, passcode ${esc(b.passcode)}<br>${esc(b.video)}<br><span class="note">Backup ${esc(b.backup)}</span></div>` +
+    `<p>Open within ${esc(DATA.facts.bridge_min)} min: ${due(st + DATA.facts.bridge_min * MIN, now, v.bridge)}${v.bridge == null && !ro ? ` <button class="btn" id="r-bridge">Bridge open</button>` : ""}</p>`;
+  h += `<table id="roll"><tr><th>Roll call</th><th>Joined</th></tr>${rc.map(r => { const j = v.joins[r];
+    return `<tr><td>${esc(r)}${!ro && ["Incident Commander", "Scribe", "Communications lead"].includes(r) ? `<br><input type="text" data-assign="${esc(r)}" value="${esc(RS.assign[r] || "")}" placeholder="Who">` : RS.assign[r] ? `<br><span class="note">${esc(RS.assign[r])}</span>` : ""}</td>` +
+      `<td class="num">${j != null ? (v.bridge != null && r !== "Incident Commander" ? due(v.bridge + RB.lead_join_min * MIN, now, j) : esc(cdt(j))) : v.bridge == null ? "" : ro || RS.mode === "drill" && r !== "Scribe" ? `<span class="pend">Not yet</span>` : `<button class="btn" data-join="${esc(r)}">Joined</button>`}</td></tr>`; }).join("")}</table>`;
+  if (type) {
+    h += `<h2>Checklist</h2>` + type.phases.map(ph => `<h3>${esc(ph.name)}</h3><ul class="chk">` + type.actions.map((a, i) => [a, i]).filter(([a]) => a.phase === ph.id).map(([a, i]) =>
+      `<li><label><input type="checkbox" data-act="${i}"${RS.acts[i] != null && RS.mode !== "replay" ? " checked" : ""}${ro ? " disabled" : ""}> <span class="tag ${partyCls(a.owner)}">${esc(a.owner)}</span> ${esc(a.text)}</label>${RS.acts[i] != null && RS.mode !== "replay" ? ` <span class="note">${esc(cdt(RS.acts[i]))}</span>` : ""}</li>`).join("") + `</ul>`).join("");
+    h += `<h2>Questions for the bridge</h2><ol class="acts">${type.questions.map((q, i) => `<li>${esc(q)}${ro ? (RS.answers[i] ? `<br><i>${esc(RS.answers[i].a)}</i>` : "") : `<br><input type="text" class="ans" data-q="${i}" value="${esc((RS.answers[i] || {}).a || "")}" placeholder="Answer">`}</li>`).join("")}</ol>`;
+    const gate = type.rts.every((_, i) => RS.rts[i] != null);
+    h += `<h2>Return-to-service gate</h2><ul class="chk">${type.rts.map((x, i) => `<li><label><input type="checkbox" data-rts="${i}"${RS.rts[i] != null && RS.mode !== "replay" ? " checked" : ""}${ro ? " disabled" : ""}> ${esc(x)}</label></li>`).join("")}</ul>` +
+      `<p>${v.rts != null ? `<span class="met">Returned to service ${esc(cdt(v.rts))}</span>` : ro ? "" : `<button class="btn" id="r-rts"${gate ? "" : " disabled"}>Declare return to service</button>${gate ? "" : ` <span class="note">Locked until every gate item is ticked.</span>`}`}</p>`;
+  }
+  h += `<h2>Decision log</h2>${ro ? "" : `<div class="row"><input type="text" id="d-what" placeholder="Decision"><input type="text" id="d-who" placeholder="Who decided"><input type="text" id="d-why" placeholder="On what facts"><button class="btn" id="d-add">Log</button></div>`}` +
+    (RS.mode !== "replay" && RS.decisions.length ? `<table id="decisions">${RS.decisions.map(d => `<tr><td class="num">${esc(cdt(d.t))}</td><td><b>${esc(d.what)}</b> (${esc(d.who)})<br><span class="note">${esc(d.why)}</span></td></tr>`).join("")}</table>` : `<p class="note">No decision logged.</p>`);
+  h += `</div></div>`;
+  // The timeline, and close-out into the review
+  const tl = v.log.filter(x => x.t <= now).sort((a, b) => a.t - b.t);
+  h += `<h2>Timeline</h2><div style="overflow-x:auto"><table id="timeline"><tr><th>${esc(CON.timezone)}</th><th>UTC</th><th>What</th></tr>${tl.map(x => `<tr><td class="num">${esc(clockStr(x.t, OFF))}</td><td class="num">${esc(clockStr(x.t, 0))}</td><td>${esc(x.text)}</td></tr>`).join("")}</table></div>`;
+  if (RS.mode === "replay" && DATA.command.replays.length) { const r = DATA.command.replays[0];
+    h += `<p class="box" id="replay-score">Held against the runbook, this bridge met <b>${esc(r.summary.met)} of ${esc(r.summary.steps)}</b> steps (${esc(r.summary.missed)} missed). <a href="#replay">The replay, step by step</a> · <a href="../pir/#${esc(r.review)}">${esc(r.review)}</a></p>`; }
+  if (RS.mode !== "replay") {
+    const pirDue = RS.closed != null ? businessDays(RS.closed, DATA.facts.pir_business_days) : null;
+    h += `<h2>Close</h2>${RS.closed == null ? `<p><button class="btn" id="r-close">Close response</button> <span class="note">Stops the clock, exports the response as YAML, and starts the post-incident review from it.</span></p>` :
+      `<p><span class="met">Closed ${esc(cdt(RS.closed))}.</span> Post-incident review due ${esc(pirDue)} (${esc(DATA.facts.pir_business_days)} business days, Interface Agreement). <button class="btn" id="r-yaml">Export YAML</button> <a class="btn" id="r-pir" href="../pir/#new=${esc(RS.id)}">Start post-incident review</a> <button class="btn" id="r-reopen">Reopen</button></p>`}`;
+  }
+  return h;
+}
+function businessDays(t, n) { const d = new Date(t + OFF); while (n > 0) { d.setUTCDate(d.getUTCDate() + 1); if (d.getUTCDay() % 6) n--; } return d.toISOString().slice(0, 10); }
+
+// The response as YAML, the shape the post-incident review reads (JSON strings are valid YAML scalars)
+function responseDoc() {
+  const e = RESP[RS.id], v = view();
+  return {event: RS.id, records: e.records.map(r => r.id), procedure: RS.type, mode: RS.mode, opened: new Date(RS.opened).toISOString(), closed: RS.closed ? new Date(RS.closed).toISOString() : null,
+    command: v.command.map(c => ({at: new Date(c.t).toISOString(), who: c.who})), bridge_open: v.bridge ? new Date(v.bridge).toISOString() : null,
+    roll_call: Object.fromEntries(Object.entries(v.joins).map(([k, t]) => [k, new Date(t).toISOString()])), roles: RS.assign,
+    notifications: v.tiers.filter(n => v.sent[n.tier]).map(n => ({to: n.name, sent: new Date(v.sent[n.tier].t).toISOString(), acknowledged: v.acked[n.tier] ? new Date(v.acked[n.tier]).toISOString() : null,
+      escalated: v.esc.filter(x => x.tier === n.tier).map(x => x.to), message: v.sent[n.tier].text})),
+    checklist: TYPES[RS.type] ? TYPES[RS.type].actions.map((a, i) => ({owner: a.owner, action: a.text, done: RS.acts[i] ? new Date(RS.acts[i]).toISOString() : null})) : [],
+    answers: TYPES[RS.type] ? TYPES[RS.type].questions.map((q, i) => ({question: q, answer: (RS.answers[i] || {}).a || ""})) : [],
+    change_holds: Object.entries(RS.holds).map(([k, d]) => ({change: k, decision: d.what, at: new Date(d.t).toISOString()})),
+    decisions: RS.decisions.map(d => ({at: new Date(d.t).toISOString(), decision: d.what, who: d.who, why: d.why})),
+    returned_to_service: RS.rtsAt ? new Date(RS.rtsAt).toISOString() : null,
+    timeline: v.log.sort((a, b) => a.t - b.t).map(x => ({at: new Date(x.t).toISOString(), what: x.text}))};
+}
+function yaml(v, ind = "") {
+  if (Array.isArray(v)) return v.length ? v.map(x => `\n${ind}- ` + (x && typeof x === "object" ? yaml(x, ind + "  ").replace(/^\n\s*/, "") : JSON.stringify(x))).join("") : " []";
+  if (v && typeof v === "object") return Object.keys(v).length ? Object.entries(v).map(([k, x]) => `\n${ind}${/^[A-Za-z0-9_-]+$/.test(k) ? k : JSON.stringify(k)}:` + (x && typeof x === "object" ? yaml(x, ind + "  ") : " " + JSON.stringify(x))).join("") : " {}";
+  return JSON.stringify(v);
+}
+const responseYaml = () => "# Emergency response exported from the Emergency tab (browser only; nothing was sent).\n" + yaml(responseDoc()).replace(/^\n/, "") + "\n";
+
+function wireRespond() {
+  const doc = document.getElementById("doc"), on = (id, f) => { const el = document.getElementById(id); if (el) el.onclick = f; };
+  const act = f => { f(); persist(); redraw(); };
+  document.getElementById("r-mode").value = RS.mode;
+  document.getElementById("r-mode").onchange = ev => { const m = ev.target.value;
+    if (m === "replay") { RS = {...fresh(RS.id), mode: "replay"}; } else { RS = saved(RS.id) || fresh(RS.id); RS.mode = m; }
+    persist(); history.replaceState(null, "", "#respond/" + RS.id + (m === "replay" ? "/replay" : "")); redraw(); };
+  document.getElementById("r-speed").onchange = ev => { setClock(T(), RS.paused); RS.speed = +ev.target.value; persist(); };
+  on("r-pause", () => act(() => setClock(T(), !RS.paused)));
+  on("r-fwd", () => act(() => setClock(T() + 5 * MIN, RS.paused)));
+  on("r-reset", () => { const m = RS.mode; const s = store(); delete s[RS.id]; try { localStorage.setItem(RKEY, JSON.stringify(s)); } catch (e) { /* private window */ } RS = fresh(RS.id); RS.mode = m === "replay" ? "replay" : m; persist(); redraw(); });
+  const t = document.getElementById("r-type"); if (t) t.onchange = () => act(() => { RS.type = t.value; note(`Procedure: ${TYPES[t.value] ? TYPES[t.value].name : "none"}.`); });
+  doc.querySelectorAll("[data-extra]").forEach(el => el.oninput = () => { RS.extra[el.dataset.extra] = el.value; persist(); });
+  doc.querySelectorAll("[data-send]").forEach(el => el.onclick = () => act(() => { const k = el.dataset.send, n = TYPES[RS.type].notify.find(x => x.tier === k);
+    const x = (RS.extra[k] || "").trim(); RS.sent[k] = {t: T(), to: n.name, local: dayStr(T()) + " " + cdt(T()), text: message(RESP[RS.id], n) + (x ? "\n" + x : "")}; note(`Notice sent to ${n.name} (${n.contact}).`); }));
+  doc.querySelectorAll("[data-ack]").forEach(el => el.onclick = () => act(() => { const k = el.dataset.ack; RS.sent[k].ack = T(); note(`${tierName(k)} acknowledged.`); }));
+  doc.querySelectorAll("[data-hold]").forEach(el => el.onclick = () => act(() => { const k = el.dataset.hold, w = el.dataset.what; RS.holds[k] = {what: w, t: T()};
+    RS.decisions.push({t: T(), what: `${w} ${k}`, who: "Incident Commander", why: "Change work on or beside the affected equipment, decided on the bridge."}); note(`Decision: ${w.toLowerCase()} ${k}.`); }));
+  on("r-cmd-go", () => { const w = document.getElementById("r-cmd").value.trim(); if (w) act(() => { RS.command.push({t: T(), who: w}); note(`Command handed over to ${w}.`); }); });
+  on("r-upd", () => act(() => { RS.log.push({t: T(), text: "Leadership update sent.", leadership: true}); }));
+  on("r-bridge", () => act(() => { RS.bridge = T(); RS.joins["Incident Commander"] = RS.bridge; note("Bridge open."); }));
+  doc.querySelectorAll("[data-engaged]").forEach(el => el.onclick = () => act(() => { RS.engaged = RS.engaged || {}; RS.engaged[el.dataset.engaged] = T(); note(`${el.dataset.engaged} engaged on site.`); }));
+  doc.querySelectorAll("[data-join]").forEach(el => el.onclick = () => act(() => { RS.joins[el.dataset.join] = T(); note(`${el.dataset.join} joined the bridge.`); }));
+  doc.querySelectorAll("[data-assign]").forEach(el => el.onchange = () => act(() => { RS.assign[el.dataset.assign] = el.value.trim(); note(`${el.dataset.assign}: ${el.value.trim() || "unassigned"}.`); }));
+  doc.querySelectorAll("[data-act]").forEach(el => el.onchange = () => act(() => { const i = +el.dataset.act, a = TYPES[RS.type].actions[i];
+    if (el.checked) { RS.acts[i] = T(); note(`Done: ${a.text}`); } else { delete RS.acts[i]; note(`Reopened: ${a.text}`); } }));
+  doc.querySelectorAll("[data-q]").forEach(el => el.onchange = () => act(() => { const i = +el.dataset.q; RS.answers[i] = {a: el.value, t: T()}; note(`Bridge answer: ${TYPES[RS.type].questions[i]} ${el.value}`); }));
+  doc.querySelectorAll("[data-rts]").forEach(el => el.onchange = () => act(() => { const i = +el.dataset.rts; if (el.checked) { RS.rts[i] = T(); note(`Gate: ${TYPES[RS.type].rts[i]}`); } else delete RS.rts[i]; }));
+  on("r-rts", () => act(() => { RS.rtsAt = T(); note("Return to service declared."); }));
+  on("d-add", () => { const g = id => document.getElementById(id).value.trim(); if (g("d-what")) act(() => { RS.decisions.push({t: T(), what: g("d-what"), who: g("d-who"), why: g("d-why")}); note(`Decision: ${g("d-what")}.`); }); });
+  on("r-close", () => { act(() => { RS.closed = T(); RS.pir_due = businessDays(RS.closed, DATA.facts.pir_business_days); note("Response closed."); setClock(RS.closed, true); }); download(responseYaml(), "response-" + RS.id + ".yaml"); });
+  on("r-yaml", () => download(responseYaml(), "response-" + RS.id + ".yaml"));
+  on("r-reopen", () => act(() => { RS.closed = null; note("Response reopened."); }));
+}
+function download(text, name) {
+  try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], {type: "text/yaml"})); a.download = name; a.click(); } catch (e) { /* no Blob URLs */ }
+}
+function sig() { const v = view(); return [v.log.filter(x => x.t <= v.now).length, Object.keys(v.acked).length, v.esc.length, Object.keys(v.joins).length, Math.floor(v.now / MIN)].join(","); }
+function redraw() {   // keep the focused field and its caret across a redraw
+  const a = document.activeElement, id = a && a.id, pos = a && a.selectionStart;
+  document.getElementById("doc").innerHTML = renderRespond(); wireRespond(); LASTSIG = sig();
+  const b = id && document.getElementById(id); if (b && b.focus) { b.focus(); if (pos != null && b.setSelectionRange) b.setSelectionRange(pos, pos); }
+}
+function tickRespond() {
+  if (mode !== "respond" || !RS) return;
+  if (sig() !== LASTSIG) { const a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.dataset.extra == null && a.id !== "r-cmd") return; redraw(); }
+}
+function openResponse(id, at, replay) {
+  const s = saved(id);
+  RS = replay ? {...fresh(id, at), mode: "replay"} : s || fresh(id, at);
+  if (at && !replay && !s) setClock(at, false);
+  if (replay && at) setClock(at, false);
+  persist();
+}
+
 function show() {
   const doc = document.getElementById("doc");
-  doc.innerHTML = mode === "contacts" ? renderContacts() : mode === "command" ? renderCommand() : proc ? renderProc(TYPES[proc]) : renderProcedures();
-  ["procedures", "contacts", "command"].forEach(k => document.getElementById("t-" + k).classList.toggle("on", k === mode));
+  doc.classList.toggle("wide", mode === "respond" && !!RS);
+  ticker(mode === "respond" && !!RS);
+  if (mode === "respond") { doc.innerHTML = RS ? renderRespond() : renderRespondList(); if (RS) { wireRespond(); LASTSIG = sig(); } }
+  else doc.innerHTML = mode === "contacts" ? renderContacts() : mode === "command" ? renderCommand() : proc ? renderProc(TYPES[proc]) : renderProcedures();
+  ["procedures", "contacts", "command", "respond"].forEach(k => document.getElementById("t-" + k).classList.toggle("on", k === mode));
   doc.querySelectorAll("#stepper [data-node]").forEach(el => el.onclick = () => { trail.push([el.dataset.node, +el.dataset.opt]); refreshStepper(); });
   wireStepper();
 }
@@ -220,9 +496,10 @@ function refreshStepper() {
   document.querySelectorAll("#stepper [data-node]").forEach(b => b.onclick = () => { trail.push([b.dataset.node, +b.dataset.opt]); refreshStepper(); });
   wireStepper();
 }
-function setMode(m, opt) {   // #procedures, #proc/<type>, #contacts, #command, #replay
+function setMode(m, opt) {   // #procedures, #proc/<type>, #contacts, #command, #replay, #respond[/<record>[/<time>|/replay]]
   mode = m; proc = m === "procedures" && TYPES[opt] ? opt : "";
-  const hash = m === "command" ? (opt === "replay" ? "#replay" : "#command") : m === "contacts" ? "#contacts" : proc ? "#proc/" + proc : "#procedures";
+  if (m !== "respond") RS = null;
+  const hash = m === "respond" ? "#respond" + (RS ? "/" + RS.id + (RS.mode === "replay" ? "/replay" : "") : "") : m === "command" ? (opt === "replay" ? "#replay" : "#command") : m === "contacts" ? "#contacts" : proc ? "#proc/" + proc : "#procedures";
   if (location.hash !== hash) history.replaceState(null, "", hash);
   show();
   const rp = document.getElementById("replay");
@@ -230,7 +507,13 @@ function setMode(m, opt) {   // #procedures, #proc/<type>, #contacts, #command, 
 }
 function route() {
   const h = decodeURIComponent(location.hash.slice(1));
-  if (h === "contacts") setMode("contacts");
+  if (h === "respond" || h.startsWith("respond/")) {   // a record opens its event's response; a time (UTC, from Live) sets the clock
+    const [, rec, at] = h.split("/"), up = (rec || "").toUpperCase(), id = Object.prototype.hasOwnProperty.call(BYREC, up) ? BYREC[up] : up;
+    if (known(id)) openResponse(id, at && at !== "replay" ? Date.parse(at) || null : null, at === "replay"); else RS = null;
+    setMode("respond"); document.documentElement.scrollTop = 0;
+    if (rec && !known(id)) document.getElementById("doc").insertAdjacentHTML("afterbegin", `<p class="missed">No P1 event or P2 record ${esc(rec)} in this dataset.</p>`);
+  }
+  else if (h === "contacts") setMode("contacts");
   else if (h === "command" || h === "replay") setMode("command", h);
   else if (h.startsWith("proc/")) { setMode("procedures", h.slice(5)); document.documentElement.scrollTop = 0; }
   else setMode("procedures");
@@ -238,7 +521,12 @@ function route() {
 document.getElementById("t-procedures").onclick = () => setMode("procedures");
 document.getElementById("t-contacts").onclick = () => setMode("contacts");
 document.getElementById("t-command").onclick = () => { setMode("command"); document.documentElement.scrollTop = 0; };
+document.getElementById("t-respond").onclick = () => { RS = null; setMode("respond"); document.documentElement.scrollTop = 0; };
 document.getElementById("print").onclick = () => window.print();
+// the console's one-second tick runs only while a response is open
+function ticker(on) { if (on && !TIMER) TIMER = setInterval(tick1, 1000); else if (!on && TIMER) { clearInterval(TIMER); TIMER = null; } }
+function tick1() { if (mode === "respond" && RS) { const c = document.getElementById("clk"), n = T(); if (c) c.textContent = both(n);
+  const im = document.getElementById("impact"), e = RESP[RS.id]; if (im && e.gpus) im.textContent = (e.gpus * Math.max(0, Math.min(n, ms(e.end) ?? n) - ms(e.start)) / 3600e3).toFixed(1); tickRespond(); } }
 window.addEventListener("hashchange", route);
 route();
 </script>

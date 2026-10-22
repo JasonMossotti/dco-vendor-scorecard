@@ -7,6 +7,7 @@ end, and contacts that are fictional and checked on time."""
 from __future__ import annotations
 
 import re
+from datetime import timedelta
 import shutil
 import subprocess
 import sys
@@ -176,3 +177,68 @@ def test_page_builds_and_works(tmp_path):
         pytest.skip("node and jsdom not installed (CI runs this check)")
     proc = subprocess.run([node, "emergency_page.cjs", str(out)], capture_output=True, text=True, cwd=ROOT / "tests" / "js")
     assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_console_works_and_feeds_the_review(tmp_path):
+    node = shutil.which("node")
+    if not node or subprocess.run([node, "-e", "require('jsdom')"], capture_output=True, cwd=ROOT / "tests" / "js").returncode:
+        pytest.skip("node and jsdom not installed (CI runs this check)")
+    import render_emergency
+    import render_pir
+    em, pir = tmp_path / "emergency.html", tmp_path / "pir.html"
+    em.write_text(render_emergency.html_page(), encoding="utf-8")
+    pir.write_text(render_pir.html_page(), encoding="utf-8")
+    proc = subprocess.run([node, "emergency_console.cjs", str(em), str(pir)], capture_output=True, text=True, cwd=ROOT / "tests" / "js")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_responses_cover_every_p1_event_and_p2_record():
+    r = emergency.responses()
+    data = tickets.build()
+    p1 = {x["id"] for x in data["records"] if x["priority"] == "P1"}
+    p2 = {x["id"] for x in data["records"] if x["priority"] == "P2"}
+    assert p1 | p2 == set(r["by_record"])
+    assert r["by_record"]["INC3900001"] == r["by_record"]["WO-41023"] == "WO-41023"
+    assert sum(e["priority"] == "P1" for e in r["events"].values()) == 8
+    assert all(r["events"][r["by_record"][i]]["priority"] == "P2" for i in p2)
+
+
+def test_response_facts_come_from_their_sources():
+    """A07's console: the topology's GPUs, the SLAs' clocks, the Calendar's change work, the EHS permits, the partners'
+    page log, and the bridge's comms log; the daily standup's open P1s all open a response."""
+    import json
+    from scorecard import standup as SU
+    from scorecard.sla_model import load_sla
+    e = emergency.responses()["events"]["WO-41023"]
+    topo = json.loads(emergency.TOPOLOGY.read_text(encoding="utf-8"))
+    assert e["gpus"] == 4 * len(next(r for r in topo["racks"] if r["rack"] == "A07")["compute_trays"]) == 72
+    p1 = {k: next(p for p in load_sla(f)["priorities"] if p["id"] == "P1") for k, f in emergency.SLA_FILES.items() if k != "Security Partner"}
+    assert {(c["label"], c["min"]) for c in e["clocks"]} == {(f"Restore ({k} SLA, P1)", p["restore_min"]) for k, p in p1.items()} \
+        | {(f"Engaged on site ({k} SLA, P1)", p["engaged_on_site_min"]) for k, p in p1.items()}
+    assert [j["id"] for j in e["work"]] == ["MOP-310", "PM-0005"]
+    assert [p["permit"] for p in e["permits"]] == ["PTW-26020", "PTW-26021"]
+    assert len(e["pages"]) == 5 and len(e["replay"]) == 27
+    assert e["redundancy"] and e["redundancy"][0]["name"] == "Rack feeds"
+    sec = emergency.responses()["events"]["SIR-00004"]
+    assert [c["min"] for c in sec["clocks"]] == [3, 60]
+    su = SU.Standup()
+    by = emergency.responses()["by_record"]
+    days = {i["refs"][0] for h in range(0, 28 * 24, 6) for i in su.open_incidents(su.start + timedelta(hours=h)) if i["priority"] == "P1" and i["refs"]}
+    assert days and all(x in by for x in days)
+
+
+def test_console_clocks_come_from_the_runbook_and_routing_file():
+    c = emergency.console()
+    n = yaml.safe_load(emergency.NOTIFY.read_text(encoding="utf-8"))
+    rule = next(r for r in n["rules"] if r["event"] == "critical")
+    assert [x["after_min"] for x in c["escalate"]] == [x["after_min"] for x in rule["escalate"]] == [15, 30]
+    assert c["runbook"] == command.load_config()["clocks"]
+
+
+def test_p1_buttons_on_the_portal_live_and_standup():
+    assert "Open emergency response" in (ROOT / "templates" / "tickets.html").read_text(encoding="utf-8")
+    assert "Escalate to emergency response" in (ROOT / "templates" / "tickets.html").read_text(encoding="utf-8")
+    assert "../emergency/#respond/" in (ROOT / "templates" / "ops.html").read_text(encoding="utf-8")
+    import render_live
+    html = render_live.html_page()
+    assert '"p1":' in html and "WO-41023" in html
