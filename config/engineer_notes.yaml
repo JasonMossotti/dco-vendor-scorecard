@@ -1,0 +1,246 @@
+# Engineer notes: the fields a technician, engineer, or officer types by hand in each partner system, and the
+# wording the composer (src/scorecard/engineer_notes.py) picks from on its own random stream ({seed}:engineer_notes).
+# Facts in a note (times, person IDs, devices, serials, readings, record numbers) always come from the record it
+# sits on; this file only supplies the field names and the phrasing. Notes follow the partner's own record, so they
+# never fix, explain away, or contradict a finding: where the records do not reconcile, the finding says so.
+#
+# Field names follow the systems the portal's records imitate (checked 2026-10-22):
+#   ServiceNow incident: Work notes (internal), Additional comments (customer-visible), Close code, Close notes
+#   ServiceNow change: Implementation plan, Backout plan, Test plan, Close code, Close notes
+#   Maximo work order: Long description, Work log, Failure reporting (problem, cause, remedy), Actuals (labor)
+#   NFPA 25 (2026 edition), chapter 15 impairment program: tag, notifications, fire watch, restoration
+
+types:
+  inc:
+    title: "Engineer notes"
+    system: "ServiceNow-style incident"
+    fields:
+      - {key: work_notes, label: "Work notes", visibility: internal, kind: log}
+      - {key: comments, label: "Additional comments", visibility: customer, kind: log}
+      - {key: cause, label: "Cause as found", visibility: internal, kind: text}
+      - {key: close_notes, label: "Close notes", visibility: internal, kind: text}
+      - {key: time_worked, label: "Time worked", visibility: internal, kind: time}
+  chg:
+    title: "Engineer notes"
+    system: "ServiceNow-style change request"
+    fields:
+      - {key: implementation_plan, label: "Implementation plan", visibility: internal, kind: text}
+      - {key: backout_plan, label: "Backout plan", visibility: internal, kind: text}
+      - {key: test_plan, label: "Test plan", visibility: internal, kind: text}
+      - {key: work_notes, label: "Implementation notes", visibility: internal, kind: log}
+      - {key: close_code, label: "Close code", visibility: internal, kind: text}
+      - {key: close_notes, label: "Close notes", visibility: internal, kind: text}
+  wo:
+    title: "Engineer notes"
+    system: "Maximo-style work order"
+    fields:
+      - {key: long_description, label: "Long description", visibility: internal, kind: text}
+      - {key: work_log, label: "Work log", visibility: internal, kind: log}
+      - {key: failure, label: "Failure reporting", visibility: internal, kind: table}
+      - {key: labor, label: "Actuals (labor)", visibility: internal, kind: time}
+  pm:
+    title: "Engineer notes"
+    system: "Maximo-style preventive maintenance work order"
+    fields:
+      - {key: checklist, label: "Task checklist", visibility: internal, kind: checklist}
+      - {key: readings, label: "Readings", visibility: internal, kind: table}
+      - {key: observations, label: "Observations", visibility: internal, kind: text}
+      - {key: follow_up, label: "Follow-up work order needed", visibility: internal, kind: text}
+      - {key: labor, label: "Actuals (labor)", visibility: internal, kind: time}
+  mop:
+    title: "Engineer notes"
+    system: "Method of procedure, execution copy"
+    fields:
+      - {key: step_log, label: "Step log", visibility: internal, kind: checklist}
+      - {key: deviations, label: "Deviations", visibility: internal, kind: text}
+      - {key: backout_used, label: "Back-out used", visibility: internal, kind: text}
+      - {key: as_left, label: "As-left state", visibility: internal, kind: text}
+      - {key: completion_notes, label: "Completion notes", visibility: internal, kind: text}
+  sir:
+    title: "Officer notes"
+    system: "Security dispatch incident report"
+    fields:
+      - {key: narrative, label: "Officer narrative", visibility: internal, kind: log}
+      - {key: actions, label: "Actions taken", visibility: internal, kind: text}
+      - {key: follow_up, label: "Follow-up or referral", visibility: internal, kind: text}
+      - {key: review, label: "Supervisor review", visibility: internal, kind: text}
+  imp:
+    title: "Engineer notes"
+    system: "Impairment log (NFPA 25 chapter 15 program)"
+    fields:
+      - {key: tag, label: "Impairment tag", visibility: internal, kind: log}
+      - {key: notifications, label: "Notifications made", visibility: internal, kind: text}
+      - {key: fire_watch, label: "Fire watch", visibility: internal, kind: text}
+      - {key: restoration, label: "Restoration test", visibility: internal, kind: text}
+      - {key: notes, label: "Notes", visibility: internal, kind: text}
+
+visibility:
+  internal: "Internal (work notes)"
+  customer: "Customer-visible"
+
+# ---------------------------------------------------------------------------------------------------------------
+# Wording. {placeholders} are filled from the record; a list gives the composer a choice.
+# ---------------------------------------------------------------------------------------------------------------
+inc:
+  comments_open:
+    - "Technician assigned and on the way to {where}. Node {ci} is drained; next update at return to service."
+    - "{ci} drained and assigned. We will update this ticket when the repair is complete and validated."
+    - "Assigned. Working {ci} now; the node stays drained until validation passes."
+  comments_open_link:
+    - "Technician assigned and on the way to {where}. The link stays down until the repair is validated."
+    - "Link {ci} assigned. We will update this ticket when the repair is complete and validated."
+  comments_open_power:
+    - "Technician assigned to {ci}. The rack stays on its other power supplies; no node is affected."
+    - "Assigned. {ci} will be replaced; redundancy is reduced until then, nodes are running."
+  comments_closed:
+    - "Repair complete and validated. {ci} is back in service."
+    - "Returned to service after validation. Closing per the close code."
+    - "Done. {ci} passed the return-to-service checks and is back in production."
+  cause:
+    tray_gpu:
+      - "{alarm}. Fault stayed with the tray."
+      - "Node drained on {alarm}; tray-level fault on {ci}."
+      - "{alarm} on {ci}; diagnostics pointed at the tray, not the rack."
+    tray_gpu_reseat:
+      - "{alarm}. Seating and quick-disconnect issue suspected; no damage found."
+      - "Node drained on {alarm}; tray not fully seated on inspection."
+    optic_link:
+      - "Link errors on {ci}. Optic swap per the link runbook."
+      - "{ci} flapping; optic at fault on inspection."
+    optic_link_clean:
+      - "Link errors on {ci}. Contamination on the connector end faces at inspection; no damage."
+      - "{ci} flapping; dirty fiber found, cleaned and inspected."
+    psu:
+      - "{ci} reported failure; unit dead on inspection, shelf otherwise healthy."
+      - "{ci} failed; no input fault upstream, unit at fault."
+    switch_tray:
+      - "{alarm}. Switch tray at fault."
+    power_shelf:
+      - "{ci} failed; shelf-level fault."
+    other:
+      - "{summary}."
+  close_replaced:
+    - "{close_code}. {item}: removed SN {removed}, installed SN {installed}. Failed part tagged for RMA. Return-to-service checks passed{validation}."
+    - "{close_code}: {item} swapped (SN {removed} out, SN {installed} in). RMA tag on the failed unit. Validated and returned to production{validation}."
+  close_reseat:
+    - "{close_code}. Reseated at {location}; no part replaced. Return-to-service checks passed{validation}."
+    - "{close_code}: reseat at {location}, no part used. Validated and returned to production{validation}."
+  close_clean:
+    - "{close_code}. Fiber cleaned and inspected on both ends; no part replaced. Link validated{validation}."
+    - "{close_code}: both connector end faces cleaned, link up clean, no part used{validation}."
+  close_other:
+    - "{close_code}. Validated and returned to production{validation}."
+  validation: "; validation attached to the ticket"
+
+chg:
+  firmware:
+    implementation_plan: "Drain rack {rack}. Update the compute trays one at a time through Redfish from {from_v} to {to_v}, confirm the version on each tray before moving to the next, then return the rack to the scheduler."
+    backout_plan: "Flash the staged {from_v} image back to any tray that fails its post-update checks; the rack stays drained until every tray reports one version."
+    test_plan: "After each tray: Redfish FirmwareVersion reads {to_v} and the tray passes its health checks. After the last tray: rack health checks before the rack returns to the scheduler."
+    started: "Change started; rack {rack} drained. First tray {first} updated to {to_v}."
+    finished: "Last tray {last} updated to {to_v}. Every tray from {first} to {last} reports {to_v} in Redfish."
+    close_notes: "Implemented in the window: compute trays {first} to {last} on rack {rack} all at {to_v}. No backout needed."
+    successful: "Successful"
+
+wo:
+  long_description:
+    - "{notes}. Unit {unit}, {room}. Raised from the BMS alarm."
+    - "{notes} ({unit}, {room}). Work order raised from the alarm."
+  long_description_planned: "{notes}. Unit {unit}, {room}. Planned work."
+  ack: ["Alarm acknowledged; engineer assigned.", "Acknowledged at the BMS; engineer dispatched."]
+  engaged: ["Engineer at the unit; isolating and inspecting.", "On site at {unit}. Inspecting."]
+  planned_engaged: ["On site at {unit}; tap-off isolated for the work.", "Engineer at {unit}. Starting the job plan."]
+  restored: ["Unit restored; alarm clear at the BMS.", "Restored. Monitoring before close."]
+  restored_parts: ["{parts}. Unit restored.", "Replaced: {parts}. Restored."]
+  closed: ["Closed after monitoring; no repeat alarm.", "Work complete. Area left clean, covers refitted."]
+  planned_closed: ["Work complete per the job plan; tap-off energized and checked.", "Retorqued and energized; tap-off closed. Complete."]
+  failure:
+    OT-FC-CDU: {problem: "Pump fault", cause: "Pump failed in service", remedy: "Replaced pump assembly"}
+    OT-FC-UPS: {problem: "Power module fault", cause: "Module failed in service", remedy: "Replaced power module"}
+    OT-FC-AIR: {problem: "Fan failure", cause: "Fan failed in service", remedy: "Replaced fan"}
+    OT-FC-LEAK: {problem: "Leak detected", cause: "Fitting weep at the connection", remedy: "Re-made the fitting and dried the area"}
+    OT-FC-CHW: {problem: "Chiller trip", cause: "Trip on unit protection", remedy: "Reset and returned to service"}
+    OT-FC-FIRE: {problem: "Detector fault", cause: "Low airflow on a sampling pipe", remedy: "Cleared the pipe and restored airflow"}
+    OT-FC-PWR: {problem: "Power fault", cause: "Fault on the power path", remedy: "Restored the power path"}
+    planned: {problem: "Planned work", cause: "Not applicable", remedy: "Completed per the job plan"}
+    utility: {problem: "Utility outage", cause: "Utility supply lost", remedy: "Generators carried the load until utility returned"}
+
+pm:
+  checklists:
+    Generators:
+      - "Pre-start walk-down: fluid levels, belts, no leaks"
+      - "Start and transfer to the load bank"
+      - "Run loaded and record readings"
+      - "Cool-down and return to auto"
+    "UPS and batteries":
+      - "Transfer to maintenance bypass"
+      - "Inspect power modules and capacitors"
+      - "Battery string health check"
+      - "Return to normal operation and confirm on the NMC"
+    CDUs:
+      - "Isolate pump 2 and confirm in Redfish"
+      - "Change the filter"
+      - "Draw a coolant sample (pH, conductivity)"
+      - "Return the pump to service"
+    Chillers:
+      - "Lock out the chiller at the BMS"
+      - "Inspect compressor, condenser, and controls"
+      - "Clear the lockout and confirm the unit runs"
+    "Fire protection":
+      - "Isolate the detector at the panel"
+      - "Inspect pipework and filters"
+      - "Smoke test and alarm confirmation"
+      - "De-isolate and confirm normal at the panel"
+    "Switchgear and busway":
+      - "Survey every section under load with the camera"
+      - "Compare hot spots with the previous survey"
+    other:
+      - "Perform the task per the job plan"
+  tag_step: "Maintenance tag updated on the asset"
+  observations:
+    - "No defects found. {evidence}."
+    - "Task complete. {evidence}."
+    - "{evidence}. Nothing further."
+  follow_up_no: "No"
+
+mop:
+  steps:
+    cdu: ["Confirm the approved window and notify the Customer", "Isolate pump 2 and confirm in Redfish", "Perform the task under {pm}", "Return the pump to service and confirm alarms clear", "Close the window"]
+    ups: ["Confirm the approved window and notify the Customer", "Transfer {asset} to maintenance bypass", "Perform the task under {pm}", "Return {asset} to normal operation", "Close the window"]
+    vesda: ["Confirm the approved window and notify the Customer", "Impair {asset} at the panel", "Perform the task under {pm}", "Restore {asset} and confirm normal at the panel", "Close the window"]
+    tapoff: ["Confirm the approved window and notify the Customer", "Confirm the tap-off and rack on the drawings", "Retorque and energize under {wo}", "Confirm the tap-off closed and the rack feed live", "Close the window"]
+    other: ["Confirm the approved window and notify the Customer", "Perform the work", "Close the window"]
+  deviations_none: "None."
+  backout_no: "No"
+  as_left: "{asset} returned to normal operation."
+  completion:
+    - "Completed in the window. {related} closed."
+    - "Work complete in the window; {related} closed."
+
+sir:
+  narrative_dispatched: ["Dispatched to {door} on the console alarm.", "Console sent me to {door}."]
+  narrative_on_scene: ["On scene at {door}.", "Arrived at {door}."]
+  narrative_closed: ["{disposition}.", "Closed: {disposition}."]
+  actions:
+    "Door secured; propped by a technician moving a cart": "Spoke with the technician; door closed and checked latched. Reminded them not to prop the door."
+    "Door secured; closer slow, work order raised with the Landlord": "Closed and latched the door by hand. Closer slow to return; reported to the Landlord."
+    "Door secured; no one present on arrival": "Area checked; no one present. Door closed and checked latched."
+    "Door secured; delivery in progress, escort present": "Confirmed the delivery and the escort; door closed after the delivery."
+    default: "Door checked latched."
+  follow_up:
+    "Door secured; closer slow, work order raised with the Landlord": "Referred to the Landlord for the door closer."
+    default: "None."
+  review: ["Reviewed by the shift supervisor; no further action.", "Shift supervisor reviewed the report."]
+
+imp:
+  tag_on: "Impairment tag placed on {device} and at the fire panel."
+  tag_off: "Impairment tag removed; {device} back in service."
+  notifications_planned: "Customer notified ahead of the window ({notice}). Monitoring company and fire department notified per the impairment procedure."
+  notifications_unplanned: "Customer notified ({notice}). Monitoring company and fire department notified per the impairment procedure."
+  extension: "Extension notified to the Customer ({notice})."
+  fire_watch_none: "Not required: the impairment did not reach the fire watch threshold."
+  fire_watch_kept: "Fire watch patrolled the affected area per the log."
+  restoration: "{device} restored to service and the impairment tag removed."
+  notes:
+    - "{reason}."
+    - "{reason}. Work complete."
