@@ -87,6 +87,16 @@ terms:
   - {term: RMA, type: acronym, expansion: Return merchandise authorization, text: "The return of a failed part to the manufacturer for repair or replacement."}
   - {term: P90, type: acronym, expansion: 90th percentile, text: "The value nine in ten cases come in at or under. The Availability tab gives it beside each median, so a long tail shows."}
   - {term: SLA, type: acronym, expansion: Service level agreement, link: false, text: "The contract schedule that sets service levels, how they are measured, and the credits for missing them. Each partner signs its own."}
+  - {term: AED, type: acronym, expansion: Automated external defibrillator, text: "The portable device that shocks a heart back into rhythm. Every guard is trained in CPR, AED, and first aid."}
+  - {term: CFOT, type: acronym, expansion: Certified Fiber Optic Technician, text: "The Fiber Optic Association's technician certification. The IT Partner's fiber inspection and cleaning credential is CFOT or an equivalent."}
+  - {term: FOA, type: acronym, expansion: Fiber Optic Association, text: "The professional society that certifies fiber optic technicians (CFOT)."}
+  - {term: DPS, type: acronym, expansion: Texas Department of Public Safety, text: "Its Private Security Program licenses security officers in Texas. Every Security Partner guard at the site holds a Level III commission."}
+  - {term: MMPI, type: acronym, expansion: Minnesota Multiphasic Personality Inventory, text: "The psychological evaluation Texas requires for a security officer commission since 2024 (House Bill 3424), filed with a Declaration of Psychological and Emotional Health."}
+  - {term: NCP-AII, type: acronym, expansion: "NVIDIA-Certified Professional: AI Infrastructure", text: "NVIDIA's professional certification for bringing up, testing, and troubleshooting AI clusters; valid two years. The IT Partner's shift leads hold it."}
+  - {term: SA, type: safety, title: "Firearm category SA (handgun)", pages: [training, agreements], text: "Texas DPS firearm category SA: any handgun (37 Tex. Admin. Code 35.7). Every guard qualifies in it and requalifies every 12 months under the Security SLA."}
+  - {term: STG, type: safety, title: "Firearm category STG (shotgun)", pages: [training, agreements], text: "Texas DPS firearm category STG: shotgun. Every guard qualifies in it; shotguns are drawn from the guard house rack for the patrol and dock posts and never enter a data hall."}
+  - {term: HB, type: acronym, expansion: "House Bill", pages: [training, agreements], text: "A Texas House bill. HB 3424 (2023) requires an MMPI evaluation for a security officer commission."}
+  - {term: S20, type: safety, title: "ANSI/ESD S20.20", pages: [training], text: "The ESD control program standard: grounding, wrist straps, and protected areas for handling electronic parts. The IT Partner's ESD training follows it."}
   - {term: OEM, type: acronym, expansion: Original equipment manufacturer, text: "The company that built the equipment (here, the rack and system integrator), with its own warranty and support contract."}
   - {term: FRU, type: acronym, expansion: Field-replaceable unit, text: "A part a technician can swap on site, such as a compute tray, optic, power supply, or fan."}
   - {term: PPE, type: acronym, expansion: Personal protective equipment, text: "Gloves, arc-rated clothing, face shields, and similar gear a task's hazard analysis requires."}
@@ -411,6 +421,10 @@ families:
      text: "A permit to work from the EHS layer: lockout/tagout (EHS-R2), energized electrical work approved in advance by the Customer with a second person (EHS-R3), or working at height (EHS-R9). It names the job, the people, the lockout times, and when it was issued and closed."}
   - {key: SAF-N, label: "SAF-#", pattern: 'SAF-\d{1,2}', type: record, title: Safety record finding, example: SAF-1, see: "ops/#ehs",
      text: "A finding of the EHS record checks: work with no permit, a lockout recorded while the device showed the circuit energized, a person named on a permit without current training, or a permit closed before the work ended. It means the records do not reconcile and opens an investigation by Customer EHS, which decides any violation class."}
+  - {key: CRT-N, label: "CRT-#", pattern: 'CRT-\d{1,2}', type: record, title: Certification finding, example: CRT-1, see: "training/",
+     text: "A finding of the certification register: work done without a required credential on file, work after a required credential lapsed, or a partner's monthly credential report that disagrees with the register. It means the records do not reconcile, opens a Customer review, and changes no credit."}
+  - {key: COD-N, label: "COD-#####", pattern: 'COD-\d{5}', type: record, title: Certificate of destruction, example: COD-00001,
+     text: "The Security Partner's certificate that a drive was destroyed on site, by serial number, with the operator and the witness."}
   - {key: SE-N, label: "SE-#", pattern: 'SE-\d{1,3}', type: record, title: Reported safety event, example: SE-1, see: "ops/#ehs",
      text: "A reported near miss, stop-work use, first aid case, or recordable, with its corrective action. Reported events are counted in the monthly EHS report and are never findings."}
   - {key: FLS-N, label: "FLS-#", pattern: 'FLS-\d{1,2}', type: record, title: Fire protection finding, example: FLS-1, see: "telemetry/#fire",
@@ -493,7 +507,7 @@ families:
   - {key: WK-Q, label: "Q# (weekly review)", pattern: 'Q\d', type: record, title: Weekly review ask, example: Q1,
      pages: [weekly], text: "An ask of one party from the weekly operations review, with a due date."}
   - {key: CREW, label: "D# or N# (shift crew)", pattern: '[DN]\d', type: record, title: Shift crew, example: D1,
-     pages: [scorecards], text: "A rostered shift crew (D for day, N for night); the staffing check compares each crew's roster with badge-ins."}
+     pages: [scorecards, training], text: "A rostered shift crew (D for day, N for night); the staffing check compares each crew's roster with badge-ins."}
   - {key: FP-P, label: "P# (failure pattern review)", pattern: 'P[1-9]', type: record, title: Failure pattern number, example: P2,
      pages: [patterns], text: "On the Failure Pattern Review, P1, P2, and P3 also number the patterns found. In the action tables, the Priority column uses the SLA priorities."}
   - {key: ONCALL, label: "E# (on-call role)", pattern: 'E\d', type: record, title: On-call role, example: E1,
@@ -563,7 +577,9 @@ plain:   # capitalised text that is not a code
     - {terms: [MOCK, ILLUSTRATIVE], why: "The contracts' status banner: fictional and illustrative."}
     - {terms: [ONLY, OK, LIVE, FEED], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
+    - {terms: [III], why: "A roman numeral: Level III, the Texas commissioned (armed) security officer license."}
     - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
+    - {terms: [AI], why: "Artificial intelligence, in a certification's name (NVIDIA-Certified Professional: AI Infrastructure); the AI-### family is the BMS analog input point."}
     - {terms: [MB, GB, TB, PB, EB], why: "Units of data size: megabytes, gigabytes, terabytes, petabytes, and exabytes."}
     - {terms: [FAN], why: "The sensor class a switch fan reports under in ENTITY-SENSOR-MIB (the field reference names it beside the reading)."}
     - {terms: [RX, TX], why: "Receive and transmit, in an optic module's own alarm names (RX power low, TX bias high), set in capitals as the module reports them."}

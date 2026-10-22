@@ -50,6 +50,7 @@ PLACES = {
     "reports/change_calendar.md": ("Operations", "ops/#calendar"),
     "reports/ehs.md": ("Operations", "ops/#ehs"),
     "reports/standup.md": ("Operations", "ops/"),
+    "reports/certifications.md": ("Training", "training/"),
     "reports/change_alarms.md": ("Alarm Board", "alarms/"),
     "reports/failure_patterns.md": ("Failure Patterns", "patterns/"),
     "reports/pue_report.md": ("Energy", "energy/"),
@@ -67,7 +68,7 @@ PAGES = [("hub", "Overview", ""), ("alarms", "Alarm Board", "alarms/"), ("ticket
          ("pir", "Post-Incident Review", "pir/"), ("weekly", "Weekly Review", "weekly/"), ("patterns", "Failure Patterns", "patterns/"),
          ("energy", "Energy", "energy/"), ("gpu", "GPU Health", "gpu/"), ("telemetry", "Telemetry", "telemetry/"),
          ("deployments", "Deployments", "deployments/"), ("availability", "Availability", "availability/"), ("live", "Live", "live/"),
-         ("ops", "Operations", "ops/"), ("emergency", "Emergency", "emergency/")]
+         ("ops", "Operations", "ops/"), ("emergency", "Emergency", "emergency/"), ("training", "Training", "training/")]
 
 
 def _strings(o):
@@ -133,8 +134,9 @@ def corpus() -> dict[str, tuple[str, str, str]]:
     import render_pir
     import render_telemetry
     import render_tickets
+    import render_training
     import render_weekly
-    mods = {"emergency": render_emergency, "hub": render_hub, "alarms": render_alarms, "tickets": render_tickets, "pir": render_pir, "weekly": render_weekly,
+    mods = {"training": render_training, "emergency": render_emergency, "hub": render_hub, "alarms": render_alarms, "tickets": render_tickets, "pir": render_pir, "weekly": render_weekly,
             "patterns": render_patterns, "energy": render_energy, "gpu": render_gpu_health, "telemetry": render_telemetry,
             "deployments": render_deployments, "availability": render_availability, "live": render_live, "ops": render_ops}
     out = {}
@@ -159,7 +161,7 @@ def page_key(src: str) -> str:
     return {"Alarm Board": "alarms", "Failure Patterns": "patterns", "Post-Incident Review": "pir",
             "Weekly Review": "weekly", "Scorecards": "scorecards", "Energy": "energy", "GPU Health": "gpu", "Telemetry": "telemetry",
             "Deployments": "deployments", "Availability": "availability", "Live": "live", "Asset Register": "devices",
-            "Fire protection": "telemetry", "Operations": "ops", "Emergency": "emergency"}[PLACES[src][0] if src in PLACES else
+            "Fire protection": "telemetry", "Operations": "ops", "Emergency": "emergency", "Training": "training"}[PLACES[src][0] if src in PLACES else
                                                                   ("Post-Incident Review" if "/pir/" in src else "Weekly Review")]
 
 

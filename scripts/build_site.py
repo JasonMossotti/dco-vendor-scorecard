@@ -15,6 +15,7 @@ Output (default _site/):
     agreements/             the Interface Agreement and both SLAs, readable (scripts/render_agreements.py)
     glossary/               every code, acronym, and record ID (scripts/render_glossary.py)
     devices/                every named device and what it connects to (scripts/render_devices.py)
+    training/               the Training tab: certification register, work gate, renewals (scripts/render_training.py)
     site/                   the site drawings (docs/site/*.svg), which the location popups open
 
 Usage:
@@ -149,11 +150,12 @@ def build(out: Path, root: Path = ROOT) -> dict[str, int]:
     import render_patterns
     import render_pir
     import render_tickets
+    import render_training
     import render_weekly
     for path, mod in (("pir", render_pir), ("weekly", render_weekly), ("patterns", render_patterns), ("alarms", render_alarms),
                       ("tickets", render_tickets), ("energy", render_energy), ("gpu", render_gpu_health),
                       ("deployments", render_deployments), ("availability", render_availability), ("ops", render_ops),
-                      ("emergency", render_emergency)):
+                      ("emergency", render_emergency), ("training", render_training)):
         (out / path).mkdir(parents=True, exist_ok=True)
         (out / path / "index.html").write_text(mod.html_page(), encoding="utf-8", newline="\n")
     # The reference tabs: the contracts, the glossary, and the device directory.

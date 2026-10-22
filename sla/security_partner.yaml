@@ -344,9 +344,28 @@ posts:
     - {id: POST-PATROL, name: Roving patrol, reader: 'Post: Patrol start', shifts: [day, night]}
   tours: Each patrol shift scans every checkpoint once every 2 hours; a scan more than 15 minutes late counts as missed.
   qualifications:
-    - Texas Department of Public Safety Private Security Program registration, current for every guard
+    - Every guard is a Level III commissioned security officer, Texas Department of Public Safety Private Security
+      Program, with the license current (it runs two years), the 45-hour Level III course, an MMPI evaluation on file
+      (Declaration of Psychological and Emotional Health), and six hours of Level III continuing education each license
+      term
+    - Firearm proficiency in two categories, SA (handgun) and STG (shotgun) (37 Tex. Admin. Code 35.7), requalified
+      every 12 months; this contract's requalification is stricter than the license renewal
     - Site security orientation and the Customer's escort and media handling procedures
-    - CPR and first aid for at least one guard on every shift
+    - CPR, AED, and first aid for every guard
+  armed_posts:
+    rule: Guards carry a handgun on every post. Inside the Customer halls only the handgun; a shotgun is drawn from the
+      locked rack at the guard house for the roving patrol and the receiving dock and never enters a data hall.
+    why: The Security Partner covers a site holding high-value compute and media awaiting destruction. Level III
+      officers are better trained and better paid than unarmed officers, which keeps turnover down.
+    conditions:
+      - The Customer's workplace weapons policy names the Security Partner's commissioned officers as the exception.
+      - The Landlord consents under the lease to armed officers on the property.
+      - The Security Partner carries the firearms liability insurance the commercial terms set and a written use-of-force
+        policy the Customer approves; any discharge or drawn weapon is a P1 security event reported at once.
+      - Firearms are stored in the guard house's locked rack when not carried; the rack is on a door contact and a camera.
+    register: The Customer keeps every guard's commission, course, MMPI, proficiency, and continuing education dates in
+      the certification register (/training/). Only post shifts worked by a guard with every qualification current
+      count toward SEC-CSL-01, as for the other partners' staffing service levels; the register shows that recalculation.
 
 door_alarms:
   principle: The access control system raises the alarm and records the console acknowledgement; the guard's badge

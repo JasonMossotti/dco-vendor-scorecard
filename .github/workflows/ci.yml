@@ -60,6 +60,8 @@ jobs:
         run: python scripts/render_ehs.py --check
       - name: Daily standup report is current
         run: python scripts/render_standup.py --check
+      - name: Certification register report is current
+        run: python scripts/render_certs.py --check
       - name: Quarterly review months and report are current
         run: python scripts/generate_quarter.py --check && python scripts/render_qbr.py --check
       - name: Glossary is current and explains every code

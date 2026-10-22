@@ -192,7 +192,7 @@ def test_glossary_document_is_current():
 def test_tab_bar_has_reference_tabs_on_the_top_row():
     nav = sitenav.nav_html("glossary")
     ref, main = re.findall(r'<div class="usm-tabs[^"]*">(.*?)</div>', nav)
-    assert re.findall(r'data-tab="(\w+)"', ref) == ["agreements", "glossary", "devices"]
+    assert re.findall(r'data-tab="(\w+)"', ref) == ["agreements", "glossary", "devices", "training"]
     assert "agreements" not in main
 
 

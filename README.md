@@ -46,6 +46,7 @@ One outage crosses the boundary between them: during planned work on rack A07's 
 | [Deployments](#deployments) | Where is the Hall B rollout, is Hall C ready for first compute, and do the records of both hold up? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/deployments/) |
 | [Agreements](#agreements-slas-as-code) | What exactly did each party agree to, and who owns which fault? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/agreements/) |
 | [Glossary](#glossary-and-code-popups) | What does this code mean, and where is it defined? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/glossary/) |
+| [Training](#training-certification-register) | Does everyone who worked here this month hold every credential the work needs, and what lapses next? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/training/) |
 | [Devices](#devices-location-pins-and-detail-sheets) | What is this device, where is it, what does it connect to, and does the asset register agree? | [open](https://jasonmossotti.github.io/dco-vendor-scorecard/devices/) |
 
 Then: [how it fits together](#how-it-fits-together), [the site](#the-site), [the data and the engines](#the-data-and-the-engines), [measuring on months the code never saw](#measuring-on-months-the-code-never-saw), [toward live data](#toward-live-data-the-read-only-collector), [tests and deployment](#tests-and-deployment), [run it locally](#run-it-locally), and the [project layout](#project-layout).
@@ -439,6 +440,16 @@ Fields that name a rack, room, or device carry a red **location pin** that opens
   <img src="docs/images/asset-register.png" alt="Asset register: every asset by serial, and the records that do not reconcile" width="860">
 - 12 equipment detail sheets, one per product (GB200 and GB300 NVL72 racks, CDU, thermal wall, free-cooling chiller, Galaxy VX and VL UPSs, busway and tap-off, generator, VESDA, TraceTek, InfiniBand leaf switch), with each part's source or stated assumption in `site/details.yaml`.
 
+## Training: certification register
+
+<img src="docs/images/training-certs.png" alt="Training: the certification register, its findings, and staffing with the qualification rule" width="860">
+
+**What it shows.** **Certifications** (`/training/`): every credential each partner's people must hold, checked against every badge-verified shift and every record that names who did the work (74 people by ID; 1,149 pieces of work: 835 shifts and 314 incidents, work orders, maintenance records, and destruction certificates). The IT Partner holds manufacturer-authorized GB200 and GB300 NVL72 service, liquid cooling, ESD, fiber (FOA CFOT or equivalent), chain of custody, and NVIDIA's NCP-AII for shift leads; the Landlord holds Galaxy UPS, CHx2000 CDU, C175-16 and EMCP 4.4, chiller, and smoke detection training and EPA 608; every Security Partner guard is a Texas DPS Level III commissioned officer with SA (handgun) and STG (shotgun) proficiency requalified every 12 months, an MMPI on file, and CPR/AED/first aid. The EHS courses come from the Safety view's training records. Six findings: a shift lead working with no NCP-AII on file, a Landlord engineer on CDU work after the CDU training lapsed, a technician whose ESD training lapsed mid-month, a guard on armed posts after the SA requalification lapsed (the guard file still says current), the IT Partner's monthly report leaving out the ESD lapse, and the EHS check's NFPA 70E lapse, shown as corroborated by its SAF finding rather than counted twice.
+
+Beside them, each staffing service level recalculated with the contracts' rule that only qualified hours count (CSL-10, OT-CSL-09, SEC-CSL-01); the published scorecards and credits do not change. **KM-15** (Training and Certification Currency) on the IT scorecard, "not measured" before, is now read from the register. **Register** lists every person with each credential's dates and the work it covered; **Renewals** drafts each partner's notice at 90, 60, and 30 days before expiry (never sent) and checks the forward schedule for enough qualified people; **Requirements** shows what each role and each kind of work needs and why.
+
+**How it works.** `src/scorecard/certifications.py` reads `config/certifications.yaml` (what each role and kind of work needs: an incident by category and the rack's model, a work order by fault class, a maintenance record by system, a post shift, a destruction certificate), takes shifts by the same badge rules as the staffing service levels, and compares the register (`data/certs/`, own random stream, `scripts/generate_certs.py`, plus `data/ehs/training.csv`) with the work at its own time. Four record problems are planted; `python scripts/render_certs.py --robustness 60 --jobs 4` scores 60 generated months. Ticket numbers in a finding show it in the Incident Portal. Report: [`reports/certifications.md`](reports/certifications.md).
+
 ## The site
 
 Site AUS-1 is a fictional AI data center in Central Texas built from real, interoperable equipment: Schneider Electric Galaxy UPS and EcoStruxure monitoring, CoolIT CHx2000 CDUs, Vertiv Liebert thermal walls and free-cooling chillers, Caterpillar C175-16 generators, VESDA aspirating smoke detection, TraceTek leak detection, NVIDIA Quantum-2 InfiniBand, and an Eaton MVSST feeding an 800 VDC pilot hall. Hall A is in production (32 x GB200 NVL72), Hall B in deployment (32 x GB300 NVL72), and Hall C planned as the 800 VDC pilot.
@@ -481,6 +492,7 @@ Every detector is scored on freshly generated months it was not tuned on, with t
 | Live page equals Site health hour by hour | 48,720 of 48,720 cases | 2,923,200 of 2,923,200 |
 | Change calendar | 4 of 4 planted (forward schedule), 72 of 72 cases agree or are explained | 240 of 240 on 60 forward schedules, 0 false positives |
 | EHS record checks | 4 of 4 planted, 1 of 1 as found, 135 of 135 cases agree or are explained | 240 of 240 planted, 60 of 60 as found, 0 false positives |
+| Certification register | 5 of 5 planted, 1 of 1 as found, 1,152 of 1,152 cases agree or are explained | 300 of 300 planted, 60 of 60 as found, 0 false positives; 69,318 of 69,318 cases |
 | Availability reconciliations | bridge closes, IT Partner = CSL-01, stages add up | 60/60 each; 0 scheduler GPU-hours unexplained |
 | Deployment record checks | 4 of 4 | 240 of 240 (60 per check), 0 false positives (decoys: 88 pending signatures, 97 retested inspections, 60 tight energizations) |
 | Hall C readiness record checks | 4 of 4 | 240 of 240, 0 false positives |
@@ -511,6 +523,7 @@ python scripts/render_calendar.py --robustness 60
 python scripts/render_ehs.py --robustness 60 --jobs 4
 python scripts/render_standup.py --robustness 60 --jobs 4
 python scripts/render_qbr.py --robustness 20 --jobs 4
+python scripts/render_certs.py --robustness 60 --jobs 4
 ```
 
 ## Toward live data: the read-only collector

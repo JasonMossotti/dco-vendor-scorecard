@@ -424,6 +424,17 @@ Derived by `scripts/generate_ehs.py` from the month's records (the Landlord's MO
 | `answer_key.json` | The planted record problems (a job with its permit missing, a lockout recorded before the device isolated the circuit, a named person with a lapsed NFPA 70E qualification, a permit closed before the work ended) and the as-found case the dataset's own ground truth names. The checks never read it |
 | `manifest.json` | Seed, window, counts |
 
+## Certification register (`data/certs/`)
+
+Derived by `scripts/generate_certs.py` from the month's people and work (the IT Partner's personnel, roster, and incidents; the Landlord's roster, work orders, and maintenance records; the badge records), the Security Partner's guards, post log, and destruction certificates (`data/security/`), and the EHS training records (`data/ehs/training.csv`, which the register reads beside this layer and never copies), with its own random stream (`{seed}:certs`); nothing else is read or changed. What each role and each kind of work needs: `config/certifications.yaml`. People are IDs only.
+
+| File | What it represents |
+|---|---|
+| `credentials.csv` | One row per person and credential their role holds (IT Partner: GB200 and, for some, GB300 NVL72 FRU authorization, liquid cooling, ESD, fiber, chain of custody, NCP-AII for shift leads; Landlord: Galaxy UPS, CHx2000 CDU, C175-16 and EMCP 4.4, chillers and thermal walls, aspirating smoke detection, EPA 608; Security Partner: the Texas DPS Level III commission, the 45-hour course, the MMPI, SA and STG firearm proficiency, continuing education, CPR/AED/first aid, site security): completed and expires (blank when it does not expire) |
+| `reported.csv` | Each partner's monthly credential report as of the month end: people, required credentials, the share it reports current, and the person:credential pairs it lists lapsed |
+| `answer_key.json` | The planted record problems (a shift lead with no NCP-AII on file, a Landlord engineer on CDU work after the CDU training lapsed, a guard on armed posts after the SA requalification lapsed, a technician's ESD lapse that the IT Partner's report leaves out) and, as found, the EHS layer's NFPA 70E lapse. The checks never read it |
+| `manifest.json` | Window, source, counts |
+
 ## Predictive maintenance (`data/predict/`)
 
 Derived by `scripts/generate_predict.py` from `data/history/` (racks, inventory, links, failures, Landlord PM records), the topology, and the CDU settings, with its own random stream (`predict-{seed}`); no other layer is written. Settings in `config/predict.yaml` (the `condition` section shapes this history; the detectors use only the `detectors` section). The detectors in `src/scorecard/predict/` never read the answer key; `scripts/predict.py` runs them on a site's own exports (`docs/predict/README.md`).
@@ -479,6 +490,7 @@ python scripts/generate_audit.py                 # data/audit
 python scripts/generate_calendar.py              # data/calendar
 python scripts/generate_ehs.py                   # data/ehs (after data/security)
 python scripts/generate_quarter.py               # data/quarter (the quarterly review's earlier months)
+python scripts/generate_certs.py                 # data/certs (after data/security and data/ehs)
 ```
 
 The tests fail when a committed layer is stale.

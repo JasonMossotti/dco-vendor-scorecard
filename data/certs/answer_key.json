@@ -1,0 +1,38 @@
+[
+ {
+  "credential": "nfpa70e",
+  "kind": "lapsed",
+  "ref": "CCF-E08",
+  "source": "ehs"
+ },
+ {
+  "credential": "ncp_aii",
+  "kind": "never_held",
+  "ref": "RSS-010",
+  "source": "planted"
+ },
+ {
+  "credential": "chx2000",
+  "kind": "lapsed",
+  "ref": "CCF-E01",
+  "source": "planted"
+ },
+ {
+  "credential": "firearm_sa",
+  "kind": "lapsed",
+  "ref": "LGP-007",
+  "source": "planted"
+ },
+ {
+  "credential": "esd",
+  "kind": "lapsed",
+  "ref": "RSS-003",
+  "source": "planted"
+ },
+ {
+  "credential": "",
+  "kind": "report",
+  "ref": "report:it",
+  "source": "planted"
+ }
+]

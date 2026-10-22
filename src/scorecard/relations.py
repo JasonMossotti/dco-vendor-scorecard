@@ -74,7 +74,7 @@ def prepare(records: list[dict[str, Any]], devices: dict[str, Any] | None = None
         start, end = _window(r)
         out[r["id"]] = {"record": r, "start": start, "end": end, "devices": set(names), "near": near - set(names),
                         "upstream": upstream, "rack": r["rack"] or "", "alarms": {a["id"] for a in r["alarms"]},
-                        "findings": {f["id"] for f in r["findings"]}, "words": _words(r["summary"], stop),
+                        "findings": {f["id"] for f in r["findings"] if f.get("severity") != "Credential"}, "words": _words(r["summary"], stop),
                         "faults": _fault_keys(r), "mops": {x for x in r["related"] if x.startswith("MOP-")},
                         "type": r["type"]}
     return {"by_id": out, "cfg": cfg, "devices": devices, "adj": adj}

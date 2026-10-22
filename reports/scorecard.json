@@ -3130,11 +3130,11 @@
       "unit": "%"
     },
     {
-      "actual": null,
-      "detail": "Not measured in the demo data",
+      "actual": 93.99,
+      "detail": "391 of 416 badge-verified IT Partner shifts worked with every role credential current",
       "direction": "higher_is_better",
       "id": "KM-15",
-      "met": null,
+      "met": false,
       "name": "Training and Certification Currency",
       "target": 100.0,
       "unit": "%"

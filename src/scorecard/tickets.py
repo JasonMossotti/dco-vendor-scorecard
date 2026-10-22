@@ -231,6 +231,7 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
         r["related"].update(v for v in (x["mop_ref"], x["pm_ref"]) if v)
     if fire:
         findings += fire["findings"]
+    findings += _credential_findings(data_dir)
     for p in raw["pm"]:
         r = base(p["task_id"], "pm", p["due_start"], p["completed_at"] or p["due_end"], state="Complete" if p["completed_at"] else "Open",
                  summary=f"{p['task']}: {p['asset']}", device=p["asset"], location=p["asset"], hall=_hall(p["asset"]),
@@ -253,7 +254,8 @@ def build(data_dir: Path = SAMPLE, changes_dir: Path = CHANGES, reports: Path = 
         for ref in f["refs"]:
             if ref in records:
                 records[ref]["findings"].append({k: red.deep(v) for k, v in f.items() if k != "refs"} | {"refs": f["refs"]})
-                records[ref]["related"].update(x for x in f["refs"] if x != ref and x in records)
+                if f.get("severity") != "Credential":   # one person's lapsed credential does not relate the work it touched
+                    records[ref]["related"].update(x for x in f["refs"] if x != ref and x in records)
     for ref, r in records.items():
         if r["type"] == "inc" and ref in by_ticket:
             i = by_ticket[ref]
@@ -398,6 +400,17 @@ def _security(sec: Path) -> dict[str, Any]:
     cfg = yaml.safe_load((ROOT / "config" / "security.yaml").read_text(encoding="utf-8"))
     prio = {p["id"]: p["engaged_on_site_min"] for p in load_sla(PARTNER_FILES["security"])["priorities"]}
     return {"alarms": alarms, "badges": badges, "doors": {d["id"]: d for d in cfg["doors"]}, "on_site": prio}
+
+
+def _credential_findings(data_dir: Path) -> list[dict[str, Any]]:
+    """The certification register's findings that name a record (scorecard.certifications), for the sample month only."""
+    from scorecard import certifications as C
+    if Path(data_dir).resolve() != C.SAMPLE.resolve() or not (C.LAYER / "manifest.json").exists():
+        return []
+    r = C.analyse(C.load_site(data_dir, C.SEC), C.load(C.LAYER, C.EHS_LAYER))
+    return [{"id": f["id"], "partner": f["owner"], "severity": "Credential", "title": f["title"], "summary": f["text"],
+             "refs": f["records"], "sla_refs": ["KM-15"] if f["partner"] == "it" else [], "source": "Certification register"}
+            for f in r["findings"] if f["records"]]
 
 
 def _fire(fire: Path, data_dir: Path) -> dict[str, Any]:
