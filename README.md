@@ -425,7 +425,7 @@ It generates nothing and judges nothing. States are Site health's, each conditio
 
 ![Device directory: leaf-a07-r1 with its connections and its place on the floor plan](docs/images/devices.png)
 
-**What it shows.** All 2,977 named devices at the site (racks and the compute trays, NVLink switch trays, and power shelves inside them; InfiniBand leaf switches and their ports; storage nodes and the storage fabric's leaves and spines; management switches, aggregation switches, and console servers; busways, tap-offs, UPSs, substations, MV switchgear, generators, CDUs, thermal walls, CRAHs, chillers, pumps, VESDA, leak detection, the fire alarm panel, pre-action zones, and clean agent systems), each with a description, what it connects to, and where it is on the drawings. Device names on every page are underlined like codes: clicking one opens a card with its connections, each of which opens its own card.
+**What it shows.** All 3,083 named devices at the site (racks and the compute trays, NVLink switch trays, and power shelves inside them; InfiniBand leaf switches and their ports; storage nodes and the storage fabric's leaves and spines; management switches, aggregation switches, and console servers; busways, tap-offs, UPSs, substations, MV switchgear, generators, CDUs, thermal walls, CRAHs, chillers, pumps, VESDA, leak detection, the fire alarm panel, pre-action zones, and clean agent systems; guard posts, gates, cameras, and video recorders), each with a description, what it connects to, and where it is on the drawings. Device names on every page are underlined like codes: clicking one opens a card with its connections, each of which opens its own card.
 
 <img src="docs/images/device-popup.png" alt="Device card for tap-off TO-A07-A on the alarm board" width="860">
 
@@ -435,7 +435,11 @@ Fields that name a rack, room, or device carry a red **location pin** that opens
 
 **How it works.**
 - `src/scorecard/devices.py` builds the directory from the site model, the rack inventory, and the generator's own cabling rule (imported, not retyped): leaf-aNN serves racks 2N-1 and 2N, so "leaf-a07-r1 port 18" is cabled to rack A13 tray 18, NIC mlx5_1. Tests check every cable against the telemetry's own port records (77,728 of 77,728 leaf port events across the robustness months).
-- The drawings are generated SVG (`src/scorecard/site_drawings.py`, `src/scorecard/detail_drawings.py`). While drawing, the code records where it put each item, so `docs/site/locations.json` comes from the drawing code itself, never from hand placement.
+- **Security drawings.** Sheet A-002 (security site plan) shows the whole property the Security Partner guards: the fence and its gates, the guard house, the Landlord's yards behind their own fences, the utility's substation (outside the patrol), 16 exterior cameras with what each sees, the pole lights, and the exterior tour. Sheet A-102 (building security zones) places every Customer door, post reader, and camera in the security data, the Landlord's readers, and the interior tour checkpoints. Seven zones (Z0 public approach to Z6 spares cage and media room) say who may enter, how, who controls entry, who patrols, and the response target; the Security SLA carries post orders for each of the five posts.
+
+<img src="docs/images/security-site-plan.png" alt="Security site plan, sheet A-002" width="860">
+
+- The drawings are generated SVG (`src/scorecard/site_drawings.py`, `src/scorecard/security_drawings.py`, `src/scorecard/detail_drawings.py`). While drawing, the code records where it put each item, so `docs/site/locations.json` comes from the drawing code itself, never from hand placement.
 - **Asset register** (`/devices/#assets`). Every asset by serial (5,867: trays, switch trays, power shelves and their PSUs, switches, storage nodes and drives, facility units, spares), from receipt to install, RMA, and disposal, reconciled every day against the serials the devices answer with, the spares ledger, RMA shipments, the OEM's RMA portal, custody handovers, and destruction and disposal certificates (Interface Agreement section 11, REG-1 to REG-6). 9 agreements, 123,989 of 123,989 cases; three findings where records do not reconcile: a PSU live in a shelf that the register holds in stock, a switch disposed under a certificate that still answers on the management network, and an OEM replacement delivered and never received. Disagreements other checks already found (two unverified swaps, a drive shipped without destruction, a wrong bay, a custody gap) are shown as corroborations and not counted again. Each device page shows what the register holds against what the device answers with. Built by `scripts/generate_assets.py` (own random stream) and `src/scorecard/assets.py`; report `reports/asset_register.md`.
 
   <img src="docs/images/asset-register.png" alt="Asset register: every asset by serial, and the records that do not reconcile" width="860">
@@ -582,6 +586,7 @@ site/site.yaml                   Single source of truth for the site: equipment,
 site/details.yaml                Equipment detail sheets: parts, sources, and alarm-text mappings
 src/scorecard/site_model.py      Site expansion, power and cooling paths, capacity checks
 src/scorecard/site_drawings.py   Site drawing set (SVG) generated from the site model
+src/scorecard/security_drawings.py Security site plan and building security zones (SVG)
 src/scorecard/detail_drawings.py Equipment detail sheets (SVG)
 src/scorecard/locations.py       Where each item is drawn (docs/site/locations.json) for location pins
 src/scorecard/devices.py         Device directory: every named device and its connections (docs/site/devices.json)

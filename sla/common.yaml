@@ -37,7 +37,7 @@ parties:
   security_partner:
     name: "Llano Gate Protective Services, LLC"
     fictional: true
-    description: "Contract security for the Customer's halls: guard posts and patrols, door alarm response, visitor sign-in and escort monitoring, CCTV operation, and on-site media destruction."
+    description: "Contract security for the whole property: armed guard posts, the gates and perimeter, patrols inside and out, door alarm response, visitor sign-in and escort monitoring, CCTV operation, and on-site media destruction."
     role: "Separate security services agreement and Security Partner SLA (Schedule D). Runs the Customer's security policy on the Customer's own systems."
   utility:
     name: "Serving utility (ERCOT region)"

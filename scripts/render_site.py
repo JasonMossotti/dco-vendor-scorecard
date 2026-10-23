@@ -69,6 +69,24 @@ def render_markdown(site: dict, sheet_list: list[tuple[str, str, str, str]]) -> 
                      S.product(site, h["fabric"])["model"]])
     add(_table(["Hall", "State", "Racks", "Design IT load", "Power", "CDUs", "Compute fabric"], rows))
     add("")
+    sec = site["security"]
+    add("## Security zones")
+    add("")
+    add("The Security Partner guards and patrols the whole property (Security SLA, SEC-POST; Interface Agreement, DM-SEC). "
+        "Zones Z0 to Z2 are on sheet A-002, Z3 to Z6 on sheet A-102.")
+    add("")
+    add(_table(["Zone", "Where", "Who may enter", "How", "Controlled by", "Patrolled by", "Response"],
+               [[f"{z['id']} {z['name']}", z["where"], z["entry"], z["method"], z["controlled_by"], z["patrolled_by"], z["response"]]
+                for z in sec["zones"]]))
+    add("")
+    add(_table(["Gate", "Name", "Kind", "Zone", "Reader", "Camera"],
+               [[g["id"], g["name"], g["kind"], g["zone"], g["reader"], g["camera"]] for g in sec["gates"]]))
+    add("")
+    add(f"Exterior tour every {sec['exterior_tour']['every_h']} hours: "
+        + ", ".join(f"{c['id']} {c['name']}" for c in sec["exterior_tour"]["checkpoints"])
+        + f". {sec['exterior_tour']['note']} {len(sec['exterior_cameras'])} exterior cameras record to {sec['exterior_recorder']}. "
+        f"{sec['guard_house']['name']}: {sec['guard_house']['text']}")
+    add("")
     add("## Drawings")
     add("")
     add(_table(["Sheet", "Title"], [[num, f"[{title}]({fn})"] for num, fn, title, _ in sheet_list]))

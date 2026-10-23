@@ -61,7 +61,7 @@ This agreement joins the Landlord SLA, the IT Partner SLA, and the Security Part
 | DM-UTIL | Utility service | 13.8 kV main breakers in the Landlord's switchgear. | Serving utility (ERCOT region) | Caprock Critical Facilities, LLC | Utility revenue metering; main breaker status in the EPMS. |
 | DM-NET | Network | Meet-me room cross-connect panel. | Caprock Critical Facilities, LLC | Ridgeline Site Services, LLC | Cross-connect records; optical power at the IT side of the panel. |
 | DM-MON | Monitoring | The read-only interfaces listed under Customer data access. | Caprock Critical Facilities, LLC | Customer | Feed availability measured by the Customer collector (OT-KM-06). |
-| DM-SEC | Physical security | The Customer hall entrance doors: the Landlord secures the perimeter, lobby, and corridors up to each door; the Security Partner covers the door and everything inside it. | Caprock Critical Facilities, LLC | Llano Gate Protective Services, LLC | Landlord lobby badge reader events; Customer access control system events at each hall door (door alarms, guard post readers). |
+| DM-SEC | Physical security | The property line: the Security Partner guards and patrols the whole property, gates and perimeter included, under the Customer's contract and with the Landlord's consent under the lease; the Landlord keeps the fences, gates, barriers, lobby, and its own readers in repair and controls entry to its yards and plant rooms (zones Z2 and Z4); the Customer's access control covers the hall doors, spares cage, media room, and dock (zones Z5 and Z6). The utility substation is the utility's, behind its own fence. | Caprock Critical Facilities, LLC | Llano Gate Protective Services, LLC | Landlord lobby and yard badge reader events; Customer access control system events at each hall door (door alarms, guard post readers); the gate log and exterior cameras. |
 
 ## 4. Break-Fix Ownership Matrix
 
@@ -92,7 +92,7 @@ This agreement joins the Landlord SLA, the IT Partner SLA, and the Security Part
 | Storage nodes and drives (physical) | A | R | - | C | - | C |
 | Meet-me rooms and cross-connects | C | C | A/R | - | - | - |
 | Spares cage, inventory, and RMA shipments | A | R | - | C | - | C |
-| Building perimeter, lobby, and access control system | C | I | A/R | - | - | C |
+| Property perimeter, gates, and patrols | A | I | C | - | - | R |
 | Customer halls and cage access lists | A | R | R | - | - | R |
 | Guard posts and patrols in the Customer halls | A | I | I | - | - | R |
 | Customer hall door alarms (forced and held) and guard response | A | I | I | - | - | R |

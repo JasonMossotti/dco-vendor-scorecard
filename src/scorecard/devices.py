@@ -47,6 +47,7 @@ KIND_LABEL = {
     "paz": "Pre-action sprinkler zone", "cas": "Clean agent system",
     "mgmt": "Management switch", "agg": "Management aggregation switch", "console": "Console server",
     "stg_rack": "Storage rack", "stg_node": "Storage node", "eth_leaf": "Storage fabric leaf switch", "eth_spine": "Storage fabric spine switch",
+    "post": "Guard post", "gate": "Gate", "camera": "Camera", "nvr": "Video recorder",
 }
 # Sections of the Devices page, in order, and the kinds in each
 GROUPS = [
@@ -57,6 +58,7 @@ GROUPS = [
     ("power", "Power", ["tx", "mv", "gen", "uss", "ups", "mups", "mvsst", "group", "busway", "tapoff"]),
     ("cooling", "Cooling", ["cdu", "tw", "crah", "chiller", "pump"]),
     ("safety", "Fire protection and leak detection", ["facp", "vesda", "paz", "cas", "leak"]),
+    ("security", "Security", ["post", "gate", "camera", "nvr"]),
 ]
 GROUP_OF = {k: g for g, _, kinds in GROUPS for k in kinds}
 
@@ -450,7 +452,32 @@ def build(site: dict[str, Any], it_site: dict[str, Any], loc_entries: dict[str, 
     fire = [n for n, e in dev.items() if e["kind"] in ("vesda", "paz", "cas")]
     add("FACP-1", "facp", desc("FACP-1"), [["Monitors", n, KIND_LABEL[dev[n]["kind"]].lower()] for n in fire] +
         [["Reports to", "", "the BMS through a BACnet gateway (secondary); the panel is the life-safety system of record"]])
+    _security(site, add, desc)
     return {"kinds": KIND_LABEL, "groups": [[g, label, kinds] for g, label, kinds in GROUPS], "devices": dev}
+
+
+def _security(site: dict[str, Any], add, desc) -> None:
+    """Guard posts, gates, cameras, and recorders (sheets A-002 and A-102; config/security.yaml)."""
+    from scorecard.security_drawings import cameras, security_config
+    sec, cfg = site["security"], security_config()
+    cams = cameras(cfg) + [{"camera": c["id"], "recorder": sec["exterior_recorder"]} for c in sec["exterior_cameras"]]
+    by_rec: dict[str, list[str]] = {}
+    for c in cams:
+        by_rec.setdefault(c["recorder"], []).append(c["camera"])
+    gate_cam = {g["camera"]: g["id"] for g in sec["gates"]}
+    for p in sec["posts"]:
+        add(p["id"], "post", desc(p["id"]), [["Stands at", "", f"{p['room']} (zone {p['zone']})"]])
+    for g in sec["gates"]:
+        add(g["id"], "gate", desc(g["id"]), [["Camera", g["camera"], ""]], title=g["name"])
+    for c in cams:
+        conn = [["Records to", c["recorder"], ""]]
+        if c["camera"] in gate_cam:
+            conn.append(["Watches", gate_cam[c["camera"]], ""])
+        add(c["camera"], "camera", desc(c["camera"]), conn)
+    for rec, names in sorted(by_rec.items()):
+        text = (f"Video recorder for the exterior cameras ({len(names)})." if rec == sec["exterior_recorder"] else
+                f"Video recorder on the Customer's video system: {len(names)} cameras; keeps at least 90 days of video.")
+        add(rec, "nvr", text, [["Records", n, ""] for n in names])
 
 
 # --------------------------------------------------------------------------- #
@@ -520,6 +547,7 @@ def subset(data: dict[str, Any], names: set[str]) -> dict[str, dict[str, Any]]:
 # Reconciling the directory with the data
 # --------------------------------------------------------------------------- #
 NOT_DEVICES = {"AUS-1", "HALL-A", "HALL-B", "HALL-C", "OPS-MAIN",   # the site, halls, and the NOC: places, not devices
+               "ER-A", "ER-B", "ER-C", "MMR-1", "MMR-2",            # electrical and meet-me rooms: places too
                "PFS-A", "PFS-B"}   # storage clusters: each is its 16 storage nodes, listed one by one
 
 

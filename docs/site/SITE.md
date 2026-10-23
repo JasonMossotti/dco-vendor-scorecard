@@ -14,12 +14,41 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 | Hall B | deployment | 32 x GB300 NVL72 | 4,224 kW | 4 x Galaxy VX, distributed redundant (4 make 3) | 4 x CHx2000 (N+1) | Quantum-X800 Q3400-RA XDR InfiniBand switch |
 | Hall C (800 VDC pilot) | planned | 8 x 800 VDC rack, Vera Rubin class (planned) | 1,840 kW | 2 x Eaton MVSST, 2N, 800 VDC | 3 x CHx2000 (N+1) | Quantum-X800 Q3400-RA XDR InfiniBand switch |
 
+## Security zones
+
+The Security Partner guards and patrols the whole property (Security SLA, SEC-POST; Interface Agreement, DM-SEC). Zones Z0 to Z2 are on sheet A-002, Z3 to Z6 on sheet A-102.
+
+| Zone | Where | Who may enter | How | Controlled by | Patrolled by | Response |
+|---|---|---|---|---|---|---|
+| Z0 Public approach | Outside the property fence: the access road to the main gate and the pedestrian turnstile. | Anyone. No badge. | None; the main gate's intercom and plate camera (CAM-X-01) at the fence line. | Customer | Security Partner, by camera from the security console; the exterior tour checks the fence line from inside. | A person or vehicle loitering at the gate: P3 (camera review, intercom challenge). |
+| Z1 Perimeter and grounds | Inside the property fence: roads, staff and visitor parking, the truck court, the guard house, and the fire lane. | Badge holders of any party; pre-registered visitors and drivers on a Customer-approved request. | Badge or plate read at the main gate, or the security console opening the gate after an intercom check; the pedestrian turnstile reads badges. | Customer | Security Partner: the exterior tour (POST-PATROL) and the exterior cameras. | An intruder inside the fence: P1 (guard engaged in 3 minutes). A gate or the fence found open: P2 (5 minutes). |
+| Z2 Equipment yards | The generator yard, the chiller yard with USS-CH1 to USS-CH4, and the MV switchgear and MVSST pad, each behind its own yard fence. | The Landlord's staff and its vendors; others only with a Landlord escort. | The Landlord's yard readers (Generator yard, Chiller yard, MV switchgear) on its base building access control. | Landlord | Security Partner, outside the yard fences: the exterior tour checks each yard gate is shut and locked. | A yard gate found open with no Landlord work under way: P2, the console calls the Landlord's operator. |
+| Z3 Building shell and lobby | The security lobby and mantrap, the secure corridor, the NOC, staging and burn-in, and the receiving dock. | Badge holders of any party; visitors signed in at the security console. | The Landlord's Main lobby reader and the mantrap; the Customer's OPS-MAIN reader at the NOC; the dock door opened by the dock post. | Landlord (lobby and mantrap), Customer (NOC, dock) | Security Partner: the security console, the receiving dock post (day), and the interior tour (Receiving dock, Corridor east). | Tailgating through the mantrap: P1. A dock door held open: P2. |
+| Z4 Landlord plant rooms | The electrical rooms (ER-A, ER-B, ER-C), the meet-me rooms (MMR-1, MMR-2), the fire riser, and the pump room. | The Landlord's staff and its vendors; carriers in the meet-me rooms with a Landlord escort; the fire department. | The Landlord's readers (Hall A electrical room, Hall B electrical room, and the riser, pump room, and meet-me room doors). | Landlord | Landlord. The Security Partner passes the doors on the interior tour but does not enter. | The Landlord's door alarms go to the Landlord's operator; the console sends a guard on request. |
+| Z5 Customer halls | Hall A, Hall B, Hall C (planned), and the telecom room (the out-of-band network). | People on the hall's access list; visitors only with a named escort who badges in with them. | The Customer's hall door readers (HALL-A, HALL-B) beside a guard post; emergency exits on door contacts only. | Customer | Security Partner: the Hall A and Hall B entrance posts and the interior tour; and the hall cameras. | Door forced: P1 (guard engaged in 3 minutes). Door held past 60 seconds: P2. A visitor without an escort: P2. |
+| Z6 Spares cage and media room | The spares cage (trays, PSUs, optics, drives) and the media destruction room beside it. | Spares cage: the IT Partner's named technicians. Media room: the Security Partner's destruction operator with a witness. | The Customer's SPARES-CAGE reader; the media room reader admits two people together (two-person rule). | Customer | Security Partner: the interior tour (Hall A spares aisle) and the spares cage cameras. | Door forced, or media unaccounted for in the chain of custody: P1. |
+
+| Gate | Name | Kind | Zone | Reader | Camera |
+|---|---|---|---|---|---|
+| GATE-MAIN | Main vehicle gate | Sliding vehicle gate with a crash-rated wedge barrier inside it | Z1 | Badge and plate read; intercom to the security console | CAM-X-01 |
+| GATE-PED | Pedestrian turnstile | Full-height turnstile | Z1 | Badge reader; intercom to the security console | CAM-X-02 |
+| GATE-TRUCK | Truck court gate | Swing gate | Z1 | Opened by the receiving dock post (day) or the console for a booked delivery | CAM-X-04 |
+| GATE-FIRE | Fire lane gate | Swing gate, normally locked | Z1 | Fire department key box; the console can open it | CAM-X-14 |
+| GATE-GEN | Generator yard gate | Yard gate | Z2 | Landlord reader: Generator yard | CAM-X-07 |
+| GATE-CH | Chiller yard gate | Yard gate | Z2 | Landlord reader: Chiller yard | CAM-X-13 |
+| GATE-MV | MV switchgear yard gate | Yard gate | Z2 | Landlord reader: MV switchgear | CAM-X-11 |
+| GATE-UTIL | Utility substation gate | Utility gate on the east fence | utility | Utility lock; the utility's crews enter the substation from outside and never cross the property | CAM-X-10 |
+
+Exterior tour every 4 hours: XC-1 Main gate, XC-2 Fence north-west, XC-3 Generator yard gate, XC-4 Fence north-east, XC-5 Substation fence, XC-6 Chiller yard gate, XC-7 Fire lane gate, XC-8 Truck court gate. Recorded on the patrol's handheld; the tour rule in the Security SLA measures the interior checkpoints only in this version. 16 exterior cameras record to NVR-5. Guard house: Patrol start reader, the locked shotgun rack (on a door contact and a camera), the exterior tour kit, and a radio base.
+
 ## Drawings
 
 | Sheet | Title |
 |---|---|
 | A-001 | [Campus plan](A-001_campus_plan.svg) |
+| A-002 | [Security site plan](A-002_security_site_plan.svg) |
 | A-101 | [Building plan](A-101_building_plan.svg) |
+| A-102 | [Building security zones](A-102_building_security_zones.svg) |
 | A-201 | [Hall A floor plan](A-201_hall_a_plan.svg) |
 | A-202 | [Hall B floor plan](A-202_hall_b_plan.svg) |
 | A-203 | [Hall C (800 VDC pilot) floor plan](A-203_hall_c_plan.svg) |
@@ -42,9 +71,17 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 
 ![Campus plan](A-001_campus_plan.svg)
 
+### A-002 Security site plan
+
+![Security site plan](A-002_security_site_plan.svg)
+
 ### A-101 Building plan
 
 ![Building plan](A-101_building_plan.svg)
+
+### A-102 Building security zones
+
+![Building security zones](A-102_building_security_zones.svg)
 
 ### A-201 Hall A floor plan
 
@@ -121,7 +158,7 @@ Central Texas, USA (fictional parcel), on the ERCOT grid. Utility service at 138
 | Customer | Customer | Leases the halls; owns the IT equipment and site outcomes; operates the Telemetry of Record. |
 | It partner | Ridgeline Site Services, LLC (fictional) | Deployment, break-fix, and data hall IT operations. |
 | Landlord | Caprock Critical Facilities, LLC (fictional) | Wholesale data center owner-operator: owns and operates the building, power, cooling, fire protection, and building monitoring; leases the halls to the Customer. |
-| Security partner | To be contracted | Access control, CCTV, escorts (later phase). |
+| Security partner | Llano Gate Protective Services, LLC (fictional) | Armed Level III officers for the whole property: gates and perimeter, the security console, the hall entrance posts, patrols, visitors, and media destruction (sheets A-002 and A-102). |
 | Utility | Serving utility (ERCOT region) | Owns the 138 kV substation and its transformers; serves the Landlord. |
 
 ## Equipment

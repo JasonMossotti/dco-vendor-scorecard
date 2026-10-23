@@ -32,6 +32,7 @@ from typing import Any
 from . import site_model as S
 from .detail_drawings import load_details, parts as product_parts
 from .site_drawings import sheets
+from .sla_model import PARTNER_FILES, load_sla
 
 VESDA_PRODUCT = "vesda_e_vep"   # the halls' aspirating detectors (site/site.yaml lists the product once)
 
@@ -231,8 +232,11 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
     for room, text in (("MMR-1", "Meet-me room, west: carrier entrance."), ("MMR-2", "Meet-me room, east: carrier entrance."),
                        ("NOC", "Site operations and the Incident Commander's desk."),
                        ("Spares cage", "On-site spares: trays, PSUs, optics."), ("Security lobby", "Mantrap and guard desk."),
-                       ("Pump room", "Facility water pumps."), ("Fire riser", "Fire alarm control panel.")):
+                       ("Pump room", "Facility water pumps."), ("Fire riser", "Fire alarm control panel."),
+                       ("Media room", "The Security Partner destroys storage media here, two people at a time."),
+                       ("Telecom", "The out-of-band management network's room.")):
         add(room, "room", room, text, [view("A-101", [room])])
+    _security(site, add, view, aliases)
     add("FACP-1", "equipment", "FACP-1", "The site's fire alarm control panel, in the fire riser: every smoke detector, pre-action "
         "valve, and clean agent system reports to it.", [view("A-101", ["Fire riser"])], "notifier_facp")
     parts_out = {}
@@ -247,6 +251,55 @@ def build(site: dict[str, Any]) -> dict[str, Any]:
             parts_out[key]["unplaced"] = spec["devices"]
     return {"sheets": sheet_meta, "entries": entries, "aliases": aliases, "rules": [list(r) for r in RULES],
             "details": parts_out, "points": [list(p) + [""] * (5 - len(p)) for p in details["points"]]}
+
+
+def _security(site: dict[str, Any], add, view, aliases: dict[str, str]) -> None:
+    """Zones, gates, posts, doors, cameras, and tour checkpoints (sheets A-002 and A-102)."""
+    from .security_drawings import cameras, security_config
+    sec, cfg = site["security"], security_config()
+    outside = {"Z0", "Z1", "Z2"}
+    for z in sec["zones"]:
+        add(z["id"], "area", f"Zone {z['id']}: {z['name']}", f"{z['where']} Entry: {z['entry']} Controlled by {z['controlled_by']}.",
+            [view("A-002" if z["id"] in outside else "A-102", [z["id"]])])
+    gh = sec["guard_house"]
+    add(gh["name"], "room", gh["name"], gh["text"], [view("A-002", [gh["name"]])])
+    add("Utility substation", "area", "Utility substation", sec["utility_fence"]["text"], [view("A-002", ["Utility substation"])])
+    for g in sec["gates"]:
+        add(g["id"], "equipment", g["name"], f"{g['kind']}. {g['reader']}.", [view("A-002", [g["id"]])])
+    names = {p["id"]: p["name"] for p in load_sla(PARTNER_FILES["security"])["posts"]["list"]}
+    for p in sec["posts"]:
+        sheet = "A-002" if p["id"] == "POST-PATROL" else "A-102"
+        add(p["id"], "equipment", f"{p['id']}: {names[p['id']]}", f"Guard post at the {p['room'].lower()} (zone {p['zone']}).",
+            [view(sheet, [p["id"]])])
+    for d in cfg["doors"]:
+        if d["id"] in ("HALL-A", "HALL-B", "SPARES-CAGE"):       # the hall and room names already point here
+            continue
+        add(d["name"], "equipment", d["name"], f"Customer door {d['id']} on a door contact.", [view("A-102", [d["id"]])])
+        aliases[d["id"]] = d["name"]
+    for name in ("Hall A entrance", "Hall B entrance"):
+        did = "HALL-" + name[5]
+        add(name, "equipment", name, f"Customer door {did}: card reader, door contact, and guard post.", [view("A-102", [did])])
+    for c in cameras(cfg):
+        add(c["camera"], "equipment", c["camera"], f"Camera in {c['area']}, recording to {c['recorder']}"
+            + (", covering a door." if c["covers_door"] else "."), [view("A-102", [c["camera"]])])
+    for c in sec["exterior_cameras"]:
+        add(c["id"], "equipment", c["id"], f"Exterior camera: {c['watches'].lower()}; recording to {sec['exterior_recorder']}.",
+            [view("A-002", [c["id"]])])
+    for c in sec["exterior_tour"]["checkpoints"]:
+        add(c["id"], "equipment", f"Exterior checkpoint {c['id']}", f"{c['name']}, on the exterior tour every "
+            f"{sec['exterior_tour']['every_h']} hours.", [view("A-002", [c["id"]])])
+    for name in cfg["tours"]["checkpoints"]:
+        title = f"Tour checkpoint: {name}"
+        text = f"Interior tour checkpoint, scanned every {cfg['tours']['every_h']} hours."
+        if name == "Receiving dock":
+            add(name, "room", "Receiving dock", "Deliveries and staging; the dock post (day) and an interior tour checkpoint.",
+                [view("A-102", ["Loading dock"], [f"Checkpoint: {name}"]), view("A-101", ["Loading dock"])])
+        else:
+            add(name, "room", title, text, [view("A-102", [f"Checkpoint: {name}"])])
+    add("Secure corridor", "room", "Secure corridor", "The corridor to the hall doors, the spares cage, and the support rooms (zone Z3).",
+        [view("A-102", ["Secure corridor"])])
+    aliases["Main lobby"] = "Security lobby"
+    aliases["OPS-MAIN"] = "NOC"
 
 
 LOCATIONS_JSON = Path(__file__).resolve().parents[2] / "docs" / "site" / "locations.json"

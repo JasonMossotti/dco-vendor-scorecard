@@ -152,10 +152,11 @@ rows:
     scenario: "The weekly cycle count finds the spares cage two compute trays short of the ledger."
     priority: null
     match: {}
-  - component: "Building perimeter, lobby, and access control system"
-    scenario: "The lobby badge readers go offline; security falls back to the paper visitor log and escorts."
-    priority: P3
-    criterion: "A degraded component with redundancy intact."
+  - component: "Property perimeter, gates, and patrols"
+    scenario: "On the 03:00 exterior tour the guard finds the fire lane gate standing open and no one on the fire lane."
+    priority: P2
+    criterion: "A property gate or the fence found open or breached."
+    demarcation: DM-SEC
     match: {}
   - component: "Customer halls and cage access lists"
     scenario: "The quarterly access review finds a technician who left last month still on the Hall A access list."

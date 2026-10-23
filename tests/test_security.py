@@ -106,7 +106,7 @@ def test_interface_agreement_adds_the_security_partner():
     assert ia["raci_parties"][-1] == "Security Partner" and "security_partner" in ia["parties"]
     rows = {r["component"]: r for r in ia["raci"]}
     mine = [c for c, r in rows.items() if r["Security Partner"] == "R"]
-    assert len(mine) == 6 and all(rows[c]["Customer"] == "A" for c in mine), "the Customer owns the policy; the Security Partner runs it"
+    assert len(mine) == 7 and all(rows[c]["Customer"] == "A" for c in mine), "the Customer owns the policy; the Security Partner runs it"
     assert {d["id"] for d in ia["demarcations"]} >= {"DM-SEC"} and "HO-5" in {h["id"] for h in ia["handoffs"]}
 
 
