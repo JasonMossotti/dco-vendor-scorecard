@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""The Operations page (/ops/): the daily standup (the opening view), the maintenance and change calendar (#calendar), and Safety (#ehs).
+"""The Operations page (/ops/): the daily standup (the opening view), the maintenance and change calendar (#calendar), Safety (#ehs), and PM coverage (#pm).
 
 Usage:
     python scripts/render_ops.py --out _site/ops     # write the page (build_site.py does this for the Pages build)
 
-The page reads scorecard.standup.page_data, scorecard.change_calendar.page_data, and scorecard.ehs.page_data (the same data as
-reports/standup.md, reports/change_calendar.md, and reports/ehs.md).
+The page reads scorecard.standup.page_data, scorecard.change_calendar.page_data, scorecard.ehs.page_data, and
+scorecard.pm_coverage.page_data (the same data as reports/standup.md, reports/change_calendar.md, reports/ehs.md, and
+reports/pm_coverage.md).
 """
 
 from __future__ import annotations
@@ -21,11 +22,12 @@ sys.path.insert(0, str(ROOT / "src"))
 from scorecard import sitenav  # noqa: E402
 from scorecard import change_calendar as CC  # noqa: E402
 from scorecard import ehs as EHS  # noqa: E402
+from scorecard import pm_coverage as PMC  # noqa: E402
 from scorecard import standup as SU  # noqa: E402
 
 
 def prepare() -> dict:
-    return {"standup": SU.page_data(), "calendar": CC.page_data(), "ehs": EHS.page_data()}
+    return {"standup": SU.page_data(), "calendar": CC.page_data(), "ehs": EHS.page_data(), "pm": PMC.page_data()}
 
 
 def html_page() -> str:

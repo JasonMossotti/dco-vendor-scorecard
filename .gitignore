@@ -27,6 +27,7 @@ data/*
 !data/quarter/
 !data/certs/
 !data/engineer_notes/
+!data/pm_coverage/
 
 # Extra engine runs (only the committed reports/ files are tracked)
 reports/*/

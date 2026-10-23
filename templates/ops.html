@@ -81,7 +81,7 @@ ol.top3 { margin:6px 0; padding-left:24px; } ol.top3 li { margin:6px 0; font-siz
 __SITENAV__
 <header class="top">
   <strong>Operations</strong>
-  <nav class="views" aria-label="Operations views"><a href="#standup" data-view="standup">Daily standup</a><a href="#calendar" data-view="calendar">Calendar</a><a href="#ehs" data-view="ehs">Safety</a></nav>
+  <nav class="views" aria-label="Operations views"><a href="#standup" data-view="standup">Daily standup</a><a href="#calendar" data-view="calendar">Calendar</a><a href="#ehs" data-view="ehs">Safety</a><a href="#pm" data-view="pm">PM coverage</a></nav>
 </header>
 <main id="doc"></main>
 <script id="data" type="application/json">__DATA__</script>
@@ -385,6 +385,110 @@ function viewEhs(sel) {
   </ul>`;
 }
 
+// ------------------------------------------------------------------ PM coverage (#pm)
+const P = D.pm;
+const PLINE = Object.fromEntries(P.lines.map(x => [x.key, x]));
+const PFIND = Object.fromEntries(P.findings.map(f => [f.id, f]));
+const ymd = d => d ? md(d) + (d.slice(0, 4) !== "2026" ? ", " + d.slice(0, 4) : "") : "";
+const FILT_P = {task: "all", hall: "all", status: "all"};
+const OPTS_P = {task: [["all", "All"], ...P.tasks.map(t => [t.id, t.task])],
+  hall: [["all", "All"], ...[...new Set(P.lines.map(x => x.hall))].sort().map(h => [h, h])],
+  status: [["all", "All"], ["gap", "In a finding"], ...Object.entries(P.status_names).filter(([k]) => P.count[k])]};
+const PCLS = {current: "ok", booked: "ok", not_required: "mute", booked_late: "warn", not_booked: "warn", overdue: "bad", no_baseline: "bad"};
+const pmFlag = k => `<span class="flag ${PCLS[k]}">${esc(P.status_names[k])}</span>`;
+function pmLine(k, text) { return `<a class="job" href="#pm/line/${esc(encodeURIComponent(k))}">${esc(text)}</a>`; }
+function pmfLink(id) { return `<a class="fnd" href="#pm/finding/${esc(id)}">${esc(id)}</a>`; }
+function calJob(id) { return JOBS[id] ? jobLink(id) : esc(id); }
+function shownLine(x) {
+  if (FILT_P.task !== "all" && x.task_id !== FILT_P.task) return false;
+  if (FILT_P.hall !== "all" && x.hall !== FILT_P.hall) return false;
+  if (FILT_P.status === "gap") return !!x.finding;
+  if (FILT_P.status !== "all" && x.status !== FILT_P.status) return false;
+  return true;
+}
+const intervalName = x => x.interval === "three_year" ? "Every 3 years" : x.interval[0].toUpperCase() + x.interval.slice(1);
+
+function pmLinePanel(k) {
+  const x = PLINE[k]; if (!x) return "";
+  const src = x.records.length ? "PM record" : x.opening ? x.opening.source : "";
+  return `<div class="panel" id="pmpanel"><button class="close" data-close="pm">Close</button><h3>${esc(x.unit)}: ${esc(x.task)}</h3>
+    <div class="kv"><div>System</div><div>${esc(x.system)} (${esc(x.hall)})</div>
+    <div>Interval</div><div>${esc(intervalName(x))}, ${esc(x.grace)} days of grace. ${esc(x.basis)}</div>
+    <div>Status</div><div>${pmFlag(x.status)}${x.finding ? " " + pmfLink(x.finding) + ": " + esc(PFIND[x.finding].title) : ""}</div>
+    <div>Last done</div><div>${x.last ? esc(ymd(x.last)) + " (" + esc(src) + ")" : "No record"}</div>
+    ${x.due ? `<div>Next due</div><div>${esc(ymd(x.due))}, grace ends ${esc(ymd(x.limit))}</div>` : ""}
+    <div>Booked</div><div>${x.bookings.length ? x.bookings.map(b => calJob(b.id) + " " + esc(md(b.day))).join(", ") : "Nothing in the forward schedule"}</div>
+    ${x.note ? `<div>Note</div><div>${esc(x.note)}</div>` : ""}</div>
+    <h3>History</h3>${x.records.length || x.opening ? `<ul class="tight">${x.opening && !x.records.length ? `<li>${esc(ymd(x.opening.done))}: ${esc(x.opening.source)} (opening register; the records begin ${esc(md(x.window_start))})</li>` : ""}${x.records.map(r => `<li>${esc(ymd(r.done))}: <b>${esc(r.id)}</b> ${esc(r.result)}${r.evidence ? "; " + esc(r.evidence) : ""} <span class="note">${esc(r.source)}</span></li>`).join("")}</ul>` : `<p class="note">No PM record and no opening entry: a baseline PM is needed.</p>`}</div>`;
+}
+
+function pmFindingPanel(id) {
+  const f = PFIND[id]; if (!f) return "";
+  const step = {overdue: "PMC-S4", booked_late: "PMC-S3", not_booked: "PMC-S2", no_baseline: "PMC-S6"}[f.kind];
+  const st = P.procedure.steps.find(s => s.id === step);
+  return `<div class="panel" id="pmfpanel"><button class="close" data-close="pm">Close</button><h3>${esc(f.id)}: ${esc(f.title)}</h3>
+    <p>${esc(f.text)}</p>
+    <div class="kv"><div>Owner</div><div>${esc(f.owner)}</div>
+    <div>Lines</div><div>${f.lines.map(k => pmLine(k, PLINE[k].unit)).join(", ")}</div>
+    ${f.booking ? `<div>Booking</div><div>${calJob(f.booking)} on ${esc(md(f.booking_day))}</div>` : ""}
+    <div>Action</div><div>${esc(f.action)}</div>
+    ${st ? `<div>Procedure</div><div><b>${esc(st.id)} ${esc(st.name)}.</b> ${esc(st.text)}</div>` : ""}</div></div>`;
+}
+
+function viewPm(sel) {
+  const c = P.count, ls = P.lines.filter(shownLine);
+  const opt = (k, vals) => `<select data-fp="${esc(k)}">${vals.map(([v, t]) => `<option value="${esc(v)}"${FILT_P[k] === v ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+  const gaps = P.findings.filter(f => f.kind !== "no_baseline");
+  const asset = P.agreements.find(a => a.key === "assets");
+  return `<h1>PM coverage</h1>
+  <p class="sub">Every Landlord device the maintenance schedule covers in Halls A and B and the site-wide plant, each task's last completion, its next due date, and whether it is booked on the ${`<a class="dayl" href="#calendar">Calendar</a>`} on or before its grace limit. As of ${esc(md(P.as_of))}, looking ahead to ${esc(md(P.horizon))} (Hall C first compute; Hall C joins the program at handover).</p>
+  <div class="tiles">
+    <div class="tile"><div class="k">Device-task lines</div><div class="v">${esc(P.lines.length)}</div><div class="s">${esc(P.devices)} devices and rooms, ${esc(P.tasks.length)} tasks</div></div>
+    <div class="tile"><div class="k">Covered</div><div class="v">${esc(c.current + c.booked)}</div><div class="s">${esc(c.booked)} booked in time, ${esc(c.current)} not due before ${esc(md(P.horizon))}</div></div>
+    <div class="tile"><div class="k">Gaps</div><div class="v">${esc(gaps.length)}</div><div class="s">${esc(c.overdue)} overdue, ${esc(c.booked_late)} booked late, ${esc(c.not_booked)} due with nothing booked</div></div>
+    <div class="tile"><div class="k">No baseline</div><div class="v">${esc(c.no_baseline)}</div><div class="s">devices on tasks the coverage clause added</div></div>
+    <div class="tile"><div class="k">PM records read</div><div class="v">${esc(P.records)}</div><div class="s">${esc(P.bookings)} PM bookings in the forward schedule</div></div>
+  </div>
+  <h2>Findings</h2>
+  <p class="note">A finding means the PM records and the bookings do not reconcile with the schedule. It starts the coverage procedure below and changes no service level; it is not a judgment of anyone.</p>
+  <div class="wide"><table><tr><th>ID</th><th>Kind</th><th>Device</th><th>Task</th><th>Last done</th><th>Due</th><th>Grace ends</th><th>Booked</th></tr>
+  ${P.findings.map(f => `<tr${f.id === sel ? ' style="background:#f0f5ff"' : ""}><td class="nw">${pmfLink(f.id)}</td><td>${esc(f.title)}</td><td>${f.units.length < 4 ? f.lines.map(k => pmLine(k, PLINE[k].unit)).join(", ") : esc(f.units.length + " devices")}</td><td>${esc(f.task)}</td>
+    <td class="nw">${esc(ymd(f.last))}</td><td class="nw">${esc(ymd(f.due))}</td><td class="nw">${esc(ymd(f.limit))}</td><td class="nw">${f.booking ? calJob(f.booking) + " " + esc(md(f.booking_day)) : ""}</td></tr>`).join("")}</table></div>
+  <div id="detail"></div>
+  <h2>Register</h2>
+  <div class="filters">
+    <label>Task ${opt("task", OPTS_P.task)}</label>
+    <label>Hall ${opt("hall", OPTS_P.hall)}</label>
+    <label>Status ${opt("status", OPTS_P.status)}</label>
+  </div>
+  <div class="wide"><table id="pmreg"><tr><th>Device</th><th>Task</th><th>Interval</th><th>Last done</th><th>Due</th><th>Grace ends</th><th>Booked</th><th>Status</th></tr>
+  ${ls.map(x => `<tr${x.key === sel ? ' style="background:#f0f5ff"' : ""}><td class="nw">${pmLine(x.key, x.unit)}</td><td>${esc(x.task)}</td><td class="nw">${esc(intervalName(x))}</td>
+    <td class="nw">${esc(ymd(x.last))}</td><td class="nw">${esc(ymd(x.due))}</td><td class="nw">${esc(ymd(x.limit))}</td>
+    <td class="nw">${x.bookings.map(b => calJob(b.id) + " " + esc(md(b.day))).join("<br>")}</td><td class="nw">${pmFlag(x.status)}${x.finding ? " " + pmfLink(x.finding) : ""}</td></tr>`).join("")}</table></div>
+  <p class="note">${esc(ls.length)} of ${esc(P.lines.length)} lines shown.</p>
+  <h2>By task</h2>
+  <div class="wide"><table><tr><th>System</th><th>Task</th><th>Interval</th><th class="n">Lines</th><th>Status</th><th>Basis</th></tr>
+  ${P.tasks.map(t => `<tr><td>${esc(t.system)}</td><td>${esc(t.task)}${t.in_schedule ? "" : ' <span class="flag mute">added</span>'}</td><td class="nw">${esc(intervalName(t))}</td><td class="n">${esc(t.lines)}</td>
+    <td>${Object.entries(t.status).map(([k, n]) => pmFlag(k) + " " + esc(n)).join(" ")}</td><td>${esc(t.basis)}</td></tr>`).join("")}</table></div>
+  <h2>The coverage procedure</h2>
+  <p>${esc(P.procedure.principle)} ${esc(P.procedure.register)} ${esc(P.procedure.grace)}</p>
+  <table><tr><th>Step</th><th>Name</th><th>What happens</th></tr>
+  ${P.procedure.steps.map(s => `<tr><td class="nw">${esc(s.id)}</td><td>${esc(s.name)}</td><td>${esc(s.text)}</td></tr>`).join("")}</table>
+  <p class="note">${esc(P.procedure.credits)} Landlord SLA section 11.1.</p>
+  <h2>Agreements with the records</h2>
+  <table><tr><th>Agreement</th><th class="n">Cases</th><th class="n">Agree</th></tr>
+  ${P.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${esc(a.checked)}</td><td class="n">${esc(a.checked - a.misses.length)}</td></tr>`).join("")}</table>
+  ${asset && asset.outside && asset.outside.length ? `<p class="note">Outside the asset register's scope: ${esc(asset.outside.join(", "))}.</p>` : ""}
+  <h2>How it works</h2>
+  <ul class="tight">
+    <li><b>Program.</b> Each line of the Landlord SLA's maintenance schedule expanded to the devices it covers, with its interval and grace (monthly tasks are due in each calendar month with ${esc(P.grace_days.monthly)} days of grace; quarterly ${esc(P.interval_days.quarterly)} days and semiannual ${esc(P.interval_days.semiannual)} days with ${esc(P.grace_days.quarterly)}; annual and longer with ${esc(P.grace_days.annual)}).</li>
+    <li><b>Last completion.</b> The latest PM record: the Hall A history for the Hall A CDU filters (the CDU telemetry and the predictions follow it), the July, August, and September Measurement Periods for everything else. Before the records begin, the opening register holds the last completion from the Landlord's maintenance system or the acceptance test at commissioning.</li>
+    <li><b>Walk.</b> From the last completion, each due date must have a booking on or before its grace limit; a booking is taken as done on its day and the next due date follows from it, until ${esc(md(P.horizon))}.</li>
+    <li><b>Beside OT-CSL-06.</b> OT-CSL-06 counts the tasks the Landlord opened, so a task never booked cannot miss it. These findings are shown beside it and change no credit.</li>
+    <li><b>Synthetic layer.</b> The opening register is generated on its own random stream with three planted record problems; the checks never read the answer key. Report: <code>reports/pm_coverage.md</code>.</li>
+  </ul>`;
+}
+
 // ------------------------------------------------------------------ Daily standup (the opening view)
 const U = D.standup;
 const UDAY = Object.fromEntries(U.days.map(d => [d.date, d]));
@@ -495,19 +599,22 @@ function viewStandup(day) {
 function route() {
   const h = decodeURIComponent(location.hash.slice(1)) || "standup";
   const [view, a, b] = h.split("/");
-  const ehs = view === "ehs", cal = view === "calendar";
-  const which = ehs ? "ehs" : cal ? "calendar" : "standup";
+  const ehs = view === "ehs", cal = view === "calendar", pm = view === "pm";
+  const which = ehs ? "ehs" : cal ? "calendar" : pm ? "pm" : "standup";
   document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === which));
   let sel = null, panel = "";
   if (ehs) {
     if (a === "permit" && PERM[b]) { panel = permitPanel(b); sel = b; }
     else if (a === "finding" && SFIND[b]) { panel = safetyFindingPanel(b); sel = b; }
+  } else if (pm) {
+    if (a === "line" && PLINE[b]) { panel = pmLinePanel(b); sel = b; }
+    else if (a === "finding" && PFIND[b]) { panel = pmFindingPanel(b); sel = b; }
   } else if (cal) {
     if (a === "job") { panel = jobPanel(b); sel = JOBS[b] ? lday(JOBS[b].start) : null; }
     else if (a === "finding") { panel = findingPanel(b); sel = FIND[b] ? FIND[b].date : null; }
     else if (a && IDX[a] !== undefined) { panel = dayPanel(a); sel = a; }
   }
-  document.getElementById("doc").innerHTML = ehs ? viewEhs(sel) : cal ? viewCalendar(sel) : viewStandup(a);
+  document.getElementById("doc").innerHTML = ehs ? viewEhs(sel) : cal ? viewCalendar(sel) : pm ? viewPm(sel) : viewStandup(a);
   document.getElementById("detail").innerHTML = panel;
   wire();
   const det = document.getElementById("detail");
@@ -533,8 +640,16 @@ function wire() {
       route();
     });
   }
+  for (const k of Object.keys(FILT_P)) {
+    const el = document.querySelector(`[data-fp="${k}"]`);
+    if (!el) continue;
+    el.addEventListener("change", () => {
+      FILT_P[k] = (OPTS_P[k].find(([v]) => v === el.value) || OPTS_P[k][0])[0];
+      route();
+    });
+  }
   document.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", () => {
-    location.hash = el.dataset.close === "ehs" ? "ehs" : "calendar"; }));
+    location.hash = el.dataset.close === "ehs" ? "ehs" : el.dataset.close === "pm" ? "pm" : "calendar"; }));
 }
 
 window.addEventListener("hashchange", route);

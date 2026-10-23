@@ -49,6 +49,7 @@ PLACES = {
     "reports/qbr.md": ("Scorecards", "app/#qbr"),
     "reports/change_calendar.md": ("Operations", "ops/#calendar"),
     "reports/ehs.md": ("Operations", "ops/#ehs"),
+    "reports/pm_coverage.md": ("Operations", "ops/#pm"),
     "reports/standup.md": ("Operations", "ops/"),
     "reports/certifications.md": ("Training", "training/"),
     "reports/change_alarms.md": ("Alarm Board", "alarms/"),

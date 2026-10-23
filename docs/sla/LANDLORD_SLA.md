@@ -661,6 +661,25 @@ A maintenance task counts as done only when telemetry or badge records confirm i
 | CDUs | Filter change and coolant sample | Manufacturer schedule; conductivity, pH, and inhibitor within specification. | Quarterly |
 | Chillers | Preventive maintenance | Manufacturer schedule; refrigerant work by EPA 608 certified technicians. | Quarterly |
 | Fire protection | Inspection and testing | NFPA 72 and NFPA 25 intervals; VESDA per manufacturer. | Per code |
+| Medium-voltage switchgear | Medium-voltage switchgear maintenance | NFPA 70B; inspection, infrared survey, and breaker exercise. | Annual |
+| Thermal walls | Thermal wall filter and fan inspection | Manufacturer schedule; filters, fans, coil, and condensate. | Quarterly |
+| Air handlers | CRAH filter and belt service | Manufacturer schedule; filters, belts, and humidifier. | Quarterly |
+| Facility water pumps | Pump and motor inspection | Manufacturer schedule; seal, bearings, vibration reading, and alignment. | Semiannual |
+
+### 11.1 PM Coverage
+
+Every device the schedule covers has its next task booked on or before its grace limit. The Landlord keeps a PM register by device and task (last completion, next due date, booking), shared read-only with the Customer. Hall C devices join it at handover. Monthly tasks are due in each calendar month and have 7 days of grace; quarterly and semiannual tasks 14 days; annual and longer tasks 30 days.
+
+| Step | Name | What happens |
+|---|---|---|
+| PMC-S1 | Weekly coverage check | Every Monday the Customer runs the coverage check against the register and the maintenance calendar for the next 8 weeks and reviews it at the daily standup. |
+| PMC-S2 | Due with nothing booked | The Customer sends the Landlord a booking request; the Landlord books the task inside its due window within 5 business days, through the change board when it takes a unit out of a redundancy group. |
+| PMC-S3 | Booked late | The Landlord moves the booking inside the grace window, or asks for a deferral (PMC-S5). |
+| PMC-S4 | Overdue | The Landlord books the task within 2 business days and tells the Customer's account lead; the device is shown as PM overdue until the work is recorded with its evidence. |
+| PMC-S5 | Deferral | A task may move past its grace window only under a deferral the Customer signs, giving the reason, the risk and how it is covered (for example closer monitoring), and a new date no later than one more interval. |
+| PMC-S6 | No baseline | A device the schedule covers with no PM record gets a baseline PM within 30 days of the schedule change or of its handover. |
+
+A coverage finding is a planning finding and changes no service level. OT-CSL-06 counts the tasks the Landlord opened; counting a task never booked as missed is a proposal for SLA change control.
 
 ## 12. Service Level Credits and Earnback
 

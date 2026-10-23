@@ -1,0 +1,73 @@
+line,unit,task,last_done,source
+gen_exercise|GEN-1,GEN-1,Monthly loaded exercise,2026-06-02,Maintenance system export
+gen_exercise|GEN-2,GEN-2,Monthly loaded exercise,2026-06-10,Maintenance system export
+gen_exercise|GEN-3,GEN-3,Monthly loaded exercise,2026-06-19,Maintenance system export
+gen_exercise|GEN-4,GEN-4,Monthly loaded exercise,2026-06-14,Maintenance system export
+gen_exercise|GEN-5,GEN-5,Monthly loaded exercise,2026-06-24,Maintenance system export
+gen_exercise|GEN-6,GEN-6,Monthly loaded exercise,2026-06-26,Maintenance system export
+gen_exercise|GEN-7,GEN-7,Monthly loaded exercise,2026-07-03,Maintenance system export
+gen_loadbank|GEN-1,GEN-1,Supplemental load bank,2026-06-18,Maintenance system export
+gen_loadbank|GEN-2,GEN-2,Supplemental load bank,2026-03-05,Maintenance system export
+gen_loadbank|GEN-3,GEN-3,Supplemental load bank,2026-05-09,Maintenance system export
+gen_loadbank|GEN-4,GEN-4,Supplemental load bank,2026-05-22,Maintenance system export
+gen_loadbank|GEN-5,GEN-5,Supplemental load bank,2026-03-28,Maintenance system export
+gen_loadbank|GEN-6,GEN-6,Supplemental load bank,2026-02-25,Maintenance system export
+gen_loadbank|GEN-7,GEN-7,Supplemental load bank,2026-05-23,Maintenance system export
+gen_endurance|GEN-1,GEN-1,Endurance test,2026-02-22,Maintenance system export
+gen_endurance|GEN-2,GEN-2,Endurance test,2026-05-16,Maintenance system export
+gen_endurance|GEN-3,GEN-3,Endurance test,2026-06-18,Maintenance system export
+gen_endurance|GEN-4,GEN-4,Endurance test,2026-06-10,Maintenance system export
+gen_endurance|GEN-5,GEN-5,Endurance test,2026-05-18,Maintenance system export
+gen_endurance|GEN-6,GEN-6,Endurance test,2026-06-02,Maintenance system export
+gen_endurance|GEN-7,GEN-7,Endurance test,2026-03-05,Maintenance system export
+gen_fuel|GEN-1,GEN-1,Fuel quality test,2026-04-01,Maintenance system export
+gen_fuel|GEN-2,GEN-2,Fuel quality test,2026-07-04,Maintenance system export
+gen_fuel|GEN-3,GEN-3,Fuel quality test,2026-05-17,Maintenance system export
+gen_fuel|GEN-4,GEN-4,Fuel quality test,2026-06-22,Maintenance system export
+gen_fuel|GEN-5,GEN-5,Fuel quality test,2026-04-26,Maintenance system export
+gen_fuel|GEN-6,GEN-6,Fuel quality test,2026-03-16,Maintenance system export
+gen_fuel|GEN-7,GEN-7,Fuel quality test,2026-04-26,Maintenance system export
+ups_pm|MUPS-A1,MUPS-A1,Preventive maintenance and battery health check,2026-06-26,Maintenance system export
+ups_pm|MUPS-A2,MUPS-A2,Preventive maintenance and battery health check,2026-02-16,Maintenance system export
+ups_pm|MUPS-B1,MUPS-B1,Preventive maintenance and battery health check,2026-06-15,Maintenance system export
+ups_pm|MUPS-B2,MUPS-B2,Preventive maintenance and battery health check,2026-06-14,Maintenance system export
+ups_pm|UPS-A1,UPS-A1,Preventive maintenance and battery health check,2026-03-11,Maintenance system export
+ups_pm|UPS-A2,UPS-A2,Preventive maintenance and battery health check,2026-05-19,Maintenance system export
+ups_pm|UPS-A3,UPS-A3,Preventive maintenance and battery health check,2026-05-18,Maintenance system export
+ups_pm|UPS-A4,UPS-A4,Preventive maintenance and battery health check,2026-02-12,Acceptance test at commissioning
+ups_pm|UPS-B1,UPS-B1,Preventive maintenance and battery health check,2026-04-10,Maintenance system export
+ups_pm|UPS-B2,UPS-B2,Preventive maintenance and battery health check,2026-02-12,Acceptance test at commissioning
+ups_pm|UPS-B3,UPS-B3,Preventive maintenance and battery health check,2026-03-21,Maintenance system export
+ups_pm|UPS-B4,UPS-B4,Preventive maintenance and battery health check,2026-02-13,Maintenance system export
+thermography|Hall A electrical room,Hall A electrical room,Infrared thermography under load,2026-02-12,Acceptance test at commissioning
+thermography|Hall B electrical room,Hall B electrical room,Infrared thermography under load,2026-06-04,Maintenance system export
+cdu_filter|CDU-A1,CDU-A1,Filter change and coolant sample,2026-02-12,Acceptance test at commissioning
+cdu_filter|CDU-A2,CDU-A2,Filter change and coolant sample,2026-02-12,Acceptance test at commissioning
+cdu_filter|CDU-A3,CDU-A3,Filter change and coolant sample,2026-02-12,Acceptance test at commissioning
+cdu_filter|CDU-A4,CDU-A4,Filter change and coolant sample,2026-02-12,Acceptance test at commissioning
+cdu_filter|CDU-B1,CDU-B1,Filter change and coolant sample,2026-05-07,Maintenance system export
+cdu_filter|CDU-B2,CDU-B2,Filter change and coolant sample,2026-04-09,Maintenance system export
+cdu_filter|CDU-B3,CDU-B3,Filter change and coolant sample,2026-04-17,Maintenance system export
+cdu_filter|CDU-B4,CDU-B4,Filter change and coolant sample,2026-05-11,Maintenance system export
+chiller_pm|CH-01,CH-01,Preventive maintenance,2026-07-05,Maintenance system export
+chiller_pm|CH-02,CH-02,Preventive maintenance,2026-04-18,Maintenance system export
+chiller_pm|CH-03,CH-03,Preventive maintenance,2026-06-18,Maintenance system export
+chiller_pm|CH-04,CH-04,Preventive maintenance,2026-04-14,Maintenance system export
+chiller_pm|CH-05,CH-05,Preventive maintenance,2026-06-19,Maintenance system export
+chiller_pm|CH-06,CH-06,Preventive maintenance,2026-06-11,Maintenance system export
+chiller_pm|CH-07,CH-07,Preventive maintenance,2026-07-05,Maintenance system export
+chiller_pm|CH-08,CH-08,Preventive maintenance,2026-07-05,Maintenance system export
+chiller_pm|CH-09,CH-09,Preventive maintenance,2026-05-26,Maintenance system export
+chiller_pm|CH-10,CH-10,Preventive maintenance,2026-05-30,Maintenance system export
+chiller_pm|CH-11,CH-11,Preventive maintenance,2026-04-06,Maintenance system export
+vesda_test|VESDA-A1,VESDA-A1,VESDA inspection and smoke test,2026-02-12,Acceptance test at commissioning
+vesda_test|VESDA-A2,VESDA-A2,VESDA inspection and smoke test,2026-03-10,Maintenance system export
+vesda_test|VESDA-B1,VESDA-B1,VESDA inspection and smoke test,2026-02-12,Acceptance test at commissioning
+vesda_test|VESDA-B2,VESDA-B2,VESDA inspection and smoke test,2026-02-12,Acceptance test at commissioning
+facp_test|FACP-1,FACP-1,Fire alarm system inspection and test,2026-03-08,Maintenance system export
+preaction_trip|PAZ-A1,PAZ-A1,Pre-action valve trip test,2026-05-24,Maintenance system export
+preaction_trip|PAZ-A2,PAZ-A2,Pre-action valve trip test,2026-03-19,Maintenance system export
+preaction_trip|PAZ-B1,PAZ-B1,Pre-action valve trip test,2026-05-07,Maintenance system export
+preaction_trip|PAZ-B2,PAZ-B2,Pre-action valve trip test,2026-03-21,Maintenance system export
+clean_agent|CAS-A1,CAS-A1,Clean agent system inspection,2026-06-16,Maintenance system export
+clean_agent|CAS-B1,CAS-B1,Clean agent system inspection,2026-05-15,Maintenance system export

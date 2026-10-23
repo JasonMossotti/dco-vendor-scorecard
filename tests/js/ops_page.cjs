@@ -104,3 +104,23 @@ go("ehs/permit/" + pf.permit);
 d.querySelector('[data-close="ehs"]').click();
 ok(w.location.hash === "#ehs", "closing a panel stays on the Safety view");
 ok(errors.length === 0, "still no script errors " + errors.join(";"));
+
+// PM coverage
+const P = JSON.parse(d.getElementById("data").textContent).pm;
+go("pm");
+ok(t().includes("PM coverage") && d.querySelector('.views a.on').dataset.view === "pm", "the PM coverage view");
+ok(d.querySelectorAll("#pmreg tr").length - 1 === P.lines.length && P.lines.length === 90, "every device-task line in the register");
+ok(P.findings.every(f => d.querySelector(`a.fnd[href="#pm/finding/${f.id}"]`) && t().includes(f.title)), "every finding listed");
+ok(P.procedure.steps.every(s => t().includes(s.id) && t().includes(s.text)), "the coverage procedure, every step");
+const a1 = P.lines.find(x => x.key === "cdu_filter|CDU-A1");
+go("pm/line/" + encodeURIComponent(a1.key));
+ok(d.getElementById("pmpanel") && t().includes("Overdue") && d.querySelector('#pmpanel a.job[href="#calendar/job/MOP-524"]') && t().includes("PMH-0005"), "a line opens with its status, history, and booking on the Calendar");
+const st = d.querySelector('select[data-fp="status"]');
+st.value = "gap"; st.dispatchEvent(new w.Event("change"));
+ok(d.querySelectorAll("#pmreg tr").length - 1 === P.lines.filter(x => x.finding).length, "the status filter shows only lines in a finding");
+const f1 = P.findings.find(f => f.kind === "no_baseline");
+go("pm/finding/" + f1.id);
+ok(d.getElementById("pmfpanel") && t().includes("PMC-S6") && f1.units.every(u => t().includes(u)), "a no-baseline finding names its devices and its procedure step");
+d.querySelector('[data-close="pm"]').click();
+ok(w.location.hash === "#pm", "closing a panel stays on PM coverage");
+ok(errors.length === 0, "no script errors on PM coverage " + errors.join(";"));

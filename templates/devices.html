@@ -165,8 +165,9 @@ __SITENAV__
     if (e.title && e.title !== name) h += `<div class="sub">${esc(name)}</div>`;
     const tl = (D.telemetry || {})[name];
     const pm = (D.predict || {})[name];
+    const pmc = (D.pmc || {})[name];
     const kc = ((D.training || {}).kinds || {})[e.kind] || {}, course = kc[e.hall || ""] || kc[""];
-    h += `<p>${esc(e.text)}</p>` + (pm ? `<p class="pred"><b>Predicted</b> ${esc(pm)} <a href="../patterns/#predict">Predictive maintenance ↗</a></p>` : "") + (tl ? `<p><a class="tel" href="../telemetry/${esc(tl)}">Telemetry ↗</a> <span class="note">this device's readings for the month</span></p>` : "") + (course ? `<p><a class="course" href="../training/#course/${esc(course)}">Course: ${esc(D.training.titles[course])} ↗</a> <span class="note">where it is, how it fails, who owns it, the work's credentials</span></p>` : "") + `<h2 class="sec">Connected to</h2><table class="conn"><tbody>`;
+    h += `<p>${esc(e.text)}</p>` + (pm ? `<p class="pred"><b>Predicted</b> ${esc(pm)} <a href="../patterns/#predict">Predictive maintenance ↗</a></p>` : "") + (pmc ? `<p class="pred pmc"><b>PM</b> ${pmc.map(([t, k]) => `<a href="../ops/#pm/line/${esc(encodeURIComponent(k))}">${esc(t)}</a>`).join("<br>")}</p>` : "") + (tl ? `<p><a class="tel" href="../telemetry/${esc(tl)}">Telemetry ↗</a> <span class="note">this device's readings for the month</span></p>` : "") + (course ? `<p><a class="course" href="../training/#course/${esc(course)}">Course: ${esc(D.training.titles[course])} ↗</a> <span class="note">where it is, how it fails, who owns it, the work's credentials</span></p>` : "") + `<h2 class="sec">Connected to</h2><table class="conn"><tbody>`;
     h += e.conn.map(([rel, n, note]) => `<tr><th scope="row">${esc(rel)}</th><td>${link(n)}${n && note ? " " : ""}<span class="note">${esc(note)}</span></td></tr>`).join("");
     h += `</tbody></table>`;
     h += `<h2 class="sec">On the drawings</h2><div class="fig" id="fig"></div>`;

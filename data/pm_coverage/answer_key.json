@@ -1,0 +1,30 @@
+{
+ "as_found": [
+  {
+   "kind": "not_booked",
+   "line": "chiller_pm|CH-01"
+  },
+  {
+   "kind": "not_booked",
+   "line": "chiller_pm|CH-07"
+  },
+  {
+   "kind": "booked_late",
+   "line": "chiller_pm|CH-08"
+  }
+ ],
+ "planted": [
+  {
+   "kind": "overdue",
+   "line": "ups_pm|MUPS-A2"
+  },
+  {
+   "kind": "booked_late",
+   "line": "chiller_pm|CH-05"
+  },
+  {
+   "kind": "not_booked",
+   "line": "ups_pm|UPS-B1"
+  }
+ ]
+}

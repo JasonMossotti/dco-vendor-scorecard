@@ -1,0 +1,74 @@
+# PM coverage: every Landlord device that needs preventive maintenance, its tasks, and when each falls due
+# (src/scorecard/pm_coverage.py; page /ops/#pm; report reports/pm_coverage.md).
+#
+# The Landlord SLA's maintenance schedule (sla/ot_partner.yaml, maintenance.schedule) says what is done and how often;
+# this file says which devices each line covers, the interval in days, and the grace window after the due date
+# (the Landlord SLA's maintenance.coverage clause). The register is built from the PM records, the opening register
+# (data/pm_coverage/, the last completion before the records begin, own random stream), and the forward schedule
+# (data/calendar/schedule.json). Hall C is in commissioning: its devices join the program at handover.
+
+as_of: "2026-09-28"                 # the day after the data weeks (config/calendar.yaml forward.start), Central time
+horizon: "2026-11-22"               # the end of the forward schedule (Hall C first compute)
+
+# Grace after the due date, by interval (Landlord SLA maintenance.coverage). Monthly tasks are due in each calendar
+# month: a task done in September is due by October 31.
+grace_days: {monthly: 7, quarterly: 14, semiannual: 14, annual: 30, three_year: 30}
+interval_days: {quarterly: 91, semiannual: 182, annual: 365, three_year: 1095}
+
+# Where the PM records come from. `start` is the first day each source covers. The Hall A history (failure pattern
+# review) is the record for the Hall A CDU filters: the CDU telemetry and the predictions follow it. The July and
+# August Measurement Periods were generated separately for the quarterly review, so their Hall A CDU filter lines are
+# not read; every other line of theirs is.
+records:
+  - {path: data/history/landlord/pm_records.csv, start: "2026-03-02", only: hall_a_cdu}
+  - {path: data/quarter/2026-07-06/landlord/pm_records.csv, start: "2026-07-06", skip: hall_a_cdu}
+  - {path: data/quarter/2026-08-03/landlord/pm_records.csv, start: "2026-08-03", skip: hall_a_cdu}
+  - {path: data/sample/landlord/pm_records.csv, start: "2026-08-31"}
+
+# One line per task. `task` is the name the PM records and the forward schedule use; `devices` lists the device kinds
+# in docs/site/devices.json (Halls A and B, and the site-wide plant) or names the units. `in_schedule: false` marks a
+# line the SLA's schedule did not have before the coverage clause: no records and no opening, so each needs a
+# baseline PM. `only_if` makes a task conditional on the records.
+tasks:
+  - {id: gen_exercise, system: Generators, task: Monthly loaded exercise, kinds: [gen], interval: monthly,
+     basis: "NFPA 110 (monthly exercise, at least 30% of nameplate kW for 30 minutes)"}
+  - {id: gen_loadbank, system: Generators, task: Supplemental load bank, kinds: [gen], interval: annual,
+     only_if: monthly_below_30, basis: "NFPA 110 (annual load bank when monthly exercises did not reach 30%)"}
+  - {id: gen_endurance, system: Generators, task: Endurance test, kinds: [gen], interval: three_year,
+     basis: "NFPA 110 (4 hours under load every 36 months, Level 1)"}
+  - {id: gen_fuel, system: Generators, task: Fuel quality test, kinds: [gen], interval: annual,
+     basis: "NFPA 110 (annual fuel quality test)"}
+  - {id: ups_pm, system: UPS and batteries, task: Preventive maintenance and battery health check, kinds: [ups, mups],
+     interval: semiannual, basis: "Manufacturer schedule and NFPA 70B"}
+  - {id: thermography, system: Switchgear and busway, task: Infrared thermography under load,
+     units: [Hall A electrical room, Hall B electrical room], interval: annual, basis: "NFPA 70B (annual infrared survey under load)"}
+  - {id: mv_pm, system: Medium-voltage switchgear, task: Medium-voltage switchgear maintenance, units: [MV switchgear],
+     interval: annual, in_schedule: false, basis: "NFPA 70B (inspection, infrared, and breaker exercise)"}
+  - {id: cdu_filter, system: CDUs, task: Filter change and coolant sample, kinds: [cdu], interval: quarterly,
+     basis: "Manufacturer schedule (91-day rated filter service)"}
+  - {id: chiller_pm, system: Chillers, task: Preventive maintenance, kinds: [chiller], interval: quarterly,
+     basis: "Manufacturer schedule; refrigerant work by EPA 608 certified technicians"}
+  - {id: tw_pm, system: Thermal walls, task: Thermal wall filter and fan inspection, kinds: [tw], interval: quarterly,
+     in_schedule: false, basis: "Manufacturer schedule (filters, fans, coil, condensate)"}
+  - {id: crah_pm, system: Air handlers, task: CRAH filter and belt service, kinds: [crah], interval: quarterly,
+     in_schedule: false, basis: "Manufacturer schedule (filters, belts, humidifier)"}
+  - {id: pump_pm, system: Facility water pumps, task: Pump and motor inspection, kinds: [pump], interval: semiannual,
+     in_schedule: false, basis: "Manufacturer schedule (seal, bearings, vibration reading, alignment)"}
+  - {id: vesda_test, system: Fire protection, task: VESDA inspection and smoke test, kinds: [vesda], interval: annual,
+     basis: "NFPA 72 (annual functional test) and the manufacturer"}
+  - {id: facp_test, system: Fire protection, task: Fire alarm system inspection and test, kinds: [facp], interval: annual,
+     basis: "NFPA 72 (annual inspection and test)"}
+  - {id: preaction_trip, system: Fire protection, task: Pre-action valve trip test, kinds: [paz], interval: annual,
+     basis: "NFPA 25 (annual trip test)"}
+  - {id: clean_agent, system: Fire protection, task: Clean agent system inspection, kinds: [cas], interval: semiannual,
+     basis: "NFPA 2001 (semiannual inspection)"}
+
+# Kinds of finding (PMC-#) and what each asks for (Landlord SLA maintenance.coverage).
+kinds:
+  overdue: "Past its grace window with nothing recorded"
+  booked_late: "Booked after its grace window"
+  not_booked: "Due before the horizon with nothing booked"
+  no_baseline: "Needs PM and has no record (no baseline)"
+
+# The opening register (generation only, own random stream "<seed>:pm"): one record problem planted of each kind.
+planted: {overdue: 1, booked_late: 1, not_booked: 1}
