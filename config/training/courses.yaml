@@ -1,0 +1,847 @@
+# =============================================================================
+# AUS-1 training portal: equipment courses (portfolio demo; all data fictional)
+# -----------------------------------------------------------------------------
+# One course per product family on site. The structured fields tie the course to the site data; everything
+# site-specific on the page (counts, device names, drawings, RACI rows, credentials, permits, PM guides, job guides,
+# and the sample's own records as examples) is computed from those ties by src/scorecard/training_portal.py, so a
+# test can check it. The prose is general knowledge about the product class, written from public references.
+#
+#   id            the page address: /training/#course/<id>
+#   title         the course name
+#   hall          optional: the course's kinds and categories count only in this hall (GB200 in Hall A, GB300 in B)
+#   partner       who works on it: it, landlord, security, or all
+#   products      site/site.yaml product keys (manufacturer, model, interfaces, and sources come from there)
+#   kinds         device directory kinds (docs/site/devices.json); each kind belongs to exactly one course
+#   sheets        drawing sheets; each detail sheet (D-...) belongs to exactly one course
+#   raci          Interface Agreement RACI rows (component names, exactly)
+#   credentials   config/certifications.yaml credential ids or config/ehs.yaml course ids
+#   categories    Incident Portal record categories that are about this equipment (IT ticket categories, Landlord
+#                 fault classes, PM systems); each category belongs to exactly one course
+#   what          what it is and what it does here (plain words, 2 to 4 sentences)
+#   failures      how this kind of equipment fails, in general (3 to 5 short items)
+#   safety        hazards and the rules that control them (2 to 4 short items)
+#   refs          reference ids from the references list at the end of this file
+#
+# References: public pages only. `checked` is the date the link was opened and found public; `login: true` marks a
+# page that needs a free account. scripts/check_training_links.py opens every link again.
+# =============================================================================
+
+courses:
+  - id: orientation
+    title: "Site orientation: AUS-1"
+    partner: all
+    products: []
+    kinds: []
+    sheets: [A-001, A-101, E-001, M-001]
+    raci: []
+    credentials: [orientation, heat, hazcom]
+    categories: []
+    what: "AUS-1 is a leased AI compute site with four parties. The Customer leases the halls, the Landlord runs the building, power, and cooling, the IT Partner works on the racks, fabric, and storage, and the Security Partner guards the whole property. Orientation covers who owns what, how to get in, how to report a problem, and what to do in an emergency."
+    failures:
+      - "Tailgating: a second person follows a badge holder through a controlled door without badging."
+      - "A door is held open past its alarm time, or a visitor is left without an escort."
+      - "Work starts before the permit, the change record, or the lockout is in place."
+      - "Heat illness on outdoor work in a Central Texas summer."
+      - "A problem is reported to the wrong party, and the clock on the response runs while it is passed along."
+    safety:
+      - "Know the emergency action plan: the alarm signals, the exit routes, the assembly point, and who calls for help."
+      - "Hazard communication: read the label and the safety data sheet before using any chemical, including coolant and cleaners."
+      - "Heat: drink water often, take rest breaks in shade or a cooled space, and watch coworkers for signs of heat illness."
+      - "Badge in every time, escort every visitor you sponsor, and never prop a door."
+    refs: [C-OSHA-EAP, C-OSHA-HAZCOM, C-OSHA-HEAT]
+
+  - id: gb200
+    title: "GB200 NVL72 rack"
+    partner: it
+    hall: "Hall A"
+    products: [gb200_nvl72]
+    kinds: [rack, compute_tray, switch_tray, power_shelf]
+    sheets: [D-101, A-201]
+    raci: ["Compute tray (GPU, CPU, memory, cold plate)", "NVLink switch tray and NVLink backplane", "Rack power shelves, PSUs, and whips from the tap-off output"]
+    credentials: [oem_gb200, esd, liquid]
+    categories: [tray_gpu, switch_tray, psu, power_shelf, rack_facility, Firmware]
+    what: "The GB200 NVL72 is a rack-scale, liquid-cooled system that joins 36 Grace CPUs and 72 Blackwell GPUs into one NVLink domain. Compute trays hold the CPUs and GPUs on cold plates, NVLink switch trays connect every GPU in the rack, and power shelves turn AC into about 50 V DC on the rack busbar with N+N redundancy. Each tray has a BMC on the out-of-band network, so faults show up in Redfish before anyone opens the rack."
+    failures:
+      - "GPU faults: XID errors, uncorrectable memory errors, or a GPU that drops off the bus and takes its tray out of the job."
+      - "NVLink faults: a link or switch tray goes down and the rack loses its full NVLink domain."
+      - "A PSU or power shelf fails; the rack stays up on the other feed but loses redundancy."
+      - "Low coolant flow or a warm supply raises GPU temperatures until the GPUs throttle."
+      - "Firmware on a replaced tray does not match the rest of the rack, and the tray will not rejoin."
+    safety:
+      - "ESD: work at a grounded station or wear a wrist strap bonded to the chassis; hold boards by the edges."
+      - "Trays are heavy: use mechanical assistance and never use a rail-mounted unit as a work surface."
+      - "Liquid: close the tray's quick disconnects as the procedure says and have absorbent ready before a tray leaves the rack."
+      - "Use only the manufacturer's replacement parts and get an RMA number before returning anything."
+    refs: [C-NV-GB200, C-NV-DGXGB-HW, C-NV-DGXGB-SAFETY, C-NV-DGXGB-SVC]
+
+  - id: gb300
+    title: "GB300 NVL72 rack"
+    partner: it
+    hall: "Hall B"
+    products: [gb300_nvl72]
+    kinds: [rack, compute_tray, switch_tray, power_shelf]
+    sheets: [D-102, A-202]
+    raci: ["Compute tray (GPU, CPU, memory, cold plate)", "NVLink switch tray and NVLink backplane", "Rack power shelves, PSUs, and whips from the tap-off output"]
+    credentials: [oem_gb300, esd, liquid]
+    categories: [tray_gpu, switch_tray, psu, power_shelf, rack_facility, Firmware]
+    what: "The GB300 NVL72 is the Blackwell Ultra version of the rack-scale system: 72 GPUs and 36 Grace CPUs in one NVLink domain. Compute trays, NVLink switch trays, and power shelves are linked by a rear cable cartridge and busbar, the same layout as GB200. About nine tenths of the heat leaves through the liquid loop, by way of the rack manifold, quick disconnects, and cold plates."
+    failures:
+      - "GPU XID and memory errors that take a compute tray out of service."
+      - "An NVLink switch tray or cable cartridge fault that breaks the rack's NVLink domain."
+      - "Power shelf or PSU failure; the rack runs on the remaining shelves without redundancy."
+      - "High GPU temperature from low flow, a blocked cold plate, or warm supply coolant, ending in throttling."
+      - "A tray swapped in with the wrong firmware or configuration that will not join the rack."
+    safety:
+      - "ESD: wrist strap bonded to the chassis, or a grounded work station."
+      - "Heavy trays: use a lift or a second person; extend only one unit at a time."
+      - "Coolant under pressure: isolate and disconnect only by the procedure, and catch drips at the quick disconnects."
+      - "Service only within your manufacturer-authorized scope, with parts the manufacturer supplies."
+    refs: [C-NV-GB300, C-LENOVO-GB300, C-NV-DGXGB-SAFETY]
+
+  - id: rack-liquid
+    title: "Rack liquid cooling: manifolds, quick disconnects, and spills"
+    partner: it
+    products: []
+    kinds: []
+    sheets: []
+    raci: ["Rack manifold, isolation valves, quick-disconnects"]
+    credentials: [liquid]
+    categories: [leak]
+    what: "Each rack has supply and return manifolds at the rear that feed coolant from the hall's CDU to every tray's cold plates. Quick disconnects let a tray come out without draining the rack, and isolation valves at the rack let the loop be closed off for service. The IT Partner owns everything from the rack's isolation valves to the cold plates; the Landlord owns the CDU and the hall header."
+    failures:
+      - "A drip or weep at a quick disconnect, often right after a tray swap."
+      - "An O-ring or fitting seeps slowly until the leak cable or a tray sensor alarms."
+      - "Air trapped after service lowers flow, and the GPUs on that tray run hot."
+      - "A blocked or kinked line starves one tray while the rest of the rack looks normal."
+    safety:
+      - "The loop is under pressure: close the isolation valves and confirm before breaking any connection."
+      - "Coolant is a glycol mix: read its safety data sheet, wear gloves and eye protection, and clean spills at once; it is slippery."
+      - "Keep liquid away from power shelves and whips; stop and call if coolant reaches anything energized."
+      - "Bag and report every spill so the leak record matches what was cleaned."
+    refs: [C-LENOVO-GB300, C-NV-DGXGB-HW, C-OSHA-HAZCOM]
+
+  - id: ib-fabric
+    title: "InfiniBand fabric: Quantum-2 and Quantum-X800 leaves"
+    partner: it
+    products: [quantum2_qm9700, quantum_x800_q3400]
+    kinds: [leaf]
+    sheets: [D-601]
+    raci: ["Leaf and spine switches (physical replacement)"]
+    credentials: [esd, fiber]
+    categories: []
+    what: "The back-end InfiniBand fabric links every GPU tray to every other rack for training traffic. Hall A uses Quantum-2 QM9700 NDR switches with 400 Gb/s ports on OSFP cages; Hall B uses Quantum-X800 Q3400 XDR switches with 800 Gb/s ports. The fabric is watched and managed through UFM, which streams switch, adapter, and cable telemetry."
+    failures:
+      - "A port flaps or goes down, often from a dirty or failing optic."
+      - "Bit error rate rises on a link until the fabric manager marks it unhealthy."
+      - "A fan or PSU fails; the switch keeps running on the rest but loses redundancy."
+      - "A cable lands on the wrong port, and cable validation reports a topology mismatch."
+      - "The switch stops answering the fabric manager while its ports still pass traffic."
+    safety:
+      - "ESD: strap on before touching transceivers, fans, or PSUs."
+      - "Optics carry invisible infrared light: never look into a port or a cable end."
+      - "Large switch chassis are heavy: use a lift or two people to rack or unrack them."
+      - "Replace one redundant unit at a time and confirm the other is healthy first."
+    refs: [C-NV-QM9700, C-NV-Q3400, C-NV-UFM, C-NV-CVT]
+
+  - id: fiber
+    title: "Fiber optics: inspect, clean, and replace"
+    partner: it
+    products: []
+    kinds: []
+    sheets: []
+    raci: ["Back-end fabric optics, cables, and fiber"]
+    credentials: [fiber, esd]
+    categories: [optic_link]
+    what: "Most links in the halls run over fiber with pluggable transceivers. Dirt on a connector end face is the most common cause of a bad link, so every connector is inspected before it is mated and cleaned when it is dirty. This course covers inspecting, cleaning, and replacing optics and patch cords in the back-end fabric."
+    failures:
+      - "A dirty end face raises loss and reflectance, and the link shows errors or will not come up."
+      - "A cord is bent past its radius or strained by its own weight, and loss climbs over time."
+      - "A dropped connector cracks its ferrule, or a fiber breaks inside a cord."
+      - "A transceiver fails outright or reports low receive power."
+    safety:
+      - "Never look into a fiber or port; confirm it is dark with a power meter and use a video microscope."
+      - "Wear safety glasses; put fiber scraps in a sealed container and keep food out of the work area."
+      - "Isopropyl alcohol is flammable: use small amounts with good ventilation."
+      - "ESD: strap on before handling transceivers."
+    refs: [C-FOA-INSPECT, C-FOA-SAFETY, C-FOA-MAINTAIN]
+
+  - id: mgmt-net
+    title: "Management network: SN2201, SN5600, and console servers"
+    partner: it
+    products: [sn2201, sn5600, console_48]
+    kinds: [mgmt, agg, console]
+    sheets: []
+    raci: ["BMC and out-of-band management network (physical)"]
+    credentials: [esd]
+    categories: []
+    what: "The out-of-band management network reaches every BMC, switch management port, and PDU, so the site can be seen and controlled when the data network is down. Rack switches give each device a 1 Gb copper port and uplink at 100 Gb to aggregation switches. Console servers give serial access to switches when their management ports cannot be reached."
+    failures:
+      - "A rack switch fails and every BMC in that rack goes dark at once, while the GPUs keep working."
+      - "An uplink drops and a whole group of racks loses management access."
+      - "A PSU or fan fails on a switch; it keeps running but loses redundancy."
+      - "A single BMC stops answering while its host is fine, usually a cable, port, or BMC hang."
+      - "A console port is unplugged or mislabeled, found only when someone needs it in an outage."
+    safety:
+      - "ESD: strap on before touching switch modules or rack devices."
+      - "Match PSU and fan airflow direction to the switch; a mismatch overheats it."
+      - "Do not pull a PSU with its cord attached; replace one redundant unit at a time."
+    refs: [C-NV-SUPERPOD-NET, C-NV-SN2201, C-NV-SN5000-FRU, C-DMTF-REDFISH]
+
+  - id: storage
+    title: "Storage nodes and the storage fabric"
+    partner: it
+    products: [storage_node, sn5600_fabric]
+    kinds: [stg_rack, stg_node, eth_leaf, eth_spine]
+    sheets: []
+    raci: ["Storage nodes and drives (physical)"]
+    credentials: [esd, custody]
+    categories: []
+    what: "Storage nodes are all-flash NVMe servers that hold training data and checkpoints, spread across nodes with erasure coding so the loss of a drive or a node does not lose data. A separate Ethernet fabric of SN5600 switches connects them to the GPU trays. Drives and nodes report health through Redfish and the storage cluster."
+    failures:
+      - "A drive wears out or reports media errors; the cluster marks it failed and rebuilds its data elsewhere."
+      - "A node goes down and the cluster runs degraded until it returns."
+      - "A NIC, optic, or switch port fails and the node drops off the storage fabric."
+      - "A second failure during a rebuild leaves data with less protection than the design assumes."
+      - "Storage slows down and the GPUs sit idle waiting for data."
+    safety:
+      - "ESD: strap on before handling drives or node parts."
+      - "Pull only the drive the cluster has marked failed, and confirm its slot before you pull."
+      - "Failed drives hold Customer data: they go straight into the custody process and never leave the site whole."
+    refs: [C-NV-SUPERPOD-NET, C-NVME-MI, C-DMTF-REDFISH, C-NIST-80088]
+
+  - id: spares
+    title: "Spares cage, RMA shipments, and drive custody"
+    partner: it
+    products: []
+    kinds: []
+    sheets: []
+    raci: ["Spares cage, inventory, and RMA shipments", "Storage media destruction from failed parts"]
+    credentials: [custody]
+    categories: []
+    what: "The spares cage holds the trays, PSUs, optics, and drives that keep repairs fast. The IT Partner keeps the inventory, ships failed parts back to the manufacturer under an RMA, and hands failed drives into a chain of custody. Drives are destroyed on site by the Security Partner with a witness, so no Customer data leaves the building."
+    failures:
+      - "The count on the shelf does not match the inventory record."
+      - "A spare drops below its minimum and the next repair waits on shipping."
+      - "A part ships back without an RMA number, or an RMA closes with no matching shipment."
+      - "A failed drive is missing from the custody log, or a destruction certificate does not match it."
+    safety:
+      - "Two-person rule in the media room; every hand-off is signed and timed."
+      - "Keep sensitive parts in ESD-safe packaging from the rack to the shelf to the shipper."
+      - "Use mechanical help to lift trays and heavy cartons."
+    refs: [C-NIST-80088, C-ESDA-S2020, C-NV-DGXGB-SVC]
+
+  - id: cdu
+    title: "CoolIT CHx2000 coolant distribution unit"
+    partner: landlord
+    products: [coolit_chx2000]
+    kinds: [cdu]
+    sheets: [D-201]
+    raci: ["CDUs and the hall secondary header"]
+    credentials: [chx2000, loto]
+    categories: [OT-FC-CDU, CDUs]
+    what: "The CoolIT CHx2000 is a row-based liquid-to-liquid coolant distribution unit. It moves heat from the racks' coolant loop into the facility water through a heat exchanger, and it controls the rack loop's flow, pressure, and supply temperature. Pumps and filters can be serviced from the front or rear without stopping the loop, and the unit reports over Redfish and other building protocols."
+    failures:
+      - "A pump fails or slows, and flow to the racks drops."
+      - "A filter loads up and the pressure drop across it climbs."
+      - "Supply temperature rises because facility water is warm or a control valve sticks."
+      - "Coolant level falls, which points to a leak somewhere on the rack side."
+      - "The unit stops reporting, so the site loses sight of the loop while it keeps running."
+    safety:
+      - "Both loops are under pressure: isolate and relieve pressure before opening a filter or a fitting."
+      - "Lock out the pump before working on it; follow the site's lockout/tagout procedure."
+      - "Know where the emergency stop is, and what stopping the CDU does to every rack it feeds."
+      - "Treat coolant spills as a slip hazard and clean them at once."
+    refs: [C-COOLIT-CHX2000, C-OSHA-LOTO, C-OSHA-HAZCOM]
+
+  - id: thermal-wall
+    title: "Vertiv Liebert CWA thermal wall"
+    partner: landlord
+    products: [liebert_cwa_400]
+    kinds: [tw]
+    sheets: [D-202]
+    raci: ["Thermal walls, CRAHs, and hot-aisle containment"]
+    credentials: [liebert]
+    categories: [OT-FC-AIR]
+    what: "The Liebert CWA is a chilled-water thermal wall installed on the gallery side of the hall. Large coils and a bank of EC fans cool the air the racks still reject, the part not carried away by liquid. The iCOM controller runs the units together as a team and keeps cooling on through a controller reboot."
+    failures:
+      - "A fan fails and the wall loses part of its capacity."
+      - "A chilled water valve sticks and supply air temperature drifts up."
+      - "Dirty filters or coils raise pressure drop and reduce airflow."
+      - "The controller loses communication and the unit falls back to its local settings."
+    safety:
+      - "Fans can start at any time under automatic control: isolate power and confirm before opening a fan section."
+      - "Use lockout/tagout for electrical and chilled water isolation."
+      - "Watch for condensate and water on the floor near the coils."
+    refs: [C-VERTIV-CWA, C-OSHA-LOTO]
+
+  - id: crah
+    title: "Vertiv Liebert CW air handlers (electrical rooms)"
+    partner: landlord
+    products: [liebert_cw_crah]
+    kinds: [crah]
+    sheets: []
+    raci: ["Thermal walls, CRAHs, and hot-aisle containment"]
+    credentials: [liebert]
+    categories: []
+    what: "The Liebert CW units are chilled-water air handlers that cool the electrical rooms, where UPS and switchgear give off heat. EC plug fans move air across an A-frame coil, and a modulating valve sets how much chilled water flows. The iCOM controller holds temperature and humidity and can run several units as one system."
+    failures:
+      - "A fan fails and room temperature climbs."
+      - "The chilled water valve hunts or sticks, and supply air swings."
+      - "A condensate drain clogs and water collects under the unit."
+      - "The controller loses its sensors or network and runs on defaults."
+    safety:
+      - "Isolate power and lock out before opening the fan or electrical sections."
+      - "The rooms they serve hold energized gear: follow the electrical room rules on entry."
+      - "Clean up water near electrical equipment only after the source is stopped."
+    refs: [C-VERTIV-CW, C-OSHA-LOTO]
+
+  - id: chiller
+    title: "Vertiv Liebert AFC free-cooling chiller"
+    partner: landlord
+    products: [liebert_afc_1500]
+    kinds: [chiller]
+    sheets: [D-203]
+    raci: ["Chillers, facility water, and pumps"]
+    credentials: [liebert, epa608, loto]
+    categories: [OT-FC-CHW, Chillers]
+    what: "The Liebert AFC is an air-cooled chiller with an inverter-driven screw compressor and a free-cooling coil. When the outdoor air is cool enough, the free-cooling coil carries the load and the compressor slows or stops; in the Texas heat the compressor does most of the work. EC fans move air across the condenser and free-cooling coils."
+    failures:
+      - "A compressor trips on high discharge pressure on a hot afternoon."
+      - "A refrigerant leak lowers charge and capacity over weeks."
+      - "Low water flow through the evaporator trips the unit to protect it."
+      - "A fan or the free-cooling valve fails and the chiller works harder than it should."
+      - "Controls lose communication and the plant stops seeing the chiller's state."
+    safety:
+      - "Only an EPA Section 608 certified technician may open the refrigerant circuit; the certification does not expire."
+      - "Lock out electrical and water isolation before service."
+      - "Fans and compressors can start on their own under automatic control."
+      - "Outdoor work in summer: water, rest, and shade."
+    refs: [C-VERTIV-AFC, C-EPA-608, C-OSHA-LOTO, C-OSHA-HEAT]
+
+  - id: fw-pumps
+    title: "Facility water loop and pumps"
+    partner: landlord
+    products: [fw_pump]
+    kinds: [pump]
+    sheets: []
+    raci: ["Chillers, facility water, and pumps"]
+    credentials: [loto]
+    categories: []
+    what: "Facility water pumps move water from the chillers to the CDUs and air handlers and back. Variable frequency drives set their speed to hold the loop's pressure, and a standby pump takes over if a running pump fails. A pump problem shows up first as a change in loop pressure or flow."
+    failures:
+      - "Cavitation: a crackling noise like gravel in the pump, with falling performance."
+      - "A mechanical seal leaks at the shaft."
+      - "Bearings wear and vibration rises, often from running far from the pump's best point."
+      - "The drive faults and the standby pump has to take over."
+    safety:
+      - "Lock out the drive and the motor, then close and tag the valves and bleed pressure before opening the pump."
+      - "Drives keep stored energy after power is removed: wait the time on the label and test before touching."
+      - "Keep coupling guards in place whenever the pump can run."
+    refs: [C-DOE-PUMPS, C-OSHA-LOTO]
+
+  - id: ups
+    title: "Schneider Electric Galaxy VX UPS and lithium-ion batteries"
+    partner: landlord
+    products: [galaxy_vx_1500, galaxy_li_ion]
+    kinds: [ups]
+    sheets: [D-301]
+    raci: ["UPS, batteries, unit substations, and switchgear"]
+    credentials: [galaxy_ups, nfpa70e, loto]
+    categories: [OT-FC-UPS, UPS and batteries]
+    what: "The Galaxy VX is a large three-phase UPS that keeps the IT load on clean power and carries it through a utility loss until the generators take over. Each unit has lithium-ion battery cabinets watched by a battery management system. The UPS can run in a high-efficiency eConversion mode, and it reports alarms and logs through its network management card."
+    failures:
+      - "The UPS goes to bypass on an overload or an internal fault."
+      - "It runs on battery during a utility event; ride-through time is what matters."
+      - "A battery module alarms on cell voltage or temperature and its cabinet breaker opens."
+      - "A fan, capacitor, or power module wears out and raises an alarm."
+      - "The management card stops reporting, so the site loses sight of the UPS state."
+    safety:
+      - "Arc flash and shock: only qualified people work on it, with the PPE the arc flash label calls for (NFPA 70E)."
+      - "Hazardous voltage remains after the battery breaker opens; test before touch."
+      - "Lock out every source, including the batteries and the bypass, before opening the unit."
+      - "Remove watches and rings and use insulated tools around batteries; battery modules are heavy."
+    refs: [C-SE-GALAXY-VX, C-SE-GALAXY-LIION, C-NFPA-70E, C-OSHA-LOTO]
+
+  - id: mups
+    title: "Schneider Electric Galaxy VL mechanical UPS"
+    partner: landlord
+    products: [galaxy_vl_300]
+    kinds: [mups]
+    sheets: [D-302]
+    raci: ["UPS, batteries, unit substations, and switchgear"]
+    credentials: [galaxy_ups, nfpa70e, loto]
+    categories: []
+    what: "The Galaxy VL here is a mechanical UPS: it carries the hall's cooling loads, such as CDU pumps and thermal wall fans, through a utility loss, so coolant and air keep moving while the generators start. It is modular, and its power modules can be swapped without a planned shutdown. It reports alarms through its network management card."
+    failures:
+      - "Motor inrush or an overload pushes the UPS to bypass."
+      - "A power module fails and the UPS keeps running with less margin."
+      - "Battery runtime is shorter than the cooling ride-through needs."
+      - "Communication loss hides the UPS state from the building system."
+    safety:
+      - "Arc flash and shock: qualified people only, with PPE per the arc flash label."
+      - "Follow the manufacturer's procedure for swapping modules on a live unit."
+      - "Lock out all sources, including the batteries, before opening the unit."
+    refs: [C-SE-GALAXY-VL, C-SE-NMC4, C-NFPA-70E, C-OSHA-LOTO]
+
+  - id: busway
+    title: "Starline Track Busway and tap-offs"
+    partner: landlord
+    products: [starline_1200t5]
+    kinds: [busway, tapoff, group]
+    sheets: [D-303]
+    raci: ["Busway, tap-off units, and tap-off breakers"]
+    credentials: [nfpa70e, loto, fall]
+    categories: [OT-FC-PWR, Switchgear and busway]
+    what: "Starline Track Busway runs overhead above the racks and carries power from the UPS output to each rack. Tap-off units twist and lock into a continuous slot anywhere along the run, each with its own breaker feeding a rack's power shelves. A power monitor on each run reports voltage, current, and power to the building systems."
+    failures:
+      - "A loose joint or tap-off contact heats up; it shows on a thermal scan before it fails."
+      - "A tap-off breaker trips and its rack drops to one feed."
+      - "Load builds unevenly across phases on one run."
+      - "The power monitor stops reporting and readings go stale."
+    safety:
+      - "Installing a tap-off on a live busway is work inside the limited approach boundary: qualified people only, tap-off breaker off, no load connected, PPE per the arc flash study."
+      - "Use a remote plug-in actuator where the site provides one, so the worker stands outside the arc flash boundary."
+      - "Busway is overhead: use a rated ladder or lift and keep one hand on the ladder."
+    refs: [C-STARLINE-1200T5, C-STARLINE-ARCFLASH, C-NFPA-70E, C-OSHA-LADDERS]
+
+  - id: mv
+    title: "Medium voltage: utility service, switchgear, and unit substations"
+    partner: landlord
+    products: [utility_tx_25mva, unit_sub_2500]
+    kinds: [tx, mv, uss]
+    sheets: [E-001]
+    raci: ["UPS, batteries, unit substations, and switchgear", "138 kV substation and utility transformers"]
+    credentials: [nfpa70e, loto]
+    categories: []
+    what: "The utility brings power in at high voltage and steps it down to 13.8 kV at its own transformers. Medium-voltage switchgear on site distributes it to unit substations, which step it down again to 480 V for the UPS systems and mechanical plant. The utility owns and runs its substation and transformers; the site's switchgear and unit substations are the Landlord's."
+    failures:
+      - "A utility outage or voltage sag sends the site to UPS and then generators."
+      - "A protective relay trips a breaker on a fault and part of the plant moves to its other source."
+      - "A transformer runs hot or its insulation ages, which shows in temperature and test results."
+      - "Hot connections show on a thermal scan long before they fail."
+    safety:
+      - "Only qualified electrical workers switch or work on medium voltage, under a written switching procedure."
+      - "De-energize, lock out, test, and ground before work; never rely on a switch position alone."
+      - "Keep the electrical maintenance program current; NFPA 70B is now a required standard."
+    refs: [C-OSHA-ELEC, C-OSHA-LOTO, C-SE-NFPA70B, C-NFPA-70E]
+
+  - id: hall-c
+    title: "Hall C pilot: 800 VDC racks and the solid-state transformer"
+    partner: all
+    hall: "Hall C"
+    products: [pilot_800vdc_rack, eaton_mvsst]
+    kinds: [rack, mvsst]
+    sheets: [A-203]
+    raci: ["UPS, batteries, unit substations, and switchgear", "Compute tray (GPU, CPU, memory, cold plate)"]
+    credentials: [nfpa70e, loto]
+    categories: []
+    what: "Hall C is the pilot for 800 V DC power. A solid-state transformer converts medium-voltage AC straight to 800 V DC in one stage, and the racks take 800 V DC in and convert it locally. Fewer conversion steps and thinner conductors are the point; the industry is still settling the safety rules, standards, and training for this voltage."
+    failures:
+      - "A fault inside the power electronics trips the converter's output."
+      - "A DC overcurrent device opens and the racks behind it lose power."
+      - "Cooling for the converter fails and it derates or shuts down."
+      - "Monitoring is not yet final in the pilot, so a failure may show first as lost power, not an alarm."
+    safety:
+      - "800 V DC is a shock and arc flash hazard: qualified people only, under the pilot's written procedures."
+      - "DC faults behave differently from AC faults; use only tools, meters, and PPE rated for the DC voltage."
+      - "De-energize, lock out, and test before work, as on any electrical system."
+    refs: [C-EATON-MVSST, C-NV-800VDC, C-NFPA-70E, C-OSHA-LOTO]
+
+  - id: generator
+    title: "Caterpillar C175-16 generator sets and EMCP 4.4"
+    partner: landlord
+    products: [cat_c175_16]
+    kinds: [gen]
+    sheets: [D-401]
+    raci: ["Generators, paralleling controls, and fuel"]
+    credentials: [emcp, loto]
+    categories: [Generators]
+    what: "The Caterpillar C175-16 is a large diesel generator set that carries the site when utility power is lost. EMCP 4.4 controls start, synchronize, and parallel the sets, and a master panel runs the group and reports to the building system. Monthly exercise and load tests prove the sets will start and take load when needed."
+    failures:
+      - "Fail to start, often from starting batteries, chargers, or fuel supply."
+      - "A set starts but fails to synchronize or close onto the bus."
+      - "A shutdown on high coolant temperature, low oil pressure, or overspeed."
+      - "A fuel leak or contaminated fuel, caught by the hydrocarbon leak cable or a fuel test."
+    safety:
+      - "A generator on automatic can start at any time: put the control in Off and lock it out before working on it."
+      - "Exhaust contains carbon monoxide: never run a set without its exhaust path, and leave if you feel dizzy."
+      - "Exhaust parts stay hot after a run; wear hearing protection near running sets."
+    refs: [C-CAT-C175, C-CAT-EMCP, C-OSHA-CO, C-OSHA-LOTO]
+
+  - id: fire-panel
+    title: "Fire alarm panel, pre-action sprinklers, and clean agent"
+    partner: landlord
+    products: [notifier_facp, preaction_zone, clean_agent]
+    kinds: [facp, paz, cas]
+    sheets: []
+    raci: ["Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression"]
+    credentials: [vesda]
+    categories: [Pre-action sprinkler, Clean agent, Fire protection]
+    what: "The addressable fire alarm panel watches every detector, valve switch, and release circuit, and reports alarm, trouble, and supervisory signals. The halls use double-interlock pre-action sprinklers: the pipes hold supervised air, and water enters only after detection and a fused sprinkler head both operate. Electrical rooms use a clean agent system that the panel releases on cross-zoned detection."
+    failures:
+      - "Trouble: an open circuit or ground fault on a detector loop."
+      - "Supervisory: low air on a pre-action system, or a closed or tampered valve."
+      - "A clean agent container loses pressure, or its release circuit is left disabled after work."
+      - "An impairment opens and is not closed when the work ends."
+    safety:
+      - "Open an impairment and notify the panel's monitoring before disabling any part of the system; close it when done."
+      - "Disable the release circuit before testing in a clean agent room, and restore it after."
+      - "If a clean agent discharges, leave the room and do not re-enter until it is ventilated."
+    refs: [C-NFPA-72, C-VIKING-PREACTION]
+
+  - id: vesda
+    title: "VESDA-E VEP aspirating smoke detection"
+    partner: landlord
+    products: [vesda_e_vep]
+    kinds: [vesda]
+    sheets: [D-501]
+    raci: ["Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression"]
+    credentials: [vesda]
+    categories: [OT-FC-FIRE, Smoke detection]
+    what: "VESDA-E VEP detectors draw air through a pipe network and measure smoke at very low levels, long before a spot detector would see it. Each detector has four alarm levels, from Alert through Fire 2, and watches airflow in every pipe. It reports to the fire panel, and a Modbus interface gives the building system a second view of its status."
+    failures:
+      - "Airflow fault: a pipe is blocked, cracked, or disconnected."
+      - "The filter nears the end of its life and the detector asks for service."
+      - "Dust from construction or cleaning raises the smoke reading and trips Alert or Action."
+      - "Communication to the fire panel or the building system is lost."
+    safety:
+      - "Detector alarms can drive sprinkler and clean agent release: coordinate with the fire panel and isolate before testing."
+      - "Work on high pipe runs from a rated ladder or lift."
+      - "Tell the panel's monitoring before dusty work so an alarm is expected and not ignored."
+    refs: [C-XTRALIS-VEP, C-XTRALIS-HLI, C-NFPA-72]
+
+  - id: leak-detection
+    title: "TraceTek leak detection"
+    partner: landlord
+    products: [tracetek_ttdm128, tracetek_water_cable, tracetek_tt5000]
+    kinds: [leak]
+    sheets: [D-502]
+    raci: ["Building leak detection (cable and controllers)"]
+    credentials: []
+    categories: [OT-FC-LEAK]
+    what: "TraceTek sensing cable lies on the floor and in drip trays, and alarms when liquid touches it anywhere along its length. The alarm module reports which cable and how far along it, so the leak can be found fast. Water cables watch the coolant and chilled water paths; hydrocarbon cable watches the generator fuel and does not react to water."
+    failures:
+      - "Leak alarm with a distance: liquid is on the cable at that spot."
+      - "A cable break or unplugged section shows as a fault, not a leak."
+      - "Dirt or residue on the cable causes a nuisance alarm."
+      - "The module stops reporting and the building system loses the leak picture."
+    safety:
+      - "Treat a leak near power gear as an electrical hazard until it is checked."
+      - "Glycol on the floor is slippery: clean it at once and dry the cable before resetting."
+      - "Do not step on or move sensing cable; it must stay where the drawing shows it."
+    refs: [C-TRACETEK-OVERVIEW, C-TRACETEK-APPGUIDE]
+
+  - id: security-systems
+    title: "Security zones, gates, cameras, and recorders"
+    partner: security
+    products: []
+    kinds: [post, gate, camera, nvr]
+    sheets: [A-002, A-102]
+    raci: ["Property perimeter, gates, and patrols", "Cameras and video recorders covering the Customer halls", "Customer halls and cage access lists"]
+    credentials: [site_security, dps_commission]
+    categories: []
+    what: "The property is divided into zones, from the public approach to the spares cage, each with its own entry rules. Gates, badge readers, and cameras control and watch each boundary, and video recorders keep the footage. The Security Partner watches it all from the security console and sends a guard when something is wrong."
+    failures:
+      - "A camera goes offline or loses video, leaving a gap in coverage."
+      - "A recorder fails or fills up, and footage is missing when it is needed."
+      - "A gate sticks open or a reader goes offline."
+      - "A fence or door alarm goes unanswered past its response time."
+    safety:
+      - "Vehicle gates can crush: stay clear while they move and never ride or climb them."
+      - "Armed officers follow their license rules and the post orders; others never handle a weapon."
+      - "Never turn off a camera or recorder without telling the console and logging why."
+    refs: [C-TXDPS-LICENSE, C-TXDPS-TRAINING]
+
+  - id: guard-posts
+    title: "Guard posts, door alarms, visitors, and media destruction"
+    partner: security
+    products: []
+    kinds: []
+    sheets: [A-102]
+    raci: ["Guard posts and patrols in the Customer halls", "Customer hall door alarms (forced and held) and guard response", "Visitor sign-in, visitor badges, and escorts in the Customer halls", "Storage media destruction from failed parts"]
+    credentials: [dps_commission, firearm_sa, firearm_stg, cpr, site_security]
+    categories: [Door held, Door forced]
+    what: "Armed commissioned security officers staff the posts at the hall entrances and walk the tours. They answer door alarms, sign in and escort visitors, and run media destruction in the media room with a witness. Every officer holds a Texas commissioned officer license and keeps firearm proficiency current."
+    failures:
+      - "A post is left unstaffed during a shift change."
+      - "A door held or forced alarm is not answered within its response time."
+      - "A visitor is in a hall without a named escort."
+      - "A destruction certificate does not match the custody log."
+      - "An officer's firearm qualification lapses while the guard file still shows current."
+    safety:
+      - "Armed posts need a current commission and a current firearm proficiency certificate."
+      - "CPR, AED, and first aid training stays current; the certificate runs two years."
+      - "Two-person rule in the media room; keep hands clear of the shredder."
+    refs: [C-TXDPS-TRAINING, C-TXDPS-LICENSE, C-REDCROSS-CPR, C-NIST-80088]
+
+references:
+  - id: C-NV-GB200
+    title: "GB200 NVL72"
+    publisher: "NVIDIA"
+    url: "https://www.nvidia.com/en-us/data-center/gb200-nvl72/"
+    checked: "2026-10-23"
+  - id: C-NV-GB300
+    title: "GB300 NVL72"
+    publisher: "NVIDIA"
+    url: "https://www.nvidia.com/en-us/data-center/gb300-nvl72/"
+    checked: "2026-10-23"
+  - id: C-NV-DGXGB-HW
+    title: "Hardware: NVIDIA DGX GB Rack Scale Systems User Guide"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html"
+    checked: "2026-10-23"
+  - id: C-NV-DGXGB-SAFETY
+    title: "Safety: NVIDIA DGX GB200 User Guide"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/dgx/dgxgb200-user-guide/safety.html"
+    checked: "2026-10-23"
+  - id: C-NV-DGXGB-SVC
+    title: "Introduction: NVIDIA DGX GB200 Service Manual"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/dgx/dgxgb200-service-manual/introduction.html"
+    checked: "2026-10-23"
+  - id: C-LENOVO-GB300
+    title: "GB300 NVL72 product guide (LP2357)"
+    publisher: "Lenovo Press"
+    url: "https://lenovopress.lenovo.com/lp2357.pdf"
+    checked: "2026-10-23"
+  - id: C-NV-QM9700
+    title: "QM97XX 1U NDR 400Gb/s InfiniBand Switch Systems User Manual: Introduction"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/networking/display/qm97x0um/introduction"
+    checked: "2026-10-23"
+  - id: C-NV-Q3400
+    title: "Q32xx and Q34xx XDR 800Gb/s InfiniBand Switch Systems User Manual: Introduction"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/networking/display/XDRSwitchesUM/Introduction"
+    checked: "2026-10-23"
+  - id: C-NV-UFM
+    title: "NVIDIA Unified Fabric Manager (UFM)"
+    publisher: "NVIDIA"
+    url: "https://www.nvidia.com/en-us/networking/infiniband/ufm/"
+    checked: "2026-10-23"
+  - id: C-NV-CVT
+    title: "UFM Cable Validation Tool 2.0.1: Installation Notes"
+    publisher: "NVIDIA"
+    url: "https://networking-docs.nvidia.com/cablevalidationtool/2.0.1/installation-notes"
+    checked: "2026-10-23"
+  - id: C-NV-SUPERPOD-NET
+    title: "DGX SuperPOD reference architecture (GB200): Network Fabrics"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/network-fabrics.html"
+    checked: "2026-10-23"
+  - id: C-NV-SN2201
+    title: "SN2201 Switch User Manual: Introduction"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/networking/display/sn2201switchesum/introduction"
+    checked: "2026-10-23"
+  - id: C-NV-SN5000-FRU
+    title: "Spectrum-4 SN5000 2U Switch Systems Hardware User Manual: FRU Replacements"
+    publisher: "NVIDIA"
+    url: "https://networking-docs.nvidia.com/sn5000hw/fru-replacements"
+    checked: "2026-10-23"
+  - id: C-FOA-INSPECT
+    title: "Inspection and Cleaning of Fiber Optic Connectors"
+    publisher: "The Fiber Optic Association"
+    url: "https://www.thefoa.org/tech/ref/testing/test/scope.html"
+    checked: "2026-10-23"
+  - id: C-FOA-SAFETY
+    title: "Safety in Fiber Optic Installations"
+    publisher: "The Fiber Optic Association"
+    url: "https://www.thefoa.org/tech/safety.htm"
+    checked: "2026-10-23"
+  - id: C-FOA-MAINTAIN
+    title: "Maintaining Fiber Optic Networks"
+    publisher: "The Fiber Optic Association"
+    url: "https://www.thefoa.org/tech/ref/user/maintain.html"
+    checked: "2026-10-23"
+  - id: C-ESDA-S2020
+    title: "An Overview of ANSI/ESD S20.20"
+    publisher: "EOS/ESD Association"
+    url: "https://www.esda.org/news/an-overview-of-ansiesd-s20-20/"
+    checked: "2026-10-23"
+  - id: C-DMTF-REDFISH
+    title: "Redfish"
+    publisher: "DMTF"
+    url: "https://www.dmtf.org/standards/redfish"
+    checked: "2026-10-23"
+  - id: C-NVME-MI
+    title: "NVM Express Management Interface Specification"
+    publisher: "NVM Express"
+    url: "https://nvmexpress.org/specification/nvme-mi-specification/"
+    checked: "2026-10-23"
+  - id: C-NIST-80088
+    title: "Guidelines for Media Sanitization (SP 800-88)"
+    publisher: "NIST"
+    url: "https://www.nist.gov/publications/guidelines-media-sanitization-3"
+    checked: "2026-10-23"
+  - id: C-COOLIT-CHX2000
+    title: "CHx2000 row-based CDU"
+    publisher: "CoolIT Systems"
+    url: "https://www.coolitsystems.com/product/chx2000-cdu/"
+    checked: "2026-10-23"
+  - id: C-VERTIV-CWA
+    title: "Liebert CWA chilled water thermal wall brochure"
+    publisher: "Vertiv"
+    url: "https://www.vertiv.com/49277c/globalassets/products/thermal-management/room-cooling/liebert-cwa-en-brochure-emea-web.pdf"
+    checked: "2026-10-23"
+  - id: C-VERTIV-CW
+    title: "Liebert CW, 038-181 kW"
+    publisher: "Vertiv"
+    url: "https://www.vertiv.com/en-us/products-catalog/thermal-management/room-cooling/liebert-cw-chilled-water-cooling-system-038-181kw/"
+    checked: "2026-10-23"
+  - id: C-VERTIV-AFC
+    title: "Liebert AFC free-cooling chiller data sheet"
+    publisher: "Vertiv"
+    url: "https://www.vertiv.com/49dc08/globalassets/products/thermal-management/free-cooling-chillers/liebert-afc-ds-en-emea-rev0---03.2020.pdf"
+    checked: "2026-10-23"
+  - id: C-EPA-608
+    title: "Section 608 Technician Certification Requirements"
+    publisher: "U.S. EPA"
+    url: "https://www.epa.gov/section608/section-608-technician-certification-requirements"
+    checked: "2026-10-23"
+  - id: C-DOE-PUMPS
+    title: "Improving Pumping System Performance: A Sourcebook for Industry"
+    publisher: "U.S. Department of Energy"
+    url: "https://www.energy.gov/sites/prod/files/2014/05/f16/pump.pdf"
+    checked: "2026-10-23"
+  - id: C-SE-GALAXY-VX
+    title: "Galaxy VX 1500 kVA, 480 V"
+    publisher: "Schneider Electric"
+    url: "https://www.se.com/us/en/product/GVX1500K1500GS/galaxy-vx-1500kva-480v-start-up-5x8/"
+    checked: "2026-10-23"
+  - id: C-SE-GALAXY-VL
+    title: "Galaxy VL UPS 200 scalable to 500 kW, 400/480 V"
+    publisher: "Schneider Electric"
+    url: "https://www.se.com/us/en/product/GVL200K500DS/galaxy-vl-ups-200-scalable-to-500kw-400-480v-startup-5x8/"
+    checked: "2026-10-23"
+  - id: C-SE-GALAXY-LIION
+    title: "Galaxy Lithium-ion Battery Cabinet: Installation and Operation"
+    publisher: "Schneider Electric"
+    url: "https://productinfo.se.com/galaxyliion/990-91430-master-galaxy-li-ion-battery-cabinet-installation-and-operation/English/990-91430E_EN.pdf"
+    checked: "2026-10-23"
+  - id: C-SE-NMC4
+    title: "Network Management Card 4 (AP9644) for Galaxy UPS"
+    publisher: "Schneider Electric"
+    url: "https://www.se.com/us/en/product/AP9644/network-management-card-4-nmc4-for-galaxy-vs-galaxy-vl-galaxy-vxl-remote-ups-monitoring-and-management/"
+    checked: "2026-10-23"
+  - id: C-STARLINE-1200T5
+    title: "Starline 1200T5 Track Busway system"
+    publisher: "Cabling Installation & Maintenance"
+    url: "https://www.cablinginstall.com/articles/2016/12/starline-1200t5-track-busway-system.html"
+    checked: "2026-10-23"
+  - id: C-STARLINE-ARCFLASH
+    title: "How to Reduce the Risks of Arc Flash Incidents in the Data Center (white paper)"
+    publisher: "Starline (Legrand)"
+    url: "https://cdn.starlinepower.com/drupal-media-and-files/files/files/BUS_Safety_Arc_Flash_Whitepaper_R5.pdf"
+    checked: "2026-10-23"
+  - id: C-SE-NFPA70B
+    title: "NFPA 70B eGuide"
+    publisher: "Schneider Electric"
+    url: "https://download.se.com/doc/998-22673303_GMA_NFPA_70B/998-22673303_GMA_NFPA_70B_eGuide.pdf"
+    checked: "2026-10-23"
+  - id: C-EATON-MVSST
+    title: "Medium-voltage solid-state transformer"
+    publisher: "Eaton"
+    url: "https://www.eaton.com/us/en-us/catalog/medium-voltage-power-distribution-control-systems/medium-voltage-solid-state-transformer.html"
+    checked: "2026-10-23"
+  - id: C-NV-800VDC
+    title: "NVIDIA 800 VDC Architecture Will Power the Next Generation of AI Factories"
+    publisher: "NVIDIA Technical Blog"
+    url: "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-generation-of-ai-factories/"
+    checked: "2026-10-23"
+  - id: C-CAT-C175
+    title: "Cat C175-16 Diesel Generator Sets (spec sheet LEHE21077)"
+    publisher: "Caterpillar"
+    url: "https://emc.cat.com/n/api/pubdirect?media_string_id=LEHE21077-"
+    checked: "2026-10-23"
+  - id: C-CAT-EMCP
+    title: "EMCP 4.4 Master Control Panel"
+    publisher: "Warren CAT (Caterpillar dealer)"
+    url: "https://www.warrencat.com/new/power-systems/electric-power/switchgear-and-paralleling-controls/emcp-4-4-master-control-panel/"
+    checked: "2026-10-23"
+  - id: C-OSHA-CO
+    title: "Carbon Monoxide Poisoning fact sheet"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/sites/default/files/publications/CARBONMONOXIDE-FACTSHEET.pdf"
+    checked: "2026-10-23"
+  - id: C-XTRALIS-VEP
+    title: "VESDA-E VEP Aspirating Smoke Detector"
+    publisher: "Xtralis (Honeywell)"
+    url: "https://xtralis.com/product/165/vesda-e-vep-aspirating-smoke-detector"
+    checked: "2026-10-23"
+  - id: C-XTRALIS-HLI
+    title: "VESDA Modbus High Level Interface data sheet"
+    publisher: "Xtralis (Honeywell)"
+    url: "https://xtralis.com/file/8501"
+    checked: "2026-10-23"
+  - id: C-VIKING-PREACTION
+    title: "Double Interlocked Preaction System (Electric/Pneu-Lectric Release)"
+    publisher: "Viking"
+    url: "https://vikinggroupinc.com/sites/default/files/migrated/020195.pdf"
+    checked: "2026-10-23"
+  - id: C-NFPA-72
+    title: "NFPA 72, National Fire Alarm and Signaling Code (2025)"
+    publisher: "NFPA"
+    url: "https://www.nfpa.org/product/nfpa-72-code/p0072code/nfpa-72-national-fire-alarm-and-signaling-code-2025/7225"
+    checked: "2026-10-23"
+  - id: C-NFPA-70E
+    title: "NFPA 70E, Standard for Electrical Safety in the Workplace"
+    publisher: "NFPA"
+    url: "https://www.nfpa.org/product/nfpa-70e-standard-for-electrical-safety-in-the-workplace/p0070ecode"
+    checked: "2026-10-23"
+  - id: C-TRACETEK-OVERVIEW
+    title: "TraceTek leak detection overview and product matrix"
+    publisher: "Chemelex (nVent RAYCHEM TraceTek)"
+    url: "https://cdn.chemelex.com/Product%20Documents/Design%20Guides-Forms/RAYCHEM-DG-EU0614-TraceTekOverview-EN.pdf"
+    checked: "2026-10-23"
+  - id: C-TRACETEK-APPGUIDE
+    title: "TraceTek sensing cable application guide"
+    publisher: "nVent RAYCHEM"
+    url: "https://go.nvent.com/rs/760-EGW-100/images/RaychemTraceTek-AR-H53147-SensingAppGuide-EN.pdf"
+    checked: "2026-10-23"
+  - id: C-OSHA-LOTO
+    title: "29 CFR 1910.147, The control of hazardous energy (lockout/tagout)"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.147"
+    checked: "2026-10-23"
+  - id: C-OSHA-ELEC
+    title: "29 CFR 1910.333, Selection and use of work practices (electrical)"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333"
+    checked: "2026-10-23"
+  - id: C-OSHA-LADDERS
+    title: "29 CFR 1910.23, Ladders"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.23"
+    checked: "2026-10-23"
+  - id: C-OSHA-HAZCOM
+    title: "29 CFR 1910.1200, Hazard Communication"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.1200"
+    checked: "2026-10-23"
+  - id: C-OSHA-HEAT
+    title: "Heat: Water. Rest. Shade."
+    publisher: "OSHA"
+    url: "https://www.osha.gov/heat-exposure/water-rest-shade"
+    checked: "2026-10-23"
+  - id: C-OSHA-EAP
+    title: "29 CFR 1910.38, Emergency action plans"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.38"
+    checked: "2026-10-23"
+  - id: C-TXDPS-TRAINING
+    title: "Private Security: Training and Continuing Education"
+    publisher: "Texas Department of Public Safety"
+    url: "https://www.dps.texas.gov/section/private-security/training-and-continuing-education"
+    checked: "2026-10-23"
+  - id: C-TXDPS-LICENSE
+    title: "Private Security: Individual License Questions"
+    publisher: "Texas Department of Public Safety"
+    url: "https://www.dps.texas.gov/section/private-security/faq/individual-license-questions"
+    checked: "2026-10-23"
+  - id: C-REDCROSS-CPR
+    title: "Adult First Aid/CPR/AED class"
+    publisher: "American Red Cross"
+    url: "https://www.redcross.org/take-a-class/classes/adult-first-aid%2Fcpr%2Faed/LP-00014200.html"
+    checked: "2026-10-23"

@@ -180,6 +180,9 @@ def markdown(f: dict) -> str:
 
 def html_page() -> str:
     f = prepare()
+    from scorecard import training_portal as TP
+    titles = {g["id"]: g["title"] for g in TP.content()["guides"]["guides"]}
+    f["guides"] = {sig: [g, titles[g]] for sig, g in TP.signal_guides().items()}    # each signal's job guide on the Training tab
     tpl = sitenav.inject((ROOT / "templates" / "alarms.html").read_text(encoding="utf-8"), "alarms")
     return sitenav.finish(tpl.replace("__DATA__", json.dumps(f, sort_keys=True, default=str).replace("</", "<\\/")))
 

@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """The Training page (/training/): the certification register and work gate (the opening view), the register by person,
-renewals, and requirements.
+renewals, and requirements; then the AUS-1 training portal: courses, alarm job guides, PM guides, and quizzes.
 
 Usage:
     python scripts/render_training.py --out _site/training     # write the page (build_site.py does this for the Pages build)
 
-The page reads scorecard.certifications.page_data (the same data as reports/certifications.md).
+The page reads scorecard.certifications.page_data (the same data as reports/certifications.md) and
+scorecard.training_portal.page_data (config/training/, checked against the site data by training_portal.validate).
 """
 
 from __future__ import annotations
@@ -20,16 +21,22 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from scorecard import certifications as C  # noqa: E402
 from scorecard import sitenav  # noqa: E402
+from scorecard import training_portal as TP  # noqa: E402
 
 
 def prepare() -> dict:
-    return {"certs": C.page_data()}
+    return {"certs": C.page_data(), "portal": TP.page_data()}
+
+
+def _js(o) -> str:
+    return json.dumps(o, sort_keys=True).replace("</", "<\\/")
 
 
 def html_page() -> str:
     f = prepare()
+    refs = f["portal"].pop("refs")
     tpl = sitenav.inject((ROOT / "templates" / "training.html").read_text(encoding="utf-8"), "training")
-    return sitenav.finish(tpl.replace("__DATA__", json.dumps(f, sort_keys=True).replace("</", "<\\/")))
+    return sitenav.finish(tpl.replace("__DATA__", _js(f)).replace("__REFS__", _js(refs)))
 
 
 def main() -> int:

@@ -1,0 +1,459 @@
+# =============================================================================
+# AUS-1 training portal: preventive maintenance and planned work guides (portfolio demo; all data fictional)
+# -----------------------------------------------------------------------------
+# One guide per planned work type. An id that is a calendar work type (config/calendar.yaml work_types) takes its
+# title pattern, duration, MOP rule, and what it takes out of service from there; its permits from config/ehs.yaml
+# and its credentials from config/certifications.yaml (schedule_work). Other guides give their own `match` on the
+# record title. The page lists the sample's records and the forward schedule's jobs of each type.
+#
+#   id          the page address: /training/#pm/<id>
+#   course      the course this guide belongs to
+#   match       (only for a guide that is not a calendar work type) a regular expression on the record title
+#   partner     who does the work: it or landlord
+#   frequency   how often, and on what basis (manufacturer, NFPA, the site's rule)
+#   why         what the work protects against (1 to 2 sentences)
+#   steps       the work in order (4 to 8 short items)
+#   acceptance  what must be true before the work is closed (2 to 4 short items)
+#   record      what the work record must show (2 to 4 short items)
+#   refs        reference ids from the references list at the end of this file
+# =============================================================================
+
+pm:
+- id: gen_exercise
+  title: Generator monthly loaded exercise
+  course: generator
+  partner: landlord
+  frequency: "Monthly for every generator, under load: at least 30% of nameplate kW, or the manufacturer's recommended exhaust temperature, for at least 30 minutes (NFPA 110)"
+  why: "A diesel that is run lightly or not at all can fail to start or carry load when the utility drops. Running it under real load also burns off the unburned fuel and soot that build up at light load (wet stacking)."
+  steps:
+    - "Confirm the planned window and that no other generator or utility work is open."
+    - "Walk down the set first: fuel level, coolant, oil, belts, leaks, battery charger, and alarms on the controller."
+    - "Start the set from its controller and let it reach operating temperature."
+    - "Transfer load to it, or add a load bank, until it carries at least 30% of nameplate or reaches the recommended exhaust temperature."
+    - "Hold that load for at least 30 minutes and read kW, voltage, frequency, and exhaust temperature during the run."
+    - "Unload, run the cool-down, and return the controller to automatic."
+    - "Clear any alarm the run raised, or open a work order for it."
+  acceptance:
+    - "The controller's own log shows at least 30 minutes at or above the required load."
+    - "The set is back in automatic with no active alarm."
+    - "Any fault found has its own work order."
+  record:
+    - "Start and stop times and the time held at load, from the controller."
+    - "kW (and percent of nameplate), exhaust temperature, voltage, and frequency during the run."
+    - "Whether a load bank was used, and its rating."
+    - "Fuel level before and after."
+  refs: [P-CSE-NFPA110, P-CSE-WETSTACK]
+- id: ups_pm
+  title: UPS preventive maintenance and battery health check
+  course: ups
+  partner: landlord
+  frequency: "Semiannual for every UPS, per the manufacturer's schedule and NFPA 70B"
+  why: "The UPS carries the IT load through every utility event until the generators take over. Worn filters, weak batteries, or loose connections show up first as alarms or heat and last as a dropped load."
+  steps:
+    - "Confirm the MOP is approved and the other UPS in the redundancy group is healthy before taking this one out."
+    - "Transfer the load to static bypass, then to maintenance bypass, in the order the manufacturer's manual gives."
+    - "Tell the shift that the load is now on unprotected bypass power and the batteries are not available."
+    - "Apply lockout on the isolated UPS under the site's LOTO procedure and verify it is de-energized with a tester."
+    - "Replace the air filters, clean, inspect connections and capacitors, and read the event log."
+    - "Run the battery test the manufacturer specifies and read the battery health values."
+    - "Remove locks, return the UPS from maintenance bypass to normal operation in the manual's order, and confirm it is on inverter."
+  acceptance:
+    - "The UPS is in normal operation on inverter with no active alarm."
+    - "Battery health is not in the weak or poor range; if it is, a replacement order is open."
+    - "Every lock is off and the LOTO permit is closed."
+  record:
+    - "Times the load went to maintenance bypass and came back."
+    - "Battery test result and health values per string or cabinet."
+    - "LOTO permit number and the lock numbers used."
+    - "Filters replaced, and any part replaced with its serial."
+  refs: [P-SE-GALAXYVX, P-TUV-70B, P-OSHA-LOTO, P-OSHA-333]
+- id: cdu_filter
+  title: CDU filter change and coolant sample
+  course: cdu
+  partner: landlord
+  frequency: "Quarterly for every CDU, per the manufacturer's schedule; the coolant is sampled at the same visit"
+  why: "The filter keeps particles out of the loop and the cold plates. The sample shows whether the PG25 coolant still has the glycol and inhibitor that protect the loop from corrosion and growth."
+  steps:
+    - "Confirm the MOP is approved and the CDU's redundant pump or partner unit is carrying flow."
+    - "Isolate the filter housing with its valves and apply lockout on them under the site's LOTO procedure."
+    - "Relieve the pressure in the housing and catch the coolant in a container."
+    - "Replace the filter element with the specified part and check the seals."
+    - "Draw the coolant sample in a clean bottle from the sample port and label it with the CDU and time."
+    - "Refill or top up only with the approved fluid, bleed the air, and remove the locks."
+    - "Open the valves slowly and watch the filter differential pressure, flow, and leak sensors."
+  acceptance:
+    - "Flow and pressure are back to their values before the work."
+    - "No leak at the housing and no leak sensor in alarm."
+    - "The sample is logged and sent for analysis."
+  record:
+    - "Filter differential pressure before and after."
+    - "Sample id, and the results when they come back (glycol concentration, pH, inhibitor)."
+    - "Coolant added, in liters, and its product and lot."
+    - "LOTO permit number and the lock numbers used."
+  refs: [P-COOLIT-CHX2000, P-OCP-PG25, P-OSHA-LOTO]
+- id: chiller_pm
+  title: Chiller preventive maintenance
+  course: chiller
+  partner: landlord
+  frequency: "Quarterly for every chiller, per the manufacturer's schedule; refrigerant work only by EPA Section 608 certified technicians"
+  why: "Chillers reject the site's heat; a fouled coil, a failing fan, or a slow refrigerant leak cuts capacity on the hottest day. Federal rules also require leaks above a set rate to be repaired and refrigerant never to be vented."
+  steps:
+    - "Confirm the plant can carry the load with this chiller out, and take the chiller out of rotation at its controller."
+    - "Apply lockout on its electrical disconnect under the site's LOTO procedure and verify it is de-energized."
+    - "Inspect and clean coils, check fans, belts, and drives, and read the controller's alarm history."
+    - "Check the refrigerant circuit for signs of a leak; any refrigerant work is done by a certified technician."
+    - "Record any refrigerant added, and calculate the leak rate when the chiller holds 50 pounds or more."
+    - "Remove locks, return the chiller to rotation, and confirm the free-cooling mode is back in automatic."
+  acceptance:
+    - "The chiller is back in rotation with no active alarm."
+    - "Free cooling is not left locked out."
+    - "Any leak above the threshold has a repair order with its 30-day due date."
+  record:
+    - "Refrigerant added (pounds), the technician's certification number, and the leak rate."
+    - "Pressures, temperatures, and amps read before and after."
+    - "LOTO permit number and the lock numbers used."
+  refs: [P-EPA-608-CERT, P-EPA-608-LEAK, P-EPA-608-VENT, P-OSHA-LOTO]
+- id: vesda_test
+  title: VESDA inspection and smoke test
+  course: vesda
+  partner: landlord
+  frequency: "Per the manufacturer's maintenance schedule and the fire code; one detector each month here, every detector in turn"
+  why: "An aspirating detector gives the earliest warning of smoke in a hall, well before a spot detector. A blocked pipe, a dirty filter, or a wrong flow threshold leaves it blind without an obvious alarm."
+  steps:
+    - "Notify the fire panel's monitoring and the shift before testing, and log the test window."
+    - "Read the detector's event log and its flow readings for each pipe."
+    - "Check the filter's remaining life and replace it if the detector asks."
+    - "Introduce test smoke at the far end of each pipe and time how long the detector takes to see it."
+    - "Confirm the alarm levels reach the fire panel as expected, then reset the panel."
+    - "Notify the monitoring that the test is over."
+  acceptance:
+    - "Every pipe saw the test smoke within the time set at commissioning."
+    - "Flow on every pipe is inside its fault thresholds."
+    - "The fire panel shows no remaining trouble or supervisory signal from the detector."
+  record:
+    - "Transport time per pipe, against the commissioning value."
+    - "Flow per pipe and the filter's remaining life."
+    - "Times the panel was told the test started and ended."
+  refs: [P-XTRALIS-VES, P-UIUC-VESDA]
+- id: thermography
+  title: Infrared thermography under load
+  course: busway
+  partner: landlord
+  frequency: "At least every 12 months for all electrical equipment under NFPA 70B (2023), and at least every 6 months for equipment in Condition 3; here one electrical room each month"
+  why: "A loose or corroded connection runs hot long before it fails. An infrared scan under load finds it while it can still be fixed in a planned window."
+  steps:
+    - "Confirm the room is carrying its normal load, and read the load on each board you scan."
+    - "Wear the PPE the arc flash label requires for any cover you open; use IR windows where they exist."
+    - "Scan switchgear, busway end feeds, tap-offs, and UPS connections, and photograph each in infrared and visible light."
+    - "Compare each hot spot with similar parts under similar load."
+    - "Rate each finding and open a work order for every connection that needs work."
+    - "Replace any cover you opened before you leave."
+  acceptance:
+    - "Every board on the route is scanned or has a reason it was not."
+    - "Each finding has a rating and a work order."
+    - "Every cover is back in place."
+  record:
+    - "Infrared and visible images for each finding, with the temperature rise and the load at the time."
+    - "The equipment condition rating assigned."
+    - "Work order numbers raised."
+  refs: [P-TUV-70B, P-ITC-70B, P-NSA-70E]
+- id: tapoff_work
+  title: Tap-off retorque
+  course: busway
+  partner: landlord
+  frequency: "As needed: a follow-up when a thermography scan finds a warm tap-off connection"
+  why: "A connection that runs warm can overheat and drop a rack feed. Retorquing it de-energized, then scanning it again under load, closes the finding."
+  steps:
+    - "Confirm the MOP is approved and the rack's other feed is healthy; never work both feeds of a rack."
+    - "Tell the Customer and the IT Partner the rack will run on one feed."
+    - "Switch the tap-off off, apply lockout under the site's LOTO procedure, and verify it is de-energized with a tester."
+    - "Inspect the terminations for discoloration or damage, and retorque them to the manufacturer's value."
+    - "Remove locks, restore the tap-off, and confirm the rack is back on both feeds."
+    - "Scan the connection again once the rack is carrying load."
+  acceptance:
+    - "The rack is on both feeds."
+    - "The follow-up scan shows the connection no warmer than its neighbors."
+    - "Every lock is off and the LOTO permit is closed."
+  record:
+    - "Torque value applied and the tool's calibration date."
+    - "Before and after infrared images with the load at each."
+    - "LOTO permit number and the lock numbers used."
+  refs: [P-OSHA-LOTO, P-OSHA-333, P-STARLINE-REL, P-TUV-70B]
+- id: tapoff_energize
+  title: Energize a new tap-off
+  course: busway
+  partner: landlord
+  frequency: "As needed: once for each new rack, on the deployment's due date"
+  why: "Track busway lets a new tap-off go in while the run stays energized, so other racks keep running. That is energized work near live parts, so only qualified people do it, with a permit and arc flash PPE."
+  steps:
+    - "Confirm the energized work permit is approved and the height permit is open for the overhead work."
+    - "Check the tap-off is the right rating and its breaker is off before it goes up."
+    - "Set up the lift, barricade the area, and keep unqualified people outside the limited approach boundary."
+    - "Wear the arc flash PPE the label and permit require."
+    - "Insert the tap-off in the busway slot and lock it in, following the manufacturer's instructions."
+    - "Close the tap-off breaker, read voltage at its output, and confirm the monitor sees it."
+  acceptance:
+    - "The tap-off reads the right voltage at its output."
+    - "The tap-off shows up on the power monitoring with its rack's name."
+    - "Both permits are closed after the work."
+  record:
+    - "Energized work permit and height permit numbers."
+    - "Tap-off serial and its slot on the busway."
+    - "Voltage read at the output."
+  refs: [P-OSHA-BUSWAY, P-NSA-70E, P-STARLINE-BUSWAY]
+- id: tray_firmware
+  title: Compute tray firmware change
+  course: gb200
+  partner: it
+  frequency: "When the Customer's change advisory board approves a new firmware baseline; one rack per change"
+  why: "Firmware fixes defects and keeps every tray on the version the Customer tested. A wrong order or a missed power cycle can leave a tray half updated."
+  steps:
+    - "Confirm the change is approved and the package matches the Customer's baseline."
+    - "Drain the rack's jobs with the Customer's scheduler before the window."
+    - "Read and save each tray's current firmware versions."
+    - "Update the BMC first, then AC power cycle the tray."
+    - "Update the rest of the tray's package with the host running, then AC power cycle it again."
+    - "Read the versions again and confirm every component shows up to date."
+    - "Hand the rack back to the scheduler and watch the first jobs."
+  acceptance:
+    - "Every tray reports the baseline version for every component."
+    - "Every BMC answers on the management network."
+    - "The rack is back in the scheduler with no new errors."
+  record:
+    - "Change number and the baseline version."
+    - "Versions before and after, per tray."
+    - "Times of each power cycle."
+  refs: [P-NVIDIA-FW]
+- id: preaction_trip
+  title: Pre-action valve trip test
+  course: fire-panel
+  match: '^Pre-action valve trip test: (?P<asset>PAZ-[A-Z]\d+)$'
+  partner: landlord
+  frequency: "Trip test annually for each zone, and a full-flow trip test at least every 3 years (NFPA 25)"
+  why: "A pre-action valve that does not trip, or trips slowly, leaves a hall unprotected when it matters. The test is also the time to inspect the valve's interior and detection devices."
+  steps:
+    - "Log the impairment, tell the monitoring company, and start a fire watch for the zone."
+    - "Record the air and water pressures before the test."
+    - "Trip the valve by the method the procedure and the test type require, and time it."
+    - "Record the trip pressure and time, and, for a full-flow test, the time until water reaches the test connection."
+    - "Drain the system, inspect the valve's interior, and reset it per the manufacturer."
+    - "Restore the supervisory air, confirm the valve is open and its tamper and low air switches are clear."
+    - "Close the impairment and tell the monitoring company."
+  acceptance:
+    - "The valve tripped, and the results compare with the prior test."
+    - "The control valve is open and the panel shows no supervisory signal."
+    - "The impairment is closed and the fire watch ended."
+  record:
+    - "Air and water pressures before, and the trip pressure and time."
+    - "For a full-flow test, the water delivery time."
+    - "Impairment opened and closed times."
+  refs: [P-QRFS-TRIP, P-QRFS-VALVES, P-JLAB-PREACTION, P-FIRESYS-PREACTION]
+- id: clean_agent
+  title: Clean agent semiannual inspection
+  course: fire-panel
+  match: '^Clean agent semiannual inspection: (?P<asset>CAS-[A-Z]\d+)$'
+  partner: landlord
+  frequency: "Semiannual: agent quantity and container pressure (NFPA 2001); the room is checked for new openings at least yearly"
+  why: "A clean agent system puts out an electrical room fire without water, but only if the containers hold enough agent and the room holds it in. A slow leak or a new hole in a wall quietly takes that away."
+  steps:
+    - "Log the impairment and tell the monitoring company before you start."
+    - "Disable the release circuit at the fire panel so the test cannot discharge the agent."
+    - "Check each container's quantity and pressure, corrected for temperature."
+    - "Inspect hoses, nozzles, and the manual release stations for damage."
+    - "Walk the room for new wall, floor, or ceiling openings that would let agent escape."
+    - "Re-enable the release circuit, confirm the panel shows it normal, and close the impairment."
+  acceptance:
+    - "No container lost more than 5% of its agent or 10% of its pressure; if one did, it is refilled or replaced."
+    - "The release circuit is enabled and the panel is normal."
+    - "Any new opening has a work order to seal it."
+  record:
+    - "Quantity and pressure per container, with the temperature."
+    - "Times the release circuit was disabled and re-enabled."
+    - "Openings found and their work orders."
+  refs: [P-KOORSEN-2001]
+- id: fiber_clean
+  title: Fiber end-face inspection and cleaning
+  course: fiber
+  partner: it
+  frequency: "Every time a connector is mated, and on every link repair; there is no calendar interval"
+  why: "A dirty end face causes link errors and can damage the connector it is mated to. Most link problems clear when both ends are inspected and cleaned."
+  steps:
+    - "Confirm the port is not transmitting before you look at it, and never look into a fiber directly."
+    - "Remove the dust cap; do not trust it to keep the end face clean."
+    - "Inspect the end face with a scope, using the magnification the inspection method calls for."
+    - "Clean with a product made for fiber connectors (dry, wet, or wet then dry)."
+    - "Inspect again, and repeat until it passes."
+    - "Inspect and clean the other connector and the port before you mate them."
+    - "Put fiber scraps in the scrap container, not on the floor."
+  acceptance:
+    - "Both end faces pass inspection before mating."
+    - "The link comes up with no errors after the work."
+  record:
+    - "Inspection images or results for each end, before and after cleaning."
+    - "Cleaning method used."
+    - "The link's error counters after the work."
+  refs: [P-FOA-8, P-FOA-SAFETY]
+- id: spares_count
+  title: Spares cage cycle count
+  course: spares
+  partner: it
+  frequency: "Weekly cycle count of high-value FRUs and a full count monthly, under the IT Partner contract"
+  why: "The spares cage is only useful if the ledger is right. A count that does not match the ledger means a repair may stall waiting for a part that is not there."
+  steps:
+    - "Freeze movement of the items on today's count list until the count is done."
+    - "Count blind: the counter does not see the ledger quantity."
+    - "Where you can, have someone who does not hold the cage keys do the count, or pair two people."
+    - "Scan each serialized part, and count the bulk items by bin; leave ESD-sensitive parts sealed in their shielding bags."
+    - "Recount any line that does not match, then research the difference in the transaction history."
+    - "Adjust the ledger only after the research, with the reason."
+  acceptance:
+    - "Every line on the count list is counted."
+    - "Every difference is explained, and adjustments carry a reason."
+    - "Any item below minimum has a replenishment request."
+  record:
+    - "Counters by role, start and end times, and the count list."
+    - "Differences found, their causes, and the adjustments made."
+    - "Serials scanned for serialized parts."
+  refs: [P-GAO-COUNT, P-ESDA-FUND3]
+
+references:
+  - id: P-OSHA-LOTO
+    title: "29 CFR 1910.147, The control of hazardous energy (lockout/tagout)"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.147"
+    checked: "2026-10-23"
+  - id: P-OSHA-333
+    title: "29 CFR 1910.333, Selection and use of work practices"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333"
+    checked: "2026-10-23"
+  - id: P-OSHA-BUSWAY
+    title: "Standard interpretation: inserting and removing plug-in units on energized track busway (2025-08-25)"
+    publisher: "OSHA"
+    url: "https://www.osha.gov/laws-regs/standardinterpretations/2025-08-25"
+    checked: "2026-10-23"
+  - id: P-NSA-70E
+    title: "NFPA 70E: understanding approach and arc flash boundaries"
+    publisher: "National Safety Apparel"
+    url: "https://www.thinknsa.com/enespro/resources/articles/nfpa-70e-understanding-approach-and-arc-flash-boundaries/"
+    checked: "2026-10-23"
+  - id: P-CSE-NFPA110
+    title: "Critical Power: NFPA 110, Standard for Emergency and Standby Power Systems"
+    publisher: "Consulting-Specifying Engineer"
+    url: "https://www.csemag.com/critical-power-nfpa-110-standard-for-emergency-and-standby-power-systems/"
+    checked: "2026-10-23"
+  - id: P-CSE-WETSTACK
+    title: "A close look at wet stacking"
+    publisher: "Consulting-Specifying Engineer"
+    url: "https://www.csemag.com/?p=8274"
+    checked: "2026-10-23"
+  - id: P-SE-GALAXYVX
+    title: "Galaxy VX UPS operation manual (990-5452N)"
+    publisher: "Schneider Electric"
+    url: "https://productinfo.se.com/galaxyvx_ul/5b69ada2313cae0001704e8d/990-5452F%20Galaxy%20VX%20Operation/English/990-5452N_EN.pdf"
+    checked: "2026-10-23"
+  - id: P-TUV-70B
+    title: "NFPA 70B 2023: new standard for electrical equipment and infrared testing"
+    publisher: "TUV SUD"
+    url: "https://www.tuvsud.com/en-us/resource-centre/blogs/risk-engineering/nfpa-70b-2023-new-standard-for-electrical-equipment-and-infrared-testing"
+    checked: "2026-10-23"
+  - id: P-ITC-70B
+    title: "NFPA 70B 2023: new guidelines for electric inspections"
+    publisher: "Infrared Training Center"
+    url: "https://www.infraredtraining.com/en-US/home/resources/blog/nfpa-70b-2023-new-guidelines-for-electric-inspections/"
+    checked: "2026-10-23"
+  - id: P-COOLIT-CHX2000
+    title: "CHx2000 coolant distribution unit"
+    publisher: "CoolIT Systems"
+    url: "https://www.coolitsystems.com/cdu-product/chx2000/"
+    checked: "2026-10-23"
+  - id: P-OCP-PG25
+    title: "PG25 heat transfer fluid guidelines"
+    publisher: "Open Compute Project"
+    url: "https://www.opencompute.org/wp-content/uploads/2026/10/OCP-PG25-Guidelines-V1.0.0.pdf"
+    checked: "2026-10-23"
+  - id: P-EPA-608-CERT
+    title: "Section 608 technician certification requirements"
+    publisher: "US EPA"
+    url: "https://epa.gov/section608/section-608-technician-certification-requirements"
+    checked: "2026-10-23"
+  - id: P-EPA-608-LEAK
+    title: "Section 608 refrigerant management rule update (webinar slides)"
+    publisher: "US EPA"
+    url: "https://epa.gov/sites/default/files/2016-11/documents/608_rule_webinar.pdf"
+    checked: "2026-10-23"
+  - id: P-EPA-608-VENT
+    title: "Prohibition on venting refrigerants"
+    publisher: "US EPA"
+    url: "https://www.epa.gov/section608/prohibition-venting-refrigerants"
+    checked: "2026-10-23"
+  - id: P-XTRALIS-VES
+    title: "VESDA-E VES technical data sheet (UL)"
+    publisher: "Xtralis (Honeywell)"
+    url: "https://www.xtralis.com/file/12016"
+    checked: "2026-10-23"
+  - id: P-UIUC-VESDA
+    title: "Data center fire suppression procedures (VESDA alarm stages)"
+    publisher: "University of Illinois Technology Services"
+    url: "https://techservices.illinois.edu/wp-content/uploads/2025/03/ACB_fire_suppression_10092023.pdf"
+    checked: "2026-10-23"
+  - id: P-QRFS-TRIP
+    title: "Guide to dry sprinkler systems, part 10: trip testing the dry pipe valve"
+    publisher: "QRFS"
+    url: "https://blog.qrfs.com/241-guide-to-dry-sprinkler-systems-part-10-trip-testing-the-dry-pipe-valve/"
+    checked: "2026-10-23"
+  - id: P-QRFS-VALVES
+    title: "What facility managers need to inspect on a fire sprinkler system, part 5 (preaction and deluge valves)"
+    publisher: "QRFS"
+    url: "https://blog.qrfs.com/121-what-facility-managers-need-to-inspect-on-a-fire-sprinkler-system-part-5/"
+    checked: "2026-10-23"
+  - id: P-JLAB-PREACTION
+    title: "Preaction system full-flow trip test (NFPA 25)"
+    publisher: "Thomas Jefferson National Accelerator Facility"
+    url: "https://www.jlab.org/ehs/ehsmanual/Fire/Ch4App11.htm"
+    checked: "2026-10-23"
+  - id: P-FIRESYS-PREACTION
+    title: "How does a pre-action sprinkler system work?"
+    publisher: "Fire Systems, Inc."
+    url: "https://firesystems.net/2025/01/18/how-does-a-pre-action-sprinkler-system-work/"
+    checked: "2026-10-23"
+  - id: P-KOORSEN-2001
+    title: "Inspection and testing requirements for clean agent suppression"
+    publisher: "Koorsen Fire and Security"
+    url: "https://blog.koorsen.com/what-are-the-inspection-testing-requirements-for-clean-agent-fire-suppression-systems"
+    checked: "2026-10-23"
+  - id: P-STARLINE-BUSWAY
+    title: "Track Busway features and benefits"
+    publisher: "Starline (Legrand)"
+    url: "https://www.starlinepower.com/busway/"
+    checked: "2026-10-23"
+  - id: P-STARLINE-REL
+    title: "Busway reliability"
+    publisher: "Starline (Legrand)"
+    url: "https://starlinepower.com/busway-reliability"
+    checked: "2026-10-23"
+  - id: P-NVIDIA-FW
+    title: "DGX GB200 firmware update guide: compute tray firmware update process"
+    publisher: "NVIDIA"
+    url: "https://docs.nvidia.com/dgx/dgxgb200-fw-update-guide/compute-fw-update.html"
+    checked: "2026-10-23"
+  - id: P-ESDA-FUND3
+    title: "Fundamentals of ESD, part 3: basic ESD control procedures and materials"
+    publisher: "EOS/ESD Association"
+    url: "https://esda.org/assets/Documents/Fundamentals-of-ESD-Part-3-Basic-ESD-Control-Procedures-and-Materials.pdf"
+    checked: "2026-10-23"
+  - id: P-FOA-8
+    title: "FOA-8: Inspection and cleaning of fiber optic connectors"
+    publisher: "The Fiber Optic Association"
+    url: "https://www.foa.org/tech/ref/1pstandards/FOA-8.pdf"
+    checked: "2026-10-23"
+  - id: P-FOA-SAFETY
+    title: "Fiber optic safety"
+    publisher: "The Fiber Optic Association"
+    url: "https://www.thefoa.org/tech/safety.htm"
+    checked: "2026-10-23"
+  - id: P-GAO-COUNT
+    title: "Executive guide: best practices in achieving consistent, accurate physical counts of inventory and related property (GAO-02-447G)"
+    publisher: "US Government Accountability Office"
+    url: "https://www.govinfo.gov/content/pkg/GAOREPORTS-GAO-02-447G/html/GAOREPORTS-GAO-02-447G.htm"
+    checked: "2026-10-23"

@@ -88,7 +88,9 @@ def predictions() -> dict[str, str]:
 
 
 def html_page() -> str:
-    data = {**devices.load(), "telemetry": telemetry_links(), "assets": register(), "predict": predictions()}
+    from scorecard import training_portal as TP
+    training = {"kinds": TP.kind_courses(), "titles": {c["id"]: c["title"] for c in TP.content()["courses"]["courses"]}}
+    data = {**devices.load(), "telemetry": telemetry_links(), "assets": register(), "predict": predictions(), "training": training}
     tpl = sitenav.inject((ROOT / "templates" / "devices.html").read_text(encoding="utf-8"), "devices")
     body = json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/")
     return sitenav.finish(tpl.replace("__DEVICES__", body))

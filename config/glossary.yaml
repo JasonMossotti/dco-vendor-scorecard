@@ -160,6 +160,13 @@ terms:
   - {term: MW, type: acronym, expansion: Megawatt, text: "One million watts."}
   - {term: VDC, type: acronym, expansion: Volts direct current, text: "DC voltage, as in the 800 VDC pilot racks."}
   - {term: DC, type: acronym, expansion: Direct current, link: false, text: "Electric current in one direction, as from batteries."}
+  - {term: AC, type: acronym, expansion: Alternating current, link: false, text: "Utility and generator power; a rack's power shelves turn it into DC for the rack busbar."}
+  - {term: EC, type: acronym, expansion: Electronically commutated (fan motor), link: false, text: "A brushless fan motor whose speed the unit controller sets, as in the thermal walls and CRAHs."}
+  - {term: PDU, type: acronym, expansion: Power distribution unit, link: false, text: "A unit that distributes power to equipment in a rack or row and often meters it; at AUS-1 the racks take power from busway tap-offs into their power shelves."}
+  - {term: VBIOS, type: acronym, expansion: Video BIOS, link: false, text: "A GPU's own firmware, updated with the rest of a compute tray's firmware under a change."}
+  - {term: LOTO, type: acronym, expansion: Lockout/tagout, text: "Isolating hazardous energy and locking it off before work (OSHA 1910.147), under a lockout permit (EHS-R2)."}
+  - {term: GAO, type: acronym, expansion: US Government Accountability Office, link: false, text: "Its public guide on inventory counts is a reference for the spares cycle count."}
+  - {term: NSA, type: acronym, expansion: Non-semi-automatic handgun (Texas DPS firearm category), link: false, text: "A Texas DPS proficiency category for handguns that are not semi-automatic; AUS-1 guards qualify in SA (any handgun) and STG (shotgun) instead."}
   - {term: VFD, type: acronym, expansion: Variable frequency drive, text: "Controls a pump or fan motor's speed."}
   - {term: LPM, type: acronym, expansion: Liters per minute, text: "Coolant flow rate."}
   - {term: COP, type: acronym, expansion: Coefficient of performance, text: "Cooling delivered per unit of power used; higher is more efficient."}
@@ -459,7 +466,7 @@ families:
      text: "The serial number of a replaced facility part: a CDU pump assembly (CHX-P) or a UPS power module (GVX-M)."}
   - {key: EHS-EX, label: "EHS-#", pattern: 'EHS-\d', type: safety, title: Worked safety example, example: EHS-1, pages: [agreements],
      text: "A numbered example event in an SLA's worked safety credit example (Appendix B)."}
-  - {key: SHEET, label: "A-###, E-###, M-###, D-###", pattern: '[AEMD]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site, agreements],
+  - {key: SHEET, label: "A-###, E-###, M-###, D-###", pattern: '[AEMD]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site, agreements, training],
      text: "A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical, D for equipment details (one representative sheet per product, typical of every unit of it)."}
   # --- Deployments (Deployments tab)
   - {key: DEP-GATE, label: "G#", pattern: 'G[0-3]', type: record, title: Deployment gate, example: G1, pages: [deployments, overview, weekly], see: "deployments/",
@@ -524,6 +531,8 @@ families:
      text: "A UPS for a hall's mechanical loads (CDUs and pumps), named by hall and number."}
   - {key: EQ-USS, label: "USS-[hall]#", pattern: 'USS-[A-C]\d', type: equipment, title: Unit substation, example: USS-A3,
      text: "Steps 13.8 kV down to 480 V for a UPS, named by hall and number."}
+  - {key: EQ-MVSST, label: "MVSST-C#", pattern: 'MVSST-C\d', type: equipment, title: Solid-state transformer (Hall C pilot), example: MVSST-C1,
+     text: "One of the two medium-voltage solid-state transformers that will feed the Hall C 800 VDC pilot racks."}
   - {key: EQ-USSCH, label: "USS-CH#", pattern: 'USS-CH\d', type: equipment, title: Chiller unit substation, example: USS-CH1,
      text: "One of the 4 unit substations (2N pairs) that power the chillers and facility water pumps."}
   - {key: EQ-ER, label: "ER-[hall]", pattern: 'ER-[A-C]', type: equipment, title: Electrical room, example: ER-A,
@@ -592,7 +601,9 @@ plain:   # capitalised text that is not a code
     - {terms: [MOCK, ILLUSTRATIVE], why: "The contracts' status banner: fictional and illustrative."}
     - {terms: [ONLY, OK, LIVE, FEED], why: "Words set in capitals for emphasis or as a status label."}
     - {terms: [YYYY-MM-DD], why: "A date format shown as a placeholder."}
-    - {terms: [III], why: "A roman numeral: Level III, the Texas commissioned (armed) security officer license."}
+    - {terms: [III, II], why: "Roman numerals: Level III, the Texas commissioned (armed) security officer license; Type II in a standard's class names."}
+    - {terms: [PM], why: "Preventive maintenance, in the Training tab's PM guides and the Incident Portal's links to them; the PM-#### family is the Landlord's maintenance record."}
+    - {terms: [Q3400], why: "Part of a switch's model number (Quantum-X800 Q3400-RA)."}
     - {terms: [FAQ, EAB], why: "Words inside a source's web address on the Deployments tab."}
     - {terms: [AI], why: "Artificial intelligence, in a certification's name (NVIDIA-Certified Professional: AI Infrastructure); the AI-### family is the BMS analog input point."}
     - {terms: [MB, GB, TB, PB, EB], why: "Units of data size: megabytes, gigabytes, terabytes, petabytes, and exabytes."}
