@@ -120,7 +120,7 @@ Exhibit from the Interface Agreement (IA-AUS1-001, version 1.4.0), which governs
 | Storage nodes and drives (physical) | A | R | - | C | - | C |
 | Meet-me rooms and cross-connects | C | C | A/R | - | - | - |
 | Spares cage, inventory, and RMA shipments | A | R | - | C | - | C |
-| Building perimeter, lobby, and access control system | C | I | A/R | - | - | C |
+| Property perimeter, gates, and patrols | A | I | C | - | - | R |
 | Customer halls and cage access lists | A | R | R | - | - | R |
 | Guard posts and patrols in the Customer halls | A | I | I | - | - | R |
 | Customer hall door alarms (forced and held) and guard response | A | I | I | - | - | R |

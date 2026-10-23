@@ -46,8 +46,9 @@ parties:
     fictional: true
     role: "Wholesale data center owner-operator: owns and operates the building, power, cooling, fire protection, and building monitoring; leases the halls to the Customer."
   security_partner:
-    name: "To be contracted"
-    role: "Access control, CCTV, escorts (later phase)."
+    name: "Llano Gate Protective Services, LLC"
+    fictional: true
+    role: "Armed Level III officers for the whole property: gates and perimeter, the security console, the hall entrance posts, patrols, visitors, and media destruction (sheets A-002 and A-102)."
   utility:
     name: "Serving utility (ERCOT region)"
     role: "Owns the 138 kV substation and its transformers; serves the Landlord."
@@ -487,6 +488,137 @@ plants:
   mechanical_power:
     chiller_unit_subs: 4              # 2N pairs of unit substations for the chiller yard
     unit_sub_product: unit_sub_2500
+
+# -----------------------------------------------------------------------------
+# Security: the property, its zones, gates, posts, and exterior devices.
+# The Security Partner guards and patrols the whole property (Security SLA,
+# SEC-POST; Interface Agreement DM-SEC). Exterior positions are campus meters
+# from the north-west corner of the property line (sheet A-001's grid); the
+# building's doors, readers, and cameras are placed on the building grid by
+# the drawing code (sheet A-102). The hall cameras, Customer doors, and
+# interior tour checkpoints come from config/security.yaml, which the
+# synthetic security data (data/security/) is generated from; nothing here
+# changes that data.
+# -----------------------------------------------------------------------------
+security:
+  property: {width_m: 250, depth_m: 160, fence_inset_m: 10,
+             fence: "2.4 m anti-climb mesh fence with outriggers on the property line inset; vehicle-rated cable in the gate approaches"}
+  zones:
+    - id: Z0
+      name: Public approach
+      where: "Outside the property fence: the access road to the main gate and the pedestrian turnstile."
+      entry: "Anyone. No badge."
+      method: "None; the main gate's intercom and plate camera (CAM-X-01) at the fence line."
+      controlled_by: Customer
+      patrolled_by: "Security Partner, by camera from the security console; the exterior tour checks the fence line from inside."
+      response: "A person or vehicle loitering at the gate: P3 (camera review, intercom challenge)."
+    - id: Z1
+      name: Perimeter and grounds
+      where: "Inside the property fence: roads, staff and visitor parking, the truck court, the guard house, and the fire lane."
+      entry: "Badge holders of any party; pre-registered visitors and drivers on a Customer-approved request."
+      method: "Badge or plate read at the main gate, or the security console opening the gate after an intercom check; the pedestrian turnstile reads badges."
+      controlled_by: Customer
+      patrolled_by: "Security Partner: the exterior tour (POST-PATROL) and the exterior cameras."
+      response: "An intruder inside the fence: P1 (guard engaged in 3 minutes). A gate or the fence found open: P2 (5 minutes)."
+    - id: Z2
+      name: Equipment yards
+      where: "The generator yard, the chiller yard with USS-CH1 to USS-CH4, and the MV switchgear and MVSST pad, each behind its own yard fence."
+      entry: "The Landlord's staff and its vendors; others only with a Landlord escort."
+      method: "The Landlord's yard readers (Generator yard, Chiller yard, MV switchgear) on its base building access control."
+      controlled_by: Landlord
+      patrolled_by: "Security Partner, outside the yard fences: the exterior tour checks each yard gate is shut and locked."
+      response: "A yard gate found open with no Landlord work under way: P2, the console calls the Landlord's operator."
+    - id: Z3
+      name: Building shell and lobby
+      where: "The security lobby and mantrap, the secure corridor, the NOC, staging and burn-in, and the receiving dock."
+      entry: "Badge holders of any party; visitors signed in at the security console."
+      method: "The Landlord's Main lobby reader and the mantrap; the Customer's OPS-MAIN reader at the NOC; the dock door opened by the dock post."
+      controlled_by: "Landlord (lobby and mantrap), Customer (NOC, dock)"
+      patrolled_by: "Security Partner: the security console, the receiving dock post (day), and the interior tour (Receiving dock, Corridor east)."
+      response: "Tailgating through the mantrap: P1. A dock door held open: P2."
+    - id: Z4
+      name: Landlord plant rooms
+      where: "The electrical rooms (ER-A, ER-B, ER-C), the meet-me rooms (MMR-1, MMR-2), the fire riser, and the pump room."
+      entry: "The Landlord's staff and its vendors; carriers in the meet-me rooms with a Landlord escort; the fire department."
+      method: "The Landlord's readers (Hall A electrical room, Hall B electrical room, and the riser, pump room, and meet-me room doors)."
+      controlled_by: Landlord
+      patrolled_by: "Landlord. The Security Partner passes the doors on the interior tour but does not enter."
+      response: "The Landlord's door alarms go to the Landlord's operator; the console sends a guard on request."
+    - id: Z5
+      name: Customer halls
+      where: "Hall A, Hall B, Hall C (planned), and the telecom room (the out-of-band network)."
+      entry: "People on the hall's access list; visitors only with a named escort who badges in with them."
+      method: "The Customer's hall door readers (HALL-A, HALL-B) beside a guard post; emergency exits on door contacts only."
+      controlled_by: Customer
+      patrolled_by: "Security Partner: the Hall A and Hall B entrance posts and the interior tour; and the hall cameras."
+      response: "Door forced: P1 (guard engaged in 3 minutes). Door held past 60 seconds: P2. A visitor without an escort: P2."
+    - id: Z6
+      name: Spares cage and media room
+      where: "The spares cage (trays, PSUs, optics, drives) and the media destruction room beside it."
+      entry: "Spares cage: the IT Partner's named technicians. Media room: the Security Partner's destruction operator with a witness."
+      method: "The Customer's SPARES-CAGE reader; the media room reader admits two people together (two-person rule)."
+      controlled_by: Customer
+      patrolled_by: "Security Partner: the interior tour (Hall A spares aisle) and the spares cage cameras."
+      response: "Door forced, or media unaccounted for in the chain of custody: P1."
+  gates:
+    - {id: GATE-MAIN, name: "Main vehicle gate", kind: "Sliding vehicle gate with a crash-rated wedge barrier inside it", at: [10, 64], zone: Z1,
+       reader: "Badge and plate read; intercom to the security console", camera: CAM-X-01}
+    - {id: GATE-PED, name: "Pedestrian turnstile", kind: "Full-height turnstile", at: [10, 52], zone: Z1,
+       reader: "Badge reader; intercom to the security console", camera: CAM-X-02}
+    - {id: GATE-TRUCK, name: "Truck court gate", kind: "Swing gate", at: [62, 61], zone: Z1,
+       reader: "Opened by the receiving dock post (day) or the console for a booked delivery", camera: CAM-X-04}
+    - {id: GATE-FIRE, name: "Fire lane gate", kind: "Swing gate, normally locked", at: [70, 150], zone: Z1,
+       reader: "Fire department key box; the console can open it", camera: CAM-X-14}
+    - {id: GATE-GEN, name: "Generator yard gate", kind: "Yard gate", at: [89, 32.5], zone: Z2, reader: "Landlord reader: Generator yard", camera: CAM-X-07}
+    - {id: GATE-CH, name: "Chiller yard gate", kind: "Yard gate", at: [93, 111], zone: Z2, reader: "Landlord reader: Chiller yard", camera: CAM-X-13}
+    - {id: GATE-MV, name: "MV switchgear yard gate", kind: "Yard gate", at: [149, 66], zone: Z2, reader: "Landlord reader: MV switchgear", camera: CAM-X-11}
+    - {id: GATE-UTIL, name: "Utility substation gate", kind: "Utility gate on the east fence", at: [240, 58], zone: utility,
+       reader: "Utility lock; the utility's crews enter the substation from outside and never cross the property", camera: CAM-X-10}
+  barriers:
+    - {id: BAR-1, name: "Wedge barrier", at: [14, 64], text: "Crash-rated wedge barrier inside the main gate; raised unless the console lowers it for a vehicle."}
+    - {id: BAR-2, name: "Lobby bollards", at: [93, 89], to: [111, 89], text: "Fixed bollards along the lobby entrance."}
+  guard_house: {id: GH-1, name: "Guard house", at: [16, 67], size: [9, 6], zone: Z1,
+                text: "Patrol start reader, the locked shotgun rack (on a door contact and a camera), the exterior tour kit, and a radio base."}
+  utility_fence: {at: [182, 37], size: [56, 42], text: "The utility's own fence around the substation; outside the Security Partner's patrol."}
+  exterior_recorder: NVR-5
+  exterior_cameras:     # id, campus position, direction in degrees (0 east, 90 south), what it watches
+    - {id: CAM-X-01, at: [14, 61], dir: 180, watches: "Main gate approach and plate read"}
+    - {id: CAM-X-02, at: [14, 48.5], dir: 180, watches: "Pedestrian turnstile"}
+    - {id: CAM-X-03, at: [31, 80], dir: 225, watches: "Guard house and the shotgun rack door"}
+    - {id: CAM-X-04, at: [59, 72], dir: 300, watches: "Truck court gate"}
+    - {id: CAM-X-05, at: [92, 50], dir: 200, watches: "Truck court and the dock doors"}
+    - {id: CAM-X-06, at: [13, 13], dir: 45, watches: "North-west fence corner"}
+    - {id: CAM-X-07, at: [85, 44], dir: 315, watches: "Generator yard, west"}
+    - {id: CAM-X-08, at: [195, 26], dir: 170, watches: "Generator yard, east"}
+    - {id: CAM-X-09, at: [237, 13], dir: 135, watches: "North-east fence corner"}
+    - {id: CAM-X-10, at: [181, 80], dir: 315, watches: "Utility substation fence and gate lane"}
+    - {id: CAM-X-11, at: [181, 57], dir: 135, watches: "MV switchgear yard"}
+    - {id: CAM-X-12, at: [237, 147], dir: 225, watches: "South-east fence corner"}
+    - {id: CAM-X-13, at: [194, 123], dir: 200, watches: "Chiller yard"}
+    - {id: CAM-X-14, at: [74, 146], dir: 270, watches: "Fire lane gate"}
+    - {id: CAM-X-15, at: [37, 98], dir: 0, watches: "Staff and visitor parking"}
+    - {id: CAM-X-16, at: [107, 92], dir: 180, watches: "Lobby entrance and bollards"}
+  lighting: {fence_spacing_m: 30, text: "Pole lights along the fence line, the roads, and the parking; every gate and yard gate lit at night."}
+  exterior_tour:
+    every_h: 4
+    note: "Recorded on the patrol's handheld; the tour rule in the Security SLA measures the interior checkpoints only in this version."
+    checkpoints:
+      - {id: XC-1, name: "Main gate", at: [20, 58]}
+      - {id: XC-2, name: "Fence north-west", at: [18, 18]}
+      - {id: XC-3, name: "Generator yard gate", at: [83, 30]}
+      - {id: XC-4, name: "Fence north-east", at: [232, 18]}
+      - {id: XC-5, name: "Substation fence", at: [205, 86]}
+      - {id: XC-6, name: "Chiller yard gate", at: [87, 111]}
+      - {id: XC-7, name: "Fire lane gate", at: [70, 142]}
+      - {id: XC-8, name: "Truck court gate", at: [56, 57]}
+    route: [[25, 67], XC-1, XC-2, [83, 18], XC-3, [83, 18], XC-4, [232, 86], XC-5, [232, 86], [232, 128], [87, 128], XC-6,
+            [87, 128], [70, 128], XC-7, [70, 96], [56, 96], [56, 70], XC-8, [25, 57], [25, 67]]
+  posts:   # the five posts of the Security SLA (posts.list); where each stands and the reader that proves it
+    - {id: POST-SOC, room: "Security lobby", zone: Z3}
+    - {id: POST-HA, room: "Hall A entrance", zone: Z3}
+    - {id: POST-HB, room: "Hall B entrance", zone: Z3}
+    - {id: POST-DOCK, room: "Receiving dock", zone: Z3}
+    - {id: POST-PATROL, room: "Guard house", zone: Z1}
 
 # -----------------------------------------------------------------------------
 # Monitoring. The Landlord operates EcoStruxure day to day. The Customer's

@@ -74,10 +74,10 @@ demarcations:
     evidence: "Feed availability measured by the Customer collector (OT-KM-06)."
   - id: "DM-SEC"
     system: "Physical security"
-    boundary: "The Customer hall entrance doors: the Landlord secures the perimeter, lobby, and corridors up to each door; the Security Partner covers the door and everything inside it."
+    boundary: "The property line: the Security Partner guards and patrols the whole property, gates and perimeter included, under the Customer's contract and with the Landlord's consent under the lease; the Landlord keeps the fences, gates, barriers, lobby, and its own readers in repair and controls entry to its yards and plant rooms (zones Z2 and Z4); the Customer's access control covers the hall doors, spares cage, media room, and dock (zones Z5 and Z6). The utility substation is the utility's, behind its own fence."
     upstream: "landlord"
     downstream: "security_partner"
-    evidence: "Landlord lobby badge reader events; Customer access control system events at each hall door (door alarms, guard post readers)."
+    evidence: "Landlord lobby and yard badge reader events; Customer access control system events at each hall door (door alarms, guard post readers); the gate log and exterior cameras."
 
 raci_legend:
   R: "Responsible: performs the work"
@@ -109,7 +109,7 @@ raci:
   - {component: "Storage nodes and drives (physical)", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "C"}
   - {component: "Meet-me rooms and cross-connects", Customer: "C", IT Partner: "C", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "-"}
   - {component: "Spares cage, inventory, and RMA shipments", Customer: "A", IT Partner: "R", Landlord: "-", OEM: "C", Utility: "-", Security Partner: "C"}
-  - {component: "Building perimeter, lobby, and access control system", Customer: "C", IT Partner: "I", Landlord: "A/R", OEM: "-", Utility: "-", Security Partner: "C"}
+  - {component: "Property perimeter, gates, and patrols", Customer: "A", IT Partner: "I", Landlord: "C", OEM: "-", Utility: "-", Security Partner: "R"}
   - {component: "Customer halls and cage access lists", Customer: "A", IT Partner: "R", Landlord: "R", OEM: "-", Utility: "-", Security Partner: "R"}
   - {component: "Guard posts and patrols in the Customer halls", Customer: "A", IT Partner: "I", Landlord: "I", OEM: "-", Utility: "-", Security Partner: "R"}
   - {component: "Customer hall door alarms (forced and held) and guard response", Customer: "A", IT Partner: "I", Landlord: "I", OEM: "-", Utility: "-", Security Partner: "R"}

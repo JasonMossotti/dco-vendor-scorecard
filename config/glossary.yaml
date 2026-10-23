@@ -88,6 +88,7 @@ terms:
   - {term: P90, type: acronym, expansion: 90th percentile, text: "The value nine in ten cases come in at or under. The Availability tab gives it beside each median, so a long tail shows."}
   - {term: SLA, type: acronym, expansion: Service level agreement, link: false, text: "The contract schedule that sets service levels, how they are measured, and the credits for missing them. Each partner signs its own."}
   - {term: AED, type: acronym, expansion: Automated external defibrillator, text: "The portable device that shocks a heart back into rhythm. Every guard is trained in CPR, AED, and first aid."}
+  - {term: NOC, type: acronym, expansion: Network operations center, text: "The site operations room on the south side of the building: the operations team and the Incident Commander's desk."}
   - {term: CFOT, type: acronym, expansion: Certified Fiber Optic Technician, text: "The Fiber Optic Association's technician certification. The IT Partner's fiber inspection and cleaning credential is CFOT or an equivalent."}
   - {term: FOA, type: acronym, expansion: Fiber Optic Association, text: "The professional society that certifies fiber optic technicians (CFOT)."}
   - {term: DPS, type: acronym, expansion: Texas Department of Public Safety, text: "Its Private Security Program licenses security officers in Texas. Every Security Partner guard at the site holds a Level III commission."}
@@ -458,7 +459,7 @@ families:
      text: "The serial number of a replaced facility part: a CDU pump assembly (CHX-P) or a UPS power module (GVX-M)."}
   - {key: EHS-EX, label: "EHS-#", pattern: 'EHS-\d', type: safety, title: Worked safety example, example: EHS-1, pages: [agreements],
      text: "A numbered example event in an SLA's worked safety credit example (Appendix B)."}
-  - {key: SHEET, label: "A-###, E-###, M-###, D-###", pattern: '[AEMD]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site],
+  - {key: SHEET, label: "A-###, E-###, M-###, D-###", pattern: '[AEMD]-\d{3}', type: record, title: Site drawing sheet, example: A-101, pages: [site, agreements],
      text: "A sheet in the site drawing set: A for architectural plans, E for electrical, M for mechanical, D for equipment details (one representative sheet per product, typical of every unit of it)."}
   # --- Deployments (Deployments tab)
   - {key: DEP-GATE, label: "G#", pattern: 'G[0-3]', type: record, title: Deployment gate, example: G1, pages: [deployments, overview, weekly], see: "deployments/",
@@ -523,6 +524,20 @@ families:
      text: "A UPS for a hall's mechanical loads (CDUs and pumps), named by hall and number."}
   - {key: EQ-USS, label: "USS-[hall]#", pattern: 'USS-[A-C]\d', type: equipment, title: Unit substation, example: USS-A3,
      text: "Steps 13.8 kV down to 480 V for a UPS, named by hall and number."}
+  - {key: EQ-USSCH, label: "USS-CH#", pattern: 'USS-CH\d', type: equipment, title: Chiller unit substation, example: USS-CH1,
+     text: "One of the 4 unit substations (2N pairs) that power the chillers and facility water pumps."}
+  - {key: EQ-ER, label: "ER-[hall]", pattern: 'ER-[A-C]', type: equipment, title: Electrical room, example: ER-A,
+     text: "A hall's electrical room on the north side of the building: its UPSs, batteries, and air handlers. The Landlord's plant room (zone Z4)."}
+  - {key: EQ-MMR, label: "MMR-#", pattern: 'MMR-[12]', type: equipment, title: Meet-me room, example: MMR-1,
+     text: "One of the two meet-me rooms where the carriers enter the building (west and east). The Landlord's plant room (zone Z4)."}
+  - {key: ZONE, label: "Z#", pattern: 'Z[0-6]', type: record, title: Security zone, example: Z5, see: "site/A-002_security_site_plan.svg",
+     text: "One of the site's security zones: Z0 public approach, Z1 perimeter and grounds, Z2 equipment yards, Z3 building shell and lobby, Z4 Landlord plant rooms, Z5 Customer halls, Z6 spares cage and media room (sheets A-002 and A-102)."}
+  - {key: GATE, label: "GATE-...", pattern: 'GATE-(?:MAIN|PED|TRUCK|FIRE|GEN|CH|MV|UTIL)', type: equipment, title: Property or yard gate, example: GATE-MAIN,
+     text: "A gate on sheet A-002: the main vehicle gate, the pedestrian turnstile, the truck court and fire lane gates (worked by the Security Partner), the Landlord's yard gates, and the utility's substation gate."}
+  - {key: XC, label: "XC-#", pattern: 'XC-[1-8]', type: record, title: Exterior tour checkpoint, example: XC-1,
+     text: "A checkpoint on the Security Partner's exterior tour of the fence line, gates, and yards, every 4 hours (sheet A-002)."}
+  - {key: NVR, label: "NVR-#", pattern: 'NVR-[1-5]', type: equipment, title: Video recorder, example: NVR-1,
+     text: "A recorder on the Customer's video system. NVR-1 to NVR-4 record the building's cameras and keep at least 90 days; NVR-5 records the exterior cameras."}
   - {key: EQ-TX, label: "TX-#", pattern: 'TX-\d', type: equipment, title: Utility transformer, example: TX-1,
      text: "One of the two utility-owned 138 kV to 13.8 kV transformers."}
   - {key: EQ-GEN, label: "GEN-#", pattern: 'GEN-\d', type: equipment, title: Standby generator, example: GEN-3,

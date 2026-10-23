@@ -72,7 +72,7 @@ Each service level has an **Expected** level (missing it triggers root cause ana
 
 | ID | Service | Description |
 |---|---|---|
-| SEC-POST | Guard posts and patrols | The Hall A and Hall B entrance posts, the security console, the receiving dock post (day shift), and a roving patrol of the Customer halls with tour checkpoints. |
+| SEC-POST | Guard posts and patrols | The whole property (zones Z0 to Z6, sheets A-002 and A-102). The Hall A and Hall B entrance posts, the security console (which also works the property gates), the receiving dock post (day shift), and a roving patrol with an interior tour of the Customer halls and an exterior tour of the fence line, gates, and yards. The utility substation, behind the utility's own fence, is outside the patrol. |
 | SEC-ALARM | Door alarm monitoring and response | Watching the access control system for door forced and door held alarms on the Customer's doors, acknowledging them at the console, and sending a guard to the door. |
 | SEC-VISIT | Visitor sign-in and escort monitoring | Signing visitors in against a Customer-approved request, issuing visitor badges, and confirming an escort badges in with each visitor. |
 | SEC-VIDEO | Video system operation | Watching camera health on the Customer's video system, raising faults, and confirming each recorder keeps 90 days of video. The Security Partner views video only for an incident and never exports it. |
@@ -81,7 +81,8 @@ Each service level has an **Expected** level (missing it triggers root cause ana
 
 ### 3.2 Not Security Partner scope
 
-- The building perimeter, lobby, and base building access control (Landlord, DM-SEC).
+- Keeping the fences, gates, barriers, lobby turnstiles, and the base building access control in repair, and the Landlord's equipment yards and plant rooms (zones Z2 and Z4) (Landlord, DM-SEC). The Security Partner patrols past them and responds when asked; it does not enter them.
+- The utility substation behind the utility's fence (Utility).
 - Security policy, access approvals, and the access control, video, and identity systems themselves (Customer).
 - Removing failed parts and their media from the racks (IT Partner, HO-5).
 
@@ -116,7 +117,7 @@ Exhibit from the Interface Agreement (IA-AUS1-001, version 1.4.0), which governs
 | Storage nodes and drives (physical) | A | R | - | C | - | C |
 | Meet-me rooms and cross-connects | C | C | A/R | - | - | - |
 | Spares cage, inventory, and RMA shipments | A | R | - | C | - | C |
-| Building perimeter, lobby, and access control system | C | I | A/R | - | - | C |
+| Property perimeter, gates, and patrols | A | I | C | - | - | R |
 | Customer halls and cage access lists | A | R | R | - | - | R |
 | Guard posts and patrols in the Customer halls | A | I | I | - | - | R |
 | Customer hall door alarms (forced and held) and guard response | A | I | I | - | - | R |
@@ -143,6 +144,7 @@ Exhibit from the Interface Agreement (IA-AUS1-001, version 1.4.0), which governs
 - Confirmed tailgating or an unbadged person in a Customer hall.
 - Storage media unaccounted for at any point in chain of custody.
 - Every camera covering a Customer hall entrance offline.
+- An intruder inside the property fence.
 
 **Examples:** Door forced alarm on the Hall B mantrap inner door. A drive serial missing from the destruction log for a tray waiting to ship.
 
@@ -155,6 +157,7 @@ Exhibit from the Interface Agreement (IA-AUS1-001, version 1.4.0), which governs
 - Door held open past its allowed time at a Customer hall or the receiving dock.
 - A visitor in a Customer hall without an escort.
 - A camera covering a Customer hall door offline.
+- A property gate or the fence found open or breached.
 
 **Examples:** Door held alarm on the Hall A receiving door during a delivery. Camera CAM-B-04 offline over the Hall B entrance.
 
@@ -167,6 +170,7 @@ Exhibit from the Interface Agreement (IA-AUS1-001, version 1.4.0), which governs
 - A camera offline that covers no Customer hall door.
 - A guard tour checkpoint missed.
 - A badge reader fault with the door secured.
+- An exterior camera or a perimeter light out.
 
 **Examples:** Camera CAM-A-11 over the Hall A spares aisle offline.
 
@@ -303,6 +307,33 @@ A post is staffed only when the assigned guard is badged in at the post reader. 
 - Firearms are stored in the guard house's locked rack when not carried; the rack is on a door contact and a camera.
 
 The Customer keeps every guard's commission, course, MMPI, proficiency, and continuing education dates in the certification register (/training/). Only post shifts worked by a guard with every qualification current count toward SEC-CSL-01, as for the other partners' staffing service levels; the register shows that recalculation.
+
+**Post orders** (where each post stands is on sheets A-002 and A-102):
+
+- **POST-SOC**, Security console in the security lobby (zone Z3), day and night.
+  - Watch the access control alarms and every camera, the exterior cameras included; acknowledge each alarm at the console and send a guard (door forced P1, door held P2).
+  - Work the property gates (GATE-MAIN, GATE-TRUCK, GATE-FIRE) from the console after an intercom check and a badge or plate read against the day's approved list; lower the wedge barrier only for that vehicle.
+  - Sign visitors in against a Customer-approved request, issue visitor badges for the named halls only, and confirm the escort badges in with the visitor.
+  - Radio check with every post each hour; call the Landlord's operator for any alarm in its yards or plant rooms (zones Z2 and Z4).
+  - Stay at the console until the relief badges the console reader.
+- **POST-HA**, Hall A entrance in the secure corridor (zone Z3, at the Z5 door), day and night.
+  - Watch each person badge the hall reader; challenge anyone who follows without badging (tailgating is P1).
+  - A visitor enters only with the escort named on the request, both badging within 2 minutes.
+  - Respond first to Hall A's door alarms; badge the alarmed door's reader on arrival.
+  - Handgun only; a shotgun never enters a data hall. Leave the post only when the relief has badged the post reader.
+- **POST-HB**, Hall B entrance in the secure corridor (zone Z3, at the Z5 door), day and night.
+  - The Hall A entrance orders, at Hall B, including the Hall B deployment area's deliveries under escort.
+  - Count racks and trays moved into the hall against the deployment work order; anything unlisted waits at the dock.
+- **POST-DOCK**, Receiving dock (zone Z3), day shift.
+  - Open the truck court gate (GATE-TRUCK) for booked deliveries only; drivers stay in the truck court.
+  - Check seals and count against the delivery; the dock door stays shut unless unloading under escort.
+  - Before any failed part leaves, match every drive serial to a destruction certificate (media destruction, HO-5); no certificate, no shipment.
+  - The shotgun may be carried at this post; it is returned to the guard house rack at the end of the shift.
+- **POST-PATROL**, Roving patrol, from the guard house (zone Z1), day and night.
+  - Badge the Patrol start reader at the guard house. Interior tour every 2 hours (the eight checkpoints of the tour rule, sheet A-102); exterior tour every 4 hours (XC-1 to XC-8, sheet A-002).
+  - On the exterior tour, check the fence line, every gate shut and locked, each yard gate (Generator yard, Chiller yard, MV switchgear) shut, the lights. Report an exterior camera or light out as P3 and an open gate as P2.
+  - Observe the utility substation from outside its fence; never enter it, the Landlord's yards, or its plant rooms.
+  - Draw the shotgun from the guard house rack for the exterior tour and return it before the interior tour.
 
 ## 7. Door Alarms
 

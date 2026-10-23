@@ -339,6 +339,20 @@ def hall_plan(site: dict, hall_id: str, sheet: str, marks: dict | None = None) -
 DOCK_W, NORTH_D, SOUTH_D = 11.0, 9.0, 7.0
 
 
+def south_rooms(bw: float) -> list[tuple[str, str, float, float]]:
+    """(name, note, x, width) of the support rooms along the building's south wall, west to east, in building meters."""
+    rooms = [("Security lobby", "mantrap, console", 7.0), ("MMR-1", "meet-me room, west", 5.0),
+             ("NOC", "site ops, IC desk", 5.5), ("Spares cage", "trays, PSUs, optics", 5.5),
+             ("Media room", "destruction", 4.0), ("Fire riser", "FACP", 3.5), ("Pump room", "FWP-1..3", 5.0),
+             ("Telecom", "OOB network", 4.5)]
+    rooms.append(("MMR-2", "meet-me room, east", bw - sum(r[2] for r in rooms)))
+    out, x = [], 0.0
+    for name, note, w in rooms:
+        out.append((name, note, x, w))
+        x += w
+    return out
+
+
 def building_dims(site: dict) -> tuple[float, float]:
     """(width, depth) of the building in meters, from the halls it contains."""
     geos = [hall_geometry(site, h) for h in site["halls"]]
@@ -370,6 +384,7 @@ def building_plan(site: dict, sheet: str = "A-101", marks: dict | None = None) -
     svg.rect(X(0), Y(0), bw * k, bd * k, sw=2.6)
     # dock and staging zone
     svg.rect(X(0), Y(0), dock_w * k, (north_d + hall_d) * k, fill="#f6f7f9", stroke=INK, sw=1.2)
+    svg.mark("Loading dock", X(0), Y(0), dock_w * k, (north_d + hall_d) * k)
     svg.text(X(dock_w / 2), Y(4), "Loading dock", size=11, anchor="middle", weight="bold")
     svg.text(X(dock_w / 2), Y(5.2), "2 truck positions", size=9, anchor="middle", fill=MUTED)
     svg.line(X(0), Y(9), X(dock_w), Y(9), sw=1.0)
@@ -430,19 +445,11 @@ def building_plan(site: dict, sheet: str = "A-101", marks: dict | None = None) -
     sy = north_d + hall_d
     svg.rect(X(0), Y(sy), bw * k, 2.4 * k, fill="#f3f5f7", stroke=INK, sw=1.0)
     svg.text(X(bw / 2), Y(sy + 1.5), "Secure corridor (badge and camera coverage)", size=9.5, anchor="middle", fill=MUTED)
-    rooms = [("Security lobby", "mantrap, guard desk", 7.0), ("MMR-1", "meet-me room, west", 5.0),
-             ("NOC", "site ops and IC desk", 7.0), ("Spares cage", "trays, PSUs, optics", 6.0),
-             ("Fire riser", "FACP", 4.0), ("Pump room", "FWP-1..3", 6.0),
-             ("Telecom", "OOB network", 5.0)]
-    used = sum(r[2] for r in rooms)
-    rooms.append(("MMR-2", "meet-me room, east", bw - used))
-    rx = 0.0
-    for name, sub, w in rooms:
+    for name, sub, rx, w in south_rooms(bw):
         svg.rect(X(rx), Y(sy + 2.4), w * k, (south_d - 2.4) * k, fill=PAPER, stroke=INK, sw=1.0)
         svg.mark(name, X(rx), Y(sy + 2.4), w * k, (south_d - 2.4) * k)
-        svg.text(X(rx + w / 2), Y(sy + 4.4), name, size=10, anchor="middle", weight="bold")
+        svg.text(X(rx + w / 2), Y(sy + 4.4), name, size=10 if w >= 4.5 else 9, anchor="middle", weight="bold")
         svg.text(X(rx + w / 2), Y(sy + 5.5), sub, size=8.5, anchor="middle", fill=MUTED)
-        rx += w
     # compass and scale
     cx, cy = X(bw) + 60, oy + 20
     svg.line(cx, cy + 22, cx, cy - 18, sw=1.6)
@@ -842,8 +849,12 @@ def sheets(site: dict, marks: dict | None = None) -> list[tuple[str, str, str, s
     """(sheet number, file name, title, svg) for every drawing. Pass ``marks`` (a dict) to also collect,
     per sheet number, where each named item is drawn: {sheet: {name: [[x, y, w, h], ...]}}."""
     m = (lambda num: marks.setdefault(num, {})) if marks is not None else (lambda num: None)
+    from scorecard.security_drawings import building_security, security_site_plan
     out = [("A-001", "A-001_campus_plan.svg", "Campus plan", campus_plan(site, marks=m("A-001"))),
-           ("A-101", "A-101_building_plan.svg", "Building plan", building_plan(site, marks=m("A-101")))]
+           ("A-002", "A-002_security_site_plan.svg", "Security site plan", security_site_plan(site, marks=m("A-002"))),
+           ("A-101", "A-101_building_plan.svg", "Building plan", building_plan(site, marks=m("A-101"))),
+           ("A-102", "A-102_building_security_zones.svg", "Building security zones",
+            building_security(site, marks=m("A-102")))]
     for i, h in enumerate(site["halls"], 1):
         num = f"A-2{i:02d}"
         slug = h["name"].split(" (")[0].lower().replace(" ", "_")
