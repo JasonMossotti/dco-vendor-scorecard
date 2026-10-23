@@ -1,0 +1,1040 @@
+# =============================================================================
+# AUS-1 training portal: alarm job guides (portfolio demo; all data fictional)
+# -----------------------------------------------------------------------------
+# One guide per alarm signal on the Customer alarm board (/alarms/), plus the Security Partner's door alarms. Every
+# alarm on the board and every signal the alarm map can raise matches exactly one guide (tested). The page computes
+# the rest from the data: who owns it (the RACI row), how often the sample raised it and its real records, the
+# credentials and permits the work needs, and the emergency procedure it escalates to.
+#
+#   id          the page address: /training/#guide/<id>
+#   signals     regular expressions on the alarm's signal (config/change_alarms.yaml, and the BMS texts)
+#   categories  Incident Portal record categories (Security incident reports: Door held, Door forced)
+#   course      the course (config/training/courses.yaml) this guide belongs to
+#   raci        the RACI row that names the owner (null when `owner` says who, as for a change overrun)
+#   owner       optional: who owns it, when no one RACI row does
+#   procedure   the emergency procedure it escalates to (config/emergency.yaml type id), or null
+#   means       what the alarm means (1 to 3 sentences)
+#   first15     what the person on shift does in the first 15 minutes (3 to 5 short items)
+#   safety      safety and permits (1 to 3 short items)
+#   steps       the repair or response steps (3 to 7 short items)
+#   rts         return-to-service checks (2 to 4 short items)
+#   refs        reference ids from the references list at the end of this file
+# =============================================================================
+
+guides:
+- id: utility-lost
+  title: Utility power lost
+  signals:
+  - ^Utility power lost$
+  categories: []
+  course: mv
+  raci: Generators, paralleling controls, and fuel
+  procedure: power_utility
+  means: "Both utility mains or one of them lost voltage, so the site is riding on UPS batteries and flywheel time until the generators start, synchronize, and take load. Every minute on generator spends fuel, and a generator that fails to start or close leaves that bus on battery only."
+  first15:
+  - "Confirm in Telemetry (utility) and Live which mains are dead and that every UPS rode through."
+  - "Watch the generators start, close to the bus, and take load; note the lowest UPS ride-through margin."
+  - "Page the Landlord for generators, paralleling, and fuel; they call the utility for the cause and an estimate."
+  - "Freeze all change work site-wide and stop any job in progress on the power path."
+  - "Open the utility outage procedure at once; escalate under it if any generator fails to start or close."
+  safety:
+  - "Keep out of the generator yard while engines run; hearing protection and exclusion zones apply."
+  - "Only the Landlord operates switchgear and paralleling controls; retransfer is their switching, not ours."
+  steps:
+  - "Landlord: confirm every generator is running, closed, and sharing load; report any that failed to start."
+  - "Landlord: report fuel on hand in hours at the present load and order a delivery if it falls short of the design."
+  - "Landlord: hold with the utility for its cause and estimate; post updates to the bridge."
+  - "Landlord: when the utility is stable for the agreed time, retransfer to utility under the switching procedure."
+  - "Landlord: let the generators run their cool-down and return the controls to automatic."
+  - "Customer: keep the change freeze until retransfer is complete and every UPS is back on normal."
+  rts:
+  - "Both mains show voltage and frequency in tolerance in telemetry."
+  - "Every UPS is back on normal operation with batteries recharging."
+  - "Generators are in automatic, alarms cleared, and fuel used is logged."
+  - "The change freeze is lifted on the bridge and the event is timed for the review."
+  refs: [G-CAT-EMCP-MCP, G-CAT-EMCP, G-SE-GVX-OPS]
+- id: ups-on-battery
+  title: UPS on battery
+  signals:
+  - ^UPS on battery$
+  categories: []
+  course: ups
+  raci: UPS, batteries, unit substations, and switchgear
+  procedure: power_utility
+  means: "The UPS has lost its input and is carrying the critical load from its batteries. Runtime is minutes, so the load drops if input does not return or the generators do not take over in time."
+  first15:
+  - "Check in Telemetry (power, utility) whether the mains or only this UPS's input is lost."
+  - "Read the battery state of charge and the runtime left, and note which racks or cooling it feeds."
+  - "Page the Landlord for UPS and switchgear and ask why the input is lost."
+  - "Check the change calendar for work on the UPS input, its breaker, or its upstream switchgear."
+  - "Open the utility outage procedure if the mains are lost; if only one UPS is on battery, watch the runtime and prepare the rack power procedure."
+  safety:
+  - "Only the Landlord's qualified electrical staff operate the UPS and its breakers (NFPA 70E)."
+  - "Lithium-ion battery cabinets stay closed; report any heat, odor, or smoke at once."
+  steps:
+  - "Landlord: find why the input is lost (utility, an open input breaker, or a fault upstream)."
+  - "Landlord: restore input from the generators or the normal source under the switching procedure."
+  - "Landlord: if runtime will run out first, plan with the Customer which load to shed in what order."
+  - "Landlord: read the UPS event log and confirm the battery and modules reported no fault."
+  - "Customer: track runtime and the protected racks on the bridge until input returns."
+  rts:
+  - "The UPS is back on normal operation with input in tolerance."
+  - "Batteries are recharging and no battery or module alarm is active."
+  - "The UPS event log is attached to the work order with the cause."
+  refs: [G-SE-GVX-OPS, G-SE-GVX-MODES, G-NFPA-70E]
+- id: ups-bypass
+  title: UPS on bypass
+  signals:
+  - ^UPS on (maintenance|fault) bypass$
+  categories: []
+  course: ups
+  raci: UPS, batteries, unit substations, and switchgear
+  procedure: power_rack
+  means: "The UPS is passing utility or generator power to its load without conditioning or battery backup, either by choice (maintenance bypass) or because the UPS forced itself there after a fault. Any disturbance on the source now reaches the racks directly."
+  first15:
+  - "Confirm in Telemetry (power) which UPS is on bypass and which racks and cooling it feeds."
+  - "Check the change calendar: a maintenance bypass inside an approved window is expected; one outside it is not."
+  - "For a fault bypass, page the Landlord now and ask what alarm put the UPS there."
+  - "Check that the other feed of every affected rack is healthy, since those racks have no backup on this side."
+  - "Open the rack power procedure if a rack loses its other feed or any load drops."
+  safety:
+  - "Only the Landlord's qualified electrical staff move a UPS to or from bypass, under lockout (EHS-R2) for any work inside."
+  - "Work inside an energized UPS or bypass cabinet needs an energized electrical work permit (EHS-R3)."
+  steps:
+  - "Landlord: read the UPS alarm log and find the fault that forced bypass."
+  - "Landlord: repair or call the manufacturer's field service for the failed part."
+  - "Landlord: for planned work, hold to the approved window and the method of procedure."
+  - "Landlord: return the UPS to normal operation with the manufacturer's sequence and confirm load transfer."
+  - "Customer: freeze other work on the same feed and its redundant pair until the UPS is back on normal."
+  rts:
+  - "The UPS reports normal operation and the bypass alarm has cleared."
+  - "Output voltage and load share are in tolerance in telemetry."
+  - "The cause is recorded on the work order, or the change record shows the window closed on time."
+  refs: [G-SE-GVX-MODES, G-SE-GVX-MBC, G-OSHA-147]
+- id: ups-module
+  title: UPS power module fault
+  signals:
+  - ^Module \d+ fault$
+  - ^UPS power module fault$
+  categories: []
+  course: ups
+  raci: UPS, batteries, unit substations, and switchgear
+  procedure: null
+  means: "One power module inside a modular UPS has failed. The UPS keeps carrying load on the remaining modules, but its spare capacity is reduced and another module failure can force it to bypass."
+  first15:
+  - "Confirm in Telemetry (power) which UPS reported the fault and that it is still on normal operation."
+  - "Compare the UPS load with the capacity of the modules still running."
+  - "Page the Landlord for UPS and switchgear and ask for the module alarm text."
+  - "Check the change calendar for work on that UPS."
+  safety:
+  - "Only the Landlord or the manufacturer's field engineer handles power modules, following the UPS manual."
+  - "Module work in an energized cabinet needs an energized electrical work permit (EHS-R3) and arc flash PPE (NFPA 70E)."
+  steps:
+  - "Landlord: read the UPS event log and identify the failed module."
+  - "Landlord: open a case with the manufacturer and confirm a replacement module."
+  - "Landlord: replace the module under the manufacturer's procedure in an approved window."
+  - "Landlord: check that load sharing across the modules is balanced after the swap."
+  rts:
+  - "All modules report normal and the module alarm has cleared."
+  - "UPS capacity in telemetry matches its design rating again."
+  - "The failed module's serial and the case number are on the work order."
+  refs: [G-SE-GVX-OPS, G-NFPA-70E]
+- id: breaker-trip
+  title: Breaker trip
+  signals:
+  - ^Breaker trip$
+  categories: []
+  course: ups
+  raci: UPS, batteries, unit substations, and switchgear
+  procedure: power_rack
+  means: "A breaker in the power path opened on a fault or overload, as reported by the power monitoring system. Everything downstream of it lost that feed, and racks fed through it are now on their other feed only."
+  first15:
+  - "Confirm in Telemetry (power) which breaker opened and which busways, tap-offs, and racks are downstream."
+  - "Check that every affected rack still has its other feed."
+  - "Page the Landlord to make the faulted section safe and report what is open and why."
+  - "Check the change calendar for work on that breaker or anything downstream."
+  - "Open the rack power procedure if any rack has lost both feeds."
+  safety:
+  - "Nobody resets a tripped breaker until the Landlord has found the cause; reclosing on a fault can cause an arc flash."
+  - "Inspection and repair downstream are done under lockout (EHS-R2) by the Landlord's qualified staff."
+  steps:
+  - "Landlord: read the trip data (overcurrent, short circuit, or ground fault) from the trip unit and the monitoring system."
+  - "Landlord: isolate and inspect the downstream section to find the fault."
+  - "Landlord: repair the fault, then test the circuit before it is re-energized."
+  - "Landlord: reclose under the switching procedure and confirm load returns."
+  - "IT Partner: validate each affected rack once the Landlord declares the feed restored (HO-1)."
+  rts:
+  - "The breaker is closed and current and voltage downstream are in tolerance."
+  - "Every affected rack shows both feeds healthy."
+  - "The trip cause and the repair are recorded on the work order."
+  refs: [G-NFPA-70E, G-OSHA-147, G-OSHA-333]
+- id: busway-voltage
+  title: Busway voltage out of tolerance
+  signals:
+  - ^Busway undervoltage$
+  - ^Busway voltage out of tolerance$
+  categories: []
+  course: busway
+  raci: Busway, tap-off units, and tap-off breakers
+  procedure: power_rack
+  means: "The voltage on an overhead busway is outside its tolerance, measured by the busway's power monitor. Low voltage can make rack power supplies drop out or fail over, and it often points at a problem upstream at the UPS or switchgear."
+  first15:
+  - "Confirm in Telemetry (power) the busway, the phase, and how far the voltage is out of tolerance."
+  - "Check whether other busways on the same UPS show the same change, which points upstream."
+  - "Check rack power shelves on that busway for PSU alarms or loss of input."
+  - "Page the Landlord for the busway and tell the IT Partner which racks are on it."
+  - "Open the rack power procedure if any rack loses this feed."
+  safety:
+  - "Only the Landlord's qualified staff take readings at the busway end feed or tap-off, with PPE under NFPA 70E."
+  - "Busway work overhead also needs the working at height rules (EHS-R9)."
+  steps:
+  - "Landlord: verify the reading with a meter at the end feed and compare it with the UPS output."
+  - "Landlord: if the UPS output is in tolerance, inspect the busway joints and end feed under an approved window."
+  - "Landlord: check the busway power monitor's calibration if the reading does not match the meter."
+  - "Landlord: repair, then confirm voltage on all three phases."
+  - "IT Partner: confirm no PSU in the affected racks failed or stayed in a fault state."
+  rts:
+  - "Voltage on every phase is in tolerance in telemetry and on the meter."
+  - "No PSU or power shelf alarm remains on the racks fed by the busway."
+  - "The cause is on the work order."
+  refs: [G-STARLINE-CPM, G-STARLINE-TB, G-NFPA-70E]
+- id: tapoff-open
+  title: Tap-off breaker open
+  signals:
+  - ^Tap-off breaker open$
+  categories: []
+  course: busway
+  raci: Busway, tap-off units, and tap-off breakers
+  procedure: power_rack
+  means: "The breaker in a busway tap-off unit is open, so the rack it feeds has lost that feed and is running on its other one. A second fault on the other feed would take the rack down."
+  first15:
+  - "Confirm in Telemetry (power) which tap-off is open and which rack and power shelves it feeds."
+  - "Check that the rack's other feed is healthy and carrying the load."
+  - "Check the change calendar: a tap-off opened for approved rack work (HO-2) is expected."
+  - "If it is not planned, page the Landlord for the busway and tell the IT Partner."
+  - "Open the rack power procedure if the rack's other feed is also lost."
+  safety:
+  - "Only the Landlord operates tap-off breakers; rack work on the de-energized side is under group lockout with both parties' locks (HO-2, EHS-R2)."
+  - "Never insert or remove a tap-off unit under load."
+  steps:
+  - "Landlord: check whether the breaker tripped or was opened, and read any trip data."
+  - "IT Partner: check the rack's power shelves and whips for a fault before the feed is restored."
+  - "Landlord: inspect the tap-off unit and replace it if it is damaged."
+  - "Landlord: close the breaker after the IT Partner confirms the rack side is ready."
+  - "IT Partner: confirm every power shelf on that feed shows input."
+  rts:
+  - "The tap-off reports closed and current flows on that feed in telemetry."
+  - "The rack shows both feeds healthy and no PSU on input loss."
+  - "Locks and tags are removed and the lockout is closed out."
+  refs: [G-STARLINE-IOM, G-OSHA-147, G-OSHA-3120]
+- id: rack-power-lost
+  title: Rack input power lost (both feeds)
+  signals:
+  - ^Rack input power lost
+  categories: []
+  course: busway
+  raci: Busway, tap-off units, and tap-off breakers
+  procedure: power_rack
+  means: "A rack has lost input power on both of its feeds and its trays are off. This is a rack outage: the Customer loses that rack's GPUs until power returns and the IT Partner validates the rack."
+  first15:
+  - "Confirm in Live and Telemetry (power) that both feeds of the rack are dead, and look for other racks on the same busways."
+  - "Open the rack power procedure now and start the bridge."
+  - "Page the Landlord for the busway and tap-offs and the IT Partner for the rack."
+  - "List every change window on the busways, tap-offs, and UPSs feeding the rack and hold anything not started."
+  - "Ask capacity and scheduling to move the rack's jobs."
+  safety:
+  - "Treat the rack as energized until the Landlord confirms the source is isolated and locked out (EHS-R2)."
+  - "The IT Partner does not touch whips or power shelves until the Landlord confirms which feeds are safe."
+  steps:
+  - "Landlord: find the open devices on both feeds and make the faulted section safe."
+  - "Landlord: repair, then restore one feed and then the other under the switching procedure."
+  - "Landlord: declare restoration on the bridge (HO-1)."
+  - "IT Partner: power on the trays, check the power shelves, and run node health checks."
+  - "IT Partner: return the nodes to the scheduler once checks pass."
+  rts:
+  - "Both feeds show voltage and current in telemetry."
+  - "Every tray in the rack is up and passes its health checks."
+  - "The rack is back in the scheduler and the outage start and end are recorded for the scorecard."
+  refs: [G-NFPA-70E, G-OSHA-147, G-NV-AHR]
+- id: psu-failed
+  title: PSU failed
+  signals:
+  - ^PSU failed$
+  categories: []
+  course: gb200
+  raci: Rack power shelves, PSUs, and whips from the tap-off output
+  procedure: null
+  means: "One power supply in a rack power shelf has failed. The shelf keeps running on its remaining supplies, so the rack is up, but it has less margin if another supply or feed fails."
+  first15:
+  - "Confirm in Telemetry which rack, shelf, and supply failed, and that the shelf is still delivering power."
+  - "Check whether the shelf's input feed is healthy; a supply alarm on every shelf of one feed points at the feed, not the supply."
+  - "Open a ticket for the IT Partner if one is not already open."
+  - "Check that a spare supply is on the shelf in the spares cage."
+  safety:
+  - "The IT Partner swaps power supplies following the manufacturer's procedure; nobody opens a supply."
+  - "Keep hands clear of the rear busbar area; it stays energized while the rack runs."
+  steps:
+  - "IT Partner: identify the failed supply by its amber LED and match it with the alarm."
+  - "IT Partner: remove the failed supply and insert the spare until it latches."
+  - "IT Partner: confirm the new supply's LED is green and its health reads normal through Redfish."
+  - "IT Partner: update the supply firmware if it does not match the rack's baseline."
+  - "IT Partner: return the failed supply under RMA and record both serial numbers."
+  rts:
+  - "The supply reports healthy in telemetry and the alarm has cleared."
+  - "The asset register shows the new serial in that slot."
+  - "The spares cage is restocked or a replenishment is ordered."
+  refs: [G-NV-GB-PSU, G-NV-GB-HW, G-NV-SPOD]
+- id: power-shelf
+  title: Power shelf failed
+  signals:
+  - ^Power shelf failed$
+  categories: []
+  course: gb200
+  raci: Rack power shelves, PSUs, and whips from the tap-off output
+  procedure: null
+  means: "A whole power shelf in the rack has stopped delivering power. The rack runs on its remaining shelves, but trays may lose redundancy or be power capped, and another shelf failure can take trays down."
+  first15:
+  - "Confirm in Telemetry which rack and shelf failed and whether its input feed is live."
+  - "Check whether the trays have throttled or dropped, and how many shelves are still healthy."
+  - "If the feed is dead, treat it as a tap-off or busway problem and page the Landlord."
+  - "Open a ticket for the IT Partner and confirm a spare shelf or management module is on hand."
+  safety:
+  - "Disconnecting the shelf's whip from the tap-off is done with the tap-off breaker open, by the Landlord under lockout (HO-2, EHS-R2)."
+  - "The IT Partner follows the manufacturer's service manual for shelf and module removal."
+  steps:
+  - "IT Partner: read the shelf's management module status and its supplies' status."
+  - "IT Partner: if only the management module failed, replace it; the supplies keep running."
+  - "IT Partner: if the shelf itself failed, plan its replacement with the Landlord for the feed isolation."
+  - "IT Partner: install the replacement, update firmware, and confirm it shares load."
+  - "IT Partner: return the failed part under RMA with its serial."
+  rts:
+  - "Every shelf in the rack reports healthy and shares load."
+  - "No tray is power capped by the shelf fault."
+  - "The asset register and the work order show the new serial."
+  refs: [G-NV-GB-PMM, G-NV-SPOD, G-OSHA-147]
+- id: pump-isolated
+  title: CDU pump isolated or redundancy lost
+  signals:
+  - ^Pump isolated$
+  - ^Pump redundancy lost$
+  categories: []
+  course: cdu
+  raci: CDUs and the hall secondary header
+  procedure: null
+  means: "A pump in a coolant distribution unit is out of service, either isolated for work or because the CDU has lost its standby pump. The CDU still moves coolant, but one more pump failure would stop flow to the racks it serves."
+  first15:
+  - "Confirm in Telemetry (CDU) which CDU, its flow, pressure, and supply temperature."
+  - "Check the change calendar: a pump isolated in an approved window is expected."
+  - "If it is not planned, page the Landlord for the CDUs and ask why the pump is out."
+  - "Check which racks the CDU serves and whether a neighboring CDU can pick them up."
+  safety:
+  - "Only the Landlord isolates or services CDU pumps, under lockout for the pump motor (EHS-R2)."
+  - "Coolant handling follows the spill procedure with spill kits at the CDU (EHS-R5)."
+  steps:
+  - "Landlord: confirm why the pump is out and when it will be back."
+  - "Landlord: if it failed, replace or repair it; the CDU's pumps can be serviced without stopping the loop."
+  - "Landlord: return the pump to service and confirm the CDU has its standby again."
+  - "Customer: hold any other work on that CDU or its neighbors until redundancy returns."
+  rts:
+  - "Both pumps report available and the redundancy alarm has cleared."
+  - "Flow, pressure, and supply temperature are in their normal band."
+  - "The change or work order records when redundancy was lost and restored."
+  refs: [G-COOLIT-CHX2000, G-COOLIT-NEWS, G-OSHA-147]
+- id: pump-fault
+  title: CDU pump fault
+  signals:
+  - ^Pump \d+ fault$
+  - ^Pump failed$
+  categories: []
+  course: cdu
+  raci: CDUs and the hall secondary header
+  procedure: cooling
+  means: "A CDU pump has failed while running. If the standby pump took over, flow continues without redundancy; if it did not, flow to the racks drops and GPU temperatures rise within minutes."
+  first15:
+  - "Confirm in Telemetry (CDU) the CDU's flow, pressure, and supply temperature now."
+  - "Check GPU temperatures on the racks it serves for a rise or throttling."
+  - "Page the Landlord for the CDUs and ask whether the standby pump is running."
+  - "Open the cooling loss procedure if flow is falling or supply temperature is out of band."
+  safety:
+  - "Only the Landlord services CDU pumps, under lockout (EHS-R2) and the coolant spill procedure (EHS-R5)."
+  - "The IT Partner only drains or powers down racks at the Customer's request; they do not operate the CDU."
+  steps:
+  - "Landlord: confirm the standby pump is carrying flow, or start it."
+  - "Landlord: read the CDU alarm log for the cause (motor, drive, or low pressure)."
+  - "Landlord: replace the failed pump and confirm it starts and holds flow."
+  - "IT Partner: if GPUs throttled, drain the affected nodes until temperatures recover."
+  rts:
+  - "Both pumps are available and flow and pressure are in band."
+  - "GPU temperatures on the served racks are back to normal."
+  - "The failed pump's cause and serial are on the work order."
+  refs: [G-COOLIT-CHX2000, G-COOLIT-NEWS, G-NV-DCGM]
+- id: leak-floor
+  title: Leak detected (building leak cable)
+  signals:
+  - ^Leak circuit \d+ at [\d.]+ m$
+  - ^Leak detected$
+  categories: []
+  course: leak-detection
+  raci: Building leak detection (cable and controllers)
+  procedure: leak
+  means: "The building leak detection cable has sensed liquid at a measured distance along its run. A leak near racks or electrical equipment can damage hardware and create a shock hazard."
+  first15:
+  - "Find the alarm's distance on the leak cable map and the racks and equipment near that point."
+  - "Look at the spot on camera or send someone with the Landlord to confirm what is wet."
+  - "Page the Landlord for leak detection and tell the IT Partner which racks are near."
+  - "Open the leak procedure at once if liquid is confirmed near any rack or electrical part."
+  safety:
+  - "Do not step in standing liquid near energized equipment; wait for the Landlord to make it safe."
+  - "Clean up under the spill procedure with the spill kits (EHS-R5); PG25 coolant has a safety data sheet on site."
+  steps:
+  - "Landlord: find the source and isolate it at the header if it is upstream of the rack valves (HO-3)."
+  - "IT Partner: isolate at the rack manifold valves if the leak is at or after them (HO-3)."
+  - "Landlord: clean and dry the area and the sensing cable, or replace the wet section."
+  - "Landlord: reset the leak module and confirm the cable reports normal along its full length."
+  rts:
+  - "The source is repaired and the area is dry."
+  - "The leak cable reports normal with no fault, so a second leak would be seen."
+  - "Affected racks are inspected and validated by the IT Partner before they return to service."
+  refs: [G-TRACETEK-TTDM, G-CHEMELEX-LEAK]
+- id: rack-leak
+  title: Rack leak detected
+  signals:
+  - ^Rack leak detected$
+  categories: []
+  course: rack-liquid
+  raci: Rack manifold, isolation valves, quick-disconnects
+  procedure: leak
+  means: "A leak sensor inside a liquid-cooled rack has detected coolant. Coolant on trays or power parts can short them out, so the rack may need to be isolated and powered down."
+  first15:
+  - "Confirm in Telemetry (CDU) and the rack's leak status which rack and which sensor alarmed."
+  - "Open the leak procedure at once."
+  - "Page the IT Partner to the rack and the Landlord for the CDU and header."
+  - "Drain the rack's nodes in the scheduler so jobs move before any power down."
+  safety:
+  - "If coolant reaches electrical parts, the rack is powered down before anyone reaches in."
+  - "Quick-disconnect service only on isolated loops; spill kits and the spill procedure apply (EHS-R5)."
+  steps:
+  - "IT Partner: isolate the rack at its manifold valves if the leak is at or after them (HO-3)."
+  - "Landlord: isolate at the header if the leak is upstream of the rack valves (HO-3)."
+  - "IT Partner: find the leaking fitting, hose, or quick-disconnect and replace it."
+  - "IT Partner: dry and inspect every wetted tray before power is restored."
+  - "IT Partner: leak test the rack, then ask the Landlord to reopen the valves."
+  rts:
+  - "The rack leak sensor reports dry and no new alarm has occurred after the valves reopen."
+  - "Every tray passes its health checks and returns to the scheduler."
+  - "Replaced parts are recorded with serials on the incident."
+  refs: [G-NV-LEAK, G-NV-GB-HW]
+- id: compressor-trip
+  title: Chiller compressor trip
+  signals:
+  - ^Compressor trip
+  categories: []
+  course: chiller
+  raci: Chillers, facility water, and pumps
+  procedure: cooling
+  means: "A chiller's compressor has stopped on a safety trip, such as high or low refrigerant pressure. The chiller loses some or all of its capacity, and on a hot day the plant may not keep up without a standby chiller."
+  first15:
+  - "Confirm in Telemetry (mechanical) which chiller tripped and how much capacity is left against load."
+  - "Check the facility water supply temperature and the outdoor temperature."
+  - "Page the Landlord for the chillers to bring a standby chiller online."
+  - "Open the cooling loss procedure if supply temperature is rising or capacity is below load."
+  safety:
+  - "Refrigerant circuit work is done only by technicians certified under EPA Section 608."
+  - "The chiller is locked out (EHS-R2) before panels are opened; fans can start without warning."
+  steps:
+  - "Landlord: start the standby chiller and confirm it carries load."
+  - "Landlord: read the chiller controller's alarm history for the trip cause."
+  - "Landlord: find the root cause (refrigerant charge, a fouled coil, a failed sensor) before a reset."
+  - "Landlord: reset once, and if it trips again, keep it out and call the manufacturer's service."
+  rts:
+  - "The compressor runs without a trip and the chiller carries its share of load."
+  - "Facility water supply temperature is in band."
+  - "The trip cause is on the work order, and any refrigerant added is recorded."
+  refs: [G-VERTIV-AFC, G-VERTIV-HPCS, G-EPA-608]
+- id: condenser-fan
+  title: Chiller condenser fan fault
+  signals:
+  - ^Condenser fan fault$
+  categories: []
+  course: chiller
+  raci: Chillers, facility water, and pumps
+  procedure: null
+  means: "A condenser fan on an air-cooled chiller has failed. The chiller loses some heat rejection, which can push refrigerant pressure up and trip a compressor on a hot day."
+  first15:
+  - "Confirm in Telemetry (mechanical) which chiller reported the fault and its capacity and pressures."
+  - "Check the outdoor temperature and whether the chiller is near its limit."
+  - "Page the Landlord for the chillers and ask whether a standby chiller should start."
+  - "Check the change calendar for work on that chiller."
+  safety:
+  - "The chiller and fan are locked out (EHS-R2) before anyone reaches near the fan blades."
+  - "Work on the chiller roof or deck follows the working at height rules (EHS-R9)."
+  steps:
+  - "Landlord: identify the failed fan and whether the motor, drive, or supply failed."
+  - "Landlord: replace the fan motor or controller under lockout."
+  - "Landlord: confirm the fan runs and the controller shows normal."
+  rts:
+  - "All condenser fans run and the fault has cleared."
+  - "Refrigerant pressures and capacity are back to normal."
+  - "The work order records the failed part."
+  refs: [G-VERTIV-HPCS, G-VERTIV-AFC, G-OSHA-147]
+- id: fan-failure
+  title: Thermal wall fan failure
+  signals:
+  - ^Fan \d+ failure$
+  categories: []
+  course: thermal-wall
+  raci: Thermal walls, CRAHs, and hot-aisle containment
+  procedure: null
+  means: "One fan in a thermal wall air handler has failed. The unit runs on its other fans, which may speed up, but the hall's air-side cooling has less margin and a second failure can raise air temperatures."
+  first15:
+  - "Confirm in Telemetry (mechanical) which thermal wall and fan, and the unit's airflow and supply air temperature."
+  - "Check hot-aisle and inlet temperatures in the hall near the unit."
+  - "Page the Landlord for the thermal walls."
+  - "Check the change calendar for work on that unit."
+  safety:
+  - "The fan is isolated and locked out (EHS-R2) before its guard is removed."
+  - "Fan replacement at height uses the working at height rules (EHS-R9)."
+  steps:
+  - "Landlord: read the unit controller's alarm for the fan's fault."
+  - "Landlord: replace the fan or its drive under lockout."
+  - "Landlord: confirm the unit's fans share speed and airflow again."
+  rts:
+  - "All fans report running and the alarm has cleared."
+  - "Supply air and inlet temperatures near the unit are in band."
+  - "The work order records the failed part."
+  refs: [G-VERTIV-CWA, G-OSHA-147, G-OSHA-28]
+- id: smoke
+  title: Smoke alarm (VESDA)
+  signals:
+  - ^Smoke alarm$
+  categories: []
+  course: vesda
+  raci: Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression
+  procedure: fire
+  means: "An aspirating smoke detector has reached one of its smoke thresholds in the space it samples. The early levels give warning before a fire grows; the higher levels are a fire alarm and can lead to suppression."
+  first15:
+  - "Read the alarm level and the detector's zone on the fire panel and the BMS."
+  - "At a fire level, evacuate the area, call 911, and open the fire procedure at once."
+  - "At an early level, page the Landlord to investigate the zone with the Security Partner holding access."
+  - "Check the change calendar for hot work, dust, or other work in the zone."
+  safety:
+  - "Nobody re-enters a hall in fire alarm until the fire department or the Landlord clears it."
+  - "Only the Landlord silences or resets the fire panel."
+  steps:
+  - "Landlord: investigate the zone for smoke, a hot component, or dust from work."
+  - "Landlord: if the source is equipment, isolate it with the owning party."
+  - "Landlord: after the event, check the detector's filter and pipe network for contamination."
+  - "Landlord: reset the panel and the detector once the cause is found."
+  rts:
+  - "The detector reads background smoke levels and no alarm remains."
+  - "The fire panel is normal with no zone disabled."
+  - "The cause is recorded, and any hot work permit in the zone is checked."
+  refs: [G-XTRALIS-VEP, G-NFPA-72, G-OSHA-38]
+- id: detector
+  title: Smoke detector isolated or in fault
+  signals:
+  - ^Detector isolated$
+  - ^Detector fault
+  categories: []
+  course: vesda
+  raci: Fire alarm panel, VESDA, pre-action sprinklers, and clean agent suppression
+  procedure: fire
+  means: "An aspirating smoke detector is isolated or reporting a fault such as low airflow or a filter problem. While it is out, the area it samples has no very early smoke warning."
+  first15:
+  - "Confirm on the fire panel and BMS which detector and what fault or isolation."
+  - "Check the change calendar: an isolation for approved work is expected; one with no work is not."
+  - "Page the Landlord for the fire alarm and ask when it will be back."
+  - "Ask whether the outage counts as an impairment needing a fire watch."
+  safety:
+  - "Only the Landlord's fire alarm technicians isolate or service detectors."
+  - "No hot work runs in a zone whose detection is out (EHS-R11)."
+  steps:
+  - "Landlord: read the fault code and inspect the airflow, filter, and pipe network."
+  - "Landlord: replace the filter or clear the pipe, or replace the failed part."
+  - "Landlord: de-isolate the detector when the work it was isolated for ends."
+  - "Landlord: start and close an impairment record if the detector was out long enough."
+  rts:
+  - "The detector reports normal with airflow in range and is not isolated."
+  - "The fire panel shows the zone normal."
+  - "Any impairment record is closed."
+  refs: [G-XTRALIS-VEP, G-NFPA-72]
+- id: bms-override
+  title: BMS point override or alarm inhibited
+  signals:
+  - ^Point override$
+  - ^Alarm inhibited$
+  categories: []
+  course: orientation
+  raci: BMS and EPMS operation
+  procedure: null
+  means: "A point in the building management system has been forced by hand or its alarm has been inhibited. The equipment may not respond to real conditions, and a real alarm on that point would not be seen."
+  first15:
+  - "Note the point, who set the override or inhibit, and when, from the BMS."
+  - "Check the change calendar for work that explains it."
+  - "Ask the Landlord for the reason and the time it will be released."
+  - "If no work explains it, ask the Landlord to release it or document why it stays."
+  safety:
+  - "Only the Landlord's BMS operators set or release overrides."
+  - "An inhibited life-safety or leak point needs a compensating check, such as a walk round."
+  steps:
+  - "Landlord: record the override with the reason, the owner, and an end time."
+  - "Landlord: release it when the work ends and confirm the point returns to automatic."
+  - "Customer: review open overrides and inhibits each day and chase any with no end time."
+  rts:
+  - "The point is back in automatic and its alarm is enabled."
+  - "The override log shows it released, with the reason."
+  refs: [G-ISA-182, G-ISA-18]
+- id: gpu-xid
+  title: GPU error (XID)
+  signals:
+  - ^GPU error \(XID\)$
+  categories: []
+  course: gb200
+  raci: Compute tray (GPU, CPU, memory, cold plate)
+  procedure: null
+  means: "The GPU driver logged an XID error for a GPU. Many XIDs come from the application, but some, such as uncorrectable memory errors or a GPU falling off the bus, point at the hardware and can stop jobs."
+  first15:
+  - "Read the XID number and look it up in the XID catalog on the glossary."
+  - "Check whether the same GPU or tray logged other XIDs recently."
+  - "For a hardware XID, drain the node and open a ticket for the IT Partner."
+  - "For an application XID, tell the job owner; no hardware action is needed."
+  safety:
+  - "The IT Partner handles trays following the manufacturer's service guide."
+  - "Tray removal from a liquid-cooled rack follows the quick-disconnect rules (EHS-R5)."
+  steps:
+  - "IT Partner: collect the driver logs and run the GPU diagnostics on the drained node."
+  - "IT Partner: reset the GPU or reboot the node as the XID's action calls for."
+  - "IT Partner: replace the tray if errors repeat after reset or diagnostics fail."
+  - "IT Partner: at this site, a second XID 79 on a tray within 30 days means replacement, not another reseat."
+  - "IT Partner: open the vendor case with the bug report for a hardware XID."
+  rts:
+  - "The node passes the diagnostics with no new XID."
+  - "The node is returned to the scheduler."
+  - "Any replaced tray's serial is on the ticket and in the asset register."
+  refs: [G-NV-XID, G-NV-XID-WORK, G-NV-DCGM]
+- id: nvlink-tray
+  title: NVLink switch tray failed
+  signals:
+  - ^NVLink switch tray failed$
+  categories: []
+  course: gb200
+  raci: NVLink switch tray and NVLink backplane
+  procedure: compute
+  means: "An NVLink switch tray in a rack has failed. The rack's GPUs lose some NVLink bandwidth or their shared domain, so jobs spanning the rack slow down or fail."
+  first15:
+  - "Confirm in Telemetry (network) and the NVLink management view which rack and switch tray."
+  - "Open the compute procedure and drain the rack's NVLink domain."
+  - "Page the IT Partner and ask for the spare switch tray on hand."
+  - "Check the change calendar for firmware or other work on the rack."
+  safety:
+  - "The IT Partner replaces switch trays following the manufacturer's procedure."
+  - "The rack is drained of jobs before a switch tray is pulled."
+  steps:
+  - "IT Partner: read the tray's health from NVLink management and its BMC."
+  - "IT Partner: reseat or replace the switch tray."
+  - "IT Partner: update the tray's firmware to the rack baseline."
+  - "IT Partner: confirm the NVLink domain is healthy before jobs return."
+  rts:
+  - "NVLink management reports the domain healthy with no degraded links."
+  - "The rack's nodes pass health checks and return to the scheduler."
+  - "The failed tray's serial is on the ticket under RMA."
+  refs: [G-NV-NMX, G-NV-SPOD, G-NV-AHR]
+- id: node-down
+  title: Node not responding
+  signals:
+  - ^Node not responding$
+  categories: []
+  course: gb200
+  raci: Compute tray (GPU, CPU, memory, cold plate)
+  procedure: null
+  means: "A compute tray stopped answering the management and monitoring systems. It may be hung, powered off, or have lost its network, and its GPUs are unavailable until it returns."
+  first15:
+  - "Check whether the tray's BMC still answers, which separates a hung host from lost power or network."
+  - "Look for other trays in the rack or on the same switch going down, which points at power or network."
+  - "Check the rack's power feeds and shelves in telemetry."
+  - "Open a ticket for the IT Partner if one is not already open."
+  safety:
+  - "The IT Partner works on trays following the manufacturer's service guide."
+  - "If power is the cause, the Landlord makes the feed safe first."
+  steps:
+  - "IT Partner: power cycle the tray through its BMC if the BMC answers."
+  - "IT Partner: check its cables and seating if it does not return."
+  - "IT Partner: run diagnostics once it is back; replace the tray if they fail."
+  - "IT Partner: escalate as a rack outage if half the rack's trays are down."
+  rts:
+  - "The tray answers monitoring and passes its health checks."
+  - "The node returns to the scheduler."
+  - "The cause is on the ticket."
+  refs: [G-NV-AHR, G-NV-DCGM, G-NV-GB-HW]
+- id: rack-outage
+  title: Rack outage
+  signals:
+  - ^Rack outage$
+  categories: []
+  course: gb200
+  raci: Compute tray (GPU, CPU, memory, cold plate)
+  procedure: compute
+  means: "Half or more of a rack's compute trays have gone down within a few minutes, so the rack is out of service. The cause is usually something the trays share: power, cooling, or the NVLink domain."
+  first15:
+  - "Open the compute procedure and start the bridge."
+  - "Check the rack's power feeds and CDU in telemetry to see whether a facility fault caused it."
+  - "Page the IT Partner, and the Landlord if power or cooling is involved."
+  - "Ask capacity and scheduling to move the rack's jobs."
+  safety:
+  - "If the cause is power or a leak, nobody works on the rack until the owning party makes it safe."
+  - "The IT Partner follows the manufacturer's procedures for trays and switch trays."
+  steps:
+  - "IT Partner: walk the rack's power and cooling paths with the Customer to find the first failed part."
+  - "Landlord: restore any facility fault and declare restoration (HO-1)."
+  - "IT Partner: recover or replace the failed trays or switch trays."
+  - "IT Partner: validate the full rack, including NVLink, before returning it."
+  rts:
+  - "Every tray is up and passes health checks, and the NVLink domain is healthy."
+  - "The rack is back in the scheduler."
+  - "The outage is attributed to its owner and recorded for the scorecard."
+  refs: [G-NV-AHR, G-NV-NMX, G-NV-SPOD]
+- id: link-down
+  title: Fabric link down
+  signals:
+  - ^Fabric link down$
+  categories: []
+  course: fiber
+  raci: Back-end fabric optics, cables, and fiber
+  procedure: null
+  means: "A back-end fabric link between a node and its switch went down. The node loses that rail's bandwidth, and jobs using it can fail or slow until the link returns."
+  first15:
+  - "Confirm in Telemetry (network) which node port and switch port, and the link down reason."
+  - "Check for other links down on the same switch or cable bundle."
+  - "Check the change calendar for work near the cable."
+  - "Open a ticket for the IT Partner if one is not already open."
+  safety:
+  - "Never look into a fiber end or an open transceiver port."
+  - "The IT Partner replaces optics and cables; only the IT Partner touches the fabric cabling."
+  steps:
+  - "IT Partner: read the switch's link diagnostic code for the cause."
+  - "IT Partner: reseat the transceivers at both ends and clean the connectors."
+  - "IT Partner: replace the transceiver or cable if the link stays down."
+  - "IT Partner: confirm the link trains at full speed and width."
+  rts:
+  - "The link is up at full speed with no new errors."
+  - "Replaced optics' serials are on the ticket."
+  - "The node is back in the scheduler."
+  refs: [G-NV-LINKDIAG, G-NV-UFM-COUNTERS, G-NV-CABLE-CLEAN]
+- id: symbol-errors
+  title: Fabric symbol errors over threshold
+  signals:
+  - ^Fabric symbol errors over threshold$
+  categories: []
+  course: fiber
+  raci: Back-end fabric optics, cables, and fiber
+  procedure: null
+  means: "A fabric link is logging physical layer symbol errors above the threshold. The link is still up, but it is degrading and often fails later, usually from a dirty connector or a weak optic."
+  first15:
+  - "Confirm in Telemetry (network) the port and the error rate trend."
+  - "Check whether the errors are on one end or both, and on one lane or many."
+  - "Open a ticket for the IT Partner to fix it in a planned window."
+  - "Check the predictive maintenance list: this link may already be flagged."
+  safety:
+  - "Never look into a fiber end or an open transceiver port."
+  - "The node is drained before its link is disturbed."
+  steps:
+  - "IT Partner: drain the node and clean the connectors at both ends."
+  - "IT Partner: replace the transceiver with the higher error count if errors return."
+  - "IT Partner: replace the cable if both optics are good."
+  - "IT Partner: clear the counters and watch the link."
+  rts:
+  - "The error counter stays under the threshold after cleaning or replacement."
+  - "Replaced parts are on the ticket."
+  - "The node is back in the scheduler."
+  refs: [G-NV-UFM-COUNTERS, G-NV-CABLE-CLEAN, G-NV-LINKDIAG]
+- id: change-overrun
+  title: Change window overrun
+  signals:
+  - ^Change window overrun$
+  categories: []
+  course: orientation
+  raci: null
+  owner: The partner that owns the change (named on its MOP or change record)
+  procedure: null
+  means: "Planned work is still in progress after its approved change window closed. The equipment may still be in a reduced redundancy state, and work that runs on can overlap other work or a shift change."
+  first15:
+  - "Confirm from the change record and telemetry what equipment is still out and its redundancy."
+  - "Call the work's lead for the remaining steps and a new end time."
+  - "Check for other work starting on the same equipment or its redundant pair; hold it."
+  - "Decide with the owner whether to extend the window or back out."
+  safety:
+  - "Lockout continues across a shift change with an orderly handover of locks (EHS-R2)."
+  - "Tired crews make mistakes; set a hard stop if the overrun is long."
+  steps:
+  - "Owner: request an extension through the change process with the reason and new end time."
+  - "Owner: restore redundancy first if the work cannot finish in the extension."
+  - "Customer: keep conflicting work held until the change closes."
+  - "Owner: close the change with actual start and end times and the reason for the overrun."
+  rts:
+  - "Equipment is back in its normal state and redundancy restored."
+  - "The change record shows actual times and the overrun reason."
+  refs: [G-OSHA-3120, G-OSHA-147]
+- id: door-forced
+  title: Door forced
+  signals: []
+  categories:
+  - Door forced
+  course: guard-posts
+  raci: Customer hall door alarms (forced and held) and guard response
+  procedure: security
+  means: "A door on a Customer hall, mantrap, or cage opened without a valid badge. It may be a hardware fault or a real breach, so it is a P1 for the Security Partner until a guard proves otherwise."
+  first15:
+  - "The Security Partner acknowledges the alarm at the console and sends a guard to the door."
+  - "Pull the camera footage for the door and preserve it."
+  - "Check the badge records for who was in the hall at the time."
+  - "Open the security procedure if the cause is not clearly benign."
+  safety:
+  - "Guards follow their training and post orders; no one confronts an intruder alone."
+  - "If anyone unknown is in the hall, call 911 and the Customer's site security lead, and keep everyone out."
+  steps:
+  - "Security Partner: the guard badges the door's reader on arrival and reports what they find."
+  - "Security Partner: hold the scene until the cause is known."
+  - "Security Partner: compare the footage and badge records with the guard's report."
+  - "Security Partner: if it is a hardware fault, report it to the Landlord (door hardware) and post a guard until the door is fixed."
+  rts:
+  - "The door is closed and secured, with the alarm cleared."
+  - "The guard's badge at the door proves the response time."
+  - "The finding and the footage agree, and the reason is logged."
+  refs: [G-TXDPS-TRAINING, G-TX-OCC-1702]
+- id: door-held
+  title: Door held open
+  signals: []
+  categories:
+  - Door held
+  course: guard-posts
+  raci: Customer hall door alarms (forced and held) and guard response
+  procedure: null
+  means: "A Customer door stayed open past its allowed time. It is often a delivery or a door that did not latch, but an open door lets people in without a badge, so a guard responds as a P2."
+  first15:
+  - "The Security Partner acknowledges the alarm at the console and sends a guard to the door."
+  - "Check the camera to see who is at the door and why."
+  - "Check whether a delivery or escort was scheduled at that door."
+  safety:
+  - "Guards follow their training and post orders."
+  - "If anyone unknown came through, treat it as a forced door and open the security procedure."
+  steps:
+  - "Security Partner: the guard badges the door's reader on arrival and closes the door."
+  - "Security Partner: check for tailgating in the footage."
+  - "Security Partner: report a door that does not latch so it is fixed."
+  rts:
+  - "The door is closed and latched, with the alarm cleared."
+  - "The guard's badge at the door proves the response time."
+  - "The reason is logged."
+  refs: [G-TXDPS-TRAINING, G-TXDPS-LICENSES]
+
+references:
+- id: G-NV-XID
+  title: "Xid Errors"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/deploy/xid-errors/"
+  checked: "2026-10-23"
+- id: G-NV-XID-WORK
+  title: "Working with Xid Errors"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/deploy/xid-errors/working-with-xid-errors.html"
+  checked: "2026-10-23"
+- id: G-NV-DCGM
+  title: "Feature Overview, NVIDIA DCGM Documentation"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html"
+  checked: "2026-10-23"
+- id: G-NV-GB-HW
+  title: "Hardware, NVIDIA DGX GB Rack Scale Systems User Guide"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html"
+  checked: "2026-10-23"
+- id: G-NV-GB-PSU
+  title: "Power Supply Replacement, NVIDIA DGX GB200 Service Manual"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/dgx/dgxgb200-service-manual/psu-replacement.html"
+  checked: "2026-10-23"
+- id: G-NV-GB-PMM
+  title: "Power Shelf Management Module Replacement, NVIDIA DGX GB200 Service Manual"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/dgx/dgxgb200-service-manual/pmm-replacement.html"
+  checked: "2026-10-23"
+- id: G-NV-SPOD
+  title: "Key Components of the DGX SuperPOD (DGX GB200 reference architecture)"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/dgx-superpod/reference-architecture-scalable-infrastructure-gb200/latest/dgx-superpod-components.html"
+  checked: "2026-10-23"
+- id: G-NV-NMX
+  title: "High-Speed Fabric Management, NVIDIA Mission Control with GB200/GB300 NVL72 Systems Administration Guide"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/mission-control/docs/systems-administration-guide/2.0.0/high-speed-fabric-management.html"
+  checked: "2026-10-23"
+- id: G-NV-AHR
+  title: "Connecting to NVIDIA Mission Control Autonomous Hardware Recovery"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/mission-control/docs/systems-administration-guide/2.1.0/autonomous-hardware-recovery.html"
+  checked: "2026-10-23"
+- id: G-NV-LEAK
+  title: "Leak Detection, NVIDIA Mission Control Software Administration Guide"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/mission-control/docs/systems-administration-guide/latest/leak-detection.html"
+  checked: "2026-10-23"
+- id: G-NV-UFM-COUNTERS
+  title: "Appendix: Supported Port Counters and Events, UFM Enterprise User Manual"
+  publisher: "NVIDIA"
+  url: "https://networking-docs.nvidia.com/ufmenterprisearum/6150/appendix-supported-port-counters-and-events"
+  checked: "2026-10-23"
+- id: G-NV-LINKDIAG
+  title: "Link Diagnostic Per Port, NVOS User Manual for InfiniBand Switches"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/networking/display/nvidianvosusermanualforinfinibandswitchesv25024002/link+diagnostic+per+port"
+  checked: "2026-10-23"
+- id: G-NV-CABLE-CLEAN
+  title: "Maintaining NDR Connectors and Cables, DGX SuperPOD Cabling Data Centers Design Guide"
+  publisher: "NVIDIA"
+  url: "https://docs.nvidia.com/dgx-superpod/design-guide-cabling-data-centers/latest/ndr-maintenance.html"
+  checked: "2026-10-23"
+- id: G-SE-GVX-OPS
+  title: "Galaxy VX UPS Operation (480 V)"
+  publisher: "Schneider Electric"
+  url: "https://productinfo.se.com/galaxyvx_ul/5b69ada2313cae0001704e8d/990-5452F%20Galaxy%20VX%20Operation/English/990-5452N_EN.pdf"
+  checked: "2026-10-23"
+- id: G-SE-GVX-MODES
+  title: "Operation Modes, Galaxy VX"
+  publisher: "Schneider Electric"
+  url: "https://productinfo.se.com/galaxyvx_iec/5b69ada2313cae0001704e8d/990-5452F%20Galaxy%20VX%20Operation/English/990-5452%20Operation_0000060284.xml/$/OperationModesREF_0000013071"
+  checked: "2026-10-23"
+- id: G-SE-GVX-MBC
+  title: "Galaxy VX Maintenance Bypass Cabinet, User Guide"
+  publisher: "Schneider Electric"
+  url: "https://www.se.com/in/en/download/document/SPD_MBPN-A2VBX3_EN/"
+  checked: "2026-10-23"
+- id: G-STARLINE-TB
+  title: "Track Busway (Continuous Access Busway)"
+  publisher: "Starline (Legrand)"
+  url: "https://www.starlinepower.com/busway/"
+  checked: "2026-10-23"
+- id: G-STARLINE-IOM
+  title: "Track Busway Installation, Operation, and Maintenance Manual (600T5 US)"
+  publisher: "Starline (Legrand)"
+  url: "https://starlinepower.com/sites/default/files/files/DPC_BUS_Starline_Busway_600T5_US_Manual_V9_1.pdf"
+  checked: "2026-10-23"
+- id: G-STARLINE-CPM
+  title: "Critical Power Monitor (CPM) from Starline"
+  publisher: "Legrand"
+  url: "https://Legrand.us/critical-power-and-infrastructure/track-busway/critical-power-monitor"
+  checked: "2026-10-23"
+- id: G-CAT-EMCP-MCP
+  title: "EMCP 4.4 Master Control Panel (switchgear and paralleling controls)"
+  publisher: "Caterpillar"
+  url: "https://www.cat.com/en_AU/products/new/power-systems/electric-power/switchgear-and-paralleling-controls/108939662909.html"
+  checked: "2026-10-23"
+- id: G-CAT-EMCP
+  title: "EMCP 4.4 Control Panel"
+  publisher: "Caterpillar"
+  url: "https://www.cat.com/en_US/products/new/power-systems/electric-power/electric-power-controls/101020.html"
+  checked: "2026-10-23"
+- id: G-COOLIT-CHX2000
+  title: "CHx2000 Row-Based CDU for AI Clusters"
+  publisher: "CoolIT Systems"
+  url: "https://www.coolitsystems.com/cdu-product/chx2000/"
+  checked: "2026-10-23"
+- id: G-COOLIT-NEWS
+  title: "CoolIT Systems Announces Further Breakthroughs in Row-Based Coolant Distribution Unit Performance"
+  publisher: "CoolIT Systems"
+  url: "https://www.coolitsystems.com/resources/news/coolit-systems-announces-further-breakthroughs-in-row-based-coolant-distribution-unit-performance/"
+  checked: "2026-10-23"
+- id: G-VERTIV-AFC
+  title: "Liebert AFC Air-cooled Free Cooling Chiller, 900 to 1800 kW (data sheet)"
+  publisher: "Vertiv"
+  url: "https://www.vertiv.com/495f9b/globalassets/products/thermal-management/free-cooling-chillers/vertiv-liebert-afc---the-inverter-screw-chiller-range-with-low-gwp-refrigerant3/vertiv-liebert-afc-data-sheet-sl-71060.pdf"
+  checked: "2026-10-23"
+- id: G-VERTIV-HPCS
+  title: "Liebert HPC-S Free-Cooling Chiller with Scroll Compressors, User Manual"
+  publisher: "Vertiv"
+  url: "https://www.vertiv.com/globalassets/products/thermal-management/free-cooling-chillers/liebert-hpc-s-free-cooling-chiller-user-manual_00.pdf"
+  checked: "2026-10-23"
+- id: G-VERTIV-CWA
+  title: "Liebert CWA Thermal Wall for Cooling Large Data Centers (data sheet)"
+  publisher: "Vertiv"
+  url: "https://www.vertiv.com/48edfb/globalassets/products/thermal-management/room-cooling/vertiv-liebert-cwa-thermal-wall/vertiv-liebert-cwa-ds-en-na-sl-70713-web.pdf"
+  checked: "2026-10-23"
+- id: G-XTRALIS-VEP
+  title: "VESDA-E VEP Technical Data Sheet"
+  publisher: "Xtralis (Honeywell)"
+  url: "https://xtralis.com/file/941"
+  checked: "2026-10-23"
+- id: G-TRACETEK-TTDM
+  title: "TraceTek Leak Detection Master Module (TTDM-128) Installation Instructions"
+  publisher: "Chemelex (nVent RAYCHEM TraceTek)"
+  url: "https://cdn.chemelex.com/Product%20Documents/Installation%20Manuals/RaychemTraceTek-IM-H57341-TTDM128-EN.pdf"
+  checked: "2026-10-23"
+- id: G-CHEMELEX-LEAK
+  title: "Leak Detection Cable, Data Center Leak Detection"
+  publisher: "Chemelex (Raychem)"
+  url: "https://www.chemelex.com/en-us/raychem/solutions/commercial/leak-detection"
+  checked: "2026-10-23"
+- id: G-OSHA-147
+  title: "29 CFR 1910.147, The control of hazardous energy (lockout/tagout)"
+  publisher: "U.S. Occupational Safety and Health Administration"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.147"
+  checked: "2026-10-23"
+- id: G-OSHA-3120
+  title: "Control of Hazardous Energy: Lockout/Tagout (OSHA 3120)"
+  publisher: "U.S. Occupational Safety and Health Administration"
+  url: "https://www.osha.gov/sites/default/files/publications/OSHA3120.pdf"
+  checked: "2026-10-23"
+- id: G-OSHA-333
+  title: "29 CFR 1910.333, Selection and use of work practices"
+  publisher: "U.S. Occupational Safety and Health Administration"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.333"
+  checked: "2026-10-23"
+- id: G-OSHA-28
+  title: "29 CFR 1910.28, Duty to have fall protection and falling object protection"
+  publisher: "U.S. Occupational Safety and Health Administration"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.28"
+  checked: "2026-10-23"
+- id: G-OSHA-38
+  title: "29 CFR 1910.38, Emergency action plans"
+  publisher: "U.S. Occupational Safety and Health Administration"
+  url: "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.38"
+  checked: "2026-10-23"
+- id: G-NFPA-70E
+  title: "Learn More About NFPA 70E"
+  publisher: "National Fire Protection Association"
+  url: "https://www.nfpa.org/education-and-research/electrical/learn-more-about-nfpa-70e"
+  checked: "2026-10-23"
+- id: G-NFPA-72
+  title: "NFPA 72, National Fire Alarm and Signaling Code"
+  publisher: "National Fire Protection Association"
+  url: "https://www.nfpa.org/product/nfpa-72-national-fire-alarm-and-signaling-code/p0072code"
+  checked: "2026-10-23"
+- id: G-EPA-608
+  title: "Questions and Answers for Section 608 Certified Technicians"
+  publisher: "U.S. Environmental Protection Agency"
+  url: "https://www.epa.gov/section608/epas-refrigerant-management-program-questions-and-answers-section-608-certified"
+  checked: "2026-10-23"
+- id: G-ISA-182
+  title: "Understanding and Applying the ANSI/ISA 18.2 Alarm Management Standard"
+  publisher: "PAS (published by ISA)"
+  url: "https://www.isa.org/getmedia/55b4210e-6cb2-4de4-89f8-2b5b6b46d954/PAS-Understanding-ISA-18-2.pdf"
+  checked: "2026-10-23"
+- id: G-ISA-18
+  title: "ISA-18 Series of Standards (alarm management)"
+  publisher: "International Society of Automation"
+  url: "https://www.isa.org/standards-and-publications/isa-standards/isa-18-series-of-standards"
+  checked: "2026-10-23"
+- id: G-TXDPS-TRAINING
+  title: "Private Security: Training and Continuing Education"
+  publisher: "Texas Department of Public Safety"
+  url: "https://www.dps.texas.gov/section/private-security/training-and-continuing-education"
+  checked: "2026-10-23"
+- id: G-TXDPS-LICENSES
+  title: "Private Security: Types of Individual Licenses"
+  publisher: "Texas Department of Public Safety"
+  url: "https://www.dps.texas.gov/section/private-security/types-individual-licenses"
+  checked: "2026-10-23"
+- id: G-TX-OCC-1702
+  title: "Texas Occupations Code, Chapter 1702, Private Security"
+  publisher: "Public.Law (Texas statutes)"
+  url: "https://texas.public.law/statutes/tex._occ._code_chapter_1702"
+  checked: "2026-10-23"

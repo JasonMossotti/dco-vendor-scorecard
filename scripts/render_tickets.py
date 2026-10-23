@@ -67,6 +67,8 @@ def relations(records: list[dict]) -> dict:
 def html_page() -> str:
     tpl = sitenav.inject((ROOT / "templates" / "tickets.html").read_text(encoding="utf-8"), "tickets")
     d = data()
+    from scorecard import training_portal as TP
+    d["training"] = TP.record_training(d["records"])
     payload = json.dumps(d, sort_keys=True, separators=(",", ":")).replace("</", "<\\/")
     rel = json.dumps(relations(d["records"]), sort_keys=True, separators=(",", ":")).replace("</", "<\\/")
     return sitenav.finish(tpl.replace("__DATA__", payload).replace("__RELATIONS__", rel))

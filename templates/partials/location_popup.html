@@ -213,7 +213,7 @@
       <div class="loc-t">${note && !p ? `<span class="loc-note">${esc(note)}.</span> ` : ""}${esc(e.text)}</div>
       <div class="loc-chips" role="tablist">${views.map((x, i) => `<button type="button" role="tab" data-i="${i}">${esc(x.v.s)} ${esc(D.sheets[x.v.s].title)}</button>`).join("")}</div>
       <div class="loc-fig"></div>
-      <div class="loc-f"><button type="button" class="loc-full">Full sheet</button><a class="loc-open" href="#">Open the drawing</a>
+      <div class="loc-f"><button type="button" class="loc-full">Full sheet</button><a class="loc-open" href="#">Open the drawing</a><a class="loc-course" href="#" target="_blank" rel="noopener" hidden></a>
         <span class="loc-key" data-gl-skip><span><i></i><span class="loc-lbl"></span></span><span class="loc-rel"><i class="rel"></i>Connected</span></span></div></div>`;
     const pop = host.querySelector(".loc-pop");
     let cur = 0, full = false;
@@ -222,6 +222,9 @@
       pop.querySelectorAll(".loc-chips button").forEach(b => { const on = +b.dataset.i === cur; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
       pop.querySelector(".loc-full").textContent = full ? "Zoom to the item" : "Full sheet";
       pop.querySelector(".loc-open").href = ROOT + "site/" + encodeURIComponent(s.file);
+      const crs = (D.courses || {})[v.s], ca = pop.querySelector(".loc-course");
+      ca.hidden = !crs;
+      if (crs) { ca.href = ROOT + "training/#course/" + encodeURIComponent(crs[0]); ca.textContent = "Course: " + crs[1] + " ↗"; }
       pop.querySelector(".loc-rel").hidden = !v.b.some(b => !b[4]);
       pop.querySelector(".loc-lbl").textContent = lbl;
       const fig = pop.querySelector(".loc-fig");

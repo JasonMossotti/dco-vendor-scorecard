@@ -54,6 +54,14 @@ ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:2px 0; }
 .letter { background:#fff; border:1px solid var(--line); border-radius:8px; padding:12px 16px; font-size:13px; white-space:pre-wrap; }
 .months { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
 .months .panel { margin:0; }
+ol.tight { margin:6px 0; padding-left:22px; } ol.tight li { margin:3px 0; }
+ul.refs li { margin:4px 0; }
+fieldset.qq { border:1px solid var(--line); border-radius:8px; margin:10px 0; padding:8px 14px 10px; }
+fieldset.qq legend { font-weight:600; padding:0 4px; } fieldset.qq label { display:block; margin:3px 0; cursor:pointer; }
+fieldset.qq.right { border-color:var(--good); background:#f2faf5; } fieldset.qq.wrong { border-color:var(--bad); background:#fff6f5; }
+fieldset.qq .why { font-size:13px; margin-top:6px; }
+#quiz button { font:inherit; font-size:14px; padding:6px 14px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; }
+#quiz #score { background:var(--it); color:#fff; border-color:var(--it); }
 @media (max-width:800px) { main { padding:18px 14px; } .kv { grid-template-columns:1fr; } .tl .lb { width:100px; } .tl .ax { margin-left:100px; } }
 @media print { header.top, .filters { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } }
 </style>
@@ -62,10 +70,11 @@ ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:2px 0; }
 __SITENAV__
 <header class="top">
   <strong>Training</strong>
-  <nav class="views" aria-label="Training views"><a href="#certs" data-view="certs">Certifications</a><a href="#register" data-view="register">Register</a><a href="#renewals" data-view="renewals">Renewals</a><a href="#requirements" data-view="requirements">Requirements</a></nav>
+  <nav class="views" aria-label="Training views"><a href="#certs" data-view="certs">Certifications</a><a href="#register" data-view="register">Register</a><a href="#renewals" data-view="renewals">Renewals</a><a href="#requirements" data-view="requirements">Requirements</a><a href="#courses" data-view="courses">Courses</a><a href="#guides" data-view="guides">Job guides</a><a href="#pm" data-view="pm">PM guides</a><a href="#quizzes" data-view="quizzes">Quizzes</a></nav>
 </header>
 <main id="doc"></main>
 <script id="data" type="application/json">__DATA__</script>
+<script id="refs" type="application/json" data-gl-skip>__REFS__</script>
 <script>
 const D = JSON.parse(document.getElementById("data").textContent);
 const R = D.certs;
@@ -313,13 +322,188 @@ function viewRequirements() {
   return h;
 }
 
+// ------------------------------------------------------------------ Training portal (config/training/, src/scorecard/training_portal.py)
+const T = D.portal;
+// References: document titles and web addresses, kept apart from the codes the Glossary explains (data-gl-skip).
+const REFS = JSON.parse(document.getElementById("refs").textContent);
+const refsOf = key => REFS.items[key] || [];
+const COURSE = Object.fromEntries(T.courses.map(c => [c.id, c]));
+const GUIDE = Object.fromEntries(T.guides.map(g => [g.id, g]));
+const PMG = Object.fromEntries(T.pm.map(p => [p.id, p]));
+const QUIZ = Object.fromEntries(T.quizzes.map(q => [q.id, q]));
+const PKEY = {"IT Partner": "it", "Landlord": "landlord", "Security Partner": "security"};
+const pFlag = name => `<span class="flag ${esc(PKEY[name] || "mute")}">${esc(name)}</span>`;
+const cLink = id => COURSE[id] ? `<a class="c" href="#course/${esc(id)}">${esc(COURSE[id].title)}</a>` : esc(id);
+const gLink = id => GUIDE[id] ? `<a class="c" href="#guide/${esc(id)}">${esc(GUIDE[id].title)}</a>` : esc(id);
+const pmLink = id => PMG[id] ? `<a class="c" href="#pm/${esc(id)}">${esc(PMG[id].title)}</a>` : esc(id);
+const devLink = n => `<a class="c" href="../devices/#${esc(encodeURIComponent(n))}">${esc(n)}</a>`;
+const list = xs => `<ul class="tight">${(xs || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+const olist = xs => `<ol class="tight">${(xs || []).map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
+const RACI_COLS = ["Customer", "IT Partner", "Landlord", "Security Partner", "OEM", "Utility"];
+function raciTable(rows) {
+  if (!rows.length) return "";
+  return `<table><tr><th>Component (Interface Agreement RACI)</th>${RACI_COLS.map(c => `<th class="c">${esc(c)}</th>`).join("")}</tr>
+    ${rows.map(r => `<tr><td>${esc(r.component)}</td>${RACI_COLS.map(c => `<td class="c">${esc(r[c] || "")}</td>`).join("")}</tr>`).join("")}</table>`;
+}
+function credTable(cs) {
+  if (!cs.length) return `<p class="note">No credential beyond the role's.</p>`;
+  return `<table><tr><th>Credential</th><th>Held by</th><th>Renewal</th></tr>${cs.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.partner)}</td>
+    <td class="nw">${c.months ? esc(c.months) + " months" : "Does not expire"}</td></tr>`).join("")}</table>`;
+}
+function recTable(rs, n, what) {
+  if (!rs.length) return `<p class="note">No ${esc(what)} in the sample month.</p>`;
+  return `<table><tr><th>Record</th><th>Opened</th><th>Partner</th><th>Summary</th></tr>${rs.map(r => `<tr><td class="nw">${esc(r.id)}</td><td class="nw">${esc(lt(r.start))}</td>
+    <td>${esc(r.partner)}</td><td>${esc(r.summary)}</td></tr>`).join("")}</table>${n > rs.length ? `<p class="note">${esc(rs.length)} of ${esc(n)} shown; the rest are in the <a class="c" href="../tickets/">Incident Portal</a>.</p>` : ""}`;
+}
+function refList(ids) {
+  if (!ids.length) return "";
+  return `<ul class="tight refs" data-gl-skip>${ids.map(k => REFS.list[k]).filter(Boolean).map(r => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.title)}</a>
+    <span class="note">${esc(r.publisher)}${r.login ? " · free login" : ""} · opened ${esc(day(r.checked))}</span></li>`).join("")}</ul>`;
+}
+const FILT_P = {v: ""};
+function partnerFilter(id) {
+  const opts = [["", "Every partner"], ["IT Partner", "IT Partner"], ["Landlord", "Landlord"], ["Security Partner", "Security Partner"]];
+  return `<div class="filters"><label>Show <select id="${id}">${opts.map(([v, l]) => `<option value="${esc(v)}"${v === FILT_P.v ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></label></div>`;
+}
+const keep = p => !FILT_P.v || p === FILT_P.v || p === "Everyone";
+
+function viewCourses() {
+  const cs = T.courses.filter(c => keep(c.partner));
+  let h = `<h1>Courses</h1><p class="sub">One course for each kind of equipment at AUS-1, for the partner that works on it. Each course says where the equipment is
+    (the device directory and the drawings), how it has failed here (the sample month's own records), who owns what, the credentials the work needs,
+    and public references from the manufacturer and the standards bodies. Content: <code>config/training/courses.yaml</code>.</p>${partnerFilter("pf")}
+    <div class="wide"><table><tr><th>Course</th><th>For</th><th>Equipment here</th><th class="n">Records</th><th class="n">Job guides</th><th class="n">PM guides</th></tr>`;
+  for (const c of cs) {
+    const eq = c.devices.map(d => `${d.count} ${d.label.toLowerCase()}${d.count === 1 ? "" : "s"}`).join(", ");
+    h += `<tr><td>${cLink(c.id)}</td><td>${pFlag(c.partner)}</td><td>${esc(eq || c.products.map(p => p.model).join(", "))}</td>
+      <td class="n">${esc(c.record_count)}</td><td class="n">${esc(c.guides.length)}</td><td class="n">${esc(c.pm.length)}</td></tr>`;
+  }
+  return h + `</table></div><p class="note">The training here is the site's own. It is not a credential: the <a class="c" href="#requirements">register</a> holds those.</p>`;
+}
+
+function viewCourse(id) {
+  const c = COURSE[id];
+  if (!c) return `<h1>Course not found</h1><p><a class="c" href="#courses">All courses</a></p>`;
+  let h = `<p class="note"><a class="c" href="#courses">Courses</a> ›</p><h1>${esc(c.title)}</h1><p class="sub">${pFlag(c.partner)}${c.hall ? " · " + esc(c.hall) : ""}</p>
+    <h2>What it is</h2><p>${esc(c.what)}</p>`;
+  if (c.products.length) h += `<table><tr><th>Manufacturer</th><th>Model</th><th>Management interfaces</th></tr>${c.products.map(p => `<tr><td>${esc(p.manufacturer)}</td>
+    <td>${esc(p.model)}</td><td>${esc(p.interfaces.join("; "))}</td></tr>`).join("")}</table>`;
+  h += `<h2>Where it is at AUS-1</h2>`;
+  if (c.devices.length) h += `<ul class="tight">${c.devices.map(d => `<li><b>${esc(d.count)}</b> ${esc(d.label.toLowerCase())}${d.count === 1 ? "" : "s"}: ${d.names.map(devLink).join(", ")}${d.more ? ` and ${esc(d.more)} more` : ""}</li>`).join("")}</ul>`;
+  if (c.sheets.length) h += `<p>Drawings: ${c.sheets.map(s => `<a class="c" href="../site/${esc(encodeURIComponent(s.file))}" target="_blank" rel="noopener">${esc(s.num)} ${esc(s.title)}</a>`).join(" · ")}</p>`;
+  h += `<h2>How it fails</h2>${list(c.failures)}<h3>Here, in the sample month</h3>${recTable(c.records, c.record_count, "records on this equipment")}`;
+  if (c.guides.length) h += `<h3>Job guides for its alarms</h3><p>${c.guides.map(gLink).join(" · ")}</p>`;
+  if (c.pm.length) h += `<h3>Preventive maintenance</h3><p>${c.pm.map(pmLink).join(" · ")}</p>`;
+  h += `<h2>Who owns what</h2>${raciTable(c.raci)}<h2>Safety</h2>${list(c.safety)}<h2>Credentials the work needs</h2>${credTable(c.credentials)}
+    <h2>References</h2>${refList(refsOf("courses:" + c.id))}${(REFS.sources[c.id] || []).length ? `<p class="note" data-gl-skip>The site model's product facts: ${REFS.sources[c.id].map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">source ${i + 1}</a>`).join(" · ")}.</p>` : ""}`;
+  return h;
+}
+
+function viewGuides() {
+  let h = `<h1>Job guides</h1><p class="sub">One guide for each alarm signal on the <a class="c" href="../alarms/">alarm board</a> and each door alarm the Security Partner answers:
+    what it means, the first 15 minutes, who owns it, safety and permits, the steps, the return-to-service checks, and the emergency procedure it escalates to.
+    Every alarm on the board matches exactly one guide. Content: <code>config/training/guides.yaml</code>.</p>
+    <table><tr><th>Guide</th><th>Owner</th><th class="n">Alarms in the sample</th><th class="n">Records</th><th>Escalates to</th></tr>`;
+  for (const g of T.guides) h += `<tr><td>${gLink(g.id)}</td><td>${esc(g.owner)}</td><td class="n">${esc(g.alarm_count)}</td><td class="n">${esc(g.record_count)}</td>
+    <td>${g.procedure ? `<a class="c" href="../emergency/#proc/${esc(g.procedure.id)}">${esc(g.procedure.name)}</a>` : ""}</td></tr>`;
+  return h + `</table>`;
+}
+
+function viewGuide(id) {
+  const g = GUIDE[id];
+  if (!g) return `<h1>Job guide not found</h1><p><a class="c" href="#guides">All job guides</a></p>`;
+  const sev = Object.entries(g.severity).map(([k, n]) => `${n} ${k}`).join(", ");
+  let h = `<p class="note"><a class="c" href="#guides">Job guides</a> ›</p><h1>${esc(g.title)}</h1>
+    <p class="sub">Owner: <b>${esc(g.owner)}</b> · Course: ${cLink(g.course)}${g.procedure ? ` · Escalates to <a class="c" href="../emergency/#proc/${esc(g.procedure.id)}">${esc(g.procedure.name)}</a>` : ""}</p>
+    <h2>What it means</h2><p>${esc(g.means)}</p><h2>First 15 minutes</h2>${olist(g.first15)}<h2>Safety and permits</h2>${list(g.safety)}`;
+  if (g.permits.length) h += `<p>Permits the work has needed here: ${g.permits.map(p => `${esc(p.name)} (${esc(p.rule)})`).join("; ")}.</p>`;
+  h += `<h2>Steps</h2>${olist(g.steps)}<h2>Return to service</h2>${list(g.rts)}${g.raci ? `<h2>Who owns it</h2>${raciTable([g.raci])}` : ""}
+    <h2>Credentials the work needs</h2>${credTable(g.credentials)}
+    <h2>On the alarm board in the sample month</h2><p>${esc(g.alarm_count)} alarm${g.alarm_count === 1 ? "" : "s"}${sev ? " (" + esc(sev) + ")" : ""}${g.devices.length ? " on " + g.devices.map(d => esc(d)).join(", ") : ""}.</p>`;
+  if (g.alarms.length) h += `<table><tr><th>Alarm</th><th>Raised</th><th>Device</th><th>Summary</th></tr>${g.alarms.map(a => `<tr><td class="nw"><a class="c" href="../alarms/">${esc(a.id)}</a></td>
+    <td class="nw">${esc(lt(a.raised))}</td><td>${esc(a.device)}</td><td>${esc(a.summary)}</td></tr>`).join("")}</table>`;
+  h += `<h3>Records</h3>${recTable(g.records, g.record_count, "records with this alarm")}<h2>References</h2>${refList(refsOf("guides:" + g.id))}`;
+  return h;
+}
+
+function viewPms() {
+  let h = `<h1>PM guides</h1><p class="sub">One guide for each kind of planned work: how often, the steps, what must be true to close it, and what the record must show.
+    Duration, permits, credentials, and what the work takes out of service come from the calendar, EHS, and certification rules; the sample's records
+    and the forward schedule's jobs are listed with each. Content: <code>config/training/pm.yaml</code>.</p>
+    <table><tr><th>Guide</th><th>Done by</th><th class="n">Minutes</th><th>Permits</th><th class="n">Records</th><th class="n">Scheduled ahead</th></tr>`;
+  for (const p of T.pm) h += `<tr><td>${pmLink(p.id)}</td><td>${pFlag(p.partner)}</td><td class="n">${p.minutes ? esc(p.minutes) : ""}</td>
+    <td>${esc(p.permits.map(x => x.name).join(", ") || "None")}</td><td class="n">${esc(p.record_count)}</td><td class="n">${esc(p.forward_count)}</td></tr>`;
+  return h + `</table>`;
+}
+
+const TAKES = {pump: "one pump of the CDU (N+1 becomes N)", ups: "the UPS (four make three becomes N)", chiller: "the chiller (N+1 becomes N)",
+  feed: "one feed of the rack (2N becomes N)", none: "nothing in a redundancy group"};
+function viewPm(id) {
+  const p = PMG[id];
+  if (!p) return `<h1>PM guide not found</h1><p><a class="c" href="#pm">All PM guides</a></p>`;
+  let h = `<p class="note"><a class="c" href="#pm">PM guides</a> ›</p><h1>${esc(p.title)}</h1><p class="sub">${pFlag(p.partner)} · Course: ${cLink(p.course)}</p>
+    <div class="kv"><div>How often</div><div>${esc(p.frequency)}</div>`;
+  if (p.work_type) h += `<div>Duration</div><div>${esc(p.minutes)} minutes${p.per_month ? ` · ${esc(p.per_month)} a month in the forward schedule` : ""}</div>
+    <div>Method of procedure</div><div>${p.mop ? "Required (a MOP window approved by the Customer change board)" : "Not required"}</div>
+    <div>Takes out of service</div><div>${esc(TAKES[p.takes] || p.takes)}</div>`;
+  h += `<div>Permits</div><div>${esc(p.permits.map(x => `${x.name} (${x.rule})`).join("; ") || "None")}</div>
+    ${p.lock && p.lock !== "none" ? `<div>Lockout point</div><div>${esc(p.lock)}: the device records the isolation, and the Safety check compares it with the permit</div>` : ""}</div>
+    <h2>Why</h2><p>${esc(p.why)}</p><h2>Steps</h2>${olist(p.steps)}<h2>Acceptance</h2>${list(p.acceptance)}<h2>What the record must show</h2>${list(p.record)}
+    <h2>Credentials the work needs</h2>${credTable(p.credentials)}<h2>In the sample month</h2>${recTable(p.records, p.record_count, "records of this work")}`;
+  if (p.forward.length) h += `<h3>Scheduled ahead (<a class="c" href="../ops/#calendar">calendar</a>)</h3><table><tr><th>Job</th><th>Window opens</th><th>Title</th></tr>
+    ${p.forward.map(j => `<tr><td class="nw">${esc(j.id)}</td><td class="nw">${esc(lt(j.start))}</td><td>${esc(j.title)}</td></tr>`).join("")}</table>
+    ${p.forward_count > p.forward.length ? `<p class="note">${esc(p.forward.length)} of ${esc(p.forward_count)} shown.</p>` : ""}`;
+  return h + `<h2>References</h2>${refList(refsOf("pm:" + p.id))}`;
+}
+
+function viewQuizzes() {
+  return `<h1>Quizzes</h1><p class="sub">A shared site orientation quiz and one for each partner. Site questions are computed from the site data (their answers are
+    tested against it); general questions are written from the public references. Scored in your browser only: nothing is recorded, and passing a quiz
+    is not a credential. Content: <code>config/training/quizzes.yaml</code>.</p>
+    <table><tr><th>Quiz</th><th>For</th><th class="n">Questions</th><th class="n">From the site data</th></tr>
+    ${T.quizzes.map(q => `<tr><td><a class="c" href="#quiz/${esc(q.id)}">${esc(q.title)}</a></td><td>${esc(q.for)}</td><td class="n">${esc(q.questions.length)}</td><td class="n">${esc(q.computed)}</td></tr>`).join("")}</table>`;
+}
+
+function viewQuiz(id) {
+  const q = QUIZ[id];
+  if (!q) return `<h1>Quiz not found</h1><p><a class="c" href="#quizzes">All quizzes</a></p>`;
+  return `<p class="note"><a class="c" href="#quizzes">Quizzes</a> ›</p><h1>${esc(q.title)} quiz</h1><p class="sub">${esc(q.for)}. ${esc(q.questions.length)} questions; nothing is recorded.</p>
+    <form id="quiz" data-quiz="${esc(q.id)}">${q.questions.map((x, i) => `<fieldset class="qq" data-i="${i}"><legend>${i + 1}. ${esc(x.q)}</legend>
+      ${x.options.map((o, j) => `<label><input type="radio" name="q${i}" value="${j}"> ${esc(o)}</label>`).join("")}<div class="why" hidden></div></fieldset>`).join("")}
+      <p><button type="button" id="score">Check my answers</button> <button type="button" id="reset">Start again</button> <span id="result" class="sub"></span></p></form>`;
+}
+
+function wireQuiz() {
+  const f = document.getElementById("quiz");
+  if (!f) return;
+  const q = QUIZ[f.dataset.quiz];
+  document.getElementById("score").addEventListener("click", () => {
+    let right = 0;
+    q.questions.forEach((x, i) => {
+      const el = f.querySelector(`input[name="q${i}"]:checked`), fs = f.querySelector(`fieldset[data-i="${i}"]`), why = fs.querySelector(".why");
+      const ok = el && +el.value === x.answer;
+      if (ok) right += 1;
+      fs.classList.toggle("right", !!ok); fs.classList.toggle("wrong", !ok);
+      why.hidden = false;
+      const ref = REFS.list[refsOf("quiz:" + x.id)[0]];
+      why.innerHTML = `${ok ? "Right." : "The answer: " + esc(x.options[x.answer]) + "."} ${esc(x.why)}${ref ? ` <a href="${esc(ref.url)}" target="_blank" rel="noopener noreferrer" data-gl-skip>${esc(ref.title)}</a>` : x.source !== "written" ? ` <span class="note">(${esc(x.source)})</span>` : ""}`;
+    });
+    document.getElementById("result").textContent = `${right} of ${q.questions.length} right (${Math.round(100 * right / q.questions.length)}%). Not recorded.`;
+  });
+  document.getElementById("reset").addEventListener("click", () => { f.reset(); f.querySelectorAll("fieldset").forEach(fs => { fs.classList.remove("right", "wrong"); fs.querySelector(".why").hidden = true; }); document.getElementById("result").textContent = ""; });
+}
+
 function route() {
   const h = decodeURIComponent(location.hash.slice(1)) || "certs";
   const [view, a] = h.split("/");
-  const which = view === "person" ? "register" : view === "finding" ? "certs" : ["certs", "register", "renewals", "requirements"].includes(view) ? view : "certs";
+  const PARENT = {person: "register", finding: "certs", course: "courses", guide: "guides", quiz: "quizzes"};
+  const which = PARENT[view] || (["certs", "register", "renewals", "requirements", "courses", "guides", "pm", "quizzes"].includes(view) ? view : "certs");
   document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === which));
   const doc = document.getElementById("doc");
-  doc.innerHTML = which === "register" ? viewRegister() : which === "renewals" ? viewRenewals() : which === "requirements" ? viewRequirements() : viewCerts();
+  doc.innerHTML = view === "course" ? viewCourse(a) : view === "guide" ? viewGuide(a) : view === "quiz" ? viewQuiz(a) : view === "pm" && a ? viewPm(a)
+    : which === "courses" ? viewCourses() : which === "guides" ? viewGuides() : which === "pm" ? viewPms() : which === "quizzes" ? viewQuizzes()
+    : which === "register" ? viewRegister() : which === "renewals" ? viewRenewals() : which === "requirements" ? viewRequirements() : viewCerts();
+  if ((["course", "guide", "quiz"].includes(view) || view === "pm" && a) && doc.scrollIntoView) doc.scrollIntoView({block: "start"});
   const det = document.getElementById("detail");
   if (det) {
     det.innerHTML = view === "person" ? personPanel(a) : view === "finding" ? findingPanel(a) : "";
@@ -336,6 +520,9 @@ function wire() {
     el.addEventListener("change", () => { FILT[k] = (OPTS[k].find(([v]) => v === el.value) || OPTS[k][0])[0]; route(); });
   }
   document.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", () => { location.hash = el.dataset.close; }));
+  const pf = document.getElementById("pf");
+  if (pf) pf.addEventListener("change", () => { FILT_P.v = ["", "IT Partner", "Landlord", "Security Partner"].find(v => v === pf.value) || ""; route(); });
+  wireQuiz();
 }
 
 window.addEventListener("hashchange", route);

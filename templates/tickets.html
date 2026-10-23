@@ -312,6 +312,15 @@ function pirLine(r) {
 
 // Emergency response: a P1 opens its event's console on the Emergency tab (records that are one event open the same
 // response); a P2 can be escalated to one when the runbook's rule is met (redundancy lost on both paths, or a second party).
+// The Training tab's job guides, PM guides, and course for this record (scorecard.training_portal.record_links).
+function trainingLine(r) {
+  const t = (D.training || {})[r.id];
+  if (!t) return "";
+  const a = (kind, [id, title]) => `<a class="trn" href="../training/#${kind}/${esc(id)}" target="_blank" rel="noopener">${esc(title)} ↗</a>`;
+  const parts = [...t.guides.map(g => "Job guide: " + a("guide", g)), ...t.pm.map(p => "PM guide: " + a("pm", p)), ...t.courses.map(c => "Course: " + a("course", c))];
+  return parts.length ? `<p class="note training">${parts.join(" · ")}</p>` : "";
+}
+
 function emergencyLine(r) {
   if (r.priority !== "P1" && r.priority !== "P2") return "";
   const p1 = r.priority === "P1";
@@ -416,7 +425,7 @@ function detail(id) {
     ["Close code", r.close_code], ["Work type", r.work_type]].filter(([, v]) => v)
     .map(([k, v, l]) => `<div class="kv"${l ? ` data-loc="${esc(v + (r.location && r.location !== v ? "|" + r.location : ""))}" data-part="${esc(r.summary)}"` : ""}><b>${esc(k)}</b>${esc(v)}</div>`).join("") + `</div>`;
   h += engineerNotes(r);
-  h += emergencyLine(r) + pirLine(r);
+  h += emergencyLine(r) + pirLine(r) + trainingLine(r);
   h += measurement(r);
   if (r.findings.length) h += `<h2>Findings that name this record</h2>` + r.findings.map(f => `<div class="card bad"><h3><span class="badge ${esc(f.severity)}">${esc(f.severity)}</span> ${esc(f.id)} · ${esc(f.title)}</h3><div>${esc(f.summary)}</div><div class="note">${f.sla_refs.length ? "SLA references: " + f.sla_refs.map(esc).join(", ") + " · " : ""}${f.source ? `${esc(f.source)} · <a href="../training/#finding/${esc(f.id)}">Training</a>` : esc(f.partner) + " scorecard"}</div></div>`).join("");
   h += `<h2>Timeline at a glance</h2>${swimlane(r)}`;

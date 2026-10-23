@@ -360,6 +360,7 @@ function rowHtml(a, T, kids = [], child = false) {
     h += `<tr class="detail"><td></td><td colspan="10">
       ${a.reason ? `<div><b>${esc(CT[a.cls])}:</b> ${esc(a.reason)}</div>` : ""}
       <div><b>Signal:</b> ${esc(a.signal)} · <b>Severity:</b> ${esc(a.severity)} · <b>Domain:</b> ${esc(a.domains.join(", "))} · <b>Alarm:</b> ${esc(a.id)}</div>
+      ${(D.guides || {})[a.signal] ? `<div><b>Job guide:</b> <a class="guide" href="../training/#guide/${esc(D.guides[a.signal][0])}" target="_blank" rel="noopener">${esc(D.guides[a.signal][1])} ↗</a></div>` : ""}
       ${a.evidence.length ? `<div><b>Also seen:</b> ${a.evidence.map(esc).join("; ")}</div>` : ""}
       ${a.ticket ? `<div><b>${esc(a.ticket.id)}</b> (${esc(a.ticket.priority)}) opened ${esc(local(ms(a.ticket.opened)))} CDT${a.ticket.resolved ? `, resolved ${esc(local(ms(a.ticket.resolved)))} CDT` : ""}</div>` : ""}
       <div><b>Notifications owed (Interface Agreement section 10):</b> ${ow.length ? ow.join("; ") : "none"}</div>

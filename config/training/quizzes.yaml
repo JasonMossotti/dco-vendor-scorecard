@@ -1,0 +1,316 @@
+# =============================================================================
+# AUS-1 training portal: quizzes (portfolio demo; all data fictional)
+# -----------------------------------------------------------------------------
+# One quiz per partner type and a shared site orientation quiz, 20 to 30 questions each. The site questions are
+# computed from the data by src/scorecard/training_portal.py (their answers are tested against it); the general
+# questions below are written by hand from the public references. Scored in the browser only: nothing is recorded,
+# and passing a quiz is not a credential.
+#
+#   written     hand-written questions: q (the question), options (3 or 4), answer (the index of the right option,
+#               from 0), why (one sentence shown after answering), ref (a reference id from the list at the end)
+# =============================================================================
+
+quizzes:
+  orientation:
+    title: "Site orientation"
+    for: "Everyone who works at AUS-1"
+    written:
+      - q: "In a group lockout, what does each person working on the equipment do?"
+        options: ["Signs the group permit and relies on the lead's lock", "Puts a personal lock on the group lock or lockbox", "Tags the equipment but does not lock it", "Asks the control room to block the start"]
+        answer: 1
+        why: "OSHA requires each authorized employee to affix a personal lockout or tagout device to the group lockout device."
+        ref: P-OSHA-LOTO
+      - q: "After the locks are on and stored energy is released, what is the last step before work starts?"
+        options: ["Verify the equipment is isolated and de-energized", "Remove the tags so they do not get damaged", "Notify the Customer that work is complete", "Start the equipment briefly to check it"]
+        answer: 0
+        why: "OSHA's lockout sequence ends with verification that the equipment is isolated and de-energized before work begins."
+        ref: P-OSHA-LOTO
+      - q: "Who may cross the limited approach boundary around exposed live parts?"
+        options: ["Anyone wearing safety glasses", "Only the shift lead", "A qualified person, or an unqualified person escorted by one with protection", "Nobody, under any condition"]
+        answer: 2
+        why: "Unqualified workers stay outside the limited approach boundary unless they are protected and escorted by a qualified person."
+        ref: P-NSA-70E
+      - q: "What does the arc flash boundary mark?"
+        options: ["The distance at which an unprotected person could get a second-degree burn from an arc flash", "The edge of the electrical room", "The distance at which a person could get a shock", "The area that must be roped off during a fire drill"]
+        answer: 0
+        why: "The arc flash boundary is where incident energy reaches 1.2 cal/cm2, enough for a second-degree burn."
+        ref: P-NSA-70E
+      - q: "A new worker starts in a hot outdoor job. What does OSHA advise?"
+        options: ["Full workload from day one so the body adapts faster", "Only work at night for the first month", "Drink water only at the end of the shift", "Increase the workload gradually and take more frequent breaks"]
+        answer: 3
+        why: "OSHA advises letting new or returning workers increase workloads gradually and take more frequent breaks as they acclimatize."
+        ref: Q-OSHA-HEAT
+      - q: "A coworker working in the heat is confused and slurring words. What do you do?"
+        options: ["Have them sit in the truck alone until they feel better", "Call 911, start cooling them, and stay with them", "Give them a sports drink and send them back to work", "Wait 30 minutes to see if it passes"]
+        answer: 1
+        why: "Confusion and slurred speech can mean heat stroke: call 911, cool the worker, and never leave them alone."
+        ref: Q-OSHA-HEAT-FA
+      - q: "What is the first VESDA alarm level, raised when smoke is too faint to see?"
+        options: ["Fire 2", "Action", "Alert", "Fire 1"]
+        answer: 2
+        why: "VESDA detectors have four thresholds (Alert, Action, Fire 1, Fire 2), and Alert is the earliest."
+        ref: P-UIUC-VESDA
+      - q: "In a double-interlock pre-action system, when does water enter the sprinkler pipes?"
+        options: ["Only when both the detection system and a sprinkler head have operated", "Whenever a smoke detector alarms", "Whenever the supervisory air pressure drops", "At all times; the pipes are always full"]
+        answer: 0
+        why: "A double-interlock system needs both detection and a sprinkler head to activate, which protects equipment from accidental water."
+        ref: P-FIRESYS-PREACTION
+      - q: "What should a visitor in a secure area always have?"
+        options: ["A camera to record their work", "Their own access badge to every door", "A copy of the floor plan", "An escort who controls their activity"]
+        answer: 3
+        why: "NIST SP 800-53's physical access control calls for escorting visitors and controlling visitor activity."
+        ref: Q-NIST-PE3
+      - q: "Why must each person's physical access be verified before entry, even if they are known to staff?"
+        options: ["Access is granted only against a current authorization, and the entry is logged", "It is only needed for visitors", "It keeps the door from wearing out", "It is optional when the area is busy"]
+        answer: 0
+        why: "The same NIST control requires verifying individual access authorizations before granting access and keeping physical access audit logs."
+        ref: Q-NIST-PE3
+      - q: "Storage media leaves a controlled area for destruction. What must be maintained?"
+        options: ["Nothing, once the media is in a box", "Accountability for the media, with the transport documented and done by authorized people", "Only a photo of the box", "A copy of the data, in case it is needed"]
+        answer: 1
+        why: "NIST SP 800-53 MP-5 requires accountability for media in transport, documentation of the transport, and authorized personnel only."
+        ref: Q-NIST-MP5
+      - q: "Which sanitization method gives the highest assurance that data cannot be recovered?"
+        options: ["Clear", "Purge", "Destroy", "Reformat"]
+        answer: 2
+        why: "NIST SP 800-88 Rev. 2 states that destroy provides the highest assurance level."
+        ref: Q-NIST-80088-FAQ
+  it:
+    title: "IT Partner"
+    for: "Ridgeline Site Services technicians and shift leads"
+    written:
+      - q: "How often should a wrist strap used every day be tested?"
+        options: ["Once a year", "Daily, unless a continuous monitor is used", "Only when it looks damaged", "Once a month"]
+        answer: 1
+        why: "The ESD Association says straps used daily should be tested daily; a continuous monitor can replace the daily check."
+        ref: P-ESDA-FUND3
+      - q: "How should a spare part that is sensitive to static be carried outside an ESD protected area?"
+        options: ["In a shielding bag", "In a cardboard box", "Wrapped in bubble wrap", "In a coat pocket"]
+        answer: 0
+        why: "Outside protected areas, ESD-sensitive items need packaging that shields them from discharge."
+        ref: P-ESDA-FUND3
+      - q: "Before mating a fiber connector, what should you do?"
+        options: ["Blow on it to remove dust", "Mate it right away if it had a dust cap on", "Clean it once and mate without looking", "Inspect it with a scope, clean it if needed, and inspect again"]
+        answer: 3
+        why: "The FOA connector guide says to inspect, clean as needed, and re-inspect until the connector passes."
+        ref: P-FOA-8
+      - q: "One end of a link is clean and the other is dirty. What happens if you mate them?"
+        options: ["The dirty connector can contaminate the clean one", "The clean end cleans the dirty one", "Nothing, as long as the light level is high", "The link will refuse to come up"]
+        answer: 0
+        why: "The FOA connector guide says to clean both connectors when mating, because a dirty connector can contaminate a clean one."
+        ref: P-FOA-8
+      - q: "Why must an optical inspection microscope have an infrared filter?"
+        options: ["To make the end face look sharper", "To keep the lens clean", "To protect your eye if the fiber is carrying light you cannot see", "It is only needed for multimode fiber"]
+        answer: 2
+        why: "Network light is infrared and invisible, and a microscope can focus it into your eye; check with a power meter first."
+        ref: P-FOA-SAFETY
+      - q: "Where do fiber scraps go?"
+        options: ["On the floor, to sweep up later", "In your pocket until the end of the shift", "In the rack's cable tray", "In a dedicated scrap container"]
+        answer: 3
+        why: "Fiber scraps are sharp and hard to remove from skin; use a dedicated container and never drop them on the floor."
+        ref: P-FOA-SAFETY
+      - q: "What is the main advantage of a dry-break, flush-face quick disconnect on a liquid-cooled tray?"
+        options: ["It allows higher coolant pressure", "It needs no latch", "It leaves almost no coolant to drip on electronics when disconnected", "It lets air into the loop to bleed it"]
+        answer: 2
+        why: "Flush-face valves leave only a thin film of coolant, while poppet valves can trap liquid that drips on disconnect."
+        ref: Q-ED-QD
+      - q: "What is PG25?"
+        options: ["About 25% propylene glycol in water, with corrosion inhibitors", "Pure propylene glycol", "A dielectric oil", "Deionized water with no additives"]
+        answer: 0
+        why: "The OCP guidelines describe PG25 as a fluid with about 25% propylene glycol and an inhibitor package."
+        ref: P-OCP-PG25
+      - q: "On a GB200 compute tray, which firmware is updated first?"
+        options: ["The GPU VBIOS", "The NIC firmware", "The operating system", "The BMC"]
+        answer: 3
+        why: "NVIDIA's process runs the BMC update first, then a power cycle, then the full tray package."
+        ref: P-NVIDIA-FW
+      - q: "What does NVIDIA's compute tray process call for after each firmware package completes?"
+        options: ["An AC power cycle of the tray", "A reboot of the head node only", "Nothing; versions apply on the next job", "Reseating every GPU"]
+        answer: 0
+        why: "The guide says to AC cycle after each package completes the firmware update."
+        ref: P-NVIDIA-FW
+      - q: "During a spares cycle count, what is a blind count?"
+        options: ["A count done with the lights off", "A count where the counter does not see the recorded quantity", "A count of only the bins nobody opened", "A count done by the person who manages the cage"]
+        answer: 1
+        why: "GAO calls blind counts the greatest degree of assurance of accurate and reliable counts."
+        ref: P-GAO-COUNT
+      - q: "A cycle count does not match the ledger. What comes first?"
+        options: ["Change the ledger to match the count", "Recount and research the difference before adjusting", "Order more parts", "Ignore it if the difference is one item"]
+        answer: 1
+        why: "GAO says reconciling the difference is essential, and balances generally stay unchanged until recounts and research are done."
+        ref: P-GAO-COUNT
+  landlord:
+    title: "Landlord"
+    for: "Caprock Critical Facilities engineers"
+    written:
+      - q: "Under NFPA 110, a diesel generator's monthly exercise runs under load for at least how long?"
+        options: ["10 minutes", "15 minutes", "30 minutes", "4 hours"]
+        answer: 2
+        why: "Monthly testing runs at least 30 minutes at 30% of nameplate kW or the recommended exhaust temperature."
+        ref: P-CSE-NFPA110
+      - q: "What is wet stacking?"
+        options: ["Fuel leaking from a day tank", "Water in the coolant", "Condensation in the alternator", "Unburned fuel and soot building up from running a diesel at light load"]
+        answer: 3
+        why: "Light-load operation sends unburned fuel and soot into the exhaust; the monthly loaded test is meant to reduce it."
+        ref: P-CSE-WETSTACK
+      - q: "While a UPS is on external maintenance bypass, what protects the load?"
+        options: ["The UPS batteries", "Nothing; the load is on unconditioned bypass power", "The inverter", "The rectifier"]
+        answer: 1
+        why: "The Galaxy VX manual says the load is fed by the bypass source with unconditioned power and the batteries are not available."
+        ref: P-SE-GALAXYVX
+      - q: "Before treating a circuit as de-energized, what must a qualified person do?"
+        options: ["Test it with test equipment", "Check that the breaker handle is off", "Ask the operator", "Wait five minutes"]
+        answer: 0
+        why: "OSHA 1910.333 requires a qualified person to use test equipment to verify the parts are de-energized."
+        ref: P-OSHA-333
+      - q: "How often must an employer inspect its energy control (lockout) procedure?"
+        options: ["Every five years", "Only after an injury", "At least annually", "Every shift"]
+        answer: 2
+        why: "OSHA 1910.147 requires a periodic inspection of the energy control procedure at least annually."
+        ref: P-OSHA-LOTO
+      - q: "Inserting a plug-in unit on energized track busway is treated by OSHA as what?"
+        options: ["Work near exposed live parts, for qualified persons only", "Ordinary equipment operation", "Work that needs no PPE", "Work anyone trained on the product may do"]
+        answer: 0
+        why: "OSHA's 2025 interpretation says this work exposes employees to live-part hazards and is limited to qualified persons."
+        ref: P-OSHA-BUSWAY
+      - q: "A technician will open and charge a low-pressure chiller circuit. Which EPA 608 certification covers it?"
+        options: ["Type I", "Type II", "Type III or Universal", "None is needed"]
+        answer: 2
+        why: "Type III covers low-pressure appliances; Universal covers all types."
+        ref: P-EPA-608-CERT
+      - q: "How long is an EPA Section 608 technician certification valid?"
+        options: ["One year", "It does not expire", "Three years", "Five years"]
+        answer: 1
+        why: "EPA states that Section 608 technician certification credentials do not expire."
+        ref: P-EPA-608-CERT
+      - q: "During service, which refrigerant release is allowed?"
+        options: ["Venting the charge to save recovery time", "De minimis amounts released during good-faith recovery, such as at hose connections", "Any release under 5 pounds", "Any release outdoors"]
+        answer: 1
+        why: "EPA prohibits intentional venting; only de minimis releases during good-faith recovery and a few exempt cases are allowed."
+        ref: P-EPA-608-VENT
+      - q: "For a comfort cooling appliance holding 50 pounds or more, above what annual leak rate must leaks be repaired?"
+        options: ["5%", "35%", "20%", "10%"]
+        answer: 3
+        why: "The 2016 update set the comfort cooling leak rate threshold at 10%, with repairs due within 30 days."
+        ref: P-EPA-608-LEAK
+      - q: "Under NFPA 70B (2023), how often must electrical equipment be inspected at a minimum?"
+        options: ["At least every 12 months", "Every 5 years", "Only after a fault", "Every 3 years"]
+        answer: 0
+        why: "The 2023 edition makes inspection of all electrical equipment mandatory at least every 12 months, and every 6 months for Condition 3."
+        ref: P-TUV-70B
+      - q: "At a semiannual check, a clean agent container has lost 12% of its pressure. What happens?"
+        options: ["Nothing until the annual inspection", "It is refilled or replaced", "Note it and check again next year", "Raise the alarm threshold"]
+        answer: 1
+        why: "A loss of more than 5% of agent or 10% of pressure means the container must be refilled or replaced."
+        ref: P-KOORSEN-2001
+  security:
+    title: "Security Partner"
+    for: "Llano Gate Protective Services officers"
+    written:
+      - q: "When must a commissioned security officer carry the DPS pocket card?"
+        options: ["Only when armed", "Only at the start of each shift", "While on duty and when traveling to and from the assignment", "Only when asked by a supervisor"]
+        answer: 2
+        why: "37 Tex. Admin. Code 35.82 requires the card while on duty and when traveling to and from the place of assignment."
+        ref: Q-TAC-35-82
+      - q: "A peace officer asks a commissioned officer to show the pocket card. What does the officer do?"
+        options: ["Present the card", "Refuse unless the supervisor is present", "Give the employer's phone number instead", "Show the site badge instead"]
+        answer: 0
+        why: "Officers must present their pocket cards when a peace officer or a department representative asks."
+        ref: Q-TAC-35-82
+      - q: "For whom may a commissioned officer perform security duties?"
+        options: ["Any client who asks on site", "Any licensed company", "Only the licensed employer on record with DPS", "Anyone, if off duty"]
+        answer: 2
+        why: "The rule prohibits performing commissioned officer duties for anyone other than the licensed employer in department records."
+        ref: Q-TAC-35-82
+      - q: "In the DPS firearm categories, what does STG mean?"
+        options: ["Standard training grade", "Shotgun", "Semi-automatic handgun only", "Stun gun"]
+        answer: 1
+        why: "37 Tex. Admin. Code 35.7 lists SA (any handgun), NSA (handguns that are not semi-automatic), and STG (shotgun)."
+        ref: Q-TAC-35-7
+      - q: "An officer is trained in SA only. May the officer carry a shotgun on post?"
+        options: ["Yes, if the post supervisor allows it", "No; an officer carries only the categories formally trained in", "Yes, in an emergency", "Yes, if the shotgun is unloaded"]
+        answer: 1
+        why: "An officer may carry only firearms of a category the officer has been formally trained to use."
+        ref: Q-TAC-35-7
+      - q: "An officer's firearm is discharged on duty. Who must be told, and how fast?"
+        options: ["Nobody, if nobody was hurt", "The employer at the end of the week", "Only the local police", "The employer immediately; the employer notifies DPS in writing within 24 hours"]
+        answer: 3
+        why: "Any discharge must be reported to the employer immediately, and the employer notifies the department within 24 hours."
+        ref: Q-TAC-35-7
+      - q: "What is the minimum length of the DPS Level III training course?"
+        options: ["45 hours", "6 hours", "15 hours", "30 hours"]
+        answer: 0
+        why: "DPS sets the Level III course at a minimum of 45 hours, including a course of fire."
+        ref: Q-DPS-TRAINING
+      - q: "DPS ties firearms proficiency to license renewal. What does this site's contract require on top of that?"
+        options: ["Nothing more", "Requalification every 5 years", "Requalification every 12 months", "Requalification only after a discharge"]
+        answer: 2
+        why: "DPS requires a proficiency certificate with renewal; this contract is stricter and requires requalification every 12 months."
+        ref: Q-DPS-TRAINING
+      - q: "How many hours of continuing education does a commissioned officer complete before renewal?"
+        options: ["Six", "Two", "Twelve", "Forty-five"]
+        answer: 0
+        why: "DPS requires six hours of continuing education for commissioned officers, from approved schools, before renewal."
+        ref: Q-DPS-TRAINING
+      - q: "A visitor badges into a hall but the escort stays at the desk. What is wrong?"
+        options: ["Nothing, if the visitor has a badge", "The visitor must be escorted and the visitor's activity controlled", "Only the badge color", "The visitor should have signed in twice"]
+        answer: 1
+        why: "NIST SP 800-53's physical access control calls for escorting visitors and controlling visitor activity."
+        ref: Q-NIST-PE3
+      - q: "Which statement about degaussing is true under NIST SP 800-88 Rev. 2?"
+        options: ["It is a destroy method for every drive", "It works on solid-state drives", "It is a purge technique for legacy magnetic media, not a destroy method", "It replaces the need for a certificate"]
+        answer: 2
+        why: "NIST calls degaussing a purge technique for legacy magnetic media and says it does not constitute a true destroy method."
+        ref: Q-NIST-80088-FAQ
+      - q: "What should a media sanitization program require as evidence that drives were sanitized?"
+        options: ["A verbal report", "Certificates of sanitization", "A photo of the shredder", "Nothing, if the drive was destroyed"]
+        answer: 1
+        why: "NIST SP 800-88 Rev. 2 says the policy should require documentation and evidence, that is, certificates of sanitization."
+        ref: Q-NIST-80088-FAQ
+
+references:
+  - id: Q-OSHA-HEAT
+    title: "Heat illness prevention campaign: Water. Rest. Shade."
+    publisher: "OSHA"
+    url: "https://obis.osha.gov/heat/index.html"
+    checked: "2026-10-23"
+  - id: Q-OSHA-HEAT-FA
+    title: "Heat-related illnesses and first aid"
+    publisher: "OSHA"
+    url: "https://osha.gov/heat-exposure/illness-first-aid"
+    checked: "2026-10-23"
+  - id: Q-NIST-PE3
+    title: "NIST SP 800-53 Rev. 5, PE-3 Physical access control"
+    publisher: "STIG Viewer (NIST control text)"
+    url: "https://www.stigviewer.com/controls/nist-800-53/PE-3"
+    checked: "2026-10-23"
+  - id: Q-NIST-MP5
+    title: "NIST SP 800-53 Rev. 5, MP-5 Media transport"
+    publisher: "STIG Viewer (NIST control text)"
+    url: "https://www.stigviewer.com/controls/nist-800-53/MP-5"
+    checked: "2026-10-23"
+  - id: Q-NIST-80088-FAQ
+    title: "SP 800-88 Rev. 2, Guidelines for Media Sanitization: frequently asked questions"
+    publisher: "NIST"
+    url: "https://csrc.nist.gov/files/pubs/sp/800/88/r2/final/docs/sp800-88r2-faq.pdf"
+    checked: "2026-10-23"
+  - id: Q-ED-QD
+    title: "Seven attributes of effective quick disconnect couplings for liquid cooling of computers and servers"
+    publisher: "Electronic Design"
+    url: "https://www.electronicdesign.com/technologies/components/interconnects/article/21798648/seven-attributes-of-effective-quick-disconnect-couplings-for-liquid-cooling-of-computers-and-servers"
+    checked: "2026-10-23"
+  - id: Q-TAC-35-82
+    title: "37 Tex. Admin. Code 35.82, Commissioned security officer standards"
+    publisher: "Legal Information Institute (Cornell Law School)"
+    url: "https://www.law.cornell.edu/regulations/texas/37-Tex-Admin-Code-SS-35-82"
+    checked: "2026-10-23"
+  - id: Q-TAC-35-7
+    title: "37 Tex. Admin. Code 35.7, Firearm standards"
+    publisher: "Legal Information Institute (Cornell Law School)"
+    url: "https://www.law.cornell.edu/regulations/texas/37-Tex-Admin-Code-SS-35-7"
+    checked: "2026-10-23"
+  - id: Q-DPS-TRAINING
+    title: "Private Security: training and continuing education"
+    publisher: "Texas Department of Public Safety"
+    url: "https://www.dps.texas.gov/section/private-security/training-and-continuing-education"
+    checked: "2026-10-23"

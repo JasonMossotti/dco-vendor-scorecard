@@ -131,6 +131,9 @@ def location_popups(page_text: str, root: str, every: bool = False) -> str:
     Pages opt in field by field with ``data-loc``; prose never gets a pin. ``every``: all of them (the Devices page)."""
     from . import locations
     data = dict(locations.load()) if every else locations.subset(locations.load(), page_text)
-    data.update(root=root, kinds=locations.KIND_LABEL)
+    from . import training_portal
+    titles = {c["id"]: c["title"] for c in training_portal.content()["courses"]["courses"]}
+    data.update(root=root, kinds=locations.KIND_LABEL,
+                courses={sh: [c, titles[c]] for sh, c in training_portal.sheet_courses().items()})   # a detail sheet's course
     tpl = (ROOT / "templates" / "partials" / "location_popup.html").read_text(encoding="utf-8")
     return tpl.replace("__LOCATIONS__", json.dumps(data, sort_keys=True, separators=(",", ":")).replace("</", "<\\/"))
