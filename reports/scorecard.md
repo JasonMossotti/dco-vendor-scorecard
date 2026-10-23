@@ -145,7 +145,7 @@ Discrepancy details and evidence: [discrepancy_report.md](discrepancy_report.md)
 | KM-12 | Corrective Actions Closed On Time | ≥ 90% | n/a | n/a | Not measured in the demo data |
 | KM-13 | Backlog Aging (P3 and P4 tickets open more than 14 days) | ≤ 5% | n/a | n/a | Not measured in the demo data |
 | KM-14 | Ticket Data Completeness (required fields populated at closure) | ≥ 98% | n/a | n/a | Not measured in the demo data |
-| KM-15 | Training and Certification Currency | 100% | n/a | n/a | Not measured in the demo data |
+| KM-15 | Training and Certification Currency | 100% | 93.99% | **Missed** | 391 of 416 badge-verified IT Partner shifts worked with every role credential current |
 | KM-16 | Chronic Units (more than 12 Supplier-attributable down-hours in a rolling 30 days) | ≤ 0 units | 0 units | Met | None |
 | KM-17 | Redundancy Exposure (hours per month running without power or cooling redundancy) | ≤ 24 hrs | 0.8 hrs | Met | 0.8 hours running without power or cooling redundancy |
 | KM-18 | Ticket Reopen Rate (TR-1 early failures and TR-2 reopens) | ≤ 3% | 4.17% | **Missed** | 3 Tickets of Record reopened under TR-1 or TR-2 |

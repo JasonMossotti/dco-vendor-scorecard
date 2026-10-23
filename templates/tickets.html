@@ -37,7 +37,7 @@ td.num { white-space:nowrap; border-left:4px solid var(--it); } td.num.Landlord 
 #list tr.row { cursor:pointer; } #list tr.row:hover td { background:#f2f6fc; } #list tr.row.sel td { background:var(--hl); }
 .badge { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; font-weight:600; color:#fff; white-space:nowrap; }
 .badge.Landlord { background:var(--ll); } .badge.IT { background:var(--it); } .badge.Customer { background:var(--cu); } .badge.Security { background:var(--sec); }
-.badge.S1 { background:var(--bad); } .badge.S2 { background:var(--warn); } .badge.S3, .badge.S4 { background:#8a96a3; }
+.badge.Credential { background:#6d4fc2; } .badge.S1 { background:var(--bad); } .badge.S2 { background:var(--warn); } .badge.S3, .badge.S4 { background:#8a96a3; }
 .pill { display:inline-block; padding:0 6px; border:1px solid var(--line); border-radius:9px; font-size:11px; white-space:nowrap; color:var(--muted); }
 .pill.P1 { border-color:var(--bad); color:var(--bad); font-weight:700; } .pill.P2 { border-color:var(--warn); color:#a35500; }
 .flag { color:var(--bad); font-weight:700; } .met { color:var(--ok); font-weight:600; } .missed { color:var(--bad); font-weight:600; }
@@ -418,7 +418,7 @@ function detail(id) {
   h += engineerNotes(r);
   h += emergencyLine(r) + pirLine(r);
   h += measurement(r);
-  if (r.findings.length) h += `<h2>Findings that name this record</h2>` + r.findings.map(f => `<div class="card bad"><h3><span class="badge ${esc(f.severity)}">${esc(f.severity)}</span> ${esc(f.id)} · ${esc(f.title)}</h3><div>${esc(f.summary)}</div><div class="note">SLA references: ${f.sla_refs.map(esc).join(", ")} · ${esc(f.partner)} scorecard</div></div>`).join("");
+  if (r.findings.length) h += `<h2>Findings that name this record</h2>` + r.findings.map(f => `<div class="card bad"><h3><span class="badge ${esc(f.severity)}">${esc(f.severity)}</span> ${esc(f.id)} · ${esc(f.title)}</h3><div>${esc(f.summary)}</div><div class="note">${f.sla_refs.length ? "SLA references: " + f.sla_refs.map(esc).join(", ") + " · " : ""}${f.source ? `${esc(f.source)} · <a href="../training/#finding/${esc(f.id)}">Training</a>` : esc(f.partner) + " scorecard"}</div></div>`).join("");
   h += `<h2>Timeline at a glance</h2>${swimlane(r)}`;
   h += `<h2>Timeline (exact source records)</h2><p class="note">Times in UTC and Central (CDT). Expand a row to see the source record exactly as stored; people are shown by person ID.</p>` +
     `<div class="wide"><table><tr><th>Central (CDT)</th><th>Party</th><th>Event</th></tr>` +

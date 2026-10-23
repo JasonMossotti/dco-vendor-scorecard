@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training · Site AUS-1</title>
+<style>
+__SITENAV_CSS__
+:root { --ink:#1e2933; --muted:#5b6774; --line:#d5dbe2; --bg:#ffffff; --panel:#f5f7f9; --bad:#b42318; --good:#1d7a46; --warn:#9a6700;
+        --grid:#eef1f4; --band:#fdecea; --it:#2a78d6; --ll:#eb6834; --sec:#6d4fc2; --soon:#fff4d6; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 "Inter","Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:#eef1f4; }
+header.top { background:#fff; border-bottom:1px solid var(--line); padding:0 24px; display:flex; flex-wrap:wrap; gap:4px 18px; align-items:center; }
+header.top strong { font-size:16px; padding:12px 0; margin-right:10px; }
+.views a { display:inline-block; padding:12px 10px 9px; color:var(--muted); text-decoration:none; border-bottom:3px solid transparent; }
+.views a.on { color:var(--ink); font-weight:600; border-bottom-color:var(--it); }
+main { max-width:1240px; margin:20px auto; background:var(--bg); padding:28px 36px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:30px 0 10px; padding-bottom:4px; border-bottom:2px solid var(--ink); }
+h3 { font-size:14px; margin:16px 0 6px; }
+.sub { color:var(--muted); margin:0 0 12px; } .note { font-size:12px; color:var(--muted); }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:14px 0; }
+.tile { background:var(--panel); border-radius:8px; padding:12px 14px; }
+.tile .k { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.tile .v { font-size:26px; font-weight:700; line-height:1.2; } .tile .s { font-size:12px; color:var(--muted); }
+.tile.bad .v { color:var(--bad); }
+.flag { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+.flag.bad { background:var(--band); color:var(--bad); } .flag.ok { background:#e7f4ec; color:var(--good); } .flag.warn { background:var(--soon); color:var(--warn); }
+.flag.mute { background:var(--grid); color:var(--muted); }
+.flag.it { background:#e5effb; color:var(--it); } .flag.landlord { background:#fdebe2; color:#b4471b; } .flag.security { background:#ece8fb; color:var(--sec); }
+table { width:100%; border-collapse:collapse; font-size:13px; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { background:var(--panel); font-weight:600; } td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+td.c, th.c { text-align:center; }
+.nw { white-space:nowrap; } .wide { overflow-x:auto; }
+.filters { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; font-size:13px; margin:10px 0; }
+.filters select { font:inherit; font-size:13px; padding:3px 6px; border:1px solid var(--line); border-radius:6px; }
+.panel { background:var(--panel); border-radius:8px; padding:14px 16px; margin:14px 0; }
+.panel h3:first-child { margin-top:0; } .panel table { background:#fff; }
+.kv { display:grid; grid-template-columns:170px 1fr; gap:3px 12px; font-size:14px; } .kv div:nth-child(odd) { color:var(--muted); }
+a.p, a.f, a.c { color:var(--it); text-decoration:none; } a.p:hover, a.f:hover, a.c:hover { text-decoration:underline; }
+.close { float:right; font:inherit; font-size:12px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:2px 10px; cursor:pointer; }
+ul.tight { margin:6px 0; padding-left:20px; } ul.tight li { margin:2px 0; }
+.dot { display:inline-block; width:10px; height:10px; border-radius:50%; vertical-align:-1px; }
+.dot.ok { background:var(--good); } .dot.bad { background:var(--bad); } .dot.warn { background:#e0a800; } .dot.none { background:#fff; border:1px solid var(--line); }
+.matrix td.c { font-size:12px; } .matrix th.v { writing-mode:vertical-rl; transform:rotate(180deg); white-space:nowrap; font-size:11px; padding:6px 2px; vertical-align:bottom; }
+.tl { position:relative; margin:8px 0 4px; }
+.tl .ax { position:relative; height:18px; font-size:11px; color:var(--muted); margin-left:220px; }
+.tl .ax span { position:absolute; transform:translateX(-50%); white-space:nowrap; }
+.tl .row { display:flex; align-items:center; height:22px; font-size:12px; }
+.tl .lb { width:220px; flex:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:8px; }
+.tl .tr { position:relative; flex:1; height:14px; background:#fff; border:1px solid var(--line); border-radius:3px; }
+.tl .bar { position:absolute; top:0; height:100%; border-radius:2px; background:var(--good); }
+.tl .bar.out { background:var(--bad); } .tl .tick { position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--ink); }
+.tl .tick.bad { background:var(--bad); }
+.letter { background:#fff; border:1px solid var(--line); border-radius:8px; padding:12px 16px; font-size:13px; white-space:pre-wrap; }
+.months { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+.months .panel { margin:0; }
+@media (max-width:800px) { main { padding:18px 14px; } .kv { grid-template-columns:1fr; } .tl .lb { width:100px; } .tl .ax { margin-left:100px; } }
+@media print { header.top, .filters { display:none !important; } body { background:#fff; } main { box-shadow:none; margin:0; max-width:none; padding:0; } }
+</style>
+</head>
+<body>
+__SITENAV__
+<header class="top">
+  <strong>Training</strong>
+  <nav class="views" aria-label="Training views"><a href="#certs" data-view="certs">Certifications</a><a href="#register" data-view="register">Register</a><a href="#renewals" data-view="renewals">Renewals</a><a href="#requirements" data-view="requirements">Requirements</a></nav>
+</header>
+<main id="doc"></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const R = D.certs;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const TZ = "America/Chicago";
+const parts = iso => Object.fromEntries(new Intl.DateTimeFormat("en-US", {timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit",
+  hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short"}).formatToParts(new Date(iso)).map(p => [p.type, p.value]));
+const md = d => { const [y, m, dd] = d.split("-"); return `${MON[+m - 1]} ${+dd}, ${y}`; };
+const lday = iso => { const p = parts(iso); return `${p.year}-${p.month}-${p.day}`; };
+const lt = iso => { const p = parts(iso); return `${md(lday(iso))} ${p.hour}:${p.minute} ${p.timeZoneName}`; };
+const day = iso => iso ? md(iso.slice(0, 10)) : "";
+const P = R.partners;
+const PEOPLE = Object.fromEntries(R.people.map(p => [p.person, p]));
+const FIND = Object.fromEntries(R.findings.map(f => [f.id, f]));
+const CAT = Object.fromEntries(R.catalog.map(c => [c.key, c]));
+const credName = k => CAT[k] ? CAT[k].name : k;
+const roleName = r => ({technician: "Technician", shift_lead: "Shift lead", engineer: "Engineer", guard: "Guard"})[r] || r;
+const STATUS = {met_expected: ["Met", "ok"], below_expected: ["Below Expected", "warn"], below_minimum: ["Minimum default", "bad"],
+  deep_below_minimum: ["Minimum default (deep)", "bad"], no_events: ["n/a", "mute"]};
+const AS_OF = Date.parse(R.as_of);
+const SOON_MS = R.notice_rules.horizon_days * 86400000;
+
+function pLink(id) { return PEOPLE[id] ? `<a class="p" href="#person/${esc(id)}">${esc(id)}</a>` : esc(id); }
+function fLink(id) { return `<a class="f" href="#finding/${esc(id)}">${esc(id)}</a>`; }
+function partnerFlag(k) { return `<span class="flag ${esc(k)}">${esc(P[k] || k)}</span>`; }
+function credState(c) {
+  if (!c.completed) return ["none", "Not on file"];
+  if (!c.current) return ["bad", c.expires ? "Lapsed " + day(c.expires) : "Lapsed"];
+  if (c.expires && Date.parse(c.expires) - AS_OF < SOON_MS) return ["warn", "Expires " + day(c.expires)];
+  return ["ok", c.expires ? "Current to " + day(c.expires) : "Current (does not expire)"];
+}
+function personStatus(p) {
+  const req = p.credentials.filter(c => c.required);
+  if (req.some(c => !c.current)) return "lapsed";
+  if (req.some(c => c.expires && Date.parse(c.expires) - AS_OF < SOON_MS)) return "soon";
+  return "current";
+}
+function pct(v) { return v === null || v === undefined ? "n/a" : v.toFixed(2) + "%"; }
+
+// ------------------------------------------------------------------ Certifications (opening view)
+function viewCerts() {
+  const s = R.summary, k = R.km15;
+  const due = R.notices.filter(n => n.days <= 30).length;
+  let h = `<h1>Certifications</h1>
+  <p class="sub">Every credential each partner's people must hold, checked against every badge-verified shift and every record that names who did the work.
+  The register is read as of ${esc(lt(R.as_of))}; people are IDs only. A finding means the credential records and the work records do not reconcile: it opens a Customer review and changes no credit.</p>
+  <div class="tiles">
+    <div class="tile"><div class="k">People</div><div class="v">${esc(s.people)}</div><div class="s">${esc(R.people.filter(p => p.partner === "it").length)} IT Partner, ${esc(R.people.filter(p => p.partner === "landlord").length)} Landlord, ${esc(R.people.filter(p => p.partner === "security").length)} Security Partner</div></div>
+    <div class="tile"><div class="k">Work checked</div><div class="v">${esc(s.work.toLocaleString("en-US"))}</div><div class="s">${esc(s.shifts)} shifts, ${esc(s.records)} records</div></div>
+    <div class="tile ${s.findings ? "bad" : ""}"><div class="k">Findings</div><div class="v">${esc(s.findings)}</div><div class="s">${Object.entries(s.by_kind).filter(([, n]) => n).map(([kk, n]) => esc(n + " " + R.kinds[kk].toLowerCase())).join("; ")}</div></div>
+    <div class="tile ${k && k.actual < 100 ? "bad" : ""}"><div class="k">KM-15 currency</div><div class="v">${k ? esc(k.actual.toFixed(1)) + "%" : "n/a"}</div><div class="s">IT Partner, target 100%</div></div>
+    <div class="tile"><div class="k">Renewals</div><div class="v">${esc(s.notices)}</div><div class="s">in the next ${esc(R.notice_rules.horizon_days)} days; ${esc(due)} within 30 days</div></div>
+  </div>
+  <h2>Findings</h2>
+  <table><tr><th>ID</th><th>Kind</th><th>Partner</th><th>Person</th><th>Credential</th><th>From</th><th>Records</th><th class="n">Shifts</th></tr>`;
+  for (const f of R.findings) {
+    h += `<tr><td class="nw">${fLink(f.id)}</td><td>${esc(f.title)}</td><td>${partnerFlag(f.partner)}</td><td class="nw">${f.person ? pLink(f.person) : "-"}</td>
+      <td>${esc(f.credential_name || "-")}</td><td class="nw">${esc(lt(f.at))}</td><td>${esc(f.records.join(", ") || "-")}</td><td class="n">${esc(f.shifts)}</td></tr>`;
+  }
+  h += `</table>
+  <div id="detail"></div>
+  <h2>Staffing with the qualification rule</h2>
+  <p class="sub">Each staffing service level counts only hours worked by people with current qualifications. Recalculated with the register beside the published value; the published scorecards and credits do not change.</p>
+  <table><tr><th>Service level</th><th>Partner</th><th class="n">Expected / Minimum</th><th class="n">Published</th><th>Status</th><th class="n">With the rule</th><th>Status</th><th class="n">Not counted</th><th>People</th></tr>`;
+  for (const r of R.staffing) {
+    const [a, ac] = STATUS[r.published_status], [b, bc] = STATUS[r.adjusted_status];
+    h += `<tr><td>${esc(r.csl)} ${esc(r.name)}</td><td>${esc(r.partner)}</td><td class="n">${esc(r.expected)}% / ${esc(r.minimum)}%</td>
+      <td class="n">${esc(pct(r.published))}</td><td><span class="flag ${ac}">${esc(a)}</span></td><td class="n">${esc(pct(r.adjusted))}</td>
+      <td><span class="flag ${bc}">${esc(b)}</span></td><td class="n">${esc(r.lost)} ${esc(r.unit)}</td><td class="nw">${r.people.map(pLink).join("<br>") || "-"}</td></tr>`;
+  }
+  h += `</table>
+  <h2>Monthly credential reports</h2>
+  <p class="sub">Each partner reports what it shows lapsed at the month end; the register is the measurement.</p>
+  <table><tr><th>Partner</th><th>As of</th><th class="n">People</th><th class="n">Reported current</th><th>Reported lapsed</th><th>Register lapsed</th><th>Agrees</th></tr>`;
+  for (const r of R.reported) {
+    const said = r.lapsed.split(";").filter(Boolean), real = R.measured_lapsed[r.partner] || [];
+    const same = said.slice().sort().join() === real.slice().sort().join();
+    const show = xs => xs.map(x => { const [p, c] = x.split(":"); return `${pLink(p)} ${esc(credName(c))}`; }).join("<br>") || "none";
+    h += `<tr><td>${partnerFlag(r.partner)}</td><td class="nw">${esc(day(r.as_of))}</td><td class="n">${esc(r.people)}</td><td class="n">${esc(r.current_pct)}%</td>
+      <td>${show(said)}</td><td>${show(real)}</td><td><span class="flag ${same ? "ok" : "bad"}">${same ? "Yes" : "No"}</span></td></tr>`;
+  }
+  h += `</table>
+  <h2>Agreements</h2>
+  <table><tr><th>Agreement</th><th class="n">Cases</th><th class="n">Agree</th><th class="n">Explained by a finding</th></tr>
+  ${R.agreements.map(a => `<tr><td>${esc(a.title)}</td><td class="n">${esc(a.checked)}</td><td class="n">${esc(a.checked - a.misses.length)}</td><td class="n">${esc(a.explained)}</td></tr>`).join("")}</table>
+  <p class="note">Report: <code>reports/certifications.md</code>. KM-15 on the IT scorecard reads this register. Contracts: the staffing sections of each SLA and the Security SLA's armed posts.</p>`;
+  return h;
+}
+
+function findingPanel(id) {
+  const f = FIND[id];
+  if (!f) return "";
+  let h = `<div class="panel" id="findpanel"><button class="close" data-close="certs">Close</button><h3>${esc(f.id)}: ${esc(f.title)}</h3>
+    <div class="kv"><div>Partner</div><div>${partnerFlag(f.partner)}</div>`;
+  if (f.person) h += `<div>Person</div><div>${pLink(f.person)} (${esc(roleName(f.role))})</div><div>Credential</div><div>${esc(f.credential_name)}</div>
+    <div>On file</div><div>${f.last ? esc(day(f.last.completed)) + " to " + esc(f.last.expires ? day(f.last.expires) : "no expiry") : "No record"}</div>`;
+  h += `<div>First work</div><div>${esc(lt(f.at))}</div>`;
+  if (f.records.length) h += `<div>Records</div><div>${esc(f.records.join(", "))}</div>`;
+  if (f.shifts) h += `<div>Shifts</div><div>${esc(f.shifts)} badge-verified</div>`;
+  if (f.corroborates) h += `<div>EHS</div><div>Corroborated by ${esc(f.corroborates)} (<a class="c" href="../ops/#ehs/finding/${esc(f.corroborates)}">Safety</a>)</div>`;
+  if (f.guard_file) h += `<div>Guard file</div><div>Lists the guard as ${esc(f.guard_file)}</div>`;
+  h += `</div><p>${esc(f.text)}</p><p><b>Action.</b> ${esc(f.action)}</p>`;
+  if (f.person && PEOPLE[f.person]) h += timeline(PEOPLE[f.person], f.credential);
+  return h + `</div>`;
+}
+
+function timeline(p, cred) {
+  // the credential's validity against the month, with each piece of work that needed it
+  const s = Date.parse(R.window.start), e = Date.parse(R.window.end), span = e - s;
+  const x = t => Math.max(0, Math.min(100, (t - s) / span * 100));
+  const c = p.credentials.find(y => y.key === cred);
+  let h = `<div class="tl"><div class="ax">${[0, 7, 14, 21, 28].map(d => `<span style="left:${esc(d / 28 * 100)}%">${esc(day(new Date(s + d * 86400000).toISOString()))}</span>`).join("")}</div>`;
+  if (c) {
+    const a = c.completed ? Date.parse(c.completed) : null, b = c.expires ? Date.parse(c.expires) : e;
+    h += `<div class="row"><div class="lb">${esc(c.name)}</div><div class="tr">`;
+    if (a !== null && b > s) h += `<div class="bar" style="left:${esc(x(a))}%;width:${esc(x(b) - x(a))}%"></div>`;
+    if (b < e) h += `<div class="bar out" style="left:${esc(x(b))}%;width:${esc(100 - x(b))}%"></div>`;
+    h += `</div></div>`;
+  }
+  const recs = p.records.filter(r => r.needs.includes(cred));
+  h += `<div class="row"><div class="lb">Work needing it (${esc(recs.length)} records)</div><div class="tr">${recs.map(r =>
+    `<div class="tick ${r.missing.includes(cred) ? "bad" : ""}" title="${esc(r.ref)}" style="left:${esc(x(Date.parse(r.at)))}%"></div>`).join("")}</div></div>`;
+  return h + `</div><p class="note">Green: the credential current; red: lapsed or not on file. Ticks: records that needed it (red: worked without it). Shifts are counted in the finding.</p>`;
+}
+
+// ------------------------------------------------------------------ Register
+const FILT = {partner: "all", role: "all", status: "all"};
+const OPTS = {partner: [["all", "All"], ["it", "IT Partner"], ["landlord", "Landlord"], ["security", "Security Partner"]],
+  role: [["all", "All"], ["technician", "Technician"], ["shift_lead", "Shift lead"], ["engineer", "Engineer"], ["guard", "Guard"]],
+  status: [["all", "All"], ["lapsed", "A required credential lapsed"], ["soon", "Expiring soon"], ["current", "All current"]]};
+function select(k) {
+  return `<label>${esc({partner: "Partner", role: "Role", status: "Status"}[k])} <select data-f="${esc(k)}">${OPTS[k].map(([v, l]) =>
+    `<option value="${esc(v)}"${FILT[k] === v ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></label>`;
+}
+function viewRegister() {
+  const rows = R.people.filter(p => (FILT.partner === "all" || p.partner === FILT.partner) && (FILT.role === "all" || p.role === FILT.role)
+    && (FILT.status === "all" || personStatus(p) === FILT.status));
+  let h = `<h1>Register</h1><p class="sub">Every person by ID, with how many of the credentials their role needs are current as of ${esc(day(R.as_of))}. Open a person for every credential, its dates, and the work it covered.</p>
+  <div class="filters">${select("partner")}${select("role")}${select("status")}<span class="note" id="count">${esc(rows.length)} of ${esc(R.people.length)} people</span></div>
+  <div class="wide"><table id="reg"><tr><th>Person</th><th>Partner</th><th>Role</th><th class="n">Required current</th><th>Next expiry</th><th class="n">Shifts</th><th class="n">Records</th><th>Findings</th></tr>`;
+  for (const p of rows) {
+    const nxt = p.credentials.filter(c => c.required && c.current && c.expires).sort((a, b) => a.expires < b.expires ? -1 : 1)[0];
+    const st = personStatus(p);
+    h += `<tr data-person="${esc(p.person)}"><td>${pLink(p.person)}</td><td>${partnerFlag(p.partner)}</td><td>${esc(roleName(p.role))}</td>
+      <td class="n"><span class="dot ${st === "lapsed" ? "bad" : st === "soon" ? "warn" : "ok"}"></span> ${esc(p.required_current)} of ${esc(p.required)}</td>
+      <td>${nxt ? esc(credName(nxt.key)) + ", " + esc(day(nxt.expires)) : "-"}</td><td class="n">${esc(p.shifts)}</td><td class="n">${esc(p.records.length)}</td>
+      <td>${p.findings.map(fLink).join(", ")}</td></tr>`;
+  }
+  return h + `</table></div><div id="detail"></div>`;
+}
+
+function personPanel(id) {
+  const p = PEOPLE[id];
+  if (!p) return "";
+  let h = `<div class="panel" id="personpanel"><button class="close" data-close="register">Close</button><h3>${esc(p.person)}</h3>
+    <div class="kv"><div>Partner</div><div>${partnerFlag(p.partner)}</div><div>Role</div><div>${esc(roleName(p.role))}</div>
+    <div>Badge-verified shifts</div><div>${esc(p.shifts)}</div><div>Findings</div><div>${p.findings.map(fLink).join(", ") || "None"}</div></div>
+    <h3>Credentials</h3><table><tr><th>Credential</th><th>Required</th><th>Completed</th><th>Expires</th><th>Source</th><th>Status</th></tr>`;
+  for (const c of p.credentials) {
+    const [cls, txt] = credState(c);
+    h += `<tr><td>${esc(c.name)}</td><td>${c.required ? "Role" : "Some work"}</td><td class="nw">${esc(day(c.completed))}</td><td class="nw">${esc(c.expires ? day(c.expires) : c.completed ? "Does not expire" : "")}</td>
+      <td>${esc(c.source === "ehs" ? "EHS training" : c.source ? "Register" : "")}</td><td><span class="dot ${cls}"></span> ${esc(txt)}</td></tr>`;
+  }
+  h += `</table>`;
+  if (p.records.length) {
+    h += `<h3>Work this month that needed a credential</h3><table><tr><th>Record</th><th>Kind</th><th>When</th><th>What</th><th>Needed</th><th>Missing</th></tr>`;
+    for (const r of p.records) h += `<tr><td>${esc(r.ref)}</td><td>${esc(R.sources[r.source])}</td><td class="nw">${esc(lt(r.at))}</td><td>${esc(r.what)}</td>
+      <td>${r.needs.map(k => esc(credName(k))).join("; ")}</td><td>${r.missing.length ? `<span class="flag bad">${r.missing.map(k => esc(credName(k))).join("; ")}</span>` : ""}</td></tr>`;
+    h += `</table>`;
+  }
+  return h + `</div>`;
+}
+
+// ------------------------------------------------------------------ Renewals
+function viewRenewals() {
+  const N = R.notice_rules;
+  const byMonth = {};
+  for (const n of R.notices) (byMonth[n.expires.slice(0, 7)] = byMonth[n.expires.slice(0, 7)] || []).push(n);
+  let h = `<h1>Renewals</h1><p class="sub">Every required credential that lapses in the ${esc(N.horizon_days)} days after ${esc(day(R.as_of))}, with notices to each partner's training coordinator at ${esc(N.lead_days.join(", "))} days before expiry, copied to the Customer site lead. Notices are drafted here and never sent.</p>
+  <div class="months">`;
+  for (const [mo, xs] of Object.entries(byMonth).sort()) {
+    const [y, m] = mo.split("-");
+    h += `<div class="panel"><h3>${esc(MON[+m - 1])} ${esc(y)}: ${esc(xs.length)}</h3><ul class="tight">${Object.entries(P).map(([k, name]) => {
+      const n = xs.filter(x => x.partner === k).length; return n ? `<li>${esc(name)}: ${esc(n)}</li>` : ""; }).join("")}</ul></div>`;
+  }
+  h += `</div><h2>Drafted notices</h2>`;
+  for (const [k, name] of Object.entries(P)) {
+    const xs = R.notices.filter(n => n.partner === k);
+    if (!xs.length) continue;
+    const now = xs.filter(n => n.stage);
+    const lines = N.lead_days.slice().sort((a, b) => a - b).map(lead => {
+      const g = now.filter(n => n.stage === lead);
+      return g.length ? `${lead === Math.min(...N.lead_days) ? "Final notice" : "Notice"}, expiring within ${lead} days (${g.length}):\n` +
+        g.map(n => `  ${n.person}  ${n.name}  expires ${day(n.expires)} (${n.days} days)`).join("\n") : "";
+    }).filter(Boolean).join("\n\n");
+    h += `<h3>${esc(name)}</h3><div class="letter" data-notice="${esc(k)}">To: ${esc(N.to[k])}
+Cc: ${esc(N.cc)}
+Subject: AUS-1 credential renewals due (${esc(now.length)})
+
+The Customer's certification register for Site AUS-1 shows ${esc(now.length)} required credentials held by your people that expire within ${esc(Math.max(...N.lead_days))} days.
+Please send the renewal record for each before it expires. Work that needs a credential stops when it lapses.
+
+${esc(lines || "None due yet.")}
+
+Register as of ${esc(day(R.as_of))}. Drafted on the Training page; not sent.</div>
+    <table><tr><th>Expires</th><th>Person</th><th>Credential</th><th class="n">Days left</th>${N.lead_days.map(d => `<th>${esc(d)}-day notice</th>`).join("")}</tr>
+    ${xs.map(n => `<tr><td class="nw">${esc(day(n.expires))}</td><td>${pLink(n.person)}</td><td>${esc(n.name)}</td><td class="n">${esc(n.days)}</td>${n.notices.map(x =>
+      `<td class="nw">${x.lead === n.stage ? `<span class="flag warn">Due now (${esc(day(x.date))})</span>` : x.due ? `<span class="note">${esc(day(x.date))}</span>` : esc(day(x.date))}</td>`).join("")}</tr>`).join("")}</table>`;
+  }
+  h += `<h2>Forward schedule: qualified people available</h2>
+  <p class="sub">Each job on the forward schedule (the Calendar) against how many of its owner's people hold every credential the work needs on the day; fewer than ${esc(N.bench_min)} is short.</p>
+  <table id="bench"><tr><th>Job</th><th>Starts</th><th>Owner</th><th>Needs</th><th class="n">Qualified people</th></tr>
+  ${R.bench.map(b => `<tr><td><a class="c" href="../ops/#calendar/job/${esc(b.id)}">${esc(b.id)}</a> ${esc(b.title)}</td><td class="nw">${esc(lt(b.start))}</td><td>${esc(b.owner)}</td>
+    <td>${b.names.map(esc).join("; ")}</td><td class="n">${b.short ? `<span class="flag bad">${esc(b.holders)}</span>` : esc(b.holders)}</td></tr>`).join("")}</table>`;
+  return h;
+}
+
+// ------------------------------------------------------------------ Requirements
+function viewRequirements() {
+  const roles = [];
+  for (const [pt, rs] of Object.entries(R.roles)) for (const r of Object.keys(rs)) roles.push([pt, r]);
+  const need = (pt, r) => new Set(R.people.find(p => p.partner === pt && p.role === r)?.credentials.filter(c => c.required).map(c => c.key) || []);
+  const keys = R.catalog.map(c => c.key);
+  let h = `<h1>Requirements</h1><p class="sub">What each role must hold to work any shift, what each kind of work adds, and where each requirement comes from. Credential rules: <code>config/certifications.yaml</code>; EHS courses: <code>config/ehs.yaml</code>.</p>
+  <h2>By role</h2><div class="wide"><table class="matrix"><tr><th>Credential</th>${roles.map(([pt, r]) => `<th class="c">${esc(P[pt])}<br>${esc(roleName(r))}</th>`).join("")}<th>Renewal</th></tr>`;
+  for (const k of keys) {
+    const c = CAT[k];
+    h += `<tr><td>${esc(c.name)}</td>${roles.map(([pt, r]) => `<td class="c">${need(pt, r).has(k) ? "Required" : k === "oem_gb300" && pt === "it" ? "Hall B work" : ""}</td>`).join("")}
+      <td class="nw">${c.months ? esc(c.months) + " months" : "Does not expire"}</td></tr>`;
+  }
+  h += `</table></div><h2>By work</h2><table><tr><th>Work</th><th>Needs</th></tr>`;
+  const W = R.work_rules;
+  for (const [cat, x] of Object.entries(W.it_incident)) h += `<tr><td>IT Partner incident, ${esc(cat.replace("_", " "))}</td><td>${x.needs.map(k => esc(credName(k))).join("; ")}${x.model ? "; the rack model's FRU authorization (Hall A " + esc(credName(W.rack_model.A)) + ", Hall B " + esc(credName(W.rack_model.B)) + ")" : ""}${!x.needs.length && !x.model ? "Role credentials only" : ""}</td></tr>`;
+  for (const [fc, ks] of Object.entries(W.landlord_work_order)) h += `<tr><td>Landlord work order, ${esc(fc)}</td><td>${ks.map(k => esc(credName(k))).join("; ")}</td></tr>`;
+  for (const [sys, ks] of Object.entries(W.landlord_pm)) h += `<tr><td>Landlord maintenance, ${esc(sys)}</td><td>${ks.map(k => esc(credName(k))).join("; ")}</td></tr>`;
+  h += `<tr><td>Security post shift (every post)</td><td>${W.guard_post.map(k => esc(credName(k))).join("; ")}</td></tr>
+    <tr><td>Security post shift (${esc(W.exterior_posts.join(", "))})</td><td>${W.guard_post_exterior.map(k => esc(credName(k))).join("; ")}</td></tr>
+    <tr><td>Destruction certificate operator</td><td>${W.destruction.map(k => esc(credName(k))).join("; ")}</td></tr>
+    <tr><td>Permits (lockout, energized work, height)</td><td>The EHS rules (<a class="c" href="../ops/#ehs">Safety</a>)</td></tr></table>
+  <h2>Credentials</h2><table><tr><th>Credential</th><th>Partner</th><th>Issued by</th><th>Renewal</th><th class="n">Holders</th><th class="n">Current</th><th>Basis</th></tr>
+  ${R.catalog.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(P[c.partner] || "EHS course")}</td><td>${esc(c.issuer)}</td><td class="nw">${c.months ? esc(c.months) + " months" : "Does not expire"}</td>
+    <td class="n">${esc(c.holders)}</td><td class="n">${esc(c.current)}</td><td>${esc(c.basis)}</td></tr>`).join("")}</table>
+  <p class="note">Public credentials go by their own names (Texas DPS Private Security, EPA Section 608, NVIDIA-Certified Professional, FOA). Manufacturer service training is described generically; nothing here describes any manufacturer's internal program. Armed guards: Security SLA, posts.</p>`;
+  return h;
+}
+
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1)) || "certs";
+  const [view, a] = h.split("/");
+  const which = view === "person" ? "register" : view === "finding" ? "certs" : ["certs", "register", "renewals", "requirements"].includes(view) ? view : "certs";
+  document.querySelectorAll(".views a").forEach(x => x.classList.toggle("on", x.dataset.view === which));
+  const doc = document.getElementById("doc");
+  doc.innerHTML = which === "register" ? viewRegister() : which === "renewals" ? viewRenewals() : which === "requirements" ? viewRequirements() : viewCerts();
+  const det = document.getElementById("detail");
+  if (det) {
+    det.innerHTML = view === "person" ? personPanel(a) : view === "finding" ? findingPanel(a) : "";
+    if (det.innerHTML && det.scrollIntoView) det.scrollIntoView({block: "nearest"});
+  }
+  wire();
+}
+
+function wire() {
+  // Each filter keeps a value from its own option list (never the control's text), so nothing typed reaches the page.
+  for (const k of Object.keys(FILT)) {
+    const el = document.querySelector(`[data-f="${k}"]`);
+    if (!el) continue;
+    el.addEventListener("change", () => { FILT[k] = (OPTS[k].find(([v]) => v === el.value) || OPTS[k][0])[0]; route(); });
+  }
+  document.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", () => { location.hash = el.dataset.close; }));
+}
+
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>

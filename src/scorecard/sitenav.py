@@ -46,6 +46,7 @@ REFERENCE_TABS = [
     ("agreements", "Agreements", "agreements/"),
     ("glossary", "Glossary", "glossary/"),
     ("devices", "Devices", "devices/"),
+    ("training", "Training", "training/"),
 ]
 KEYS = [k for k, _, _ in TABS + REFERENCE_TABS]
 

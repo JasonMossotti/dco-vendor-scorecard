@@ -122,8 +122,13 @@ def test_findings_and_alarms_are_on_their_records(by_id):
     for fid, ref in fire:
         assert fid in [x["id"] for x in by_id[ref]["findings"]], (fid, ref)
     assert fire == [("FLS-1", "IMP-0005")]
+    from scorecard import certifications as C
+    crt = [(f["id"], ref) for f in C.analyse(C.load_site(), C.load())["findings"] for ref in f["records"]]
+    for fid, ref in crt:
+        assert fid in [x["id"] for x in by_id[ref]["findings"]], (fid, ref)
+    assert {fid for fid, _ in crt} == {"CRT-3", "CRT-4"}, "the lapsed CDU and ESD credentials carry their findings"
     n = sum(len(r["findings"]) for r in by_id.values())
-    assert n == sum(len(f["tickets"]) for f in it + ll) + len(sec_refs) + len(fire)
+    assert n == sum(len(f["tickets"]) for f in it + ll) + len(sec_refs) + len(fire) + len(crt)
     from scorecard import alarms as AL
     for a in AL.run_check(SAMPLE, ROOT / "data" / "changes")["alarms"]:
         for ref in {(a.ticket or {}).get("id"), a.change} - {None, ""}:

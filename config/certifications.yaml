@@ -1,0 +1,141 @@
+# Certification register: every credential each partner's people must hold, what each kind of work needs, and the
+# renewal notices (data/certs/, own random stream "<seed>:certs"). Read by src/scorecard/synthetic/certs.py
+# (generation) and src/scorecard/certifications.py (the work gate; page /training/).
+#
+# The contracts already require these: IT SLA staffing.required_qualifications and KM-15, Landlord SLA
+# staffing.required_qualifications, Security SLA qualifications. The EHS courses (orientation, NFPA 70E, lockout,
+# fall protection, ...) live in data/ehs/training.csv and config/ehs.yaml; the register reads them, never copies them.
+#
+# A finding means the credential records and the work records do not reconcile: someone worked, by the badge and work
+# records, while the register shows a required credential lapsed or never held. It opens a Customer review; the person
+# stops that kind of work until the record is current. It is not a judgment of anyone and changes no credit.
+#
+# Credential names: public credentials by their own names (Texas DPS, EPA, NVIDIA-Certified Professional, FOA).
+# Manufacturer service training is described generically ("manufacturer-authorized"); the project claims no knowledge
+# of any manufacturer's internal programs. People are IDs only.
+
+# `months`: how long a completion stays current (null: does not expire). `issuer`: who issues it, in general terms.
+# `basis`: where the requirement and the term come from.
+credentials:
+  # IT Partner
+  oem_gb200:    {name: "GB200 NVL72 field-replaceable unit service (manufacturer-authorized)", months: 24, partner: it,
+                 issuer: "Manufacturer or its authorized training partner", basis: "IT SLA required qualifications"}
+  oem_gb300:    {name: "GB300 NVL72 field-replaceable unit service (manufacturer-authorized)", months: 24, partner: it,
+                 issuer: "Manufacturer or its authorized training partner", basis: "IT SLA required qualifications (Hall B racks are GB300)"}
+  liquid:       {name: "Liquid cooling, quick-disconnect service, and spill response", months: 12, partner: it,
+                 issuer: "IT Partner training program, Customer-approved", basis: "IT SLA required qualifications"}
+  esd:          {name: "ESD control (ANSI/ESD S20.20 program)", months: 12, partner: it,
+                 issuer: "IT Partner ESD program", basis: "IT SLA required qualifications"}
+  fiber:        {name: "Fiber optic inspection and cleaning (FOA CFOT or equivalent)", months: 36, partner: it,
+                 issuer: "Fiber Optic Association or equivalent", basis: "IT SLA required qualifications; 36-month refresh is the site rule"}
+  custody:      {name: "Site security and chain of custody", months: 12, partner: it,
+                 issuer: "Customer site security", basis: "IT SLA required qualifications"}
+  ncp_aii:      {name: "NVIDIA-Certified Professional: AI Infrastructure (NCP-AII)", months: 24, partner: it,
+                 issuer: "NVIDIA", basis: "Shift leads: the IT SLA's key personnel rule; NVIDIA states a two-year validity"}
+  # Landlord
+  galaxy_ups:   {name: "Galaxy VX and VL UPS service (manufacturer training)", months: 36, partner: landlord,
+                 issuer: "Manufacturer", basis: "Landlord SLA required qualifications"}
+  chx2000:      {name: "CHx2000 CDU service (manufacturer training)", months: 24, partner: landlord,
+                 issuer: "Manufacturer", basis: "Landlord SLA required qualifications"}
+  emcp:         {name: "C175-16 generator set and EMCP 4.4 controls (dealer training)", months: 36, partner: landlord,
+                 issuer: "Engine dealer", basis: "Landlord SLA required qualifications"}
+  liebert:      {name: "Chillers, thermal walls, and CRAHs (manufacturer training)", months: 36, partner: landlord,
+                 issuer: "Manufacturer", basis: "Landlord SLA maintenance schedule (manufacturer schedule)"}
+  vesda:        {name: "Aspirating smoke detection inspection and test (manufacturer training)", months: 36, partner: landlord,
+                 issuer: "Manufacturer", basis: "Landlord SLA fire protection maintenance (NFPA 72)"}
+  epa608:       {name: "EPA Section 608 Universal technician certification", months: null, partner: landlord,
+                 issuer: "EPA-approved certifying organization", basis: "Landlord SLA: refrigerant work by EPA 608 certified technicians; the certification does not expire"}
+  # Security Partner: every guard is a Level III commissioned security officer (armed), qualified in two firearm
+  # categories, SA (any handgun) and STG (shotgun), 37 Tex. Admin. Code 35.7.
+  dps_commission: {name: "Texas DPS commissioned security officer license (Level III)", months: 24, partner: security,
+                   issuer: "Texas Department of Public Safety, Private Security Program", basis: "Security SLA qualifications; the license runs two years"}
+  level3_course:  {name: "Level III training course (45 hours)", months: null, partner: security,
+                   issuer: "Licensed Level III training school", basis: "Texas DPS Private Security; completed before the first commission"}
+  mmpi:           {name: "MMPI psychological evaluation on file (Declaration of Psychological and Emotional Health)", months: null, partner: security,
+                   issuer: "Licensed psychologist", basis: "Texas HB 3424: required for commissions from 2024-01-01"}
+  firearm_sa:     {name: "Firearm proficiency, category SA (handgun)", months: 12, partner: security,
+                   issuer: "Licensed Level III instructor", basis: "Security SLA: annual requalification (the contract's rule, stricter than the license renewal)"}
+  firearm_stg:    {name: "Firearm proficiency, category STG (shotgun)", months: 12, partner: security,
+                   issuer: "Licensed Level III instructor", basis: "Security SLA: annual requalification (the contract's rule, stricter than the license renewal)"}
+  level3_ce:      {name: "Level III continuing education (6 hours per license term)", months: 24, partner: security,
+                   issuer: "Licensed Level III training school", basis: "Texas DPS Private Security continuing education"}
+  cpr:            {name: "CPR, AED, and first aid", months: 24, partner: security,
+                   issuer: "Nationally recognized provider", basis: "Security SLA qualifications"}
+  site_security:  {name: "Site orientation, escort, and media handling", months: 12, partner: security,
+                   issuer: "Customer site security", basis: "Security SLA qualifications"}
+
+# What each role must hold to work any shift (with the EHS courses its role holds in data/ehs/training.csv).
+roles:
+  it:
+    technician: [oem_gb200, liquid, esd, fiber, custody]
+    shift_lead: [oem_gb200, liquid, esd, fiber, custody, ncp_aii]
+  landlord:
+    engineer: [galaxy_ups, chx2000, emcp, liebert, vesda, epa608]
+  security:
+    guard: [dps_commission, level3_course, mmpi, firearm_sa, firearm_stg, level3_ce, cpr, site_security]
+
+# What each kind of work needs its person to hold at the work time, beyond the role.
+work:
+  it_incident:                 # by ticket category; `model` adds the rack model's FRU authorization
+    tray_gpu:      {needs: [esd, liquid], model: true}
+    switch_tray:   {needs: [esd, liquid], model: true}
+    optic_link:    {needs: [esd, fiber]}
+    psu:           {needs: [esd]}
+    power_shelf:   {needs: [esd]}
+    leak:          {needs: [liquid]}
+    rack_facility: {needs: []}
+  rack_model: {A: oem_gb200, B: oem_gb300}       # by hall
+  landlord_work_order:         # by fault class
+    OT-FC-UPS:  [galaxy_ups]
+    OT-FC-CDU:  [chx2000]
+    OT-FC-LEAK: [chx2000]
+    OT-FC-CHW:  [liebert]
+    OT-FC-AIR:  [liebert]
+    OT-FC-FIRE: [vesda]
+  landlord_pm:                 # by maintenance system
+    Generators: [emcp]
+    UPS and batteries: [galaxy_ups]
+    CDUs: [chx2000]
+    Chillers: [liebert, epa608]
+    Fire protection: [vesda]
+  guard_post: [dps_commission, firearm_sa]         # every post shift: armed
+  guard_post_exterior: [firearm_stg]               # posts that draw a shotgun from the guard house rack
+  exterior_posts: [POST-PATROL, POST-DOCK]
+  destruction: [site_security]                     # the operator on a destruction certificate
+
+# Renewal notices to each partner's training coordinator, drafted on the page and never sent.
+notices:
+  as_of: month_end                                 # the register is read as of the Measurement Period's end
+  horizon_days: 120
+  lead_days: [90, 60, 30]
+  to:
+    it: "training@itpartner.example.com"
+    landlord: "training@landlord.example.com"
+    security: "training@security.example.com"
+  cc: "site-lead@example.com"
+  bench_min: 2                                     # a scheduled job type needs at least this many current holders
+
+# Forward schedule (data/calendar/schedule.json): what each planned work type needs, for the bench check.
+schedule_work:
+  tapoff_energize: [nfpa70e]
+  tapoff_work: [nfpa70e, loto]
+  ups_pm: [galaxy_ups, nfpa70e, loto]
+  cdu_filter: [chx2000, loto]
+  chiller_pm: [liebert, epa608, loto]
+  thermography: [nfpa70e]
+  gen_exercise: [emcp]
+  tray_firmware: [oem_gb300]
+  vesda_test: [vesda]
+
+# Generation only.
+generate:
+  gb300_share: 0.55            # IT people holding GB300 authorization beyond those who worked Hall B tray incidents
+  issued_before_start_days: 7  # every completion is on file at least this long before the month starts
+  never_expires_years: [1, 12] # how long ago a credential that does not expire was earned
+
+# Planted record problems (one of each). The answer key is written beside the data.
+planted:
+  never_held: 1        # a shift lead works shifts with no NCP-AII on file
+  lapsed_landlord: 1   # an engineer works CDU work after the CHx2000 training lapsed
+  lapsed_guard: 1      # a guard works armed posts after the SA requalification lapsed; the guard file still says current
+  lapsed_report: 1     # a technician's ESD training lapses mid-month and the partner's monthly report still says 100% current

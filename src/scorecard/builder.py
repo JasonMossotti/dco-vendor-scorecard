@@ -162,6 +162,11 @@ def build_scorecard(sla: dict[str, Any], result: EngineResult) -> dict[str, Any]
     ctx, findings = result.context, result.findings
     incidents = build_incidents(ctx, findings)
     measured = measure_period(ctx, incidents, findings, ctx.window_start, ctx.window_end, sla)
+    if "KM-15" not in measured:                 # read from the certification register when it was built from this dataset
+        from scorecard.certifications import km15_for
+        k15 = km15_for(getattr(ctx.src, "root", None))
+        if k15:
+            measured["KM-15"] = k15
     csl = _csl_rows(sla, measured, ctx.vendor_weekly)
     kms = _km_rows(sla, measured)
 

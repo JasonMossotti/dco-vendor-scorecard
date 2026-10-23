@@ -133,6 +133,15 @@ Each service level has an **Expected** level (missing it triggers root cause ana
 {% for q in sla.posts.qualifications -%}
 - {{ q }}
 {% endfor %}
+{%- if sla.posts.armed_posts %}
+
+**Armed posts:** {{ sla.posts.armed_posts.rule }} {{ sla.posts.armed_posts.why }}
+
+{% for c in sla.posts.armed_posts.conditions -%}
+- {{ c }}
+{% endfor %}
+{{ sla.posts.armed_posts.register }}
+{% endif %}
 
 ## 7. Door Alarms
 

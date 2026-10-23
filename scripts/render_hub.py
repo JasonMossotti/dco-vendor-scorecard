@@ -60,6 +60,7 @@ DOCS = [
     ("Security Partner discrepancy report", "reports/security_discrepancy_report.md"),
     ("Incident Commander runbook and A07 replay", "docs/emergency/incident-command.md"),
     ("Emergency procedures and call lists", "docs/emergency/EMERGENCY_PROCEDURES.md"),
+    ("Certification register and work gate", "reports/certifications.md"),
     ("Hall B deployment plan", "docs/deployments/DEPLOYMENT_PLAN.md"),
     ("Hall C readiness", "docs/deployments/HALL_C_READINESS.md"),
     ("Live collector readiness", "docs/LIVE_READINESS.md"),
@@ -103,6 +104,8 @@ def facts() -> dict:
     tk = T.build()
     from scorecard import emergency as EM
     em = EM.build()
+    from scorecard import certifications as CERT
+    ce = CERT.page_data()
     start, end = sc["window"]["start"], sc["window"]["end"]
     return {
         "window": f"{start:%b} {start.day} to {end:%b} {end.day}, {end:%Y}",
@@ -126,6 +129,9 @@ def facts() -> dict:
                 "open": sum(a["status"] != "Complete" for r in pirs for a in r["actions"])},
         "emergency": {"types": len(em["types"]), "events": len(em["events"]), "contacts": len(em["contacts"]),
                       "stale": sum(c["stale"] for c in em["contacts"]), "replay": em["command"]["replays"][0]["summary"]},
+        "training": {"people": ce["summary"]["people"], "findings": ce["summary"]["findings"], "notices": ce["summary"]["notices"],
+                     "km15": ce["km15"]["actual"] if ce["km15"] else None,
+                     "soon": sum(1 for n in ce["notices"] if n["days"] <= 30)},
         "weeks": [(w["id"], w["title"]) for w in weeks],
         "week_status": [(p["role"], p["status"]) for p in weeks[-1]["partners"]],
         "tickets": {"records": len(tk["records"]), "incidents": tk["counts"]["inc"] + tk["counts"]["wo"],
@@ -292,6 +298,14 @@ def body(f: dict) -> str:
               (str(f["emergency"]["contacts"]), "contacts"), (f"{f['emergency']['replay']['met']} of {f['emergency']['replay']['steps']}", "runbook steps met in the A07 replay")],
              [("Procedures", "emergency/"), ("Call lists", "emergency/#contacts"), ("Incident Commander runbook", "emergency/#command")],
              f"Contacts are fictional and checked by a test call; {f['emergency']['stale']} past its check date."),
+        tile("training", "Training",
+             "Every credential each partner's people must hold, from NFPA 70E to the guards' Level III commissions, checked against "
+             "every badge-verified shift and every record that names who did the work, with renewal notices drafted ahead of expiry.",
+             [(str(f["training"]["people"]), "people in the register"), (str(f["training"]["findings"]), "findings"),
+              (f"{f['training']['km15']:.1f}%" if f["training"]["km15"] is not None else "n/a", "KM-15 currency"),
+              (str(f["training"]["notices"]), "renewals in 120 days")],
+             [("Certifications", "training/"), ("Register", "training/#register"), ("Renewals", "training/#renewals")],
+             f"{f['training']['soon']} credentials lapse within 30 days. People are IDs only."),
         tile("pir", "Post-Incident Review",
              f"Completed reviews with their causes and owned actions, and a review that can be started from any record. "
              f"Latest: {pir['latest']['id']}, \u201c{pir['latest']['title']}\u201d.",
