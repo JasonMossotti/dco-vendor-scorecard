@@ -1,0 +1,8 @@
+{
+ "disclaimer": "Synthetic opening PM register for a portfolio demonstration. All records are fictional.",
+ "files": {
+  "opening.csv": 72
+ },
+ "note": "Own random stream; answer_key.json is the answer key and the checks never read it. Reads the PM records, data/calendar/schedule.json, and data/assets/register_opening.csv.",
+ "seed": 2026
+}

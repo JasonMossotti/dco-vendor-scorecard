@@ -257,6 +257,17 @@ Each check is recorded in the Landlord maintenance system under a standard check
 | {{ t.system }} | {{ t.task }} | {{ t.requirement }} | {{ t.frequency }} |
 {% endfor %}
 
+### 11.1 PM Coverage
+
+{{ sla.maintenance.coverage.principle }} {{ sla.maintenance.coverage.register }} {{ sla.maintenance.coverage.grace }}
+
+| Step | Name | What happens |
+|---|---|---|
+{% for t in sla.maintenance.coverage.steps -%}
+| {{ t.id }} | {{ t.name }} | {{ t.text }} |
+{% endfor %}
+{{ sla.maintenance.coverage.credits }}
+
 ## 12. Service Level Credits and Earnback
 
 - **At-Risk Amount:** {{ c.at_risk_pct }}% of monthly charges (illustratively ${{ "{:,.0f}".format(c.monthly_charges) }}/month, so **${{ "{:,.0f}".format(at_risk) }}** at risk each month).
